@@ -54,11 +54,9 @@ class Action_Controler {
           
         } else if ($sPath = $oExtends->getAttribute('path')) {
           
-          $oDocument = new XML_Document(Controler::getAbsolutePath($sPath, $oInterface->getDocument()->getFile()));
+          $oDocument = new XML_Document(Controler::getAbsolutePath($sPath, $oInterface->getDocument()->getFile()), MODE_EXECUTION);
           //echo Controler::getAbsolutePath($sPath, $oInterface->getDocument()->getFile());
-          $oParentInterface = self::buildInterface($oDocument);
-          
-          $oInterface->add($oParentInterface->query('*'));
+          if ($oParentInterface = self::buildInterface($oDocument)) $oInterface->add($oParentInterface->query('*'));
           
         } else dspm(xt('Extension de classe %s invalide', view($oExtends)), 'action/warning');
       }

@@ -14,6 +14,13 @@
       <ls:mode>744</ls:mode>
     </ls:security>
   </file>
+  <file name="form-ajax.js">
+    <ls:security>
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>744</ls:mode>
+    </ls:security>
+  </file>
   <file name="list.css">
     <ls:security xmlns:ls="http://www.sylma.org/security">
       <ls:owner>root</ls:owner>

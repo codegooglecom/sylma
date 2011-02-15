@@ -256,11 +256,12 @@ var sylma = {
                 //sylma.dsp(method['path-node'] + ' :: ' + method['id-node']);
                 
                 if (method.limit) {
-                  
+                  var sLimit = method.limit;//
+				  // alert(method);
                   eNode.addEvent(method.name, function(e) {
                     
                     var oBound = sylma.limitFunc.bind(eNode);
-                    oBound(e, sMethod, method.limit);
+                    oBound(e, sMethod, sLimit);
                   });
                   
                 } else if (method.delay) {
@@ -322,7 +323,6 @@ var sylma = {
     var oTarget;
     var bResult = false;
     var aTargets = sTargets.split(',');
-    
     for (var i = 0; i < aTargets.length; i++) {
       //alert(sTarget);
       var sPath = aTargets[i].replace(/^\s+/g,'').replace(/\s+$/g,'');
@@ -330,11 +330,17 @@ var sylma = {
       if (sPath[0] == '$') {
         //sylma.dsp(new Date())
         
+		
         if (sPath[1] == '>') var aChildren = this.getChildren(sPath.substring(2));
         else var aChildren = this.getElements(sPath.substring(1));
         
+        // sylma.dsp(sPath);
+        // sylma.dsp(aChildren.length);
+        
+        //sylma.dsp(e.target.get('tag') + '  .' + e.target.get('class') + ' #' + e.target.get('id') + '  ' + e.target.get('text'));
+        //sylma.dsp('---');
         aChildren.each(function(eNode) {
-          
+          //sylma.dsp(eNode.get('tag') + '  .' + eNode.get('class') + ' #' + eNode.get('id') + '  ' + eNode.get('text'))
           if (!bResult && eNode === e.target) bResult = true;
         });
         

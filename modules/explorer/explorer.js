@@ -102,7 +102,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
       
       var self = this;
       
-      oArguments = $extend({path : this.currentDirectory}, oArguments);
+      oArguments = Object.append({path : this.currentDirectory}, oArguments);
       this.currentDirectory = oArguments.path;
       //alert(this.currentDirectory);
       this.parent(oArguments, {
@@ -408,7 +408,7 @@ function uploaderStatusChanged(uploader) {
   }
 }
 
-$extend(oExplorerClasses, {
+Object.append(oExplorerClasses, {
   
   'file' : new Class({
     
