@@ -10,6 +10,8 @@ var sylma = {
   
   defaultMessagesId : false,
   defaultMessagesContainer : false,
+  aToBuild : new Array(),
+  /* global */
   
   inttobool : function(sValue) {
     
@@ -20,6 +22,28 @@ var sylma = {
     
     return bValue ? 'true' : 'false';
   },
+  
+  formatDuration : function(iDuration) {
+    
+    var iHour = Math.floor(iDuration / 3600);
+    var iMin = Math.floor((iDuration - (iHour * 3600)) / 60);
+    var iSec = Math.floor(iDuration - (iHour * 3600) - (iMin * 60));
+    
+    var sValue = '';
+    
+    if (iHour) sValue += iHour + 'h ';
+    if (iMin) sValue += iMin + 'mn ';
+    sValue += iSec + 's';
+    
+    return sValue;
+  },
+  
+  trim : function(sValue) {
+    
+    return sValue ? sValue.replace(/^\s+/g,'').replace(/\s+$/g,'') : '';
+  },
+  
+  /* ajax actions */
   
   importNodes : function(mElements) {
     
@@ -34,7 +58,7 @@ var sylma = {
       
       return aResults;
       
-    } else {
+    } else if (mElements) {
       
       if (document.importNode) return window.document.importNode(mElements, true);
       else return mElements;
@@ -57,6 +81,8 @@ var sylma = {
   
   buildRoot: function(object, sPath, oParent, oRoot) {
     
+    var result;
+    
     if (!object) this.dsp('Aucun objet reçu pour "' + sPath + '"');
     else {
       for (var i in object) { var bluh; } // TODO ??
@@ -64,14 +90,14 @@ var sylma = {
       //if (!oRoot) oRoot = oParent;
       if (!sPath) sPath = i;
       
-      return this.buildObject(object[i], sPath, oParent, oRoot);
+      result = this.buildObject(object[i], sPath, oParent, oRoot);
     }
     
-    return null;
+    return result;
   },
   
   buildObject: function(object, sPath, parentLayer, rootObject, iDepth) {
-    
+    // sylma.dsp(this.aToBuild.length);
     var sKey, sName, oSub, bRoot, eNode, isRoot;
     var oResult = {};
     var bResult = true;
@@ -185,7 +211,7 @@ var sylma = {
       }
       //sylma.dsp(sPath);
       if (object['methods']) this.buildMethods(object, oResult);
-      if (oResult.onBuilt) oResult.onBuilt();
+      if (oResult.onBuilt) this.aToBuild.push(oResult.onBuilt.bind(oResult));
       
       if (isRoot  && oResult.node) oResult.node.removeClass('sylma-loading');
       
@@ -231,25 +257,24 @@ var sylma = {
                 
                 if (method.limit) {
                   
-                  eNode.addEvent(method.name, this.limitFunc.create({
+                  eNode.addEvent(method.name, function(e) {
                     
-                    arguments : [sMethod, method.limit],
-                    event : true,
-                    bind : eNode
-                  }));
+                    var oBound = sylma.limitFunc.bind(eNode);
+                    oBound(e, sMethod, method.limit);
+                  });
                   
                 } else if (method.delay) {
                   
-                  eNode.addEvent(method.name, this.delayFunc.create({
+                  eNode.addEvent(method.name, function(e) {
                     
-                    arguments : [sMethod, method.timer, parseInt(method.delay), oParent],
-                    event : true,
-                    bind : eNode
-                  }));
+                    var oBound = sylma.delayFunc.bind(eNode);
+                    oBound(e, sMethod, method.timer, parseInt(method.delay), oParent);
+                  });
                   
                 } else if (method.name == 'keydown' && method.key) {
                   
                   eNode.addEvent(method.name, function(e) {
+                    
                     var oBound = sylma.keyDownFunc.bind(eNode);
                     oBound(e, sMethod, method.key);
                   });
@@ -439,25 +464,31 @@ var sylma = {
         var oContentContainer = this.parseAction(oXML);
         var oContent = self.importNodes(oContentContainer.getFirst());
         
-        oContent.setStyle('opacity', 0.2);
-        
-        if (oOptions.replace) oContent.replaces(oOptions.html);
-        else {
+        if (!oContent) {
           
-          if (oOptions['html-position']) oContent.inject(oOptions.html, oOptions['html-position']);
-          else oOptions.html.grab(oContent);
+          sylma.dsp('Aucun contenu');
+          
+        } else {
+          
+          oContent.setStyle('opacity', 0.2);
+          
+          if (oOptions.replace) oContent.replaces(oOptions.html);
+          else {
+            
+            if (oOptions['html-position']) oContent.inject(oOptions.html, oOptions['html-position']);
+            else oOptions.html.grab(oContent);
+          }
+          
+          if (oOptions.onLoad) oOptions.onLoad();
+          
+          if (oOptions.position == 'center') {
+            
+            var iLeft = (window.getSize().x - oContent.getSize().x) / 2;
+            var iTop = ($(window).getSize().y - oContent.getSize().y) / 2;
+            
+            oContent.setStyles({'left' : iLeft, 'top' : iTop});
+          }
         }
-        
-        if (oOptions.onLoad) oOptions.onLoad();
-        
-        if (oOptions.position == 'center') {
-          
-          var iLeft = (window.getSize().x - oContent.getSize().x) / 2;
-          var iTop = ($(window).getSize().y - oContent.getSize().y) / 2;
-          
-          oContent.setStyles({'left' : iLeft, 'top' : iTop});
-        }
-        
         var iOpacity = oOptions.opacity ? oOptions.opacity : 1;
         
         // TODO kill old layer
@@ -490,7 +521,7 @@ var sylma = {
                 eval(sResponse);
                 self.replace(sRecall, oOptions, oContent);
                 
-                oContent.setStyle('opacity', iOpacity);
+                if (oContent) oContent.setStyle('opacity', iOpacity);
                 
             }}).get();
             
@@ -529,12 +560,18 @@ var sylma = {
         
         if (!oOptions.parent) oOptions.parent = sylma;
         
-        var oNewObject = self.buildRoot(oResponse, oOptions.name, oOptions.parent, oOptions.root);
+        self.aToBuild = new Array();
         
+        var oNewObject = self.buildRoot(oResponse, oOptions.name, oOptions.parent, oOptions.root);
+        // sylma.dsp(this.aToBuild.length);
         if (oOptions.position) oNewObject['sylma-position'] = oOptions.position;
         // sylma.dsp(oOptions.parent['sylma-path'] + ' / ' + oOptions.name);
         if (oOptions['old-name']) eval('delete(oOptions.parent.' + oOptions['old-name'] + ')'); // delete old object
         if (oNewObject) eval('oOptions.parent.' + oOptions.name + ' = oNewObject'); // insert new object
+        // sylma.dsp('oOptions.parent.' + oOptions.name + ' = oNewObject');
+        
+        // sylma.dsp(self.aToBuild.length);
+        Array.each(self.aToBuild, function(item) { item(); });
         
         oOptions.resultObject = oNewObject;
         
@@ -859,7 +896,7 @@ sylma.classes.layer = new Class({
   
   replace : function(oOptions) {
     
-    this.node.setStyle('opacity', 0.2);
+    if (this.node) this.node.setStyle('opacity', 0.2);
     
     oOptions = Object.append({
       

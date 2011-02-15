@@ -1643,7 +1643,7 @@ class XML_Action extends XML_Document {
     
     if (!$bResult) {
       
-      $this->dspm(xt('Argument %s invalide pour %s', view($mArgument), view($oElement)), 'action/error');
+      $this->dspm(xt('Argument %s [%s] invalide pour %s', view($mArgument), $sActualFormat, view($oElement)), 'action/error');
       $this->setStatut('error');
     }
     

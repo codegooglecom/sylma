@@ -138,6 +138,12 @@ class XML_Database {
     return addQuote($sValue);
   }
   
+  public function addDocument($sDocument, XML_Document $oRoot) {
+	
+	if (!$this->check($this->getPath($sDocument))) $this->query("xmldb:store('{$this->getCollection(false)}', '{$sDocument}', {$oRoot->display(true, false)})", array(), false, false);
+	//$this->update("xmldb:chmod-resource('{$this->getCollection(false)}', '{$this->sDocument}', $mode as xs:integer)util:base-to-integer(0755, 8)");
+  }
+  
   public function hasDocument($sDocument) {
     
     return 'xs:boolean('.$this->getPath($sDocument).')';

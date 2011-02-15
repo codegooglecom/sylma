@@ -4,6 +4,7 @@ define('SYLMA_PATH_LOGIN',    '/login');
 define('SYLMA_PATH_LOGOUT',   '/logout');
 define('SYLMA_PATH_USER_EDIT',   '/sylma/modules/users/edit/');
 define('SYLMA_PATH_ERROR',    '/error');
+define('SYLMA_XAMPP_BUG',    false);
 
 define('SYLMA_PATH_EDITOR',   '/modules/editeur'.SYLMA_ADMIN_EXTENSION);
 define('SYLMA_PATH_MODULES',   '/modules');
