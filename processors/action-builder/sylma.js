@@ -582,7 +582,7 @@ var sylma = {
         oOptions.resultObject = oNewObject;
         
         // at last : onSuccess function
-        if (oOptions.onSuccess) oOptions.onSuccess(oResult);
+        if (oOptions.onSuccess) oOptions.onSuccess(oNewObject);
         
     }}).get();
   },
@@ -827,7 +827,7 @@ sylma.classes.request = new Class({
         //oMessagesContent.fade('hide');
         
         oMessagesContent.addClass('messages-float');
-        oContainer.adopt(oMessagesContent, 'top');
+        if (oContainer) oContainer.adopt(oMessagesContent, 'top');
         
         var pf = new PulseFade(oMessagesContent, {'times':  6, 'duration':  600, 'max' : 1, 'min' : 0.2}); //
         pf.start();
@@ -836,7 +836,7 @@ sylma.classes.request = new Class({
       }
     }
     
-    this.cleanStack(oContainer, 8);
+    if (oContainer) this.cleanStack(oContainer, 8);
     
     if (bText && oContent) return oContent.get('text');
     else return oContent;
