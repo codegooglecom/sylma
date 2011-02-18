@@ -126,7 +126,13 @@ class Img implements Main {
       
       $aExtensions = array('jpeg', 'png', 'gif');
       
-      if (in_array($sExtension, $aExtensions)) {
+      if ($sExtension == 'gif') { // TODO: tmp, seems to work :/
+        
+        Controler::setContentType($sExtension);
+        
+        return $this->oFile->read();
+        
+      } else if (in_array($sExtension, $aExtensions)) {
         
         Controler::setContentType($sExtension);
         

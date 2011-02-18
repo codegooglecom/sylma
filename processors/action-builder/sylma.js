@@ -67,6 +67,8 @@ var sylma = {
   
   loadTree : function(sName, sID, oSuccess) {
     
+    var self = this;
+    
     var oResult = new Request.JSON({
       
       'url' : '/index.txt?sylma-result-id=' + sID, 
@@ -75,6 +77,8 @@ var sylma = {
         //sylma.dsp(' - DEBUT - ');
         sylma[sName] = sylma.buildRoot(oResult);
         if (oSuccess) oSuccess();
+        
+        Array.each(self.aToBuild, function(item) { item(); });
         //sylma.dsp(' - FIN - ');
     }}).get();
   },
@@ -213,7 +217,7 @@ var sylma = {
       if (object['methods']) this.buildMethods(object, oResult);
       if (oResult.onBuilt) this.aToBuild.push(oResult.onBuilt.bind(oResult));
       
-      if (isRoot  && oResult.node) oResult.node.removeClass('sylma-loading');
+      if (isRoot  && oResult.node) this.enableNode(oResult.node);
       
       return oResult;
       
@@ -443,6 +447,34 @@ var sylma = {
     return parent;
   },
   
+  disableNode : function(node) {
+    
+    if (node) {
+      
+      node.get('tween').set('duration', 'short');
+      node.tween('opacity', 0.1);
+    }
+  },
+  
+  enableNode : function(node, iOpacity) {
+    
+    iOpacity = iOpacity || 1;
+    
+    if (node) {
+      
+      if (node.hasClass('sylma-loading')) {
+        
+        var iFrom = node.getStyle('opacity');
+        node.setStyle('opacity', iFrom);
+        
+        node.removeClass('sylma-loading')
+      }
+      
+      node.get('tween').set('duration', 'short');
+      node.tween('opacity', iOpacity);
+    }
+  },
+  
   load : function(oOptions) {
     
     if (!oOptions.method) oOptions.method = 'get';
@@ -476,7 +508,7 @@ var sylma = {
           
         } else {
           
-          oContent.setStyle('opacity', 0.2);
+          self.disableNode(oContent);
           
           if (oOptions.replace) oContent.replaces(oOptions.html);
           else {
@@ -495,7 +527,8 @@ var sylma = {
             oContent.setStyles({'left' : iLeft, 'top' : iTop});
           }
         }
-        var iOpacity = oOptions.opacity ? oOptions.opacity : 1;
+        
+        var iOpacity;
         
         // TODO kill old layer
         //layer.node.destroy(); 
@@ -527,7 +560,7 @@ var sylma = {
                 eval(sResponse);
                 self.replace(sRecall, oOptions, oContent);
                 
-                if (oContent) oContent.setStyle('opacity', iOpacity);
+                if (oContent) self.enableNode(oContent);
                 
             }}).get();
             
@@ -536,7 +569,7 @@ var sylma = {
             // no methods
             
             self.replace(sRecall, oOptions);
-            oContent.setStyle('opacity', iOpacity);
+            self.enableNode(oContent, iOpacity);
             
             if (oOptions.onSuccess) oOptions.onSuccess(oContent);
           }
@@ -544,7 +577,7 @@ var sylma = {
         } else {
           
           // only change content node
-          oContent.setStyle('opacity', iOpacity);
+          self.enableNode(oContent, iOpacity);
           
           if (oOptions.onSuccess) oOptions.onSuccess(oContent);
           //oCaller.node = oContent;
@@ -756,8 +789,12 @@ sylma.classes.Base = new Class({
   
   setTimer : function(sName, callback, iTime, el) {
     
+    el = el || this;
+    
     if (el) var bound = callback.bind(el);
     else bound = callback;
+    
+    if (!this.timer) this.timer = new Array();
     
     this.timer[sName] = window.setInterval(bound, iTime);
   },
@@ -769,7 +806,13 @@ sylma.classes.Base = new Class({
       window.clearInterval(this.timer[sName]);
       this.timer[sName] = undefined;
     }
+  },
+  
+  remove : function() {
+    
+    if (this.timer) this.timer.each(function(item, sKey) { this.clearTimer(sKey); });
   }
+
 });
 
 sylma.classes.request = new Class({
@@ -902,7 +945,7 @@ sylma.classes.layer = new Class({
   
   replace : function(oOptions) {
     
-    if (this.node) this.node.setStyle('opacity', 0.2);
+    if (this.node) sylma.disableNode(this.node);
     
     oOptions = Object.append({
       
@@ -933,6 +976,8 @@ sylma.classes.layer = new Class({
   },
   
   remove : function() {
+    
+    this.parent();
     
     var oElement = this.node;
     
