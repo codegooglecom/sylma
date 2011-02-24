@@ -22,6 +22,7 @@
     </le:argument>
   </le:settings>
   <le:action path="/sylma/processors/action-builder/init"/>
+  <le:action path="/modules/calendar"/>
   <le:window>
     <li:add-css le:format="string">
       <le:directory/>
@@ -32,7 +33,7 @@
       <le:string>/form-ajax.js</le:string>
     </li:add-js>
   </le:window>
-  <la:layer extend-base="sylma.dbx-classes">
+  <la:layer extend-base="sylma.dbx-classes" class="form">
     <le:get-argument name="model">
       <li:parse>
         <le:get-variable name="template"/>

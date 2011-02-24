@@ -40,8 +40,7 @@
   </method>
   <method path="get-model" name="getModel" return-default="true">
     <argument name="schema" format="XML_Document"/>
-    <argument name="messages" format="php-boolean" required="false"/>
-    <argument name="load-refs" format="php-boolean" required="false"/>
+    <argument name="options" format="php-array" required="false"/>
   </method>
   <method path="include-externals" name="includeExternals"/>
   <method path="view" name="view" return-default="true">

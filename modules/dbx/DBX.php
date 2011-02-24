@@ -448,7 +448,7 @@ class DBX_Module extends XDB_Module {
             
             // $this->buildRefs($oModel, true);
             
-            $sForm = $this->readOption('ajax') == 'true' ? 'form-ajax' : 'form';
+            $sForm = $this->readOption('ajax', false) == 'true' ? 'form-ajax' : 'form';
             
             $this->switchDirectory();
             
@@ -489,7 +489,7 @@ class DBX_Module extends XDB_Module {
           $sPath = $this->readOption('add-do-path', false);
           $sPath = $sPath ? $sPath : $this->getAdminPath().'/add-do';
           
-          $sForm = $this->readOption('ajax') == 'true' ? 'form-ajax' : 'form';
+          $sForm = $this->readOption('ajax', false) == 'true' ? 'form-ajax' : 'form';
           
           $this->switchDirectory();
           

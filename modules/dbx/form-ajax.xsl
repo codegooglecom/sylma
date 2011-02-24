@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:func="http://exslt.org/functions" xmlns:lc="http://www.sylma.org/schemas" xmlns:lx="http://ns.sylma.org/xslt" version="1.0" extension-element-prefixes="func lx" xmlns:la="http://www.sylma.org/processors/action-builder">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:func="http://exslt.org/functions" xmlns:lc="http://www.sylma.org/schemas" xmlns:lx="http://ns.sylma.org/xslt" xmlns:la="http://www.sylma.org/processors/action-builder" version="1.0" extension-element-prefixes="func lx">
   <xsl:import href="../../schemas/functions.xsl"/>
   <xsl:import href="/sylma/xslt/string.xsl"/>
   <xsl:param name="action"/>
@@ -32,7 +32,9 @@
         <xsl:when test="$parent">
           <xsl:value-of select="concat($parent, '[', lc:get-name(), ']')"/>
         </xsl:when>
-        <xsl:otherwise><xsl:value-of select="lc:get-name()"/></xsl:otherwise>
+        <xsl:otherwise>
+          <xsl:value-of select="lc:get-name()"/>
+        </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:variable name="id" select="concat('field-', lc:get-name())"/>
@@ -51,7 +53,9 @@
         <xsl:choose>
           <xsl:when test="lc:is-required()">
             <la:layer class="complex">
-              <h3><xsl:value-of select="lc:get-title()"/></h3>
+              <h3>
+                <xsl:value-of select="lc:get-title()"/>
+              </h3>
               <div class="field-complex clear-block">
                 <xsl:apply-templates select="@*"/>
                 <xsl:apply-templates select="*" mode="field">
@@ -149,8 +153,8 @@
         </xsl:choose>
       </xsl:when>
       <xsl:when test="lc:is-date()">
-        <input type="hidden" value="{$id};;{$name};;{.}" class="{$class} field-input-date"/>
-        <span id="{$id}" class="field-input-date"/>
+        <input class="{$class} field-input-date" id="{$id}" value="{.}"/>
+        <input type="hidden" name="{$name}" value="{.}"/>
       </xsl:when>
       <xsl:when test="lc:is-boolean()">
         <input type="checkbox" id="{$id}" class="{$class} field-input-boolean" name="{$name}" value="1">

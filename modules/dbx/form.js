@@ -1,14 +1,16 @@
 /* Document JS */
 
 var sylmaCalendarOptions = {
-  // months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
-  // days: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+  months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+  days: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
   // draggable : false
   'startMonday' : true,
   'format' : '%D %B %Y',
-  'theme' : 'osx-dashboard',
-  'createHiddenInput' : true,
-  'hiddenInputFormat' : '%Y-%m-%d'
+  
+  classes: ['i-heart-ny']
+  // 'theme' : 'osx-dashboard',
+  // 'createHiddenInput' : true,
+  // 'hiddenInputFormat' : '%Y-%m-%d'
 };
 
 addWindowLoad(function () {
@@ -36,15 +38,16 @@ addWindowLoad(function () {
       var sMonth = oNow.getMonth().toString().length == 1 ? '0' + oNow.getMonth() + 1 : oNow.getMonth() + 1;
       var sDay = oNow.getDate().toString().length == 1 ? '0' + oNow.getDate() : oNow.getDate();
       
-      sDate = oNow.getFullYear() + '-' + sMonth + '-' + sDay;
-      //alert(sDate);
+      sDate = oNow.getFullYear() + '/' + sMonth + '/' + sDay;
     }
     
-    sylmaCalendarOptions['defaultDate'] = sDate;
-    sylmaCalendarOptions['hiddenInputName'] = sName;
-    new CalendarEightysix(sID, sylmaCalendarOptions);
+    el.setAttribute('value', sDate);
     
-    // new Calendar({sID : 'D B Y'}, sylmaCalendarOptions);
+    //sylmaCalendarOptions['defaultDate'] = sDate;
+    //sylmaCalendarOptions['hiddenInputName'] = sName;
+    //new CalendarEightysix(sID, sylmaCalendarOptions);
+    var
+    new Calendar({sID : 'D B Y'}, sylmaCalendarOptions);
   });
 });
 

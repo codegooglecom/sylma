@@ -258,6 +258,11 @@ class XDB_Module extends Module {
     return $this->getDB()->get($sQuery, $this->mergeNamespaces($aNamespaces), $bDocument, true, false);
   }
   
+  protected function read($sQuery, array $aNamespaces = array()) {
+    
+    return $this->getDB()->query($sQuery, $this->mergeNamespaces($aNamespaces), true, false);
+  }
+  
   protected function query($sQuery, array $aNamespaces = array(), $bGetResult = true, $bGetMessages = true) {
     
     return $this->getDB()->query($sQuery, $this->mergeNamespaces($aNamespaces), $bGetResult, $bGetMessages);
