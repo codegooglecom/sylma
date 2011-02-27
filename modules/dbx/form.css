@@ -88,22 +88,9 @@ span.field-input-date {
   cursor: pointer;
 }
 
-.calendar-eightysix.osx-dashboard {
-  height: 145px;
-  width: 172px;
-  margin-left: 5px;
-  background-image: none;
-  background-color: gray;
-  opacity: 0.8;
-  -moz-border-radius: 7px;
+div.field-complex {
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  -moz-border-radius: 15px 0px;
 }
-
-.calendar-eightysix.osx-dashboard .c86-wrapper { padding: 5px; }
-
-.calendar-eightysix.osx-dashboard .c86-header .c86-label,
-.calendar-eightysix.osx-dashboard .c86-body .c86-inner .c86-container .c86-row div.c86-selected { color: #ccc !important; }
-
-.calendar-eightysix.osx-dashboard .c86-header .c86-label.c86-clickable:hover,
-.calendar-eightysix.osx-dashboard .c86-body .c86-inner .c86-container.c86-month.c86-pickable .c86-row div:hover, 
-.calendar-eightysix.osx-dashboard .c86-body .c86-inner .c86-container.c86-year-decade .c86-row div:hover,
-.calendar-eightysix.osx-dashboard .c86-body .c86-inner .c86-container.c86-month .c86-row div.c86-outside:hover { color: #A6C4CA !important; }

@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:lc="http://www.sylma.org/schemas" xmlns:func="http://exslt.org/functions" version="1.0" extension-element-prefixes="func exsl">
+  
+  <xsl:import href="functions-schema.xsl"/>
+  
   <func:function name="lc:get-model">
     <xsl:param name="source" select="."/>
     <xsl:variable name="id" select="$source/@lc:model"/>
-    <func:result select="/*/lc:schemas//lc:model[@id=$id]"/>
+    <func:result select="/*/lc:schemas//lc:model[@id = $id]"/>
   </func:function>
+  
   <func:function name="lc:get-schema">
     <xsl:param name="source" select="."/>
     <xsl:variable name="model" select="lc:get-model($source)"/>
-    <xsl:if test="$model/@base">
-      <func:result select="/*/lc:schemas/lc:base[@name=$model/@base]"/>
+    <xsl:if test="$model and $model/@base">
+      <func:result select="/*/lc:schemas/lc:base[@name = $model/@base]"/>
     </xsl:if>
   </func:function>
+  
   <func:function name="lc:get-element">
     <xsl:param name="source" select="."/>
     <xsl:variable name="model" select="lc:get-model($source)"/>
@@ -21,12 +26,12 @@
           <func:result select="//lc:element[@id = $model/@element]"/>
         </xsl:when>
         <xsl:when test="lc:get-schema($source/..)">
-          <xsl:variable name="model-name" select="$model/@name"/>
-          <func:result select="lc:get-schema($source/..)/*/lc:element[@name = $model-name]"/>
+          <func:result select="lc:get-schema($source/..)/*/lc:element[@name = $model/@name]"/>
         </xsl:when>
       </xsl:choose>
     </xsl:if>
   </func:function>
+  
   <func:function name="lc:get-title">
     <xsl:param name="source" select="."/>
     <xsl:choose>
@@ -41,6 +46,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </func:function>
+  
   <func:function name="lc:get-statut">
     <func:result select="lc:get-model()/@statut"/>
   </func:function>
@@ -57,10 +63,12 @@
       </xsl:otherwise>
     </xsl:choose>
   </func:function>
+  
   <func:function name="lc:get-name">
-    <xsl:variable name="name" select="local-name()"/>
+    <xsl:param name="source" select="."/>
+    <xsl:variable name="name" select="local-name($source)"/>
     <xsl:choose>
-      <xsl:when test="count(../*[local-name()=$name]) &gt; 1">
+      <xsl:when test="count($source/../*[local-name() = $name]) &gt; 1">
         <func:result select="concat($name, '[', position(), ']')"/>
       </xsl:when>
       <xsl:otherwise>
@@ -68,6 +76,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </func:function>
+  
   <func:function name="lc:is-complex">
     <xsl:param name="source" select="."/>
     <xsl:if test="lc:get-schema($source)">
@@ -78,6 +87,7 @@
     <xsl:param name="source" select="."/>
     <func:result select="not(lc:is-complex($source))"/>
   </func:function>
+  
   <func:function name="lc:get-type">
     <xsl:param name="source" select="."/>
     <xsl:if test="not(lc:is-complex($source))">
@@ -91,11 +101,13 @@
       </xsl:choose>
     </xsl:if>
   </func:function>
+  
   <func:function name="lc:is-required">
     <xsl:param name="source" select="."/>
-    <xsl:variable name="model" select="lc:get-model()"/>
-    <func:result select="boolean($model/@required or not($model/@minOccurs) or ($model/@minOccurs and $model/@minOccurs &gt; 0))"/>
+    <xsl:variable name="schema" select="lc:get-schema($source)"/>
+    <func:result select="boolean($schema and ($schema/@required or not($schema/@minOccurs) or ($schema/@minOccurs != '' and $schema/@minOccurs &gt; 0)))"/>
   </func:function>
+  
   <func:function name="lc:is-string">
     <xsl:param name="source" select="."/>
     <func:result select="boolean(lc:get-type($source) = 'xs:string')"/>
@@ -120,4 +132,5 @@
     <xsl:param name="source" select="."/>
     <func:result select="boolean($source/@lc:key-ref)"/>
   </func:function>
+
 </xsl:stylesheet>

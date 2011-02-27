@@ -306,6 +306,7 @@ class XML_Element extends DOMElement implements XML_Composante {
    * Set an attribute of the element, remove the attribute if $sValue is null
    * @param string $sName The name of the attribute
    * @param string $sValue The value of the attribute
+   * @return true|false Returns TRUE on success or FALSE on failure.
    */
   public function setAttribute($sName, $sValue = '', $sUri = null) {
     
@@ -317,6 +318,8 @@ class XML_Element extends DOMElement implements XML_Composante {
       else return $this->setAttributeNS($sUri, $sName, $sValue);
       
     } else return $this->removeAttribute($sName);
+    
+    return false;
   }
   
   public function addClass($sClass) {
@@ -376,6 +379,12 @@ class XML_Element extends DOMElement implements XML_Composante {
   public function getAttributes() {
     
     return new XML_NodeList($this->attributes);
+  }
+  
+  public function getAttributeNode($sName, $sUri = '') {
+    
+    if ($sUri) return parent::getAttributeNodeNS($sUri, $sName);
+    else return parent::getAttributeNode($sName);
   }
   
   /**
