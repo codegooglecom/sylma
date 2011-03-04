@@ -9,14 +9,19 @@ class XSD_Parser extends Module {
     'mark' => true, // copy sylma schema namespaced attributes to elements
     'load-refs' => false); // load key-refs datas, require database
   
-  private $oModel = null;
+  private $oModel = null; // Result object
   
   private $aMessages = array();
-  public $aTypes = array();
-  public $aTypesUsed = array(); // stack of types to avoid recursive calls - TODO reset private
-  private $aGroups = array();
-  private $aRefs = array();
-  private $iID = 1;
+  
+  public $aTypes = array(); // list of xs:type's, rebuilded extended or restricted xs:type's and inline complexType)
+  public $aTypesUsed = array(); // stack of types to avoid recursive calls - TODO reset to private
+  
+  private $aGroups = array(); // list of xs:group's
+  private $aElements = array(); // list of xs:element's defined in root
+  
+  private $aRefs = array(); // list of element datas loaded from DB. Indicate in schema with @lc:key-ref
+  
+  private $iID = 1; // used to increment @id set to model and refering @model set to source node
   
   private $oElement = null;
   
@@ -45,7 +50,7 @@ class XSD_Parser extends Module {
   }
   
   /*
-   * Namespace that should use the document to validate
+   * Namespace that should be used in the document to validate
    **/
   public function getTargetNamespace() {
     
@@ -62,10 +67,11 @@ class XSD_Parser extends Module {
   }
   
   /*
-   * @param XML_Document|null $oDatas Document source to build the model result from.
-   *   If null 'model' option should be set to (bool) true to generate entire new document
    * Main parser function that will build the model from the schema and alterate source nodes with model id attribute.
    * Depends and options.
+   *
+   * @param XML_Document|null $oDatas Document source to build the model result from.
+   *   If null 'model' option should be set to (bool) true to generate entire new document
    **/
   
   private function buildSchema(XML_Document $oDatas = null) {
@@ -81,12 +87,13 @@ class XSD_Parser extends Module {
     if ($oRoot && ($oSource = $this->getSchema()->get("/*/xs:element[@name='".$sRoot."']", $this->getNS()))) {
       
       $oElement = new XSD_Element($oSource, null, null, $this, $aPath);
+      $this->aElements = $oElement;
       
       if ($sPath) $oElement = $this->getElement();
       
       if (!$oElement) {
         
-        dspm('Element manquant');
+        dspm(xt('Element manquant'), 'xml/error');
         
       } else {
         
@@ -100,6 +107,7 @@ class XSD_Parser extends Module {
             $this->aRefs,
             $this->aTypes,
             $this->aGroups,
+            $this->aElements,
             $oModel), null, $this->getNamespace());
           
           $oResult = new XML_Element('sylma-schema', array($oDatas, $oSchemas), array(
@@ -777,8 +785,10 @@ class XSD_Element extends XSD_Node {
     
     $oResult = new XML_Element('element', null, array(
       'name'=> $this->getName(),
-      'type' => $this->getType(),
       'id' => $this->getID()), $this->getNamespace());
+    
+    if ($this->getType()->isBasic()) $oResult->setAttribute('basic-type', $this->getType());
+    else $oResult->setAttribute('type', $this->getType());
     
     $oResult->cloneAttributes($this->getSource(), array('minOccurs', 'maxOccurs'));
     

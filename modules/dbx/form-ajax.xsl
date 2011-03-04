@@ -34,8 +34,15 @@
     <form method="{$method}" action="{$action}" enctype="multipart/form-data">
       
       <xsl:apply-templates select="lc:get-model(*[1])/lc:annotations/lc:message"/>
+      <xsl:variable name="element" select="lc:get-root-element(current()/*[1])"/>
       
-      <xsl:apply-templates select="*[1]" mode="field"/>
+      <xsl:apply-templates select="*[1]/@*" mode="field">
+        <xsl:with-param name="parent-element" select="$element"/>
+      </xsl:apply-templates>
+      
+      <xsl:apply-templates select="*[1]/*" mode="field">
+        <xsl:with-param name="parent-element" select="$element"/>
+      </xsl:apply-templates>
       
       <div class="field-actions">
         <input type="submit" value="Enregistrer"/>
@@ -48,17 +55,17 @@
   <xsl:template match="*" mode="field">
     
     <xsl:param name="parent"/>
-    <xsl:param name="parent-schema"/>
-    <xsl:variable name="schema" select="lc:schema-get-schema($parent-schema)"/>
+    <xsl:param name="parent-element"/>
+    <xsl:variable name="element" select="lc:element-get-element($parent-element)"/>
     
     <xsl:choose>
-      <xsl:when test="$schema">
+      <xsl:when test="$element">
         <xsl:variable name="name" select="lc:build-name($parent)"/>
         <xsl:choose>
-          <xsl:when test="lc:schema-is-complex($schema)">
+          <xsl:when test="lc:element-is-complex($element)">
             <xsl:call-template name="field-complex">
               <xsl:with-param name="name" select="$name"/>
-              <xsl:with-param name="schema" select="$schema"/>
+              <xsl:with-param name="element" select="$element"/>
             </xsl:call-template>
           </xsl:when>
           
@@ -75,15 +82,15 @@
                   <xsl:with-param name="id" select="$id"/>
                   <xsl:with-param name="name" select="$name"/>
                   <xsl:with-param name="class" select="$class"/>
-                  <xsl:with-param name="schema" select="$schema"/>
+                  <xsl:with-param name="element" select="$element"/>
                 </xsl:apply-templates>
                 <xsl:apply-templates select="@*" mode="field">
                   <xsl:with-param name="parent" select="$name"/>
-                  <xsl:with-param name="parent-schema" select="$schema"/>
+                  <xsl:with-param name="parent-element" select="$element"/>
                 </xsl:apply-templates>
               </xsl:with-param>
               
-              <xsl:with-param name="schema" select="$schema"/>
+              <xsl:with-param name="element" select="$element"/>
               <xsl:with-param name="model" select="lc:get-model()"/>
             </xsl:call-template>
             
@@ -92,21 +99,24 @@
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-        <div class="clear-block message-error">Invalid field element. Please contact admin.</div>
+        <div class="clear-block message-error">
+          Invalid field <strong><xsl:value-of select="name()"/></strong> element. Please contact admin.
+        </div>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
   
   <xsl:template match="@*" mode="field">
     <xsl:param name="parent"/>
-    <xsl:param name="parent-schema"/>
+    <xsl:param name="parent-element"/>
     <xsl:if test="namespace-uri() != 'http://www.sylma.org/schemas'">
-      <xsl:variable name="schema" select="lc:schema-get-schema-attribute($parent-schema)"/>
+      
+      <xsl:variable name="element" select="lc:element-get-attribute($parent-element)"/>
       <xsl:choose>
-        <xsl:when test="$schema">
+        <xsl:when test="$element">
           <xsl:choose>
             
-            <xsl:when test="$schema and lc:is-visible($schema)">
+            <xsl:when test="$element and lc:is-visible($element)">
               <xsl:variable name="id" select="concat('field-', local-name())"/>
               <xsl:variable name="name" select="lc:build-name($parent, local-name())" />
               <xsl:variable name="class" select="'field-input-attribute'"/>
@@ -120,15 +130,14 @@
                     <xsl:with-param name="id" select="$id"/>
                     <xsl:with-param name="name" select="$name"/>
                     <xsl:with-param name="class" select="$class"/>
-                    <xsl:with-param name="schema" select="$schema"/>
+                    <xsl:with-param name="element" select="$element"/>
                   </xsl:apply-templates>
                 </xsl:with-param>
                 
-                <xsl:with-param name="schema" select="$schema"/>
+                <xsl:with-param name="element" select="$element"/>
                 <xsl:with-param name="model" select="lc:get-model(..)"/>
               </xsl:call-template>
               
-              <input type="text" value="ATTR1 {name()}" name="attr-{local-name()}"/>
             </xsl:when>
             
             <xsl:otherwise>
@@ -139,7 +148,9 @@
         </xsl:when>
         
         <xsl:otherwise>
-          <div class="clear-block message-error">Invalid field element. Please contact admin.</div>
+          <div class="clear-block message-error">
+            Invalid field @<strong><xsl:value-of select="name()"/></strong> attribute. Please contact admin.
+          </div>
         </xsl:otherwise>
         
       </xsl:choose>
@@ -148,22 +159,22 @@
   
   <xsl:template name="field-complex">
     <xsl:param name="name"/>
-    <xsl:param name="schema"/>
+    <xsl:param name="element"/>
     <la:layer class="complex">
-      <xsl:if test="$schema/@lc:title">
+      <xsl:if test="$element/@lc:title">
         <h3>
-          <xsl:value-of select="lx:first-case(lc:schema-get-title($schema, .))"/>
+          <xsl:value-of select="lx:first-case(lc:element-get-title($element, .))"/>
         </h3>
       </xsl:if>
       <div class="field-complex clear-block">
         <xsl:apply-templates select="lc:get-model()/lc:annotations/lc:message"/>
         <xsl:apply-templates select="@*" mode="field">
           <xsl:with-param name="parent" select="$name"/>
-          <xsl:with-param name="parent-schema" select="$schema"/>
+          <xsl:with-param name="parent-element" select="$element"/>
         </xsl:apply-templates>
         <xsl:apply-templates select="*" mode="field">
           <xsl:with-param name="parent" select="$name"/>
-          <xsl:with-param name="parent-schema" select="$schema"/>
+          <xsl:with-param name="parent-element" select="$element"/>
         </xsl:apply-templates>
       </div>
     </la:layer>
@@ -173,10 +184,10 @@
     <xsl:param name="id"/>
     <xsl:param name="name"/>
     <xsl:param name="content"/>
-    <xsl:param name="schema"/>
+    <xsl:param name="element"/>
     <xsl:param name="model"/>
     <xsl:choose>
-      <xsl:when test="lc:is-visible($schema)">
+      <xsl:when test="lc:is-visible($element)">
         <xsl:variable name="statut">
           <xsl:choose>
             <xsl:when test="@lc:model">
@@ -192,7 +203,7 @@
         </xsl:variable>
         <div class="field clear-block {$statut}" id="field-container-{$name}">
           <xsl:choose>
-            <xsl:when test="lc:schema-is-boolean($schema)">
+            <xsl:when test="lc:element-is-boolean($element)">
               <xsl:copy-of select="$content"/>
               <xsl:copy-of select="$label"/>
             </xsl:when>
@@ -233,9 +244,9 @@
     <xsl:param name="id"/>
     <xsl:param name="name"/>
     <xsl:param name="class"/>
-    <xsl:param name="schema"/>
-    <xsl:variable name="is-visible" select="lc:is-visible($schema)"/>
-    <xsl:variable name="is-editable" select="lc:is-editable($schema)"/>
+    <xsl:param name="element"/>
+    <xsl:variable name="is-visible" select="lc:is-visible($element)"/>
+    <xsl:variable name="is-editable" select="lc:is-editable($element)"/>
     <xsl:choose>
       <xsl:when test="not($is-visible) and $is-editable">
         <input type="hidden" class="{$class}" name="{$name}" id="{$id}" value="{.}"/>
@@ -246,7 +257,7 @@
         </span>
       </xsl:when>
       <xsl:when test="not($is-editable) and not($is-visible)"/>
-      <xsl:when test="lc:schema-is-keyref($schema)">
+      <xsl:when test="lc:element-is-keyref($element)">
         <select name="{$name}" id="{$id}" class="{$class}">
           <option value="0">&lt; choisissez &gt;</option>
           <xsl:variable name="self" select="."/>
@@ -258,17 +269,17 @@
           </xsl:for-each>
         </select>
       </xsl:when>
-      <xsl:when test="lc:schema-is-string($schema)">
+      <xsl:when test="lc:element-is-string($element)">
         <xsl:choose>
-          <xsl:when test="lc:schema-is-enum($schema)">
+          <xsl:when test="lc:element-is-enum($element)">
             <select name="{$name}" id="{$id}" class="{$class}">
               <option value="0">&lt; choisissez &gt;</option>
-              <xsl:apply-templates select="$schema/lc:restriction/lc:enumeration">
+              <xsl:apply-templates select="$element/lc:restriction/lc:enumeration">
                 <xsl:with-param name="value" select="node()"/>
               </xsl:apply-templates>
             </select>
           </xsl:when>
-          <xsl:when test="lc:boolean($schema/@lc:line-break) or lc:boolean($schema/@lc:wiki)">
+          <xsl:when test="lc:boolean($element/@lc:line-break) or lc:boolean($element/@lc:wiki)">
             <textarea id="{$id}" name="{$name}" class="{$class}">
               <xsl:value-of select="."/>
             </textarea>
@@ -278,18 +289,18 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
-      <xsl:when test="lc:schema-is-date($schema)">
+      <xsl:when test="lc:element-is-date($element)">
         <input class="{$class} field-input-date" id="{$id}" value="{.}"/>
         <input type="hidden" name="{$name}" value="{.}"/>
       </xsl:when>
-      <xsl:when test="lc:schema-is-boolean($schema)">
+      <xsl:when test="lc:element-is-boolean($element)">
         <input type="checkbox" id="{$id}" class="{$class} field-input-boolean" name="{$name}" value="1">
           <xsl:if test=". = '1' or . = 'true'">
             <xsl:attribute name="checked">checked</xsl:attribute>
           </xsl:if>
         </input>
       </xsl:when>
-      <xsl:when test="lc:schema-is-integer($schema)">
+      <xsl:when test="lc:element-is-integer($element)">
         <input type="text" class="{$class} field-input-integer" id="{$id}" name="{$name}" value="{.}"/>
       </xsl:when>
       <xsl:otherwise>
@@ -304,12 +315,12 @@
     <xsl:param name="id"/>
     <xsl:param name="name"/>
     <xsl:param name="class"/>
-    <xsl:param name="schema"/>
+    <xsl:param name="element"/>
     <xsl:call-template name="input">
       <xsl:with-param name="id" select="$id"/>
       <xsl:with-param name="name" select="$name"/>
       <xsl:with-param name="class" select="$class"/>
-      <xsl:with-param name="schema" select="$schema"/>
+      <xsl:with-param name="element" select="$element"/>
     </xsl:call-template>
   </xsl:template>
   
@@ -317,12 +328,12 @@
     <xsl:param name="id"/>
     <xsl:param name="name"/>
     <xsl:param name="class"/>
-    <xsl:param name="schema"/>
+    <xsl:param name="element"/>
     <xsl:call-template name="input">
       <xsl:with-param name="id" select="$id"/>
       <xsl:with-param name="name" select="$name"/>
       <xsl:with-param name="class" select="$class"/>
-      <xsl:with-param name="schema" select="$schema"/>
+      <xsl:with-param name="element" select="$element"/>
     </xsl:call-template>
   </xsl:template>
   
