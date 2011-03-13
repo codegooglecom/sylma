@@ -45,6 +45,21 @@ sylma['dbx-classes'] = {
     
     Extends : sylma.classes.layer
     
+  }),
+  
+  template : new Class({
+    
+    Extends : sylma.classes.layer,
+    
+    add : function() {
+      
+      this.parentObject.insert({
+        'html' : this.node,
+        'html-position' : 'before',
+        'path' : this.rootObject.pathAdd,
+        'arguments' : { path : this.path }
+      });
+    }
   })
 };
 

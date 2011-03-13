@@ -377,15 +377,58 @@ class Controler {
     return $oRedirect;
   }
   
-  private static function loadPost($mValues, XML_Element $oNode) {
+  private static function loadPost($mValues, XML_Element $oNode, $sName = '') {
+    
+    $bFirstPass = true;
     
     foreach ($mValues as $mKey => $mValue) {
       
-      if (!is_numeric($mKey) && substr($mKey, 0, 8) !== 'sylma-id') $oResult = $oNode->addNode($mKey);
-      else $oResult = $oNode;
+      if (is_numeric($mKey)) {
+        
+        if (!$sName) {
+          
+          dspm(xt('Impossible d\'importer la clé numérique %s dans $_POST (%s), le nom de l\'élément n\'est pas spécifié',
+            new HTML_Strong($mKey), view($_POST)), 'action/warning');
+        }
+        else {
+          
+          
+          if ($bFirstPass) {
+            
+            if (!$oNode->getParent()) {
+              
+              dspm(xt('Impossible d\'importer la clé numérique %s dans $_POST (%s), un élément parent doit être spécifié pour %s',
+                new HTML_Strong($mKey), view($_POST), view($oNode)), 'action/warning');
+            }
+            else {
+              
+              $oParent = $oNode->getParent();
+              $oNode->remove();
+              $oNode = $oParent;
+            }
+          }
+          
+          $oResult = $oNode->addNode($sName);
+          
+          if (is_array($mValue)) self::loadPost($mValue, $oResult);
+          else $oResult->set($mValue);
+        }
+      }
+      else {
+        
+        if (is_array($mValue)) {
+          
+          $oResult = $oNode->addNode($mKey);
+          self::loadPost($mValue, $oResult, $mKey);
+        }
+        else {
+          
+          $oResult = $oNode->addNode($mKey);
+          $oResult->set($mValue);
+        }
+      }
       
-      if (is_array($mValue)) self::loadPost($mValue, $oResult);
-      else $oResult->set($mValue);
+      $bFirstPass = false;
     }
   }
   

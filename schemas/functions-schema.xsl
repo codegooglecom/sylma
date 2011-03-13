@@ -21,16 +21,21 @@
     <func:result select="/*/lc:schemas/lc:element[@name = local-name($source)]"/>
   </func:function>
   
-  <func:function name="lc:element-get-element">
+  <func:function name="lc:name-get-element">
     <xsl:param name="element"/>
-    <xsl:param name="source" select="."/>
-    <xsl:variable name="model" select="lc:get-model($source)"/>
+    <xsl:param name="name"/>
     <xsl:if test="$element">
       <xsl:variable name="schema" select="lc:element-get-schema($element)"/>
       <xsl:if test="$schema">
-        <func:result select="$schema/*/lc:element[@name = local-name($source)]"/>
+        <func:result select="$schema/*/lc:element[@name = $name]"/>
       </xsl:if>
     </xsl:if>
+  </func:function>
+  
+  <func:function name="lc:element-get-element">
+    <xsl:param name="element"/>
+    <xsl:param name="source" select="."/>
+    <func:result select="lc:name-get-element($element, local-name($source))"/>
   </func:function>
   
   <func:function name="lc:element-get-schema">
@@ -54,7 +59,7 @@
   
   <func:function name="lc:element-is-complex">
     <xsl:param name="element"/>
-    <xsl:if test="$element and not($element/@basic-type)">
+    <xsl:if test="$element and $element/@type">
       <xsl:variable name="schema" select="lc:element-get-schema($element)"/>
       <xsl:choose>
         <xsl:when test="$schema">
@@ -68,6 +73,12 @@
     </xsl:if>
   </func:function>
   
+  <func:function name="lc:element-is-mixed">
+    <xsl:param name="element"/>
+    <xsl:variable name="schema" select="lc:element-get-schema($element)"/>
+    <func:result select="lc:boolean($schema/@mixed)"/>
+  </func:function>
+  
   <func:function name="lc:element-is-simple">
     <xsl:param name="element"/>
     <func:result select="not(lc:element-is-complex($element))"/>
@@ -76,13 +87,24 @@
   <func:function name="lc:element-get-type">
     <xsl:param name="element"/>
     <xsl:choose>
-      <xsl:when test="$element and lc:element-is-simple($element)">
+      <xsl:when test="$element and $element/@type">
+        <xsl:variable name="schema" select="lc:element-get-schema($element)"/>
+        <xsl:if test="$schema and $schema/@type">
+          <func:result select="$schema/@type"/>
+        </xsl:if>
+      </xsl:when>
+      <xsl:when test="$element">
         <func:result select="$element/@basic-type"/>
       </xsl:when>
       <xsl:otherwise>
         <func:result select="''"/>
       </xsl:otherwise>
     </xsl:choose>
+  </func:function>
+  
+  <func:function name="lc:element-is-multiple">
+    <xsl:param name="element"/>
+    <func:result select="$element/@maxOccurs and ($element/@maxOccurs = 'unbounded' or $element/@maxOccurs &gt; 1)"/>
   </func:function>
   
   <func:function name="lc:element-is-required">
@@ -106,6 +128,11 @@
     </xsl:choose>
   </func:function>
   
+  <func:function name="lc:model-get-statut">
+    <xsl:param name="model"/>
+    <func:result select="$model/@statut"/>
+  </func:function>
+  
   <func:function name="lc:element-is-string">
     <xsl:param name="element"/>
     <func:result select="boolean(lc:element-get-type($element) = 'xs:string')"/>
@@ -124,7 +151,10 @@
   </func:function>
   <func:function name="lc:element-is-enum">
     <xsl:param name="element"/>
-    <func:result select="lc:element-is-simple($element) and $element and $element/lc:restriction/lc:enumeration"/>
+    <xsl:variable name="schema" select="lc:element-get-schema($element)"/>
+    <xsl:if test="$schema">
+      <func:result select="not(lc:boolean($schema/@complex)) and $schema/lc:restriction/lc:enumeration"/>
+    </xsl:if>
   </func:function>
   <func:function name="lc:element-is-keyref">
     <xsl:param name="element"/>

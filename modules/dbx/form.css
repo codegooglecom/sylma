@@ -15,10 +15,21 @@ form {
   width: 30%;
 }
 
+.field-uneditable,
 .field-input-element {
   float: left;
-  border: 1px solid gray;
   padding: 2px;
+}
+
+.field-input-element {
+  border: 1px solid gray;
+  -moz-box-shadow: 2px 2px 5px #EEEEEE inset;
+  -webkit-box-shadow: 2px 2px 5px #EEEEEE inset;
+}
+
+.field-input-element:focus {
+  border-color: orange;
+  -moz-box-shadow-: 2px 2px 5px #ccc inset;
 }
 
 .field input[type=text], .field textarea {
@@ -52,18 +63,29 @@ form {
   opacity: 0.65;
 }
 
+.field-statut-optional.field-complex {
+  opacity: 1;
+}
+
 .field-statut-optional:hover {
   opacity: 1;
 }
 
-.field-statut-invalid label,
-.field-statut-missing label {
+.field-statut-invalid > h3,
+.field-statut-missing > h3,
+.field-statut-invalid > label,
+.field-statut-missing > label {
   color: red;
 }
 
-.field-statut-invalid .field-input-element,
-.field-statut-missing .field-input-element {
+.field-statut-invalid > .field-input-element,
+.field-statut-missing > .field-input-element {
   border: 1px solid red;
+}
+
+.field-statut-template {
+  display: none;
+  _color: green;
 }
 
 .field-message {
@@ -78,6 +100,7 @@ form {
 }
 
 .field-input-boolean {
+  float: left;
   margin-left:30%;
   margin-right:2%;
   width: auto !important;
@@ -88,9 +111,26 @@ span.field-input-date {
   cursor: pointer;
 }
 
+div.field-multiple,
 div.field-complex {
-  padding: 10px;
   margin-bottom: 5px;
-  border: 1px solid #ccc;
-  -moz-border-radius: 15px 0px;
 }
+
+div.field-multiple {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-width: 1px 0 0 1px;
+  -moz-border-radius: 10px 0 15px 15px;
+  -moz-box-shadow: -2px -2px 5px #EEEEEE;
+}
+
+div.field-complex {
+}
+
+#content div.field-complex h3 {
+  margin: 1em 0 0.5em;
+  text-align: center;
+  text-shadow: 2px 3px 1px #eee;
+}
+
+

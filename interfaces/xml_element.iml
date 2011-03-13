@@ -11,7 +11,8 @@
       <format>XML_Element</format>
       <format>XML_NodeList</format>
     </argument>
-    <argument format="php-array" name="attributes" required="false"/>
+    <argument format="php-array" name="attributes" required="false" allow-null="true"/>
+    <argument format="php-string" name="namespace" required="false" allow-null="true"/>
   </method-construct>
   <method path="view" name="view" return-default="true"/>
   <method path="get-children" name="getChildren" return-default="true"/>

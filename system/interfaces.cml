@@ -7,6 +7,7 @@
   <interface class="Redirect">/sylma/interfaces/redirect.iml</interface>
   <interface class="User">/sylma/interfaces/user.iml</interface>
   <interface class="WindowAction">/sylma/interfaces/window_action.iml</interface>
+  <interface class="Redirection">/sylma/interfaces/redirection.iml</interface>
   <interface class="XML_Action">/sylma/interfaces/xml_action.iml</interface>
   <interface class="ActionScript">/sylma/interfaces/xml_action_script.iml</interface>
   <interface class="XML_Database">/sylma/interfaces/xml_database.iml</interface>

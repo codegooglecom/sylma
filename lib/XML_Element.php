@@ -66,6 +66,11 @@ class XML_Element extends DOMElement implements XML_Composante {
     
     if ($sNamespace === null) $sNamespace = $this->getNamespace();
     
+    if ($oLastParent === $this) {
+      
+      dspm(xt('Impossible de déterminer le chemin CSS, élément source et cible identiques : %s', view($this)), 'xml/error');
+    }
+    
     if ($this->useNamespace($sNamespace)) {
       
       $iPrevious = 1;
@@ -314,12 +319,12 @@ class XML_Element extends DOMElement implements XML_Composante {
     
     if ($sValue !== '' && $sValue !== null) {
       
-      if (!$sUri) return parent::setAttribute($sName, checkEncoding($sValue));
-      else return $this->setAttributeNS($sUri, $sName, $sValue);
+      if (!$sUri) parent::setAttribute($sName, checkEncoding($sValue));
+      else $this->setAttributeNS($sUri, $sName, $sValue);
       
-    } else return $this->removeAttribute($sName);
+    } else $this->removeAttribute($sName);
     
-    return false;
+    return $this->getAttribute($sName, $sUri);
   }
   
   public function addClass($sClass) {
@@ -453,17 +458,20 @@ class XML_Element extends DOMElement implements XML_Composante {
         
         foreach ($mAttribute as $sAttribute)
           if ($oElement->hasAttribute($sAttribute, $sNamespace)) $this->cloneAttributes($oElement, $sAttribute, $sNamespace);
-        
-      } else {
+      }
+      else {
         
         $sAttribute = $oElement->getAttribute($mAttribute, $sNamespace);
         
         if ($sAttribute !== '') $this->setAttribute($mAttribute, $sAttribute, $sNamespace);
       }
+    }
+    else {
       
-    } else {
-      
-      foreach ($oElement->getAttributes() as $oAttribute) $this->setAttributeNode($oAttribute);
+      foreach ($oElement->getAttributes() as $oAttribute) {
+        
+        if (!$sNamespace || $oAttribute->useNamespace($sNamespace)) $this->setAttributeNode($oAttribute);
+      }
     }
   }
   
@@ -1025,6 +1033,18 @@ class XML_Element extends DOMElement implements XML_Composante {
     
     return $oResult;
   }
+  
+  /*
+   * Will update namespaces of this element and children of it using namespaces defined in $mFrom to namespaces defined in $mTo
+   * WARNING : can cause crash in undefined cicumstances. TODO
+   * 
+   * @param null|string|array $mFrom An array of namespaces to look for, if it is a string, $mTo should be a string too
+   * @param null|string|array $mTo An array of namespaces to update element's to
+   * @param string|array $mPrefix corresponding prefixes
+   * @param null|XML_Element|XML_Document the parent node to set element to
+   *
+   * @return XML_Element New element with updated namespaces
+   **/
   
   public function updateNamespaces($mFrom = null, $mTo = null, $mPrefix = '', $oParent = null) {
     

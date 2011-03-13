@@ -447,12 +447,16 @@ var sylma = {
     return parent;
   },
   
-  disableNode : function(node) {
+  disableNode : function(node, bFast) {
     
     if (node) {
       
-      node.get('tween').set('duration', 'short');
-      node.tween('opacity', 0.1);
+      if (bFast) node.setStyle('opacity', 0.1);
+      else {
+        
+        node.get('tween').set('duration', 'short');
+        node.tween('opacity', 0.1);
+      }
     }
   },
   
@@ -508,7 +512,7 @@ var sylma = {
           
         } else {
           
-          self.disableNode(oContent);
+          self.disableNode(oContent, true);
           
           if (oOptions.replace) oContent.replaces(oOptions.html);
           else {

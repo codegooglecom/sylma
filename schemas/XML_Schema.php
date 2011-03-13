@@ -1,5 +1,26 @@
 <?php
 
+/* Following nodes are currently implemented :
+ * - element, complexType, simpleType, attribute, sequence
+ * - minInclusive, maxInclusive, length, minLength, maxLength, enumeration, pattern [... TODO]
+ * Following has limitations [TODO more details] :
+ * - extension, restriction, @mixed
+ * 
+ * Following simple types are currently supported :
+ * - xs:string, xs:date, xs:boolean, xs:integer, xs:decimal
+ * Following has no validation but can be used :
+ * - xs:dateTime, xs:duration, xs:time
+ * 
+ * TODO :
+ * Following nodes or functions are NOT yet implemented. Hope it will be soon.
+ * - group, @ref, choice, all, attributeGroup, union, any, assertion [... TODO]
+ * Lot of simple types are NOT yet implemented, see implemented ones above. [... TODO]
+ * Sequences, choices cannot be imbricated in each other
+ * Some abstract classes share identical methods, those classes should be rebuild to avoid this
+ * Instances setStatut(), isValid(), use/addMessages(), (..) methods should be merged in an "invalidation" structure/method
+ * Finish comments
+ **/
+
 class XSD_Parser extends Module {
   
   private $aOptions = array(
@@ -89,11 +110,11 @@ class XSD_Parser extends Module {
       $oElement = new XSD_Element($oSource, null, null, $this, $aPath);
       $this->aElements = $oElement;
       
-      if ($sPath) $oElement = $this->getElement();
+      // if ($sPath) $oElement = $this->getElement();
       
       if (!$oElement) {
         
-        dspm(xt('Element manquant'), 'xml/error');
+        $this->dspm(xt('Elément manquant'), 'xml/error');
         
       } else {
         
@@ -124,6 +145,9 @@ class XSD_Parser extends Module {
       }
     }
     
+    // if (!$this->isValid()) $this->dspm(xt('Des valeurs indiquées dans ce formulaire ne sont pas valides'), 'xml/warning');
+    // dspf($oResult);
+    // dspf($this->getSchema());
     if ($oResult) return new XML_Document($oResult);
     else return null;
   }
@@ -350,7 +374,7 @@ class XSD_Parser extends Module {
   }
 }
 
-abstract class XSD_Basic { // Used by XSD_Container, XSD_Class / XSD_Element, XSD_Attribute
+abstract class XSD_Basic { // Used by XSD_Container, XSD_Class
   
   protected $sPath = '';
   protected $mMax = 1;
@@ -366,7 +390,7 @@ abstract class XSD_Basic { // Used by XSD_Container, XSD_Class / XSD_Element, XS
   
   public function getParser() {
     
-    return $this->oParser ? $this->oParser : $this->getParent()->getParser();
+    return $this->oParser ? $this->oParser : ($this->getParent() ? $this->getParent()->getParser() : null);
   }
   
   public function getParent() {
@@ -430,7 +454,7 @@ abstract class XSD_Basic { // Used by XSD_Container, XSD_Class / XSD_Element, XS
   }
 }
 
-abstract class XSD_Container extends XSD_Basic { // Used by XSD_Element, XSD_Attribute, XSD_Group, XSD_Type
+abstract class XSD_Container extends XSD_Basic { // Used by XSD_Node, XSD_Group, XSD_Type
   
   private $sName = '';
   private $bNew = false; // anonymous definition
@@ -501,9 +525,6 @@ abstract class XSD_Node extends XSD_Container { // Used by XSD_Element, XSD_Attr
   public function __construct(XML_Element $oSource, $oParent, $oNode = null, XSD_Parser $oParser = null, $aPath = array()) {
     
     parent::__construct($oSource, $oParent, $oNode, $oParser);
-    
-    if (count($aPath) == 1) $this->getParser()->setElement($this);
-    array_shift($aPath);
     
     // if parent sequence is not direct child of element, build parent name and get it
     if ($this->getParent() && $this->getParent()->getParent() instanceof XSD_Particle) $this->sID = $this->getParser()->getID();
@@ -719,18 +740,23 @@ abstract class XSD_Instance { // Used by XSD_Model, XSD_ParticleInstance, XSD_Gr
 
 class XSD_Element extends XSD_Node {
   
+  public function __construct(XML_Element $oSource, $oParent, $oNode = null, XSD_Parser $oParser = null, $aPath = array()) {
+    
+    array_shift($aPath);
+    
+    parent::__construct($oSource, $oParent, $oNode, $oParser, $aPath);
+    if (count($aPath) == 1) $this->getParser()->setElement($this);
+  }
+  
   public function getParents() {
     
     return $this->getParent()->getClasses();
   }
   
-  public function validate(XSD_Instance $oInstance, $aPath = array()) {
+  public function validate(XSD_Instance $oInstance, $aPath = array(), $bMessages = true) {
     
-    $bResult = null;
-    
-    if (!$bResult = $this->getType()->validate($oInstance, $aPath)) $oInstance->setStatut('invalid');
-    
-    return $bResult;
+    array_shift($aPath);
+    return $this->getType()->validate($oInstance, $aPath, $bMessages);
   }
   
   /*
@@ -747,7 +773,7 @@ class XSD_Element extends XSD_Node {
     if ($this->getType()) {
       
       $oElement = $oParent->getModel()->getNode()->insertChild(
-        new XML_Element($this->getName(), null, null, $this->getType()->getNamespace()),
+        new XML_Element($this->getName(), null, null, $this->getType()->getNamespace(true)),
         $oPrevious, true);
       
       if ($sDefault = $this->getSource()->getAttribute('default')) {
@@ -793,8 +819,8 @@ class XSD_Element extends XSD_Node {
     $oResult->cloneAttributes($this->getSource(), array('minOccurs', 'maxOccurs'));
     
     // copy @lc:* to current node
-    $oAttributes = $this->getSource()->query("@*[namespace-uri()='{$this->getNamespace()}']");
-    $oResult->add($oAttributes);
+    
+    $oResult->cloneAttributes($this->getSource(), null, $this->getNamespace());
     
     return $oResult;
   }
@@ -811,13 +837,13 @@ class XSD_Attribute extends XSD_Node {
     
     if (!$oParent->getNode()->setAttribute($sName, ' ', $sNamespace)) {
       
-      $this->dspm(xt('Impossibe d\'ajouter l\'attribut %s:%s dans %s',
-        $sNamespace, $sName, view($oParent->getNode())), 'xml/error');
+      $this->dspm(xt('Impossible d\'ajouter l\'attribut %s [%s] dans %s',
+        new HTML_Strong($sName), $sNamespace, view($oParent->getNode())), 'xml/error');
       
     } else {
       
       $oAttribute = $oParent->getNode()->getAttributeNode($sName, $sNamespace);
-      //dspf($oAttribute->getName());
+      
       if ($sDefault = $this->getSource()->getAttribute('default')) {
         
         $oAttribute->set($sDefault);
@@ -834,15 +860,19 @@ class XSD_Attribute extends XSD_Node {
     
     $sNamespace = '';
     
-    if (!$oInstance)
+    if (!$oInstance) {
+      
       $sNamespace = parent::getNamespace();
-    else if (!$oInstance->getNode()->useNamespace($this->getType()->getNamespace()))
+    }
+    else if (!$oInstance->getNode()->useNamespace($this->getType()->getNamespace())) {
+      
       $sNamespace = $this->getType()->getNamespace();
+    }
     
     return $sNamespace;
   }
   
-  public function validate(XSD_Instance $oInstance) {
+  public function validate(XSD_Instance $oInstance, $bMessages = true) {
     
     $bResult = false;
     
@@ -851,11 +881,12 @@ class XSD_Attribute extends XSD_Node {
       
       if ($this->isRequired()) {
         
-        if ($this->useMessages())
+        if ($bMessages && $this->useMessages())
           $oInstance->addMessage(xt('Le champ %s doit être indiqué', new HTML_Strong($this->getName())), 'attribute', 'missing');
         
         $oInstance->isValid(false);
       }
+      else $bResult = true;
       
       if ($this->getParser()->useModel()) $this->buildInstance($oInstance);
     }
@@ -867,13 +898,12 @@ class XSD_Attribute extends XSD_Node {
     
     $oResult = new XML_Element('attribute', null, array(
       'name' => $this->getName(),
-      'type' => $this->getType()), $this->getNamespace());
+      'basic-type' => $this->getType()), $this->getNamespace());
     
     $oResult->cloneAttributes($this->getSource(), array('minOccurs', 'maxOccurs'));
     
     // copy @lc:* to current node
-    $oAttributes = $this->getSource()->query("@*[namespace-uri()='{$this->getNamespace()}']");
-    $oResult->add($oAttributes);
+    $oResult->cloneAttributes($this->getSource(), null, $this->getNamespace());
     
     return $oResult;
   }
@@ -883,7 +913,7 @@ class XSD_Model extends XSD_Instance { // XSD_ElementInstance
   
   private $oParticle = null;
   private $oNode = null;
-  private $bValidName = false;
+  private $bValidName = false; // define if node name correspond to element (class) name
   
   public function __construct(XSD_Element $oClass, XML_Element $oNode = null, XSD_Instance $oParent = null) {
     
@@ -1010,6 +1040,12 @@ class XSD_Model extends XSD_Instance { // XSD_ElementInstance
     
     if ($this->getNode()) {
       
+      // copy @lc:* to current node
+      if ($this->getParser()->useMark()) {
+        
+        $this->getNode()->cloneAttributes($this->getClass()->getSource(), null, $this->getNamespace());
+      }
+      
       $this->getNode()->setAttribute('lc:model', $iID, $this->getNamespace());
       
       if ($this->getParticle() || $this->getNode()->isComplex()) { // complex type or complex node
@@ -1062,7 +1098,9 @@ class XSD_Particle extends XSD_Class {
   
   public function indexChildren($aPath) {
     
-    $sPath = array_last($aPath);
+    if ($aPath) $sPath = $aPath[0];
+    else $sPath = '';
+    
     $aResult = array();
     
     foreach ($this->getSource()->getChildren(null, null, true) as $oComponent) {
@@ -1123,9 +1161,7 @@ class XSD_Particle extends XSD_Class {
     return $oResult;
   }
   
-  public function validate(XSD_Instance $oInstance, $aPath = array()) {
-    
-    $sPath = array_last($aPath);
+  public function validate(XSD_Instance $oInstance, $aPath = array(), $bMessages = true) {
     
     if (!$oInstance) { // temp ?
       
@@ -1146,25 +1182,26 @@ class XSD_Particle extends XSD_Class {
     
     // TODO, if sequence
     
-    while (($this->keepValidate() || $this->getParser()->isValid()) && $oChild && $oSubInstance) {
+    while (($this->keepValidate() || $this->getParser()->isValid()) && $oChild) {
       
-      if ($oChild->hasInstance($oSubInstance)) {
+      if ($oSubInstance && $oChild->hasInstance($oSubInstance)) {
         
         $oInstance->shiftSeek();
         
-        $bResult = $this->getParser()->isValid($oChild->validate($oSubInstance, $aPath));
-        
-        if ($oChild->getMax() <= 1 || !($oSubInstance->isValidName() && 
-          $oSubInstance->getNode()->getNext() &&
-          $oSubInstance->getNode()->getNext()->getName() == $oSubInstance->getNode()->getName())) {
+        $bResult = $oChild->validate($oSubInstance, $aPath);
+        $this->getParser()->isValid($bResult);
+        // || !($oSubInstance->isValidName() && 
+          // $oSubInstance->getNode()->getNext() &&
+          // $oSubInstance->getNode()->getNext()->getName() == $oSubInstance->getNode()->getName())
+        if ($oChild->getMax() <= 1) {
             
             list(,$oChild) = each($aChildren);
         }
         
-        $oPrevious = $oSubInstance;
+        $oPrevious = $oSubInstance->getNode();
         list(,$oSubInstance) = each($aSubInstances);
-        
-      } else {
+      }
+      else {
         
         if ($oChild->getSource()->testAttribute('editable', true, $this->getNamespace())) {
           
@@ -1176,23 +1213,51 @@ class XSD_Particle extends XSD_Class {
           
           if ($this->getParser()->useModel()) {
             
-            $oNode = $oPrevious ? $oPrevious->getNode() : null;
-            
-            $oNewInstance = $oChild->buildInstance($oInstance, $oNode); // TODO occurs
-            $oChild->validate($oNewInstance, $aPath);
-            
-            if (!$oChild->isRequired()) { // if not required
+            if (!$oChild->isRequired() && $oChild->getMax() > 1 && !$aPath) {
               
-              $oNewInstance->setStatut('optional');
-              
-            } else if ($oNewInstance && $oInstance->useMessages()) { // if required set message and statut
-              
-              $oNewInstance->isValid(false);
-              $oNewInstance->setStatut('missing');
-              $oNewInstance->addMessage(xt('Ce champ doit être indiqué'), 'content', 'invalid');
+              if ($oNode = $oInstance->getNode()) {
+                
+                $aAttributes = array('name' => $oChild->getName());
+                
+                $sPath = $oChild->getName();
+                $oParent = null;
+                
+                do {
+                  
+                  if ($oParent) $oParent = $oParent->getParent();
+                  else $oParent = $oNode;
+                  
+                  $sPath = $oParent->getName().'/'.$sPath;
+                  
+                } while (!$oParent->isRoot());
+                
+                if ($oPrevious) $oPrevious = $oNode->insertNode(
+                  'lc:link-add', $sPath, $aAttributes, $this->getNamespace(), $oPrevious, true);
+                else $oNode->addNode('lc:link-add', $sPath, $aAttributes, $this->getNamespace());
+              }
             }
-            
-            $oPrevious = $oNewInstance;
+            else { // else is required or optional but unique
+              
+              $oNewInstance = $oChild->buildInstance($oInstance, $oPrevious);
+              $bSubResult = $oChild->validate($oNewInstance, $aPath, false);
+              
+              if (!$oChild->isRequired()) $oNewInstance->setStatut('optional');
+              else {
+                
+                $bResult = false;
+                $oNewInstance->isValid(false);
+                
+                // if ($oChild->getMax() > 1) $oNewInstance->setStatut('template');
+                
+                if (!$aPath && $oNewInstance && $bMessages && $oInstance->useMessages()) { // set message and statut
+                  
+                  $oNewInstance->setStatut('missing');
+                  $oNewInstance->addMessage(xt('Ce champ doit être indiqué'), 'content', 'invalid');
+                }
+                
+                $oPrevious = $oNewInstance->getNode();
+              }
+            }
           }
         }
         
@@ -1522,33 +1587,37 @@ class XSD_BaseType {
     return $this->sType;
   }
   
-  public function validate(XSD_Instance $oInstance, $aPath = array()) {
+  public function validate(XSD_Instance $oInstance, $aPath = array(), $bMessages = true) {
     
     $bResult = false;
-    $mValue = $oInstance->getValue();
     
-    switch ($this->getName()) {
+    if ($bMessages) {
       
-      case 'string' : $bResult = is_string($mValue); break; // && !is_numeric($mValue)
-      case 'date' : $bResult = preg_match('/^\d{4}-\d{2}-\d{2}$/', $mValue); break;
-      case 'dateTime' : break;
-      case 'duration' : break;
-      case 'boolean' : $bResult = in_array($mValue, array('1', '0', 'true', 'false')); break;
-      case 'integer' : $bResult = is_integer($mValue) || ctype_digit($mValue); break;
-      case 'decimal' : $bResult = is_numeric($mValue) && !is_integer($mValue) && !ctype_digit($mValue); break;
-      case 'time' : break; // TODO
-      default :
-        
-        $this->getParser()->dspm(xt('Type %s inconnu dans l\'élément %s',
-          new HTML_Strong($this->getName()), view($oInstance->getNode())), 'xml/error');
-    }
-    
-    if (!$bResult) {
+      $mValue = $oInstance->getValue();
       
-      if ($oInstance->useMessages()) $oInstance->addMessage(
-        xt('Ce champ n\'est pas de type %s', new HTML_Strong($this->getName())), 'content');
+      switch ($this->getName()) {
         
-      $oInstance->isValid(false);
+        case 'string' : $bResult = is_string($mValue); break; // && !is_numeric($mValue)
+        case 'date' : $bResult = preg_match('/^\d{4}-\d{2}-\d{2}$/', $mValue); break;
+        case 'dateTime' : break;
+        case 'duration' : break;
+        case 'boolean' : $bResult = in_array($mValue, array('', '1', '0', 'true', 'false')); break;
+        case 'integer' : $bResult = is_integer($mValue) || ctype_digit($mValue); break;
+        case 'decimal' : $bResult = is_numeric($mValue) && !is_integer($mValue) && !ctype_digit($mValue); break;
+        case 'time' : break; // TODO
+        default :
+          
+          $this->getParser()->dspm(xt('Type %s inconnu dans l\'élément %s',
+            new HTML_Strong($this->getName()), view($oInstance->getNode())), 'xml/error');
+      }
+      
+      if (!$bResult) {
+        
+        if ($oInstance->useMessages()) $oInstance->addMessage(
+          xt('Ce champ n\'est pas de type %s', new HTML_Strong($this->getName())), 'content');
+          
+        $oInstance->isValid(false);
+      }
     }
     
     return $bResult;
@@ -1608,6 +1677,139 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
     $this->build($aPath);
   }
   
+  private function build($aPath) {
+    
+    $oComponent = $this->getSource();
+    
+    $bComplexType = $oComponent->getName() != 'simpleType'; // WARNING : no name check for simpleType
+    
+    // WARNING : no check if text type node
+    if (!$oComponent->hasChildren()) $this->dspm(xt('Elément enfants requis dans le type %s', view($oComponent)), 'xml/error');
+    else {
+      
+      $bComplexContent = $bSimpleContent = false;
+      
+      if ($bComplexType && ($oFirst = $oComponent->getFirst())) {
+        
+        $bComplexContent = $bComplexType && $oFirst->getName() == 'complexContent';
+        $bSimpleContent = $bComplexType && !$bComplexContent && $oFirst->getName() == 'simpleContent';
+        
+      } else $oFirst = $oComponent;
+      
+      if (!$bComplexType || $bComplexContent || $bSimpleContent)  { // simple type & complex type legacy
+        
+        if (!$oExtend = $oFirst->getFirst()) {
+          
+          $this->dspm(xt('Elément enfants (restriction|extension) requis dans %s', view($oComponent)), 'xml/error');
+          
+        }
+        else if (!$sBase = $oExtend->getAttribute('base')) {
+          
+          $this->dspm(xt('Aucune base désigné pour l\'extension du composant %s', view($oComponent)), 'xml/error');
+          
+        }
+        else { // valid
+          
+          $oType = $this->getParser()->getType($sBase, $oComponent);
+          
+          if ($bComplexType && $bComplexContent) { // complexContent
+            
+            // simple extension add to the end
+            
+            if ($oExtend->getFirst()) {
+              
+              if (!$oType->getSource()) {
+                
+                $this->dspm(xt('Le type %s ne peut pas étendre le type %s qui est invalide',
+                  view($oComponent), view($oType->getSource())), 'xml/error');
+                
+              }
+              else if ($oType->getSource()->getFirst()->getName() != $oExtend->getFirst()->getName()) {
+                
+                $this->dspm(xt('La particule de %s doit être identique à la particule de %s',
+                  view($oType->getSource()), view($oExtend)), 'xml/error');
+                
+              }
+              else {
+                
+                $oExtend->getFirst()->shift($oType->getSource()->getFirst()->getChildren());
+                $this->setParticle(new XSD_Particle($oExtend->getFirst(), $this, $aPath));
+              }
+            }
+            // $mResult = new XML_Element($oComponent->getName(), null, null, $this->getNamespace());
+            
+            // TODO $mResult->add($oType->getChildren(), $this->buildElement());
+            
+          }
+          else { // simpleType & simpleContent
+            
+            $this->oBase = $oType;
+            
+            if ($oType->hasRestrictions()) { // if not empty type
+              
+              if ($oExtend->getName() != 'extension') { // restriction
+                
+                $this->aRestrictions = $oType->getRestrictions();
+                $this->buildRestrictions($oExtend);
+                
+              }
+              else { // extension
+                
+                // what TODO ?
+                $this->dspm('TODO', 'xml/error');
+              }
+            }
+            
+            $this->buildRestrictions($oExtend);
+          }
+          
+          //$mResult->add($oExtend);
+        }
+        
+      }
+      else { // complex type definition
+        
+        // WARNING : no check if valid children, if not group
+        
+        foreach ($oComponent->getChildren() as $oChild) {
+          
+          switch ($oChild->getName()) {
+            
+            case 'group' : 
+              
+              $this->setParticle(new XSD_Group($oFirst, $this));
+              
+            break;
+            
+            case 'sequence' :
+            case 'choice' :
+            case 'all' :
+              
+              $this->getParser()->pushType($this->getName());
+              $this->setParticle(new XSD_Particle($oFirst, $this, $aPath));
+              $this->getParser()->popType();
+              
+            break;
+            
+            case 'attribute' :
+              
+              $this->aAttributes[] = new XSD_Attribute($oChild, $this);
+              
+            break;
+            
+            default :
+              
+              if (!$this->isMixed()) {
+                
+                $this->dspm(xt('Erreur dans la définition de %s, élément %s inconnu', view($oComponent), view($oChild)));
+              }
+              
+          }
+        }
+      }
+    }
+  }
+  
   public function buildValue($mValue, $sBase) {
     
     switch ($sBase) {
@@ -1624,7 +1826,7 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
     return $mValue;
   }
   
-  public function validate(XSD_Instance $oInstance, $aPath = array()) {
+  public function validate(XSD_Instance $oInstance, $aPath = array(), $bMessages = true) {
     
     $bResult = false;
     
@@ -1730,33 +1932,41 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
         }
       }
       
-    } else { // complex type
+    }
+    else { // complex type
       
       if (!$this->getParser()->useType($this->getName())) { // avoid recursion
         
-        $this->getParser()->pushType($this->getName());
-        
-        if (!$oInstance->getParticle()) { // simple type should be complex
-          
-          if ($this->keepValidate()) $oInstance->buildParticle();
-        }
-        
         if ($this->isMixed()) $bResult = true; // TODO real validation
-        else if (!$this->getParticle()) {
+        else {
           
-          $this->dspm(xt('Impossible de valider l\'élément %s, particule inexistante', view($this->getSource())), 'xml/warning');
+          $this->getParser()->pushType($this->getName());
           
-        } else { // ok, continue
+          if (!$oInstance->getParticle() && $this->keepValidate()) $oInstance->buildParticle(); // simple type should be complex
           
-          $bResult = $this->getParticle()->validate($oInstance->getParticle(), $aPath);
+          if (!$this->getParticle()) {
+            
+            $this->dspm(xt('Impossible de valider l\'élément %s, particule inexistante', view($this->getSource())), 'xml/warning');
+          }
+          else { // ok, continue
+            
+            $bResult = $this->getParticle()->validate($oInstance->getParticle(), $aPath, $bMessages);
+          }
+          
+          $this->getParser()->popType();
         }
         
-        $this->getParser()->popType();
-        
-      } else $bResult = true;
+      }
+      else $bResult = true;
     }
     
-    foreach ($this->aAttributes as $oAttribute) if (!$oAttribute->validate($oInstance)) $bResult = false;
+    if (!$aPath) { // validate attributes
+      
+      foreach ($this->aAttributes as $oAttribute) {
+        
+        if (!$oAttribute->validate($oInstance, $bMessages)) $bResult = false;
+      }
+    }
     
     $oInstance->isValid($bResult);
     
@@ -1809,128 +2019,6 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
     return $this->aRestrictions;
   }
   
-  private function build($aPath) {
-    
-    $oComponent = $this->getSource();
-    
-    $bComplexType = $oComponent->getName() != 'simpleType'; // WARNING : no name check for simpleType
-    
-    // WARNING : no check if text type node
-    if (!$oComponent->hasChildren()) $this->dspm(xt('Elément enfants requis dans le type %s', view($oComponent)), 'xml/error');
-    else {
-      
-      $bComplexContent = $bSimpleContent = false;
-      
-      if ($bComplexType && ($oFirst = $oComponent->getFirst())) {
-        
-        $bComplexContent = $bComplexType && $oFirst->getName() == 'complexContent';
-        $bSimpleContent = $bComplexType && !$bComplexContent && $oFirst->getName() == 'simpleContent';
-        
-      } else $oFirst = $oComponent;
-      
-      if (!$bComplexType || $bComplexContent || $bSimpleContent)  { // simple type & complex type legacy
-        
-        if (!$oExtend = $oFirst->getFirst()) {
-          
-          $this->dspm(xt('Elément enfants (restriction|extension) requis dans %s', view($oComponent)), 'xml/error');
-          
-        } else if (!$sBase = $oExtend->getAttribute('base')) {
-          
-          $this->dspm(xt('Aucune base désigné pour l\'extension du composant %s', view($oComponent)), 'xml/error');
-          
-        } else { // valid
-          
-          $oType = $this->getParser()->getType($sBase, $oComponent);
-          
-          if ($bComplexType && $bComplexContent) { // complexContent
-            
-            // simple extension add to the end
-            
-            if ($oExtend->getFirst()) {
-              
-              if (!$oType->getSource()) {
-                
-                $this->dspm(xt('Le type %s ne peut pas étendre le type %s qui est invalide',
-                  view($oComponent), view($oType->getSource())), 'xml/error');
-                
-              } else if ($oType->getSource()->getFirst()->getName() != $oExtend->getFirst()->getName()) {
-                
-                $this->dspm(xt('La particule de %s doit être identique à la particule de %s',
-                  view($oType->getSource()), view($oExtend)), 'xml/error');
-                
-              } else {
-                
-                $oExtend->getFirst()->shift($oType->getSource()->getFirst()->getChildren());
-                $this->setParticle(new XSD_Particle($oExtend->getFirst(), $this, $aPath));
-              }
-            }
-            // $mResult = new XML_Element($oComponent->getName(), null, null, $this->getNamespace());
-            
-            // TODO $mResult->add($oType->getChildren(), $this->buildElement());
-            
-          } else { // simpleType & simpleContent
-            
-            $this->oBase = $oType;
-            
-            if ($oType->hasRestrictions()) { // if not empty type
-              
-              if ($oExtend->getName() != 'extension') { // restriction
-                
-                $this->aRestrictions = $oType->getRestrictions();
-                $this->buildRestrictions($oExtend);
-                
-              } else { // extension
-                
-                // what TODO ?
-                $this->dspm('TODO', 'xml/error');
-              }
-            }
-            
-            $this->buildRestrictions($oExtend);
-          }
-          
-          //$mResult->add($oExtend);
-        }
-        
-      } else { // complex type definition
-        
-        // WARNING : no check if valid children, if not group
-        
-        foreach ($oComponent->getChildren() as $oChild) {
-          
-          switch ($oChild->getName()) {
-            
-            case 'group' : 
-              
-              $this->setParticle(new XSD_Group($oFirst, $this));
-              
-            break;
-            
-            case 'sequence' :
-            case 'choice' :
-            case 'all' :
-              
-              $this->getParser()->pushType($this->getName());
-              $this->setParticle(new XSD_Particle($oFirst, $this, $aPath));
-              $this->getParser()->popType();
-              
-            break;
-            
-            case 'attribute' :
-              
-              $this->aAttributes[] = new XSD_Attribute($oChild, $this);
-              
-            break;
-            
-            default :
-              
-              $this->dspm(xt('Erreur dans la définition de %s, élément %s inconnu', view($oComponent), view($oChild)));
-          }
-        }
-      }
-    }
-  }
-  
   private function buildRestrictions(XML_Element $oExtend) {
     
     // copy facets restriction
@@ -1963,7 +2051,11 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
     
     $oResult = new XML_Element('base', null, array('name' => $this), $this->getNamespace());
     
-    if (!$this->isSimple()) $oResult->setAttribute('lc:complex', 'true', $this->getNamespace());
+    if ($this->isComplex()) {
+      
+      if ($this->isMixed()) $oResult->setAttribute('mixed', 'true');
+      $oResult->setAttribute('lc:complex', 'true', $this->getNamespace());
+    }
     
     if (!$oContent = $this->getParticle()) {
       

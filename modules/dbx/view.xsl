@@ -4,14 +4,32 @@
   <xsl:import href="/sylma/xslt/string.xsl"/>
   <xsl:import href="/sylma/xslt/date.xsl"/>
   <xsl:template match="/*">
+    
+    <xsl:variable name="element" select="lc:get-root-element(current()/*[1])"/>
+    
     <div>
       <xsl:apply-templates select="*[1]" mode="title"/>
       <xsl:apply-templates select="." mode="annotations"/>
-      <xsl:apply-templates select="*[1]/*" mode="field"/>
+      <xsl:apply-templates select="*[1]/@*" mode="field">
+        <xsl:with-param name="parent-element" select="$element"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="*[1]/*" mode="field">
+        <xsl:with-param name="parent-element" select="$element"/>
+      </xsl:apply-templates>
     </div>
   </xsl:template>
+  
   <xsl:template match="*" mode="title"/>
+  
   <xsl:template match="*" mode="annotations">
+    <xsl:call-template name="annotations"/>
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="annotations">
+    <xsl:call-template name="annotations"/>
+  </xsl:template>
+  
+  <xsl:template name="annotations">
     <xsl:variable name="messages" select="lc:get-model()/lc:annotations/lc:message"/>
     <xsl:if test="$messages">
       <div class="view-message">
@@ -19,39 +37,102 @@
       </div>
     </xsl:if>
   </xsl:template>
+  
   <xsl:template match="*" mode="field">
+    <xsl:param name="parent-element"/>
+    <xsl:variable name="element" select="lc:element-get-element($parent-element)"/>
+    
+    <xsl:call-template name="field">
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+    
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="field">
+    <xsl:param name="parent-element"/>
+    <xsl:variable name="element" select="lc:element-get-attribute($parent-element)"/>
+    
+    <xsl:if test="namespace-uri() != 'http://www.sylma.org/schemas'">
+      <xsl:call-template name="field">
+        <xsl:with-param name="element" select="$element"/>
+      </xsl:call-template>
+    </xsl:if>
+    
+  </xsl:template>
+  
+  <xsl:template name="field">
+    <xsl:param name="element"/>
+    
     <xsl:variable name="name" select="lc:get-name()"/>
     <xsl:variable name="class">
       <xsl:choose>
-        <xsl:when test="not(lc:get-model())">unknown</xsl:when>
-        <xsl:when test="lc:is-keyref()">keyref</xsl:when>
-        <xsl:when test="lc:is-string()">string</xsl:when>
-        <xsl:when test="lc:is-date()">date</xsl:when>
-        <xsl:when test="lc:is-integer()">integer</xsl:when>
+        <xsl:when test="not($element)">unknown</xsl:when>
+        <xsl:when test="lc:element-is-keyref($element)">keyref</xsl:when>
+        <xsl:when test="lc:element-is-string($element)">string</xsl:when>
+        <xsl:when test="lc:element-is-date($element)">date</xsl:when>
+        <xsl:when test="lc:element-is-integer($element)">integer</xsl:when>
         <xsl:otherwise>default</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:choose>
-      <xsl:when test="not(@lc:editable = 'false')">
-        <div class="field clear-block type-{$class}">
-          <xsl:apply-templates select="." mode="label"/>
-          <xsl:apply-templates select="." mode="value"/>
-          <xsl:apply-templates select="." mode="annotations"/>
-        </div>
-      </xsl:when>
-    </xsl:choose>
+    <xsl:if test="not(@lc:editable = 'false')">
+      <div class="field clear-block type-{$class}">
+        <xsl:apply-templates select="." mode="label">
+          <xsl:with-param name="element" select="$element"/>
+        </xsl:apply-templates>
+        <xsl:apply-templates select="." mode="value">
+          <xsl:with-param name="element" select="$element"/>
+        </xsl:apply-templates>
+        <xsl:apply-templates select="." mode="annotations"/>
+      </div>
+    </xsl:if>
+    
   </xsl:template>
+  
   <xsl:template match="*" mode="label">
+    <xsl:param name="element"/>
+    <xsl:call-template name="label">
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="label">
+    <xsl:param name="element"/>
+    <xsl:call-template name="label">
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template name="label">
+    <xsl:param name="element"/>
     <label>
-      <xsl:value-of select="lx:first-case(lc:get-title())"/>
+      <xsl:value-of select="lx:first-case(lc:element-get-title($element))"/>
       <xsl:text> : </xsl:text>
     </label>
   </xsl:template>
+  
   <xsl:template match="*" mode="value">
+    <xsl:param name="element"/>
+    <xsl:call-template name="value">
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="value">
+    <xsl:param name="element"/>
+    <xsl:call-template name="value">
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template name="value">
+    <xsl:param name="element"/>
+    
     <xsl:choose>
-      <xsl:when test=". = '' and not(lc:is-boolean())">
+      
+      <xsl:when test=". = '' and not(lc:element-is-boolean($element))">
         <em class="left">-</em>
       </xsl:when>
+      
       <xsl:when test="@lc:line-break">
         <pre class="field-content">
           <xsl:if test="string-length(.) &gt; 250">
@@ -60,29 +141,39 @@
           <xsl:value-of select="."/>
         </pre>
       </xsl:when>
+      
       <xsl:otherwise>
         <div class="field-content">
           <xsl:choose>
-            <xsl:when test="lc:is-date()">
+            
+            <xsl:when test="lc:element-is-date($element)">
               <xsl:value-of select="lx:format-date(.)"/>
             </xsl:when>
-            <xsl:when test="lc:is-boolean()">
+            
+            <xsl:when test="lc:element-is-boolean($element)">
+              
               <xsl:variable name="icone">
                 <xsl:choose>
                   <xsl:when test=". = '0' or . = '' or . = 'false'">delete</xsl:when>
                   <xsl:otherwise>ok</xsl:otherwise>
                 </xsl:choose>
               </xsl:variable>
-              <img src="{$directory}/images/{$icone}.png"/>
+              
+              <img src="{$sylma-directory}/images/{$icone}.png"/>
             </xsl:when>
+            
             <xsl:otherwise>
               <xsl:value-of select="."/>
             </xsl:otherwise>
+            
           </xsl:choose>
         </div>
       </xsl:otherwise>
+      
     </xsl:choose>
+
   </xsl:template>
+  
   <xsl:template match="lc:message">
     <div>
       <xsl:copy-of select="node()"/>

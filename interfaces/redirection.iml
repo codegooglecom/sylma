@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/interface">
+  <name>Redirection</name>
+  <method path="add-js" name="addJS">
+    <argument name="path">
+      <format>php-string</format>
+      <format>php-null</format>
+    </argument>
+    <argument name="content" required="false">
+      <format>php-string</format>
+      <format>XML_CData</format>
+    </argument>
+  </method>
+  <method path="add-css" name="addCSS">
+    <argument name="path" format="php-string"/>
+  </method>
+  <method path="add-onload" name="addOnLoad">
+    <argument name="content">
+      <format>php-string</format>
+      <format>XML_CData</format>
+    </argument>
+  </method>
+</class>

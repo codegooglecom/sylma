@@ -3,7 +3,7 @@
   <le:settings>
     <le:name>Formulaire</le:name>
     <le:processor path="/sylma/processors/action-builder" namespace="http://www.sylma.org/processors/action-builder"/>
-    <le:template path="form-ajax.xsl" set-variable="template">
+    <le:template path="form.xsl" set-variable="template">
       <li:set-parameter>
         <le:argument>action</le:argument>
         <le:get-argument name="action"/>
@@ -11,6 +11,7 @@
     </le:template>
     <le:argument format="XML_Document" name="model"/>
     <le:argument format="php-string" name="action"/>
+    <le:argument format="php-string" name="module"/>
     <le:argument name="template-extension" required="false" format="XML_Element">
       <le:validate>
         <le:get-variable name="template">
@@ -34,6 +35,12 @@
     </li:add-js>
   </le:window>
   <la:layer extend-base="sylma.dbx-classes" class="form">
+    <la:property name="pathAdd">
+      <le:string>
+        <le:get-argument name="module"/>
+        <le:argument>/add-field</le:argument>
+      </le:string>
+    </la:property>
     <le:get-argument name="model">
       <li:parse>
         <le:get-variable name="template"/>

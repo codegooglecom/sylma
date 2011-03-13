@@ -242,9 +242,8 @@ class XML_Action extends XML_Document {
       
     } else if (!$oInterface) {
       
-      dspm(array(xt('Pas d\'interface pour l\'instruction %s dans %s (Objet : %s) ',
+      $this->dspm(array(xt('Pas d\'interface pour l\'instruction %s (Objet : %s) ',
         view($oElement),
-        $this->getPath()->parse(),
         view($mObject))), 'action/warning');
       
     } else if (!$oMethod = $oInterface->get("ns:method[@path='$sActionMethod']")) {
@@ -833,24 +832,31 @@ class XML_Action extends XML_Document {
       
       case 'namespace' :
         
-        $aNamespaces = array(
-          'action' => SYLMA_NS_EXECUTION,
-          'directory' => SYLMA_NS_DIRECTORY,
-          'security' => SYLMA_NS_SECURITY,
-          'interface' => SYLMA_NS_INTERFACE,
-          'message' => SYLMA_NS_MESSAGES,
-          'schemas' => SYLMA_NS_SCHEMAS,
-          'xsd' => SYLMA_NS_XSD);
-        
-        if (!$sNamespace = $oElement->read()) {
+        if ($sPrefix = $oElement->getAttribute('prefix')) {
           
-          dspm(xt('Espace de nom introuvable dans %s', $this->getPath()), 'action/error');
+          $mResult = $oElement->getNamespace($sPrefix);
+        }
+        else {
           
-        } else if (!array_key_exists($sNamespace, $aNamespaces)) {
+          $aNamespaces = array(
+            'action' => SYLMA_NS_EXECUTION,
+            'directory' => SYLMA_NS_DIRECTORY,
+            'security' => SYLMA_NS_SECURITY,
+            'interface' => SYLMA_NS_INTERFACE,
+            'message' => SYLMA_NS_MESSAGES,
+            'schemas' => SYLMA_NS_SCHEMAS,
+            'xsd' => SYLMA_NS_XSD);
           
-          dspm(xt('Espace de nom %s inconnu dans %s %s', new HTML_Strong($sNamespace), $this->getPath(), $oElement->parse()), 'action/error');
-          
-        } else $mResult = $aNamespaces[$sNamespace];
+          if (!$sNamespace = $oElement->read()) {
+            
+            dspm(xt('Espace de nom introuvable dans %s', $this->getPath()), 'action/error');
+            
+          } else if (!array_key_exists($sNamespace, $aNamespaces)) {
+            
+            dspm(xt('Espace de nom %s inconnu dans %s %s', new HTML_Strong($sNamespace), $this->getPath(), $oElement->parse()), 'action/error');
+            
+          } else $mResult = $aNamespaces[$sNamespace];
+        }
         
       break;
       

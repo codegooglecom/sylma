@@ -7,6 +7,10 @@
   <xsl:param name="action"/>
   <xsl:param name="method" select="'POST'"/>
   
+  <func:function name="lc:is-last-duplicate">
+    <func:result select="count(../*[name() = name(current())]) = count(preceding-sibling::*[name() = name(current())]) + 1"/>
+  </func:function>
+  
   <func:function name="lc:is-visible">
     <xsl:param name="source" select="."/>
     <func:result select="lc:boolean($source/@lc:visible, 1)"/>
@@ -18,59 +22,65 @@
   </func:function>
   
   <func:function name="lc:build-name">
-    <xsl:param name="parent"/>
+    <xsl:param name="element"/>
+    <xsl:param name="parent" select="''"/>
     <xsl:param name="name" select="lc:get-name()"/>
-    <xsl:choose>
-      <xsl:when test="$parent">
-        <func:result select="concat($parent, '[', $name, ']')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="$name"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    
+    <xsl:variable name="suffix">
+      <xsl:if test="($element and lc:element-is-multiple($element)) or count(../*[local-name() = $name]) &gt; 1">
+        <xsl:value-of  select="concat('[', generate-id(), ']')"/>
+      </xsl:if>
+    </xsl:variable>
+    
+    <xsl:variable name="full-name">
+      <xsl:choose>
+        <xsl:when test="$parent">
+          <xsl:value-of select="concat('[', $name, ']')"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$name"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    
+    <func:result select="concat($parent, $full-name, $suffix)"/>
+    
   </func:function>
   
-  <xsl:template match="/*">
-    <form method="{$method}" action="{$action}" enctype="multipart/form-data">
-      
-      <xsl:apply-templates select="lc:get-model(*[1])/lc:annotations/lc:message"/>
-      <xsl:variable name="element" select="lc:get-root-element(current()/*[1])"/>
-      
-      <xsl:apply-templates select="*[1]/@*" mode="field">
-        <xsl:with-param name="parent-element" select="$element"/>
-      </xsl:apply-templates>
-      
-      <xsl:apply-templates select="*[1]/*" mode="field">
-        <xsl:with-param name="parent-element" select="$element"/>
-      </xsl:apply-templates>
-      
-      <div class="field-actions">
-        <input type="submit" value="Enregistrer"/>
-        <input type="button" value="Annuler" onclick="history.go(-1);"/>
-      </div>
-      
-    </form>
+  <xsl:template match="lc:link-add" mode="field">
+    
+    <xsl:param name="parent-element"/>
+    <xsl:variable name="element" select="lc:name-get-element($parent-element, @name)"/>
+    
+    <xsl:call-template name="multiple-add">
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+    
   </xsl:template>
   
   <xsl:template match="*" mode="field">
     
     <xsl:param name="parent"/>
     <xsl:param name="parent-element"/>
+    
     <xsl:variable name="element" select="lc:element-get-element($parent-element)"/>
     
     <xsl:choose>
       <xsl:when test="$element">
-        <xsl:variable name="name" select="lc:build-name($parent)"/>
+        <xsl:variable name="name" select="lc:build-name($element, $parent)"/>
         <xsl:choose>
-          <xsl:when test="lc:element-is-complex($element)">
-            <xsl:call-template name="field-complex">
+          
+          <xsl:when test="lc:element-is-complex($element) and not(lc:element-is-mixed($element))">
+            
+            <xsl:apply-templates select="." mode="field-complex">
               <xsl:with-param name="name" select="$name"/>
               <xsl:with-param name="element" select="$element"/>
-            </xsl:call-template>
+            </xsl:apply-templates>
+            
           </xsl:when>
           
           <xsl:otherwise>
-            <xsl:variable name="id" select="concat('field-', lc:get-name())"/>
+            <xsl:variable name="id" select="concat('field-', $name)"/>
             <xsl:variable name="class" select="'field-input-element'"/>
             
             <xsl:call-template name="field-simple">
@@ -117,8 +127,8 @@
           <xsl:choose>
             
             <xsl:when test="$element and lc:is-visible($element)">
-              <xsl:variable name="id" select="concat('field-', local-name())"/>
-              <xsl:variable name="name" select="lc:build-name($parent, local-name())" />
+              <xsl:variable name="name" select="lc:build-name($element, $parent, concat('sylma-attr-', local-name()))" />
+              <xsl:variable name="id" select="concat('field-', $name)"/>
               <xsl:variable name="class" select="'field-input-attribute'"/>
               
               <xsl:call-template name="field-simple">
@@ -135,13 +145,12 @@
                 </xsl:with-param>
                 
                 <xsl:with-param name="element" select="$element"/>
-                <xsl:with-param name="model" select="lc:get-model(..)"/>
               </xsl:call-template>
               
             </xsl:when>
             
             <xsl:otherwise>
-              <input type="text" value="ATTR INVISIBLE {name()}" name="attr-{local-name()}"/>
+              <input type="hidden" value="{.}" name="sylma-attr-{local-name()}"/>
             </xsl:otherwise>
             
           </xsl:choose>
@@ -157,29 +166,6 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template name="field-complex">
-    <xsl:param name="name"/>
-    <xsl:param name="element"/>
-    <la:layer class="complex">
-      <xsl:if test="$element/@lc:title">
-        <h3>
-          <xsl:value-of select="lx:first-case(lc:element-get-title($element, .))"/>
-        </h3>
-      </xsl:if>
-      <div class="field-complex clear-block">
-        <xsl:apply-templates select="lc:get-model()/lc:annotations/lc:message"/>
-        <xsl:apply-templates select="@*" mode="field">
-          <xsl:with-param name="parent" select="$name"/>
-          <xsl:with-param name="parent-element" select="$element"/>
-        </xsl:apply-templates>
-        <xsl:apply-templates select="*" mode="field">
-          <xsl:with-param name="parent" select="$name"/>
-          <xsl:with-param name="parent-element" select="$element"/>
-        </xsl:apply-templates>
-      </div>
-    </la:layer>
-  </xsl:template>
-  
   <xsl:template name="field-simple">
     <xsl:param name="id"/>
     <xsl:param name="name"/>
@@ -188,20 +174,25 @@
     <xsl:param name="model"/>
     <xsl:choose>
       <xsl:when test="lc:is-visible($element)">
+        
         <xsl:variable name="statut">
           <xsl:choose>
-            <xsl:when test="@lc:model">
-              <xsl:value-of select="concat('field-statut-', lc:get-statut())"/>
+            <xsl:when test="$model">
+              <xsl:value-of select="concat('field-statut-', lc:model-get-statut($model))"/>
             </xsl:when>
             <xsl:otherwise>field-statut-attr</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
         <xsl:variable name="label">
           <xsl:apply-templates select="." mode="label">
+            <xsl:with-param name="element" select="$element"/>
             <xsl:with-param name="id" select="$id"/>
           </xsl:apply-templates>
         </xsl:variable>
-        <div class="field clear-block {$statut}" id="field-container-{$name}">
+        
+        <xsl:variable name="is-multiple" select="lc:element-is-multiple($element)"/>
+        
+        <xsl:variable name="full-content">
           <xsl:choose>
             <xsl:when test="lc:element-is-boolean($element)">
               <xsl:copy-of select="$content"/>
@@ -212,15 +203,143 @@
               <xsl:copy-of select="$content"/>
             </xsl:otherwise>
           </xsl:choose>
-          <xsl:if test="@lc:model">
+          <xsl:if test="$model">
             <xsl:apply-templates select="$model/lc:annotations/lc:message"/>
           </xsl:if>
-        </div>
+        </xsl:variable>
+        
+        <xsl:choose>
+          
+          <xsl:when test="$is-multiple">
+            
+            <la:layer>
+              <div class="field clear-block {$statut}">
+                <xsl:copy-of select="$full-content"/>
+                <xsl:call-template name="multiple-remove">
+                  <xsl:with-param name="element" select="$element"/>
+                </xsl:call-template>
+              </div>
+            </la:layer>
+            
+          </xsl:when>
+          
+          <xsl:otherwise>
+            <div class="field clear-block {$statut}" id="field-container-{$name}">
+              <xsl:copy-of select="$full-content"/>              
+            </div>
+          </xsl:otherwise>
+        
+        </xsl:choose>
+        
       </xsl:when>
       <xsl:otherwise>
         <xsl:copy-of select="$content"/>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="field-complex">
+    <xsl:param name="name"/>
+    <xsl:param name="element"/>
+    
+    <xsl:variable name="model" select="lc:get-model()"/>
+    
+    <la:layer class="complex">
+      
+      <xsl:variable name="statut">
+        <xsl:value-of select="concat('field-statut-', lc:model-get-statut($model))"/>
+      </xsl:variable>
+      
+      <div>
+        
+        <xsl:choose>
+          
+          <xsl:when test="lc:element-is-multiple($element)">
+            
+            <div class="field-complex field-multiple clear-block {$statut}">
+              
+              <xsl:call-template name="multiple-remove">
+                <xsl:with-param name="element" select="$element"/>
+              </xsl:call-template>
+              
+              <xsl:apply-templates select="lc:get-model()/lc:annotations/lc:message"/>
+              <xsl:call-template name="field-complex">
+                <xsl:with-param name="name" select="$name"/>
+                <xsl:with-param name="element" select="$element"/>
+              </xsl:call-template>
+              
+            </div>
+            
+          </xsl:when>
+          
+          <xsl:otherwise>
+            <div class="field-complex clear-block {$statut}">
+              
+              <xsl:apply-templates select="lc:get-model()/lc:annotations/lc:message"/>
+              
+              <xsl:if test="$element/@lc:title">
+                <h3>
+                  <xsl:value-of select="lx:first-case(lc:element-get-title($element, .))"/>
+                </h3>
+              </xsl:if>
+              
+              <xsl:call-template name="field-complex">
+                <xsl:with-param name="name" select="$name"/>
+                <xsl:with-param name="element" select="$element"/>
+              </xsl:call-template>
+              
+            </div>
+          </xsl:otherwise>
+          
+        </xsl:choose>
+        
+      </div>
+      
+    </la:layer>
+  </xsl:template>
+  
+  <xsl:template name="field-complex">
+    
+    <xsl:param name="name"/>
+    <xsl:param name="element"/>
+    
+    <xsl:apply-templates select="@*" mode="field">
+      <xsl:with-param name="parent" select="$name"/>
+      <xsl:with-param name="parent-element" select="$element"/>
+    </xsl:apply-templates>
+    <xsl:apply-templates select="*" mode="field">
+      <xsl:with-param name="parent" select="$name"/>
+      <xsl:with-param name="parent-element" select="$element"/>
+    </xsl:apply-templates>
+    
+  </xsl:template>
+  
+  <xsl:template name="multiple-add">
+    <xsl:param name="element"/>
+    <la:layer class="template">
+      <la:property name="path">
+        <xsl:value-of select="."/>
+      </la:property>
+      <div class="center" style="margin: 5px 0 10px 0">
+        <button>
+          <la:event name="click">
+           %ref-object%.add();
+           return false;
+          </la:event>
+          <span><xsl:text>Ajouter un/e</xsl:text>
+          <strong><xsl:value-of select="lc:element-get-title($element)"/></strong></span>
+        </button>
+      </div>
+    </la:layer>
+  </xsl:template>
+  
+  <xsl:template name="multiple-remove">
+    <xsl:param name="element"/>
+    <input type="button" value="Retirer" class="right">
+      <la:event name="click">
+        %ref-object%.remove();
+      </la:event>
+    </input>
   </xsl:template>
   
   <xsl:template match="*" mode="notice">
@@ -230,14 +349,62 @@
   </xsl:template>
   
   <xsl:template match="*" mode="label">
+    <xsl:param name="element"/>
     <xsl:param name="id"/>
+    
+    <xsl:call-template name="label">
+      <xsl:with-param name="element" select="$element"/>
+      <xsl:with-param name="id" select="$id"/>
+    </xsl:call-template>
+    
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="label">
+    <xsl:param name="element"/>
+    <xsl:param name="id"/>
+    
+    <xsl:call-template name="label">
+      <xsl:with-param name="element" select="$element"/>
+      <xsl:with-param name="id" select="$id"/>
+    </xsl:call-template>
+    
+  </xsl:template>
+  
+  <xsl:template name="label">
+    <xsl:param name="element"/>
+    <xsl:param name="id"/>
+    
     <label for="{$id}">
-      <xsl:value-of select="lx:first-case(lc:get-title())"/>
-      <xsl:if test="not(lc:is-boolean())">
-        <xsl:text> : </xsl:text>
-      </xsl:if>
-      <xsl:if test="not(lc:get-statut() = 'optional')"> *</xsl:if>
+      <xsl:value-of select="lx:first-case(lc:element-get-title($element))"/>
+      <xsl:if test="not(lc:element-is-boolean($element))"> : </xsl:if>
+      <xsl:if test="lc:element-is-required($element)"> *</xsl:if>
     </label>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="input">
+    <xsl:param name="id"/>
+    <xsl:param name="name"/>
+    <xsl:param name="class"/>
+    <xsl:param name="element"/>
+    <xsl:call-template name="input">
+      <xsl:with-param name="id" select="$id"/>
+      <xsl:with-param name="name" select="$name"/>
+      <xsl:with-param name="class" select="$class"/>
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="input">
+    <xsl:param name="id"/>
+    <xsl:param name="name"/>
+    <xsl:param name="class"/>
+    <xsl:param name="element"/>
+    <xsl:call-template name="input">
+      <xsl:with-param name="id" select="$id"/>
+      <xsl:with-param name="name" select="$name"/>
+      <xsl:with-param name="class" select="$class"/>
+      <xsl:with-param name="element" select="$element"/>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template name="input">
@@ -245,14 +412,16 @@
     <xsl:param name="name"/>
     <xsl:param name="class"/>
     <xsl:param name="element"/>
+    
     <xsl:variable name="is-visible" select="lc:is-visible($element)"/>
     <xsl:variable name="is-editable" select="lc:is-editable($element)"/>
+    
     <xsl:choose>
       <xsl:when test="not($is-visible) and $is-editable">
         <input type="hidden" class="{$class}" name="{$name}" id="{$id}" value="{.}"/>
       </xsl:when>
       <xsl:when test="not($is-editable) and $is-visible">
-        <span class="{$class}" id="{$id}">
+        <span class="field-uneditable" id="{$id}">
           <xsl:value-of select="."/>
         </span>
       </xsl:when>
@@ -272,9 +441,10 @@
       <xsl:when test="lc:element-is-string($element)">
         <xsl:choose>
           <xsl:when test="lc:element-is-enum($element)">
+            <xsl:variable name="schema" select="lc:element-get-schema($element)"/>
             <select name="{$name}" id="{$id}" class="{$class}">
               <option value="0">&lt; choisissez &gt;</option>
-              <xsl:apply-templates select="$element/lc:restriction/lc:enumeration">
+              <xsl:apply-templates select="$schema/lc:restriction/lc:enumeration">
                 <xsl:with-param name="value" select="node()"/>
               </xsl:apply-templates>
             </select>
@@ -309,32 +479,6 @@
         </textarea>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:template>
-  
-  <xsl:template match="*" mode="input">
-    <xsl:param name="id"/>
-    <xsl:param name="name"/>
-    <xsl:param name="class"/>
-    <xsl:param name="element"/>
-    <xsl:call-template name="input">
-      <xsl:with-param name="id" select="$id"/>
-      <xsl:with-param name="name" select="$name"/>
-      <xsl:with-param name="class" select="$class"/>
-      <xsl:with-param name="element" select="$element"/>
-    </xsl:call-template>
-  </xsl:template>
-  
-  <xsl:template match="@*" mode="input">
-    <xsl:param name="id"/>
-    <xsl:param name="name"/>
-    <xsl:param name="class"/>
-    <xsl:param name="element"/>
-    <xsl:call-template name="input">
-      <xsl:with-param name="id" select="$id"/>
-      <xsl:with-param name="name" select="$name"/>
-      <xsl:with-param name="class" select="$class"/>
-      <xsl:with-param name="element" select="$element"/>
-    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="lc:enumeration">

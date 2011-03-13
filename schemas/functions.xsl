@@ -66,21 +66,14 @@
   
   <func:function name="lc:get-name">
     <xsl:param name="source" select="."/>
-    <xsl:variable name="name" select="local-name($source)"/>
-    <xsl:choose>
-      <xsl:when test="count($source/../*[local-name() = $name]) &gt; 1">
-        <func:result select="concat($name, '[', position(), ']')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="$name"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <func:result name="name" select="local-name($source)"/>
   </func:function>
   
   <func:function name="lc:is-complex">
     <xsl:param name="source" select="."/>
-    <xsl:if test="lc:get-schema($source)">
-      <func:result select="boolean(lc:get-schema($source)/@complex)"/>
+    <xsl:variable name="schema" select="lc:get-schema($source)"/>
+    <xsl:if test="$schema">
+      <func:result select="boolean($schema/@complex)"/>
     </xsl:if>
   </func:function>
   <func:function name="lc:is-simple">
@@ -90,15 +83,11 @@
   
   <func:function name="lc:get-type">
     <xsl:param name="source" select="."/>
-    <xsl:if test="not(lc:is-complex($source))">
-      <xsl:choose>
-        <xsl:when test="lc:get-schema($source)">
-          <func:result select="lc:get-schema($source)/@type"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <func:result select="lc:get-model($source)/@type"/>
-        </xsl:otherwise>
-      </xsl:choose>
+    <xsl:variable name="schema" select="lc:get-schema($source)"/>
+    <xsl:if test="not($schema) or not(boolean($schema/@complex))">
+      <xsl:if test="$schema">
+        <func:result select="$schema/@basic-type"/>
+      </xsl:if>
     </xsl:if>
   </func:function>
   

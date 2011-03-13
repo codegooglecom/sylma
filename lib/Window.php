@@ -175,6 +175,21 @@ class Img implements Main {
 
 class Redirection implements Main {
   
+  public function addOnLoad($sValue) {
+    
+    return null;
+  }
+  
+  public function addJS($sHref, $mContent = null) {
+    
+    return null; // TODO
+  }
+  
+  public function addCSS($sHref = '') {
+    
+    return null; // TODO
+  }
+  
   public function loadAction($oAction) {
     
     $mResult = $oAction->parse();
@@ -338,6 +353,16 @@ class WindowAction extends XML_Document implements Main {
     return null;
   }
   
+  public function addJS($sHref, $mContent = null) {
+    
+    return null; // TODO
+  }
+  
+  public function addCSS($sHref = '') {
+    
+    return null; // TODO
+  }
+  
   public function loadAction($oAction) {
     
     Controler::setContentType('xml');
@@ -371,16 +396,6 @@ class WindowAction extends XML_Document implements Main {
     
     $oInfos = $oRoot->addNode('infos', Controler::getInfos());
     $oInfos->getFirst()->addClass('msg-infos-sub');
-  }
-  
-  public function addJS($sHref, $mContent = null) {
-    
-    return null; // TODO
-  }
-  
-  public function addCSS($sHref = '') {
-    
-    return null; // TODO
   }
   
   public function __toString() {

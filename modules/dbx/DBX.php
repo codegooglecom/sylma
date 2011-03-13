@@ -149,8 +149,6 @@ class DBX_Module extends XDB_Module {
   
   public function validateElement(XML_Element $oElement, $bID = false) {
     
-    $oAttributes = $oElement->query("@*[namespace-uri()='{$this->getNamespace()}']");
-    
     foreach ($oElement->getChildren() as $oChild) if ($oChild->isElement()) $this->validateElement($oChild);
     
     foreach ($oElement->getAttributes() as $oAttribute) {
@@ -298,14 +296,18 @@ class DBX_Module extends XDB_Module {
       
       if ($oValue->isElement()) {
         
-        if (substr($oValue->getName(), 0, 4) == 'attr') {
+        if (substr($oValue->getName(), 0, 10) == 'sylma-attr') {
           
-          $sName = substr($oValue->getName(), 5);
+          $sName = substr($oValue->getName(), 11);
           
           if ($sName == 'id') $oParent->setAttribute('xml:'.$sName, $oValue->read());
           else $oParent->setAttribute($sName, $oValue->read());
+        }
+        // else if (substr($oValue->getName(), 0, 11) == 'sylma-empty') {
           
-        } else {
+          // $sName = substr($oValue->getName(), 12);
+        // }
+        else {
           
           $oChild = $oParent->addNode($this->getFullPrefix().$oValue->getName(), null, null, $this->getNamespace());
           
@@ -331,8 +333,8 @@ class DBX_Module extends XDB_Module {
         dspm(t('Une erreur s\'est produite. Impossible de continuer. Modifications perdues'), 'error');
         dspm(t('Aucune données dans $_POST'), 'action/warning');
       }
-      
-    } else {
+    }
+    else {
       
       if (!$oValues = $this->buildValues($oPost, $oParent)) {
         
@@ -341,8 +343,8 @@ class DBX_Module extends XDB_Module {
           dspm(t('Impossible de lire les valeurs envoyés par le formulaire'), 'error');
           dspm(xt('Erreur dans la conversion des valeurs %s dans $_POST', view($oPost)), 'action/error');
         }
-        
-      } else $oResult = $oValues->getDocument();
+      }
+      else $oResult = $oValues->getDocument();
     }
     
     return $oResult;
@@ -433,8 +435,8 @@ class DBX_Module extends XDB_Module {
         if (!$oValues) {
           
           dspm(xt('L\'élément identifié par %s n\'existe pas', new HTML_Strong($sID)), 'warning');
-          
-        } else {
+        }
+        else {
           
           $aOptions = array();
           if ($sPath) $aOptions['path'] = $this->readOption('database/name').'/'.$sPath;
@@ -444,10 +446,11 @@ class DBX_Module extends XDB_Module {
             dspm(xt('Impossible de charger l\'élément'), 'error');
             dspm(xt('Aucun modèle chargé pour %s', view($oValues)), 'action/error');
             
-          } else {
+          }
+          else {
             
             // $this->buildRefs($oModel, true);
-            
+            // dspf($oModel);
             $sForm = $this->readOption('ajax', false) == 'true' ? 'form-ajax' : 'form';
             
             $this->switchDirectory();
@@ -457,9 +460,13 @@ class DBX_Module extends XDB_Module {
             
             $mResult = $this->runAction($sForm, array(
               'model' => $oModel,
+              'module' => $this->getAdmin(),
               'action' => $this->getAdminPath()."/edit-do/$sID".SYLMA_FORM_REDIRECT_EXTENSION,
               'template-extension' => $this->getTemplateExtension()));
-            }
+            
+            // $mResult = $mResult->getDocument()->updateNamespaces(SYLMA_NS_XHTML, SYLMA_NS_XHTML);
+          }
+          
         }
         
       break;
@@ -498,6 +505,7 @@ class DBX_Module extends XDB_Module {
           
           $mResult = $this->runAction($sForm, array(
             'model' => $oModel,
+            'module' => $this->getAdmin(),
             'action' => $sPath.SYLMA_FORM_REDIRECT_EXTENSION,
             'template-extension' => $this->getTemplateExtension())); //.redirect
         }
@@ -560,6 +568,32 @@ class DBX_Module extends XDB_Module {
           
           $oRedirect->setPath($sList);
           $mResult = $oRedirect;
+        }
+        
+      break;
+      
+      case 'add-field' :
+        
+        if (!$sPath = array_val('path', $aOptions)) {
+          
+          $this->dspm(xt('Impossible d\'ajouter de champs pour le moment, chemin non spécifié'), 'error');
+        }
+        else {
+          
+          $aPath = explode('/', $sPath);
+          $sName = array_last($aPath);
+          
+          $aTempPath = $aPath;
+          $sCSSName = array_shift($aTempPath);
+          
+          foreach ($aTempPath as $sElement) $sCSSName .= "[$sElement]";
+          
+          $mResult = $this->runAction('add', array(
+            'element' => $this->getEmpty()->getRoot(),
+            'name' => $sName,
+            'css-name' => $sCSSName,
+            'path' => $sPath,
+            'schema' => $this->getSchema()));
         }
         
       break;
@@ -739,7 +773,7 @@ class DBX_Module extends XDB_Module {
     $oParent = null;
     $aOptions = array();
     
-    if ($sPath = $this->readOption('use-child')) {
+    if ($sPath = $this->readOption('use-child', false)) {
       
       $aPath = explode('/', $sPath);
       $oParent = new XML_Element(array_last($aPath), null, null, $this->getNamespace());
@@ -747,7 +781,7 @@ class DBX_Module extends XDB_Module {
     }
     
     if ($oValues = $this->getPost($oRedirect, true, $oParent)) {
-      //dspf($oValues);
+      
       if (!$oValues->validate($this->getSchema(), $aOptions)) {
         
         dspm(t('Un ou plusieurs champs ne sont pas corrects, ceux-ci sont indiqués en rouge'), 'warning');
