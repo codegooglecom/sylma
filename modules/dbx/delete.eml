@@ -12,7 +12,7 @@
       <le:argument>/form.css</le:argument>
     </li:add-css>
   </le:window>
-  <form action="[$action]">
+  <form action="[$action]" method="post">
     <input name="sylma_form_id" id="sylma_form_id" value="[$form-id]" type="hidden"/>
     <div class="center">Voulez-vous supprimer l'élément "<strong le:parse-variables="true">[$id]</strong>" ?</div>
     <div class="field-actions">
