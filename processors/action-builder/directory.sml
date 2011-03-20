@@ -7,4 +7,11 @@
       <ls:mode>744</ls:mode>
     </ls:security>
   </file>
+  <file name="sylma.css">
+    <ls:security>
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>744</ls:mode>
+    </ls:security>
+  </file>
 </directory>

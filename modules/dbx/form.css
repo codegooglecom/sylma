@@ -22,14 +22,11 @@ form {
 }
 
 .field-input-element {
-  border: 1px solid gray;
-  -moz-box-shadow: 2px 2px 5px #EEEEEE inset;
-  -webkit-box-shadow: 2px 2px 5px #EEEEEE inset;
+  border: 1px solid #ccc;
 }
 
 .field-input-element:focus {
-  border-color: orange;
-  -moz-box-shadow-: 2px 2px 5px #ccc inset;
+  border-color: gray;
 }
 
 .field input[type=text], .field textarea {
@@ -38,6 +35,10 @@ form {
 
 .field textarea {
   height: 100px;
+}
+
+.field-notice-top {
+  margin-bottom: 1em;
 }
 
 .field-notice {
@@ -59,8 +60,8 @@ form {
   text-align: center;
 }
 
-.field-statut-optional {
-  opacity: 0.65;
+.field-statut-optional > label {
+  color: #888;
 }
 
 .field-statut-optional.field-complex {
@@ -111,26 +112,98 @@ span.field-input-date {
   cursor: pointer;
 }
 
+.field-add {
+  margin: 0 0 5px;
+}
+
+.field-add > div {
+  margin: auto;
+  width: 330px;
+  padding-left: 90px;
+}
+
 div.field-multiple,
 div.field-complex {
   margin-bottom: 5px;
 }
 
-div.field-multiple {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-width: 1px 0 0 1px;
-  -moz-border-radius: 10px 0 15px 15px;
-  -moz-box-shadow: -2px -2px 5px #EEEEEE;
+div.field-complex {
+  margin: 1em 0;
+  padding: 0 1em 0.5em;
+  border: 3px solid #eee;
+  border-width: 3px 1px 1px 3px;
+  -moz-border-radius: 0 20px;
+  -webkit-border-radius: 0 20px;
+  opacity: 1;
 }
 
-div.field-complex {
+div.field-multiple {
+  padding: 10px;
+  border: 2px solid #eee;
+  border-width: 2px 1px 1px 2px;
+  -moz-border-radius: 0 15px;
+  -webkit-border-radius: 0 15px;
 }
 
 #content div.field-complex h3 {
-  margin: 1em 0 0.5em;
-  text-align: center;
+  margin: 0.5em 0 1em;
+  text-align: left;
   text-shadow: 2px 3px 1px #eee;
 }
 
+.sylma-field-loading {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.field-file-container {
+  width: 400px;
+  margin: auto;
+  margin-bottom: 1em;
+}
+
+.field-file-icone {
+  width: 100px;
+  height: 80px;
+  margin-right: 1em;
+  border: 1px solid #ccc;
+  background: url(icones/file.png) no-repeat 50% 50%;
+}
+
+.field-file-icone img {
+  margin: 2px;
+}
+
+.field-file-label {
+  text-align: center;
+  margin-left: 40px;
+  padding: 1em 0;
+  width: 220px;
+}
+
+.field-file-actions {
+  border-top: 1px solid #EEEEEE;
+  margin-top: 5px;
+}
+
+.field-file-extension-rar,
+.field-file-extension-gzip,
+.field-file-extension-zip {
+  background-image: url(icones/zip.png);
+}
+
+.field-file-extension-rar.field-file-small,
+.field-file-extension-gzip.field-file-small,
+.field-file-extension-zip.field-file-small {
+  background-image: url(icones/zip.png?width=16&height=16);
+}
+
+.field-file-extension-pdf {
+  background-image: url(icones/pdf.png);
+}
+
+.field-file-extension-docx,
+.field-file-extension-doc {
+  background-image: url(icones/word.gif);
+}
 

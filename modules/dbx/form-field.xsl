@@ -4,17 +4,16 @@
   <xsl:import href="form-functions.xsl"/>
   
   <xsl:param name="element-name"/>
-  <xsl:param name="parent-name" select="''"/>
   
   <xsl:template match="/*">
     
     <xsl:variable name="element" select="lc:get-root-element(current()/*[1])"/>
     
     <xsl:apply-templates select="*[1]/*" mode="search">
-      <xsl:with-param name="parent" select="$parent-name"/>
+      <xsl:with-param name="parent" select="''"/>
       <xsl:with-param name="parent-element" select="$element"/>
     </xsl:apply-templates>
-      
+    
   </xsl:template>
   
   <xsl:template match="*" mode="search">
@@ -34,7 +33,7 @@
       <xsl:otherwise>
         <xsl:variable name="element" select="lc:element-get-element($parent-element)"/>
         <xsl:apply-templates select="*" mode="search">
-          <xsl:with-param name="parent" select="$parent"/>
+          <xsl:with-param name="parent" select="lc:build-name($element, $parent)"/>
           <xsl:with-param name="parent-element" select="$element"/>
         </xsl:apply-templates>
       </xsl:otherwise>

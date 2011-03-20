@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:func="http://exslt.org/functions" xmlns:lc="http://www.sylma.org/schemas" xmlns:lx="http://ns.sylma.org/xslt" xmlns:la="http://www.sylma.org/processors/action-builder" version="1.0" extension-element-prefixes="func lx">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:func="http://exslt.org/functions" xmlns:lc="http://www.sylma.org/schemas" xmlns:lx="http://ns.sylma.org/xslt" xmlns:la="http://www.sylma.org/processors/action-builder" xmlns:ld="http://www.sylma.org/directory" version="1.0" extension-element-prefixes="func lx">
   
   <xsl:import href="../../schemas/functions.xsl"/>
   <xsl:import href="/sylma/xslt/string.xsl"/>
+  <xsl:import href="form-file.xsl"/>
   
   <xsl:param name="action"/>
   <xsl:param name="method" select="'POST'"/>
+  <xsl:param name="sylma-attr-prefix">sylma-attr-</xsl:param>
+  <xsl:param name="sylma-file-prefix">sylma-file-</xsl:param>
   
   <func:function name="lc:is-last-duplicate">
     <func:result select="count(../*[name() = name(current())]) = count(preceding-sibling::*[name() = name(current())]) + 1"/>
@@ -28,7 +31,7 @@
     
     <xsl:variable name="suffix">
       <xsl:if test="($element and lc:element-is-multiple($element)) or count(../*[local-name() = $name]) &gt; 1">
-        <xsl:value-of  select="concat('[', generate-id(), ']')"/>
+        <xsl:value-of  select="concat('[sylma-', generate-id(), ']')"/>
       </xsl:if>
     </xsl:variable>
     
@@ -47,16 +50,7 @@
     
   </func:function>
   
-  <xsl:template match="lc:link-add" mode="field">
-    
-    <xsl:param name="parent-element"/>
-    <xsl:variable name="element" select="lc:name-get-element($parent-element, @name)"/>
-    
-    <xsl:call-template name="multiple-add">
-      <xsl:with-param name="element" select="$element"/>
-    </xsl:call-template>
-    
-  </xsl:template>
+  <!-- This is where it begins -->
   
   <xsl:template match="*" mode="field">
     
@@ -71,7 +65,7 @@
         <xsl:choose>
           
           <xsl:when test="lc:element-is-complex($element) and not(lc:element-is-mixed($element))">
-            
+            <!-- is complex -->
             <xsl:apply-templates select="." mode="field-complex">
               <xsl:with-param name="name" select="$name"/>
               <xsl:with-param name="element" select="$element"/>
@@ -79,9 +73,31 @@
             
           </xsl:when>
           
+          <xsl:when test="lc:element-is-file($element)">
+            
+            <!-- is file (is simple), call ld:file-->
+            <xsl:variable name="file" select="lc:get-file()"/>
+            
+            <xsl:choose>
+              <xsl:when test="$file">
+                <xsl:apply-templates select="$file" mode="field" ld:ns="null">
+                  <xsl:with-param name="name" select="lc:build-name($element, $parent, concat($sylma-file-prefix, lc:get-name()))"/>
+                  <xsl:with-param name="title" select="@name"/>
+                  <xsl:with-param name="model" select="lc:get-model()"/>
+                  <xsl:with-param name="id" select="@lc:temp-file"/>
+                </xsl:apply-templates>
+              </xsl:when>
+              <xsl:otherwise>
+                <div class="center sylma-message-error">Fichier introuvable</div>
+              </xsl:otherwise>
+            </xsl:choose>
+            
+          </xsl:when>
+          
           <xsl:otherwise>
+            <!-- is simple -->
             <xsl:variable name="id" select="concat('field-', $name)"/>
-            <xsl:variable name="class" select="'field-input-element'"/>
+            <xsl:variable name="class" select="'field-input field-input-element'"/>
             
             <xsl:call-template name="field-simple">
               <xsl:with-param name="id" select="$id"/>
@@ -107,6 +123,11 @@
           </xsl:otherwise>
           
         </xsl:choose>
+        
+        <xsl:if test="@lc:view-options">
+          <input type="hidden" id="sylma-options-{$name}" value="{@view-options}"/>
+        </xsl:if>
+        
       </xsl:when>
       <xsl:otherwise>
         <div class="clear-block message-error">
@@ -127,9 +148,9 @@
           <xsl:choose>
             
             <xsl:when test="$element and lc:is-visible($element)">
-              <xsl:variable name="name" select="lc:build-name($element, $parent, concat('sylma-attr-', local-name()))" />
+              <xsl:variable name="name" select="lc:build-name($element, $parent, concat($sylma-attr-prefix, local-name()))" />
               <xsl:variable name="id" select="concat('field-', $name)"/>
-              <xsl:variable name="class" select="'field-input-attribute'"/>
+              <xsl:variable name="class" select="'field-input field-input-attribute'"/>
               
               <xsl:call-template name="field-simple">
                 <xsl:with-param name="id" select="$id"/>
@@ -150,7 +171,7 @@
             </xsl:when>
             
             <xsl:otherwise>
-              <input type="hidden" value="{.}" name="sylma-attr-{local-name()}"/>
+              <input type="hidden" value="{.}" name="{$sylma-attr-prefix}{local-name()}"/>
             </xsl:otherwise>
             
           </xsl:choose>
@@ -215,9 +236,9 @@
             <la:layer>
               <div class="field clear-block {$statut}">
                 <xsl:copy-of select="$full-content"/>
-                <xsl:call-template name="multiple-remove">
+                <xsl:apply-templates select="." mode="multiple-remove">
                   <xsl:with-param name="element" select="$element"/>
-                </xsl:call-template>
+                </xsl:apply-templates>
               </div>
             </la:layer>
             
@@ -245,31 +266,25 @@
     <xsl:variable name="model" select="lc:get-model()"/>
     
     <la:layer class="complex">
-      
       <xsl:variable name="statut">
         <xsl:value-of select="concat('field-statut-', lc:model-get-statut($model))"/>
       </xsl:variable>
       
       <div>
-        
         <xsl:choose>
-          
           <xsl:when test="lc:element-is-multiple($element)">
-            
             <div class="field-complex field-multiple clear-block {$statut}">
-              
-              <xsl:call-template name="multiple-remove">
+              <xsl:apply-templates select="." mode="multiple-remove">
                 <xsl:with-param name="element" select="$element"/>
-              </xsl:call-template>
+              </xsl:apply-templates>
               
               <xsl:apply-templates select="lc:get-model()/lc:annotations/lc:message"/>
+              
               <xsl:call-template name="field-complex">
                 <xsl:with-param name="name" select="$name"/>
                 <xsl:with-param name="element" select="$element"/>
               </xsl:call-template>
-              
             </div>
-            
           </xsl:when>
           
           <xsl:otherwise>
@@ -290,9 +305,7 @@
               
             </div>
           </xsl:otherwise>
-          
         </xsl:choose>
-        
       </div>
       
     </la:layer>
@@ -314,26 +327,86 @@
     
   </xsl:template>
   
-  <xsl:template name="multiple-add">
+  <!-- Links are multiple element's related node to indicate where this element could be added -->
+  
+  <xsl:template match="lc:link-add" mode="field">
+    <xsl:param name="parent"/>
+    <xsl:param name="parent-element"/>
+    <xsl:variable name="element" select="lc:name-get-element($parent-element, @name)"/>
+    
+    <xsl:choose>
+      <xsl:when test="lc:element-is-file($element)">
+        <xsl:apply-templates select="." mode="file">
+          <xsl:with-param name="parent" select="$parent"/>
+          <xsl:with-param name="element" select="$element"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      
+      <xsl:otherwise>
+        <xsl:apply-templates select=".">
+          <xsl:with-param name="element" select="$element"/>
+        </xsl:apply-templates>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:template>
+  
+  <xsl:template match="lc:link-add">
+    <xsl:param name="parent"/>
     <xsl:param name="element"/>
+    
     <la:layer class="template">
       <la:property name="path">
         <xsl:value-of select="."/>
       </la:property>
-      <div class="center" style="margin: 5px 0 10px 0">
+      
+      <div class="center field-add">
         <button>
           <la:event name="click">
            %ref-object%.add();
            return false;
           </la:event>
+          
           <span><xsl:text>Ajouter un/e</xsl:text>
           <strong><xsl:value-of select="lc:element-get-title($element)"/></strong></span>
         </button>
       </div>
     </la:layer>
+    
   </xsl:template>
   
-  <xsl:template name="multiple-remove">
+  <xsl:template match="lc:link-add" mode="file">
+    <xsl:param name="parent"/>
+    <xsl:param name="element"/>
+    
+    <la:layer class="files">
+      <la:property name="parentName">
+        <xsl:value-of select="$parent"/>
+      </la:property>
+      <la:property name="name">
+        <xsl:value-of select="concat($sylma-file-prefix, @name)"/>
+      </la:property>
+      <la:property name="path">
+        <xsl:value-of select="."/>
+      </la:property>
+      
+      <div class="field-add">
+        
+        <div>
+          <input type="file" name="file-uploader">
+            <la:event name="change"><![CDATA[return %ref-object%.sendFile(this);]]></la:event>
+          </input>
+          <span class="sylma-field-loading">... chargement</span>
+        </div>
+        
+        <iframe id="sylma-uploader-iframe" name="sylma-uploader-iframe" style="display: none;width: 0; height: 0; border:0">
+          <la:event name="load"><![CDATA[%ref-object%.updateFile(this);]]></la:event>
+        </iframe>
+      </div>
+    </la:layer>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="multiple-remove">
     <xsl:param name="element"/>
     <input type="button" value="Retirer" class="right">
       <la:event name="click">
@@ -343,7 +416,8 @@
   </xsl:template>
   
   <xsl:template match="*" mode="notice">
-    <div class="field-notice">
+    <xsl:param name="class"/>
+    <div class="field-notice {$class}">
       Les champs marqués d'un <strong>*</strong> sont obligatoires
     </div>
   </xsl:template>
@@ -407,6 +481,8 @@
     </xsl:call-template>
   </xsl:template>
   
+  <!-- Here you will find last input type template with form elements -->
+  
   <xsl:template name="input">
     <xsl:param name="id"/>
     <xsl:param name="name"/>
@@ -440,6 +516,14 @@
       </xsl:when>
       <xsl:when test="lc:element-is-string($element)">
         <xsl:choose>
+          <xsl:when test="@lc:file">
+            <xsl:call-template name="input-file">
+              <xsl:with-param name="id" select="$id"/>
+              <xsl:with-param name="name" select="$name"/>
+              <xsl:with-param name="class" select="$class"/>
+              <xsl:with-param name="element" select="$element"/>
+            </xsl:call-template>
+          </xsl:when>
           <xsl:when test="lc:element-is-enum($element)">
             <xsl:variable name="schema" select="lc:element-get-schema($element)"/>
             <select name="{$name}" id="{$id}" class="{$class}">
@@ -495,7 +579,7 @@
     <xsl:param name="value"/>
     <option>
       <xsl:choose>
-        <xsl:when test="@key">
+        <xsl:when test="@key != ''">
           <xsl:attribute name="value">
             <xsl:value-of select="@key"/>
           </xsl:attribute>

@@ -4,7 +4,6 @@
     <le:name>Ajouter</le:name>
     <le:processor path="/sylma/processors/action-builder" namespace="http://www.sylma.org/processors/action-builder"/>
     <le:argument format="php-string" name="name"/>
-    <le:argument format="php-string" name="css-name"/>
     <le:argument format="php-string" name="path"/>
     <le:argument format="XML_Document" name="schema"/>
     <le:argument format="XML_Element" name="element"/>
@@ -22,10 +21,6 @@
         </le:array>
         <li:parse>
           <le:template path="form-field.xsl">
-            <li:set-parameter>
-              <le:argument>parent-name</le:argument>
-              <le:get-argument name="css-name"/>
-            </li:set-parameter>
             <li:set-parameter>
               <le:argument>element-name</le:argument>
               <le:get-argument name="name"/>

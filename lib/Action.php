@@ -943,11 +943,16 @@ class XML_Action extends XML_Document {
     return $mResult;
   }
   
+  /*
+   * This is where append main transformation of XML nodes into objects/values that will be send to action process.
+   * @param mixed $oArgument The XML node to process
+   * @return mixed The result value to insert into result tree
+   **/
   public function buildArgument($oArgument) {
     
     $mResult = null;
     $sAction = 'default';
-        
+    
     // msg
     
     if ($oArgument instanceof XML_Document) $oArgument = $oArgument->getRoot(); // XML_Document => XML_Element
@@ -968,29 +973,31 @@ class XML_Action extends XML_Document {
         // msg
         if (Controler::useStatut('action/report')) {
           
-          if ($oArgument->isComplex())
+          if ($oArgument->isComplex()) {
             $oContent = xt('Build:%s [%s] &gt; ', new HTML_Span('end', array('style' => 'color: red')), view($oArgument));
-          else
+          }
+          else {
             $oContent = xt('Build [%s] &gt; ', view($oArgument));
+          }
           
           dspm(array($oContent, view($mResult, false)), 'action/report');
         }
-        
-      } else if ($oArgument->useNamespace(SYLMA_NS_INTERFACE)) {
+      }
+      else if ($oArgument->useNamespace(SYLMA_NS_INTERFACE)) {
         
         /* Interface */
         
         dspm(array(t('Aucune méthode ne peut être appellée ici !'), $oArgument->messageParse()), 'action/error');
         $mResult = null;
-        
-      } else if ($oProcessor = $this->getProcessor($oArgument->getNamespace())) {
+      }
+      else if ($oProcessor = $this->getProcessor($oArgument->getNamespace())) {
         
         /* Other Processors */
         
         $this->replaceAttributesVariables($oArgument);
         $mResult = $this->runProcessor($oArgument, $oProcessor);
-        
-      } else {
+      }
+      else {
         
         /* Unknown namespace -> copy element */
         if (Controler::useStatut('action/report')) dspm(xt('Copy [%s]', view($oArgument)), 'action/report');
@@ -1010,8 +1017,8 @@ class XML_Action extends XML_Document {
         
         $this->replaceAttributesVariables($mResult);
       }
-      
-    } else if ($oArgument instanceof XML_NodeList) {
+    }
+    else if ($oArgument instanceof XML_NodeList) {
       
       /* NodeList */
       
@@ -1035,8 +1042,8 @@ class XML_Action extends XML_Document {
       
       if (Controler::useStatut('action/report'))
         dspm(array(xt('List [%s] &gt; ', view($oArgument)), view($mResult)), 'action/report');
-      
-    } else if ($oArgument instanceof XML_Text) {
+    }
+    else if ($oArgument instanceof XML_Text) {
       
       /* Text */
       
@@ -1047,8 +1054,8 @@ class XML_Action extends XML_Document {
       
       if (Controler::useStatut('action/report'))
         dspm(array(xt('Text [%s] &gt; ', view($oArgument)), view($mResult)), 'action/report');
-      
-    } else if ($oArgument instanceof XML_CData) {
+    }
+    else if ($oArgument instanceof XML_CData) {
       
       $mResult = clone $oArgument;
       
@@ -1057,14 +1064,20 @@ class XML_Action extends XML_Document {
       
       if (Controler::useStatut('action/report'))
         dspm(array(xt('CData [%s] &gt; ', view($oArgument)), view($mResult)), 'action/report');
-      
-    } else if ($oArgument instanceof XML_Comment) {
+    }
+    else if ($oArgument instanceof XML_Comment) {
       
       $mResult = clone $oArgument; // TODO : generate DOMComment
+    }
+    else if ($oArgument === null) {
       
-    } else dspm(xt('Type d\'argument %s inconnu', view($oArgument)), 'action/error');
-    
-    // msg
+      // TODO, something or not
+    }
+    else {
+      
+      // TODO, be more explicit
+      $this->dspm(xt('Type d\'argument %s inconnu', view($oArgument)), 'action/error');
+    }
     
     return $mResult;
   }
@@ -1553,7 +1566,7 @@ class XML_Action extends XML_Document {
                 if (Controler::useStatut('action/report')) {
                   
                   $sArgumentType = $bAssoc ? 'assoc' : 'index';
-                  dspm(xt('Argument : %s [%s]', Controler::formatResource($mArgument), new HTML_Em($sArgumentType)), 'action/report');
+                  dspm(xt('Argument : %s [%s]', view($mArgument), new HTML_Em($sArgumentType)), 'action/report');
                 }
               }
             }

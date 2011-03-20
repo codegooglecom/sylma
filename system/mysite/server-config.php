@@ -19,6 +19,27 @@ define('FORMAT_MESSAGES', true); // DEFAULT = true
 define('SYLMA_DB_SHOW_QUERIES', false); // DEFAULT = false
 define('SYLMA_DB_SHOW_RESULTS', false); // DEFAULT = false
 
+define('SYLMA_USE_DB', true);
+
+$sylma = array(
+  
+  'maintenance' => array(
+    'enable' => null, // DEFAULT = null, warning 'false' will be see as 'true'
+    'file' => 'protected/maintenance.html',
+    'login' => 'protected/sylma/modules/users/maintenance-login.html',
+    'login-do' => 'sylma/modules/users/interface/login_do.redirect',
+  ),
+  
+  'db' => array(
+    'enable' => true,
+    'host' => 'http://localhost:8080/exist/services/Query?wsdl',
+    'user' => 'username',
+    'password' => 'password',
+    'collection' => '/mysite',
+    'namespace' => 'http://www.example.com',
+  ),
+);
+
 /* Global */ // Could be different for production or test server
 
 define('SYLMA_HOST_NAME', 'Undefined');
@@ -41,11 +62,6 @@ define('SYLMA_ACTION_STATS', true); // infos
 define('SYLMA_ACTION_ERROR_REDIRECT', false);
 
 $aDB = array(
-  'host' => 'http://localhost:8080/exist/services/Query?wsdl',
-  'user' => 'username',
-  'password' => 'password',
-  'collection' => '/mysite',
-  'namespace' => 'http://www.example.com');
 
 
 set_include_path(get_include_path() . PATH_SEPARATOR . PATH_SYLMA . PATH_SEPARATOR . PATH_PHP);

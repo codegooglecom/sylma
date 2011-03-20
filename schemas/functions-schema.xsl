@@ -161,4 +161,9 @@
     <func:result select="boolean($element/@lc:key-ref)"/>
   </func:function>
   
+  <func:function name="lc:element-is-file">
+    <xsl:param name="element"/>
+    <func:result select="$element/@lc:file"/>
+  </func:function>
+  
 </xsl:stylesheet>

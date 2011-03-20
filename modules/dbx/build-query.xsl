@@ -70,7 +70,7 @@ element <xsl:value-of select="$parent-name"/> {
           let $sylma-<xsl:value-of select="concat(@name, ' := ', $ref/.)"/>
           <xsl:choose>
             <xsl:when test="$ref/@key-constrain"><xsl:value-of select="$ref/@key-constrain"/></xsl:when>
-            <xsl:otherwise>[@key = $self/<xsl:value-of select="concat($prefix, @name)"/>/text()]</xsl:otherwise>
+            <xsl:otherwise>[@key = $self/<xsl:value-of select="concat($prefix, @name)"/>/text()][1]</xsl:otherwise>
           </xsl:choose>
         </xsl:if>
         <xsl:if test="@path">

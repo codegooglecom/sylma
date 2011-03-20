@@ -19,6 +19,9 @@
   <method path="include-element" name="includeElement">
     <argument name="element" format="XML_Element"/>
   </method>
+  <method path="parse" name="parseDocument" return-default="true">
+    <argument name="document" format="XML_Document"/>
+  </method>
   <method path="include-external" name="includeExternal">
     <argument name="template" format="XSL_Document" allow-null="true"/>
     <argument name="element" format="XML_Element" required="false"/>

@@ -14,5 +14,9 @@
       <le:directory/>
       <le:argument>/sylma.js</le:argument>
     </li:add-js>
+    <li:add-css le:format="string">
+      <le:directory/>
+      <le:argument>/sylma.css</le:argument>
+    </li:add-css>
   </le:window>
 </le:action>

@@ -167,7 +167,7 @@ class XSD_Parser extends Module {
     return array_pop($this->aTypesUsed);
   }
   
-  public function addType($oType, $oElement) {
+  public function addType(XSD_Type $oType, $oElement) {
     
     $this->aTypes[$oElement->getNamespace()][$oType->getName()] = $oType;
     
@@ -181,9 +181,36 @@ class XSD_Parser extends Module {
     return $oGroup;
   }
   
+  /* Load the file infos parse and add it to refs
+   *
+   **/
+  public function addFile(XML_Element $oNode, XML_Element $oElement, XSD_Model $oModel) {
+    
+    if ($this->getOption('load-refs')) { // replace ref with corresponding nodes
+      
+      $sPath = $oNode->read();
+      
+      if (!$oFile = Controler::getFile($sPath)) {
+        
+        dspm(xt('Aucun fichier ne correspond à %s dans l\'élément %s',
+          new HTML_Strong($sPath), new HTML_Strong($oModel->getName())), 'warning');
+      }
+      else {
+        
+        $oFile = $oFile->parseXML();
+        $sFile = uniqid('file-');
+        
+        $oFile->setAttribute('lc:id-file', $sFile, $this->getNamespace());
+        $oNode->setAttribute('lc:file-ref', $sFile, $this->getNamespace());
+        
+        $this->aRefs[] = $oFile;
+      }
+    }
+  }
+  
   public function addRef($oElement) {
     
-    $mRef = $oElement->getAttribute('lc:key-ref');
+    $mRef = $oElement->getAttribute('key-ref', $this->getNamespace());
     
     // replace document() calls
     
@@ -835,6 +862,8 @@ class XSD_Attribute extends XSD_Node {
     
     // if ($this->getType()) { // TODO : attribute content validation
     
+    if (strpos($sName, ':')) $sNamespace = ''; // usefull for xml:id
+    
     if (!$oParent->getNode()->setAttribute($sName, ' ', $sNamespace)) {
       
       $this->dspm(xt('Impossible d\'ajouter l\'attribut %s [%s] dans %s',
@@ -932,6 +961,10 @@ class XSD_Model extends XSD_Instance { // XSD_ElementInstance
         
         if ($oNode->hasChildren()) $this->buildChildren();
         if ($oNode->hasAttributes()) $this->buildAttributes();
+      }
+      else if ($oClass->getSource()->getAttribute('file', $this->getNamespace())) { // look for lc:file
+        
+        $this->getParser()->addFile($oNode, $oClass->getSource(), $this);
       }
       
     } else $this->setStatut('missing');
@@ -1161,6 +1194,14 @@ class XSD_Particle extends XSD_Class {
     return $oResult;
   }
   
+  /* Validate self and distribute, on a name base, xs:element to instances
+   * Most part of the model building will append here
+   * @param XSD_Instance The instance to validate to
+   * @param array $aPath The list of parent's name if validation append on an inside node
+   * @param boolean $bMessages Do must the validation display error message.
+   *  If validation failed before, error messages will not be displayed for only builded model
+   * @return boolean Return [true] if validation success
+   **/
   public function validate(XSD_Instance $oInstance, $aPath = array(), $bMessages = true) {
     
     if (!$oInstance) { // temp ?
@@ -1222,6 +1263,8 @@ class XSD_Particle extends XSD_Class {
                 $sPath = $oChild->getName();
                 $oParent = null;
                 
+                // build the path. TODO should use a generic function
+                
                 do {
                   
                   if ($oParent) $oParent = $oParent->getParent();
@@ -1233,7 +1276,7 @@ class XSD_Particle extends XSD_Class {
                 
                 if ($oPrevious) $oPrevious = $oNode->insertNode(
                   'lc:link-add', $sPath, $aAttributes, $this->getNamespace(), $oPrevious, true);
-                else $oNode->addNode('lc:link-add', $sPath, $aAttributes, $this->getNamespace());
+                else $oPrevious = $oNode->addNode('lc:link-add', $sPath, $aAttributes, $this->getNamespace());
               }
             }
             else { // else is required or optional but unique
@@ -1247,16 +1290,14 @@ class XSD_Particle extends XSD_Class {
                 $bResult = false;
                 $oNewInstance->isValid(false);
                 
-                // if ($oChild->getMax() > 1) $oNewInstance->setStatut('template');
-                
                 if (!$aPath && $oNewInstance && $bMessages && $oInstance->useMessages()) { // set message and statut
                   
                   $oNewInstance->setStatut('missing');
                   $oNewInstance->addMessage(xt('Ce champ doit être indiqué'), 'content', 'invalid');
                 }
-                
-                $oPrevious = $oNewInstance->getNode();
               }
+              
+              $oPrevious = $oNewInstance->getNode();
             }
           }
         }
@@ -1311,12 +1352,25 @@ class XSD_ParticleInstance extends XSD_Instance {
     
     $iIndex = $this->getSeek();
     $aChildren = $this->getChildren();
-    // dspf($oInstance->getName());
-    // dspf($this->getSeek());
-    // dsparray($this->getChildren());
-    if ($iIndex === null || $iIndex == count($aChildren)) $this->aChildren[] = $oInstance;
-    else if (!$iIndex) array_unshift($this->aChildren, $oInstance);
-    else $this->aChildren = array_merge(array_slice($aChildren, 0, $iIndex), array($oInstance), array_slice($aChildren, $iIndex));
+    
+    if ($iIndex === null || $iIndex == count($aChildren)) {
+      
+      // insert at last
+      $this->aChildren[] = $oInstance;
+    }
+    else if (!$iIndex) {
+      
+      // insert at first
+      array_unshift($this->aChildren, $oInstance);
+    }
+    else {
+      
+      // insert elsewhere
+      $this->aChildren = array_merge(
+        array_slice($aChildren, 0, $iIndex),
+        array($oInstance),
+        array_slice($aChildren, $iIndex));
+    }
     
     $this->shiftSeek();
   }

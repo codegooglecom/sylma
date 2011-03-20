@@ -309,8 +309,12 @@ class XML_Element extends DOMElement implements XML_Composante {
   
   /**
    * Set an attribute of the element, remove the attribute if $sValue is null
+   * See @param $sUri for more detail on use with namespace
    * @param string $sName The name of the attribute
    * @param string $sValue The value of the attribute
+   * @param string $sUri The value of the attribute.
+   *    If $sUri is set @param $sName should have a prefix to bind correctly attribute to namespace
+   *    In other case if $sUri is not set, @param $sName MUST NOT have a prefix, can cause crash
    * @return true|false Returns TRUE on success or FALSE on failure.
    */
   public function setAttribute($sName, $sValue = '', $sUri = null) {

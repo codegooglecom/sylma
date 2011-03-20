@@ -423,7 +423,7 @@ class XML_Document extends DOMDocument {
   
   public function saveTemp($sPath = null) {
     
-    $sPath = Controler::getUser()->getDirectory('temp').'/dbx-'.uniqid().'.xml';
+    $sPath = Controler::getUser()->getDirectory('#tmp').'/dbx-'.uniqid().'.xml';
     
     $this->save($sPath);
     $this->bTemp = true;

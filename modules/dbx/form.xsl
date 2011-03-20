@@ -4,10 +4,20 @@
   <xsl:import href="form-functions.xsl"/>
   
   <xsl:param name="action"/>
+  <xsl:param name="form-id"/>
   <xsl:param name="method">post</xsl:param>
+  <xsl:param name="action-top-count" select="15"/>
   
   <xsl:template match="/*">
     <form method="{$method}" action="{$action}" enctype="multipart/form-data">
+      
+      <input name="sylma_form_id" id="sylma_form_id" value="{$form-id}" type="hidden"/>
+      
+      <xsl:if test="count(*[1]//*) &gt; $action-top-count">
+        <xsl:apply-templates select="*[1]" mode="notice">
+          <xsl:with-param name="class" select="'field-notice-top'"/>
+        </xsl:apply-templates>
+      </xsl:if>
       
       <xsl:apply-templates select="lc:get-model(*[1])/lc:annotations/lc:message"/>
       <xsl:variable name="element" select="lc:get-root-element(current()/*[1])"/>
@@ -28,6 +38,7 @@
       </div>
       
     </form>
+    
   </xsl:template>
   
 </xsl:stylesheet>

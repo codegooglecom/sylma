@@ -2,6 +2,7 @@
 <le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml">
   <le:settings>
     <le:name>Supprimer</le:name>
+    <le:argument name="form-id" format="php-string" set-variable="form-id"/>
     <le:argument name="id" format="php-string" set-variable="id"/>
     <le:argument name="action" format="php-string" set-variable="action"/>
   </le:settings>
@@ -12,6 +13,7 @@
     </li:add-css>
   </le:window>
   <form action="[$action]">
+    <input name="sylma_form_id" id="sylma_form_id" value="[$form-id]" type="hidden"/>
     <div class="center">Voulez-vous supprimer l'élément "<strong le:parse-variables="true">[$id]</strong>" ?</div>
     <div class="field-actions">
       <input type="submit" value="Oui"/>

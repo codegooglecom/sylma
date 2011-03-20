@@ -3,8 +3,8 @@
   margin-bottom: 5px;
   border-top: 1px dashed #ccc;
   padding-top: 5px;
-  float: left;
-  width: 100%;
+  _float: left;
+  width: auto;
 }
 
 .field label {
@@ -13,6 +13,12 @@
   vertical-align: top;
   width: 30%;
   font-weight: bold;
+}
+
+.field-complex {
+  border-top: 0;
+  border-left: 1em solid #eee;
+  padding-left: 2em;
 }
 
 .field-content {

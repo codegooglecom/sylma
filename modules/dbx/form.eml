@@ -7,7 +7,12 @@
         <le:argument>action</le:argument>
         <le:get-argument name="action"/>
       </li:set-parameter>
+      <li:set-parameter>
+        <le:argument>form-id</le:argument>
+        <le:get-argument name="form-id"/>
+      </li:set-parameter>
     </le:template>
+    <le:argument format="php-string" name="form-id"/>
     <le:argument format="XML_Document" name="model"/>
     <le:argument format="php-string" name="action"/>
     <le:argument name="template-extension" required="false" format="XML_Element">
@@ -20,7 +25,7 @@
       </le:validate>
     </le:argument>
   </le:settings>
-  <le:action path="/modules/calendar/eightysix"/>
+  <le:action path="/modules/calendar"/>
   <le:window>
     <li:add-css le:format="string">
       <le:directory/>

@@ -628,20 +628,61 @@ var sylma = {
   
   /* Window */
   
-  center : function(node) {
+  center : function(node, bAbsolute) {
     
-    var iLeft = (window.getSize().x - node.getSize().x) / 2;
-    var iTop = ($(window).getSize().y - node.getSize().y) / 2;
+    if (bAbsolute) {
+      
+      node.position();
+    }
+    else {
+      
+      node.position({ignoreScroll: true});
+      node.setStyle('position', 'fixed');
+    }
+  },
+  
+  sendPopup : function(sMessage, sStatut, callback, caller) {
     
-    iTop = iTop >= 0 ? iTop : 0;
+    sStatut = sStatut | 'notice';
     
-    node.setStyles({'left' : iLeft, 'top' : iTop});
+    var oMessage = new Element('div', {
+      'class' : 'sylma-popup sylma-message-' + sStatut,
+      html : '<div>' + sMessage + '</div>',
+      styles : {
+        opacity : '0'
+      }
+    });
+    
+    oMessage.adopt(
+      new Element('input', {
+        type: 'button',
+        value: 'Ok',
+        events : {
+          'click' : function() {
+            
+            oMessage.fade('out').get('tween').chain(function() { oMessage.dispose(); });
+            
+            if (callback) {
+              
+              var bound = callback.bind(caller);
+              bound();
+            }
+          }}
+      }));
+    
+    document.body.grab(oMessage);
+    sylma.center(oMessage);
+    //this.center(oMessage);
+    
+    oMessage.fade('in');
+    
+    return false;
   },
   
   sendConfirm : function(sMessage, callback, caller) {
     
     var oMessage = new Element('div', {
-      'class' : 'sylma-message sylma-message-confirm',
+      'class' : 'sylma-popup sylma-message-confirm',
       html : '<div>' + sMessage + '</div>',
       styles : {
         opacity : '0'
@@ -844,7 +885,7 @@ sylma.classes.request = new Class({
     var oContainer = $('msg-admin');
     // sylma.dsp(oResult.childNodes[0].tagName);
     //if (!$(oResult)) {sylma.dsp(typeOf(oResult));sylma.dsp(bText);}
-    oResult = oResult.firstChild;
+    // if (oResult.firstChild) oResult = oResult.firstChild;
     
     if (Browser.ie) {
       
@@ -947,11 +988,9 @@ sylma.classes.layer = new Class({
     //.setStyles({'left' : iLeft, 'top' : iTop});
   },
   
-  replace : function(oOptions) {
+  replace : function(options, target) {
     
-    if (this.node) sylma.disableNode(this.node);
-    
-    oOptions = Object.append({
+    options = Object.append({
       
       'html' : this.node,
       'old-name' : this['sylma-path'], // optional
@@ -959,12 +998,14 @@ sylma.classes.layer = new Class({
       'parent' : this.parentObject, // optional
       'root' : this.rootObject, // optional
       'replace' : true
-    }, oOptions);
+    }, options);
     
-    if (this['sylma-send-method']) oOptions.method = this['sylma-send-method'];
-    if (this['sylma-position']) oOptions.position = this['sylma-position'];
+    if (options.html) sylma.disableNode(options.html);
     
-    return sylma.load(oOptions);
+    if (this['sylma-send-method']) options.method = this['sylma-send-method'];
+    if (this['sylma-position']) options.position = this['sylma-position'];
+    
+    return sylma.load(options);
   },
   
   update : function(oArguments, oOptions) {
@@ -986,7 +1027,8 @@ sylma.classes.layer = new Class({
     var oElement = this.node;
     
     oElement.fade('out').get('tween').chain(function() { oElement.dispose(); });
-    eval('delete(this.parentObject.' + this['sylma-path'] + ')');
+    //sylma.sendPopup('delete(this.parentObject["' + this['sylma-path'] + '"])');
+    eval('delete(this.parentObject["' + this['sylma-path'] + '"])');
   },
   
   'show' : function() {

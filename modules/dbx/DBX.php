@@ -107,49 +107,11 @@ class DBX_Module extends XDB_Module {
   
   /*** Various ***/
   
-  private function getFile($sPath) {
-    
-    $oResult = null;
-    $sFile = 'document';
-    
-    if (isset($_FILES[$sFile]) && $_FILES[$sFile]['name']) {
-      
-      if ($_FILES[$sFile]['size'] > SYLMA_UPLOAD_MAX_SIZE) dspm(t('Le fichier lié est trop grand'), 'warning');
-      else {
-        
-        $oParentDirectory = extractDirectory(__file__, true);
-        
-        if (!$oDirectory = $oParentDirectory->getParent()->addDirectory('documents')) dspm(t('Impossible de créer le répertoire de destination des fichiers'), 'error');
-        else {
-          
-          $sExtension = '';
-          
-          if ($iExtension = strrpos($_FILES[$sFile]['name'], '.')) $sExtension = strtolower(substr($_FILES[$sFile]['name'], $iExtension));
-          
-          if ($sExtension == '.php') dspm(xt('L\'extension "%s" de ce fichier est interdite !', new HTML_Strong($sExtension)), 'warning');
-          else {
-            
-            $sName = $sPath.$sExtension;
-            $sPath = $oDirectory->getRealPath().'/'.$sName;
-            
-            if(!move_uploaded_file($_FILES[$sFile]['tmp_name'], $sPath)) dspm(t('Problème lors du chargement du fichier'), 'warning');
-            else {
-              
-              $oResult = new XML_Element($sFile, $sName);
-              
-              dspm(xt('Fichier %s ajouté dans %s', new HTML_Strong($sName), (string) $oDirectory));
-            }
-          }
-        }
-      }
-    }
-    
-    return $oResult;
-  }
-  
   public function validateElement(XML_Element $oElement, $bID = false) {
     
     foreach ($oElement->getChildren() as $oChild) if ($oChild->isElement()) $this->validateElement($oChild);
+    
+    $iFile = 0;
     
     foreach ($oElement->getAttributes() as $oAttribute) {
       
@@ -203,32 +165,49 @@ class DBX_Module extends XDB_Module {
             
             // $sPath = $this->readOption("file[@name='$sValue']");
             
-            
           break;
+          
+          case 'file' :
             
-          /*case 'use-statut' :
-            
-            $sPublish = $oElement->readByName('date-publish', $this->getNamespace());
-            $sEnd = $oElement->readByName('date-end', $this->getNamespace());
-            
-            if (!$sPublish || !$sEnd) {
+            if ($sID = $oElement->getAttribute('temp-file', $this->getNamespace('lc'))) {
               
-              dspm(xt('Impossible d\'indiquer l\'état de l\'élément %s', view($oElement)), 'action/warning');
+              // move file
               
-            } else {
-              
-              $oToday = new DateTime();
-              $oPublish = new DateTime($sPublish);
-              $oEnd = new DateTime($sEnd);
-              
-              if ($oPublish > $oToday) $iStatut = 5;
-              else if ($oEnd < $oToday) $iStatut = 20;
-              else $iStatut = 10;
-              
-              $oElement->setAttribute('statut', $iStatut);
+              if ((!$aFiles = array_val('files', $this->getSessionForm())) ||
+                (!$aFile = array_val($sID, $aFiles))) {
+                
+                $this->dspm(xt('Fichier perdu. Veuillez nous en excuser'), 'error');
+              }
+              else {
+                
+                if (!$oDirectory = Controler::getDirectory($sValue)) {
+                  
+                  $this->dspm(xt('Impossible d\'ouvrir le répertoire de destination des fichiers %s',
+                  new HTML_Strong($sValue)), 'action/error');
+                }
+                else {
+                  
+                  if (!$oFile = Controler::getFile($aFile['path'])) {
+                    
+                    $this->dspm(xt('Fichier source perdu. Veuillez nous en excuser'), 'error');
+                  }
+                  else {
+                    
+                    if (!$sFile = $oFile->moveFree((string) $oDirectory)) {
+                      
+                      $oElement->remove();
+                    }
+                    else {
+                      
+                      $oElement->set($sFile);
+                      $iFile++;
+                    }
+                  }
+                }
+              }
             }
             
-          break;*/
+          break;
           
           case 'model' :
           default :
@@ -236,9 +215,14 @@ class DBX_Module extends XDB_Module {
             // dspm(xt('Attribut %s inconnu dans l\'élément %s',
               // new HTML_Strong($oAttribute->getName()), view($oAttribute->getParent())), 'xml/warning');
         }
-        
-        $oAttribute->remove();
       }
+    }
+    
+    if ($iFile) $this->dspm(xt('%s fichier téléchargé', new HTML_Strong($iFile)), 'success');
+    
+    foreach ($oElement->getAttributes() as $oAttribute) { // remove all attr after to allow multiple/connected attr use
+      
+      if ($oAttribute->useNamespace($this->getNamespace('lc'))) $oAttribute->remove();
     }
   }
   
@@ -252,6 +236,45 @@ class DBX_Module extends XDB_Module {
     }
     
     return $oTemplate;
+  }
+  
+  private function setFormID() {
+    
+    $sID = uniqid('form-');
+    
+    if (!array_key_exists('forms', $_SESSION)) $_SESSION['forms'] = array();
+    $_SESSION['forms'][$sID] = array();
+    
+    return $sID;
+  }
+  
+  protected function getFormID() {
+    
+    return array_val('sylma_form_id', $_POST);
+  }
+  
+  private function killSessionForm() {
+    
+    if ($this->getSessionForm()) unset($_SESSION['forms'][$this->getFormID()]);
+  }
+  
+  private function &getSessionForm() {
+    
+    if ($this->checkForm()) $aResult =& $_SESSION['forms'][$this->getFormID()];
+    else $aResult = array();
+    
+    return $aResult;
+  }
+  
+  private function checkForm() {
+    
+    $bResult = (array_key_exists('forms', $_SESSION) &&
+      ($sForm = $this->getFormID()) &&
+      array_key_exists($sForm, $_SESSION['forms']));
+      
+    if (!$bResult) $this->dspm(xt('Formulaire invalide, la session a été perdu. Veuillez nous en excuser.'), 'error');
+    
+    return $bResult;
   }
   
   /*** Headers ***/
@@ -288,17 +311,32 @@ class DBX_Module extends XDB_Module {
   
   /*** Values ***/
   
+  /*
+   * Evaluate $oValues and prepare special fields beginning with 'sylma-' for schema validation
+   * Return value will be the new document ready for validation
+   * $oValues can also be altered to resend to form if validation fail
+   * 
+   * @param TODO $oValues The document to read and transform
+   * @param XML_Document|null $oParent The parent document to insert children to,
+   *    if null, a new document will be builded then returned
+   * @return XML_Document The document sent as @param or a new document with result nodes ready for validation
+   **/
+  
   protected function buildValues($oValues, XML_Element $oParent = null) {
     
     if (!$oParent) $oParent = new XML_Document($this->getEmpty());
+    $sDirectory = nonull_val($this->readOption('upload-path', false), 'uploads');
+    
+    if ($oFormID = $oValues->getByName('sylma_form_id')) $oFormID->remove();
     
     foreach ($oValues->getChildren() as $oValue) {
       
       if ($oValue->isElement()) {
         
-        if (substr($oValue->getName(), 0, 10) == 'sylma-attr') {
-          
-          $sName = substr($oValue->getName(), 11);
+        $sPrefix = substr($oValue->getName(), 0, 10);
+        $sName = substr($oValue->getName(), 11);
+        
+        if ($sPrefix == 'sylma-attr') {
           
           if ($sName == 'id') $oParent->setAttribute('xml:'.$sName, $oValue->read());
           else $oParent->setAttribute($sName, $oValue->read());
@@ -307,9 +345,18 @@ class DBX_Module extends XDB_Module {
           
           // $sName = substr($oValue->getName(), 12);
         // }
+        else if ($sPrefix == 'sylma-file') {
+          
+          $oElement = new XML_Element($sName, $oValue->readByName('path'), array(
+            'name' => $oValue->readByName('name')), $oParent->getNamespace());
+          
+          $oElement->setAttribute('lc:temp-file', $oValue->readByName('id'), $this->getNamespace('lc'));
+          
+          $oParent->add($oElement);
+        }
         else {
           
-          $oChild = $oParent->addNode($this->getFullPrefix().$oValue->getName(), null, null, $this->getNamespace());
+          $oChild = $oParent->addNode($oValue->getName());
           
           if ($oValue->isComplex()) $this->buildValues($oValue, $oChild);
           else $oChild->add($oValue->read());
@@ -362,6 +409,9 @@ class DBX_Module extends XDB_Module {
     // $this->switchDirectory();
     
     $sID = array_val(0, $aOptions, '');
+    $sFormID = $this->setFormID();
+    
+    if ($aForm = $oRedirect->getArgument('post-form')) $_SESSION['forms'][$sFormID] = $aForm; // copy previous form arguments
     
     $this->switchDirectory(); // to dbx directory
     
@@ -459,6 +509,7 @@ class DBX_Module extends XDB_Module {
             if (!$oForm = Controler::getFile($sForm.'.eml', $this->getDirectory())) $this->switchDirectory();
             
             $mResult = $this->runAction($sForm, array(
+              'form-id' => $sFormID,
               'model' => $oModel,
               'module' => $this->getAdmin(),
               'action' => $this->getAdminPath()."/edit-do/$sID".SYLMA_FORM_REDIRECT_EXTENSION,
@@ -466,17 +517,24 @@ class DBX_Module extends XDB_Module {
             
             // $mResult = $mResult->getDocument()->updateNamespaces(SYLMA_NS_XHTML, SYLMA_NS_XHTML);
           }
-          
         }
         
       break;
       
       case 'edit-do' :
         
-        if (!$this->edit($oRedirect, $sID)) $oRedirect->setPath($this->getAdminPath().'/edit/'.$sID);
-        else $oRedirect->setPath($sList);
-        
-        $mResult = $oRedirect;
+        if ($this->checkForm()) {
+          
+          if (!$this->edit($oRedirect, $sID)) {
+            
+            $oRedirect->setPath($this->getAdminPath().'/edit/'.$sID);
+            $oRedirect->setArgument('post-form', $this->getSessionForm());
+          }
+          else $oRedirect->setPath($sList);
+          
+          $this->killSessionForm();
+          $mResult = $oRedirect;
+        }
         
       break;
       
@@ -504,6 +562,7 @@ class DBX_Module extends XDB_Module {
           if (!$oForm = Controler::getFile($sForm.'.eml', $this->getDirectory())) $this->switchDirectory();
           
           $mResult = $this->runAction($sForm, array(
+            'form-id' => $sFormID,
             'model' => $oModel,
             'module' => $this->getAdmin(),
             'action' => $sPath.SYLMA_FORM_REDIRECT_EXTENSION,
@@ -514,20 +573,25 @@ class DBX_Module extends XDB_Module {
       
       case 'add-do' :
         
-        if (!$this->add($oRedirect)) {
+        if ($this->checkForm()) {
           
-          $sPath = $this->readOption('add-path', false);
-          $sPath = $sPath ? $sPath : $this->getAdminPath().'/add';
+          if (!$this->add($oRedirect)) {
+            
+            $sPath = $this->readOption('add-path', false);
+            $sPath = $sPath ? $sPath : $this->getAdminPath().'/add';
+            
+            $oRedirect->setPath($sPath);
+            $oRedirect->setArgument('post-form', $this->getSessionForm());
+            
+          } else {
+            
+            if (!$sPath = $this->readOption('redirect', false)) $sPath = $sList;
+            $oRedirect->setPath($sPath);
+          }
           
-          $oRedirect->setPath($sPath);
-          
-        } else {
-          
-          if (!$sPath = $this->readOption('redirect', false)) $sPath = $sList;
-          $oRedirect->setPath($sPath);
+          $mResult = $oRedirect;
+          $this->killSessionForm();
         }
-        
-        $mResult = $oRedirect;
         
       break;
       
@@ -548,6 +612,7 @@ class DBX_Module extends XDB_Module {
       case 'delete' :
         
         $oPath = new XML_Path($this->getDirectory().'/delete.eml', array(
+          'form-id' => $sFormID,
           'id' => $sID,
           'action' => $this->getAdminPath()."/delete-do/$sID.redirect"), true, false); //.redirect
         
@@ -557,17 +622,22 @@ class DBX_Module extends XDB_Module {
       
       case 'delete-do' :
         
-        if (!$sID) {
+        if ($this->checkForm()) {
           
-          dspm(t('ID manquant'), 'action/error');
+          if (!$sID) {
+            
+            dspm(t('ID manquant'), 'action/error');
+            
+          } else {
+            
+            $this->delete($sID);
+            dspm(xt('Elément %s supprimé', $sID), 'success');
+            
+            $oRedirect->setPath($sList);
+            $mResult = $oRedirect;
+          }
           
-        } else {
-          
-          $this->delete($sID);
-          dspm(xt('Elément %s supprimé', $sID), 'success');
-          
-          $oRedirect->setPath($sList);
-          $mResult = $oRedirect;
+          $this->killSessionForm();
         }
         
       break;
@@ -584,16 +654,63 @@ class DBX_Module extends XDB_Module {
           $sName = array_last($aPath);
           
           $aTempPath = $aPath;
-          $sCSSName = array_shift($aTempPath);
           
-          foreach ($aTempPath as $sElement) $sCSSName .= "[$sElement]";
+          // $sCSSName = array_unshift($aTempPath);
+          // dspf(array($aPath, $aTempPath));
+          // foreach ($aTempPath as $sElement) $sCSSName .= "[$sElement]";
           
           $mResult = $this->runAction('add', array(
             'element' => $this->getEmpty()->getRoot(),
             'name' => $sName,
-            'css-name' => $sCSSName,
+            'css-name' => '',//$sCSSName,
             'path' => $sPath,
             'schema' => $this->getSchema()));
+        }
+        
+      break;
+      
+      case 'upload' :
+        
+        if ($this->checkForm()) $mResult = $this->upload();
+        
+      break;
+      
+      case 'upload-view' :
+        
+        if ($this->checkForm()) {
+          
+          $sID = $oRedirect->getDocument('post')->readByName('id');
+          $sName = $oRedirect->getDocument('post')->readByName('name');
+          
+          if (!$sID || !$sName) {
+            
+            dspm(xt('ID ou chemin non spécifié pour le fichier temporaire'), 'error');
+          }
+          else {
+            
+            if ((!$aFiles = array_val('files', $this->getSessionForm())) ||
+              (!$aFile = array_val($sID, $aFiles))) {
+              
+              $this->dspm(xt('Fichier perdu. Veuillez nous en excuser'), 'error');
+            }
+            else {
+              
+              if (!$oFile = Controler::getFile($aFile['path'])) {
+                
+                dspm(xt('Le fichier a été perdu, veuillez nous en excuser'), 'error');
+              }
+              else {
+                
+                $oFile = $oFile->parseXML();
+                $oFile->setAttribute('lc:temp-file', $sID, $this->getNamespace('lc'));
+                
+                $mResult = $this->runAction('upload-view', array(
+                  'title' => $aFile['title'],
+                  'name' => $sName,
+                  'file' => $oFile));
+                }
+            }
+          }
         }
         
       break;
@@ -680,6 +797,72 @@ class DBX_Module extends XDB_Module {
     $_SESSION[$sDocument] = (string) $this->getHeaders();
   }
   
+  private function upload() {
+    
+    $oResult = null;
+    
+    $sFile = 'file-uploader';
+    
+    if (!isset($_FILES[$sFile]) || !$_FILES[$sFile]['name']) {
+      
+      $this->dspm(xt('Aucun fichier envoyé'), 'warning');
+    }
+    else {
+      
+      if ($_FILES[$sFile]['size'] > SYLMA_UPLOAD_MAX_SIZE) {
+        
+        $this->dspm(t('Le fichier lié est trop grand'), 'warning');
+      }
+      else {
+        
+        if (!$oDirectory = Controler::getUser()->getDirectory('#tmp')) {
+          
+          $this->dspm(t('Impossible de créer ou lire le répertoire de destination des fichiers'), 'error');
+        }
+        else {
+          
+          $sExtension = '';
+          $sName = $_FILES[$sFile]['name'];
+          
+          if ($iExtension = strrpos($sName, '.')) $sExtension = strtolower(substr($sName, $iExtension));
+          
+          if ($sExtension == '.php') {
+            
+            $this->dspm(xt('L\'extension "%s" de ce fichier est interdite !', new HTML_Strong($sExtension)), 'warning');
+          }
+          else { // valid file
+            
+            $sID = uniqid('file-');
+            
+            $sPath = $oDirectory.'/'.$sID.$sExtension;
+            $sRealPath = $oDirectory->getRealPath().'/'.$sID.$sExtension;
+            
+            if(!move_uploaded_file($_FILES[$sFile]['tmp_name'], $sRealPath)) {
+              
+              $this->dspm(t('Problème lors du chargement du fichier'), 'warning');
+            }
+            else { // success
+              
+              $aForm =& $this->getSessionForm();
+              
+              if (!array_val('files', $aForm)) $aForm['files'] = array();
+              
+              $aForm['files'][$sID] = array(
+                'path' => $sPath,
+                'title' => $sName);
+              
+              $oResult = $sID;
+              $this->dspm(xt('Fichier %s ajouté dans %s', new HTML_Strong($sName), (string) $oDirectory));
+            }
+          }
+        }
+      }
+    }
+    
+    return $oResult;
+    
+  }
+  
   public function getList($sPath, $sAction = 'list') {
     
     $mResult = null;
@@ -750,7 +933,12 @@ class DBX_Module extends XDB_Module {
         // if ($oFile = $oValues->saveTemp()) $this->getDB()->run("add to {$this->getParent()} {$oFile->getSystemPath()}");
         $sPath = $this->getPath('/'.$sParent);
         
-        if ($this->query($sPath, array(), false)) {
+        if (!$this->query($sPath, array(), false)) {
+          
+          dspm(t('Une erreur est survenue, impossible de sauvegarder, réessayer plus tard'), 'error');
+          $this->dspm(xt('Elément parent %s introuvable', new HTML_Strong($sPath)), 'action/error');
+        }
+        else {
           
           $this->insert($oValues, $sPath);
           

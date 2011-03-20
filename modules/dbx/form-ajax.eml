@@ -8,7 +8,12 @@
         <le:argument>action</le:argument>
         <le:get-argument name="action"/>
       </li:set-parameter>
+      <li:set-parameter>
+        <le:argument>form-id</le:argument>
+        <le:get-argument name="form-id"/>
+      </li:set-parameter>
     </le:template>
+    <le:argument format="php-string" name="form-id"/>
     <le:argument format="XML_Document" name="model"/>
     <le:argument format="php-string" name="action"/>
     <le:argument format="php-string" name="module"/>
@@ -34,11 +39,23 @@
       <le:string>/form-ajax.js</le:string>
     </li:add-js>
   </le:window>
-  <la:layer extend-base="sylma.dbx-classes" class="form">
+  <la:layer extend-base="sylma.dbx" class="form">
     <la:property name="pathAdd">
       <le:string>
         <le:get-argument name="module"/>
         <le:argument>/add-field</le:argument>
+      </le:string>
+    </la:property>
+    <la:property name="pathUpload">
+      <le:string>
+        <le:get-argument name="module"/>
+        <le:argument>/upload</le:argument>
+      </le:string>
+    </la:property>
+    <la:property name="pathUploadView">
+      <le:string>
+        <le:get-argument name="module"/>
+        <le:argument>/upload-view</le:argument>
       </le:string>
     </la:property>
     <le:get-argument name="model">

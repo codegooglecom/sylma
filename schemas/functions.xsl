@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:lc="http://www.sylma.org/schemas" xmlns:func="http://exslt.org/functions" version="1.0" extension-element-prefixes="func exsl">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:lc="http://www.sylma.org/schemas" xmlns:func="http://exslt.org/functions" xmlns:ld="http://www.sylma.org/directory" version="1.0" extension-element-prefixes="func exsl">
   
   <xsl:import href="functions-schema.xsl"/>
+  
+  <func:function name="lc:get-name">
+    <xsl:param name="source" select="."/>
+    <func:result name="name" select="local-name($source)"/>
+  </func:function>
+  
+  <func:function name="lc:get-file">
+    <xsl:param name="source" select="."/>
+    <func:result select="/*/*[2]/ld:file[@lc:id-file = $source/@lc:file-ref]" ld:ns="null"/>
+  </func:function>
   
   <func:function name="lc:get-model">
     <xsl:param name="source" select="."/>
@@ -62,11 +72,6 @@
         <func:result select="local-name()"/>
       </xsl:otherwise>
     </xsl:choose>
-  </func:function>
-  
-  <func:function name="lc:get-name">
-    <xsl:param name="source" select="."/>
-    <func:result name="name" select="local-name($source)"/>
   </func:function>
   
   <func:function name="lc:is-complex">

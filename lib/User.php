@@ -53,9 +53,29 @@ class User {
     $this->aGroups = $aGroups;
   }
   
-  public function getDirectory($sSubDirectory = '') {
+  public function getDirectory($sPath = '') {
     
-    return Controler::getDirectory('/users/'.$this->getName());
+    global $sylma;
+    
+    if ($sPath && $sPath[0] == '#') {
+      
+      switch (substr($sPath, 1)) {
+        
+        case 'tmp' :
+          
+          $sPath = Controler::getSettings('@path-temp');
+          
+        break;
+        
+        default :
+          
+          dspm(xt('Unknown token directory %s for user', new HTML_Strong($sPath)), 'file/error');
+          
+        break;
+      }
+    }
+    
+    return Controler::getDirectory($sPath);
   }
   
   public function getName() {

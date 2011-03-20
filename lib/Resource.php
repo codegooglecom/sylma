@@ -771,6 +771,89 @@ class XML_File extends XML_Resource {
     return file_get_contents($this->getRealPath());
   }
   
+  /**
+   * Alias of moveSecured() with $bSecured set to true. Move a file WITH security rights
+   * 
+   * @param string $sDirectory Targeted directory
+   * @param string $sName Optional new name
+   * @return null|XML_File The result from moveSecured() with $bSecured set to true
+   */
+  public function move($sDirectory, $sName = '') {
+    
+    return $this->moveSecured($sDirectory, $sName);
+  }
+  
+  /**
+   * Alias of moveSecured() with $bSecured set to false. Move a file WITHOUT security rights
+   * 
+   * @param string $sDirectory Targeted directory
+   * @param string $sName Optional new name
+   * @return null|string The result from moveSecured() with $bSecured set to false
+   */
+  public function moveFree($sDirectory, $sName = '') {
+    
+    return $this->moveSecured($sDirectory, $sName, false);
+  }
+  
+  /**
+   * Move a file with or without security rights, depends on @param $bSecured
+   * - This file must be writable
+   * - The target file shouldn't exist
+   * - The target directory must be writable
+   * 
+   * If @param $bSecured is set to TRUE :
+   * - Rights will be kept
+   * 
+   * If @param $bSecured is set to FALSE :
+   * - Rights will not be kept and new rights will depends on new parent directory
+   * - The target directory must be readable, but not necessary writable
+   * 
+   * @param string $sDirectory Targeted directory
+   * @param string $sName Optional new name
+   * @return null|string|XML_File If $bSecured is set to true, the resulting new XML_file if move success or null if not
+   *    If $bSecured is set to false, then it will return (string) path if move success or null if not.
+   */
+  protected function moveSecured($sDirectory, $sNewName = '', $bSecured = true) {
+    
+    $oResult = null;
+    
+    if ($this->checkRights(MODE_WRITE)) {
+      
+      $sName = $this->getName();
+      if (!$sNewName) $sNewName = $sName;
+      
+      if ((!$oDirectory = Controler::getDirectory($sDirectory)) ||
+        ($bSecured && !$oDirectory->checkRights(MODE_WRITE))) {
+        
+        dspm(xt('Impossible de déplacer %s dans %s, le répertoire est introuvable ou privé',
+          $this->parse(), new HTML_Strong($sDirectory)), 'warning');
+      }
+      else if (rename($this->getRealPath(), $oDirectory->getRealPath().'/'.$sNewName)) {
+        
+        $this->update();
+        
+        if ($oDirectory != $this->getParent()) {
+          
+          if ($bSecured) $oDirectory->getSettings()->updateFile($sNewName,
+            $this->getOwner(), $this->getGroup(), $this->getMode()); // copy security attributes
+          
+          $this->getSettings()->deleteFile($sName);
+        }
+        
+        if ($bSecured) $oResult = $oDirectory->updateFile($sNewName);
+        else $oResult = $oDirectory.'/'.$sNewName; // if not secured, target file may be not readable
+        
+        // Controler::addMessage(t('Fichier déplacé !'), 'success');
+        
+        // update directory settings
+        $this->getSettings()->updateFileName($this->getName(), $sName);
+        
+      } else dspm(t('Impossible de déplacer le fichier !'), 'warning');
+    }
+    
+    return $oResult;
+  }
+  
   public function rename($sNewName) {
     
     $oResult = null;
@@ -852,7 +935,7 @@ class XML_File extends XML_Resource {
       'write' => booltostr($this->checkRights(MODE_WRITE)),
       'execution' => booltostr($this->checkRights(MODE_EXECUTION)),
       'size' => $iSize,
-      'extension' => $this->getExtension()));
+      'extension' => $this->getExtension()), SYLMA_NS_DIRECTORY);
   }
 }
 

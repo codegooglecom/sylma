@@ -33,7 +33,7 @@ class Controler {
     
     global $aDefaultInitMessages;
     global $aExecutableExtensions;
-    global $aDB;
+    global $sylma;
     
     self::$iStartTime = microtime(true);
     self::$aActions[] = new XML_Action();
@@ -46,6 +46,9 @@ class Controler {
     // Define error_report
     self::setReportLevel();
     
+    // Check for maintenance mode
+    if ($aMaintenance = self::loadMaintenance()) return $aMaintenance[0];
+    
     // Main Messages object
     self::$oMessages = new Messages();
     
@@ -57,8 +60,11 @@ class Controler {
     
     // Set Controler ready
     self::useMessages(true);
-
-    if (SYLMA_USE_DB) self::setDatabase(new XML_Database($aDB));
+    
+    // init xml database
+    if (isset($sylma['db']['enable'])) self::setDatabase(new XML_Database($sylma['db']));
+    
+    if (isset($sylma['test']['montest'])) dspm('ok');
     
     // Load Redirect session var, if present means it has been redirected - $_SESSION['redirect'], $_POST in 'document'
     $oRedirect = self::loadRedirect();
@@ -131,6 +137,25 @@ class Controler {
     return self::getWindow();
   }
   
+  private static function loadMaintenance() {
+    
+    global $sylma;
+    $aResult = array();
+    
+    if (isset($sylma['maintenance']['enable']) && !self::getUser()->isMember('0')) { // continue when admin
+      
+      $sPath = isset($_GET['q']) ? $_GET['q'] : '';
+      
+      if ($sPath != $sylma['maintenance']['login-do']) { // continue when 'login-do'
+        
+        if ($sPath == 'login') $aResult[] = file_get_contents($sylma['maintenance']['login']);
+        else $aResult[] = file_get_contents($sylma['maintenance']['file']);
+      }
+    }
+    
+    return $aResult;
+  }
+  
   private static function setReportLevel() {
     
     if (self::isAdmin()) {
@@ -192,7 +217,7 @@ class Controler {
     if (!$sExtension = $oPath->parseExtension(true)) $sExtension = 'html';
     $sExtension = strtolower($sExtension);
     
-    if (self::isAdmin() && $oPath->getIndex(0, true) == 'show-report') {
+    if (self::isAdmin() && ($oPath->getIndex(0, true) == 'show-report' || isset($_POST['sylma_show_report']))) {
       
       $oPath->getIndex();
       
@@ -260,43 +285,6 @@ class Controler {
     
     return self::$iResults;
   }
-  
-  /*public static function addResult($mResult, $sWindow) {
-    
-    $sPath = self::getPath()->getSimplePath();
-    
-    if (!array_key_exists($sPath, self::$aResults)) self::$aResults[$sPath] = array();
-    self::$aResults[$sPath]['result-time'] = microtime(true);
-    
-    if (!array_key_exists($sWindow, self::$aResults[$sPath])) self::$aResults[$sPath][$sWindow] = array();
-    
-    self::$aResults[$sPath][$sWindow][] = $mResult;
-    self::updateResults();
-    
-    self::$hasResult = true;
-    
-    return $mResult;
-  }
-  
-  private static function getResult() {
-    
-    $mResult = null;
-    
-    $sPath = self::getPath()->getSimplePath();
-    $sWindow = self::getPath()->getExtension();
-    
-    if (isset(self::$aResults[$sPath][$sWindow])) {
-      
-      $mResult = array_pop(self::$aResults[$sPath][$sWindow]);
-      
-      if (!count(self::$aResults[$sPath][$sWindow])) unset(self::$aResults[$sPath][$sWindow]);
-      if (!count(self::$aResults[$sPath])) unset(self::$aResults[$sPath]);
-      
-      self::updateResults();
-    }
-    
-    return $mResult;
-  }*/
   
   public static function getResults() {
     
@@ -377,27 +365,35 @@ class Controler {
     return $oRedirect;
   }
   
+  /* Build XML_Document from array, used for $_POST.
+   * 
+   **/
+ 
   private static function loadPost($mValues, XML_Element $oNode, $sName = '') {
     
     $bFirstPass = true;
+    $sIDPrefix = 'sylma-id';
     
     foreach ($mValues as $mKey => $mValue) {
       
       if (is_numeric($mKey)) {
         
+        dspm(xt('Numeric field\'s name are not allowed in $_POST %s', view($_POST)), 'warning');
+      }
+      else if (substr($mKey, 0, strlen($sIDPrefix)) == $sIDPrefix) {
+        
         if (!$sName) {
           
-          dspm(xt('Impossible d\'importer la clé numérique %s dans $_POST (%s), le nom de l\'élément n\'est pas spécifié',
+          dspm(xt('Impossible d\'importer la clé ID %s dans $_POST (%s), le nom de l\'élément n\'est pas spécifié',
             new HTML_Strong($mKey), view($_POST)), 'action/warning');
         }
         else {
-          
           
           if ($bFirstPass) {
             
             if (!$oNode->getParent()) {
               
-              dspm(xt('Impossible d\'importer la clé numérique %s dans $_POST (%s), un élément parent doit être spécifié pour %s',
+              dspm(xt('Impossible d\'importer la clé ID %s dans $_POST (%s), un élément parent doit être spécifié pour %s',
                 new HTML_Strong($mKey), view($_POST), view($oNode)), 'action/warning');
             }
             else {
