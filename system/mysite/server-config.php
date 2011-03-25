@@ -4,6 +4,30 @@
 
 define('DEBUG', false); // DEFAULT = false
 
+// To add customized settings to $sylma, see [sylma]/system/config-sylma.php for more details
+$sylma = array_merge_keys($sylma, array(
+  
+  'users' => array(
+    'server' => array( // server user for cron jobs
+      'ip' => '127.0.0.1', // localhost cannot always be used when multiple domains share same ip
+    ),
+  ),
+  
+  'maintenance' => array(
+    'enable' => null, // DEFAULT = null, warning 'false' will be see as 'true'
+    'file' => 'protected/maintenance.html',
+  ),
+  
+  'db' => array(
+    'enable' => false, // switch to TRUE to enable database
+    'host' => 'http://localhost:8080/exist/services/Query?wsdl',
+    'user' => 'username',
+    'password' => 'password',
+    'collection' => '/mysite',
+    'namespace' => 'http://www.example.com',
+  ),
+));
+
 define('SYLMA_DISABLE_RIGHTS', false); // DEFAULT = false
 define('SYLMA_DISABLE_STATUTS', false); // messages statuts, DEFAULT = false
 
@@ -20,25 +44,6 @@ define('SYLMA_DB_SHOW_QUERIES', false); // DEFAULT = false
 define('SYLMA_DB_SHOW_RESULTS', false); // DEFAULT = false
 
 define('SYLMA_USE_DB', true);
-
-$sylma = array(
-  
-  'maintenance' => array(
-    'enable' => null, // DEFAULT = null, warning 'false' will be see as 'true'
-    'file' => 'protected/maintenance.html',
-    'login' => 'protected/sylma/modules/users/maintenance-login.html',
-    'login-do' => 'sylma/modules/users/interface/login_do.redirect',
-  ),
-  
-  'db' => array(
-    'enable' => true,
-    'host' => 'http://localhost:8080/exist/services/Query?wsdl',
-    'user' => 'username',
-    'password' => 'password',
-    'collection' => '/mysite',
-    'namespace' => 'http://www.example.com',
-  ),
-);
 
 /* Global */ // Could be different for production or test server
 

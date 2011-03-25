@@ -1,8 +1,8 @@
 /* Document JS */
 
 var SYLMA_MODE_EXECUTION = 1, SYLMA_MODE_WRITE = 2, SYLMA_MODE_READ = 4;
-var SYLMA_HIDE_MESSAGES = true;
 var SYLMA_USE_CONSOLE = false;
+var SYLMA_IS_ADMIN = false;
 
 var sylma = {
   
@@ -437,9 +437,9 @@ var sylma = {
         
       break;
       
-      case 9 :
-      
-      break;
+      case 9 : break;
+      case 7 : break; // version="1.0" encoding="utf-8"
+      case 8 : break // doctype
       
       default : sylma.dsp('Impossible d\'ajouter ' + xml.nodeValue + ' de type ' + xml.nodeType);
     }
@@ -493,98 +493,92 @@ var sylma = {
       'url' : sPath + '.' + sWindow,
       'data' : oOptions.arguments,
       'method' : oOptions.method,
-      //'async ' : true,
       'onSuccess' : function(sResult, oXML) {
         
         if (Browser.ie) {
           
           //oXML = { documentElement: self.createXML(oXML.documentElement) }; // not working yet
-          oXML = self.createXML(oXML); // not working yet
+          // oXML = self.createXML(oXML); // not working yet
+          oXML = $(oXML);
           //oXML = oXML.ownerDocument;
         }
         
         var oContentContainer = this.parseAction(oXML);
-        var oContent = self.importNodes(oContentContainer.getFirst());
         
-        if (!oContent) {
+        if (!oContentContainer) {
           
-          sylma.dsp('Aucun contenu');
+          sylma.dsp('Réponse du serveur illisible', 'error');
+        }
+        else {
           
-        } else {
+          var oContent = self.importNodes(oContentContainer.getFirst());
           
-          self.disableNode(oContent, true);
-          
-          if (oOptions.replace) oContent.replaces(oOptions.html);
+          if (!oContent) {
+            
+            sylma.sendPopup('La session a été fermée', 'error');
+          }
           else {
             
-            if (oOptions['html-position']) oContent.inject(oOptions.html, oOptions['html-position']);
-            else oOptions.html.grab(oContent);
+            self.disableNode(oContent, true);
+            
+            if (oOptions.replace) oContent.replaces(oOptions.html);
+            else {
+              
+              if (oOptions['html-position']) oContent.inject(oOptions.html, oOptions['html-position']);
+              else oOptions.html.grab(oContent);
+            }
+            
+            if (oOptions.onLoad) oOptions.onLoad();
+            
+            if (oOptions.position == 'center') {
+              
+              var iLeft = (window.getSize().x - oContent.getSize().x) / 2;
+              var iTop = ($(window).getSize().y - oContent.getSize().y) / 2;
+              
+              oContent.setStyles({'left' : iLeft, 'top' : iTop});
+            }
           }
           
-          if (oOptions.onLoad) oOptions.onLoad();
+          var iOpacity;
           
-          if (oOptions.position == 'center') {
+          // TODO kill old layer
+          //layer.node.destroy(); 
+          
+          var sRecall = oContentContainer.getProperty('recall');
+          
+          if (sRecall) { // get new object
             
-            var iLeft = (window.getSize().x - oContent.getSize().x) / 2;
-            var iTop = ($(window).getSize().y - oContent.getSize().y) / 2;
+            var sMethods = oContentContainer.getProperty('methods');
             
-            oContent.setStyles({'left' : iLeft, 'top' : iTop});
+            if (sMethods) { // has methods, first load them
+              
+              var oMethods = new Request({
+                
+                url : '/index.txt?sylma-result-id=' + sMethods,
+                onFailure : function() { sylma.sendPopup('Réponse du serveur illisible', 'error'); },
+                onSuccess : function(sResponse) {
+                  
+                  eval(sResponse);
+                  self.replace(sRecall, oOptions, oContent);
+                  
+                  if (oContent) self.enableNode(oContent);
+                  
+              }}).get();
+            }
+            else { // no methods
+              
+              self.replace(sRecall, oOptions);
+              self.enableNode(oContent, iOpacity);
+              
+              if (oOptions.onSuccess) oOptions.onSuccess(oContent);
+            }
           }
-        }
-        
-        var iOpacity;
-        
-        // TODO kill old layer
-        //layer.node.destroy(); 
-        
-        var sRecall = oContentContainer.getProperty('recall');
-        
-        if (sRecall) {
-          
-          // get new object
-          
-          var sMethods = oContentContainer.getProperty('methods');
-          
-          if (sMethods) {
+          else {
             
-            // has methods, first load em
-            
-            var oMethods = new Request({
-              
-              'url' : '/index.txt?sylma-result-id=' + sMethods,
-              //'evalResponse' : true,
-              onFailure : function() {
-                
-                sylma.dsp('failure');
-              },
-              
-              'onSuccess' : function(sResponse) {
-                
-                //alert(sResponse);
-                eval(sResponse);
-                self.replace(sRecall, oOptions, oContent);
-                
-                if (oContent) self.enableNode(oContent);
-                
-            }}).get();
-            
-          } else {
-            
-            // no methods
-            
-            self.replace(sRecall, oOptions);
-            self.enableNode(oContent, iOpacity);
-            
+            self.enableNode(oContent, iOpacity); // only change content node
             if (oOptions.onSuccess) oOptions.onSuccess(oContent);
+            //oCaller.node = oContent;
           }
-          
-        } else {
-          
-          // only change content node
-          self.enableNode(oContent, iOpacity);
-          
-          if (oOptions.onSuccess) oOptions.onSuccess(oContent);
-          //oCaller.node = oContent;
         }
       }
     }).send();
@@ -670,9 +664,8 @@ var sylma = {
           }}
       }));
     
-    document.body.grab(oMessage);
-    sylma.center(oMessage);
-    //this.center(oMessage);
+    $(document.body).grab(oMessage);
+    this.center(oMessage);
     
     oMessage.fade('in');
     
@@ -730,31 +723,12 @@ var sylma = {
   
   /* Utils */
   
-  dsp_message : function(mContent, sTargetId) {
+  dsp : function(sContent, sStatut) {
     
-    if (!sTargetId) sTargetId = 'sylma-messages-default';
-    
-    var eMessages = $(sTargetId);
-    
-    if (!(typeOf(eMessages) == 'element')) {
+    if (SYLMA_IS_ADMIN) {
       
-      eMessages = new Element('div', {'id' : sTargetId, 'class' : 'sylma-messages'});
-      
-      var oContent = $('content');
-      if (!oContent) oContent = $(document.body);
-      
-      oContent.grab(eMessages, 'bottom');
-    }
-    
-    eMessages.grab(mContent, 'top');
-  },
-  
-  dsp : function(sContent, sTargetId) {
-    
-    if (SYLMA_USE_CONSOLE) console.log(sContent);
-    else {
-      var sStyle = 'border-bottom: 1px solid gray; margin-bottom: 0.5em;';
-      this.dsp_message(new Element('div', {'html' : sContent, 'style' : sStyle}));
+      if (SYLMA_USE_CONSOLE) console.log(sContent);
+      else this.sendPopup(sContent, sStatut);
     }
   },
   
@@ -885,49 +859,59 @@ sylma.classes.request = new Class({
     var oContainer = $('msg-admin');
     // sylma.dsp(oResult.childNodes[0].tagName);
     //if (!$(oResult)) {sylma.dsp(typeOf(oResult));sylma.dsp(bText);}
-    // if (oResult.firstChild) oResult = oResult.firstChild;
     
-    if (Browser.ie) {
+    if (!oResult) {
       
-      alert(oResult);
-      // var oContent = oResult.('content')[0];
+      sylma.sendPopup('Erreur ! L\'appel a échoué', 'error');
+    }
+    else {
       
-    } else {
+      if (typeOf(oResult) != 'element') oResult = oResult.firstChild;
+      //oResult = 
+      //sylma.dsp(typeOf(oResult));
+      
+      
+      if (Browser.ie) {
+        
+        oResult = sylma.createXML(oResult);
+        // sylma.dsp(typeOf(oResult));
+        // var oContent = oResult.('content')[0];
+      }
       
       var oMessages = oResult.getElement('messages');
       var oContent = oResult.getElement('content');
       var oInfos = oResult.getElement('infos');
-    }
-    
-    if (oContainer && oInfos) oContainer.adopt(sylma.importNodes(oInfos.getFirst()), 'top');
-    
-    var sMessages = sylma.defaultMessagesId;
-    // if (!oTarget) oTarget = sylma.defaultMessagesContainer;
-    
-    if (oMessages && oMessages.getChildren().length) {
       
-      var oMessagesContent = oMessages.getFirst();
+      if (oContainer && oInfos) oContainer.adopt(sylma.importNodes(oInfos.getFirst()), 'top');
       
-      if (oMessagesContent) {
+      var sMessages = sylma.defaultMessagesId;
+      // if (!oTarget) oTarget = sylma.defaultMessagesContainer;
+      
+      if (oMessages && oMessages.getChildren().length) {
         
-        oMessagesContent = sylma.importNodes(oMessagesContent);
+        var oMessagesContent = oMessages.getFirst();
         
-        //oMessagesContent.fade('hide');
-        
-        oMessagesContent.addClass('messages-float');
-        if (oContainer) oContainer.adopt(oMessagesContent, 'top');
-        
-        var pf = new PulseFade(oMessagesContent, {'times':  6, 'duration':  600, 'max' : 1, 'min' : 0.2}); //
-        pf.start();
-        
-        //oMessagesContent.fade('in').;
+        if (oMessagesContent) {
+          
+          oMessagesContent = sylma.importNodes(oMessagesContent);
+          
+          //oMessagesContent.fade('hide');
+          
+          oMessagesContent.addClass('messages-float');
+          if (oContainer) oContainer.adopt(oMessagesContent, 'top');
+          
+          var pf = new PulseFade(oMessagesContent, {'times':  6, 'duration':  600, 'max' : 1, 'min' : 0.2}); //
+          pf.start();
+          
+          //oMessagesContent.fade('in').;
+        }
       }
+      
+      if (oContainer) this.cleanStack(oContainer, 8);
+      
+      if (bText && oContent) return oContent.get('text');
+      else return oContent;
     }
-    
-    if (oContainer) this.cleanStack(oContainer, 8);
-    
-    if (bText && oContent) return oContent.get('text');
-    else return oContent;
   }
 });
 

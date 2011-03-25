@@ -526,7 +526,7 @@ class HTML_Action extends XML_Action {
       
     } catch(Exception $e) {
       
-      if (DEBUG && Controler::isAdmin()) {
+      if (Controler::isAdmin()) {
         
         dsp($e->getMessage());
         dsp($e->getFile().' : ligne '.$e->getLine());

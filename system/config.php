@@ -37,7 +37,6 @@ define('SYLMA_FIELD_PREFIX', 'field-');
 define('SYLMA_SECURITY_FILE', 'directory.sml');
 define('SYLMA_DEFAULT_MODE', 0770);
 define('SYLMA_DEFAULT_GROUP', 'internet');
-define('SYLMA_ANONYMOUS', 'famous');
 define('SYLMA_AUTHENTICATED', 'users');
 
 define('SYLMA_UPLOAD_MAX_SIZE', 10000000);

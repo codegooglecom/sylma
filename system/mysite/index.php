@@ -10,6 +10,7 @@ if (!defined("PATH_SEPARATOR")) {
   else define("PATH_SEPARATOR", ":");
 }
 
+require('protected/sylma/system/config-sylma.php'); // temporary included directory with $sylma global
 require('server-config.php'); // no directory yet included
 require('system/config.php'); // now default directory inclusion is sylma main directory
 
@@ -18,15 +19,7 @@ else error_reporting(0);
 
 libxml_use_internal_errors(true);
 
-require('Sylma.php');
-
-// DB
-
-if (SYLMA_USE_DB) {
-  
-  require(PATH_LIBS.'/eXist.php');
-  require(PATH_LIBS.'/XML_Database.php');
-}
+if (SYLMA_USE_DB) require(PATH_SYLMA.'/modules/exist/XML_Database.php');
 
 // others
 

@@ -1,6 +1,7 @@
 <?php
 
-/* Following nodes are currently implemented :
+/**
+ * Following nodes are currently implemented :
  * - element, complexType, simpleType, attribute, sequence
  * - minInclusive, maxInclusive, length, minLength, maxLength, enumeration, pattern [... TODO]
  * Following has limitations [TODO more details] :
@@ -19,7 +20,7 @@
  * Some abstract classes share identical methods, those classes should be rebuild to avoid this
  * Instances setStatut(), isValid(), use/addMessages(), (..) methods should be merged in an "invalidation" structure/method
  * Finish comments
- **/
+ */
 
 class XSD_Parser extends Module {
   
@@ -70,30 +71,30 @@ class XSD_Parser extends Module {
     return $this->oSchema;
   }
   
-  /*
+  /**
    * Namespace that should be used in the document to validate
-   **/
+   */
   public function getTargetNamespace() {
     
     return $this->getSchema()->getAttribute('targetNamespace');
   }
   
-  /*
+  /**
    * Generate a random ID number incremented each time
    * @return int
-   **/
+   */
   public function getID() {
     
     return $this->iID++;
   }
   
-  /*
+  /**
    * Main parser function that will build the model from the schema and alterate source nodes with model id attribute.
    * Depends and options.
    *
    * @param XML_Document|null $oDatas Document source to build the model result from.
    *   If null 'model' option should be set to (bool) true to generate entire new document
-   **/
+   */
   
   private function buildSchema(XML_Document $oDatas = null) {
     
@@ -181,9 +182,10 @@ class XSD_Parser extends Module {
     return $oGroup;
   }
   
-  /* Load the file infos parse and add it to refs
+  /**
+   * Load the file infos parse and add it to refs
    *
-   **/
+   */
   public function addFile(XML_Element $oNode, XML_Element $oElement, XSD_Model $oModel) {
     
     if ($this->getOption('load-refs')) { // replace ref with corresponding nodes
@@ -541,7 +543,7 @@ abstract class XSD_Node extends XSD_Container { // Used by XSD_Element, XSD_Attr
   
   abstract public function buildInstance(XSD_Instance $oParent);
   
-  /*
+  /**
    * @param XML_Element $oSource Node that represents this object in the schema (xs:element, xs:attribute)
    * @param XSD_Particle|null $oParent Particle that contains this node
    * @param $oNode Unusefull for this class, due to extends
@@ -786,12 +788,12 @@ class XSD_Element extends XSD_Node {
     return $this->getType()->validate($oInstance, $aPath, $bMessages);
   }
   
-  /*
+  /**
    * @param XSD_Instance $oParent Parent particle instance to set instance to
    * @param XML_Element|null $oPrevious Previous element to indicate position to new node, last if null
    * @return XSD_Instance The builded instance object
    * Create new node and instance with getInstance() in node of $oParent's model from his own type
-   **/
+   */
   
   public function buildInstance(XSD_Instance $oParent, XML_Element $oPrevious = null) {
     
@@ -820,11 +822,11 @@ class XSD_Element extends XSD_Node {
     return $oInstance;
   }
   
-  /*
+  /**
    * @param XSD_Particle|null $oParent Parent particle instance of the new element instance
    * @param XML_Element $oNode Source node of the instance
    * Create then add from $oNode, a new XSD_Model in instances array
-   **/
+   */
   
   public function getInstance($oParent, XML_Element $oNode) {
     
@@ -1194,14 +1196,15 @@ class XSD_Particle extends XSD_Class {
     return $oResult;
   }
   
-  /* Validate self and distribute, on a name base, xs:element to instances
+  /**
+ * Validate self and distribute, on a name base, xs:element to instances
    * Most part of the model building will append here
    * @param XSD_Instance The instance to validate to
    * @param array $aPath The list of parent's name if validation append on an inside node
    * @param boolean $bMessages Do must the validation display error message.
    *  If validation failed before, error messages will not be displayed for only builded model
    * @return boolean Return [true] if validation success
-   **/
+   */
   public function validate(XSD_Instance $oInstance, $aPath = array(), $bMessages = true) {
     
     if (!$oInstance) { // temp ?
@@ -1715,7 +1718,7 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
   
   private $oBase = null;
   
-  /*
+  /**
    * @param XML_Element $oSource Node that represents this object in the schema (xs:complexType)
    * @param XSD_Particle|null $oParent Particle that contains this node
    * @param $oNode Unusefull for this class, due to extends

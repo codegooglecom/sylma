@@ -7,7 +7,7 @@ class User {
   private $aGroups = array();
   private $aArguments = array();
   
-  public function __construct($sName = null, $aGroups = array(), $aArguments = array()) {
+  public function __construct($sName = null, array $aGroups = array(), array $aArguments = array()) {
     
     if ($sName) $this->setReal();
     else $this->setReal(false);
@@ -48,9 +48,9 @@ class User {
     return $this->aGroups;
   }
   
-  public function setGroups($aGroups) {
+  public function setGroups(array $aGroups) {
     
-    $this->aGroups = $aGroups;
+    if (is_array($aGroups)) $this->aGroups = $aGroups;
   }
   
   public function getDirectory($sPath = '') {
@@ -103,7 +103,7 @@ class User {
     $this->aArgument[$sKey] = $sValue;
   }
   
-  public function setArguments($aArguments = array()) {
+  public function setArguments(array $aArguments = array()) {
     
     if (is_array($aArguments)) $this->aArguments = $aArguments;
   }
@@ -166,10 +166,9 @@ class User {
   
   public function parse() {
     
-    $oNode = new HTML_Div(array(
-      new HTML_A(SYLMA_PATH_USER_EDIT.$this->getName(), $this->getArgument('full-name')),
-      ' ('.implode(', ', $this->getGroups()).')'), array('id' => 'user-info'));
+    $sName = $this->getArgument('full-name').' ['.$this->getName().']';
     
-    return $oNode;
+    //' ('.implode(', ', $this->getGroups()).')'
+    return new HTML_A(SYLMA_PATH_USER_EDIT.$this->getName(), $sName);
   }
 }

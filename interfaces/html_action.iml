@@ -15,6 +15,7 @@
   <method path="add-css" name="addCSS">
     <argument name="path" format="php-string"/>
   </method>
+  <method path="get-head" name="getHead"/>
   <method path="add-onload" name="addOnLoad">
     <argument name="content">
       <format>php-string</format>

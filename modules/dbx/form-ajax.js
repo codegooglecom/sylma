@@ -125,7 +125,7 @@ Object.append(sylma.dbx, {
       if (oFrame.contentDocument.childNodes.length) {
         
         var eResult = sylma.importNodes(oFrame.contentDocument.childNodes[0]);
-        var sID = req.parseAction($(eResult), true);
+        var sID = req.parseAction(eResult, true);
         
         this.loader.fade('out');
         

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <groups>
-  <group owner="root" name="0">
-    <member>daajack</member>
-  </group>
-  <group owner="root" name="admin">
-    <member>peter</member>
+  <group owner="root" name="0"/>
+  <group owner="root" name="web"/>
+  <group owner="root" name="users"/>
+  <group owner="root" name="famous">
+    <member>anonymous</member>
   </group>
 </groups>

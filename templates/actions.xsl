@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:ld="http://www.sylma.org/directory" version="1.0">
   <xsl:template match="controler">
     <div class="msg-actions">
       <xsl:apply-templates select="action"/>
@@ -67,7 +67,7 @@
             <span class="msg-actions-hidden-count">
               <xsl:value-of select="count(files/*)"/>
             </span>
-            <xsl:for-each select="files/file">
+            <xsl:for-each select="files/ld:file">
               <xsl:choose>
                 <xsl:when test="@first-time">
                   <a href="{$path-editor}?path={@full-path}">

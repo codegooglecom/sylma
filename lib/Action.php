@@ -287,6 +287,12 @@ class XML_Action extends XML_Document {
         // run method
         if ($aArgumentsPatch) $oResult = $this->runMethod($mObject, $sMethod, $aArgumentsPatch, $bStatic);
         
+        // format output with @le:function
+        if ($oElement->hasAttribute('function', SYLMA_NS_EXECUTION)) {
+          
+          $oResult = $this->runFunction($oElement, $oResult);
+        }
+        
         // check variable
         $this->setVariableElement($oElement, $oResult);
         
@@ -595,33 +601,7 @@ class XML_Action extends XML_Document {
       
       case 'function' :
         
-        if (!$sName = $oElement->getAttribute('name')) {
-          
-          dspm(xt('Nom introuvable pour la fonction %s dans %s', view($oElement), $this->getPath()->parse()), 'action/error');
-          
-        } else {
-          
-          switch ($sName) {
-            
-            case 'urlencode' : $mResult = urlencode($this->buildArgument($oElement->getChildren())); break;
-            case 'add-quote' : $mResult = addQuote($this->buildArgument($oElement->getChildren())); break;
-            case 'escape-path' : $mResult = '"'.xmlize($this->buildArgument($oElement->getChildren())).'"'; break;
-            case 'format-date' :
-              
-              $mResult = $this->buildArgument($oElement->getFirst());
-              $oElement->getFirst()->remove();
-              
-              if (!$sFormat = $oElement->getAttribute('format')) $sFormat = 'd.m.Y';
-              
-              $mResult = date($sFormat, strtotime($mResult));
-              
-            break;
-            
-            default:
-              
-              dspm(xt('Function %s inconnue, %s dans %s', new HTML_Strong($sName), view($oElement), $this->getPath()->parse()), 'action/error');
-          }
-        }
+        $mResult = $this->runFunction($oElement);
         
       break;
       
@@ -923,23 +903,76 @@ class XML_Action extends XML_Document {
     if (!$oElement->testAttribute('return', true)) $mResult = null;
     $mResult = $bSubReturn ? $mSubResult : $mResult;
     
-    // msg
+    return $mResult;
+  }
+  
+  /**
+   * Run the function indicate either in the @name of a le:function or in a @le:function of a li:*
+   * The element's children will be use as argument, some functions can use more than one argument
+   * @todo Must be normalized then documented
+   * @param XML_Element $oElement The element to process
+   * @return mixed The returned result of the function called
+   */
+  
+  protected function runFunction(XML_Element $oElement, $mValue = null) {
     
-    /*if (Controler::useStatut('action/report') && $bSubReturn) {
+    $mResult = null;
+    
+    if ($oElement->useNamespace(SYLMA_NS_EXECUTION)) {
       
-      dspm(array(xt('%s return sub-result  :', view($oElement)), view($mSubResult, false)), 'action/report');
+      if (!$sName = $oElement->getAttribute('name')) {
+        
+        $this->dspm(xt('Nom introuvable pour la fonction %s dans %s', view($oElement), $this->getPath()->parse()), 'action/error');
+      }
+      else {
+        
+        $mValue = $this->buildArgument($oElement->getChildren());
+      }
+      
+    } else {
+      
+      if (!$sName = $oElement->getAttribute('function', SYLMA_NS_EXECUTION)) {
+        
+        $this->dspm(xt('Nom introuvable pour la fonction %s dans %s', view($oElement), $this->getPath()->parse()), 'action/error');
+      }
     }
-    // Clone some attribute when element is an le:action
-    /*
-    if ($oElement->isElement() && $oElement->getName(true) == 'action' && $oElement->useNamespace(SYLMA_NS_EXECUTION) && is_object($mResult)) {
+    
+    if ($sName) {
       
-      if (($mResult instanceof XML_Document) || ($mResult instanceof XML_Element))
-        $mResult->cloneAttributes($oElement, array('class', 'style', 'id'));
-      else if ($mResult instanceof XML_NodeList && $mResult->length && $mResult->item(0)->isElement())
-        $mResult->item(0)->cloneAttributes($oElement, array('class', 'style'));
-      
+      switch ($sName) {
+        
+        case 'urlencode' : $mResult = urlencode($mValue); break;
+        case 'add-quote' : $mResult = addQuote($mValue); break;
+        case 'escape-path' : $mResult = '"'.xmlize($mValue).'"'; break;
+        case 'format-date' :
+          
+          $mDate = $mValue;
+          $sFormat = '';
+          
+          if ($mValue instanceof XML_NodeList) {
+            
+            $mDate = $mValue->item(0);
+            $sFormat = $mValue->item(1);
+          }
+          
+          if (!$mDate) {
+            
+            $this->dspm(xt('Date %s invalide dans %s', view($mDate), view($oElement)), 'action/error');
+          }
+          else {
+            
+            if (!$sFormat) $sFormat = 'd.m.Y';
+            $mResult = date($sFormat, strtotime($mDate));
+          }
+          
+        break;
+        
+        default:
+          
+          dspm(xt('Function %s inconnue, %s dans %s', new HTML_Strong($sName), view($oElement), $this->getPath()->parse()), 'action/error');
+      }
     }
-    */
+    
     return $mResult;
   }
   

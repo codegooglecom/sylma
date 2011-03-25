@@ -53,7 +53,7 @@ class Controler {
     self::$oMessages = new Messages();
     
     // Root directory
-    self::$oDirectory = new XML_Directory('', '', array('owner' => 'root', 'group' => '0', 'mode' => '700', 'user-mode' => null));
+    self::$oDirectory = new XML_Directory('', '', $sylma['directories']['root']['rights']);
     
     // Load general parameters - root.xml
     self::loadSettings();
@@ -477,8 +477,10 @@ class Controler {
     
     $oMessage = new HTML_Strong(t('Authentification').' : ');
     
-    if (self::getUser()->isReal()) $oView->addMultiItem($oMessage, self::getUser()->getArgument('full-name'));
-    else $oView->addMultiItem($oMessage, new HTML_Tag('em', t('- aucun -')));
+    if (self::getUser()->isReal()) $oUser = $oView->addMultiItem($oMessage, self::getUser());
+    else $oUser = $oView->addMultiItem($oMessage, new HTML_Tag('em', t('- aucun -')));
+    
+    $oUser->add(new HTML_Br, new HTML_Tag('em', $_SERVER['REMOTE_ADDR'])); // IP
     
     if (self::getUser()->isReal()) {
       
@@ -1074,8 +1076,10 @@ class Controler {
   private static function loadUser() {
     
     // Une redirection a été effectuée
+    global $sylma;
     
-    $oAnonymous = new User('anonymous', array('web', SYLMA_ANONYMOUS), array('full_name' => 'Anonymous'));
+    $aAnonyme = $sylma['users']['anonymouse'];
+    $aAnonyme = new User($aAnonyme['name'], $aAnonyme['groups'], $aAnonyme['arguments']);
     
     if (array_key_exists('user', $_SESSION)) {
       
@@ -1087,13 +1091,25 @@ class Controler {
       
       if (!($oUser instanceof User)) {
         
-        $oUser = $oAnonymous;
+        $oUser = $aAnonyme;
         
         unset($_SESSION['user']);
         self::addMessage(t('Session utilisateur perdue !'), 'warning');
       }
       
-    } else $oUser = $oAnonymous;
+    } else {
+      
+      $aServer = $sylma['users']['server'];
+      
+      if ($_SERVER['REMOTE_ADDR'] == $aServer['ip']) {
+        
+        $oUser = new User($aServer['name'], $aServer['groups'], $aServer['arguments']);
+      }
+      else {
+        
+        $oUser = $aAnonyme;
+      }
+    }
     
     return $oUser;
   }
@@ -1146,7 +1162,7 @@ class Controler {
     }
     
     if (self::getMessages()) self::getMessages()->addMessage(new Message($mMessage, $sPath, $aArgs));
-    //else if (DEBUG) echo 'Impossible d\'ajouter le message : '.$mMessage;
+    else if (DEBUG) echo $mMessage;
   }
   
   public static function useStatut($sStatut) {
