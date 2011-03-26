@@ -21,6 +21,15 @@
         <xsl:value-of select="$directory"/>
         <xsl:text>/resource</xsl:text>
       </la:property>
+      <xsl:variable name="security">
+        <div class="security">
+          <xsl:if test="@owner != $sylma-user">
+            <span><xsl:value-of select="@owner"/></span>
+          </xsl:if>
+          <span><xsl:value-of select="@group"/></span>
+          <span><xsl:value-of select="@mode"/></span>
+        </div>
+      </xsl:variable>
       <div class="resource {name()}">
         <la:event name="mouseenter"><![CDATA[var tools = %ref-object%.rootObject.tools;
 
@@ -44,13 +53,14 @@ return true;]]></la:event>
         <xsl:choose>
           <xsl:when test="contains('jpg,jpeg,gif,png', @extension)">
             <la:property name="isImage">true</la:property>
-            <a rel="lightbox[group]" class="preview clear-block" href="{@full-path}?width=800&amp;height=650">
+            <a class="preview clear-block preview-image" href="{@full-path}?width=800&amp;height=650">
               <img src="{@full-path}?width=96&amp;height=50"/>
+              <xsl:copy-of select="$security"/>
             </a>
           </xsl:when>
           <xsl:otherwise>
             <div class="preview">
-              <input type="hidden"/>
+              <xsl:copy-of select="$security"/>
             </div>
           </xsl:otherwise>
         </xsl:choose>

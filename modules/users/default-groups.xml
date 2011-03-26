@@ -3,6 +3,7 @@
   <group owner="root" name="0"/>
   <group owner="root" name="web"/>
   <group owner="root" name="users"/>
+  <group owner="root" name="server"/>
   <group owner="root" name="famous">
     <member>anonymous</member>
   </group>

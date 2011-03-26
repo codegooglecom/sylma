@@ -22,7 +22,7 @@
         <le:argument>/interface</le:argument>
       </le:string>
     </la:property>
-    <le:action path="/modules/lightbox/slimbox"/>
+    <le:action path="/modules/lightbox/cerabox"/>
     <div id="explorer">
       <le:action path="tools/resource"/>
       <le:action path="tree"/>

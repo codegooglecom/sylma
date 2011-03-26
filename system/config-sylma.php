@@ -12,7 +12,7 @@ $sylma = array(
     'server' => array( // server user for cron jobs
       'name' => 'server', // 'server' user is now reserved
       'ip' => '', // localhost cannot always be used when multiple domains share same ip
-      'groups' => array('famous'), // same as anonymouse
+      'groups' => array('famous', 'server'), // same as anonymouse
       'arguments' => array(),
     ),
     'anonymouse' => array(

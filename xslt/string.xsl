@@ -107,6 +107,12 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  <func:function name="lx:to-upper">
+    <xsl:param name="str"/>
+    <xsl:variable name="lower" select="'abcdefghijklmnopqrstuvwxyz'"/>
+    <xsl:variable name="upper" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+    <func:result select="translate($str,$lower,$upper)"/>
+  </func:function>
   <func:function name="lx:first-case">
     <xsl:param name="str"/>
     <xsl:variable name="firstLetter" select="substring($str,1,1)"/>

@@ -640,7 +640,13 @@ class XML_Action extends XML_Document {
           
           switch ($sClass) {
             
-            case 'xsl' : $mResult = new XSL_Document; break;
+            case 'xsl' :
+              
+              $mResult = new XSL_Document;
+              $this->setGlobalVariables($mResult); // auto variables
+              
+            break;
+            
             case 'xml' : 
             default : $mResult = new XML_Document; break;
           }
@@ -785,14 +791,7 @@ class XML_Action extends XML_Document {
             
             $mResult = new $sClass($mPath, $iMode);
             
-            if ($sClass == 'XSL_Document') { // auto variables
-              
-              $mResult->setParameters(array(
-                'sylma-user' => Controler::getUser()->getName(),
-                'sylma-directory' => (string) $this->getDirectory(),
-                'sylma-lang' => (string) Controler::getSettings('infos/lang'),
-              ));
-            }
+            if ($sClass == 'XSL_Document') $this->setGlobalVariables($mResult); // auto variables
             
             $bRun = true;
           }
@@ -904,6 +903,20 @@ class XML_Action extends XML_Document {
     $mResult = $bSubReturn ? $mSubResult : $mResult;
     
     return $mResult;
+  }
+  
+  /**
+   * Will set as parameters in a template, a selection of global variables that will be available
+   * through all the XSL templates created in an XML_Action.
+   * @param XSL_Template The template to set variables to
+   */
+  protected function setGlobalVariables(XSL_Document $oTemplate) {
+    
+    $oTemplate->setParameters(array(
+      'sylma-user' => Controler::getUser()->getName(),
+      'sylma-directory' => (string) $this->getDirectory(),
+      'sylma-lang' => (string) Controler::getSettings('infos/lang'),
+    ));
   }
   
   /**

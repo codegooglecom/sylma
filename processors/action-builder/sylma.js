@@ -1,7 +1,7 @@
 /* Document JS */
 
 var SYLMA_MODE_EXECUTION = 1, SYLMA_MODE_WRITE = 2, SYLMA_MODE_READ = 4;
-var SYLMA_USE_CONSOLE = false;
+var SYLMA_USE_CONSOLE = true;
 var SYLMA_IS_ADMIN = false;
 
 var sylma = {
@@ -226,9 +226,44 @@ var sylma = {
     return false;
   },
   
+  buildEvent : function(method, sMethod, eNode, oParent) {
+    
+    var oBound;
+    
+    if (method.limit) {
+      
+      var sLimit = method.limit;
+      
+      eNode.addEvent(method.name, function(e) {
+        
+        oBound = sylma.limitFunc.bind(eNode);
+        oBound(e, sMethod, sLimit);
+      });
+    }
+    else if (method.delay) {
+      
+      eNode.addEvent(method.name, function(e) {
+        
+        var oBound = sylma.delayFunc.bind(eNode);
+        oBound(e, sMethod, method.timer, parseInt(method.delay), oParent);
+      });
+    }
+    else if (method.name == 'keydown' && method.key) {
+      
+      eNode.addEvent(method.name, function(e) {
+        
+        var oBound = sylma.keyDownFunc.bind(eNode);
+        oBound(e, sMethod, method.key);
+      });
+      
+    }
+    else eNode.addEvent(method.name, sylma.methods[sMethod]); // add event
+  },
+  
   buildMethods: function(object, oParent) {
     
     var method, eNode;
+    var sLimit, oBound;
     
     for (var sMethod in object.methods) {
       
@@ -251,64 +286,32 @@ var sylma = {
                 
                 eNode = $$(method['path-node']);
                 if (eNode.length) eNode = eNode[0];
-                
-              } else eNode = $(method['id-node']);
-              //sPath = method['path-node'] ? method['path-node'] : '#' + method['id-node']
+              }
+              else eNode = $(method['id-node']);
+              
               if (typeOf(eNode) == 'element') {
-                //sylma.dsp(sPath + ' (' + oParent['sylma-path'] + ') / ' + sMethod);
+                
                 eNode.store('ref-object', oParent); // store parent object in node
-                //sylma.dsp(method['path-node'] + ' :: ' + method['id-node']);
+                this.buildEvent(method, sMethod, eNode, oParent);
+              }
+              else {
                 
-                if (method.limit) {
-                  var sLimit = method.limit;//
-				  // alert(method);
-                  eNode.addEvent(method.name, function(e) {
-                    
-                    var oBound = sylma.limitFunc.bind(eNode);
-                    oBound(e, sMethod, sLimit);
-                  });
-                  
-                } else if (method.delay) {
-                  
-                  eNode.addEvent(method.name, function(e) {
-                    
-                    var oBound = sylma.delayFunc.bind(eNode);
-                    oBound(e, sMethod, method.timer, parseInt(method.delay), oParent);
-                  });
-                  
-                } else if (method.name == 'keydown' && method.key) {
-                  
-                  eNode.addEvent(method.name, function(e) {
-                    
-                    var oBound = sylma.keyDownFunc.bind(eNode);
-                    oBound(e, sMethod, method.key);
-                  });
-                  
-                } else eNode.addEvent(method.name, sylma.methods[sMethod]); // add event
-                
-              } else {
-                
-                //sylma.dsp_f(eNode);
                 this.dsp('Erreur :: Objet DOM introuvable - path : "' + method['path-node'] + '" - id : ' + method['id-node']);
               }
               
             } else {
               
               this.dsp("Erreur :: Méthode '" + sMethod + "' invalide !");
-              this.dsp(this.view(method));
             }
-            
-          } else {
-            
-            // method
+          }
+          else { // method
             
             oParent[method.name] = sylma.methods[sMethod];
           }
-          
-        } else {
+        }
+        else {
           
           this.dsp("Erreur :: Méthode '" + sMethod + "' introuvable !");
-          this.dsp(this.view(method));
         }
       }
     }
@@ -327,24 +330,18 @@ var sylma = {
     var oTarget;
     var bResult = false;
     var aTargets = sTargets.split(',');
+    
     for (var i = 0; i < aTargets.length; i++) {
-      //alert(sTarget);
+      
       var sPath = aTargets[i].replace(/^\s+/g,'').replace(/\s+$/g,'');
       
       if (sPath[0] == '$') {
-        //sylma.dsp(new Date())
         
-		
         if (sPath[1] == '>') var aChildren = this.getChildren(sPath.substring(2));
         else var aChildren = this.getElements(sPath.substring(1));
         
-        // sylma.dsp(sPath);
-        // sylma.dsp(aChildren.length);
-        
-        //sylma.dsp(e.target.get('tag') + '  .' + e.target.get('class') + ' #' + e.target.get('id') + '  ' + e.target.get('text'));
-        //sylma.dsp('---');
         aChildren.each(function(eNode) {
-          //sylma.dsp(eNode.get('tag') + '  .' + eNode.get('class') + ' #' + eNode.get('id') + '  ' + eNode.get('text'))
+          
           if (!bResult && eNode === e.target) bResult = true;
         });
         
@@ -515,7 +512,7 @@ var sylma = {
           
           if (!oContent) {
             
-            sylma.sendPopup('La session a été fermée', 'error');
+            sylma.sendPopup('Erreur dans la réponse ou session expirée', 'error');
           }
           else {
             

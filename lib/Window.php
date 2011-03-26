@@ -126,7 +126,10 @@ class Img implements Main {
       
       $aExtensions = array('jpeg', 'png', 'gif');
       
-      if ($sExtension == 'gif') { // TODO: tmp, seems to work :/
+      $iWidth = Controler::getPath()->getAssoc('width');
+      $iHeight = Controler::getPath()->getAssoc('height');
+      
+      if (!$iWidth && !$iHeight) {
         
         Controler::setContentType($sExtension);
         
@@ -136,28 +139,11 @@ class Img implements Main {
         
         Controler::setContentType($sExtension);
         
-        $iWidth = Controler::getPath()->getAssoc('width');
-        $iHeight = Controler::getPath()->getAssoc('height');
+        if (!$iWidth) $iWidth = $iHeight;
+        if (!$iHeight) $iHeight = $iWidth;
         
-        if ($iWidth || $iHeight) {
-          
-          if (!$iWidth) $iWidth = 200;
-          if (!$iHeight) $iHeight = 200;
-          
-          $img = $this->resize($sExtension, $iWidth, $iHeight, true);
-          
-        } else {
-          
-          $sFunction = 'imagecreatefrom'.strtolower($sExtension);
-          $img = @$sFunction(MAIN_DIRECTORY.$sFilePath) or die("Cannot Initialize new GD image stream");
-          
-          if ($sExtension == 'png' || $sExtension == 'gif') {
-            
-            imagealphablending($img, false);
-            imagesavealpha($img, true);
-          }
-        }
-        //echo Controler::getMessages();
+        $img = $this->resize($sExtension, $iWidth, $iHeight, true);
+        
         // imagefilter($img, IMG_FILTER_GRAYSCALE);
         // imagestring($img, 2, 5, 15, date('H:i:s'), imagecolorallocate($img, 255, 216, 147));
         

@@ -38,6 +38,9 @@
     <xsl:param name="year"/>
     <xsl:param name="to"/>
     <xsl:choose>
+      <xsl:when test="$to = 'simple-full-year'">
+        <xsl:value-of select="concat($day, '.', $i-month, '.', $year)"/>
+      </xsl:when>
       <xsl:when test="$to = 'simple'">
         <xsl:value-of select="concat($day, '.', $i-month, '.', substring($year, 3, 2))"/>
       </xsl:when>

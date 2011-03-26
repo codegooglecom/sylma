@@ -43,7 +43,13 @@ return true;
         <div class="preview">
           <la:event name="click"><![CDATA[if (!%ref-object%.rootObject.tools.isLocked()) %ref-object%.open();
 return true;]]></la:event>
-          <input type="hidden"/>
+          <div class="security">
+            <xsl:if test="@owner != $sylma-user">
+              <span><xsl:value-of select="@owner"/></span>
+            </xsl:if>
+            <span><xsl:value-of select="@group"/></span>
+            <span><xsl:value-of select="@mode"/></span>
+          </div>
         </div>
         <span>
           <xsl:value-of select="@name"/>

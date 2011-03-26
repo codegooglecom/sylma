@@ -50,6 +50,21 @@ a img {
   text-decoration: none;
 }
 
+.security {
+  color: gray;
+  font-size: 9px;
+  position: absolute;
+  text-shadow: 1px 1px #DDDDDD;
+  top: 0px;
+  width: 95%;
+}
+
+.security span {
+  display: block;
+  text-align: right;
+  width: 100%;
+}
+
 /*.resource .tools { left: 30%; top: -60px; width: 0; }*/
 .resource > span {
   margin: 0 auto 0 auto;

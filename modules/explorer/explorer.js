@@ -85,12 +85,25 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
     'initialize' : function(oArgs) {
       
       this.parent(oArgs);
-      //Slimbox.scanPage();
-      this.node.getElements('a').filter(function(el) {
-        return el.rel && el.rel.test(/^lightbox/i);
-      }).slimbox({}, null, function(el) {
-        return (this == el) || ((this.rel.length > 8) && (this.rel == el.rel));
-      });
+      
+      this.updateLightbox();
+    },
+    
+    updateLightbox : function(node) {
+      
+      node = node || this.node;
+      
+      var nodes = node.getElements('a.preview-image');
+      
+      if (nodes.length) {
+        
+        var box = new CeraBox({
+          group: true,
+          errorLoadingMessage: 'The requested content cannot be loaded. Please try again later.',
+        });
+        
+        box.addItems(nodes);
+      }
     },
     
     getCurrent : function() {
@@ -108,7 +121,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
       this.parent(oArguments, {
         'onLoad' : function() {
           
-          Slimbox.scanPage();
+          self.updateLightbox();
           self.parentObject.center();
         }});
     }
@@ -170,8 +183,8 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
         'write' : SYLMA_MODE_WRITE,
         'execution' : SYLMA_MODE_EXECUTION};
       
-      $each(aMode, function(sModeValue, sModeKey) {
-        $each(aRights, function(sRightValue, sRightKey) {
+      Object.each(aMode, function(sModeValue, sModeKey) {
+        Object.each(aRights, function(sRightValue, sRightKey) {
           
           var eInput = this.sub.rights.node.getElement('input[name=resource-' + sModeKey + '-' + sRightKey + ']');
           
@@ -202,7 +215,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
         
         var iMode = 0, iTarget = 0, aMode = [0, 0, 0], aModes = [SYLMA_MODE_READ, SYLMA_MODE_WRITE, SYLMA_MODE_EXECUTION];
         
-        $each(aNodes, function(eInput) {
+        aNodes.each(function(eInput) {
           
           if (eInput.get('checked')) aMode[iTarget] |= aModes[iMode];
           
@@ -264,8 +277,8 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
       
       var bChecked, aNodes = this.sub.rights.node.getElements('input' + sName + '[type=checkbox]');
       
-      $each(aNodes, function(eInput) { if (eInput.get('checked')) bChecked = true; });
-      $each(aNodes, function(eInput) {
+      aNodes.each(function(eInput) { if (eInput.get('checked')) bChecked = true; });
+      aNodes.each(function(eInput) {
         
         if (bChecked) eInput.removeProperty('checked');
         else eInput.set('checked', 'checked');
@@ -376,11 +389,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
         
         options['onSuccess'] = function(node) {
           
-          node.getElements('a').filter(function(el) {
-            return el.rel && el.rel.test(/^lightbox/i);
-          }).slimbox({}, null, function(el) {
-            return (this == el) || ((this.rel.length > 8) && (this.rel == el.rel));
-          });
+          this.parentObject.updateLightbox(node);
         };
       }
       
