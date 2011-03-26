@@ -553,6 +553,7 @@ class XML_Action extends XML_Document {
             
             $mResult = array();
             $mTest = $this->buildArgument($oElement->getFirst()->remove());
+            $bPrevious = false;
             
             foreach ($oElement->getChildren() as $oChild) {
               
@@ -575,19 +576,26 @@ class XML_Action extends XML_Document {
                   
                   // case
                   
-                  if (!$oChild->getChildren()->length) $this->dspm(xt('Arguments insuffisants pour %s dans %s',
-                    view($oChild), view($oElement)), 'error');
-                  else {
+                  // compare values
+                  if (!$mValue = $oChild->getAttribute('test')) {
                     
-                    // compare values
-                    if (!$mValue = $oChild->getAttribute('test')) $mValue = $this->buildArgument($oChild->getFirst()->remove());
-                    
-                    // if same add value
-                    if ($mValue === $mTest) {
+                    if (!$oChild->getChildren()->length) {
                       
-                      $mResult[] = $this->buildArgument($oChild->getChildren());
-                      if ($oChild->testAttribute('break', true)) break;
+                      $this->dspm(xt('Aucun test défini dans %s', view($oChild)), 'warning');
                     }
+                    else {
+                      
+                      $mValue = $this->buildArgument($oChild->getFirst()->remove());
+                    }
+                  }
+                  
+                  // if same add value
+                  if ($bPrevious || $mValue === $mTest) {
+                    
+                    if ($oChild->getChildren()->length) $mResult[] = $this->buildArgument($oChild->getChildren());
+                    
+                    if ($oChild->testAttribute('break', true)) break;
+                    else $bPrevious = true;
                   }
                 }
               }
