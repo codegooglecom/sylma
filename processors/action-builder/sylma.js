@@ -69,6 +69,26 @@ var sylma = {
     
     var self = this;
     
+    if (Browser.ie) {
+      
+      var iVerticalMove = 45;
+      
+      new Request.HTML({
+        'url' : '/sylma/system/ie-warning.xml',
+        'onSuccess' : function(sResult, oResult) {
+          
+          $(document.body).adopt(sResult);
+          var node = $('browser-warning');
+          
+          if (node) {
+            
+            node.set('morph', {'duration' : 500});
+            $('browser-warning').morph({'top' : iVerticalMove, 'opacity' : '0.9', 'width' : '380'});
+          }
+        }
+      }).get(); //&xml-mode=htm
+    }
+    
     var oResult = new Request.JSON({
       
       'url' : '/index.txt?sylma-result-id=' + sID, 

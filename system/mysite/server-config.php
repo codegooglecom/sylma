@@ -20,7 +20,6 @@ $sylma = array_merge_keys($sylma, array(
   
   'db' => array(
     'enable' => false, // switch to TRUE to enable database
-    'host' => 'http://localhost:8080/exist/services/Query?wsdl',
     'user' => 'username',
     'password' => 'password',
     'collection' => '/mysite',

@@ -262,6 +262,7 @@ table.list .tools {
   color: black;
   border: 1px solid #777;
   font-style:italic;
+  z-index: 5;
 }
 
 /* ActionBuilder */
