@@ -361,7 +361,7 @@
       </la:property>
       
       <div class="center field-add">
-        <button>
+        <button type="button">
           <la:event name="click">
            %ref-object%.add();
            return false;
@@ -603,6 +603,13 @@
   <xsl:template match="lc:message">
     <div class="field-message">
       <xsl:copy-of select="node()"/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="actions">
+    <div class="field-actions">
+      <input type="submit" value="Enregistrer"/>
+      <input type="button" value="Annuler" onclick="history.go(-1);"/>
     </div>
   </xsl:template>
   

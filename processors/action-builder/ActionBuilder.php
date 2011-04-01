@@ -84,6 +84,7 @@ class ActionBuilder extends XML_Processor  {
           
         } else {
           
+          
           $oElement->set($this->buildChildren($oElement));
           $mResult = $oElement;
         }
@@ -222,6 +223,12 @@ class ActionBuilder extends XML_Processor  {
           foreach (explode('.', $sClassBase) as $sClass) $sClassResult .= '['.addQuote($sClass).']';
           $oElement->setAttribute($sAttribute, $sClassResult);
         }
+      }
+      
+      if ($oElement->countChildren() == 1 && $oElement->testAttribute('hidden', false)) {
+        
+        $oElement->getFirst()->pushAttribute('style', 'visibility: hidden; opacity: 0');
+        // $oElement->shift(new XML_Element('la:property', 'true', array('name' => 'isOpen'), SYLMA_NS_ACTIONBUILDER));
       }
       
       // ref node : html node visible entity of the object

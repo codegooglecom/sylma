@@ -343,6 +343,12 @@ class XML_Element extends DOMElement implements XML_Composante {
     $this->setAttribute('class', $sClasses);
   }
   
+  public function pushAttribute($sName, $sValue, $sNamespace = null) {
+    
+    $sCurrent = $this->getAttribute($sName, $sNamespace);
+    $this->setAttribute($sName, $sCurrent.$sValue, $sNamespace);
+  }
+  
   /**
    * Import then add with {@link setAttributeNode()} an attribute object to the element
    * @param XML_Attribute $oAttribute Attribute to add to the element

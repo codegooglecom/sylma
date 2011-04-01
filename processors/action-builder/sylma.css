@@ -1,7 +1,9 @@
 /* Document CSS */
 
 .sylma-popup {
+  -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
+  -webkit-box-shadow: 0 0 10px #CCCCCC;
   -moz-box-shadow: 0 0 10px #CCCCCC;
   background-color: #DFEEFF;
   border: 4px solid white;
@@ -12,8 +14,21 @@
   position: fixed;
   top: 40%;
   text-align: center;
+  z-index: 11;
 }
 
 .sylma-popup > div {
   margin-bottom: 10px;
 }
+
+.sylma-overlay-document {
+  background-color: white;
+  opacity: 0.8;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 10;
+}
+

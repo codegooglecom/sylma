@@ -11,6 +11,8 @@
   <xsl:template match="/*">
     <form method="{$method}" action="{$action}" enctype="multipart/form-data">
       
+      <xsl:apply-templates select="*[1]" mode="events"/>
+      
       <input name="sylma_form_id" id="sylma_form_id" value="{$form-id}" type="hidden"/>
       
       <xsl:if test="count(*[1]//*) &gt; $action-top-count">
@@ -31,11 +33,7 @@
       </xsl:apply-templates>
       
       <xsl:apply-templates select="*[1]" mode="notice"/>
-      
-      <div class="field-actions">
-        <input type="submit" value="Enregistrer"/>
-        <input type="button" value="Annuler" onclick="history.go(-1);"/>
-      </div>
+      <xsl:apply-templates select="*[1]" mode="actions"/>
       
     </form>
     

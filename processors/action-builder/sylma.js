@@ -975,17 +975,21 @@ sylma.classes.layer = new Class({
   
   center : function() {
     
-    var iLeft = (window.getSize().x - this.node.getSize().x) / 2;
+    var iLeft = ($(window).getSize().x - this.node.getSize().x) / 2;
     var iTop = ($(window).getSize().y - this.node.getSize().y) / 2;
     
     //this.node.setStyle('top', iTop);
     
     iTop = iTop >= 0 ? iTop : 0;
     
-    var oFX = new Fx.Tween(this.node, {'transition' : 'sine:in:out' });
-    oFX.start('top', iTop);
+    var oFX = new Fx.Morph(this.node, {'transition' : 'sine:in:out' });
     
-    //this.node.tween('left', iLeft);
+    oFX.start({
+      'top': iTop,
+      'left': iLeft
+    });
+    
+    // this.node.tween('left', iLeft);
     //.setStyles({'left' : iLeft, 'top' : iTop});
   },
   
@@ -1032,7 +1036,7 @@ sylma.classes.layer = new Class({
     eval('delete(this.parentObject["' + this['sylma-path'] + '"])');
   },
   
-  'show' : function() {
+  show : function() {
     
     if (!this.isOpen) {
       
@@ -1043,7 +1047,7 @@ sylma.classes.layer = new Class({
     return true;
   },
   
-  'hide' : function(bQuick) {
+  hide : function(bQuick) {
     
     if (bQuick) {
       
@@ -1072,6 +1076,46 @@ sylma.classes.menu = new Class({
     
     return '[obj] ' + this.node + ' #' + this.node.id;
   }
+});
+
+sylma.classes.menuAlert = new Class({
+  
+  Extends : sylma.classes.layer,
+  overlay : null,
+  
+  initialize : function(options) {
+    
+    this.parent(options);
+    this.node.addClass('sylma-popup');
+  },
+  
+  show : function() {
+    
+    this.overlay = new Element('div', {
+      'class' : 'sylma-overlay-document'
+    });
+    
+    $(document.body).setStyles({'height' : $(window).getSize().y + 'px', 'overflow' : 'hidden'});
+    
+    this.overlay.setStyle('opacity', 0);
+    $(document.body).grab(this.overlay);
+    this.overlay.fade(0.8);
+    
+    this.node.setStyles({
+      visibility: 'visible',
+      opacity: 0.1
+    });
+    
+    this.center();
+    this.parent();
+  },
+  
+  hide : function() {
+    
+    $(document.body).setStyles({'height' : 'auto', 'overflow' : 'auto'});
+    this.overlay.fade('out');
+    this.parent();
+  },
 });
 
 sylma.classes['menu-common'] = new Class({
