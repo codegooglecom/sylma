@@ -613,4 +613,6 @@
     </div>
   </xsl:template>
   
+  <xsl:template match="*" mode="events"/>
+  
 </xsl:stylesheet>
