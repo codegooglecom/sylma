@@ -1937,7 +1937,7 @@ class XML_Action extends XML_Document {
     
     // Load stats
     
-    if (SYLMA_ACTION_STATS && Controler::getUser()->isMember('0')) {
+    if (SYLMA_ACTION_STATS && Controler::isAdmin()) {
       
       $bStats = true;
       
@@ -1959,8 +1959,8 @@ class XML_Action extends XML_Document {
     if ($this->isEmpty()) {
       
       if ($bMessage) dspm(xt('Action %s : document vide !', $this->getPath()), 'action/error');
-      
-    } else {
+    }
+    else {
       
       $oRoot = $this->getRoot();
       $oDocument = new XML_Document($oRoot);
@@ -2006,6 +2006,7 @@ class XML_Action extends XML_Document {
                     
                   break;
                   
+                  case 'Redirect' :
                   case 'mixed' :
                     
                     $oResult = $this->buildArgument($oDocument->getFirst());
@@ -2239,7 +2240,7 @@ class XML_Path {
    * @param $bArguments Use of indexed arguments (file/argument1/argument2)
    */
   
-  public function __construct($sPath, $aArguments = null, $bParse = true, $bArguments = true) {
+  public function __construct($sPath, $aArguments = null, $bParse = true, $bArguments = true, $bDebug = true) {
     
     // Remove arguments following '?' of type ..?arg1=val&arg2=val..
     
@@ -2282,13 +2283,13 @@ class XML_Path {
     $this->setPath($sPath);
     $this->sSimplePath = $sPath;
     
-    if ($bParse) $this->parsePath($bArguments);
+    if ($bParse) $this->parsePath($bArguments, $bDebug);
     
     // echo $sPath;
     // dsp($this->aArguments);
   }
   
-  public function parsePath($bArguments = true) {
+  public function parsePath($bArguments = true, $bDebug = true) {
     
     global $aActionExtensions;
     
@@ -2325,7 +2326,12 @@ class XML_Path {
           }
         }
         
-        if ($bError) dspm(xt('Aucun fichier correspondant à %s', new HTML_Strong($sSubPath)), 'action/warning');
+        if ($bError && $bDebug) {
+          
+          $this->dspm(xt('Aucun fichier correspondant à %s dans %s',
+            new HTML_Strong($sSubPath),
+            new HTML_Strong($oDirectory)), 'action/warning');
+        }
         
       } else $oDirectory = $oSubDirectory;
       
@@ -2559,6 +2565,11 @@ class XML_Path {
     
     $sPath = (string) $this;
     return new HTML_A(SYLMA_PATH_EDITOR.'?path='.$sPath, $sPath);
+  }
+  
+  public function dspm($sMessage, $sStatut) {
+    
+    dspm(xt('%s : '.$sMessage, new HTML_Strong('XML_Path')), $sStatut);
   }
   
   public function __toString() {

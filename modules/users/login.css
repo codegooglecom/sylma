@@ -1,0 +1,22 @@
+#sylma-user-login { 
+  width: 65%;
+  padding-top: 15%;
+}
+
+#sylma-user-login .field {
+  margin-bottom: 5px;
+}
+
+#sylma-user-login .field-actions {
+  margin-top: 5%;
+  text-align: right;
+}
+
+#sylma-user-lock {
+  background: url(lock_delete.png) no-repeat 50% 50%;
+  float: left;
+}
+
+#sylma-user-lock.sylma-https {
+  background-image: url(lock.png)
+}

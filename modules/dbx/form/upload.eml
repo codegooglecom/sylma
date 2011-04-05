@@ -14,7 +14,7 @@
     </le:argument>
   </le:settings>
   <le:recall>
-    <le:template path="upload-view.xsl">
+    <le:template path="upload.xsl">
       <li:set-parameter>
         <le:argument>title</le:argument>
         <le:get-argument name="title"/>

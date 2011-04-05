@@ -4,51 +4,34 @@ class DBX_Module extends XDB_Module {
   
   private $oModel = null;
   
-  private $bSelfDirectory = true;
-  private $oSelfDirectory = null;
-  private $oExtendDirectory = null;
-  
   private $oHeaders = null;
-  private $oOptions = null;
-  private $aOptions = array(); // cache array
   
   public function __construct(XML_Directory $oDirectory, XML_Document $oSchema, XML_Document $oOptions) {
     
     $this->setName('dbx');
     
-    $this->setDirectory(__file__);
-    $this->oSelfDirectory = $this->getDirectory();
-    $this->oExtendDirectory = $oDirectory;
-    
-    $this->switchDirectory();
-    
-    $this->oOptions = $oOptions;
-    
-    if (!$oSchema) $this->dspm(xt('Aucun schéma défini'), 'action/warning');
-    else $this->setSchema($oSchema, true, $this->readOption('database/prefix'));
-    
-    $this->oHeaders = new XML_Document($this->getOption('headers'));
-    
-    $this->setDocument($this->readOption('database/document'));
+    $this->addDirectory(__file__, __class__);
+    $this->addDirectory($oDirectory);
     
     $this->setNamespace('http://www.sylma.org/modules/dbx', 'dbx', false);
     $this->setNamespace(SYLMA_NS_XHTML, 'html', false);
     $this->setNamespace(SYLMA_NS_SCHEMAS, 'lc', false);
+    
+    $this->setOptions($oOptions);
+    
+    if (!$oSchema) $this->dspm(xt('Aucun schéma défini'), 'action/warning');
+    else $this->setSchema($oSchema, true, $this->readOption('database/prefix', false));
+    
+    $this->oHeaders = new XML_Document($this->getOption('headers', false));
+    
+    $this->setDocument($this->readOption('database/document', false));
   }
   
   /*** Module Extension ***/
   
   private function getExtendDirectory() {
     
-    return $this->oExtendDirectory;
-  }
-  
-  private function switchDirectory() {
-    
-    if ($this->bSelfDirectory) $this->oDirectory = $this->oExtendDirectory;
-    else $this->oDirectory = $this->oSelfDirectory;
-    
-    $this->bSelfDirectory = !$this->bSelfDirectory;
+    return $this->getDirectory();
   }
   
   private function getAdminPath() {
@@ -64,45 +47,6 @@ class DBX_Module extends XDB_Module {
     $oResult->addNode($this->getFullPrefix().$sName, null, null, $this->getNamespace());
     
     return $oResult;
-  }
-  
-  private function parsePath($sPath, $sPrefix = '') {
-    
-    if (!$sPrefix) $sPrefix = $this->getPrefix();
-    
-    return preg_replace('/([-\w]+)/', $sPrefix.':\1', $sPath);
-  }
-  
-  /*** Options ***/
-  
-  private function getOptions() {
-    
-    return $this->oOptions;
-  }
-  
-  public function getOption($sPath, $bDebug = true) {
-    
-    if (!$this->getOptions()) $this->dspm(xt('Aucune option définie'), 'action/warning');
-    else {
-      
-      if (!array_key_exists($sPath, $this->aOptions) || !$this->aOptions[$sPath]) {
-        
-        $sRealPath = $this->parsePath($sPath, 'dbx');
-        
-        if ((!$this->aOptions[$sPath] = $this->getOptions()->get($sRealPath, $this->getNS())) && $bDebug)
-          dspm(xt('Option %s introuvable dans %s', new HTML_Strong($sPath), view($this->getOptions())), 'action/warning');
-      }
-      
-      return $this->aOptions[$sPath];
-    }
-    
-    return null;
-  }
-  
-  public function readOption($sPath, $bDebug = true) {
-    
-    if ($oOption = $this->getOption($sPath, $bDebug)) return $oOption->read();
-    else return '';
   }
   
   /*** Various ***/
@@ -230,7 +174,7 @@ class DBX_Module extends XDB_Module {
     
     $oTemplate = null;
     
-    if ($oFormExtension = $this->getOptions()->getByName('template-form', $this->getNamespace('dbx'))) {
+    if ($oFormExtension = $this->getOption('template-form')) {
       
       $oTemplate = $oFormExtension->getFirst();
     }
@@ -406,126 +350,22 @@ class DBX_Module extends XDB_Module {
     
     if ($oOptions) $this->getHeaders()->shift($oOptions->getChildren());
     
-    // $this->switchDirectory();
-    
     $sID = array_val(0, $aOptions, '');
     $sFormID = $this->setFormID();
     
     if ($aForm = $oRedirect->getArgument('post-form')) $_SESSION['forms'][$sFormID] = $aForm; // copy previous form arguments
     
-    $this->switchDirectory(); // to dbx directory
-    
     switch ($sAction) {
       
-      case 'view' :
-        
-        $aOptions = array('messages' => false, 'load-refs' => false);
-        
-        if (!$oModel = $this->getEmpty()->getModel($this->getSchema(), $aOptions)) {
-          
-          $this->dspm(xt('Impossible de charger l\'élément'), 'error');
-          $this->dspm(xt('Modèle de base invalide pour %s', view($oValues)), 'action/error');
-          
-        } else {
-          
-          // load extended datas
-          
-          
-          $oTemplate = $this->getDocument('view-xq.xsl', true);
-          
-          $oTemplate->setParameters(array(
-            'path' => $this->getPath("//id('$sID')"),
-            'prefix' => $this->getFullPrefix()));
-          
-          $oModel->add($oModel->parseXSL($this->getDocument('build-headers.xsl', true)));
-          
-          $oQuery = new XML_XQuery($oModel->parseXSL($oTemplate, false), $this->getNS());
-          $oItem = new XML_Document($oQuery);
-          
-          if ($oItem->isEmpty()) {
-            
-            $this->dspm(xt('Impossible de charger l\'élément'), 'error');
-            $this->dspm(xt('Document vide'), 'action/error');
-            
-          } else {
-            
-            if (!$oModel = $oItem->getModel($this->getSchema(), $aOptions)) {
-              
-              $this->dspm(xt('Impossible de charger l\'élément'), 'error');
-              $this->dspm(xt('Aucun modèle chargé pour %s', view($oItem)), 'action/error');
-              
-            } else {
-              
-              // run action
-              
-              $aArguments = array('model' => $oModel);
-              
-              if ($oFormExtension = $this->getOptions()->getByName('template-view', $this->getNamespace('dbx'))) {
-                
-                $aArguments['template-extension'] = $oFormExtension->getFirst();
-              }
-              
-              $mResult = $this->runAction('view', $aArguments);
-            }
-          }
-        }
-        
-      break;
+      case 'view' : $mResult = $this->view($sID); break;
       
-      case 'edit' :
-        
-        $sPath = $this->readOption('use-child', false);
-        
-        if (!$oValues = $this->getPost($oRedirect, false)) {
-          
-          if ($sPath) $oValues = $this->get($this->getPath("//id('$sID')/".$this->parsePath($sPath)), true);
-          else $oValues = $this->load($sID);
-        }
-        
-        if (!$oValues) {
-          
-          dspm(xt('L\'élément identifié par %s n\'existe pas', new HTML_Strong($sID)), 'warning');
-        }
-        else {
-          
-          $aOptions = array();
-          if ($sPath) $aOptions['path'] = $this->readOption('database/name').'/'.$sPath;
-          
-          if (!$oModel = $oValues->getModel($this->getSchema(), $aOptions)) {
-            
-            dspm(xt('Impossible de charger l\'élément'), 'error');
-            dspm(xt('Aucun modèle chargé pour %s', view($oValues)), 'action/error');
-            
-          }
-          else {
-            
-            // $this->buildRefs($oModel, true);
-            // dspf($oModel);
-            $sForm = $this->readOption('ajax', false) == 'true' ? 'form-ajax' : 'form';
-            
-            $this->switchDirectory();
-            
-            // first, look for corresponding file in targetDirectory
-            if (!$oForm = Controler::getFile($sForm.'.eml', $this->getDirectory())) $this->switchDirectory();
-            
-            $mResult = $this->runAction($sForm, array(
-              'form-id' => $sFormID,
-              'model' => $oModel,
-              'module' => $this->getAdmin(),
-              'action' => $this->getAdminPath()."/edit-do/$sID".SYLMA_FORM_REDIRECT_EXTENSION,
-              'template-extension' => $this->getTemplateExtension()));
-            
-            // $mResult = $mResult->getDocument()->updateNamespaces(SYLMA_NS_XHTML, SYLMA_NS_XHTML);
-          }
-        }
-        
-      break;
+      case 'edit' : $mResult = $this->edit($oRedirect, $sID, $sFormID); break;
       
       case 'edit-do' :
         
         if ($this->checkForm()) {
           
-          if (!$this->edit($oRedirect, $sID)) {
+          if (!$this->editDo($oRedirect, $sID)) {
             
             $oRedirect->setPath($this->getAdminPath().'/edit/'.$sID);
             $oRedirect->setArgument('post-form', $this->getSessionForm());
@@ -540,33 +380,14 @@ class DBX_Module extends XDB_Module {
       
       case 'add' :
         
-        if (!$oValues = $this->getPost($oRedirect, false)) $oValues = $this->getEmpty();
-        
-        if (!$oModel = $oValues->getModel($this->getSchema(), array('messages' => (bool) $oRedirect->getDocument('post')))) {
+        if ($oTemplate = $this->getTemplate('form/index.xsl')) {
           
-          dspm(xt('Impossible de charger l\'élément'), 'error');
-          dspm(xt('Aucun modèle chargé pour %s', view($oValues)), 'action/error');
-          
-        } else {
-          
-          // dspf($oModel);
-          // $this->buildRefs($oModel, true);
-          $sPath = $this->readOption('add-do-path', false);
-          $sPath = $sPath ? $sPath : $this->getAdminPath().'/add-do';
-          
-          $sForm = $this->readOption('ajax', false) == 'true' ? 'form-ajax' : 'form';
-          
-          $this->switchDirectory();
-          
-          // first, look for corresponding file in targetDirectory
-          if (!$oForm = Controler::getFile($sForm.'.eml', $this->getDirectory())) $this->switchDirectory();
-          
-          $mResult = $this->runAction($sForm, array(
-            'form-id' => $sFormID,
-            'model' => $oModel,
-            'module' => $this->getAdmin(),
-            'action' => $sPath.SYLMA_FORM_REDIRECT_EXTENSION,
-            'template-extension' => $this->getTemplateExtension())); //.redirect
+          $mResult = $this->add(
+            $oRedirect,
+            $sFormID,
+            $oTemplate,
+            $this->readOption('add-do-path', false),
+            $this->getTemplateExtension());
         }
         
       break;
@@ -575,7 +396,7 @@ class DBX_Module extends XDB_Module {
         
         if ($this->checkForm()) {
           
-          if (!$this->add($oRedirect)) {
+          if (!$this->addDo($oRedirect)) {
             
             $sPath = $this->readOption('add-path', false);
             $sPath = $sPath ? $sPath : $this->getAdminPath().'/add';
@@ -598,14 +419,14 @@ class DBX_Module extends XDB_Module {
       case 'simple-list' :
         
         $this->loadView($oRedirect, $aOptions);
-        $mResult = $this->getList($this->getAdmin().'/simple-list', 'simple-list');
+        $mResult = $this->getList($this->getAdmin().'/list/simple', 'simple-list');
         
       break;
       
       case 'list' :
         
         $this->loadView($oRedirect, $aOptions);
-        $mResult = $this->getList($this->getAdmin().'/simple-list');
+        $mResult = $this->getList($this->getAdmin().'/list/simple');
         
       break;
       
@@ -642,30 +463,7 @@ class DBX_Module extends XDB_Module {
         
       break;
       
-      case 'add-field' :
-        
-        if (!$sPath = array_val('path', $aOptions)) {
-          
-          $this->dspm(xt('Impossible d\'ajouter de champs pour le moment, chemin non spécifié'), 'error');
-        }
-        else {
-          
-          $aPath = explode('/', $sPath);
-          $sName = array_last($aPath);
-          
-          $aTempPath = $aPath;
-          
-          // $sCSSName = array_unshift($aTempPath);
-          // dspf(array($aPath, $aTempPath));
-          // foreach ($aTempPath as $sElement) $sCSSName .= "[$sElement]";
-          
-          $mResult = $this->runAction('add', array(
-            'element' => $this->getEmpty()->getRoot(),
-            'name' => $sName,
-            'css-name' => '',//$sCSSName,
-            'path' => $sPath,
-            'schema' => $this->getSchema()));
-        }
+      case 'add-field' : $this->addField(array_val('path', $aOptions));
         
       break;
       
@@ -675,43 +473,7 @@ class DBX_Module extends XDB_Module {
         
       break;
       
-      case 'upload-view' :
-        
-        if ($this->checkForm()) {
-          
-          $sID = $oRedirect->getDocument('post')->readByName('id');
-          $sName = $oRedirect->getDocument('post')->readByName('name');
-          
-          if (!$sID || !$sName) {
-            
-            dspm(xt('ID ou chemin non spécifié pour le fichier temporaire'), 'error');
-          }
-          else {
-            
-            if ((!$aFiles = array_val('files', $this->getSessionForm())) ||
-              (!$aFile = array_val($sID, $aFiles))) {
-              
-              $this->dspm(xt('Fichier perdu. Veuillez nous en excuser'), 'error');
-            }
-            else {
-              
-              if (!$oFile = Controler::getFile($aFile['path'])) {
-                
-                dspm(xt('Le fichier a été perdu, veuillez nous en excuser'), 'error');
-              }
-              else {
-                
-                $oFile = $oFile->parseXML();
-                $oFile->setAttribute('lc:temp-file', $sID, $this->getNamespace('lc'));
-                
-                $mResult = $this->runAction('upload-view', array(
-                  'title' => $aFile['title'],
-                  'name' => $sName,
-                  'file' => $oFile));
-                }
-            }
-          }
-        }
+      case 'upload-view' : $mResult = $this->uploadView($oRedirect);
         
       break;
       
@@ -734,17 +496,234 @@ class DBX_Module extends XDB_Module {
       break;
     }
     
-    $this->switchDirectory();
-    
-    /*if (!$mResult instanceof Redirect && $sAction != 'list' && !$this->getOption('no-action', false)) {
-      
-      $mResult = new HTML_Div($mResult);
-      $mResult->shift(new HTML_A($sList, t('< Retour à la liste'), array('class' => 'dbx-link-list')));
-      
-      $mResult = $mResult->getChildren();
-    }*/
-    
     return $mResult;
+  }
+  
+  /**
+   * Build the form to add an element
+   * @param Redirect $oRedirect The redirect object containing POST request
+   * @param string $sFormID The token generated for the form
+   * @param XML_Document $oTemplate The main template that will be used for parsing
+   * @param string $sAddDo The action path of the form
+   * @param XML_Element $oExtension The extensions to add at the end of the main template
+   * @return XML_Document The resulting form document
+   */
+  protected function add(Redirect $oRedirect, $sFormID, XML_Document $oTemplate, $sAddDo = '', $oExtension = null) {
+    
+    $oResult = null;
+    
+    if (!$oValues = $this->getPost($oRedirect, false)) $oValues = $this->getEmpty();
+    
+    if (!$oModel = $oValues->getModel($this->getSchema(), array('messages' => (bool) $oRedirect->getDocument('post')))) {
+      
+      dspm(xt('Impossible de charger l\'élément'), 'error');
+      $this->dspm(xt('Aucun modèle chargé pour %s', view($oValues)), 'action/error');
+    }
+    else {
+      
+      $sPath = $sAddDo ? $sAddDo : $this->getAdminPath().'/add-do';
+      
+      $sForm = $this->readOption('ajax', false) == 'true' ? 'form/ajax' : 'form';
+      
+      $oTemplate->setParameters(array(
+        'action' => $sPath.SYLMA_FORM_REDIRECT_EXTENSION,
+        'form-id' => $sFormID,
+      ));
+      
+      $oTemplate->includeElement($oExtension);
+      
+      // first, look for corresponding file in targetDirectory
+      
+      $oResult = $this->runAction($sForm, array(
+        'model' => $oModel,
+        'module' => $this->getAdmin(),
+        'template' => $oTemplate,
+      ));
+    }
+    
+    return $oResult;
+  }
+  
+  /**
+   * Generate a view from an element with the given ID
+   * @param string $sID The ID of the item to retrieve
+   * @return XML_Document Resulting document view
+   */
+  protected function view($sID) {
+    
+    $aOptions = array('messages' => false, 'load-refs' => false);
+    $oResult = null;
+    
+    if (!$oModel = $this->getEmpty()->getModel($this->getSchema(), $aOptions)) {
+      
+      $this->dspm(xt('Impossible de charger l\'élément'), 'error');
+      $this->dspm(xt('Modèle de base invalide pour %s', view($oValues)), 'action/error');
+      
+    } else {
+      
+      // load extended datas
+      
+      $oTemplate = $this->getTemplate('/view/xquery.xsl');
+      
+      $oTemplate->setParameters(array(
+        'path' => $this->getPath("//id('$sID')"),
+        'prefix' => $this->getFullPrefix()));
+      
+      $oModel->add($oModel->parseXSL($this->getTemplate('build-headers.xsl')));
+      
+      $oQuery = new XML_XQuery($oModel->parseXSL($oTemplate, false), $this->getNS());
+      $oItem = new XML_Document($oQuery);
+      
+      if ($oItem->isEmpty()) {
+        
+        $this->dspm(xt('Impossible de charger l\'élément'), 'error');
+        $this->dspm(xt('Document vide'), 'action/error');
+        
+      } else {
+        
+        if (!$oModel = $oItem->getModel($this->getSchema(), $aOptions)) {
+          
+          $this->dspm(xt('Impossible de charger l\'élément'), 'error');
+          $this->dspm(xt('Aucun modèle chargé pour %s', view($oItem)), 'action/error');
+          
+        } else {
+          
+          // run action
+          
+          $aArguments = array('model' => $oModel);
+          
+          if ($oFormExtension = $this->getOption('template-view')) {
+            
+            $aArguments['template-extension'] = $oFormExtension->getFirst();
+          }
+          
+          $oResult = $this->runAction('view', $aArguments);
+        }
+      }
+    }
+    
+    return $oResult;
+  }
+  
+  /**
+   * Generate a form to edit an element
+   * @param Redirect $oRedirect The redirect object containing POST values
+   * @param string $sID The ID of the element to edit
+   * @param string $sFormID The token ID of the form
+   * @return XML_Document The resulting form element
+   */
+  protected function edit(Redirect $oRedirect, $sID, $sFormID) {
+    
+    $sPath = $this->readOption('use-child', false);
+    
+    if (!$oValues = $this->getPost($oRedirect, false)) {
+      
+      if ($sPath) $oValues = $this->get($this->getPath("//id('$sID')/".$this->parsePath($sPath)), true);
+      else $oValues = $this->load($sID);
+    }
+    
+    if (!$oValues) {
+      
+      dspm(xt('L\'élément identifié par %s n\'existe pas', new HTML_Strong($sID)), 'warning');
+    }
+    else {
+      
+      $aOptions = array();
+      if ($sPath) $aOptions['path'] = $this->readOption('database/name').'/'.$sPath;
+      
+      if (!$oModel = $oValues->getModel($this->getSchema(), $aOptions)) {
+        
+        dspm(xt('Impossible de charger l\'élément'), 'error');
+        dspm(xt('Aucun modèle chargé pour %s', view($oValues)), 'action/error');
+        
+      }
+      else {
+        
+        $sForm = $this->readOption('ajax', false) == 'true' ? 'form/ajax' : 'form';
+        
+        // first, look for corresponding file in targetDirectory
+        // if (!$oForm = Controler::getFile($sForm.'.eml', $this->getDirectory())) $this->switchDirectory();
+        
+        $mResult = $this->runAction($sForm, array(
+          'form-id' => $sFormID,
+          'model' => $oModel,
+          'module' => $this->getAdmin(),
+          'action' => $this->getAdminPath()."/edit-do/$sID".SYLMA_FORM_REDIRECT_EXTENSION,
+          'template-extension' => $this->getTemplateExtension()));
+        
+        // $mResult = $mResult->getDocument()->updateNamespaces(SYLMA_NS_XHTML, SYLMA_NS_XHTML);
+      }
+    }
+  }
+  
+  /**
+   * Extract and generate a single field from a schema
+   * @param array $sPath The path that will indicate the element to load. ie: /items/item/name
+   * @return XML_Document The resulting field element
+   */
+  protected function addField($sPath) {
+    
+    if (!$sPath) {
+      
+      $this->dspm(xt('Impossible d\'ajouter de champs pour le moment, chemin non spécifié'), 'error');
+    }
+    else {
+      
+      $aPath = explode('/', $sPath);
+      $sName = array_last($aPath);
+      
+      $aTempPath = $aPath;
+      
+      // $sCSSName = array_unshift($aTempPath);
+      // dspf(array($aPath, $aTempPath));
+      // foreach ($aTempPath as $sElement) $sCSSName .= "[$sElement]";
+      
+      $mResult = $this->runAction('form/add', array(
+        'element' => $this->getEmpty()->getRoot(),
+        'name' => $sName,
+        'css-name' => '',//$sCSSName,
+        'path' => $sPath,
+        'schema' => $this->getSchema()));
+    }
+  }
+  
+  protected function uploadView($oRedirect) {
+    
+    if ($this->checkForm()) {
+      
+      $sID = $oRedirect->getDocument('post')->readByName('id');
+      $sName = $oRedirect->getDocument('post')->readByName('name');
+      
+      if (!$sID || !$sName) {
+        
+        dspm(xt('ID ou chemin non spécifié pour le fichier temporaire'), 'error');
+      }
+      else {
+        
+        if ((!$aFiles = array_val('files', $this->getSessionForm())) ||
+          (!$aFile = array_val($sID, $aFiles))) {
+          
+          $this->dspm(xt('Fichier perdu. Veuillez nous en excuser'), 'error');
+        }
+        else {
+          
+          if (!$oFile = Controler::getFile($aFile['path'])) {
+            
+            dspm(xt('Le fichier a été perdu, veuillez nous en excuser'), 'error');
+          }
+          else {
+            
+            $oFile = $oFile->parseXML();
+            $oFile->setAttribute('lc:temp-file', $sID, $this->getNamespace('lc'));
+            
+            $mResult = $this->runAction('form/upload', array(
+              'title' => $aFile['title'],
+              'name' => $sName,
+              'file' => $oFile));
+            }
+        }
+      }
+    }
   }
   
   protected function sendMail($sID, $oRedirect) {
@@ -756,16 +735,12 @@ class DBX_Module extends XDB_Module {
     $sSubject = $this->getSettings('mailer/prefix');
     $sSubject .= nonull_val($this->readOption('mailer/subject', false), t('Nouvelle entrée sur le site'));
     
-    $this->switchDirectory();
-    
     $oView = new HTML_Div($this->run($oRedirect, 'view', array($sID)));
-    
-    $this->switchDirectory();
     
     $sHref = 'http://'.$_SERVER['HTTP_HOST'].$this->readOption('mailer/view').'/'.$sID;
     
     $oView->shift(
-      new HTML_Style(null, $this->getDirectory()->getFile('view.css')->read()),
+      new HTML_Style(null, $this->getFile('view.css')->read()),
       new HTML_A($sHref, t('Voir sur le site')),
       new HTML_Br);
     
@@ -873,13 +848,11 @@ class DBX_Module extends XDB_Module {
     if (!$oModel || $oModel->isEmpty()) dspm(xt('Fichier modèle %s invalide', view($oModel)), 'action/error');
     else {
       
-      // $this->buildRefs($oModel);
-      
       $oModel->add($this->getHeaders());
       
       // dspf($oModel);
       
-      $oTemplate = $this->getDocument('list-xq.xsl', true);
+      $oTemplate = $this->getTemplate('list/xquery.xsl');
       
       $sChildren = $this->readOption('database/list-path', false);
       $sName = $this->getFullPrefix().$this->readOption('database/name');
@@ -896,23 +869,19 @@ class DBX_Module extends XDB_Module {
       $oTemplateExt = $this->getOption('template-list', false);
       if ($oTemplateExt) $oTemplateExt = $oTemplateExt->getFirst();
       
-      $oPath = new XML_Path($this->getDirectory().'/'.$sAction, array(
+      $mResult = $this->runAction($sAction, array(
         'o-model' => $oModel,
         'datas' => $this->get($sQuery, true),
         'path-add' => $this->getAdmin().'/add',
         'path-list' => $sPath,
         'module' => (string) $this->getAdmin(),
         'template-extension' => $oTemplateExt));
-      
-      $mResult = new XML_Action($oPath);
-      
-      if ($mResult) $mResult = $mResult->parse(); // parse to keep files in process before __destruct()
     }
     
     return $mResult;
   }
   
-  public function add(Redirect $oRedirect) {
+  public function addDo(Redirect $oRedirect) {
     
     $bResult = false;
     
@@ -955,7 +924,7 @@ class DBX_Module extends XDB_Module {
     return $bResult;
   }
   
-  public function edit(Redirect $oRedirect, $sID) {
+  public function editDo(Redirect $oRedirect, $sID) {
     
     $bResult = false;
     $oParent = null;

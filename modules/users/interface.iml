@@ -2,10 +2,12 @@
 <class xmlns="http://www.sylma.org/interface">
   <file>Users.php</file>
   <name>Users</name>
+  <extends path="../dbx/interface.iml"/>
   <method return-default="true" name="loadUser" path="load-user">
     <argument name="user" format="php-string"/>
   </method>
-  <method name="login_do" path="login_do" return-default="true"/>
+  <method name="login" path="login" return-default="true">
+    <argument format="Redirect" name="redirect"/>
+  </method>
   <method name="logout" path="logout" return-default="true"/>
-  <method name="getList" path="list" return-default="true"/>
 </class>

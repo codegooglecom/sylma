@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <le:settings>
+    <le:name>Formulaire</le:name>
+    <le:argument format="XML_Document" name="model"/>
+    <le:argument format="XSL_Document" name="template"/>
+  </le:settings>
+  <le:action path="/modules/calendar"/>
+  <le:window>
+    <li:add-css le:format="string">
+      <le:directory/>
+      <le:string>/index.css</le:string>
+    </li:add-css>
+    <li:add-js le:format="string">
+      <le:directory/>
+      <le:string>/index.js</le:string>
+    </li:add-js>
+  </le:window>
+  <le:get-argument name="model">
+    <li:parse>
+      <le:get-argument name="template"/>
+    </li:parse>
+  </le:get-argument>
+</le:action>

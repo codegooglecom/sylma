@@ -5,36 +5,14 @@
     <le:argument format="php-string" enum="add,add-do" required="false">
       <le:default replace="true">add</le:default>
     </le:argument>
+    <le:return format="Redirect"/>
   </le:settings>
   <le:action le:set-variable="interface" path="interface" return="false">
     <le:directory/>
     <le:file path="login.xsd"/>
-    <le:action path="options">
-      <li:add>
-        <dbx:path>
-          <le:path>
-            <li:get-action/>
-          </le:path>
-        </dbx:path>
-        <dbx:add-do-path>
-          <le:directory/>
-          <le:string>/login-do</le:string>
-        </dbx:add-do-path>
-        <dbx:template-form>
-          <le:file path="login-ext.xsl"/>
-        </dbx:template-form>
-      </li:add>
-    </le:action>
-    <li:run>
+    <le:action path="options"/>
+    <li:login>
       <le:redirect return="true"/>
-      <le:argument>add</le:argument>
-      <le:get-all-arguments/>
-    </li:run>
+    </li:login>
   </le:action>
-  <le:window>
-    <li:add-css le:format="string">
-      <le:directory/>
-      <le:argument>/login.css</le:argument>
-    </li:add-css>
-  </le:window>
 </le:action>

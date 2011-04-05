@@ -22,7 +22,7 @@
   <le:window>
     <li:add-css le:format="string">
       <le:directory/>
-      <le:string>/view.css</le:string>
+      <le:string>/index.css</le:string>
     </li:add-css>
   </le:window>
   <le:get-argument name="model">

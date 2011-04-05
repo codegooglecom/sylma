@@ -54,7 +54,8 @@ class Action_Controler {
           
         } else if ($sPath = $oExtends->getAttribute('path')) {
           
-          $oDocument = new XML_Document(Controler::getAbsolutePath($sPath, $oInterface->getDocument()->getFile()), MODE_EXECUTION);
+          $oDirectory = $oInterface->getDocument()->getFile()->getParent();
+          $oDocument = new XML_Document(Controler::getAbsolutePath($sPath, $oDirectory), MODE_EXECUTION);
           //echo Controler::getAbsolutePath($sPath, $oInterface->getDocument()->getFile());
           if ($oParentInterface = self::buildInterface($oDocument)) $oInterface->add($oParentInterface->query('*'));
           

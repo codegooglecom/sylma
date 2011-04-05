@@ -22,7 +22,7 @@
  * Finish comments
  */
 
-class XSD_Parser extends Module {
+class XSD_Parser extends ModuleBase {
   
   private $aOptions = array(
     'model' => false, // if false, it will not build the model

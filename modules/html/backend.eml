@@ -37,7 +37,7 @@
                 <a href="/modules/editeur">Editeur</a>
               </li>
               <li ls:owner="root" ls:group="users" ls:mode="710">
-                <a href="/sylma/modules/users/interface/logout.redirect">Déconnexion</a>
+                <a href="/sylma/interfaces/user/logout.redirect">Déconnexion</a>
               </li>
             </ul>
           </div>

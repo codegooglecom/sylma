@@ -3,29 +3,9 @@
   <le:settings>
     <le:name>Formulaire</le:name>
     <le:processor path="/sylma/processors/action-builder" namespace="http://www.sylma.org/processors/action-builder"/>
-    <le:template path="form.xsl" set-variable="template">
-      <li:set-parameter>
-        <le:argument>action</le:argument>
-        <le:get-argument name="action"/>
-      </li:set-parameter>
-      <li:set-parameter>
-        <le:argument>form-id</le:argument>
-        <le:get-argument name="form-id"/>
-      </li:set-parameter>
-    </le:template>
-    <le:argument format="php-string" name="form-id"/>
     <le:argument format="XML_Document" name="model"/>
-    <le:argument format="php-string" name="action"/>
+    <le:argument format="XSL_Document" name="template"/>
     <le:argument format="php-string" name="module"/>
-    <le:argument name="template-extension" required="false" format="XML_Element">
-      <le:validate>
-        <le:get-variable name="template">
-          <li:include-element>
-            <le:get-argument name="template-extension"/>
-          </li:include-element>
-        </le:get-variable>
-      </le:validate>
-    </le:argument>
   </le:settings>
   <le:action path="/sylma/processors/action-builder/init"/>
   <le:action path="/modules/calendar"/>
@@ -60,7 +40,7 @@
     </la:property>
     <le:get-argument name="model">
       <li:parse>
-        <le:get-variable name="template"/>
+        <le:get-argument name="template"/>
       </li:parse>
     </le:get-argument>
   </la:layer>

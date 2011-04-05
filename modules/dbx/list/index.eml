@@ -19,11 +19,11 @@
     <le:window>
       <li:add-css le:format="string">
         <le:directory/>
-        <le:argument>/list.css</le:argument>
+        <le:argument>/index.css</le:argument>
       </li:add-css>
       <li:add-js le:format="string">
         <le:directory/>
-        <le:argument>/list.js</le:argument>
+        <le:argument>/index.js</le:argument>
       </li:add-js>
     </le:window>
   </le:settings>
@@ -59,7 +59,7 @@
           </li:parse>
         </le:get-argument>
       </la:group>
-      <le:action path="simple-list">
+      <le:action path="simple">
         <le:get-argument le:name="o-model" name="o-model"/>
         <le:get-argument le:name="datas" name="datas"/>
         <le:get-argument le:name="module" name="module"/>

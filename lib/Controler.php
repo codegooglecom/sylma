@@ -179,7 +179,7 @@ class Controler {
   
   public static function getSettings($sQuery = '') {
     
-    if ($sQuery) {
+    if ($sQuery && self::$oSettings) {
       
       if (array_key_exists($sQuery, self::$aQueries)) return self::$aQueries[$sQuery];
       else $sResult = self::$aQueries[$sQuery] = self::$oSettings->read($sQuery);

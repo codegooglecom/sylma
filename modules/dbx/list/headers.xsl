@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:func="http://exslt.org/functions" xmlns:lc="http://www.sylma.org/schemas" xmlns:lx="http://ns.sylma.org/xslt" xmlns:dbx="http://www.sylma.org/modules/dbx" xmlns:la="http://www.sylma.org/processors/action-builder" version="1.0" extension-element-prefixes="func lx dbx">
-  <xsl:import href="../../schemas/functions.xsl"/>
+  
+  <xsl:import href="/sylma/schemas/functions.xsl"/>
   <xsl:import href="/sylma/xslt/string.xsl"/>
+  
   <xsl:param name="model"/>
   <xsl:param name="module"/>
   <xsl:variable name="doc-model" select="document($model)"/>
+  
   <func:function name="dbx:get-element">
     <xsl:param name="parent"/>
     <xsl:choose>

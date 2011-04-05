@@ -29,7 +29,7 @@ form {
   border-color: gray;
 }
 
-.field input[type=text], .field textarea {
+.field input[type=text], .field input[type=password], .field textarea {
   width: 50%;
 }
 

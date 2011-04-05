@@ -157,7 +157,13 @@ class XML_Document extends DOMDocument {
       if ($this->getFile()) $sImportPath = Controler::getAbsolutePath($sHref, $this->getFile()->getParent());
       else $sImportPath = Controler::getAbsolutePath($sHref, '/');
       
-      if (!in_array($sImportPath, $aPaths)) $oResult = Controler::getFile($sImportPath);
+      if (!in_array($sImportPath, $aPaths)) {
+        
+        if (!$oResult = Controler::getFile($sImportPath)) {
+          
+          dspm(xt('fichier %s introuvable pour l\'importation', new HTML_Strong($sHref)), 'xml/warning');
+        }
+      }
     }
     
     return $oResult;
@@ -899,46 +905,53 @@ class XSL_Document extends XML_Document {
     
     $sPrefixes = 'extension-element-prefixes';
     
-    if ($sResult = $oElement->getAttribute($sPrefixes)) {
+    if ($this->isEmpty()) {
       
-      if ($sTarget = $this->getAttribute($sPrefixes)) {
-        
-        $aTarget = explode(' ', $sTarget);
-        $aResult = $aPrefixes = array_diff(explode(' ', $sResult), $aTarget);
-        
-      } else {
-        
-        $aTarget = array();
-        $aResult = $aPrefixes = explode(' ', $sResult);
-      }
-      
-      foreach ($aPrefixes as $iPrefix => $sPrefix) {
-        
-        if (!$this->getNamespace($sPrefix)) {
-          
-          if ($sNamespace = $oElement->getNamespace($sPrefix)) {
-            
-            // TODO to add a namespace
-            $this->setAttribute($sPrefix.':ns', 'null', $sNamespace); 
-            // $this->setAttribute('xmlns:'.$sPrefix, $sNamespace);
-            
-          } else unset($aResult[$iPrefix]);
-        }
-      }
-      
-      $this->setAttribute($sPrefixes, implode(' ', array_merge($aResult, $aTarget)));
+      dspm(xt('Impossible d\'inclure l\'éléments %s dans le document vide %s',
+        view($oElement),
+        $this->getFile() ? $this->getFile()->parse() : new HTML_Em(t('[Pas de chemin]'))), 'xml/warning');
     }
-    
-    if ($oExternal) {
-      
-      switch ($oExternal->getName(true)) {
+    else {
+      if ($sResult = $oElement->getAttribute($sPrefixes)) {
         
-        case 'include' : $oExternal->replace($oElement->getChildren()); break;
-        case 'import' : $this->add($oElement->getChildren()); break;
+        if ($sTarget = $this->getAttribute($sPrefixes)) {
+          
+          $aTarget = explode(' ', $sTarget);
+          $aResult = $aPrefixes = array_diff(explode(' ', $sResult), $aTarget);
+          
+        } else {
+          
+          $aTarget = array();
+          $aResult = $aPrefixes = explode(' ', $sResult);
+        }
+        
+        foreach ($aPrefixes as $iPrefix => $sPrefix) {
+          
+          if (!$this->getNamespace($sPrefix)) {
+            
+            if ($sNamespace = $oElement->getNamespace($sPrefix)) {
+              
+              // TODO to add a namespace
+              $this->setAttribute($sPrefix.':ns', 'null', $sNamespace); 
+              // $this->setAttribute('xmlns:'.$sPrefix, $sNamespace);
+              
+            } else unset($aResult[$iPrefix]);
+          }
+        }
+        
+        $this->setAttribute($sPrefixes, implode(' ', array_merge($aResult, $aTarget)));
       }
       
-    } else $this->shift($oElement->getChildren());
-    
+      if ($oExternal) {
+        
+        switch ($oExternal->getName(true)) {
+          
+          case 'include' : $oExternal->replace($oElement->getChildren()); break;
+          case 'import' : $this->add($oElement->getChildren()); break;
+        }
+        
+      } else $this->shift($oElement->getChildren());
+    }
   }
   
   public function includeExternal(XSL_Document $oTemplate, XML_Element $oExternal = null, $aMarks = array(), &$aPaths = array(), $iLevel = 0) {

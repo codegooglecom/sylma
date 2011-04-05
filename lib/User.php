@@ -3,6 +3,7 @@
 class User {
   
   private $sName = '';
+  private $sSID = ''; // session ID
   private $bIsReal = false;
   private $aGroups = array();
   private $aArguments = array();
@@ -12,14 +13,18 @@ class User {
     if ($sName) $this->setReal();
     else $this->setReal(false);
     
+    $this->sSID = uniqid();
     $this->setName($sName);
     $this->setGroups($aGroups);
     $this->setArguments($aArguments);
   }
   
-  public function login() {
+  public function login($bRemember = false) {
+    
+    global $sylma;
     
     $_SESSION['user'] = serialize($this);
+    // if ($bRemember) setcookie('sylma-user-id', $this->sSID, time() + $sylma['session']['cookies']['lifetime']);
   }
   
   public function logout() {

@@ -6,7 +6,7 @@
     <le:argument format="php-string" name="module"/>
     <le:argument format="php-string" name="path-list"/>
     <le:argument format="XML_Document" name="datas"/>
-    <le:template path="list.xsl" set-variable="template">
+    <le:template path="simple.xsl" set-variable="template">
       <li:set-parameter>
         <le:argument>module</le:argument>
         <le:get-argument name="module"/>

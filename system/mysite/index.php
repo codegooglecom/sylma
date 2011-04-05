@@ -26,8 +26,9 @@ if (SYLMA_USE_DB) require(PATH_SYLMA.'/modules/exist/XML_Database.php');
 require(PATH_LIBS.'/Form.php');
 require('modules/dbx/DBX.php');
 
-ini_set('session.gc_maxlifetime', SESSION_MAX_LIFETIME); 
 session_start();
+ 
+ini_set('session.gc_maxlifetime', SESSION_MAX_LIFETIME); 
 
 // db::connect();
 

@@ -8,4 +8,5 @@
     </argument>
   </method>
   <method path="get-directory" name="getDirectory" return-default="true"/>
+  <method path="logout" name="logout" return-default="true"/>
 </class>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:func="http://exslt.org/functions" xmlns:lc="http://www.sylma.org/schemas" xmlns:lx="http://ns.sylma.org/xslt" version="1.0" extension-element-prefixes="func lx">
   
-  <xsl:import href="form-functions.xsl"/>
+  <xsl:import href="functions.xsl"/>
   
   <xsl:param name="action"/>
   <xsl:param name="form-id"/>
@@ -11,7 +11,7 @@
   <xsl:template match="/*">
     <form method="{$method}" action="{$action}" enctype="multipart/form-data">
       
-      <xsl:apply-templates select="*[1]" mode="events"/>
+      <xsl:apply-templates select="*[1]" mode="form-child"/>
       
       <input name="sylma_form_id" id="sylma_form_id" value="{$form-id}" type="hidden"/>
       

@@ -5,7 +5,7 @@
   <xsl:param name="module"/>
   <xsl:param name="directory"/>
   
-  <xsl:import href="../../schemas/functions.xsl"/>
+  <xsl:import href="/sylma/schemas/functions.xsl"/>
   <xsl:import href="/sylma/xslt/string.xsl"/>
   <xsl:import href="/sylma/xslt/date.xsl"/>
   
