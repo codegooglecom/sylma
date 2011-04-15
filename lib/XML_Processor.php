@@ -3,7 +3,7 @@
 interface XML_ProcessorInterface {
   
   public function loadElement($oElement, XML_Action $oAction = null);
-  public function startAction($oAction);
+  public function startAction(XML_Action $oAction);
   public function stopAction();
 }
 
@@ -24,12 +24,22 @@ class XML_Processor implements XML_ProcessorInterface {
     return $this->bInterfaced;
   }
   */
-  public function startAction($oAction) {
+  public function startAction(XML_Action $oAction) {
     
     $this->aActions[] = $oAction;
+    
+    if (Controler::useStatut('action/report')) {
+      
+      dspm(new HTML_Span('Start processor : ', array('style' => 'color: red')).($this->getAction() ? $this->getAction()->getPath() : 'unknown'), 'action/report');
+    }
   }
   
   public function stopAction() {
+    
+    if (Controler::useStatut('action/report')) {
+      
+      dspm(new HTML_Span('Stop processor : ', array('style' => 'color: red')).($this->getAction() ? $this->getAction()->getPath() : 'unknown'), 'action/report');
+    }
     
     array_pop($this->aActions);
   }
@@ -46,7 +56,7 @@ class XML_Processor implements XML_ProcessorInterface {
   
   public function buildChildren($oElement) {
     
-    if ($oElement && $oElement->hasChildren()) {
+    if ($this->getAction() && $oElement && $oElement->hasChildren()) {
       
       $aResults = array();
       foreach ($oElement->getChildren() as $oChild) $aResults[] = $this->getAction()->buildArgument($oChild);
@@ -59,8 +69,12 @@ class XML_Processor implements XML_ProcessorInterface {
   
   public function getAction() {
     
-    if ($this->aActions) return $this->aActions[count($this->aActions) - 1];
-    else return null;
+    $oAction = null;
+    
+    if ($this->aActions) $oAction = array_last($this->aActions);
+    if (!$oAction) dspm(xt('Aucune action liée au processeur'), 'warning');
+    
+    return $oAction;
   }
   
   public function getElement() {

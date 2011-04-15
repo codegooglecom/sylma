@@ -1,20 +1,41 @@
 <?php
 
-/* Debug */ // be careful to reset to original values for production installation
+/**
+ * This array will override $sylma from system/config-sylma.php see it for more details. It let you customize these values.
+ * This is only a sample of what can be usefull. None of these values are required.
+ * Be careful to reset to original values for production installation
+ */
 
-define('DEBUG', false); // DEFAULT = false
 
-// To add customized settings to $sylma, see [sylma]/system/config-sylma.php for more details
-$sylma = array_merge_keys($sylma, array(
+$sylmaSite = array(
+  
+  'debug' => array(
+    'enable' => false, // DEFAULT = false
+  ),
+  
+  'messages' => array(
+    
+    'format' => array(
+      'enable' => false, // DEFAULT = true
+    ),
+    'backtrace' => array(
+      'enable' => false, // DEFAULT = true
+      'count' => 3, // DEFAULT = 3
+    ),
+  ),
+  
+  'form' => array(
+    'redirect' => '.redirect',
+  ),
   
   'users' => array(
-    'server' => array( // server user for cron jobs
-      'ip' => '127.0.0.1', // localhost cannot always be used when multiple domains share same ip
+    'server' => array(
+      'ip' => '127.0.1.1',
     ),
   ),
   
   'maintenance' => array(
-    'enable' => null, // DEFAULT = null, warning 'false' will be see as 'true'
+    'enable' => false, // DEFAULT = false
     'file' => 'protected/maintenance.html',
   ),
   
@@ -24,49 +45,35 @@ $sylma = array_merge_keys($sylma, array(
     'password' => 'password',
     'collection' => '/mysite',
     'namespace' => 'http://www.example.com',
+    'debug' => array(
+      'show-queries' => false,
+      'show-results' => false,
+    ),
   ),
-));
+  
+  'actions' => array(
+    'redirect' => array(
+      'enable' => true,
+    ),
+    'stats' => array(
+      'enable' => true,
+    ),
+  ),
+  
+  'modules' => array(
+    
+    'editor' => array(
+      'path' => '/modules/editeur',
+    ),
+  ),
+);
 
-define('SYLMA_DISABLE_RIGHTS', false); // DEFAULT = false
-define('SYLMA_DISABLE_STATUTS', false); // messages statuts, DEFAULT = false
+// The constants are currently required
 
-// Messages
-
-define('SYLMA_PRINT_MESSAGES', false); // DEFAULT = false
-define('SYLMA_MESSAGES_BACKTRACE', true); // DEFAULT = true
-define('SYLMA_BACKTRACE_LIMIT', 3); // DEFAULT = 3
-define('MESSAGES_SHOW_XML', true); // DEFAULT = true, WARNING : with false can cause UTF-8 errors - TODO
-define('SYLMA_LOG_MESSAGES', false); // DEFAULT = false
-define('FORMAT_MESSAGES', true); // DEFAULT = true
-
-define('SYLMA_DB_SHOW_QUERIES', false); // DEFAULT = false
-define('SYLMA_DB_SHOW_RESULTS', false); // DEFAULT = false
-
-define('SYLMA_USE_DB', true);
-
-/* Global */ // Could be different for production or test server
-
-define('SYLMA_HOST_NAME', 'Undefined');
-
-define('PATH_SYLMA', 'protected/sylma');
-define('PATH_LIBS', PATH_SYLMA.'/lib');
-define('PATH_PHP', 'protected');
-define('MAIN_DIRECTORY', PATH_PHP);
-define('SESSION_MAX_LIFETIME', 3600 * 8);
-define('ERROR_LEVEL', E_ALL); // or E_ALL ^ E_WARNING ^ E_NOTICE
+define('MAIN_DIRECTORY', 'protected');
+define('SYLMA_PATH', MAIN_DIRECTORY.'/sylma');
 define('SYLMA_PATH_SETTINGS',   '/config/root.xml');
 
-define('SYLMA_ADMIN_EXTENSION',   '.sylma');
-define('SYLMA_FORM_REDIRECT_EXTENSION',   '.redirect');
+set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH);
 
-define('SYLMA_RESULT_LIFETIME', 30); // seconds, JS results stored in the $_SESSION, read in AJAX
-define('SYLMA_ENCODING_CHECK', true);
-
-define('SYLMA_ACTION_STATS', true); // infos
-define('SYLMA_ACTION_ERROR_REDIRECT', false);
-
-$aDB = array(
-
-
-set_include_path(get_include_path() . PATH_SEPARATOR . PATH_SYLMA . PATH_SEPARATOR . PATH_PHP);
 

@@ -6,6 +6,9 @@
   <method return-default="true" name="loadUser" path="load-user">
     <argument name="user" format="php-string"/>
   </method>
+  <method name="connection" path="connection" return-default="true">
+    <argument format="Redirect" name="redirect"/>
+  </method>
   <method name="login" path="login" return-default="true">
     <argument format="Redirect" name="redirect"/>
   </method>

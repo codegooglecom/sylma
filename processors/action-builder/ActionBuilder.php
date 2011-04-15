@@ -40,8 +40,15 @@ class ActionBuilder extends XML_Processor  {
       
       if (!$oElement->get("la:property[@name='sylma-update-path']", $this->aNS)) {
         
-        $sPath = $this->getAction()->getPath()->getActionPath();
-        $oElement->addNode('property', $sPath, array('name' => 'sylma-update-path'), SYLMA_NS_ACTIONBUILDER);
+        if (!$this->getAction()) { // error
+          
+          dspm(xt('Pas d\'action pour %s', view($oElement)), 'warning');
+        }
+        else {
+          
+          $sPath = $this->getAction()->getPath()->getActionPath();
+          $oElement->addNode('property', $sPath, array('name' => 'sylma-update-path'), SYLMA_NS_ACTIONBUILDER);
+        }
       }
     }
     
@@ -242,7 +249,7 @@ class ActionBuilder extends XML_Processor  {
           
           if ($bFirst) $oRefNode->addClass('sylma-loading');
           
-        } else dspm(xt('Noeud HTML de référence non trouvé pour %s', view($oElement, false)), 'action/error');
+        }// else dspm(xt('Noeud HTML de référence non trouvé pour %s', view($oElement, false)), 'action/error');
         
         $oElement->setAttribute('id-node', $sName);
         
@@ -329,7 +336,14 @@ class ActionBuilder extends XML_Processor  {
       case 'child' :
       default : 
         
-        if ($oElement->hasChildren() && $oElement->getFirst()->isElement()) {
+        if (!$oElement->hasChildren() || !$oElement->getFirst()->isElement()) { // error
+          
+          $sPath = $this->getAction() ? $this->getAction()->getPath()->parse() : new HTML_Em(t('[Aucun chemin]'));
+          
+          dspm(xt('ActionBuilder : Référence impossible, l\'objet %s n\'a pas d\'enfant valide dans %s',
+            view($oElement), $sPath), 'action/error');
+        }
+        else {
           
           // first look in children
           
@@ -345,8 +359,7 @@ class ActionBuilder extends XML_Processor  {
           // children are all action-builder go far
           
           if (!$oRefNode) $oRefNode = $oElement->get(".//*[namespace-uri() != '".SYLMA_NS_ACTIONBUILDER."']", $this->aNS); 
-          
-        } else dspm(xt('ActionBuilder : Référence impossible, l\'objet %s n\'a pas d\'enfant valide dans %s', view($oElement), $this->getAction()->getPath()->parse()), 'action/error');
+        }
         
       break;
     }

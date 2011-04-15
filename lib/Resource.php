@@ -911,7 +911,7 @@ class XML_File extends XML_Resource {
   
   public function parse() {
     
-    return new HTML_A(SYLMA_PATH_EDITOR.'?path='.$this->getFullPath(), $this->getFullPath());
+    return new HTML_A(Sylma::get('modules/editor/path').'?path='.$this->getFullPath(), $this->getFullPath());
     //$oLink->add($this->getParent().'/', new HTML_Span($this->getName(), array('class' => 'file-name')));
     
     //return $oLink;

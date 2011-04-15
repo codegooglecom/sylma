@@ -3,7 +3,6 @@
 class DBX_Module extends XDB_Module {
   
   private $oModel = null;
-  
   private $oHeaders = null;
   
   public function __construct(XML_Directory $oDirectory, XML_Document $oSchema, XML_Document $oOptions) {
@@ -39,6 +38,11 @@ class DBX_Module extends XDB_Module {
     return $this->readOption('path');
   }
   
+  /**
+   * Build a document with the first node indicate in dbx options
+   * @*param string $sName Customized name for root node
+   * @return XML_Document The resulting "only rooted" document
+   */
   protected function getEmpty($sName = '') {
     
     if (!$sName) $sName = $this->readOption('database/name');
@@ -170,7 +174,7 @@ class DBX_Module extends XDB_Module {
     }
   }
   
-  private function getTemplateExtension() {
+  protected function getTemplateExtension() {
     
     $oTemplate = null;
     
@@ -182,7 +186,7 @@ class DBX_Module extends XDB_Module {
     return $oTemplate;
   }
   
-  private function setFormID() {
+  protected function setFormID() {
     
     $sID = uniqid('form-');
     
@@ -526,11 +530,11 @@ class DBX_Module extends XDB_Module {
       $sForm = $this->readOption('ajax', false) == 'true' ? 'form/ajax' : 'form';
       
       $oTemplate->setParameters(array(
-        'action' => $sPath.SYLMA_FORM_REDIRECT_EXTENSION,
+        'action' => $sPath.Sylma::get('form/redirect'),
         'form-id' => $sFormID,
       ));
       
-      $oTemplate->includeElement($oExtension);
+      if ($oExtension) $oTemplate->includeElement($oExtension);
       
       // first, look for corresponding file in targetDirectory
       

@@ -266,7 +266,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
         oResource.owner = oArguments.owner;
         oResource.group = oArguments.group;
         oResource.mode = oArguments.mode;
-        //this.resetParent();
+        // oResource.update();
       }
     },
     

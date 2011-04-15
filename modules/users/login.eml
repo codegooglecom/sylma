@@ -25,11 +25,9 @@
         </dbx:template-form>
       </li:add>
     </le:action>
-    <li:run>
+    <li:connection>
       <le:redirect return="true"/>
-      <le:argument>add</le:argument>
-      <le:get-all-arguments/>
-    </li:run>
+    </li:connection>
   </le:action>
   <le:window>
     <li:add-css le:format="string">

@@ -11,17 +11,17 @@ class XML_Database {
   private $sCollection = '';
   private $iHits = 0; // temp value for result's hits count
   
-  public function __construct($aDB) {
+  public function __construct() {
     
     try {
       
-      $db = new eXist($aDB['user'], $aDB['password'], $aDB['host']);
+      $db = new eXist(Sylma::get('db/user'), Sylma::get('db/password'), Sylma::get('db/host'));
       if (!$db->connect()) dspm($db->getError(), 'db/error');
       
       //$this->sDatabase = $sDatabase;
       $this->oSession = $db;
-      $this->sNamespace = $aDB['namespace'];
-      $this->sCollection = $aDB['collection'];
+      $this->sNamespace = Sylma::get('db/namespace');
+      $this->sCollection = Sylma::get('db/collection');
       
     } catch (Exception $e) {
       
@@ -115,8 +115,10 @@ class XML_Database {
         new HTML_Strong(floatval($queryTime / 1000)),
         new HTML_Strong($hits));
       
-      if (SYLMA_DB_SHOW_QUERIES) dspm(array(t('xquery [query] '), $oResults, new HTML_Tag('pre', $sQuery)), 'db/notice');
-      if (SYLMA_DB_SHOW_RESULTS) dspm(array(t('xquery [result] '), $oResults, new HTML_Tag('pre', $sResult)), 'db/notice');
+      if (Sylma::get('db/debug/show-queries'))
+        dspm(array(t('xquery [query] '), $oResults, new HTML_Tag('pre', $sQuery)), 'db/notice');
+      if (Sylma::get('db/debug/show-queries'))
+        dspm(array(t('xquery [result] '), $oResults, new HTML_Tag('pre', $sResult)), 'db/notice');
     }
     
     return $sResult;

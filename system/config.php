@@ -6,7 +6,6 @@ define('SYLMA_PATH_USER_EDIT',   '/sylma/modules/users/edit/');
 define('SYLMA_PATH_ERROR',    '/error');
 define('SYLMA_XAMPP_BUG',    false);
 
-define('SYLMA_PATH_EDITOR',   '/modules/editeur'.SYLMA_ADMIN_EXTENSION);
 define('SYLMA_PATH_MODULES',   '/modules');
 define('SYLMA_PATH_TEMP',   '/config/tmp');
 
@@ -36,8 +35,6 @@ define('SYLMA_FIELD_PREFIX', 'field-');
 
 define('SYLMA_SECURITY_FILE', 'directory.sml');
 define('SYLMA_DEFAULT_MODE', 0770);
-define('SYLMA_DEFAULT_GROUP', 'internet');
-define('SYLMA_AUTHENTICATED', 'users');
 
 define('SYLMA_UPLOAD_MAX_SIZE', 10000000);
 

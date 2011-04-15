@@ -8,10 +8,17 @@ class Users extends DBX_Module {
     parent::__construct($oDirectory, $oSchema, $oOptions);
   }
   
-  protected function add(Redirect $oRedirect, $sFormID, XML_Document $oTemplate, $sAddDo = '', $oExtension = null) {
+  public function connection(Redirect $oRedirect) {
     
+    $oTemplate = $this->getTemplate('form/index.xsl');
     if (isset($_SERVER['HTTPS'])) $oTemplate->setParameter('https', $_SERVER['HTTPS']);
-    return parent::add($oRedirect, $sFormID, $oTemplate, $sAddDo, $oExtension);
+    
+    return $this->add(
+      $oRedirect,
+      $this->setFormID(),
+      $oTemplate,
+      $this->readOption('add-do-path', false),
+      $this->getTemplateExtension());
   }
   
   public function login(Redirect $oRedirect) {
@@ -70,7 +77,7 @@ class Users extends DBX_Module {
     
     // Ajout des rôles
     
-    $aGroups = array(SYLMA_AUTHENTICATED);
+    $aGroups = Sylma::get('users/authenticated/groups');
     
     $oAllGroups = $this->getDocument($this->readSettings('groups/@path'), MODE_EXECUTION);
     
@@ -99,3 +106,5 @@ class Users extends DBX_Module {
     $oRedirect->addMessage(t('Bienvenue '.$sFirstName), 'success');
   }
 }
+
+

@@ -6,7 +6,7 @@
 class Controler {
   
   private static $iStartTime = 0;
-  private static $iBacktraceLimit = SYLMA_BACKTRACE_LIMIT;
+  private static $iBacktraceLimit = 0;
   
   private static $oMessages = null;
   private static $oUser = null;
@@ -33,7 +33,6 @@ class Controler {
     
     global $aDefaultInitMessages;
     global $aExecutableExtensions;
-    global $sylma;
     
     self::$iStartTime = microtime(true);
     self::$aActions[] = new XML_Action();
@@ -51,9 +50,10 @@ class Controler {
     
     // Main Messages object
     self::$oMessages = new Messages();
+    self::$iBacktraceLimit = Sylma::get('messages/backtrace/count');
     
     // Root directory
-    self::$oDirectory = new XML_Directory('', '', $sylma['directories']['root']['rights']);
+    self::$oDirectory = new XML_Directory('', '', Sylma::get('directories/root/rights'));
     
     // Load general parameters - root.xml
     self::loadSettings();
@@ -62,9 +62,7 @@ class Controler {
     self::useMessages(true);
     
     // init xml database
-    if (isset($sylma['db']['enable'])) self::setDatabase(new XML_Database($sylma['db']));
-    
-    if (isset($sylma['test']['montest'])) dspm('ok');
+    if (Sylma::get('db/enable')) self::setDatabase(new XML_Database());
     
     // Load Redirect session var, if present means it has been redirected - $_SESSION['redirect'], $_POST in 'document'
     $oRedirect = self::loadRedirect();
@@ -110,9 +108,9 @@ class Controler {
         
         // Get then send the action
         
-        $oAction = new XML_Action(self::getPath(), $oRedirect, null, self::getWindow());
+        $oAction = new XML_Action(self::getPath(), $oRedirect, array(), self::getWindow());
         
-        if ($oAction->isEmpty() && SYLMA_ACTION_ERROR_REDIRECT) self::errorRedirect(); // no rights / empty main action
+        if ($oAction->isEmpty() && Sylma::get('actions/redirect/enable')) self::errorRedirect(); // no rights / empty main action
         else {
           
           if (self::getWindowSettings()->hasAttribute('action')) {
@@ -139,17 +137,16 @@ class Controler {
   
   private static function loadMaintenance() {
     
-    global $sylma;
     $aResult = array();
     
-    if (isset($sylma['maintenance']['enable']) && !self::getUser()->isMember('0')) { // continue when admin
+    if (Sylma::get('maintenance/enable') && !self::getUser()->isMember('0')) { // continue when admin
       
       $sPath = isset($_GET['q']) ? $_GET['q'] : '';
       
-      if ($sPath != $sylma['maintenance']['login-do']) { // continue when 'login-do'
+      if ($sPath != Sylma::get('maintenance/login-do')) { // continue when 'login-do'
         
-        if ($sPath == 'login') $aResult[] = file_get_contents($sylma['maintenance']['login']);
-        else $aResult[] = file_get_contents($sylma['maintenance']['file']);
+        if ($sPath == 'login') $aResult[] = file_get_contents(Sylma::get('maintenance/login'));
+        else $aResult[] = file_get_contents(Sylma::get('maintenance/file'));
       }
     }
     
@@ -161,8 +158,8 @@ class Controler {
     if (self::isAdmin()) {
       
       // debug or not debug..
-      if (DEBUG) error_reporting(E_ALL);
-      else error_reporting(ERROR_LEVEL);
+      if (Sylma::get('debug/enable')) error_reporting(E_ALL);
+      else error_reporting(Sylma::get('users/root/error-level'));
       
     } else error_reporting(0);
   }
@@ -261,10 +258,13 @@ class Controler {
   }
   
   public static function loadResults() {
-    // $_SESSION['results'] = array();
+    
     if (!array_key_exists('results', $_SESSION)) $_SESSION['results'] = array();
     self::$aResults = $_SESSION['results'];
+    
     /*
+     * TODO Not necessary until result now use ID, should be run sometimes
+    
     foreach (self::$aResults as $sKey => $aAction) {
       
       if (!array_key_exists('result-time', $aAction)) $fTime = 0;
@@ -273,7 +273,8 @@ class Controler {
       if ((microtime(true) - $fTime) > SYLMA_RESULT_LIFETIME) unset(self::$aResults[$sKey]);
     }
     
-    self::updateResults();*/
+    self::updateResults();
+    */
   }
   
   public static function updateResults() {
@@ -543,20 +544,20 @@ class Controler {
     self::$aActions[] = $oCaller;
   }
   
-  public static function testAction($sPath, $iMaxTime = 5, $iMaxCount = 100) {
+  public static function testAction($sPath, $iMaxTime = 10, $iMaxCount = 50) {
     
     $iCount = $iMaxCount;
     
     if ($iCount > 1000) {
       
       dspm(xt('%s récurences est un chiffre trop élévé, remplacement par %s',
-        new HTML_Strong($iCount), new HTML_Strong(100)), 'warning');
-      $iCount = 100;
+        new HTML_Strong($iCount), new HTML_Strong(50)), 'warning');
+      $iCount = 50;
     }
     
     if ($iMaxTime > 60) {
       
-      dspm(xt('%s de temps maximum un chiffre trop élévé, remplacement par %s',
+      dspm(xt('%s s de temps maximum est un chiffre trop élévé, remplacement par %s',
         new HTML_Strong($iCount), new HTML_Strong(10)), 'warning');
       $iMaxTime = 10;
     }
@@ -564,43 +565,52 @@ class Controler {
     $iCalls = 0;
     $iBiggerTime = 0;
     
+    $oAction = null;
     $oResult = new XML_Document('root');
     
     $iStart = microtime(true);
     
-    while ($iCount) {
+    $oPath = new XML_Path($sPath, array(), true, true, false);
+    if (!$oPath->getPath()) {
       
-      $oAction = new XML_Action($sPath);
-      $iActionTime = microtime(true);
-      
-      $oResult->add($oAction);
-      
-      $iDeltaTime = microtime(true) - $iActionTime;
-      if ($iDeltaTime > $iBiggerTime) $iBiggerTime = $iDeltaTime;
-      
-      if (microtime(true) - $iStart > $iMaxTime) $iCount = 0;
-      else {
-        
-        $iCount--;
-        $iCalls++;
-      }
+      dspm(xt('L\'action %s n\'existe pas !', new HTML_Strong($sPath)), 'warning');
     }
-    
-    $iTotalTime = microtime(true) - $iStart;
-    $iAverageTime = $iTotalTime / $iCalls;
-    $iDeltaTime = ((100 / $iAverageTime) * ($iBiggerTime - $iAverageTime));
-    
-    $oCalls = new HTML_Strong($iCalls);
-    if ($iCalls != $iMaxCount) $oCalls->setAttribute('style', 'color : red');
-    
-    dspm(t('Test terminé'), 'success');
-    dspm(xt('Action : %s', new HTML_Strong($sPath)));
-    dspm(xt('Temps total : %s', new HTML_Strong(number_format($iTotalTime, 3).' s')));
-    dspm(xt('Nombre d\'appels : %s', $oCalls));
-    dspm(new HTML_Hr());
-    dspm(xt('Mémoire utilisée : %s', new HTML_Strong(formatMemory(memory_get_peak_usage()))));
-    dspm(xt('Temps moyen : %s', new HTML_Strong(number_format($iAverageTime, 3).' s')));
-    dspm(xt('Variation : %s%%', new HTML_Strong(number_format($iDeltaTime, 1))));
+    else {
+      
+      while ($iCount) {
+        
+        $oAction = new XML_Action($sPath);
+        $iActionTime = microtime(true);
+        
+        $oResult->add($oAction); // parse
+        
+        $iDeltaTime = microtime(true) - $iActionTime;
+        if ($iDeltaTime > $iBiggerTime) $iBiggerTime = $iDeltaTime;
+        
+        if (microtime(true) - $iStart > $iMaxTime) $iCount = 0;
+        else {
+          
+          $iCount--;
+          $iCalls++;
+        }
+      }
+      
+      $iTotalTime = microtime(true) - $iStart;
+      $iAverageTime = $iTotalTime / $iCalls;
+      $iDeltaTime = ((100 / $iAverageTime) * ($iBiggerTime - $iAverageTime));
+      
+      $oCalls = new HTML_Strong($iCalls);
+      if ($iCalls != $iMaxCount) $oCalls->setAttribute('style', 'color : red');
+      
+      dspm(t('Test terminé'), 'success');
+      dspm(xt('Action : %s', new HTML_Strong($sPath)));
+      dspm(xt('Temps total : %s', new HTML_Strong(number_format($iTotalTime, 3).' s')));
+      dspm(xt('Nombre d\'appels : %s', $oCalls));
+      dspm(new HTML_Hr());
+      dspm(xt('Mémoire utilisée : %s', new HTML_Strong(formatMemory(memory_get_peak_usage()))));
+      dspm(xt('Temps moyen : %s', new HTML_Strong(number_format($iAverageTime, 3).' s')));
+      dspm(xt('Variation : %s%%', new HTML_Strong(number_format($iDeltaTime, 1))));
+    }
     
     return $oAction;
   }
@@ -624,7 +634,7 @@ class Controler {
     
     $oResume->getFirst()->setAttribute('path', '<controler>');
     $oTemplate = new XSL_Document(Controler::getSettings('actions/template/@path'), MODE_EXECUTION);
-    $oTemplate->setParameter('path-editor', SYLMA_PATH_EDITOR);
+    $oTemplate->setParameter('path-editor', Sylma::get('modules/editor/path'));
     
     return $oResume->getDocument()->parseXSL($oTemplate);
   }
@@ -720,7 +730,7 @@ class Controler {
   
   public static function formatResource($mArgument, $bDecode = false, $iMaxLength = 120) {
     
-    if (FORMAT_MESSAGES) {
+    if (Sylma::get('messages/format/enable')) {
       
       if (is_string($mArgument)) {
         
@@ -760,7 +770,7 @@ class Controler {
           
           /* XML_Document */
           
-          if (MESSAGES_SHOW_XML) {
+          if (Sylma::get('messages/xml/enable')) {
             
             if ($mArgument->isEmpty()) {
               
@@ -791,7 +801,7 @@ class Controler {
           
           if ($mArgument->isReal()) { // prevent from dom lost cf. http://bugs.php.net/bug.php?id=39593
             
-            if (MESSAGES_SHOW_XML) {
+            if (Sylma::get('messages/xml/enable')) {
               
               $oContainer = $mArgument->view(true, true, $bDecode);
               // $oContainer = new HTML_Span;
@@ -885,9 +895,6 @@ class Controler {
     $aBackTrace = debug_backtrace();
     array_shift($aBackTrace);
     
-    // if (DEBUG) dsp($aBackTrace);
-    // return null;
-    
     foreach ($aBackTrace as $aLine) {
       
       if (isset($aLine['line'])) $aLines[] = $aLine['line'];
@@ -924,7 +931,7 @@ class Controler {
         $oArguments = new HTML_Span($aArguments);
       }
       
-      if (FORMAT_MESSAGES) {
+      if (Sylma::get('messages/format/enable')) {
         
         $aResult[] = new HTML_Div(array(
           '[',
@@ -1076,9 +1083,7 @@ class Controler {
   private static function loadUser() {
     
     // Une redirection a été effectuée
-    global $sylma;
-    
-    $aAnonyme = $sylma['users']['anonymouse'];
+    $aAnonyme = Sylma::get('users/anonymouse');
     $aAnonyme = new User($aAnonyme['name'], $aAnonyme['groups'], $aAnonyme['arguments']);
     
     if (array_key_exists('user', $_SESSION)) {
@@ -1099,7 +1104,7 @@ class Controler {
       
     } else {
       
-      $aServer = $sylma['users']['server'];
+      $aServer = Sylma::get('users/server');
       
       if ($_SERVER['REMOTE_ADDR'] == $aServer['ip']) {
         
@@ -1143,31 +1148,34 @@ class Controler {
   
   public static function addMessage($mMessage = '- message vide -', $sPath = SYLMA_MESSAGES_DEFAULT_STAT, $aArgs = array()) {
     
-    if (Controler::isAdmin() && SYLMA_MESSAGES_BACKTRACE && strstr($sPath, 'error') && self::$iBacktraceLimit !== 0) {
+    if (Controler::isAdmin() &&
+      Sylma::get('messages/backtrace/enable') &&
+      strstr($sPath, 'error') &&
+      self::$iBacktraceLimit !== 0) {
       
       if (self::$iBacktraceLimit) self::$iBacktraceLimit--;
       $mMessage = array($mMessage, Controler::getBacktrace());
     }
     
-    if (DEBUG && (SYLMA_PRINT_MESSAGES)) { // || !self::useMessages()
+    if (Sylma::get('debug/enable') && Sylma::get('messages/print')) { // || !self::useMessages()
       
       if (is_array($mMessage)) foreach ($mMessage as $mContent) echo $mContent.new HTML_Br;
       else echo $mMessage.new HTML_Br;
     }
     
-    if (DEBUG && (SYLMA_LOG_MESSAGES)) {
+    if (Sylma::get('debug/enable') && (Sylma::get('messages/log/enable'))) {
       
       if (is_array($mMessage)) foreach ($mMessage as $mContent) dspl($mContent."\n");
       else dspl($mMessage."\n");
     }
     
     if (self::getMessages()) self::getMessages()->addMessage(new Message($mMessage, $sPath, $aArgs));
-    else if (DEBUG) echo $mMessage;
+    else if (Sylma::get('debug/enable')) echo $mMessage;
   }
   
   public static function useStatut($sStatut) {
     
-    if (SYLMA_DISABLE_STATUTS) return true;
+    if (!Sylma::get('messages/rights/enable')) return true;
     else return self::getMessages()->useStatut($sStatut);
   }
   
@@ -1265,7 +1273,7 @@ class Controler {
   
   public static function isAdmin() {
     
-    if (DEBUG) return true;
+    if (Sylma::get('debug/enable')) return true;
     else if (self::getUser()) return self::getUser()->isMember('0');
     else return false;
   }

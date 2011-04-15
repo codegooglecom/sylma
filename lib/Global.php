@@ -60,6 +60,30 @@ function array_remove($sKey, &$aArray, $bDebug = true) {
   return $mValue;
 }
 
+/**
+ * Will merge array recurively, but instead of replaced by array, similar keys are erased
+ * @param array $array1 The source array, for wich values could be replaced
+ * @param array $array2 The second array that will override first argument array
+ * @author andyidol at gmail dot com - http://www.php.net/manual/en/function.array-merge-recursive.php#102379
+ * @author Rodolphe Gerber
+ */
+function array_merge_keys(array $array1, array $array2) {
+  
+  foreach($array2 as $key => $val) {
+    
+    if(array_key_exists($key, $array1) && is_array($val)) {
+      
+      $array1[$key] = array_merge_keys($array1[$key], $array2[$key]);
+    }
+    else {
+      
+      $array1[$key] = $val;
+    }
+  }
+
+  return $array1;
+}
+
 function strtobool($sValue, $bDefault = null) {
   
   if (strtolower($sValue) == 'true') return true;
@@ -220,7 +244,7 @@ function float_format($mValue, $iDec = 2, $iPoint = '.', $iThousand = '\'') {
  */
 function checkEncoding($sContent) {
   
-  if (SYLMA_ENCODING_CHECK && !mb_check_encoding($sContent, 'UTF-8')) {
+  if (Sylma::get('xml/encoding/check') && !mb_check_encoding($sContent, 'UTF-8')) {
     
     $sContent = utf8_encode($sContent); //t('EREUR D\' ENCODAGE'); TODO , result not always in utf-8
     dspm(xt('L\'encodage n\'est pas utf-8 %s', new HTML_Strong(stringResume($sContent))), 'xml/warning');
@@ -228,6 +252,7 @@ function checkEncoding($sContent) {
   
   return $sContent;
 }
+
 /* Display function */
 
 /*

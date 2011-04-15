@@ -491,7 +491,7 @@ var sylma = {
         node.removeClass('sylma-loading')
       }
       
-      node.get('tween').set('duration', 'short');
+      node.get('tween').set('duration', 100);
       node.tween('opacity', iOpacity);
     }
   },

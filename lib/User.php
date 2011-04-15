@@ -21,10 +21,9 @@ class User {
   
   public function login($bRemember = false) {
     
-    global $sylma;
-    
     $_SESSION['user'] = serialize($this);
-    // if ($bRemember) setcookie('sylma-user-id', $this->sSID, time() + $sylma['session']['cookies']['lifetime']);
+    if ($bRemember) setcookie('sylma-user-id', $this->sSID, time() + Sylma::get('cookies/lifetime'));
+    else setcookie('sylma-user-id', '');
   }
   
   public function logout() {
@@ -53,14 +52,12 @@ class User {
     return $this->aGroups;
   }
   
-  public function setGroups(array $aGroups) {
+  private function setGroups(array $aGroups) {
     
     if (is_array($aGroups)) $this->aGroups = $aGroups;
   }
   
   public function getDirectory($sPath = '') {
-    
-    global $sylma;
     
     if ($sPath && $sPath[0] == '#') {
       
@@ -98,9 +95,17 @@ class User {
     return ($this->getName() == $sName);
   }
   
-  public function isMember($sGroup) {
+  public function isMember($mGroup) {
     
-    return in_array($sGroup, $this->aGroups);
+    if (is_array($mGroup)) {
+      
+      foreach ($mGroup as $sGroup) if (!$this->isMember($sGroup)) return false;
+      return true;
+    }
+    else {
+      
+      return in_array($mGroup, $this->aGroups);
+    }
   }
   
   public function setArgument($sKey, $sValue) {

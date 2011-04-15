@@ -8,7 +8,19 @@
  */
 $sylma = array(
   
+  'modules' => array(
+    
+    'editor' => array(
+      'path' => '/modules/editeur',
+    ),
+  ),
+  
   'users' => array(
+    'root' => array(
+      //'name' => 'root',
+      //'groups' => array('0', 'users'),
+      'error-level' => E_ALL, // or E_ALL ^ E_WARNING ^ E_NOTICE
+    ),
     'server' => array( // server user for cron jobs
       'name' => 'server', // 'server' user is now reserved
       'ip' => '', // localhost cannot always be used when multiple domains share same ip
@@ -26,7 +38,7 @@ $sylma = array(
   ),
   
   'maintenance' => array(
-    'enable' => null,
+    'enable' => false, // DEFAULT = false
     'file' => '', // TODO build the html page
     'login' => 'protected/sylma/modules/users/maintenance-login.html',
     'login-do' => 'sylma/modules/users/interface/login_do.redirect',
@@ -39,6 +51,10 @@ $sylma = array(
     'password' => 'mypass',
     'collection' => '/mycollection',
     'namespace' => 'http://www.example.com',
+    'debug' => array(
+      'show-queries' => false, // DEFAULT = false
+      'show-results' => false, // DEFAULT = false
+    ),
   ),
   
   'directories' => array(
@@ -47,31 +63,56 @@ $sylma = array(
     ),
   ),
   
-);
-
-/**
- * Will merge array recurively, but instead of replaced by array, similar keys are erased
- * @param array $array1 The source array, for wich values could be replaced
- * @param array $array2 The second array that will override first argument array
- * @author andyidol at gmail dot com - http://www.php.net/manual/en/function.array-merge-recursive.php#102379
- * @author Rodolphe Gerber
- */
-function array_merge_keys(array $array1, array $array2) {
+  'cookies' => array(
+    'lifetime' => 3600 * 8,
+  ),
   
-  foreach($array2 as $key => $val) {
-    
-    if(array_key_exists($key, $array1) && is_array($val)) {
-      
-      $array1[$key] = array_merge_keys($array1[$key], $array2[$key]);
-    }
-    else {
-      
-      $array1[$key] = $val;
-    }
-  }
-
-  return $array1;
-}
+  'session' => array(
+    'lifetime' => (string) 3600 * 8,
+  ),
+  
+  'xml' => array(
+    'rights' => array(
+      'enable' => true, // DEFAULT = true
+    ),
+    'encoding' => array(
+      'check' => true,
+    ),
+  ),
+  
+  'form' => array(
+    'redirect' => '.redirect',
+  ),
+  
+  'messages' => array(
+    'print' => false, // DEFAULT = false
+    'format' => array(
+      'enable' => true, // DEFAULT = true
+    ),
+    'backtrace' => array(
+      'enable' => true, // DEFAULT = true
+      'count' => 3, // DEFAULT = 3
+    ),
+    'xml' => array(
+      'enable' => true, // DEFAULT = true, WARNING : with false can cause UTF-8 errors - TODO
+    ),
+    'log' => array(
+      'enable' => true, // DEFAULT = false
+    ),
+    'rights' => array(
+      'enable' => true, // DEFAULT = true
+    ),
+  ),
+  
+  'actions' => array(
+    'redirect' => array(
+      'enable' => true,
+    ),
+    'stats' => array(
+      'enable' => true,
+    ),
+  ),
+);
 
 
 
