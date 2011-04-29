@@ -4,7 +4,15 @@
     <ls:security>
       <ls:owner>root</ls:owner>
       <ls:group>0</ls:group>
-      <ls:mode>755</ls:mode>
+      <ls:mode>440</ls:mode>
     </ls:security>
   </propagate>
+  <file name="infos.xsl">
+    <ls:security>
+      <ls:owner>root</ls:owner>
+      <ls:group>0</ls:group>
+      <ls:mode>710</ls:mode>
+    </ls:security>
+  </file>
+
 </directory>

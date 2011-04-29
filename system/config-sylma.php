@@ -10,16 +10,55 @@ $sylma = array(
   
   'modules' => array(
     
+    'users' => array(
+      'path' => '/sylma/modules/users',
+    ),
+    
     'editor' => array(
       'path' => '/modules/editeur',
     ),
   ),
   
   'users' => array(
+    
+    'classes' => array(
+      'user' => array(
+        'name' => 'XUser',
+        'file' => '/sylma/modules/users/XUser.php',
+      ),
+      'cookie' => array(
+        'name' => 'Cookie',
+        'file' => '/sylma/user/Cookie.php',
+      ),
+    ),
+    
+    'path' => '/users',
+    'profil' => 'profil.xml',
+    
+    'cookies' => array(
+      'name' => 'sylma-user',
+      'secret-key' => 'This value is not really secret', // (!) This value should be rewrited for a good cookie security
+      'lifetime' => array(
+        'short' => 3600 * 8, // 8h
+        'normal' => 3600 * 8 * 14, //14j
+      ),
+    ),
+    
+    'session' => array(
+      'name' => 'sylma-user',
+      'lifetime' => (string) 3600 * 8,
+    ),
+    
     'root' => array(
       //'name' => 'root',
       //'groups' => array('0', 'users'),
       'error-level' => E_ALL, // or E_ALL ^ E_WARNING ^ E_NOTICE
+      'arguments' => array(
+        // 'db' => array( // to set specific credentials to a user
+          // 'user' => 'rootuser',
+          // 'password' => 'rootpass',
+        ),
+      // ),
     ),
     'server' => array( // server user for cron jobs
       'name' => 'server', // 'server' user is now reserved
@@ -30,10 +69,16 @@ $sylma = array(
     'anonymouse' => array(
       'name' => 'anonymouse', // 'anonymouse' user is now reserved
       'groups' => array('famous'),
-      'arguments' => array('full-name' => 'Anonymous')
+      'arguments' => array('full-name' => 'Anonymous'),
     ),
     'authenticated' => array(
       'groups' => array('users'),
+      'arguments' => array(
+        // 'db' => array( // to set specific credentials to a authentified users
+          // 'user' => 'authuser',
+          // 'password' => 'authpass',
+        // ),
+      ),
     ),
   ),
   
@@ -46,29 +91,34 @@ $sylma = array(
   
   'db' => array(
     'enable' => false, // switch to TRUE to enable database
+    'install' => false, // DEFAULT = FALSE Will check for existence of collections and documents and build it if none
     'host' => 'http://localhost:8080/exist/services/Query?wsdl',
-    'user' => 'myuser',
-    'password' => 'mypass',
+    'user' => 'myuser', // default / anonymouse credentials
+    'password' => 'mypass', // default / anonymouse credentials
     'collection' => '/mycollection',
     'namespace' => 'http://www.example.com',
+    'default' => array(
+      'group' => 'dba',
+      'mode' => '0770', // octal value
+    ),
     'debug' => array(
-      'show-queries' => false, // DEFAULT = false
-      'show-results' => false, // DEFAULT = false
+      'run' => true, // DEFAULT = true
+      'queries' => array(
+        'show' => false, // DEFAULT = false
+        'statut' => 'db/notice',
+      ),
+      'results' => array(
+        'show' => false, // DEFAULT = false
+        'statut' => 'db/notice',
+      ),
     ),
   ),
   
   'directories' => array(
     'root' => array(
+      'path' => 'protected',
       'rights' => array('owner' => 'root', 'group' => '0', 'mode' => '700', 'user-mode' => null),
     ),
-  ),
-  
-  'cookies' => array(
-    'lifetime' => 3600 * 8,
-  ),
-  
-  'session' => array(
-    'lifetime' => (string) 3600 * 8,
   ),
   
   'xml' => array(
@@ -97,7 +147,7 @@ $sylma = array(
       'enable' => true, // DEFAULT = true, WARNING : with false can cause UTF-8 errors - TODO
     ),
     'log' => array(
-      'enable' => true, // DEFAULT = false
+      'enable' => false, // DEFAULT = false
     ),
     'rights' => array(
       'enable' => true, // DEFAULT = true

@@ -135,7 +135,7 @@ class Messages extends XML_Document {
         }
       }
       */
-      return $this->parseXSL(new XML_Document(Controler::getSettings('messages/template/@path')));
+      return $this->parseXSL(new XML_Document(Controler::getSettings('messages/template/@path'), MODE_EXECUTION));
       
     } else return null;
   }

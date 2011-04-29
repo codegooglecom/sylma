@@ -21,9 +21,9 @@
     <groups path="/sylma/modules/users/default-groups.xml"/>
     <users path="/config/modules/users/default-users.xml"/>
   </module>
-  <xquery template="/sylma/templates/xqueryx.xsl"/>
+  <xquery template="/sylma/modules/xquery/xqueryx.xsl"/>
   <actions>
-    <template path="/sylma/templates/actions.xsl"/>
+    <template path="/sylma/action/infos.xsl"/>
     <interfaces path="/sylma/interfaces"/>
     <login>/sylma/modules/users/login</login>
     <galeries path="/galeries/images"/>
@@ -66,7 +66,7 @@
   </window>
   <messages>
     <allowed path="/sylma/system/allowed-messages.xml"/>
-    <template path="/sylma/templates/messages.xsl"/>
-    <statistic-template path="/sylma/templates/stats.xsl"/>
+    <template path="/sylma/system/messages.xsl"/>
+    <statistic-template path="/sylma/system/stats.xsl"/>
   </messages>
 </controler>

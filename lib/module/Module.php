@@ -79,7 +79,7 @@ class Module extends ModuleBase {
   protected function getOption($sPath, $mDefault = null, $bDebug = false) {
     
     if ($this->getOptions() !== null) $eResult = $this->getOptions()->get($sPath, $bDebug);
-    return $eResult ? $eResult : $mDefault;
+    return isset($eResult) ? $eResult : $mDefault;
   }
   
   protected function readOption($sPath, $mDefault = null, $bDebug = false) {

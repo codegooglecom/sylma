@@ -20,14 +20,4 @@
   <method return-default="true" path="get-messages" name="getMessages"/>
   <method path="build-specials" name="buildSpecials" ls:owner="root" ls:group="0" ls:mode="700"/>
   <method path="view-infos" return-default="true" name="viewInfos" ls:owner="root" ls:group="0" ls:mode="700"/>
-  <!--<method path="export-database" return-default="true" name="exportDatabase"/>
-  <method path="import-database" return-default="true" name="importDatabase"/>-->
-  <method path="clean-document" return-default="true" name="cleanDocument">
-    <argument format="php-string" name="path"/>
-  </method>
-  <method name="testAction" path="test-action" ls:owner="root" ls:group="0" ls:mode="700">
-    <argument format="php-string" name="path"/>
-    <argument required="false" format="php-integer" name="time"/>
-    <argument required="false" format="php-integer" name="count"/>
-  </method>
 </class>

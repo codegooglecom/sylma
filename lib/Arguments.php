@@ -16,12 +16,25 @@ class Arguments {
     return $this->sName;
   }
   
+  public function set($sPath, $mValue) {
+    
+    if ($aTarget = $this->get($sPath)) {
+      
+      if ($mValue) $aTarget = $mValue;
+      else unset($aTarget);
+    }
+    
+    return $aTarget;
+  }
+  
   public function &get($sPath, $mDefault = null, $bDebug = true) {
     
     if (!$sPath) $this->dspm('Aucun chemin indiqué dans la requête', 'warning');
     else {
       
-      if (strpos($sPath, '/')) $aPath = explode('/', $sPath);
+      if ($sPath[0] == '/') $sPath = substr($sPath, 1);
+      
+      if (strpos($sPath, '/') !== false) $aPath = explode('/', $sPath);
       else $aPath = array($sPath);
       
       return $this->getValue($aPath, $this->aArray, $mDefault, $bDebug, $sPath);
@@ -37,7 +50,7 @@ class Arguments {
     
     if (!array_key_exists($sKey, $aArray)) {
       
-      if ($bDebug) $this->dspm("Valeur '$sPath' introuvable à partir de '$sKey'");
+      if ($bDebug) $this->dspm("Cannot find '$sPath', stopped at key '$sKey'");
       
       if ($mDefault !== null) $mResult = $mDefault;
       else $mResult = null;
@@ -90,8 +103,8 @@ class Arguments {
   /**
    * Build a Options object with his own arguments
    * @param XML_Element $oRoot The root node to insert the results to
-   * *@param XML_Document $oSchema The schema that will be used by the Options object
-   * *@param string $sPath An optional sub-path to extract the arguments from
+   * @param? XML_Document $oSchema The schema that will be used by the Options object
+   * @param? string $sPath An optional sub-path to extract the arguments from
    */
   public function getOptions(XML_Element $oRoot, XML_Document $oSchema = null, $sPath = '') {
     
@@ -121,7 +134,7 @@ class Arguments {
   
   protected function dspm($sMessage) {
     
-    dspm($sMessage." - Arguments[{$this->sName}]", 'action/warning');
+    dspm($sMessage." - Arguments [{$this->sName}]", 'action/warning');
   }
 }
 

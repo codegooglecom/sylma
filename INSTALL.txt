@@ -1,0 +1,30 @@
+See http://code.google.com/p/sylma/ or http://www.sylma.org for more details
+
+Installation
+
+Pre-Requested is an apache PHP Server with the following extensions enabled: DOM, XSLT, Rewrite, GD2 and the .htaccess use right. In major cases, only XSLT and Rewrite need to be explicitly activated.
+
+eXist-db, a full XML database engine written in Java, is recommended to use XML Database related modules. Actually only the DBX module that allow use of form and list generation from XSD schemas.
+
+To begin, you need the following file structure to run Sylma.
+
+Sample and default files can be found in system, system/mysite and modules/users Additional recommanded modules like the XML Editor are not yet online, ask the author to get it.
+
+* optional to run, but should be copied and adapted for a complete installation
+
++ (root) // any name
+  - .htaccess
+  - index.php
+  - server-config.php * // local server configuration
+  + (protected) // resources within are protected by apache and calls are transfered to Sylma
+    - .htaccess
+    - directory.sml // default permissions for descendants
+    + (config) *
+      - directory.sml * // restricted permissions for config files
+      - root.xml * // general configuration, modules, ..
+      - users.xml * // permissions users. Copy from modules/users/default-users.xml
+      - groups.xml * // permissions groups. Copy from modules/users/default-groups.xml
+    - (users) // users owned resources location
+    - (sylma) // main library directory
+    
+See http://code.google.com/p/sylma/ or http://www.sylma.org for more details

@@ -4,21 +4,21 @@ require('module/Base.php');
 
 class Options extends ModuleBase {
   
-  private $oDocument = null;
+  private $dDocument = null;
   private $aOptions = array(); // cache array
   
-  public function __construct(XML_Document $oDocument, XML_Document $oSchema = null, array $aNS = array()) {
+  public function __construct(XML_Document $dDocument, XML_Document $dSchema = null, array $aNS = array()) {
     
-    $this->oDocument = $oDocument;
-    $this->setPrefix($oDocument && $oDocument->getRoot() ? $oDocument->getRoot()->getPrefix() : '');
+    $this->dDocument = $dDocument;
+    $this->setPrefix($dDocument && $dDocument->getRoot() ? $dDocument->getRoot()->getPrefix() : '');
     
     $this->setNamespaces($aNS);
-    if ($oSchema) $this->setSchema($oSchema);
+    if ($dSchema) $this->setSchema($dSchema);
   }
   
   private function getDocument() {
     
-    return $this->oDocument;
+    return $this->dDocument;
   }
   
   private function parsePath($sPath) {
@@ -27,11 +27,35 @@ class Options extends ModuleBase {
     else return $sPath;
   }
   
+  public function validate() {
+    
+    $bResult = false;
+    
+    if (!$this->getSchema()) {
+      
+      $this->dspm(xt('Cannot validate, no schema defined'), 'warning');
+    }
+    else if (!$this->getDocument() || $this->getDocument()->isEmpty()) {
+      
+      $this->dspm(xt('Cannot validate, document empty or not defined'), 'warning');
+    }
+    else {
+      
+      $bResult = $this->getDocument()->validate($this->getSchema);
+    }
+    
+    return $bResult;
+  }
+  
   public function get($sPath, $bDebug = true) {
     
     $eResult = null;
     
-    if (!$this->getDocument()) $this->dspm(xt('Aucune option définie'), 'action/warning');
+    if (!$this->getDocument()) {
+      
+      $this->dspm(xt('Cannot load value %s, no document defined',
+        new HTML_Strong($sPath)), 'error');
+    }
     else {
       
       if (!array_key_exists($sPath, $this->aOptions) || !$this->aOptions[$sPath]) {
@@ -54,7 +78,7 @@ class Options extends ModuleBase {
         
         if (!$this->aOptions[$sPath] && $bDebug) {
           
-          dspm(xt('Option %s introuvable dans %s',
+          dspm(xt('Option %s not found in %s',
             new HTML_Strong($sPath),
             view($this->getDocument())), 'action/warning');
         }
@@ -68,5 +92,18 @@ class Options extends ModuleBase {
     
     if ($oOption = $this->get($sPath, $bDebug)) return $oOption->read();
     else return '';
+  }
+  
+  public function set($sPath, $mValue = null) {
+    
+    $mResult = '';
+    
+    if ($eOption = $this->get($sPath)) {
+      
+      if ($mValue) $mResult = $eOption->set($mValue);
+      else $mResult = $eOption->remove();
+    }
+    
+    return $mResult;
   }
 }

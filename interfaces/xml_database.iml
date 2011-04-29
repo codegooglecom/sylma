@@ -10,4 +10,6 @@
   <method path="escape" name="escape" return-default="true">
     <argument name="value" format="php-string"/>
   </method>
+  <!--<method path="export-database" return-default="true" name="exportDatabase"/>
+  <method path="import-database" return-default="true" name="importDatabase"/>-->
 </class>

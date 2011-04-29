@@ -28,7 +28,7 @@ class Sylma {
     
     //ini_set('session.save_path', 'c:/temp/php');
     //ini_set('session.cookie_lifetime', SESSION_MAX_LIFETIME);
-    ini_set('session.gc_maxlifetime', Sylma::get('session/lifetime'));
+    ini_set('session.gc_maxlifetime', Sylma::get('users/session/lifetime'));
     
     session_start();
     
@@ -37,6 +37,12 @@ class Sylma {
     return Controler::trickMe();
     
     //session_write_close();
+  }
+  
+  public static function getSettings($sPath = '') {
+    
+    if ($sPath) return self::getSettings()->get($sPath);
+    else return self::$oSettings;
   }
   
   public static function get($sPath) {
@@ -54,23 +60,25 @@ class Sylma {
     
     require_once('module/Extension.php');
     require_once('module/XDB.php');
-    require_once('XML.php');
+    require_once('dom/XML.php');
     include('schemas/XML_Schema.php');
-    require_once('XML_Controler.php');
+    require_once('dom/Controler.php');
     require_once('HTML.php');
-    require_once('Action.php');
+    
+    require_once('action/Action.php');
+    require_once('modules/xquery/XQuery.php');
+    require_once('XSL_Document.php');
     require_once('XML_Processor.php');
-    require_once('Action_Controler.php');
+    require_once('action/Controler.php');
     require_once('Controler.php');
+    require_once('Redirect.php');
     require_once('Messages.php');
-    require_once('User.php');
+    
+    require_once('user/User.php');
+    require_once('user/Cookie.php');
+    
     require_once('Resource.php');
     require_once('Window.php');
   }
   
-  public static function getSettings($sPath = '') {
-    
-    if ($sPath) return self::getSettings()->get($sPath);
-    else return self::$oSettings;
-  }
 }

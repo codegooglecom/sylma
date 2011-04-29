@@ -1,6 +1,6 @@
 <?php
 
-require_once('ActionPath.php');
+require_once('Path.php');
 
 class XML_Action extends XML_Document {
   
@@ -90,7 +90,7 @@ class XML_Action extends XML_Document {
     $sMethod = '';
     $aArguments = array();
     
-    if ($oInterface = Action_Controler::setInterface($oInterface)) {
+    if ($oInterface = ActionControler::setInterface($oInterface)) {
       
       $sClassName = $oInterface->readByName('name');
       if ($sFile = $oInterface->readByName('file')) $sFile = $this->getAbsolutePath($sFile);
@@ -167,7 +167,7 @@ class XML_Action extends XML_Document {
     
     if (is_array($mObject)) $mObject = new Action_Array($mObject);
     
-    if (is_object($mObject) || $bStatic) $oInterface = Action_Controler::getInterface($mObject);
+    if (is_object($mObject) || $bStatic) $oInterface = ActionControler::getInterface($mObject);
     else $oInterface = null;
     
     foreach ($oElement->getChildren() as $oChild) {
@@ -621,7 +621,7 @@ class XML_Action extends XML_Document {
           
         } else {
           
-          $oInterface = Action_Controler::getInterface($sClassName);
+          $oInterface = ActionControler::getInterface($sClassName);
           
           $aArguments = array();
           
@@ -879,7 +879,7 @@ class XML_Action extends XML_Document {
         $aPhp = array('array', 'string', 'null', 'integer', 'int', 'boolean', 'bool');
         
         if (in_array($sSpecialName, $aPhp)) $mResult = $this->parseBaseType($sSpecialName, $oElement);
-        else if ($aSpecial = Action_Controler::getSpecial($sSpecialName, $this, $this->getRedirect())) {
+        else if ($aSpecial = ActionControler::getSpecial($sSpecialName, $this, $this->getRedirect())) {
           
           $mResult = $aSpecial['variable'];
           if (!$oElement->hasAttribute('return')) $oElement->setAttribute('return', booltostr($aSpecial['return']));
@@ -2020,7 +2020,7 @@ class XML_Action extends XML_Document {
                     $oResult = new XML_Document('temp');
                     
                     $oMethod = new XML_Element('li:add', $oDocument->getRoot()->getChildren(), null, SYLMA_NS_INTERFACE);
-                    $this->runInterfaceMethod($oResult, $oMethod, Action_Controler::getInterface($oResult, $this->getRedirect()));
+                    $this->runInterfaceMethod($oResult, $oMethod, ActionControler::getInterface($oResult, $this->getRedirect()));
                     
                     if (!$oResult->isEmpty()) $oResult = $oResult->getRoot()->getChildren();
                     else dspm(xt('Aucune valeur retournée pour l\'action %s', $this->getPath()), 'action/warning');
@@ -2053,7 +2053,7 @@ class XML_Action extends XML_Document {
                   
                 } else if ($sClass = $oSettings->readByName('class', SYLMA_NS_EXECUTION)) {
                   
-                  $oInterface = Action_Controler::getInterface($sClass);
+                  $oInterface = ActionControler::getInterface($sClass);
                 }
                 
                 $oSettings->remove();

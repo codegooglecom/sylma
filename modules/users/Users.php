@@ -2,108 +2,60 @@
 
 class Users extends DBX_Module {
   
-  public function __construct(XML_Directory $oDirectory, XML_Document $oSchema, XML_Document $oOptions) {
+  public function __construct(XML_Directory $directory = null, XML_Document $dSchema = null, XML_Document $dOptions = null) {
     
     $this->setName('users');
-    parent::__construct($oDirectory, $oSchema, $oOptions);
+    $this->setArguments(Sylma::get('modules/users'));
+    $this->getArguments()->merge(Sylma::get('users'));
+    
+    if (!$directory) $directory = $this->setDirectory(__file__);
+    if (!$dSchema) $dSchema = $this->getDocument('login.xsd');
+    if (!$dOptions) $dOptions = $this->runAction('options');
+    
+    parent::__construct($directory, $dSchema, $dOptions);
   }
   
-  public function connection(Redirect $oRedirect) {
+  public function connection(Redirect $redirect) {
     
-    $oTemplate = $this->getTemplate('form/index.xsl');
-    if (isset($_SERVER['HTTPS'])) $oTemplate->setParameter('https', $_SERVER['HTTPS']);
+    $dTemplate = $this->getTemplate('form/index.xsl');
+    if (isset($_SERVER['HTTPS'])) $dTemplate->setParameter('https', $_SERVER['HTTPS']);
     
     return $this->add(
-      $oRedirect,
+      $redirect,
       $this->setFormID(),
-      $oTemplate,
+      $dTemplate,
       $this->readOption('add-do-path', false),
       $this->getTemplateExtension());
   }
   
-  public function login(Redirect $oRedirect) {
+  public function login(Redirect $redirect) {
     
-    $oValues = $oRedirect;
-    $bError = false;
-    
-    if (!$oPost = $oRedirect->getDocument('post')) {
+    if (!$dPost = new XML_Options($redirect->getDocument('post'))) {
       
       $this->dspm('Aucune données d\'authentification !', 'warning');
     }
     else {
       
-      $sUser = $oPost->readByName('name');
-      $sPassword = $oPost->readByName('password');
+      $sUser = $dPost->get('name');
+      $sPassword = $dPost->get('password');
       
-      $bRemember = (bool) $oPost->readByName('remember');
+      $bRemember = (bool) $dPost->get('remember');
       
-      if (!$sUser || !$sPassword) {
+      $user = $this->create('user');
+      
+      if ($user->authenticate($sUser, $sPassword, $bRemember)) {
         
-        $this->dspm('Données d\'authentification incomplètes, nom d\'utilisateur ou mot de passe manquants !', 'warning');
-      }
-      else {
+        $user->load($bRemember);
+        Controler::setUser($user);
         
-        $oUsers = $this->getDocument($this->readSettings('users/@path'), MODE_EXECUTION);
+        $sRedirect = $this->readOption('redirect', '/', false);
+        $redirect->setPath($sRedirect);
         
-        if (!$oUsers || $oUsers->isEmpty()) {
-          
-          $this->dspm(t('Aucun utilisateur actif sur ce site'), 'action/error');
-        }
-        else {
-          
-          $sUser = addQuote($sUser);
-          $sPassword = addQuote(sha1($sPassword));
-          
-          if (!$eUser = $oUsers->get("//user[@name = $sUser and @password = $sPassword]")) {
-            
-            $this->dspm('Nom d\'utilisateur ou mot de passe incorrect !', 'warning');
-          }
-          else {
-            
-            // Authentification réussie !
-            $this->setUser($oRedirect, $eUser, $bRemember);
-          }
-        }
+        $redirect->addMessage(t('Bienvenue '.$user->getArgument('first-name')), 'success');
       }
     }
     
-    return $oRedirect;
-  }
-  
-  private function setUser(Redirect $oRedirect, XML_Element $eUser, $bRemember = false) {
-    
-    $sUser = $eUser->getAttribute('name');
-    $sRedirect = $this->readOption('redirect', '/', false);
-    
-    // Ajout des rôles
-    
-    $aGroups = Sylma::get('users/authenticated/groups');
-    
-    $oAllGroups = $this->getDocument($this->readSettings('groups/@path'), MODE_EXECUTION);
-    
-    $oGroups = $oAllGroups->query("group[@owner = $sUser]/@name | group[member = $sUser]/@name");
-    foreach ($oGroups as $oAttribute) $aGroups[] = $oAttribute->getValue();
-    
-    // Création de l'utilisateur
-    
-    $oUser = new User($sUser, $aGroups);
-    Controler::setUser($oUser);
-    
-    // Ajout du profil
-    
-    $oProfil = $this->getDocument($eUser->read('@path'));
-    
-    if (!$oProfil->isEmpty()) {
-      
-      $sFirstName = $oProfil->read('first-name');
-      $oUser->setArguments(array('full-name' => $sFirstName.' '.$oProfil->read('last-name')));
-      
-    } else $sFirstName = '... visiteur';
-    
-    $oUser->login($bRemember);
-    
-    $oRedirect->setPath($sRedirect);
-    $oRedirect->addMessage(t('Bienvenue '.$sFirstName), 'success');
+    return $redirect;
   }
 }
 

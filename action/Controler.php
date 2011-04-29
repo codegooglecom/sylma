@@ -1,6 +1,6 @@
 <?php
 
-class Action_Controler {
+class ActionControler {
   
   private static $aInterfaces = array();
   private static $oInterfaces = null;

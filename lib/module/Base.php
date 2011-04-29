@@ -4,6 +4,9 @@ class ModuleBase {
   
   protected $oSchema = null;  
   
+  // array of classe's object to use within this class with $this->create() loaded in [settings]/classes
+  private $aClasses = array();
+  
   private $aNamespaces = array();
   private $sNamespace = '';
   private $sPrefix = '';
@@ -13,14 +16,44 @@ class ModuleBase {
   private $oDirectory = null;
   private $oArguments = null;
   
-  protected function setDirectory($sPath) {
+  protected function setDirectory($mPath) {
     
-    $this->oDirectory = extractDirectory($sPath);
+    if (is_string($mPath)) $this->oDirectory = extractDirectory($mPath);
+    else $this->oDirectory = $mPath;
   }
   
   protected function getDirectory() {
     
     return $this->oDirectory;
+  }
+  
+  public function create($sName, $aArguments = array()) {
+    
+    $result = null;
+    
+    if (!$this->getArguments()) {
+      
+      $this->dspm(xt('Cannot build object %s. No settings defined'),
+        new HTML_Strong($sName), 'action/error');
+    }
+    else if (!$aClass = $this->getArgument('classes/' . $sName)) { // has class ?
+      
+      dspm(xt('Cannot build object %s. No settings defined for these class'),
+        new HTML_Strong($sKey), 'action/error');
+    }
+    else {
+      
+      // set absolute path for relative classe file's path
+      
+      if ($aClass['file'] && $aClass['file'][0] != '/' && ($sPath = $this->getArgument('path'))) {
+        
+        $aClass['file'] = Controler::getAbsolutePath($aClass['file'], $this->getDirectory());
+      }
+      
+      $result = Controler::createObject($aClass, $aArguments);
+    }
+    
+    return $result;
   }
   
   protected function setName($sName) {
@@ -33,9 +66,16 @@ class ModuleBase {
     return $this->sName;
   }
   
-  protected function setArguments(array $aArguments) {
+  protected function setArguments(array $aArguments = null, $bMerge = true) {
     
-    $this->oArguments = new Arguments($aArguments);
+    if ($aArguments) {
+      
+      if ($this->getArguments() && $bMerge) $this->getArguments()->merge($aArguments);
+      else $this->oArguments = new Arguments($aArguments, $this->getName());
+    }
+    else $this->oArguments = null;
+    
+    return $this->getArguments();
   }
   
   protected function getArguments() {

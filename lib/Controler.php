@@ -9,7 +9,7 @@ class Controler {
   private static $iBacktraceLimit = 0;
   
   private static $oMessages = null;
-  private static $oUser = null;
+  private static $user = null;
   private static $oDirectory = null;
   
   private static $oWindow;
@@ -40,7 +40,8 @@ class Controler {
     self::$sSystemPath = $_SERVER['DOCUMENT_ROOT'];
     
     // Authentication : load user's session var - $_SESSION['user']
-    self::setUser(self::loadUser());
+    self::$user = self::createObject(Sylma::get('users/classes/user'));
+    self::$user->load();
     
     // Define error_report
     self::setReportLevel();
@@ -104,7 +105,7 @@ class Controler {
         
         // Load file of the interface's paths
         
-        Action_Controler::loadInterfaces();
+        ActionControler::loadInterfaces();
         
         // Get then send the action
         
@@ -235,9 +236,9 @@ class Controler {
     
     if ($sInterface = $oWindowSettings->getAttribute('interface')) {
       
-      Action_Controler::loadInterfaces();
+      ActionControler::loadInterfaces();
       
-      if ($oInterface = Action_Controler::buildInterface(new XML_Document($sInterface))) {
+      if ($oInterface = ActionControler::buildInterface(new XML_Document($sInterface))) {
         
         if (!$sAction = $oWindowSettings->getAttribute('action')) {
           
@@ -457,17 +458,6 @@ class Controler {
     header('Content-type: '.self::getMime($sExtension));
   }
 
-  private static function getActionRights($sPath = null) {
-    
-    if (!$sPath) $sPath = self::getAction();
-    
-    $aActionRights = isset(self::$aRights[$sPath]['rights']) ? self::$aRights[$sPath]['rights'] : array();
-    
-    if (!is_array($aActionRights)) $aActionRights = array($aActionRights);
-    
-    return $aActionRights;
-  }
-  
   /*****************/
   /* Infos & Stats */
   /*****************/
@@ -478,11 +468,11 @@ class Controler {
     
     $oMessage = new HTML_Strong(t('Authentification').' : ');
     
-    if (self::getUser()->isReal()) $oUser = $oView->addMultiItem($oMessage, self::getUser());
+    if (self::getUser()) $oUser = $oView->addMultiItem($oMessage, self::getUser());
     else $oUser = $oView->addMultiItem($oMessage, new HTML_Tag('em', t('- aucun -')));
     
     $oUser->add(new HTML_Br, new HTML_Tag('em', $_SERVER['REMOTE_ADDR'])); // IP
-    
+    /*
     if (self::getUser()->isReal()) {
       
       $oMessage = new HTML_Strong(t('Groupe(s)').' : ');
@@ -490,7 +480,7 @@ class Controler {
       if (self::getUser()->getGroups()) $oView->addMultiItem($oMessage, implode(', ', self::getUser()->getGroups()));
       else $oView->addMultiItem($oMessage, new HTML_Tag('em', t('- aucun -')));
     }
-    
+    */
     $oView->addMultiItem(new HTML_Strong(t('Adresse').' : '), self::getPath());
     
     $oMessage = new HTML_Strong(t('Redirection').' : ');
@@ -542,77 +532,6 @@ class Controler {
   public static function infosOpenAction($oCaller) {
     
     self::$aActions[] = $oCaller;
-  }
-  
-  public static function testAction($sPath, $iMaxTime = 10, $iMaxCount = 50) {
-    
-    $iCount = $iMaxCount;
-    
-    if ($iCount > 1000) {
-      
-      dspm(xt('%s récurences est un chiffre trop élévé, remplacement par %s',
-        new HTML_Strong($iCount), new HTML_Strong(50)), 'warning');
-      $iCount = 50;
-    }
-    
-    if ($iMaxTime > 60) {
-      
-      dspm(xt('%s s de temps maximum est un chiffre trop élévé, remplacement par %s',
-        new HTML_Strong($iCount), new HTML_Strong(10)), 'warning');
-      $iMaxTime = 10;
-    }
-    
-    $iCalls = 0;
-    $iBiggerTime = 0;
-    
-    $oAction = null;
-    $oResult = new XML_Document('root');
-    
-    $iStart = microtime(true);
-    
-    $oPath = new XML_Path($sPath, array(), true, true, false);
-    if (!$oPath->getPath()) {
-      
-      dspm(xt('L\'action %s n\'existe pas !', new HTML_Strong($sPath)), 'warning');
-    }
-    else {
-      
-      while ($iCount) {
-        
-        $oAction = new XML_Action($sPath);
-        $iActionTime = microtime(true);
-        
-        $oResult->add($oAction); // parse
-        
-        $iDeltaTime = microtime(true) - $iActionTime;
-        if ($iDeltaTime > $iBiggerTime) $iBiggerTime = $iDeltaTime;
-        
-        if (microtime(true) - $iStart > $iMaxTime) $iCount = 0;
-        else {
-          
-          $iCount--;
-          $iCalls++;
-        }
-      }
-      
-      $iTotalTime = microtime(true) - $iStart;
-      $iAverageTime = $iTotalTime / $iCalls;
-      $iDeltaTime = ((100 / $iAverageTime) * ($iBiggerTime - $iAverageTime));
-      
-      $oCalls = new HTML_Strong($iCalls);
-      if ($iCalls != $iMaxCount) $oCalls->setAttribute('style', 'color : red');
-      
-      dspm(t('Test terminé'), 'success');
-      dspm(xt('Action : %s', new HTML_Strong($sPath)));
-      dspm(xt('Temps total : %s', new HTML_Strong(number_format($iTotalTime, 3).' s')));
-      dspm(xt('Nombre d\'appels : %s', $oCalls));
-      dspm(new HTML_Hr());
-      dspm(xt('Mémoire utilisée : %s', new HTML_Strong(formatMemory(memory_get_peak_usage()))));
-      dspm(xt('Temps moyen : %s', new HTML_Strong(number_format($iAverageTime, 3).' s')));
-      dspm(xt('Variation : %s%%', new HTML_Strong(number_format($iDeltaTime, 1))));
-    }
-    
-    return $oAction;
   }
   
   public static function infosCloseAction($oAction) {
@@ -959,43 +878,72 @@ class Controler {
   /* *** */
   
   /**
+   * Create an object from a module array using @method buildClass() :
+   * @param array $sKey The key name of the class to use
+   * @param array $aModule The module array containing the classes parameters.
+   *  Ex : array('path' => 'modules/mymodule', classes' => array('keyname' => array('name' => 'classname', 'file' => 'filename')))
+   * @param* array $aArguments The list of arguments to send to __construct method of object created
+   * @return
+   */
+  public static function createObject(array $aClass, array $aArguments = array()) {
+    
+    $result = null;
+    
+    if (!$sClass = array_val('name', $aClass)) { // has name ?
+      
+      dspm(xt('Cannot build object. No "name" argument defined for class in %s'),
+        view($aClass), 'action/error');
+    }
+    else {
+      
+      $result = self::buildClass($sClass, array_val('file', $aClass), $aArguments);
+    }
+    
+    return $result;
+  }
+  
+  /**
    * Build an object from the class name with Reflection
-   * @param string $sClassName the class name
+   * @param string $sClass the class name
    * @param string $sFile the file where the class is declared to include
    * @param array $aArgument the arguments to use at the __construct call
    * @return null|object the created object
    */
-  public static function buildClass($sClassName, $sFile = '', $aArguments = array()) {
+  public static function buildClass($sClass, $sFile = '', $aArguments = array()) {
+    
+    $result = null;
     
     if ($sFile) {
       
-      // Include du fichier
+      // include the file
       
-      $sFile = MAIN_DIRECTORY.$sFile;
+      $sFile = Sylma::get('directories/root/path') . $sFile;
       
       if (file_exists($sFile)) require_once($sFile);
-      else dspm(xt('Fichier "%s" introuvable !', new HTML_Strong($sFile)), 'action/error');
+      else {
+        
+        dspm(xt('Cannot build object %s. File %s not found !',
+          new HTML_Strong($sClass), new HTML_Strong($sFile)), 'action/error');
+      }
     }
     
-    // Contrôle de l'existence de la classe
-    
-    if (!class_exists($sClassName)) {
+    if (!class_exists($sClass)) { // class exists ?
       
-      dspm(xt('Action impossible (la classe "%s" n\'existe pas) !', new HTML_Strong($sClassName)), 'action/error');
+      dspm(xt('Cannot build object. The class %s does not seem to exists !',
+        new HTML_Strong($sClass)), 'action/error');
       
     } else {
       
-      // Création de la classe
+      // creation of object
       
-      $oReflected = new ReflectionClass($sClassName);
+      $reflected = new ReflectionClass($sClass);
       
-      if ($aArguments) $oAction = $oReflected->newInstanceArgs($aArguments);
-      else $oAction = $oReflected->newInstance();
-      
-      return $oAction;
+      if ($aArguments) $result = $reflected->newInstanceArgs($aArguments);
+      else $result = $reflected->newInstance();
     }
     
-    return null;
+    return $result;
+
   }
   
   public static function setDatabase($oDatabase) {
@@ -1007,121 +955,10 @@ class Controler {
     
     return self::$oDatabase;
   }
-  /*
-  public static function importDatabase() {
-    
-    $xDirectory = 'database/export';
-    $xName = $xDirectory.'/@name';
-    
-    if ((!$sPath = self::getSettings($xDirectory)) || (!$sName = self::getSettings($xName))) {
-      
-      dspm(xt('Chemin %s inexistant ou invalide pour l\'importation dans le fichier root', new HTML_Strong($xDirectory)), 'warning');
-      
-    } else {
-      
-      self::cleanDocument($sPath.'/'.$sName);
-      
-      if ($oFile = self::getFile($sPath.'/'.$sName, true)) {
-        
-        $oDocument = $oFile->getDocument();
-        
-        if ($oDocument->isEmpty()) dspm(xt('Le document d\'importation %s est vide', new HTML_Strong), 'warning');
-        else {
-          
-          self::getDatabase()->run("delete $sName");
-          self::getDatabase()->run('add '.$oFile->getSystemPath());
-          
-          dspm(xt('Base de donnée importée depuis %s', $oDocument->getFile()->parse()), 'success');
-        }
-      }
-    }
-    
-    return '';
-  }
-  
-  public static function exportDatabase() {
-    
-    $xDirectory = 'database/export';
-    $xName = $xDirectory.'/@name';
-    
-    if ((!$sPath = self::getSettings($xDirectory)) || (!$sName = self::getSettings($xName))) {
-      
-      dspm(xt('Chemin %s inexistant ou invalide pour l\'exportation dans le fichier root', new HTML_Strong($xDirectory)), 'warning');
-      
-    } else {
-      
-      if ($sPath{0} != '/') $sResultPath = self::getDirectory()->getSystemPath().'/'.$sPath;
-      else $sResultPath = $sPath;
-      
-      self::getDatabase()->run("export $sResultPath $sName");
-      
-      self::cleanDocument($sPath.'/'.$sName);
-      
-      dspm(xt('Données exportées dans %s', new HTML_Strong($sResultPath.'/'.$sName)), 'success');
-      
-      
-    }
-    
-    return '';
-  }
-  */
-  public static function cleanDocument($sPath) {
-    
-    $oDocument = new XML_Document(self::getAbsolutePath($sPath));
-    $oDocument->updateAllNamespaces();
-    
-    $oDocument->save();
-    
-    dspm(xt('Document %s nettoyé !', view($oDocument)), 'success');
-  }
-  
-  public static function setUser($oUser = null) {
-    
-    if (is_object($oUser) && get_class($oUser) == 'User') self::$oUser = $oUser;
-  }
-  
-  private static function loadUser() {
-    
-    // Une redirection a été effectuée
-    $aAnonyme = Sylma::get('users/anonymouse');
-    $aAnonyme = new User($aAnonyme['name'], $aAnonyme['groups'], $aAnonyme['arguments']);
-    
-    if (array_key_exists('user', $_SESSION)) {
-      
-      // self::addMessage(t('Session existante'), 'report');
-      
-      $oUser = unserialize($_SESSION['user']);
-      
-      // Récupération des messages du Redirect et suppression
-      
-      if (!($oUser instanceof User)) {
-        
-        $oUser = $aAnonyme;
-        
-        unset($_SESSION['user']);
-        self::addMessage(t('Session utilisateur perdue !'), 'warning');
-      }
-      
-    } else {
-      
-      $aServer = Sylma::get('users/server');
-      
-      if ($_SERVER['REMOTE_ADDR'] == $aServer['ip']) {
-        
-        $oUser = new User($aServer['name'], $aServer['groups'], $aServer['arguments']);
-      }
-      else {
-        
-        $oUser = $aAnonyme;
-      }
-    }
-    
-    return $oUser;
-  }
   
   public static function getUser() {
     
-    return self::$oUser;
+    return self::$user;
   }
   
   public static function getAbsolutePath($sTarget, $mSource = '') {
@@ -1170,7 +1007,11 @@ class Controler {
     }
     
     if (self::getMessages()) self::getMessages()->addMessage(new Message($mMessage, $sPath, $aArgs));
-    else if (Sylma::get('debug/enable')) echo $mMessage;
+    else if (Sylma::get('debug/enable')) {
+      
+      if (is_array($mMessage)) print_r($mMessage);
+      else echo $mMessage;
+    }
   }
   
   public static function useStatut($sStatut) {
@@ -1288,156 +1129,4 @@ class Controler {
     return t('[Controler]');
   }
 }
-
-class Redirect {
-  
-  private $sPath = '/'; // URL cible
-  private $oPath = null; // URL cible
-  private $oSource = null; // URL de provenance
-  private $sWindowType = 'html';
-  private $bIsReal = false; // Défini si le cookie a été redirigé ou non
-  
-  private $aArguments = array();
-  private $aDocuments = array();
-  private $oMessages;
-  
-  public function __construct($sPath = '', $mMessages = array(), $aArguments = array()) {
-    
-    $this->setMessages($mMessages);
-    
-    if ($sPath) $this->setPath($sPath);
-    
-    $this->aArguments = $aArguments;
-    //$this->setArgument('post', $_POST);
-    //$this->setWindowType(Controler::getWindowType());
-  }
-  
-  public function getArgument($sKey) {
-    
-    return (array_key_exists($sKey, $this->aArguments)) ? $this->aArguments[$sKey] : null;
-  }
-  
-  public function setArgumentKey($sArgument, $sKey, $mValue = '') {
-    
-    $mArgument = $this->getArgument($sArgument);
-    
-    if (is_array($mArgument)) {
-      
-      if ($mValue) {
-        
-        $mArgument[$sKey] = $mValue;
-        $this->setArgument($sArgument, $mArgument);
-        
-      } else unset($this->aArguments[$sArgument][$sKey]);
-    }
-  }
-  
-  public function setArgument($sKey, $mValue) {
-    
-    $this->aArguments[$sKey] = $mValue;
-  }
-  
-  public function getArguments() {
-    
-    return $this->aArguments;
-  }
-  
-  public function getDocuments() {
-    
-    return $this->aDocuments;
-  }
-  
-  public function getDocument($sKey) {
-    
-    return (array_key_exists($sKey, $this->aDocuments)) ? $this->aDocuments[$sKey] : null;
-  }
-  
-  public function setDocument($sKey, $oDocument) {
-    
-    $this->aDocuments[$sKey] = $oDocument;
-  }
-  
-  public function setMessages($mMessages = array()) {
-    
-    $this->oMessages = new Messages(new XML_Document(Controler::getSettings('messages/allowed/@path')), $mMessages);
-  }
-  
-  public function getMessages($sStatut = null) {
-    
-    if ($sStatut) return $this->oMessages->getMessages($sStatut);
-    else return $this->oMessages;
-  }
-  
-  public function addMessage($sMessage = '- message vide -', $sStatut = 'notice', $aArguments = array()) {
-    
-    $this->oMessages->addStringMessage($sMessage, $sStatut, $aArguments);
-  }
-  
-  public function getPath() {
-    
-    return $this->oPath;
-  }
-  
-  public function setPath($oPath) {
-    
-    $this->oPath = $oPath;
-    return $oPath;
-    // if ($sPath == '/' || $sPath != Controler::getPath()) $this->sPath = $sPath;
-    // else Controler::errorRedirect(t('Un problème de redirection à été détecté !'));
-  }
-  
-  public function getSource() {
-    
-    return $this->oSource;
-  }
-  
-  public function setSource($oSource) {
-    
-    $this->oSource = $oSource;
-    return $oSource;
-  }
-  
-  public function isSource($sSource) {
-    
-    return ((string) $this->oSource == $sSource);
-  }
-  
-  public function getWindowType() {
-    
-    return $this->sWindowType;
-  }
-  
-  public function setWindowType($sWindowType) {
-    
-    $this->sWindowType = $sWindowType;
-  }
-  
-  public function setReal($bValue = 'true') {
-    
-    $this->bIsReal = (bool) $bValue;
-  }
-  
-  public function isReal() {
-    
-    return $this->bIsReal;
-  }
-  
-  public function __sleep() {
-    
-    foreach ($this->aDocuments as $sKey => $oDocument) $this->aDocuments[$sKey] = (string) $oDocument;
-    return array_keys(get_object_vars($this)); // TODO Ref or not ?
-  }
-  
-  public function __wakeup() {
-    
-    foreach ($this->aDocuments as $sKey => $sDocument) $this->aDocuments[$sKey] = new XML_Document($sDocument);
-  }
-  
-  public function __toString() {
-    
-    return (string) $this->oPath;
-  }
-}
-
-
 

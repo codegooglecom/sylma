@@ -11,7 +11,7 @@ class XML_Controler {
     $oResult = new XML_Document('statistics');
     
     $oResult->addArray(self::$aStats, 'category');
-    return $oResult->parseXSL(new XML_Document(Controler::getSettings('messages/statistic-template/@path')));
+    return $oResult->parseXSL(new XSL_Document(Controler::getSettings('messages/statistic-template/@path'), MODE_EXECUTION));
   }
   
   public static function getStats() {
