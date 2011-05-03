@@ -1,7 +1,5 @@
 <?php
 
-require_once('Base.php');
-
 class Module extends ModuleBase {
   
   private $oSettings = null;  // global module settings
@@ -11,7 +9,11 @@ class Module extends ModuleBase {
     
     $sResult = $mDefault;
     
-    if ($oSetting = $this->getSettings($sPath, $bDebug)) $sResult = $oSetting->read();
+    if ($nResult = $this->getSettings($sPath, $bDebug)) {
+      
+      if (is_object($nResult)) $sResult = $nResult->read();
+      else $sResult = (string) $nResult;
+    }
     if (!$sResult) $sResult = $mDefault;
     
     return $sResult;
@@ -19,14 +21,11 @@ class Module extends ModuleBase {
   
   protected function getSettings($sPath = '', $mDefault = null, $bDebug = true) {
     
-    if (!$this->oSettings && $this->getName()) {
+    if (!$this->oSettings) {
       
-      $oSettings = Controler::getSettings()->get("module[@name='{$this->getName()}']");
-      if (!$oSettings) {
-        
-        $this->dspm(t('Aucune configuration définie pour ce module'), 'action/warning');
-      }
-      else {
+      // try to load from the name
+      
+      if ($this->getName() && ($oSettings = Controler::getSettings()->get("module[@name='{$this->getName()}']"))) {
         
         $this->oSettings = new Options(new XML_Document($oSettings), null); // TODO, schemas and namespaces
       }
@@ -35,6 +34,11 @@ class Module extends ModuleBase {
     if ($sPath && $this->oSettings) return $this->oSettings->get($sPath, $bDebug);
     else if ($mDefault) return $mDefault;
     else return $this->oSettings;
+  }
+  
+  protected function setSettings(XML_Document $dSettings, XML_Document $dSchema = null, array $aNS = array()) {
+    
+    $this->oSettings = new Options($dSettings, $dSchema, $this->mergeNamespaces($this->getNS(), $aNS));
   }
   
   protected function runAction($sPath, $aArguments = array()) {
@@ -64,9 +68,9 @@ class Module extends ModuleBase {
   
   /*** Options ***/
   
-  protected function setOptions(XML_Document $oOptions, XML_Document $oSchema = null, $bPrefix = false) {
+  protected function setOptions(XML_Document $oOptions, XML_Document $oSchema = null, $aNS = array()) {
     
-    $this->oOptions = new Options($oOptions, $oSchema, $this->getNS());
+    $this->oOptions = new Options($oOptions, $oSchema, $this->mergeNamespaces($this->getNS(), $aNS));
     
     return $this->getOptions();
   }

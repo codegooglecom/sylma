@@ -2,11 +2,10 @@
 
 class User extends Module {
   
-  private $sName = '';
+  private $sUser = '';
   private $sSID = ''; // session ID
-  private $bIsReal = false;
+  
   private $aGroups = array();
-  private $aArguments = array();
   
   public function __construct($sName = '', array $aGroups = array(), array $aOptions = array()) {
     
@@ -19,9 +18,51 @@ class User extends Module {
       $this->setOptions($options->getOptions($this->createNode('user')));
     }
     
+    
     $this->aGroups = $aGroups;
   }
   
+  public function authenticate($sUser, $sPassword) {
+    
+    $sResult = null;
+    
+    $this->setSettings(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
+    
+    if (!$sUser || !$sPassword) {
+      
+      $this->dspm('Données d\'authentification incomplètes, nom d\'utilisateur ou mot de passe manquants !', 'warning');
+    }
+    else {
+      
+      $dUsers = $this->getDocument($this->readSettings('users/@path'), MODE_EXECUTION);
+      
+      if (!$dUsers || $dUsers->isEmpty()) {
+        
+        $this->dspm(t('Aucun utilisateur actif sur ce site'), 'action/warning');
+      }
+      else {
+        
+        list($spUser, $spPassword) = addQuote(array($sUser, sha1($sPassword)));
+        
+        if (!$eUser = $dUsers->get("//user[@name = $spUser and @password = $spPassword]")) {
+          
+          $this->dspm('Nom d\'utilisateur ou mot de passe incorrect !', 'warning');
+        }
+        else {
+          
+          // Authentification success !
+          
+          $sResult = $this->setName($sUser);
+        }
+      }
+    }
+    
+    return $sResult;
+  }
+  
+  /**
+   * Load the user, from either cookie, session or profil if authentication has been done
+   */
   public function load($bRemember = false) {
     
     $cookie = $this->loadCookie();
@@ -33,7 +74,7 @@ class User extends Module {
     }
     else if (!$this->loadSession()) { // no session
       
-      if ($cookie && ($sUser = $cookie->getUser())) { // has cookie
+      if ($cookie && ($sUser = $cookie->getName())) { // has cookie
         
         $this->setName($sUser);
         $this->loadProfile();
@@ -56,21 +97,39 @@ class User extends Module {
     
     $this->setDirectory(Controler::getDirectory($this->getArgument('path') . '/' . $this->getName()));
     
-    $profil = new Options($this->getDocument($this->getArgument('profil')));
-    $profil->set('full-name', $profil->get('first-name') . ' ' . $profil->get('last-name'));
+    $sProfil = $this->getArgument('profil');
+    $dProfil = $this->getDocument($sProfil);
     
-    $this->setOptions($profil);
-    $this->saveSession();
+    if (!$dProfil || $dProfil->isEmpty()) {
+      
+      $this->dspm(xt('Cannot load profile in %s', $sProfil), 'error');
+    }
+    else {
+      
+      $dProfil->addNode('full-name', $dProfil->getByName('first-name') . ' ' . $dProfil->getByName('last-name'));
+      
+      $this->setOptions($dProfil);
+      
+      $this->loadGroups();
+      $this->saveSession();
+    }
+  }
+  
+  protected function loadGroups() {
+    
+    $aGroups = Sylma::get('users/authenticated/groups');
+    
+    $oAllGroups = $this->getDocument($this->readSettings('groups/@path'), MODE_EXECUTION);
+    
+    $oGroups = $oAllGroups->query("group[@owner = $sUser]/@name | group[member = $sUser]/@name");
+    foreach ($oGroups as $oAttribute) $aGroups[] = $oAttribute->getValue();
+    
+    $this->setGroups($aGroups);
   }
   
   protected function loadCookie() {
     
     return $this->create('cookie');
-  }
-  
-  protected function saveCookie() {
-    
-    $_SESSION[$this->getArgument('session/name')] = array($this->getName(), $this->getArguments());
   }
   
   protected function loadSession() {
@@ -90,7 +149,19 @@ class User extends Module {
     
     $_SESSION[$this->getArgument('session/name')] = serialize(array($this->getName(), $this->getOptions()));
   }
-
+  
+  /*** Groups ***/
+  
+  protected function setGroups(array $aGroups) {
+    
+    $this->aGroups = $aGroups;
+  }
+  
+  protected function getGroups() {
+    
+    return $this->aGroups;
+  }
+  
   public function isMember($mGroup) {
     
     if (is_array($mGroup)) {

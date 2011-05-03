@@ -117,7 +117,11 @@ class Controler {
           if (self::getWindowSettings()->hasAttribute('action')) {
             
             $oResult = null;
-            self::getWindow()->getPath()->setAssoc('window-action', $oAction);
+            
+            if (self::getWindow()) {
+              
+              self::getWindow()->getPath()->setAssoc('window-action', $oAction);
+            }
             
           } else $oResult = self::getWindow()->loadAction($oAction); // TODO or not todo : make XML_Action
         }
@@ -238,7 +242,7 @@ class Controler {
       
       ActionControler::loadInterfaces();
       
-      if ($oInterface = ActionControler::buildInterface(new XML_Document($sInterface))) {
+      if ($oInterface = ActionControler::buildInterface(new XML_Document($sInterface, MODE_EXECUTION))) {
         
         if (!$sAction = $oWindowSettings->getAttribute('action')) {
           
@@ -961,6 +965,11 @@ class Controler {
     return self::$user;
   }
   
+  public static function setUser(User $user) {
+    
+    return self::$user = $user;
+  }
+  
   public static function getAbsolutePath($sTarget, $mSource = '') {
     
     if (!$sTarget || $sTarget{0} == '/' || $sTarget{0} == '*') return $sTarget;
@@ -1009,8 +1018,7 @@ class Controler {
     if (self::getMessages()) self::getMessages()->addMessage(new Message($mMessage, $sPath, $aArgs));
     else if (Sylma::get('debug/enable')) {
       
-      if (is_array($mMessage)) print_r($mMessage);
-      else echo $mMessage;
+      // echo view($mMessage);
     }
   }
   
@@ -1092,7 +1100,7 @@ class Controler {
   
   public static function getDirectory($sPath = '') {
     
-    if ($sPath && $sPath != '/') {
+    if (self::$oDirectory && $sPath && $sPath != '/') {
       
       $aPath = explode('/', $sPath);
       array_shift($aPath);
@@ -1104,12 +1112,16 @@ class Controler {
   
   public static function getFile($sPath, $mSource = null, $bDebug = false) {
     
-    $sPath = self::getAbsolutePath($sPath, $mSource);
-    
-    $aPath = explode('/', $sPath);
-    array_shift($aPath);
-    
-    return self::getDirectory()->getDistantFile($aPath, $bDebug);
+    if (self::getDirectory()) {
+      
+      $sPath = self::getAbsolutePath($sPath, $mSource);
+      
+      $aPath = explode('/', $sPath);
+      array_shift($aPath);
+      
+      return self::getDirectory()->getDistantFile($aPath, $bDebug);
+      
+    } else return self::$oDirectory;
   }
   
   public static function isAdmin() {

@@ -12,17 +12,12 @@ class Cookie extends XDB_Module {
     $this->validate();
   }
   
-  public function getUser() {
-    
-    return $this->sUser;
-  }
-  
   public function save($bRemember = false) {
     
     if ($bRemember) $iExpiration = time() + $this->getArgument('lifetime/normal'); // 14 days
     else $iExpiration = time() + $this->getArgument('lifetime/short'); // 8 hours
     
-    $sCookie = $this->generate($user->getName(), $iExpiration);
+    $sCookie = $this->generate(Controler::getUser()->getName(), $iExpiration);
     
     if (!setcookie($this->getArgument('name'), $sCookie, $iExpiration) ) {
       

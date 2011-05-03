@@ -1,7 +1,5 @@
 <?php
 
-require('module/Base.php');
-
 class Options extends ModuleBase {
   
   private $dDocument = null;
@@ -16,12 +14,12 @@ class Options extends ModuleBase {
     if ($dSchema) $this->setSchema($dSchema);
   }
   
-  private function getDocument() {
+  protected function getDocument() {
     
     return $this->dDocument;
   }
   
-  private function parsePath($sPath) {
+  protected function parsePath($sPath) {
     
     if ($sPrefix = $this->getPrefix()) return preg_replace('/([-\w]+)/', $sPrefix.':\1', $sPath);
     else return $sPath;
@@ -49,7 +47,7 @@ class Options extends ModuleBase {
   
   public function get($sPath, $bDebug = true) {
     
-    $eResult = null;
+    $nResult = null;
     
     if (!$this->getDocument()) {
       
@@ -60,21 +58,21 @@ class Options extends ModuleBase {
       
       if (!array_key_exists($sPath, $this->aOptions) || !$this->aOptions[$sPath]) {
         
-        $bPrefix = strpos($sPath, ':');
+        $bPrefix = (strpos($sPath, ':') !== false);
         
-        if (!$bPrefix && !strpos($sPath, '/')) { // only first level, can optimize
+        if (!$bPrefix && strpos($sPath, '/') === false) { // only first level, can optimize
           
-          $eResult = $this->getDocument()->getByName($sPath);
+          $nResult = $this->getDocument()->getByName($sPath);
         }
         else { // more than one level, use xpath
           
           if (!$bPrefix) $sRealPath = $this->parsePath($sPath);
           else $sRealPath = $sPath;
           
-          $eResult = $this->getDocument()->get($sRealPath, $this->getNS());
+          $nResult = $this->getDocument()->get($sRealPath, $this->getNS());
         }
         
-        $this->aOptions[$sPath] = $eResult;
+        $this->aOptions[$sPath] = $nResult;
         
         if (!$this->aOptions[$sPath] && $bDebug) {
           
@@ -85,7 +83,7 @@ class Options extends ModuleBase {
       }
     }
     
-    return $eResult;
+    return $nResult;
   }
   
   public function read($sPath, $bDebug = true) {

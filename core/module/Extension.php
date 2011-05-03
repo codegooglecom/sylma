@@ -1,7 +1,5 @@
 <?php
 
-require_once('Module.php');
-
 class ModuleExtension extends Module {
   
   // All the modules directories listed in the extends stack, added with @method addDirectory()

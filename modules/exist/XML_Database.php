@@ -6,15 +6,17 @@ class XML_Database extends ModuleBase {
   
   private $oSession;
   
-  private $aNamespaces = array();
-  private $sNamespace = '';
   private $sCollection = '';
   private $iHits = 0; // temp value for result's hits count
   
   public function __construct() {
     
-    $this->setName('database');
     $this->setArguments(Sylma::get('db'));
+    $this->setName('database');
+    
+    $this->setNamespace($this->getArgument('namespace'));
+    $this->sCollection = $this->getArgument('collection');
+    
     $this->connect();
   }
   
@@ -22,19 +24,16 @@ class XML_Database extends ModuleBase {
     
     try {
       
-      $aUser = Controler::getUser()->getArgument('db');
-      $sUser = $aUser ? $aUser['name'] : $this->getArgument('user');
-      $sPassword = $aUser ? $aUser['password'] : $this->getArgument('password');
+      // first load from user settings, else load from db settings
+      $aUser = Controler::getUser()->getArgument('db', array(
+        'user' => $this->getArgument('user'),
+        'password' => $this->getArgument('password'),
+      ), false);
       
-      $this->setArguments(Sylma::get('db'));
-      
-      $db = new eXist($sUser, $sPassword, $this->getArgument('host'));
+      $db = new eXist($aUser['user'], $aUser['password'], $this->getArgument('host'));
       if (!$db->connect()) dspm($db->getError(), 'db/error');
       
-      //$this->sDatabase = $sDatabase;
       $this->oSession = $db;
-      $this->sNamespace = $this->getArgument('namespace');
-      $this->sCollection = $this->getArgument('collection');
       
     } catch (Exception $e) {
       
@@ -50,23 +49,6 @@ class XML_Database extends ModuleBase {
   public function getSession() {
     
     return $this->oSession;
-  }
-  
-  public function getNamespace($sPrefix = '') {
-    
-    if ($sPrefix) return $this->aNamespaces[$sPrefix];
-    else return $this->sNamespace;
-  }
-  
-  public function setNamespaces($aNamespace) {
-    
-    foreach ($aNamespaces as $sPrefix => $sNamespace) $this->setNamespace($sPrefix, $sNamespace);
-  }
-  
-  public function setNamespace($mNamespace, $sPrefix = '') {
-    
-    if ($sPrefix) $this->aNamespaces[$sPrefix] = $mNamespace;
-    else $this->sNamespace = $mNamespace;
   }
   
   public function query($sQuery, array $aNamespaces = array(), $bGetResult = true, $bMessages = true) {
@@ -326,65 +308,62 @@ class XML_Database extends ModuleBase {
     return $this->query($sQuery, $aNamespaces, false, false);
   }
   
-  /*
-  public static function importDatabase() {
+  public static function import() {
     
-    $xDirectory = 'database/export';
-    $xName = $xDirectory.'/@name';
+    // $xDirectory = 'database/export';
+    // $xName = $xDirectory.'/@name';
     
-    if ((!$sPath = self::getSettings($xDirectory)) || (!$sName = self::getSettings($xName))) {
+    // if ((!$sPath = self::getSettings($xDirectory)) || (!$sName = self::getSettings($xName))) {
       
-      dspm(xt('Chemin %s inexistant ou invalide pour l\'importation dans le fichier root', new HTML_Strong($xDirectory)), 'warning');
+      // dspm(xt('Chemin %s inexistant ou invalide pour l\'importation dans le fichier root', new HTML_Strong($xDirectory)), 'warning');
       
-    } else {
+    // } else {
       
-      self::cleanDocument($sPath.'/'.$sName);
+      // self::cleanDocument($sPath.'/'.$sName);
       
-      if ($oFile = self::getFile($sPath.'/'.$sName, true)) {
+      // if ($oFile = self::getFile($sPath.'/'.$sName, true)) {
         
-        $oDocument = $oFile->getDocument();
+        // $oDocument = $oFile->getDocument();
         
-        if ($oDocument->isEmpty()) dspm(xt('Le document d\'importation %s est vide', new HTML_Strong), 'warning');
-        else {
+        // if ($oDocument->isEmpty()) dspm(xt('Le document d\'importation %s est vide', new HTML_Strong), 'warning');
+        // else {
           
-          self::getDatabase()->run("delete $sName");
-          self::getDatabase()->run('add '.$oFile->getSystemPath());
+          // self::getDatabase()->run("delete $sName");
+          // self::getDatabase()->run('add '.$oFile->getSystemPath());
           
-          dspm(xt('Base de donnée importée depuis %s', $oDocument->getFile()->parse()), 'success');
-        }
-      }
-    }
+          // dspm(xt('Base de donnée importée depuis %s', $oDocument->getFile()->parse()), 'success');
+        // }
+      // }
+    // }
     
-    return '';
+    // return '';
   }
   
-  public static function exportDatabase() {
+  public static function export() {
     
-    $xDirectory = 'database/export';
-    $xName = $xDirectory.'/@name';
+    // $xDirectory = 'database/export';
+    // $xName = $xDirectory.'/@name';
     
-    if ((!$sPath = self::getSettings($xDirectory)) || (!$sName = self::getSettings($xName))) {
+    // if ((!$sPath = self::getSettings($xDirectory)) || (!$sName = self::getSettings($xName))) {
       
-      dspm(xt('Chemin %s inexistant ou invalide pour l\'exportation dans le fichier root', new HTML_Strong($xDirectory)), 'warning');
+      // dspm(xt('Chemin %s inexistant ou invalide pour l\'exportation dans le fichier root', new HTML_Strong($xDirectory)), 'warning');
       
-    } else {
+    // } else {
       
-      if ($sPath{0} != '/') $sResultPath = self::getDirectory()->getSystemPath().'/'.$sPath;
-      else $sResultPath = $sPath;
+      // if ($sPath{0} != '/') $sResultPath = self::getDirectory()->getSystemPath().'/'.$sPath;
+      // else $sResultPath = $sPath;
       
-      self::getDatabase()->run("export $sResultPath $sName");
+      // self::getDatabase()->run("export $sResultPath $sName");
       
-      self::cleanDocument($sPath.'/'.$sName);
+      // self::cleanDocument($sPath.'/'.$sName);
       
-      dspm(xt('Données exportées dans %s', new HTML_Strong($sResultPath.'/'.$sName)), 'success');
+      // dspm(xt('Données exportées dans %s', new HTML_Strong($sResultPath.'/'.$sName)), 'success');
       
       
-    }
+    // }
     
-    return '';
+    // return '';
   }
-  */
-
   
   public function __destruct() {
     

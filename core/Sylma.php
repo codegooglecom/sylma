@@ -3,12 +3,13 @@
 class Sylma {
   
   private static $oSettings = null;
+  private static $sLib = 'core';
   
   public static function init(array $aSettings) {
     
     global $sylma;
     
-    require_once('lib/Arguments.php');
+    require_once(self::$sLib . '/Arguments.php');
     self::$oSettings = new Arguments($sylma, 'sylma');
     self::getSettings()->merge($aSettings);
     
@@ -52,20 +53,27 @@ class Sylma {
   
   protected static function loadLibs() {
     
-    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH.'/lib');
+    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . self::$sLib);
     
     require_once('Error.php');
     require_once('Global.php');
-    require_once('Options.php');
     
+    require_once(self::$sLib . '/module/Base.php');
+    require_once('module/Module.php');
     require_once('module/Extension.php');
     require_once('module/XDB.php');
+    
     require_once('dom/XML.php');
+    require_once('dom/Options.php');
+    
     include('schemas/XML_Schema.php');
     require_once('dom/Controler.php');
     require_once('HTML.php');
     
+    require_once('action/Path.php');
+    require_once('action/Array.php');
     require_once('action/Action.php');
+    
     require_once('modules/xquery/XQuery.php');
     require_once('XSL_Document.php');
     require_once('XML_Processor.php');
@@ -77,7 +85,11 @@ class Sylma {
     require_once('user/User.php');
     require_once('user/Cookie.php');
     
-    require_once('Resource.php');
+    require_once('storage/filesys/Resource.php');
+    require_once('storage/filesys/Directory.php');
+    require_once('storage/filesys/File.php');
+    require_once('storage/filesys/SFile.php');
+    
     require_once('Window.php');
   }
   

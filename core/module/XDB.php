@@ -1,7 +1,5 @@
 <?php
 
-require_once('Extension.php');
-
 class XDB_Module extends ModuleExtension {
   
   /* Global */

@@ -83,12 +83,6 @@ class ModuleBase {
     return $this->oArguments;
   }
   
-  protected function readArgument($sPath, $mDefault = null, $bDebug = true) {
-    
-    if ($this->getArguments()) return $this->getArguments()->read($sPath, $mDefault, $bDebug);
-    else return $mDefault;
-  }
-  
   protected function &getArgument($sPath, $mDefault = null, $bDebug = true) {
     
     if ($this->getArguments()) return $this->getArguments()->get($sPath, $mDefault, $bDebug);
@@ -114,7 +108,7 @@ class ModuleBase {
     return $this->oSchema;
   }
   
-  protected function mergeNamespaces($aNamespaces = array()) {
+  protected function mergeNamespaces(array $aNamespaces = array()) {
     
     if ($aNamespaces) return array_merge($this->getNS(), $aNamespaces);
     else return $this->getNS();
@@ -165,3 +159,5 @@ class ModuleBase {
     return dspm(array($oPath, $mMessage, new HTML_Tag('hr')), $sStatut);
   }
 }
+
+

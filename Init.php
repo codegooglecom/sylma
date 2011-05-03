@@ -8,5 +8,5 @@ if (!defined("SYLMA_PATH_SEPARATOR")) {
 
 require_once('system/config-sylma.php'); 
 require_once('system/config.php'); 
-require('lib/Sylma.php');
+require('core/Sylma.php');
 

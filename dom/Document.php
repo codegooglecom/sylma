@@ -14,6 +14,7 @@ class XML_Document extends DOMDocument {
     $this->preserveWhiteSpace = false;
     // $this->substituteEntities = false;
     
+    // $this->registerNodeClass('DOMNode', 'XML_Node');
     $this->registerNodeClass('DOMDocument', 'XML_Document');
     $this->registerNodeClass('DOMElement', 'XML_Element');
     $this->registerNodeClass('DOMText', 'XML_Text');
@@ -559,7 +560,7 @@ class XML_Document extends DOMDocument {
     else return $this->setChild($this->createNode($sName, $oContent, $aAttributes, $sUri));
   }
   
-  public function setChild($oChild) {
+  public function setChild(DOMNode $oChild) {
     
     if (!$this->isEmpty()) $this->getRoot()->remove();
     

@@ -1,7 +1,5 @@
 <?php
 
-require_once('Path.php');
-
 class XML_Action extends XML_Document {
   
   private $oParent = null; // parent action, null if not an action
@@ -13,7 +11,7 @@ class XML_Action extends XML_Document {
   private $oRedirect = null;
   private $sStatut = null;
   private $aProcessors = array();
-  private $aNS = array('le' => SYLMA_NS_EXECUTION, 'le' => SYLMA_NS_INTERFACE, 'xsl', SYLMA_NS_XSLT );
+  private $aNS = array('le' => SYLMA_NS_EXECUTION, 'li' => SYLMA_NS_INTERFACE, 'xsl', SYLMA_NS_XSLT );
   
   private $aQueries = array();
   
@@ -216,7 +214,7 @@ class XML_Action extends XML_Document {
    * @param boolean $bStatic Type of call to the object, if true it's a static::call
    * @return array [0] The return value, [1] A boolean that indicates if the value have to be keeped
    */
-  private function runInterfaceMethod($mObject, $oElement, $oInterface, $bStatic = false) {
+  private function runInterfaceMethod($mObject, $oElement, DOMNode $oInterface = null, $bStatic = false) {
     
     $oResult = null;
     $bReturn = false;
@@ -246,8 +244,11 @@ class XML_Action extends XML_Document {
       
     } else if (!$oMethod = $oInterface->get("ns:method[@path='$sActionMethod']")) {
       
+      if (($document = $oInterface->getDocument()) && ($file = $document->getFile())) $path = $oFile->parse();
+      else $path = new HTML_Em(t('- unknown -'));
+      
       $this->dspm(xt('Méthode %s inexistante dans l\'interface %s',
-        view($oElement), ($oFile = $oInterface->getDocument()->getFile()) ? $oFile->parse() : view(null)), 'action/warning');
+        view($oElement), $path), 'action/warning');
       
     } else {
       
@@ -2171,55 +2172,6 @@ class XML_Action extends XML_Document {
       array('style' => 'font-weight: bold; padding: 5px 0 5px;'));
     
     return dspm(array($oTitle, $mMessage, new HTML_Tag('hr')), $sStatut);
-  }
-}
-
-class Action_Array {
-  
-  private $aArray = array();
-  public $length;
-  protected $iIndex = 0;
-  
-  public function __construct($aArray) {
-    
-    $this->aArray = $aArray;
-    $this->length = count($aArray);
-  }
-  
-  public function item($mKey) {
-    
-    if (array_key_exists($mKey, $this->aArray)) return $this->aArray[$mKey];
-    else return null;
-  }
-  
-  public function rewind() {
-    
-    $this->iIndex = 0;
-  }
-  
-  public function next() {
-    
-    $this->iIndex++;
-  }
-  
-  public function key() {
-    
-    return $this->iIndex;
-  }
-  
-  public function implode() {
-    
-    return implode(', ', $this->aArray);
-  }
-  
-  public function current() {
-    
-    return $this->aArray[$this->iIndex];
-  }
-  
-  public function valid() {
-    
-    return ($this->iIndex < count($this->aArray));
   }
 }
 

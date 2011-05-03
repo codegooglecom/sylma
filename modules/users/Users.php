@@ -30,16 +30,16 @@ class Users extends DBX_Module {
   
   public function login(Redirect $redirect) {
     
-    if (!$dPost = new XML_Options($redirect->getDocument('post'))) {
+    if (!$post = new Options($redirect->getDocument('post'))) {
       
       $this->dspm('Aucune données d\'authentification !', 'warning');
     }
     else {
       
-      $sUser = $dPost->get('name');
-      $sPassword = $dPost->get('password');
+      $sUser = $post->read('name');
+      $sPassword = $post->read('password');
       
-      $bRemember = (bool) $dPost->get('remember');
+      $bRemember = (bool) $post->get('remember');
       
       $user = $this->create('user');
       
