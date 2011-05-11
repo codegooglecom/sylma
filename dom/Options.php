@@ -1,5 +1,6 @@
 <?php
 
+
 class Options extends ModuleBase {
   
   private $dDocument = null;
@@ -8,13 +9,14 @@ class Options extends ModuleBase {
   public function __construct(XML_Document $dDocument, XML_Document $dSchema = null, array $aNS = array()) {
     
     $this->dDocument = $dDocument;
+    
     $this->setPrefix($dDocument && $dDocument->getRoot() ? $dDocument->getRoot()->getPrefix() : '');
     
     $this->setNamespaces($aNS);
     if ($dSchema) $this->setSchema($dSchema);
   }
   
-  protected function getDocument() {
+  public function getDocument() {
     
     return $this->dDocument;
   }
@@ -74,11 +76,17 @@ class Options extends ModuleBase {
         
         $this->aOptions[$sPath] = $nResult;
         
-        if (!$this->aOptions[$sPath] && $bDebug) {
+        if (!$nResult && $bDebug) {
           
           dspm(xt('Option %s not found in %s',
             new HTML_Strong($sPath),
             view($this->getDocument())), 'action/warning');
+        }
+        else if (is_object($nResult)) {
+          
+          // Transform node result in options
+          
+          // $nResult = new Options(new XML_Document($nResult), null, $this->getNS());
         }
       }
     }

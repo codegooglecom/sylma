@@ -1,8 +1,5 @@
 <?php
 
-include('Document.php');
-include('Element.php');
-
 function xt() {
   
   if (func_num_args()) {

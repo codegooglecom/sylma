@@ -19,7 +19,9 @@ class Users extends DBX_Module {
     
     $dTemplate = $this->getTemplate('form/index.xsl');
     if (isset($_SERVER['HTTPS'])) $dTemplate->setParameter('https', $_SERVER['HTTPS']);
-    
+    // dspf($_COOKIE);
+    // dspf($_SESSION);
+    // dspf(unserialize(array_val('sylma-user', $_SESSION)));
     return $this->add(
       $redirect,
       $this->setFormID(),
@@ -39,14 +41,14 @@ class Users extends DBX_Module {
       $sUser = $post->read('name');
       $sPassword = $post->read('password');
       
-      $bRemember = (bool) $post->get('remember');
+      $bRemember = (bool) $post->get('remember', false);
       
       $user = $this->create('user');
       
       if ($user->authenticate($sUser, $sPassword, $bRemember)) {
         
-        $user->load($bRemember);
         Controler::setUser($user);
+        $user->load($bRemember);
         
         $sRedirect = $this->readOption('redirect', '/', false);
         $redirect->setPath($sRedirect);

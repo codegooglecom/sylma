@@ -22,7 +22,7 @@ class ModuleBase {
     else $this->oDirectory = $mPath;
   }
   
-  protected function getDirectory() {
+  public function getDirectory() {
     
     return $this->oDirectory;
   }
@@ -58,7 +58,7 @@ class ModuleBase {
   
   protected function setName($sName) {
     
-    $this->sName = $sName;
+    return $this->sName = $sName;
   }
   
   public function getName() {

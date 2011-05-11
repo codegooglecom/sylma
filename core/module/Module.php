@@ -88,8 +88,10 @@ class Module extends ModuleBase {
   
   protected function readOption($sPath, $mDefault = null, $bDebug = false) {
     
+    $sResult = null;
+    
     if ($this->getOptions() !== null) $sResult = $this->getOptions()->read($sPath, $bDebug);
-    return $sResult ? $sResult : $mDefault;
+    return isset($sResult) ? $sResult : $mDefault;
   }
   
   public function getFullPrefix() {

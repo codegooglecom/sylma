@@ -2,14 +2,14 @@
 
 class Sylma {
   
+  const PATH_LIB = 'core';
   private static $oSettings = null;
-  private static $sLib = 'core';
   
   public static function init(array $aSettings) {
     
     global $sylma;
     
-    require_once(self::$sLib . '/Arguments.php');
+    require_once(self::PATH_LIB . '/Arguments.php');
     self::$oSettings = new Arguments($sylma, 'sylma');
     self::getSettings()->merge($aSettings);
     
@@ -17,6 +17,9 @@ class Sylma {
     else error_reporting(0);
     
     libxml_use_internal_errors(true);
+    
+    require_once('Error.php');
+    $sError = set_error_handler("userErrorHandler");
     
     self::loadLibs();
     
@@ -32,8 +35,6 @@ class Sylma {
     ini_set('session.gc_maxlifetime', Sylma::get('users/session/lifetime'));
     
     session_start();
-    
-    $sError = set_error_handler("userErrorHandler");
     
     return Controler::trickMe();
     
@@ -53,34 +54,37 @@ class Sylma {
   
   protected static function loadLibs() {
     
-    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . self::$sLib);
+    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . self::PATH_LIB);
     
-    require_once('Error.php');
     require_once('Global.php');
     
-    require_once(self::$sLib . '/module/Base.php');
+    require_once('module/Base.php');
     require_once('module/Module.php');
     require_once('module/Extension.php');
     require_once('module/XDB.php');
+    require_once('XML_Processor.php');
     
-    require_once('dom/XML.php');
-    require_once('dom/Options.php');
-    
-    include('schemas/XML_Schema.php');
     require_once('dom/Controler.php');
+    require_once('dom/Document.php');
+    require_once('dom/XML.php');
+    require_once('dom/Element.php');
     require_once('HTML.php');
     
+    require_once('dom/Options.php');
+    
+    require_once('Controler.php');
+    require_once('Redirect.php');
+    require_once('Messages.php');
+    
+    require_once('schemas/XML_Schema.php');
+    
+    require_once('action/Controler.php');
     require_once('action/Path.php');
     require_once('action/Array.php');
     require_once('action/Action.php');
     
     require_once('modules/xquery/XQuery.php');
     require_once('XSL_Document.php');
-    require_once('XML_Processor.php');
-    require_once('action/Controler.php');
-    require_once('Controler.php');
-    require_once('Redirect.php');
-    require_once('Messages.php');
     
     require_once('user/User.php');
     require_once('user/Cookie.php');

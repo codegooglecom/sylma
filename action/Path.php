@@ -36,8 +36,8 @@ class XML_Path {
         
         $aArgument = explode('=', $sArgument);
         
-        if (count($aArgument) == 1) $aArguments[] = $aArgument[0]; // index : only name
-        else $aArguments[$aArgument[0]] = $aArgument[1]; // assoc : name and value
+        if (count($aArgument) == 1) $aArguments[] = $this->parseBaseType($aArgument[0]); // index : only name
+        else $aArguments[$aArgument[0]] = $this->parseBaseType($aArgument[1]); // assoc : name and value
       }
     }
     
@@ -144,7 +144,10 @@ class XML_Path {
       $aTempPath = $aPath;
       $aPath = array();
       
-      foreach ($aTempPath as $sValue) if ($sValue) $aPath[] = $sValue;
+      foreach ($aTempPath as $sValue) {
+        
+        if ($sValue) $aPath[] = $this->parseBaseType($sValue);
+      }
       
       // push final values
       
@@ -155,6 +158,39 @@ class XML_Path {
       $this->sSimplePath = $oFile->getActionPath().$this->getStringIndex(false); // TODO add assoc
       
     } else $this->setPath('');
+  }
+  
+  public function parseBaseType($mValue) {
+    
+    $mResult = $mValue;
+    
+    if (is_string($mValue) && strpos($mValue, 'xs:') !== false) {
+      
+      preg_match('/^xs:(\w+)\(([^\)]+)\)$/', $mValue, $aMatches);
+      
+      switch ($aMatches[1]) {
+        
+        case 'bool' :
+        case 'boolean' :
+          
+          $mResult = strtobool($aMatches[2]);
+          
+        break;
+        
+        case 'int' :
+        case 'integer' :
+          
+          $mResult = (int) $aMatches[2];
+          
+        break;
+        
+        default :
+          
+          $this->dspm(xt('Unknown base type %s', new HTML_Strong($aMatches[1])), 'warning');
+      }
+    }
+    
+    return $mResult;
   }
   
   public function parseExtension($bRemove) {

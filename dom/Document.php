@@ -1,6 +1,6 @@
 <?php
 
-class XML_Document extends DOMDocument {
+class XML_Document extends DOMDocument implements Serializable {
   
   private $iMode = null;
   private $oFile = null;
@@ -826,11 +826,16 @@ class XML_Document extends DOMDocument {
     return $this->display();
   }
   
-  /*public function __sleep() {
+  public function serialize() {
     
-    return (string) $this;
+    return $this->display(true, false);
   }
   
+  public function unserialize($sDocument) {
+    
+    return $this->__construct('<?xml version="1.0" encoding="utf-8"?>'."\n".$sDocument);
+  }
+  /*
   public function __wakeup() {
     
     

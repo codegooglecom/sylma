@@ -1,3 +1,0 @@
-#RedirectPermanent / http://onsite.sme-services.ch/
-order deny,allow
-deny from all

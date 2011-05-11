@@ -213,9 +213,13 @@ class Controler {
       
     } else $sPath = '/';
     
-    // L'extension (si elle est correct) indique le type de fenêtre
+    $oPath = new XML_Path('/'.$sPath, array(), false);
     
-    $oPath = new XML_Path('/'.$sPath, $aGET, false);
+    foreach ($aGET as &$mValue) $mValue = $oPath->parseBaseType($mValue);
+    $oPath->mergeAssoc($aGET);
+    
+    // The extension specify the window type
+    
     if (!$sExtension = $oPath->parseExtension(true)) $sExtension = 'html';
     $sExtension = strtolower($sExtension);
     
@@ -1003,7 +1007,7 @@ class Controler {
       $mMessage = array($mMessage, Controler::getBacktrace());
     }
     
-    if (Sylma::get('debug/enable') && Sylma::get('messages/print')) { // || !self::useMessages()
+    if (Sylma::get('debug/enable') && Sylma::get('messages/print/all')) { // || !self::useMessages()
       
       if (is_array($mMessage)) foreach ($mMessage as $mContent) echo $mContent.new HTML_Br;
       else echo $mMessage.new HTML_Br;
@@ -1016,9 +1020,9 @@ class Controler {
     }
     
     if (self::getMessages()) self::getMessages()->addMessage(new Message($mMessage, $sPath, $aArgs));
-    else if (Sylma::get('debug/enable')) {
+    else if (Sylma::get('debug/enable') && Sylma::get('messages/print/hidden')) {
       
-      // echo view($mMessage);
+      echo view($mMessage);
     }
   }
   

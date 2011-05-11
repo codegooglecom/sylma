@@ -135,7 +135,10 @@ $sylma = array(
   ),
   
   'messages' => array(
-    'print' => false, // DEFAULT = false
+    'print' => array(
+      'all' => false, // DEFAULT = false
+      'hidden' => true, // Messages sent before Messages handler's creation. Only available in DEBUG mode : DEFAULT = false
+    ),
     'format' => array(
       'enable' => true, // DEFAULT = true
     ),
@@ -156,10 +159,10 @@ $sylma = array(
   
   'actions' => array(
     'redirect' => array(
-      'enable' => true,
+      'enable' => true, // Redirect on action's error to 404 : DEFAULT = true
     ),
     'stats' => array(
-      'enable' => true,
+      'enable' => true, // Display actions infos (memory leak !) : DEFAULT = true
     ),
   ),
 );

@@ -7,7 +7,7 @@ class Messages extends XML_Document {
   private $oLast = null;
   private $aNS = array('lm' => SYLMA_NS_MESSAGES);
   
-  public function __construct($oSchema = null, $mMessages = array()) {
+  public function __construct(XML_Document $oSchema = null, array $mMessages = array()) {
     
     parent::__construct('messages');
     
@@ -93,6 +93,11 @@ class Messages extends XML_Document {
     return ($this->getMessages($sPath));
   }
   
+  public function unserialize($sDocument) {
+    
+    return parent::__construct('<?xml version="1.0" encoding="utf-8"?>'."\n".$sDocument);
+  }
+  
   public function parse() {
     
     if ($this->get('//lm:message', $this->aNS)) {
@@ -139,6 +144,7 @@ class Messages extends XML_Document {
       
     } else return null;
   }
+  
 }
 
 class Message extends XML_Element {

@@ -3,6 +3,7 @@
 class User extends Module {
   
   private $sUser = '';
+  private $bValid = false;
   private $sSID = ''; // session ID
   
   private $aGroups = array();
@@ -17,7 +18,6 @@ class User extends Module {
       $options = new Arguments($aOptions);
       $this->setOptions($options->getOptions($this->createNode('user')));
     }
-    
     
     $this->aGroups = $aGroups;
   }
@@ -53,11 +53,31 @@ class User extends Module {
           // Authentification success !
           
           $sResult = $this->setName($sUser);
+          $this->isValid(true);
+          
+          dspm(xt('Authentification %s réussie !', new HTML_Strong($sUser)), 'success');
         }
       }
     }
     
     return $sResult;
+  }
+  
+  protected function isValid($bValid = null) {
+    
+    if ($bValid !== null) $this->bValid = $bValid;
+    return $this->bValid;
+  }
+  
+  public function logout() {
+    
+    $cookie = new Cookie;
+    $cookie->kill();
+    
+    $_SESSION = array();
+    // setcookie(session_name(), '', time()-42000, '/');
+    
+    return new Redirect('salut');
   }
   
   /**
@@ -67,24 +87,32 @@ class User extends Module {
     
     $cookie = $this->loadCookie();
     
-    if ($this->getName()) { // just authenticated via @method authenticate()
+    if ($this->isValid() && $this->getName()) {
+      
+      // just authenticated via @method authenticate()
       
       $this->loadProfile();
-      if ($cookie) $cookie->save($bRemember);
+      if ($cookie) $cookie->save($this->getName(), $bRemember);
     }
-    else if (!$this->loadSession()) { // no session
+    else if (!$this->loadSession()) {
       
-      if ($cookie && ($sUser = $cookie->getName())) { // has cookie
+      // no session
+      
+      if ($cookie && ($sUser = $cookie->getUser())) {
+        
+        // has cookie
         
         $this->setName($sUser);
         $this->loadProfile();
       }
-      else { // no cookie, neither session
+      else {
+        
+        // no cookie, select the default user
         
         $aServer = $this->getArgument('server');
         
-        if ($_SERVER['REMOTE_ADDR'] == $aServer['ip']) $aOptions = $aServer; // is server ?
-        else $aOptions = $this->getArgument('anonymouse'); // is anonymouse
+        if ($_SERVER['REMOTE_ADDR'] == $aServer['ip']) $aOptions = $aServer;
+        else $aOptions = $this->getArgument('anonymouse');
         
         $this->setName($aOptions['name']);
         $this->aGroups = $aOptions['groups'];
@@ -106,7 +134,7 @@ class User extends Module {
     }
     else {
       
-      $dProfil->addNode('full-name', $dProfil->getByName('first-name') . ' ' . $dProfil->getByName('last-name'));
+      $dProfil->addNode('full-name', $dProfil->readByName('first-name') . ' ' . $dProfil->readByName('last-name'));
       
       $this->setOptions($dProfil);
       
@@ -118,6 +146,7 @@ class User extends Module {
   protected function loadGroups() {
     
     $aGroups = Sylma::get('users/authenticated/groups');
+    $sUser = $this->getName();
     
     $oAllGroups = $this->getDocument($this->readSettings('groups/@path'), MODE_EXECUTION);
     
@@ -147,7 +176,7 @@ class User extends Module {
   
   protected function saveSession() {
     
-    $_SESSION[$this->getArgument('session/name')] = serialize(array($this->getName(), $this->getOptions()));
+    $_SESSION[$this->getArgument('session/name')] = serialize(array($this->getName(), $this->getOptions()->getDocument()));
   }
   
   /*** Groups ***/
@@ -223,7 +252,7 @@ class User extends Module {
   
   public function parse() {
     
-    $sName = $this->getOption('full-name').' ['.$this->getName().']';
-    return new HTML_A($this->getArgument('edit') . $this->getName(), $sName);
+    $sName = $this->readOption('full-name').' ['.$this->getName().']';
+    return new HTML_A($this->getArgument('edit') . '/' . $this->getName(), $sName);
   }
 }
