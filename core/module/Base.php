@@ -5,7 +5,7 @@ class ModuleBase {
   protected $oSchema = null;  
   
   // array of classe's object to use within this class with $this->create() loaded in [settings]/classes
-  private $aClasses = array();
+  protected $aClasses = array();
   
   private $aNamespaces = array();
   private $sNamespace = '';
@@ -14,7 +14,17 @@ class ModuleBase {
   private $sName = '';
   
   private $oDirectory = null;
-  private $oArguments = null;
+  private $arguments = null;
+  
+  protected function setName($sName) {
+    
+    return $this->sName = $sName;
+  }
+  
+  public function getName() {
+    
+    return $this->sName;
+  }
   
   protected function setDirectory($mPath) {
     
@@ -25,6 +35,11 @@ class ModuleBase {
   public function getDirectory() {
     
     return $this->oDirectory;
+  }
+  
+  protected function getFile($sPath) {
+    
+    return Controler::getFile(Controler::getAbsolutePath($sPath, $this->getDirectory()));
   }
   
   public function create($sName, $aArguments = array()) {
@@ -56,37 +71,39 @@ class ModuleBase {
     return $result;
   }
   
-  protected function setName($sName) {
+  protected function setArguments($mArguments = null, $bMerge = true) {
     
-    return $this->sName = $sName;
-  }
-  
-  public function getName() {
-    
-    return $this->sName;
-  }
-  
-  protected function setArguments(array $aArguments = null, $bMerge = true) {
-    
-    if ($aArguments) {
+    if ($mArguments) {
       
-      if ($this->getArguments() && $bMerge) $this->getArguments()->merge($aArguments);
-      else $this->oArguments = new Arguments($aArguments, $this->getName());
+      if (is_string($mArguments)) {
+        
+        $mArguments = $this->getFile($mArguments)->getYAML();
+      }
+      
+      if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
+      else $this->arguments = new Arguments($mArguments, $this->getName());
     }
-    else $this->oArguments = null;
+    else $this->arguments = null;
     
     return $this->getArguments();
   }
   
   protected function getArguments() {
     
-    return $this->oArguments;
+    return $this->arguments;
   }
   
-  protected function &getArgument($sPath, $mDefault = null, $bDebug = true) {
+  protected function getArgument($sPath, $mDefault = null, $bDebug = true) {
     
-    if ($this->getArguments()) return $this->getArguments()->get($sPath, $mDefault, $bDebug);
-    else return $mDefault;
+    $mResult = $mDefault;
+    
+    if ($this->getArguments()) {
+      
+      $mResult = $this->getArguments()->get($sPath, $bDebug);
+      if (!$mResult && $mDefault !== 'null') $mResult = $mDefault;
+    }
+    
+    return $mResult;
   }
   
   protected function setSchema($mSchema, $bNamespace = true, $sPrefix = '') {

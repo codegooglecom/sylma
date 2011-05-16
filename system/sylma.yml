@@ -1,0 +1,137 @@
+debug:
+  enable: false
+general:
+  settings: /config/root.xml
+modules:
+  users:
+    path: /sylma/modules/users
+  editor:
+    path: /modules/editeur
+  inspector:
+    classes:
+      class:
+        name: InspectorClass
+      method:
+        name: InspectorMethod
+      parameter:
+        name: InspectorParameter
+      property:
+        name: InspectorProperty
+users:
+  classes:
+    user:
+      name: XUser
+      file: /sylma/modules/users/XUser.php
+    cookie:
+      name: Cookie
+      file: /sylma/user/Cookie.php
+  path: /users
+  # Path to edit a user, name will be add as first indexed arg
+  edit: /sylma/modules/users/edit
+  profil: profil.xml
+  cookies:
+    name: sylma-user
+    # (!) This value should be rewrited for a good cookie security
+    secret-key: This value is not really secret
+    lifetime:
+      # 8h
+      short: 28800
+      # 14j
+      normal: 403200
+  session:
+    name: sylma-user
+    lifetime: 28800
+  root:
+    error-level: 6143
+    arguments: [ ]
+  # server user for cron jobs
+  server:
+    name: server
+    ip:
+    groups:
+      - famous
+      - server
+    arguments: [ ]
+  anonymouse:
+    name: anonymouse
+    groups:
+      - famous
+    arguments:
+      full-name: Anonymous
+  authenticated:
+    groups:
+      - users
+    arguments: [ ]
+maintenance:
+  enable: false
+  file:
+  login: protected/sylma/modules/users/maintenance-login.html
+  login-do: sylma/modules/users/interface/login_do.redirect
+db:
+  # Switch to TRUE to enable database
+  enable: false
+  # Will check for existence of collections and documents and build it if none
+  install: false
+  host: http://localhost:8080/exist/services/Query?wsdl
+  user: myuser
+  password: mypass
+  collection: /mycollection
+  namespace: http://www.example.com
+  default:
+    group: dba
+    # octal value
+    mode: '0770'
+  debug:
+    run: true
+    queries:
+      show: false
+      statut: db/notice
+    results:
+      show: false
+      statut: db/notice
+directories:
+  root:
+    path: protected
+    rights:
+      owner: root
+      group: 0
+      mode: 700
+      user-mode:
+xml:
+  rights:
+    enable: true
+  encoding:
+    check: false
+form:
+  redirect: .redirect
+messages:
+  print:
+    all: false
+    # Messages sent before Messages handler's creation. Only available in DEBUG mode
+    hidden: true
+  format:
+    enable: true
+  backtrace:
+    enable: true
+    count: 3
+  array:
+    line-break: false
+  xml:
+    # WARNING : with false can cause UTF-8 errors - TODO
+    enable: true
+  log:
+    enable: true
+    all: false
+    # Write to this file if DB is not active
+    file : /debug.log
+  rights:
+    enable: true
+actions:
+  redirect:
+    # Redirect on action's error to 404
+    enable: true
+  stats:
+    # Display actions infos (memory leak !)
+    enable: true
+
+

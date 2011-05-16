@@ -1,7 +1,7 @@
 <?php
 
 
-class Options extends ModuleBase {
+class Options extends ModuleBase implements ArgumentsInterface {
   
   private $dDocument = null;
   private $aOptions = array(); // cache array

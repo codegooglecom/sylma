@@ -1,0 +1,4 @@
+database :
+  parent:     logger
+  document :  /sylma/log
+  namespace : http://www.sylma.org/modules/logger

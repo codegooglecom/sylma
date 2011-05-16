@@ -1,0 +1,27 @@
+debug:
+  enable: false
+messages:
+  backtrace:
+    enable: false
+users:
+  cookies:
+    # (!) This value should be rewrited for a good cookie security
+    secret-key: This value is not really secret
+  root:
+    arguments:
+      db:
+        user: adminUser
+        password: hashedPassword
+maintenance:
+  enable: false
+  file: protected/maintenance.html
+db:
+  enable: false
+  user: anonUser
+  password: hashedPassword
+  collection: /example.com
+  namespace: http://www.example.com
+actions:
+  stats:
+    enable: false
+

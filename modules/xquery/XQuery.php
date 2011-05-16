@@ -51,7 +51,7 @@ class XML_XQuery {
     
     $sQuery = $this->getQuery();
     
-    if ($sResult = $oDB->query($sQuery, $this->getNamespaces())) {
+    if ($oDB && ($sResult = $oDB->query($sQuery, $this->getNamespaces()))) {
       
       if ($bXML) {
         

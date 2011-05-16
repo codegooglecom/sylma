@@ -29,6 +29,11 @@ class Controler {
   
   private static $aActions = null;      // Array of running actions
   
+  /**
+   * Reflection classes builded with @method buildClass() or @method ModuleBase::create();
+   */
+  private static $aClasses = array();
+  
   public static function trickMe() {
     
     global $aDefaultInitMessages;
@@ -171,7 +176,7 @@ class Controler {
   
   private static function loadSettings() {
     
-    self::$oSettings = new XML_Document(SYLMA_PATH_SETTINGS, MODE_EXECUTION);
+    self::$oSettings = new XML_Document(Sylma::get('general/settings'), Sylma::MODE_EXECUTE);
     
     $oAllowed = new XML_Document(self::getSettings('messages/allowed/@path'));
     
@@ -898,7 +903,7 @@ class Controler {
    * @param array $aModule The module array containing the classes parameters.
    *  Ex : array('path' => 'modules/mymodule', classes' => array('keyname' => array('name' => 'classname', 'file' => 'filename')))
    * @param* array $aArguments The list of arguments to send to __construct method of object created
-   * @return
+   * @return mixed The object created
    */
   public static function createObject(array $aClass, array $aArguments = array()) {
     
@@ -951,7 +956,9 @@ class Controler {
       
       // creation of object
       
-      $reflected = new ReflectionClass($sClass);
+      // caching classes improve performances
+      if (array_key_exists($sClass, self::$aClasses)) $reflected = self::$aClasses[$sClass];
+      else $reflected = self::$aClasses[$sClass] = new ReflectionClass($sClass);
       
       if ($aArguments) $result = $reflected->newInstanceArgs($aArguments);
       else $result = $reflected->newInstance();

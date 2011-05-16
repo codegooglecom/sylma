@@ -3,19 +3,29 @@
 class Sylma {
   
   const PATH_LIB = 'core';
+  const PATH_OPTIONS = '/system/sylma.yml';
   const MODE_EXECUTE = 1;
   const MODE_READ = 1;
   const MODE_WRITE = 1;
+  const LOG_STATUT_DEFAULT = 'notice';
   
-  private static $oSettings = null;
+  private static $settings = null;
+  private static $logger = null;
   
-  public static function init(array $aSettings) {
+  public static function init($sServer = '') {
     
-    global $sylma;
-    
+    require_once('ArgumentsInterface.php');
     require_once('Arguments.php');
-    self::$oSettings = new Arguments($sylma, 'sylma');
-    self::getSettings()->merge($aSettings);
+    require_once('Spyc.php');
+    
+    $sSylma = SYLMA_PATH . self::PATH_OPTIONS;
+    $mResult = null;
+    
+    if (!file_exists($sSylma)) return "Cannot find main configuration file in <strong>$sSylma</strong>";
+    $aSylma = Spyc::YAMLLoad($sSylma);
+    self::$settings = new Arguments($aSylma, 'sylma');
+    
+    if ($sServer)  self::getSettings()->merge(Spyc::YAMLLoad($sServer));
     
     // set error report mode
     if (Sylma::get('debug/enable')) error_reporting(E_ALL);
@@ -31,10 +41,11 @@ class Sylma {
     self::loadLibs();
     
     // DB
-    // if (self::get('database/enable')) require_once('modules/exist/XML_Database.php');
-    require_once('modules/exist/XML_Database.php');
+    if (self::get('db/enable')) require_once('modules/exist/XML_Database.php');
     
     // others
+    require_once('modules/logger/LoggerInterface.php');
+    require_once('modules/logger/Logger.php');
     require_once('modules/dbx/DBX.php');
     
     //ini_set('session.save_path', 'c:/temp/php');
@@ -43,20 +54,61 @@ class Sylma {
     
     session_start();
     
-    return Controler::trickMe();
+    $mResult = Controler::trickMe();
     
+    return $mResult;
     //session_write_close();
   }
   
-  public static function getSettings($sPath = '') {
+  protected static function getSettings($sPath = '') {
     
     if ($sPath) return self::getSettings()->get($sPath);
-    else return self::$oSettings;
+    else return self::$settings;
   }
   
-  public static function get($sPath) {
+  protected static function getLogger() {
     
-    return self::getSettings()->get($sPath);
+    return $this->logger;
+  }
+  
+  protected static function setLogger(LoggerInterface $logger) {
+    
+    $this->logger = $logger;
+  }
+  
+  public static function get($sPath, $bDebug = true) {
+    
+    return self::getSettings()->get($sPath, $bDebug);
+  }
+  
+  /**
+   * Log system messages either in database or in a file defined in @settings /messages/log/file if db is not yet ready
+   * Arguments can be see as questions : Who, What, Where
+   */
+  public static function log($sNamespace, $mMessage, $sStatut = self::LOG_STATUT_DEFAULT) {
+    
+    if (class_exists('Controler') && Controler::isAdmin()) {
+      
+      Controler::addMessage(array($sNamespace, ' >> ', $mMessage), $sStatut); // temp
+    }
+    
+    if (class_exists('Logger')) {
+      
+      // database is open log into
+      
+      
+    }
+    else if (self::get('messages/log/enable')) {
+      
+      // no database instance, use a file
+      
+      if ($sPath = self::get('messages/log/file', false)) {
+        
+        $fp = fopen(MAIN_DIRECTORY.$sPath, 'a+');
+        fwrite($fp, "----\n" . $mMessage . ' -- ' . $sStatut . "\n"); //.Controler::getBacktrace()
+        fclose($fp);
+      }
+    }
   }
   
   protected static function loadLibs() {

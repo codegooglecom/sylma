@@ -1,36 +1,36 @@
 <?php
 
-class Arguments {
+class Arguments implements ArgumentsInterface {
   
-  const MESSAGES_STATUT = 'warning';
+  const MESSAGES_STATUT = Sylma::LOG_STATUT_DEFAULT;
   private $aArray = array();
-  private $sName = '';
+  private $sNamespace = '';
   
-  public function __construct(array $aArray, $sName = '') {
+  public function __construct(array $aArray = array(), $sNamespace = '') {
     
     $this->aArray = $aArray;
-    $this->sName = $sName;
+    $this->sNamespace = $sNamespace;
   }
   
-  public function getName() {
+  public function getNamespace() {
     
-    return $this->sName;
+    return $this->sNamespace;
   }
   
-  public function set($sPath, $mValue) {
+  public function set($sPath, $mValue = null) {
     
     if ($aTarget = $this->get($sPath)) {
       
-      if ($mValue) $aTarget = $mValue;
+      if ($mValue !== null) $aTarget = $mValue;
       else unset($aTarget);
     }
     
     return $aTarget;
   }
   
-  public function &get($sPath, $mDefault = null, $bDebug = true) {
+  public function get($sPath, $bDebug = true) {
     
-    if (!$sPath) $this->dspm('Aucun chemin indiqué dans la requête', 'warning');
+    if (!$sPath) $this->log('Aucun chemin indiqué dans la requête', 'warning');
     else {
       
       if ($sPath[0] == '/') $sPath = substr($sPath, 1);
@@ -38,41 +38,40 @@ class Arguments {
       if (strpos($sPath, '/') !== false) $aPath = explode('/', $sPath);
       else $aPath = array($sPath);
       
-      return $this->getValue($aPath, $this->aArray, $mDefault, $bDebug, $sPath);
+      return $this->getValue($aPath, $this->aArray, $bDebug, $sPath);
     }
     
     return null;
   }
   
-  private function &getValue(array $aPath, array $aArray, $mDefault, $bDebug, $sPath) {
+  private function getValue(array $aPath, array $aArray, $bDebug, $sPath) {
     
     $mResult = null;
     $sKey = array_shift($aPath);
     
     if (!array_key_exists($sKey, $aArray)) {
       
-      if ($bDebug) $this->dspm("Cannot find '$sPath', stopped at key '$sKey'");
+      if ($bDebug) $this->log("Cannot find '$sPath', stopped at key '$sKey'");
       
-      if ($mDefault !== null) $mResult = $mDefault;
-      else $mResult = null;
+      $mResult = null;
     }
     else {
       
       if (!$aPath) $mResult = $aArray[$sKey];
-      else if (is_array($aArray[$sKey])) $mResult = $this->getValue($aPath, $aArray[$sKey], $mDefault, $bDebug, $sPath);
-      else $this->dspm("Aucun sous-chemin dans $sPath");
+      else if (is_array($aArray[$sKey])) $mResult = $this->getValue($aPath, $aArray[$sKey], $bDebug, $sPath);
+      else $this->log("Aucun sous-chemin dans $sPath");
     }
     
     return $mResult;
   }
   
-  public function read($sPath, $mDefault = null, $bDebug = true) {
+  public function read($sPath, $bDebug = true) {
     
-    $sResult = $this->get($sPath, $mDefault, $bDebug);
+    $sResult = $this->get($sPath, $bDebug);
     
     if (is_array($sResult)) {
       
-      $this->dspm("Cannot read array in $sPath");
+      $this->log("Cannot read array in $sPath");
       $sResult = '';
     }
     
@@ -133,9 +132,9 @@ class Arguments {
     }
   }
   
-  protected function dspm($sMessage, $sStatut = self::MESSAGES_STATUT) {
+  protected function log($sMessage, $sStatut = self::MESSAGES_STATUT) {
     
-    dspm($sMessage." - Arguments [{$this->sName}]", $sStatut);
+    Sylma::log($this->getNamespace(), $sMessage, $sStatut);
   }
 }
 

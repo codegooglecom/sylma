@@ -55,11 +55,6 @@ class Module extends ModuleBase {
     else return null;
   }
   
-  protected function getFile($sPath) {
-    
-    return Controler::getFile(Controler::getAbsolutePath($sPath, $this->getDirectory()));
-  }
-  
   protected function getDocument($sPath, $iMode = MODE_READ) {
     
     if ($oFile = $this->getFile($sPath)) return new XML_Document((string) $oFile, $iMode);

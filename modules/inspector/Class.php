@@ -3,17 +3,21 @@
 class InspectorClass extends InspectorReflector implements InspectorReflectorInterface {
   
   protected $aProperties = array();
+  const PROPERTY_CLASS = 'property';
+  
   protected $aMethods = array();
+  const METHOD_CLASS = 'method';
   
   protected $file;
   protected $sSource;
   
-  public function __construct(ReflectionClass $rClass, ModuleBase $controler) {
+  public function __construct(ReflectionClass $class, ModuleBase $controler) {
     
     $this->controler = $controler;
-    $this->reflector = $rClass;
+    $this->reflector = $class;
     
     $this->loadFile();
+    
     $this->loadMethods();
     $this->loadProperties();
   }
@@ -43,7 +47,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
       
       if ($property->getDeclaringClass() == $this->getReflector()) {
         
-        $this->aProperties[] = $this->getControler()->create('property', array(
+        $this->aProperties[] = $this->getControler()->create(self::PROPERTY_CLASS, array(
           $property, $this));
       }
     }
@@ -55,7 +59,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
       
       if ($method->getDeclaringClass() == $this->getReflector()) {
         
-        $this->aMethods[$method->getName()] = $this->getControler()->create('method', array(
+        $this->aMethods[$method->getName()] = $this->getControler()->create(self::METHOD_CLASS, array(
           $method, $this));
       }
     }

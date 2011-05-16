@@ -113,6 +113,19 @@ class XML_File extends XML_Resource {
     $this->oDocument = $oDocument;
   }
   
+  public function getYAML() {
+    
+    $aResult = array();
+    
+    if (!$sContent = $this->read()) dspm(t('Aucun contenu dans le fichier %s, impossible de créer un tableau YAML'), 'warning');
+    else {
+      
+      $aResult = Spyc::YAMLLoadString($this->read());
+    }
+    
+    return $aResult;
+  }
+  
   public function checkRights($iMode) {
     
     if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;

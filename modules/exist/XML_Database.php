@@ -60,9 +60,8 @@ class XML_Database extends ModuleBase {
     else {
       
       $sDeclare = ''; // namespaces declarations
-      $aNamespaces = array_merge(array($this->sNamespace), $this->aNamespaces, $aNamespaces);
       
-      foreach ($aNamespaces as $sPrefix => $sNamespace) {
+      foreach ($this->mergeNamespaces($aNamespaces) as $sPrefix => $sNamespace) {
         
         if ($sPrefix === 0) $sDeclare .= "declare default element namespace '{$sNamespace}';\n";
         else if ($sPrefix) $sDeclare .= "declare namespace {$sPrefix}='{$sNamespace}';\n";

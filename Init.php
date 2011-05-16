@@ -6,7 +6,11 @@ if (!defined("SYLMA_PATH_SEPARATOR")) {
   else define("SYLMA_PATH_SEPARATOR", ":");
 }
 
-require_once('system/config-sylma.php'); 
+preg_match('`[^/]+/[^/]+$`', str_replace('\\', '/', dirname(__FILE__)), $result);
+
+define('SYLMA_PATH', $result[0]);
+set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH);
+
 require_once('system/config.php'); 
 require('core/Sylma.php');
 

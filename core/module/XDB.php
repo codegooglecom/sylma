@@ -1,12 +1,49 @@
 <?php
 
+class BadObject {
+  
+  protected $bAlert = false;
+  protected $sName;
+  protected $sNamespace;
+  
+  public function __construct($sNamespace, $sName) {
+    
+    $this->sName = $sName;
+    $this->sNamespace = $sNamespace;
+  }
+  
+  protected function log($sMessage) {
+    
+    if (!$this->bAlert) {
+      
+      Sylma::log($this->sNamespace, xt('Access the None object (%s) : %s',
+        new HTML_Strong($this->sName),
+        $sMessage), 'error');
+      
+      $this->bAlert = true;
+    }
+  }
+  
+  public function __call($sMethod, $aArguments) {
+    
+    $this->log(xt('@method %s with %s', new HTML_Strong($sMethod), view($aArguments)));
+  }
+  
+  public function __get($sProperty) {
+    
+    $this->log(xt('@property %s', new HTML_Strong($sProperty)));
+  }
+}
+
 class XDB_Module extends ModuleExtension {
   
   /* Global */
   
   protected function getDB() {
     
-    return Controler::getDatabase();
+    if (!$db = Controler::getDatabase()) $db = new BadObject($this->getNamespace(), 'database');
+    
+    return $db;
   }
   
   protected function setDocument($sDocument, XML_Document $oContent = null) {
