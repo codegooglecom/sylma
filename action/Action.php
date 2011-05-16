@@ -2,6 +2,8 @@
 
 class XML_Action extends XML_Document {
   
+  const MONITOR_NS = 'http://www.sylma.org/action/monitor';
+  
   private $oParent = null; // parent action, null if not an action
   private $oPath = null;
   private $oSettings = null;
@@ -11,7 +13,11 @@ class XML_Action extends XML_Document {
   private $oRedirect = null;
   private $sStatut = null;
   private $aProcessors = array();
-  private $aNS = array('le' => SYLMA_NS_EXECUTION, 'li' => SYLMA_NS_INTERFACE, 'xsl', SYLMA_NS_XSLT );
+  private $aNS = array(
+    'le' => SYLMA_NS_EXECUTION,
+    'li' => SYLMA_NS_INTERFACE,
+    'xsl' => SYLMA_NS_XSLT,
+    'lem' => self::MONITOR_NS);
   
   private $aQueries = array();
   
@@ -1808,10 +1814,13 @@ class XML_Action extends XML_Document {
   /**
    * Build action's first element for the infos box
    */
-  
   public function getResume() {
     
-    if (!$this->oResume) $this->oResume = new XML_Element('action', null, array('path' => $this->getPath()));
+    if (!$this->oResume) {
+      
+      $this->oResume = new XML_Element('action', null, array(
+        'path' => $this->getPath()), self::MONITOR_NS);
+    }
     
     return $this->oResume;
   }
@@ -1825,21 +1834,23 @@ class XML_Action extends XML_Document {
   /**
    * Add a file to this action for infos box
    */
-  
   public function resumeFile($oFile, $bFirstTime) {
     
-    if (!$oFiles = $this->getResume()->getByName('files')) $oFiles = $this->getResume()->addNode('files');
+    if (!$oFiles = $this->getResume()->getByName('files')) {
+      
+      $oFiles = $this->getResume()->addNode('files', null, array(), self::MONITOR_NS);
+    }
     
     $oResume = $oFile->parseXML();
     if ($bFirstTime) $oResume->setAttribute('first-time' , 1);
     
+    // if ($oResume) dspf($oResume->getNamespace());
     $oFiles->add($oResume);
   }
   
   /**
    * Add a sub-action to this action in infos box
    */
-  
   public function resumeAction($oAction) {
     
     $this->aSubActions[] = $oAction->viewResume();
@@ -1848,7 +1859,6 @@ class XML_Action extends XML_Document {
   /**
    * Get the stats resume for infos box
    */
-  
   public function viewResume() {
     
     $oAction = $this->getResume();
@@ -1893,12 +1903,15 @@ class XML_Action extends XML_Document {
       // add children
       $oSubActions = $oAction->addNode('sub-actions');
       
-      foreach ($this->aSubActions as $oSubAction) $oSubActions->add($oSubAction);
+      foreach ($this->aSubActions as $oSubAction) {
+        
+        $oTest = $oSubActions->add($oSubAction);
+      }
       
       // evaluate stat weight with children's
       foreach ($this->aStats as $sName => $fValue) {
         
-        $oSubStats = $oSubActions->query("action/stats/stat[@name='$sName']");
+        $oSubStats = $oSubActions->query("lem:action/lem:stats/lem:stat[@name='$sName']", $this->aNS);
         
         $fResultValue = $fValue;
         

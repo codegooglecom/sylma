@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lc="http://www.sylma.org/schemas" xmlns="http://www.sylma.org/modules/users" xmlns:ls="http://www.sylma.org/security" targetNamespace="http://www.sylma.org/modules/users" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xs:complexType name="Profil">
+    <xs:sequence>
+      <xs:element name="first-name" lc:title="Prénom" type="xs:string"/>
+      <xs:element name="last-name" lc:title="Nom de famille" type="xs:string"/>
+      <xs:element name="email" lc:title="Courriel" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="profil" type="Profil" maxOccurs="unbounded"/>
+</xs:schema>

@@ -5,7 +5,7 @@ class DBX_Module extends XDB_Module {
   private $oModel = null;
   private $oHeaders = null;
   
-  public function __construct(XML_Directory $oDirectory, XML_Document $oSchema, XML_Document $oOptions) {
+  public function __construct(XML_Directory $oDirectory, XML_Document $oSchema = null, XML_Document $oOptions = null) {
     
     $this->setName('dbx');
     
@@ -16,14 +16,15 @@ class DBX_Module extends XDB_Module {
     $this->setNamespace(SYLMA_NS_XHTML, 'html', false);
     $this->setNamespace(SYLMA_NS_SCHEMAS, 'lc', false);
     
-    $this->setOptions($oOptions);
+    if ($oOptions) {
     
-    if (!$oSchema) $this->dspm(xt('Aucun schéma défini'), 'action/warning');
-    else $this->setSchema($oSchema, true, $this->readOption('database/prefix', false));
-    
-    $this->oHeaders = new XML_Document($this->getOption('headers', false));
-    
-    $this->setDocument($this->readOption('database/document', false));
+      $this->setOptions($oOptions);
+      
+      if ($oSchema) $this->setSchema($oSchema, true, $this->readOption('database/prefix', false));
+      
+      $this->oHeaders = new XML_Document($this->getOption('headers', false));
+      $this->setDocument($this->readOption('database/document', false));
+    }
   }
   
   /*** Module Extension ***/

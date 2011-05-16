@@ -149,6 +149,11 @@ class XML_File extends XML_Resource {
     return false;
   }
   
+  public function readArray() {
+    
+    return file($this->getRealPath(), FILE_SKIP_EMPTY_LINES);
+  }
+  
   public function read() {
     
     return file_get_contents($this->getRealPath());

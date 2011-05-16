@@ -21,7 +21,7 @@
           <le:string>/login-do</le:string>
         </dbx:add-do-path>
         <dbx:template-form>
-          <le:file path="login-ext.xsl"/>
+          <le:file path="login-ext.xsl" mode="1"/>
         </dbx:template-form>
       </li:add>
     </le:action>

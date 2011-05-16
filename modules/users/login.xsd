@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lc="http://www.sylma.org/schemas" xmlns="http://www.sylma.org/modules/users" xmlns:ls="http://www.sylma.org/security" targetNamespace="http://www.sylma.org/modules/users" xmlns:xi="http://www.w3.org/2001/XInclude">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lc="http://www.sylma.org/schemas" xmlns="http://www.sylma.org/modules/users/login" xmlns:ls="http://www.sylma.org/security" targetNamespace="http://www.sylma.org/modules/users/login" xmlns:xi="http://www.w3.org/2001/XInclude">
   <xs:complexType name="User">
     <xs:sequence>
       <xs:element name="name" lc:title="nom d'utilisateur" type="xs:string"/>

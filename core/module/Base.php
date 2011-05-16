@@ -39,13 +39,13 @@ class ModuleBase {
     else if (!$aClass = $this->getArgument('classes/' . $sName)) { // has class ?
       
       dspm(xt('Cannot build object %s. No settings defined for these class'),
-        new HTML_Strong($sKey), 'action/error');
+        new HTML_Strong($sName), 'action/error');
     }
     else {
       
       // set absolute path for relative classe file's path
       
-      if ($aClass['file'] && $aClass['file'][0] != '/' && ($sPath = $this->getArgument('path'))) {
+      if (array_key_exists('file', $aClass) && $aClass['file'] && $aClass['file'][0] != '/' && ($sPath = $this->getArgument('path'))) {
         
         $aClass['file'] = Controler::getAbsolutePath($aClass['file'], $this->getDirectory());
       }
@@ -89,18 +89,20 @@ class ModuleBase {
     else return $mDefault;
   }
   
-  protected function setSchema($oSchema, $bNamespace = false, $sPrefix = '') {
+  protected function setSchema($mSchema, $bNamespace = true, $sPrefix = '') {
     
-    if ($bNamespace && !$this->getNamespace() && $oSchema && !$oSchema->isEmpty()) {
+    if (is_string($mSchema)) $mSchema = $this->getDocument($mSchema);
+    
+    if ($mSchema && !$mSchema->isEmpty()) { // !$this->getNamespace() && TODO REM
       
-      if ($sNamespace = $oSchema->getAttribute('targetNamespace')) {
+      if ($sNamespace = $mSchema->getAttribute('targetNamespace')) {
         
         if (!$sPrefix) $sPrefix = $this->getPrefix();
-        $this->setNamespace($sNamespace, $sPrefix, true);
+        $this->setNamespace($sNamespace, $sPrefix, $bNamespace);
       }
+      
+      $this->oSchema = $mSchema;
     }
-    
-    $this->oSchema = $oSchema;
   }
   
   protected function getSchema() {

@@ -361,7 +361,7 @@ class XML_Path {
   
   public function viewResume() {
     
-    $nPath = new XML_Element('path');
+    $nPath = new XML_Element('path', null, array(), XML_Action::MONITOR_NS);
     
     if ($this->aArguments['index']) {
       

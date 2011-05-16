@@ -2,26 +2,45 @@
 
 class Users extends DBX_Module {
   
+  const MODULE_NAME = 'users';
+  
+  const LOGIN_SCHEMA = 'login.xsd';
+  const LOGIN_TEMPLATE = 'form/index.xsl';
+  
+  const PROFIL_SCHEMA = 'profil.xsd';
+  
+  const OPTIONS_ACTION = 'options';
+  const OPTION_USERS = 'users';
+  const OPTION_MODULE = 'modules/users';
+  
   public function __construct(XML_Directory $directory = null, XML_Document $dSchema = null, XML_Document $dOptions = null) {
     
-    $this->setName('users');
-    $this->setArguments(Sylma::get('modules/users'));
-    $this->getArguments()->merge(Sylma::get('users'));
+    $this->setName(self::MODULE_NAME);
+    
+    $this->setArguments(Sylma::get(self::OPTION_MODULE));
+    $this->getArguments()->merge(Sylma::get(self::OPTION_USERS));
     
     if (!$directory) $directory = $this->setDirectory(__file__);
-    if (!$dSchema) $dSchema = $this->getDocument('login.xsd');
-    if (!$dOptions) $dOptions = $this->runAction('options');
+    if (!$dOptions) $dOptions = $this->runAction(self::OPTIONS_ACTION);
     
     parent::__construct($directory, $dSchema, $dOptions);
   }
   
+  public function editProfil(Redirect $redirect) {
+    
+    $this->setSchema(self::PROFIL_SCHEMA);
+  }
+  
   public function connection(Redirect $redirect) {
     
-    $dTemplate = $this->getTemplate('form/index.xsl');
+    $this->setSchema($this->getDocument(self::LOGIN_SCHEMA, Sylma::MODE_EXECUTE));
+    $dTemplate = $this->getTemplate(self::LOGIN_TEMPLATE);
+    
     if (isset($_SERVER['HTTPS'])) $dTemplate->setParameter('https', $_SERVER['HTTPS']);
-    // dspf($_COOKIE);
-    // dspf($_SESSION);
-    // dspf(unserialize(array_val('sylma-user', $_SESSION)));
+    
+    // dspf($this->getOptions()->getDocument());
+    // dspf($this->getTemplateExtension());
+    
     return $this->add(
       $redirect,
       $this->setFormID(),
@@ -38,6 +57,8 @@ class Users extends DBX_Module {
     }
     else {
       
+      $this->setSchema(self::LOGIN_SCHEMA);
+      
       $sUser = $post->read('name');
       $sPassword = $post->read('password');
       
@@ -53,7 +74,7 @@ class Users extends DBX_Module {
         $sRedirect = $this->readOption('redirect', '/', false);
         $redirect->setPath($sRedirect);
         
-        $redirect->addMessage(t('Bienvenue '.$user->getArgument('first-name')), 'success');
+        $redirect->addMessage(xt('Bienvenue %s', $user->getArgument('first-name')), 'success');
       }
     }
     

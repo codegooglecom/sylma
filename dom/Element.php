@@ -22,11 +22,12 @@ class XML_Element extends DOMElement implements XML_Composante {
     if (!$oDocument) {
       
       $oDocument = new XML_Document();
+      // $oDocument->importNode($this);
       $oDocument->add($this);
       
     } else {
       
-      $oDocument->importNode($this, 1);
+      $oDocument->importNode($this);
       $oDocument->add($this); // TODO ??
       $this->remove();
     }
@@ -660,7 +661,7 @@ class XML_Element extends DOMElement implements XML_Composante {
       
       if ($oChild->getDocument() && ($oChild->getDocument() !== $this->getDocument())) {
         
-        $oChild = $this->getDocument()->importNode($oChild, 1);
+        $oChild = $this->getDocument()->importNode($oChild);
       }
       
       if ($bPrevious) {
@@ -673,7 +674,6 @@ class XML_Element extends DOMElement implements XML_Composante {
         
         if ($oReferer) $oResult = parent::insertBefore($oChild, $oReferer);
         else $oResult = parent::appendChild($oChild);
-      
       }
     }
     

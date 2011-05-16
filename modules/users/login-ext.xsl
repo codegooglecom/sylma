@@ -1,4 +1,4 @@
-<xsl:stylesheet extension-element-prefixes="usr" xmlns:usr="http://www.sylma.org/modules/users" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" usr:ns="null">
+<xsl:stylesheet extension-element-prefixes="usr" xmlns:usr="http://www.sylma.org/modules/users/login" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" usr:ns="null">
   <xsl:template match="usr:*" mode="form-child">
     <xsl:attribute name="id">sylma-user-login</xsl:attribute>
   </xsl:template>

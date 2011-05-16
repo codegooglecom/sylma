@@ -20,6 +20,11 @@ function extractDirectory($sPath, $bObject = false) {
   else return $sResult;
 }
 
+function pathWin2Unix($sPath) {
+  
+  return str_replace('\\', '/', $sPath);
+}
+
 /*** Array ***/
 
 function array_last($aArray, $mDefault = null) {

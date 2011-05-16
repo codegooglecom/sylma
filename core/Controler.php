@@ -556,13 +556,16 @@ class Controler {
     $oAction = array_pop(self::$aActions);
     
     $oAction->parse(array('time' => self::$iStartTime), false);
-    
-    $oResume = new XML_Element('controler', $oAction->viewResume());
-    
+    $oTest = $oAction->viewResume();
+    // dspf($oTest->query('//ld:file', array('ld' => SYLMA_NS_DIRECTORY))->length);
+    $oResume = new XML_Element('controler', $oTest, array(), XML_Action::MONITOR_NS);
+    // dspf($oResume->getNamespace());
+    // dspf($oResume->query('//ld:file', array('ld' => SYLMA_NS_DIRECTORY))->length);
     $oResume->getFirst()->setAttribute('path', '<controler>');
     $oTemplate = new XSL_Document(Controler::getSettings('actions/template/@path'), MODE_EXECUTION);
     $oTemplate->setParameter('path-editor', Sylma::get('modules/editor/path'));
-    
+    // dspf($oResume->getDocument());
+    // dspf($oTemplate);
     return $oResume->getDocument()->parseXSL($oTemplate);
   }
   
@@ -672,22 +675,26 @@ class Controler {
       else if (is_array($mArgument)) {
         
         // Arrays
+        $bLineBreak = Sylma::get('messages/array/line-break');
         
         if (count($mArgument)) {
-        $iCount = count($mArgument) - 1;
           
+          $iCount = count($mArgument) - 1;
           $oContent = new HTML_Div(null, array('style' => 'display: inline;'));
+          if ($bLineBreak) $oContent->add(new HTML_Br);
+          
           foreach ($mArgument as $mKey => $mValue) {
             
             $oContent->add(view($mKey), ' => ', self::formatResource($mValue, $bDecode));
             if ($iCount) $oContent->add(', ');
             
+            if ($bLineBreak) $oContent->add(new HTML_Br);
             $iCount--;
           }
           
         } else $oContent = '';
         
-        $aValue = array(new HTML_Div(xt('array[%s](%s)', new HTML_Strong(count($mArgument)), $oContent), array('class' => 'array')), 'violet');
+        $aValue = array(new HTML_Div(xt('array[%s](%s)', new HTML_Strong(count($mArgument)), $oContent), array('class' => 'array' . ($bLineBreak ? ' array-break' : ''))), 'violet');
         
       } else if (is_object($mArgument)) {
         
@@ -948,6 +955,11 @@ class Controler {
       
       if ($aArguments) $result = $reflected->newInstanceArgs($aArguments);
       else $result = $reflected->newInstance();
+      
+      // These 2 following functions doesn't work, keep here for futur brainstorming
+      //
+      // $result = new $sClass(list($aArguments));
+      // $result = call_user_func_array(array($sClass, '__construct'), $aArguments);
     }
     
     return $result;

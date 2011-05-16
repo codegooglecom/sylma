@@ -3,18 +3,25 @@
 class Sylma {
   
   const PATH_LIB = 'core';
+  const MODE_EXECUTE = 1;
+  const MODE_READ = 1;
+  const MODE_WRITE = 1;
+  
   private static $oSettings = null;
   
   public static function init(array $aSettings) {
     
     global $sylma;
     
-    require_once(self::PATH_LIB . '/Arguments.php');
+    require_once('Arguments.php');
     self::$oSettings = new Arguments($sylma, 'sylma');
     self::getSettings()->merge($aSettings);
     
+    // set error report mode
     if (Sylma::get('debug/enable')) error_reporting(E_ALL);
     else error_reporting(0);
+    
+    require_once('Controler.php');
     
     libxml_use_internal_errors(true);
     
@@ -72,7 +79,6 @@ class Sylma {
     
     require_once('dom/Options.php');
     
-    require_once('Controler.php');
     require_once('Redirect.php');
     require_once('Messages.php');
     

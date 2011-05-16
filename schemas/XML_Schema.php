@@ -106,7 +106,11 @@ class XSD_Parser extends ModuleBase {
     
     $sRoot = $aPath ? $aPath[0] : $oRoot->getName();
     
-    if ($oRoot && ($oSource = $this->getSchema()->get("/*/xs:element[@name='".$sRoot."']", $this->getNS()))) {
+    if (!$this->getSchema()) {
+      
+      $this->dspm(xt('Cannot validate or build model, no schema defined'), 'warning');
+    }
+    else if ($oRoot && ($oSource = $this->getSchema()->get("/*/xs:element[@name='".$sRoot."']", $this->getNS()))) {
       
       $oElement = new XSD_Element($oSource, null, null, $this, $aPath);
       $this->aElements = $oElement;

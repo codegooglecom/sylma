@@ -8,7 +8,7 @@ function userErrorHandler($errno, $errstr, $errfile, $errline) {
   
   if (Controler::isAdmin()) {
     
-    if (Sylma::get('messages/format/enable')) {
+    if (Sylma::get('messages/format/enable') && class_exists('HTML_Tag')) {
       
       $oMessage = new HTML_Div;
       $oMessage->add(
@@ -16,10 +16,10 @@ function userErrorHandler($errno, $errstr, $errfile, $errline) {
         $errstr,
         new HTML_Tag('i', " - $errfile [ligne $errline]"));
         
-    } else $oMessage = "ERREUR [$errno] $errstr - [$errline] - $errfile : ";//.Controler::getBacktrace();
+    } else $oMessage = "ERREUR [$errno] $errstr - [$errline] - $errfile : <br/>";//.Controler::getBacktrace();
     
     if (Controler::useMessages()) Controler::addMessage($oMessage, 'error');
-    else if (Sylma::get('debug/enable')) echo $oMessage;
+    else if (Sylma::get('debug/enable') && Sylma::get('messages/print/hidden')) echo $oMessage;
     
     return true;
   }

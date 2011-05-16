@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interfaces>
-  <interface class="Action_Array">/sylma/core/array.iml</interface>
+  <interface class="Action_Array">/sylma/action/array.iml</interface>
   <interface class="Controler">/sylma/core/controler.iml</interface>
   <interface class="HTML_Action">/sylma/core/html_action.iml</interface>
   <interface class="Redirect">/sylma/core/redirect.iml</interface>

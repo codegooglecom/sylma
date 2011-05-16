@@ -17,6 +17,23 @@ $sylma = array(
     'editor' => array(
       'path' => '/modules/editeur',
     ),
+    
+    'inspector' => array(
+      'classes' => array(
+        'class' => array(
+          'name' => 'InspectorClass',
+        ),
+        'method' => array(
+          'name' => 'InspectorMethod',
+        ),
+        'parameter' => array(
+          'name' => 'InspectorParameter',
+        ),
+        'property' => array(
+          'name' => 'InspectorProperty',
+        ),
+      ),
+    ),
   ),
   
   'users' => array(
@@ -33,6 +50,7 @@ $sylma = array(
     ),
     
     'path' => '/users',
+    'edit' => '/sylma/modules/users/edit', // Path to edit a user, name will be add as first indexed arg
     'profil' => 'profil.xml',
     
     'cookies' => array(
@@ -145,6 +163,9 @@ $sylma = array(
     'backtrace' => array(
       'enable' => true, // DEFAULT = true
       'count' => 3, // DEFAULT = 3
+    ),
+    'array' => array(
+      'line-break' => false,
     ),
     'xml' => array(
       'enable' => true, // DEFAULT = true, WARNING : with false can cause UTF-8 errors - TODO

@@ -2,6 +2,7 @@
 
 class Arguments {
   
+  const MESSAGES_STATUT = 'warning';
   private $aArray = array();
   private $sName = '';
   
@@ -132,9 +133,9 @@ class Arguments {
     }
   }
   
-  protected function dspm($sMessage) {
+  protected function dspm($sMessage, $sStatut = self::MESSAGES_STATUT) {
     
-    dspm($sMessage." - Arguments [{$this->sName}]", 'action/warning');
+    dspm($sMessage." - Arguments [{$this->sName}]", $sStatut);
   }
 }
 

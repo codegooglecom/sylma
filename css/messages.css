@@ -50,7 +50,19 @@
 .messages div.element:hover .hidden { display: block; }
 /*.messages div.element .hidden:hover { display: none; }*/
 
-.messages div.array { display: inline; border: 1px solid transparent; }
+.messages div.array.array {
+  display: inline;
+  border: 1px solid transparent;
+}
+
+.messages div.array.array-break {
+  border: 0 solid #bbb;
+  display: block;
+  margin-left: 1em;
+  padding-left: 0.5em;
+  border-left-width: 1px;
+}
+
 .messages div.array:hover {
   border: 1px solid #aaa;
   margin: 1px 0 1px 0;
