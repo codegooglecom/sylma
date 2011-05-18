@@ -173,7 +173,7 @@ class XML_Element extends DOMElement implements XML_Composante {
         
         XML_Controler::addStat('query');
         
-        if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) Controler::infosSetQuery($sQuery);
+        if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
         
         if ($mResult === null) {
           
@@ -209,8 +209,7 @@ class XML_Element extends DOMElement implements XML_Composante {
         
         XML_Controler::addStat('query');
         
-        if (Sylma::get('actions/stats/enable') && Controler::isAdmin())
-          Controler::infosSetQuery($sQuery);
+        if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
         
         // if (!$mResult || !$mResult->length) Controler::addMessage(xt("Element->query(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');
         // ////// report & notice type will crash system, maybe something TODO /////// //

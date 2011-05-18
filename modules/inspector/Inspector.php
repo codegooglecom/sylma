@@ -21,17 +21,20 @@ class Inspector extends Module {
   
   public function inspect() {
     
+    // dspf($this->getFile('/sylma/system/sylma.yml')->getYAML());
+    
     $action = $this->create('class', array(
       new ReflectionClass('InspectorClass'), $this));
     
-    dspf($action->parse());
-    
-    return new HTML_Tag('pre', (string) $action);
+    // dspf($this->
+    // dspf($action->parse());
+    // dspf($action->getSourceProperties());
+    // return new HTML_Tag('pre', (string) $action);
   }
   
-  public function dspm($sMessage, $sStatut = self::MESSAGES_STATUT) {
+  public function log($sMessage, $sStatut = self::MESSAGES_STATUT) {
     
-    parent::dspm($sMessage, $sStatut);
+    parent::log($sMessage, $sStatut);
   }
 }
 

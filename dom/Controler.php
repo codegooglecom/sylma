@@ -3,6 +3,7 @@
 class XML_Controler {
   
   private static $aStats = array();
+  protected static $aQueries = array();      // Array of running actions
   
   public static function viewStats() {
     
@@ -17,6 +18,14 @@ class XML_Controler {
   public static function getStats() {
     
     return self::$aStats;
+  }
+  
+  public static function addQuery($sQuery) {
+    
+    if (array_key_exists($sQuery, self::$aQueries)) self::$aQueries[$sQuery]++;
+    else self::$aQueries[$sQuery] = 1;
+    
+    Controler::infosSetQuery($sQuery);
   }
   
   public static function addStat($sKey, $iWeight = 1) {

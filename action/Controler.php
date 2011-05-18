@@ -90,7 +90,7 @@ class ActionControler {
       
       if (self::buildInterface($oInterface, $sClass) && Controler::useStatut('action/report'))
         Controler::addMessage(xt('Chargement de l\'interface "%s"', $oInterface->parseFile()), 'action/report');
-
+      
     }
     
     return $oInterface;

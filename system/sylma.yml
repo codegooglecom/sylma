@@ -3,20 +3,12 @@ debug:
 general:
   settings: /config/root.xml
 modules:
+  path: /sylma/modules
   users:
     path: /sylma/modules/users
   editor:
     path: /modules/editeur
-  inspector:
-    classes:
-      class:
-        name: InspectorClass
-      method:
-        name: InspectorMethod
-      parameter:
-        name: InspectorParameter
-      property:
-        name: InspectorProperty
+  inspector: @sylma:import @sylma:self ../path; + /inspector/settings.yml;
 users:
   classes:
     user:

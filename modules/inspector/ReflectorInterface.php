@@ -5,7 +5,7 @@ interface InspectorReflectorInterface {
   /**
    *
    */
-  function sendError($sMessage, $sStatut = null);
+  function log($sMessage);
   
   /**
    * This method is called in DOM parsing, and will produce an XML document representing the source code

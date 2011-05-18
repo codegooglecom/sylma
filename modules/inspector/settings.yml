@@ -1,0 +1,9 @@
+classes:
+  class:
+    name: InspectorClass
+  method:
+    name: InspectorMethod
+  parameter:
+    name: InspectorParameter
+  property:
+    name: InspectorProperty

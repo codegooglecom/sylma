@@ -34,18 +34,13 @@ class InspectorProperty extends InspectorReflector implements InspectorReflector
   public function display() {
     
     $mDefault = '';
-    
-    if (0 && $this->getReflector()->isDefault()) {
-      
-      switch (gettype($mDefault)) {
-        
-        case 'string' : $mDefault = $mDefault ? addQuote($mDefault) : "''"; break;
-        case 'integer' : break;
-        case 'boolean' : $mDefault = strtoupper(booltostr($mDefault)); break;
-      }
-      
-      $mDefault = ' = '.$mDefault;
-    }
+    preg_match(
+      '/\$' . $this->getReflector()->getName() . '\s*=\s*([^;]+);/',
+      $this->getParent()->getSourceProperties(),
+      $aResult);
+    // dspf($aResult);
+    //dspm("/\${$sName}\s*=\s*([^;]+);/");
+    if ($aResult && !empty($aResult[1])) $mDefault = ' = '.$aResult[1];
     
     return
       '  ' . implode(' ', Reflection::getModifierNames($this->getReflector()->getModifiers())) .

@@ -1,12 +1,5 @@
 <?php
 
-function t($s) {
-  
-  //$s = '[['.$s.']]';
-  
-  return $s;
-}
-
 function extractDirectory($sPath, $bObject = false) {
   
   $sPath = substr($sPath, strlen(getcwd().MAIN_DIRECTORY) + 1);

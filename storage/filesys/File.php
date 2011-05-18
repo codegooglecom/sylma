@@ -120,7 +120,7 @@ class XML_File extends XML_Resource {
     if (!$sContent = $this->read()) dspm(t('Aucun contenu dans le fichier %s, impossible de créer un tableau YAML'), 'warning');
     else {
       
-      $aResult = Spyc::YAMLLoadString($this->read());
+      $aResult = Arguments::parseYAML($this->read());
     }
     
     return $aResult;

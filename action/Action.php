@@ -2171,7 +2171,7 @@ class XML_Action extends XML_Document {
       
       default : // Pas de document (404)
         
-        $this->dspm(t('Document inexistant ou invalide !'), 'action/error');
+        if ($this->getPath()) $this->dspm(t('Document inexistant ou invalide !'), 'action/error');
         
       break;
     }

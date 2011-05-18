@@ -48,13 +48,11 @@ class ModuleBase {
     
     if (!$this->getArguments()) {
       
-      $this->dspm(xt('Cannot build object %s. No settings defined'),
-        new HTML_Strong($sName), 'action/error');
+      $this->log(txt('Cannot build object @class %s. No settings defined', $sName));
     }
     else if (!$aClass = $this->getArgument('classes/' . $sName)) { // has class ?
       
-      dspm(xt('Cannot build object %s. No settings defined for these class'),
-        new HTML_Strong($sName), 'action/error');
+      $this->log(txt('Cannot build object @class %s. No settings defined for these class', $sName));
     }
     else {
       
@@ -77,7 +75,7 @@ class ModuleBase {
       
       if (is_string($mArguments)) {
         
-        $mArguments = $this->getFile($mArguments)->getYAML();
+        if ($file = $this->getFile($mArguments)) $mArguments = $file->getYAML();
       }
       
       if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
@@ -171,7 +169,19 @@ class ModuleBase {
     return $this->sPrefix;
   }
   
-  protected function dspm($mMessage, $sStatut = SYLMA_MESSAGES_DEFAULT_STAT) {
+  /*
+   * Add a log message with the @class Logger
+   * @param mixed|DOMNode|string|array $mMessage The message to send, will be parsed or stringed
+   * @param $sStatut The statut of message : see @file /system/allowed-messages.xml for more infos
+   **/
+  protected function log($mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
+    
+    return Sylma::log($this->getNamespace(), $mMessage, $sStatut);
+  }
+  /**
+   * Alias of log for ascendent compatibility
+   */
+  protected function dspm($mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
     
     $oPath = new HTML_Div(xt('Module %s -&gt; %s', view($this->getName()), new HTML_Strong($this->getDirectory())),
       array('style' => 'font-weight: bold; padding: 5px 0 5px;'));

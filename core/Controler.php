@@ -15,6 +15,7 @@ class Controler {
   private static $oWindow;
   private static $oWindowSettings;
   private static $oSettings;
+  private static $aSettings = array();
   private static $oRedirect;
   private static $oDatabase;
   
@@ -23,7 +24,6 @@ class Controler {
   private static $sAction = '';     // Chemin de l'action. Ex: /utilisateur/edit
   public static $aResults = array();     // Pile of results of the same action in different mime type (typically html + json)
   public static $iResults = 0;
-  private static $aQueries = array();
   private static $bUseMessages = false;
   private static $sSystemPath = '';
   
@@ -188,8 +188,8 @@ class Controler {
     
     if ($sQuery && self::$oSettings) {
       
-      if (array_key_exists($sQuery, self::$aQueries)) return self::$aQueries[$sQuery];
-      else $sResult = self::$aQueries[$sQuery] = self::$oSettings->read($sQuery);
+      if (array_key_exists($sQuery, self::$aSettings)) return self::$aSettings[$sQuery];
+      else $sResult = self::$aSettings[$sQuery] = self::$oSettings->read($sQuery);
       
       if (!$sResult) dspm(xt('Aucun paramètre recupéré dans %s avec la requête "%s"',
         self::$oSettings->getFile()->parse(), new HTML_Strong($sQuery)), 'action/error');
@@ -539,7 +539,13 @@ class Controler {
   
   public static function infosSetQuery($sQuery) {
     
-    if ($oLast = array_last(self::$aActions)) $oLast->resumeQuery($sQuery);
+    if ($oLast = array_last(self::$aActions)) {
+      
+      $oLast->resumeQuery($sQuery);
+      return true;
+    }
+    
+    return false;
   }
   
   public static function infosOpenAction($oCaller) {
@@ -911,8 +917,7 @@ class Controler {
     
     if (!$sClass = array_val('name', $aClass)) { // has name ?
       
-      dspm(xt('Cannot build object. No "name" argument defined for class in %s'),
-        view($aClass), 'action/error');
+      Sylma::log(txt('Cannot build object. No "name" defined in class %s', var_export($aClass, true)), 'action/error');
     }
     else {
       

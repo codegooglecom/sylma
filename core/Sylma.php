@@ -12,20 +12,22 @@ class Sylma {
   private static $settings = null;
   private static $logger = null;
   
+  /**
+   * Handle final result for @method render()
+   */
+  private static $result = null;
+  
   public static function init($sServer = '') {
     
     require_once('ArgumentsInterface.php');
+    require_once('Functions.php');
     require_once('Arguments.php');
     require_once('Spyc.php');
     
     $sSylma = SYLMA_PATH . self::PATH_OPTIONS;
-    $mResult = null;
     
-    if (!file_exists($sSylma)) return "Cannot find main configuration file in <strong>$sSylma</strong>";
-    $aSylma = Spyc::YAMLLoad($sSylma);
-    self::$settings = new Arguments($aSylma, 'sylma');
-    
-    if ($sServer)  self::getSettings()->merge(Spyc::YAMLLoad($sServer));
+    self::$settings = new Arguments(Arguments::loadYAML($sSylma), 'sylma');
+    if ($sServer)  self::getSettings()->merge(Arguments::loadYAML($sServer));
     
     // set error report mode
     if (Sylma::get('debug/enable')) error_reporting(E_ALL);
@@ -54,9 +56,8 @@ class Sylma {
     
     session_start();
     
-    $mResult = Controler::trickMe();
+    self::$result = Controler::trickMe();
     
-    return $mResult;
     //session_write_close();
   }
   
@@ -78,7 +79,8 @@ class Sylma {
   
   public static function get($sPath, $bDebug = true) {
     
-    return self::getSettings()->get($sPath, $bDebug);
+    if (self::getSettings()) return self::getSettings()->get($sPath, $bDebug);
+    else return $bDebug;
   }
   
   /**
@@ -87,9 +89,18 @@ class Sylma {
    */
   public static function log($sNamespace, $mMessage, $sStatut = self::LOG_STATUT_DEFAULT) {
     
-    if (class_exists('Controler') && Controler::isAdmin()) {
+    if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
+      
+      if (self::get('messages/print/all')) {
+        
+        echo $sNamespace . ' >> ' . $mMessage;
+      }
       
       Controler::addMessage(array($sNamespace, ' >> ', $mMessage), $sStatut); // temp
+    }
+    else if (self::get('messages/print/hidden')) {
+      
+      echo $sNamespace . ' >> ' . $mMessage . "<br/>\n";
     }
     
     if (class_exists('Logger')) {
@@ -98,7 +109,7 @@ class Sylma {
       
       
     }
-    else if (self::get('messages/log/enable')) {
+    else if (self::get('messages/log/enable', false)) {
       
       // no database instance, use a file
       
@@ -155,4 +166,8 @@ class Sylma {
     require_once('Window.php');
   }
   
+  public static function render() {
+    
+    return self::$result;
+  }
 }

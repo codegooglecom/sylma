@@ -10,6 +10,10 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   
   protected $file;
   protected $sSource;
+  /**
+   * NULL mean it has never been load, '' means nothing found
+   */
+  protected $sSourceProperties = null;
   
   public function __construct(ReflectionClass $class, ModuleBase $controler) {
     
@@ -20,6 +24,28 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     
     $this->loadMethods();
     $this->loadProperties();
+  }
+  
+  public function getSourceProperties() {
+    
+    if ($this->sSourceProperties === null) {
+      
+      $sName = $this->getReflector()->getName();
+      
+      preg_match("/class {$sName}[\s\w\/]*{([^{]*)function/", implode('', $this->getSource()), $aResult);
+      // dspf($aResult);
+      if (!$aResult || empty($aResult[1])) {
+        
+        $this->sSourceProperties = '';
+        $this->log(t('No properties found'));
+      }
+      else {
+        
+        $this->sSourceProperties = $aResult[1];
+      }
+    }
+    
+    return $this->sSourceProperties;
   }
   
   public function getSource() {
@@ -63,6 +89,14 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
           $method, $this));
       }
     }
+  }
+  
+  public function log($sMessage) {
+    
+    return parent::log(xt('@class %s in @file %s : %s',
+      $this->getReflector()->getName(),
+      $this->file,
+      $sMessage));
   }
   
   public function parse() {

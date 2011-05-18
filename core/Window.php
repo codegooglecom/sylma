@@ -468,14 +468,17 @@ class HTML_Action extends XML_Action {
       
       if (!$sMessage = Controler::getWindowSettings()->read('messages')) $sMessage = $sBody;
       // dspf($_SESSION['test']);
-
+      
+      // dspm(array_sum(Controler::$aQueries));
+      // asort(Controler::$aQueries);
+      // dspf(Controler::$aQueries);
       if ($oContainer = $oView->get($sMessage)) $oContainer->shift(Controler::getMessages());
       else {
         
         dspm(xt('Containeur %s introuvable', new HTML_Strong($sMessage)), 'action/warning');
         $oView->add(Controler::getMessages());
       }
-
+      
       Controler::useMessages(false);
       
       // Fill empty html tags

@@ -2,8 +2,6 @@
 
 abstract class InspectorReflector {
   
-  const MESSAGES_STATUT = 'warning';
-  
   protected $reflector;
   protected $controler;
   
@@ -17,8 +15,8 @@ abstract class InspectorReflector {
     return $this->controler;
   }
   
-  public function sendError($sMessage, $sStatut = self::MESSAGES_STATUT) {
+  public function log($sMessage) {
     
-    $this->getControler()->dspm($sMessage, $sStatut);
+    $this->getControler()->log($sMessage);
   }
 }
