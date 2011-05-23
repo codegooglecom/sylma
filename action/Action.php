@@ -62,7 +62,7 @@ class XML_Action extends XML_Document {
     
     $sParent = '';
     
-    if (!$this->getPath()->getFile()) $this->dspm(t('Fichier introuvable'), 'action/error');
+    if (!$this->getPath()->getFile()) $this->log(txt('Cannot find @file %s', $this->getPath()), 'error');
     else $sParent = $this->getPath()->getFile()->getParent();
     
     return $sParent;
@@ -107,7 +107,7 @@ class XML_Action extends XML_Document {
           
           if (!$aArguments && ($oConstruct->query('ns:argument[not(@required="false")]'))) {
             
-            $this->dspm('Erreur dans les arguments, impossible de construire l\'objet', 'action/warning');
+            $this->log(txt('Bad arguments, cannot build the object @class %s', $sClassName), 'warning');
             return null;
           }
         }
@@ -136,7 +136,7 @@ class XML_Action extends XML_Document {
     if (array_key_exists($sKey, $this->aVariables)) return $this->aVariables[$sKey];
     else if ($bDebug) {
       
-      $this->dspm(t('La variable "%s" n\'existe pas !', new HTML_Strong($sKey)), 'action/error');
+      $this->log(txt('The variable %s does not exist !', $sKey), 'action/error');
     }
     
     return null;
@@ -196,7 +196,7 @@ class XML_Action extends XML_Document {
           
         } else {
           
-          $this->dspm(xt('runInterfaceList() : L\'élément %s n\'est pas permis ', view($oChild)), 'action/error');
+          $this->log(txt('@element %s is not allowed in %s', $oChild->getName(false), $oElement->getName(false)), 'error');
           $oChild->remove();
         }
         
@@ -225,6 +225,7 @@ class XML_Action extends XML_Document {
     $oResult = null;
     $bReturn = false;
     $sActionMethod = $oElement->getName(true);
+    $sPathInterface = $oInterface ? ($oInterface->getDocument() ? $oInterface->getDocument()->getPath() : '[none]') : '[none]';
     
     if ($sActionMethod == 'if') {
       
@@ -244,17 +245,11 @@ class XML_Action extends XML_Document {
       
     } else if (!$oInterface) {
       
-      $this->dspm(array(xt('Pas d\'interface pour l\'instruction %s (Objet : %s) ',
-        view($oElement),
-        view($mObject))), 'action/warning');
+      $this->log(txt('No available interface for @element %s', $oElement->getPath()), 'warning');
       
     } else if (!$oMethod = $oInterface->get("ns:method[@path='$sActionMethod']")) {
       
-      if (($document = $oInterface->getDocument()) && ($file = $document->getFile())) $path = $oFile->parse();
-      else $path = new HTML_Em(t('- unknown -'));
-      
-      $this->dspm(xt('Méthode %s inexistante dans l\'interface %s',
-        view($oElement), $path), 'action/warning');
+      $this->log(txt('Unknown method in @element %s for interface @file %s', $oElement->getPath(), $sPathInterface), 'warning');
       
     } else {
       
@@ -282,7 +277,7 @@ class XML_Action extends XML_Document {
       
       if (!$sMethod = $oMethod->getAttribute('name')) {
         
-        $this->dspm('Interface invalide, attribut \'nom\' manquant', 'action/error');
+        $this->log(txt('Invalid interface %s, name attribute missing in method %s', $sPathInterface, $sActionMethod),'error');
         
       } else {
         
@@ -367,7 +362,7 @@ class XML_Action extends XML_Document {
       
       if (!$oElement->hasChildren()) {
         
-        $this->dspm(xt('Aucun chemin spécifié pour l\'action %s', view($oElement)), 'action/warning');
+        $this->log(txt('No path defined for action'), 'warning');
         
       } else {
         
@@ -382,7 +377,7 @@ class XML_Action extends XML_Document {
       
       if ((string) $oPath == (string) $this->getPath()) {
         
-        $this->dspm(t('Récursivité avec l\'appel %s !', view($oElement)), 'action/error');
+        $this->dspm(txt('Recursive call with @file %s !', $sPath), 'error');
         
       } else {
         
@@ -424,7 +419,7 @@ class XML_Action extends XML_Document {
             
             if (Controler::useStatut('action/report')) {
               
-              $this->dspm(xt('Redirection vers %s', $mResult->getPath()), 'action/report');
+              dspm(xt('Redirection vers %s', $mResult->getPath()), 'action/report');
             }
             
           break;
@@ -456,7 +451,7 @@ class XML_Action extends XML_Document {
           
           if ($sFormat = $oElement->getAttribute('format', SYLMA_NS_EXECUTION)) $mResult = $this->parseBaseType($sFormat, $oElement);
           else if ($oElement->countChildren() <= 1) $mResult = $this->buildArgument($oElement->getFirst());
-          else $this->dspm(xt('Argument d\'action %s invalide. Nombre d\'enfants incorrect', view($oElement)), 'action/warning');
+          else $this->log(txt('Invalid @element %s. The number of children is wrong', $oElement->getPath()), 'warning');
           
         } else $mResult = null;
         
@@ -498,7 +493,7 @@ class XML_Action extends XML_Document {
           if ($this->getPath()->hasAssoc($sName)) $mResult = $this->getPath()->getAssoc($sName, ($bKeep !== false));
           else if ($oElement->testAttribute('required', false)) {
             
-            $this->dspm(xt('Argument associé %s inexistant', new HTML_Strong($sName)), 'action/error');
+            $this->log(txt('Cannot find argument %s for @element %s', $sName, $oElement->getPath()), 'error');
           }
           
         } else if ($iIndex = $oElement->getAttribute('index')) $mResult = $this->getPath()->getIndex($iIndex, $bKeep);
@@ -516,7 +511,10 @@ class XML_Action extends XML_Document {
       
       case 'set-variable' :
         
-        if (!$sName = $oElement->getAttribute('name')) $this->dspm(xt('Attribute \'name\' manquant pour %s', $oElement), 'error');
+        if (!$sName = $oElement->getAttribute('name')) {
+          
+          $this->log(txt('@attribute %s is missing in @element %s', 'name', $oElement->getPath()), 'error');
+        }
         else {
           
           $mResult = $this->buildArgument($oElement->getChildren());
@@ -529,7 +527,7 @@ class XML_Action extends XML_Document {
         
         if ((!$sVariable = $oElement->getAttribute('name'))) {
           
-          $this->dspm(array(t('Nom de la variable indéfini !'), $oElement->messageParse()), 'action/warning');
+          $this->log(txt('Cannot load @element %s, no @attribute name given', $oElement->getPath()), 'warning');
           
         } else {
           
@@ -544,14 +542,13 @@ class XML_Action extends XML_Document {
         
         if ($oElement->getChildren()->length < 2) {
           
-          $this->dspm(xt('Arguments insuffisants pour %s', $oElement), 'action/error');
+          $this->log(txt('Not enough argument for @element %s'), 'error');
           
         } else {
           
           if ($oElement->getFirst()->getName() == 'case') {
             
-            $this->dspm(xt('Le premier argument ne peux pas être %s dans %s',
-              $oElement->getFirst(), $oElement), 'action/error');
+            $this->log(txt('@element case vorbidden as first argument in switch must set the value to check first'), 'error');
             
           } else {
             
@@ -564,7 +561,7 @@ class XML_Action extends XML_Document {
               if (!$oChild->useNamespace(SYLMA_NS_EXECUTION) ||
                 !($oChild->getName() == 'case' || $oChild->getName() == 'default')) {
                 
-                $this->dspm(xt('Element %s interdit dans %s', $oChild, $oElement), 'action/error');
+                $this->log(txt('Vorbidden @element %s in @element %s', $oChild->getPath(), $oElement->getPath()), 'action/error');
                 
               } else {
                 
@@ -572,9 +569,15 @@ class XML_Action extends XML_Document {
                   
                   // default
                   
-                  if ($oChild != $oElement->getLast()) $this->dspm(xt('%s doit être placer à la fin de %s',
-                    view($oChild), view($oElement)), 'action/error');
-                  else $mResult[] = $this->buildArgument($oChild->getChildren());
+                  if ($oChild != $oElement->getLast()) {
+                    
+                    $this->log(txt('@element %s should the last child of @element %s',
+                      $oChild->getPath(), $oElement->getPath()), 'error');
+                  }
+                  else {
+                    
+                    $mResult[] = $this->buildArgument($oChild->getChildren());
+                  }
                   
                 } else {
                   
@@ -585,7 +588,7 @@ class XML_Action extends XML_Document {
                     
                     if (!$oChild->getChildren()->length) {
                       
-                      $this->dspm(xt('Aucun test défini dans %s', view($oChild)), 'warning');
+                      $this->log(txt('@attribute %s is missing in @element %s', 'test', $oChild->getPath()), 'warning');
                     }
                     else {
                       
@@ -621,7 +624,7 @@ class XML_Action extends XML_Document {
         
         if (!$sClassName = $oElement->getAttribute('class')) {
           
-          $this->dspm(xt('L\'élément %s doit spécifier une classe via @class', view($oElement)), 'action/error');
+          $this->log(txt('@attribute %s is missing in @element %s', 'class', $oElement->getPath()), 'error');
           
         } else {
           
@@ -678,7 +681,7 @@ class XML_Action extends XML_Document {
         
         if (!$oElement->hasChildren() || !$oElement->getFirst()->isElement()) {
           
-          $this->dspm(xt('L\'élément %s ne possède pas d\'enfant valide', view($oElement)), 'action/error');
+          $this->log(txt('@element %s has no valid child', $oElement->getPath()), 'error');
           
         } else { // validated
           
@@ -699,7 +702,7 @@ class XML_Action extends XML_Document {
         
         if (!$oElement->hasChildren() || !$oElement->getFirst()->isElement()) {
           
-          $this->dspm(xt('L\'élément %s ne possède pas d\'enfant valide', view($oElement)), 'action/error');
+          $this->log(txt('@element %s has no valide child', $oElement->getPath()), 'error');
           
         } else { // validated
           
@@ -707,9 +710,8 @@ class XML_Action extends XML_Document {
             
             if ($oElement->countChildren() < 2) {
               
-              $this->dspm(xt('Eléments enfants insuffisant dans %s ou attribut %s nécessaire',
-                view($oElement),
-                new HTML_Strong('name')), 'action/error');
+              $this->log(txt('@attribute %s or at least one child is required in @element %s',
+                'name', $oElement->getPath()), 'error');
               
             } else {
               
@@ -734,7 +736,7 @@ class XML_Action extends XML_Document {
         
         if (!$oElement->hasChildren()) {
           
-          $this->dspm(xt('Aucun argument n\'est indiqué pour %s', view($oElement)), 'action/error');
+          $this->log(txt('@element %s must have some children', $oElement->getPath()), 'error');
           
         } else {
           
@@ -745,8 +747,8 @@ class XML_Action extends XML_Document {
             
             if (!is_array($aNamespaces)) {
               
-              $this->dspm(xt('Le second élément de la requête %s doit renvoyer un tableau d\'espaces de nom',
-                view($oElement), 'action/error'));
+              $this->log(txt('The second argument in @element %s must return an array of namespaces',
+                $oElement->getPath()), 'error');
             }
             
           } else $aNamespaces = array();
@@ -755,7 +757,7 @@ class XML_Action extends XML_Document {
           
           if (!$oArgument = $this->buildArgument($oElement->getFirst())) {
             
-            $this->dspm(xt('Un élément enfant doit contenir la requête dans %s', view($oElement)), 'action/error');
+            $this->log(txt('A child must return the query in @element %s', $oElement->getPath()), 'error');
             
           } else $mResult = new XML_XQuery($oArgument, $aNamespaces);
           
@@ -774,7 +776,7 @@ class XML_Action extends XML_Document {
         if (!($mPath = $oElement->getAttribute('path')) &&
           (!$oElement->hasChildren() || !($mPath = $this->buildArgument($oElement->getFirst()->remove())))) { 
           
-          $this->dspm(xt('Aucun chemin spécifié pour le fichier dans %s.', view($oElement)), 'action/warning');
+          $this->log(txt('@attribute %s or a child is missing in @element %s.', 'path', $oElement->getPath()), 'warning');
           
         } else { // file found
           
@@ -836,11 +838,11 @@ class XML_Action extends XML_Document {
           
           if (!$sNamespace = $oElement->read()) {
             
-            $this->dspm(xt('Espace de nom introuvable dans %s', view($oElement)), 'action/error');
+            $this->log(txt('Cannot find namespace with @element %s', $oElement->getPath()), 'error');
             
           } else if (!array_key_exists($sNamespace, $aNamespaces)) {
             
-            $this->dspm(xt('Espace de nom %s inconnu dans %s', new HTML_Strong($sNamespace), view($oElement)), 'action/error');
+            $this->log(txt('No namespace prefixed with %s in @element %s', $sNamespace, $oElement->getPath()), 'error');
             
           } else $mResult = $aNamespaces[$sNamespace];
         }
@@ -858,14 +860,12 @@ class XML_Action extends XML_Document {
           if ($sPrefix{0} == '*') {
             
             if ($sNamespace = $oElement->getNamespace(null)) $mResult[substr($sPrefix, 1)] = $sNamespace;
-            else $this->dspm(xt('Aucun espace de nom par défaut défini pour le prefix %s dans %s',
-              new HTML_Strong($sPrefix), view($oElement)), 'action/warning');
+            else $this->log(xt('No default namespace found with %s in @element %s', $sPrefix, $oElement->getPath()), 'warning');
             
           } else {
             
             if ($sNamespace = $oElement->getNamespace($sPrefix)) $mResult[$sPrefix] = $sNamespace;
-            else $this->dspm(xt('Aucun espace de nom pour le prefix %s dans %s',
-              new HTML_Strong($sPrefix), view($oElement)), 'action/warning');
+            else $this->log(txt('No namespace found with %s in @element %s', $sPrefix, $oElement->getPath()), 'warning');
           }
         }
         
@@ -891,7 +891,7 @@ class XML_Action extends XML_Document {
           
         } else {
           
-          $this->dspm(xt('Elément d\'action %s inconnu', view($oElement)), 'action/error');
+          $this->log(txt('Unknown @element %s', $oElement->getPath()), 'error');
         }
         
       break;
@@ -943,7 +943,7 @@ class XML_Action extends XML_Document {
       
       if (!$sName = $oElement->getAttribute('name')) {
         
-        $this->dspm(xt('Nom introuvable pour la fonction %s dans %s', view($oElement), $this->getPath()->parse()), 'action/error');
+        $this->log(txt('@attribute %s is missing in @element %s', 'name', $oElement->getPath()), 'error');
       }
       else {
         
@@ -954,7 +954,7 @@ class XML_Action extends XML_Document {
       
       if (!$sName = $oElement->getAttribute('function', SYLMA_NS_EXECUTION)) {
         
-        $this->dspm(xt('Nom introuvable pour la fonction %s dans %s', view($oElement), $this->getPath()->parse()), 'action/error');
+        $this->log(txt('@attribute %s is missing in @element %s', 'function', $oElement->getPath()), 'error');
       }
     }
     
@@ -978,7 +978,7 @@ class XML_Action extends XML_Document {
           
           if (!$mDate) {
             
-            $this->dspm(xt('Date %s invalide dans %s', view($mDate), view($oElement)), 'action/error');
+            $this->log(txt('Invalid date %s in @element %s', $mDate, $oElement->getPath()), 'error');
           }
           else {
             
@@ -990,7 +990,7 @@ class XML_Action extends XML_Document {
         
         default:
           
-          $this->dspm(xt('Function %s inconnue, %s', new HTML_Strong($sName), view($oElement)), 'action/error');
+          $this->log(txt('Unknown function %s in @element %s', $sName, $oElement->getPath()), 'error');
       }
     }
     
@@ -1041,7 +1041,7 @@ class XML_Action extends XML_Document {
         
         /* Interface */
         
-        $this->dspm(xt('Aucune méthode ne peut être appellée dans %s', view($oArgument)), 'action/error');
+        $this->log(txt('Methods cannot be called in @element %s', $oArgument->getPath()), 'error');
         $mResult = null;
       }
       else if ($oProcessor = $this->getProcessor($oArgument->getNamespace())) {
@@ -1130,7 +1130,7 @@ class XML_Action extends XML_Document {
     else {
       
       // TODO, be more explicit
-      $this->dspm(xt('Type d\'argument %s inconnu', view($oArgument)), 'action/error');
+      $this->log(txt('Uknown object type %s', gettype($oArgument)), 'error');
     }
     
     return $mResult;
@@ -1275,8 +1275,7 @@ class XML_Action extends XML_Document {
       
       default :
         
-        dspm(xt('Type de base %s inconnu dans %s !',
-          new HTML_Strong($sName), view($oElement)), 'action/error');
+        $this->log(txt('Base type %s unknown in @element %s', $sName, $oElement->getPath()), 'error');
         
       break;
     }
@@ -1330,7 +1329,7 @@ class XML_Action extends XML_Document {
         
       } else {
         
-        dspm(xt('Pas assez d\'arguments pour %s!', view($oMethod)), 'action/warning');
+        $this->log(txt('Not enough arguments in @element %s!', $oMethod->getPath()), 'action/warning');
         $bError = true;
       }
       
@@ -1377,10 +1376,9 @@ class XML_Action extends XML_Document {
           
         } else if ($oChild->testAttribute('required') !== false) {
           
-          $this->dspm(xt('L\'argument %s requis dans %s est absent',
-            new HTML_Strong($oChild->getAttribute('name')),
-            view($oMethod)), 'action/error');
-            
+          $this->log(txt('Required argument %s in @element %s is missing',
+            $oChild->getAttribute('name'), $oMethod->getPath()), 'error');
+          
           $bError = true;
           
         } else if ($bUseAssoc && !$oChild->isLast()) {
@@ -1450,7 +1448,11 @@ class XML_Action extends XML_Document {
       
       return $oResult;
       
-    } else $this->dspm(xt('La méthode "%s" n\'existe pas dans la classe "%s" !', new HTML_Strong($sMethodName.'()'), get_class($mObject)), 'action/error');
+    }
+    else {
+      
+      $this->log(txt('Method %s does not exist in @class %s', $sMethodName, get_class($mObject)), 'error');
+    }
     
     return null;
   }
@@ -1520,7 +1522,10 @@ class XML_Action extends XML_Document {
       
     } else {
       
-      if ($oChild->testAttribute('use-post')) $this->dspm('Attribute %s manquant dans %s', new HTML_Strong('name'), view($oChild));
+      if ($oChild->testAttribute('use-post')) {
+        
+        $this->log('@attribute %s is missing in @element %s', 'name', $oChild->getPath());
+      }
       else {
         
         if (!$mKey = $oChild->getAttribute('index')) $mKey = $iArgument;
@@ -1532,7 +1537,7 @@ class XML_Action extends XML_Document {
     
     if ($bRequired && $mArgument === null) { // TODO : check if && !$mArgument is required
       
-      $this->dspm(xt('L\'argument "%s" est manquant !', new HTML_Strong($mKey)), 'error');
+      $this->log(txt('Argument %s is missing', $mKey), 'error');
       $bResult = false;
       
     } else {
@@ -1561,9 +1566,7 @@ class XML_Action extends XML_Document {
           
           if (count($aFormats) > 1) {
             
-            $this->dspm(xt('Only one format allowed with attribute %s in %s',
-              new HTML_Strong('use-mixed'),
-              view($oChild)), 'warning');
+            $this->log(txt('@attribute %s must have only one format in @element %s', 'use-mixed', $oChild->getPath()), 'warning');
             
           } else {
             
@@ -1583,7 +1586,7 @@ class XML_Action extends XML_Document {
               case 'php-array' : $mResult = array($mArgument); break;
               default :
                 
-                $this->dspm(xt('The format %s is not basetype in %s', new HTML_Strong($sFormat), view($oChild)), 'warning');
+                $this->log(txt('Unknown format %s in @element %s', $sFormat, $oChild->getPath()), 'warning');
                 $bResult = false;
             }
             
@@ -1613,7 +1616,7 @@ class XML_Action extends XML_Document {
                 
                 if ($oValidate->testAttribute('required', true)) {
                   
-                  $this->dspm(xt('L\'argument "%s" est invalide !', new HTML_Strong($mKey)), 'action/error');
+                  $this->log(txt('Argument %s is invalid', $mKey), 'error');
                 }
                 
                 $bResult = false;
@@ -1625,7 +1628,7 @@ class XML_Action extends XML_Document {
                 if (Controler::useStatut('action/report')) {
                   
                   $sArgumentType = $bAssoc ? 'assoc' : 'index';
-                  $this->dspm(xt('Argument : %s [%s]', view($mArgument), new HTML_Em($sArgumentType)), 'action/report');
+                  dspm(xt('Argument : %s [%s]', view($mArgument), new HTML_Em($sArgumentType)), 'action/report');
                 }
               }
             }
@@ -1641,7 +1644,7 @@ class XML_Action extends XML_Document {
         
         if ((!$mResult = $this->buildArgument($oDefault->getFirst())) && $oDefault->testAttribute('required')) {
           
-          $this->dspm(xt('Argument "%s" valeur par défaut invalide !', new HTML_Strong($mKey)), 'action/error');
+          $this->log(txt('Invalid default value for @element %s', $mKey), 'error');
           $bResult = false;
           
         } else {
@@ -1721,7 +1724,7 @@ class XML_Action extends XML_Document {
     
     if (!$bResult) {
       
-      $this->dspm(xt('Argument %s [%s] invalide pour %s', view($mArgument), $sActualFormat, view($oElement)), 'action/error');
+      $this->log(txt('Invalid argument %s for @element %s', gettype($mArgument), $oElement->getPath()), 'error');
       $this->setStatut('error');
     }
     
@@ -1777,7 +1780,10 @@ class XML_Action extends XML_Document {
                     new XML_Element('le:self', null, array('return' => 'true'), SYLMA_NS_EXECUTION),
                     array('path' => $sPath), SYLMA_NS_EXECUTION);
                   
-                  if (!$oResult = $this->buildArgument($oAction)) $this->dspm(xt('Processeur %s introuvable', $sNamespace), 'action/error');
+                  if (!$oResult = $this->buildArgument($oAction)) {
+                    
+                    $this->log(txt('Cannot find processor %s', $sNamespace), 'error');
+                  }
                   else {
                     
                     $oResult->startAction($this);
@@ -1785,9 +1791,9 @@ class XML_Action extends XML_Document {
                   }
                 }
                 
-              } else $this->dspm(xt('Processor [%s]: chemin introuvable ! %s', new HTML_Strong(t('namespace')), $oChild->messageParse()), 'action/error');
+              } else $this->log(txt('No path defined for processor %s', $oChild->getPath()), 'error');
               
-            } else $this->dspm(xt('Processor : attribut %s manquant %s', new HTML_Strong(t('namespace')), $oChild->messageParse()), 'action/error');
+            } else $this->log(txt('@attribute %s is missing in @element %s', 'namespace', $oChild->getPath()), 'error');
             
           break;
           
@@ -1974,7 +1980,7 @@ class XML_Action extends XML_Document {
     
     if ($this->isEmpty()) {
       
-      if ($bMessage) $this->dspm(t('Document vide !'), 'action/error');
+      if ($bMessage) $this->log(txt('Empty document'), 'error');
     }
     else {
       
@@ -2026,7 +2032,7 @@ class XML_Action extends XML_Document {
                   case 'mixed' :
                     
                     $oResult = $this->buildArgument($oDocument->getFirst());
-                    if ($oDocument->countChildren() > 1) $this->dspm(xt('Mode mixed'), 'warning');
+                    // if ($oDocument->countChildren() > 1) $this->dspm(xt('Mode mixed'), 'warning');
                   break;
                   
                   default :
@@ -2037,13 +2043,13 @@ class XML_Action extends XML_Document {
                     $this->runInterfaceMethod($oResult, $oMethod, ActionControler::getInterface($oResult, $this->getRedirect()));
                     
                     if (!$oResult->isEmpty()) $oResult = $oResult->getRoot()->getChildren();
-                    else $this->dspm(t('Aucune valeur retournée'), 'action/warning');
+                    else $this->log(txt('No value returned'), 'warning');
                 }
                 
               } else {
                 
                 $this->setStatut('error');
-                $this->dspm(xt('L\'action n\'a pas été exécuté', $this->getPath()->parse()), 'action/error');
+                $this->log(txt('Parsing abort ..'), 'error');
               }
               
             break;
@@ -2052,13 +2058,16 @@ class XML_Action extends XML_Document {
               
               if (!$oSettings = $this->getByName('settings', SYLMA_NS_EXECUTION)) {
                 
-                $this->dspm(xt('Action %s invalide, aucuns paramètres !', new HTML_Strong($this->getPath())), 'action/warning');
+                $this->log(txt('@element %s is missing', 'settings'), 'warning');
                 
               } else {
                 
                 if ($oAction = $oSettings->getByName('use-action')) {
                   
-                  if (!$sPath = $oAction->getAttribute('path')) $this->dspm(xt('Chemin manquant sur %s', $oAction), 'action/error');
+                  if (!$sPath = $oAction->getAttribute('path')) {
+                    
+                    $this->log(txt('@attribute %s is missing in @element %s', 'path', $oAction->getPath()), 'error');
+                  }
                   else {
                     
                     $oInterface = new XML_Document($sPath);
@@ -2090,7 +2099,7 @@ class XML_Action extends XML_Document {
             
             default :
               
-              $this->dspm(xt('L\'élément racine %s n\'est pas valide', view($oRoot)), 'action/warning');
+              $this->log(txt('Invalid root @element %s', $oRoot->getPath()), 'warning');
               
             break;
           }
@@ -2107,7 +2116,7 @@ class XML_Action extends XML_Document {
         
         default :
           
-          $this->dspm(t('Espace de nom incorrect'), 'action/warning');
+          $this->log(txt('Invalid namespace for @element %s', $oRoot->getPath()), 'warning');
           
         break;
         
@@ -2171,7 +2180,7 @@ class XML_Action extends XML_Document {
       
       default : // Pas de document (404)
         
-        if ($this->getPath()) $this->dspm(t('Document inexistant ou invalide !'), 'action/error');
+        if ($this->getPath()) $this->log(txt('Invalid or missing document!'), 'error');
         
       break;
     }
@@ -2179,12 +2188,11 @@ class XML_Action extends XML_Document {
     return null;
   }
   
-  public function dspm($mMessage, $sStatut = SYLMA_MESSAGES_DEFAULT_STAT) {
+  protected function log($mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
     
-    $oTitle = new HTML_Div(array(new HTML_Strong('Action :'), $this->getPath()),
-      array('style' => 'font-weight: bold; padding: 5px 0 5px;'));
+    $sContent = '@path ' . $this->getPath() . ' - ' . $mMessage;
     
-    return dspm(array($oTitle, $mMessage, new HTML_Tag('hr')), $sStatut);
+    return Sylma::log($this->getNamespace(), $sContent, $sStatut);
   }
 }
 

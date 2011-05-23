@@ -19,15 +19,17 @@ class Sylma {
   
   public static function init($sServer = '') {
     
-    require_once('ArgumentsInterface.php');
     require_once('Functions.php');
+    require_once('module/Namespaced.php');
+    require_once('ArgumentsInterface.php');
     require_once('Arguments.php');
     require_once('Spyc.php');
+    require_once('XArguments.php');
     
     $sSylma = SYLMA_PATH . self::PATH_OPTIONS;
     
-    self::$settings = new Arguments(Arguments::loadYAML($sSylma), 'sylma');
-    if ($sServer)  self::getSettings()->merge(Arguments::loadYAML($sServer));
+    self::$settings = new XArguments($sSylma, 'sylma');
+    if ($sServer)  self::getSettings()->mergeFile($sServer);
     
     // set error report mode
     if (Sylma::get('debug/enable')) error_reporting(E_ALL);
@@ -140,7 +142,7 @@ class Sylma {
     require_once('dom/Element.php');
     require_once('HTML.php');
     
-    require_once('dom/Options.php');
+    require_once('core/Options.php');
     
     require_once('Redirect.php');
     require_once('Messages.php');
@@ -163,7 +165,12 @@ class Sylma {
     require_once('storage/filesys/File.php');
     require_once('storage/filesys/SFile.php');
     
-    require_once('Window.php');
+    require_once('window/WindowInterface.php');
+    require_once('window/Action.php');
+    require_once('window/HTML.php');
+    require_once('window/XML.php');
+    require_once('window/TXT.php');
+    require_once('window/Img.php');
   }
   
   public static function render() {

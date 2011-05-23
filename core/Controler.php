@@ -45,6 +45,7 @@ class Controler {
     self::$sSystemPath = $_SERVER['DOCUMENT_ROOT'];
     
     // Authentication : load user's session var - $_SESSION['user']
+    
     self::$user = self::createObject(Sylma::get('users/classes/user'));
     self::$user->load();
     

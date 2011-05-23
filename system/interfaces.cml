@@ -2,11 +2,11 @@
 <interfaces>
   <interface class="Action_Array">/sylma/action/array.iml</interface>
   <interface class="Controler">/sylma/core/controler.iml</interface>
-  <interface class="HTML_Action">/sylma/core/html_action.iml</interface>
+  <interface class="WindowHTML">/sylma/window/html.iml</interface>
   <interface class="Redirect">/sylma/core/redirect.iml</interface>
   <interface class="User">/sylma/user/interface.iml</interface>
-  <interface class="WindowAction">/sylma/core/window_action.iml</interface>
-  <interface class="Redirection">/sylma/core/redirection.iml</interface>
+  <interface class="WindowAction">/sylma/window/action.iml</interface>
+  <interface class="Redirection">/sylma/window/redirection.iml</interface>
   <interface class="XML_Action">/sylma/action/interface.iml</interface>
   <interface class="XML_Database">/sylma/modules/exist/interface.iml</interface>
   <interface class="XML_Directory">/sylma/storage/filesys/directory.iml</interface>

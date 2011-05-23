@@ -1,12 +1,10 @@
 <?php
 
-class Arguments implements ArgumentsInterface {
+class Arguments extends Namespaced implements ArgumentsInterface {
   
   const VARIABLE_PREFIX = '@sylma:';
-  const NS = 'http://www.sylma.org/core/arguments';
   const MESSAGES_STATUT = Sylma::LOG_STATUT_DEFAULT;
-  private $aArray = array();
-  private $sNamespace = '';
+  protected $aArray = array();
   
   /**
    * Store an error if occurs, in form : <code>array('name' => '', 'message' => '')</code>
@@ -17,11 +15,6 @@ class Arguments implements ArgumentsInterface {
     
     if (is_array($aArray)) $this->aArray = $aArray;
     $this->sNamespace = $sNamespace;
-  }
-  
-  public function getNamespace() {
-    
-    return $this->sNamespace;
   }
   
   public function set($sPath, $mValue = null) {
@@ -42,10 +35,10 @@ class Arguments implements ArgumentsInterface {
     if (!$sPath) $this->log(txt('Empty path is not valid'));
     else {
       
-      $mResult = self::getValue(self::parsePath($sPath), $this->aArray);
+      $mResult = $this->getValue(self::parsePath($sPath));
       $aError = self::getError();
       
-      // if ($aError && $bDebug) $this->log($aError['name'] . ' - ' . $aError['message'], $sPath);
+      if ($aError && $bDebug) $this->log($aError['name'] . ' - ' . $aError['message'], $sPath);
     }
     
     return $mResult;
@@ -71,36 +64,60 @@ class Arguments implements ArgumentsInterface {
     return $aResult;
   }
   
-  protected static function getValue(array $aPath, array $aArray, array $aParentPath = array(), array $aRoot = array()) {
+  protected function getValue(array $aPath = array()) {
     
-    if (!$aRoot) $aRoot = $aArray;
+    $mCurrent = $this->aArray;
     $mResult = null;
-    self::$aError = array();
+    $aParentPath = array();
+    $sKey = '[none]';
     
-    $sPath = implode('/', $aParentPath + $aPath);
-    $sKey = array_shift($aPath);
-    
-    array_push($aParentPath, $sKey);
-    
-    if (!array_key_exists($sKey, $aArray)) {
+    while ($aPath) {
       
-      self::setError('unknown', txt('Key %s in %s', $sKey, $sPath));
-      $mResult = null;
-    }
-    else {
-      
-      $mResult =& $aArray[$sKey];
-      
-      if (is_string($mResult)) $mResult = self::parseYAMLProperties($mResult, $aRoot, $aParentPath);
-      
-      if ($aPath) {
+      if (!is_array($mCurrent)) {
         
-        if (is_array($aArray[$sKey])) $mResult = self::getValue($aPath, $mResult, $aParentPath, $aRoot);
-        else self::setError('lost', txt('Key %s in %s', $sKey, $sPath));
+        self::setError('lost', txt('Key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+      }
+      else {
+        
+        if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath)) {
+          
+          $mCurrent =& $mCurrent[$sKey];
+          
+          // run hypotheticals parse on strings
+          if (is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
+          
+          // if last, save result
+          if (!$aPath) $mResult = $mCurrent;
+        }
       }
     }
     
     return $mResult;
+  }
+  
+  protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array()) {
+    
+    $mResult = null;
+    self::$aError = array();
+    
+    $sKey = array_shift($aPath);
+    array_push($aParentPath, $sKey);
+    
+    if (!array_key_exists($sKey, $aArray)) {
+      
+      self::setError('unknown', txt('Key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+    }
+    else {
+      
+      $mResult = $sKey;
+    }
+    
+    return $mResult;
+  }
+  
+  protected function parseValue($sValue, $aParentPath) {
+    
+    return $sValue;
   }
   
   protected static function getError() {
@@ -181,155 +198,6 @@ class Arguments implements ArgumentsInterface {
       if (is_array($mValue)) $this->buildElement($oElement, $mValue);
       else $oElement->set($mValue);
     }
-  }
-  
-  public static function loadYAML($sPath) {
-    
-    $aResult = array();
-    
-    if (!file_exists($sPath)) {
-      
-      Sylma::log(self::NS, txt('Cannot find configuration file in @file %s', $sPath), 'error');
-    }
-    else {
-      
-      if (!$sContent = file_get_contents($sPath)) {
-        
-        Sylma::log(self::NS, txt('@file %s is empty', $sPath), 'error');
-      }
-      else {
-        
-        $aResult = self::parseYAML($sContent);
-      }
-    }
-    
-    return $aResult;
-  }
-  
-  public static function parseYAML($sContent) {
-    
-    $aResult = Spyc::YAMLLoadString($sContent);
-    return $aResult;
-  }
-  
-  protected static function parseTree(array $aArray) {
-    
-    ksort($aArray);
-    
-    
-    $aResult = array();
-    $aStack = $aArray;
-    
-    list($sCurrentKey, $mCurrentValue) = each($aArray);
-    unset($aArray[$sCurrentKey]);
-    
-    foreach ($aStack as $sKey => $mValue) {
-      // $aResult
-    }
-  }
-  
-  protected static function parseTreeItem(array $aArray, array $aResult) {
-    
-    $sValue = '';
-    $iMaxSize = 0;
-    
-    foreach ($aArray as $sKey => $mValue) {
-      
-      if (!$iMaxSize) {
-        
-        foreach($sKey as $iKey => $sChar) {
-          
-          if ($sChar == $sKey[$iKey]) $iMaxSize = $iKey;
-          else break;
-        }
-        
-        if ($iMaxSize) {
-          
-          // if (is_array($mValue)
-          $sValue = substr($sKey, 0, $iMaxSize);
-          $aResult[$sValue] = 2;
-        }
-      }
-      else {
-        
-        if (substr($sKey, 0, strlen($sValue)) == $sValue) {
-          
-          $aResult[$sValue]++;
-        }
-      }
-    }
-    
-    // if (!$iMaxSize) $aResult[$sCurrentKey] = 
-  }
-  
-  protected static function parseYAMLProperties($sValue, array $aRoot, array $aPath) {
-    
-    $mResult = $sValue;
-    $iStart = strrpos($sValue, self::VARIABLE_PREFIX);
-    
-    while ($iStart !== false) {
-      
-      $sProperty = substr($sValue, $iStart);
-      
-      preg_match('/' . self::VARIABLE_PREFIX . '(\w+)\s*([^;]+);/', $sProperty, $aMatch);
-      
-      $mTempResult = self::parseYAMLProperty($aMatch[1], trim($aMatch[2]), $aRoot, $aPath);
-      
-      if ($iStart && is_string($mTempResult)) {
-        
-        $sValue = substr_replace($sValue, $mTempResult, $iStart, strlen($aMatch[0]));
-      }
-      else {
-        
-        $sValue = '';
-        $mResult = $mTempResult;
-      }
-      
-      $iStart = strrpos($sValue, self::VARIABLE_PREFIX);
-    }
-    
-    return $mResult;
-  }
-  
-  protected static function parseYAMLProperty($sName, $sArguments, array $aRoot, array $aPath) {
-    
-    $mResult = null;
-    
-    switch ($sName) {
-      
-      case 'import' :
-        
-        if (!$sPath = self::parseYAMLString($sArguments, $aRoot, $aPath)) {
-          
-          Sylma::log(self::NS, txt('Cannot load parameter for %s in %s', $sName, $sArguments), 'error');
-        }
-        else {
-          
-          $mResult = self::loadYAML(MAIN_DIRECTORY . $sPath);
-        }
-        
-      break;
-      
-      case 'self' :
-        
-        $mResult = self::getValue(self::parsePath($sArguments, implode('/', $aPath)), $aRoot);
-        //if ($aError = self::getError()) dspf($aError);
-      break;
-      
-      default :
-        
-        Sylma::log(self::NS, txt('Unkown YAML property call : %s', $sName), 'error');
-    }
-    
-    return $mResult;
-  }
-  
-  protected static function parseYAMLString($sArguments, array $aRoot, array $aPath) {
-    
-    $aArguments = explode('+', $sArguments);
-    $sResult = '';
-    
-    return implode('', array_map('trim', $aArguments));
   }
   
   protected function log($sMessage, $sStatut = self::MESSAGES_STATUT) {

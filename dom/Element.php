@@ -60,6 +60,13 @@ class XML_Element extends DOMElement implements XML_Composante {
     else return false;
   }
   
+  public function getPath() {
+    
+    if (!$sLine = $this->getLineNo()) $sLine = 'xx';
+    
+    return $this->getName(false) . ' (line ' . $sLine . ')';
+  }
+  
   /**
    * @return string The CSS path of the element relative to his parent and brotherhood. ex: 'div > a:eq(2)'
    */

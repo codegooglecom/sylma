@@ -9,7 +9,7 @@ class Logger extends XDB_Module implements LoggerInterface {
     $this->setArguments(self::OPTIONS_FILE);
   }
   
-  public function log($sNamespace, $mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
+  public function addLog($sNamespace, $mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
     
     dspf($this->getArguments());
   }

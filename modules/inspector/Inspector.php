@@ -10,13 +10,14 @@ include('Parameter.php');
 class Inspector extends Module {
   
   const MESSAGES_STATUT = 'warning';
+  const NS = 'http://www.sylma.org/modules/inspector';
   
   public function __construct() {
     
     $this->setArguments(Sylma::get('modules/inspector'));
     
     $this->setDirectory(__file__);
-    $this->setNamespace('http://www.sylma.org/modules/inspector');
+    $this->setNamespace(self::NS);
   }
   
   public function inspect() {
@@ -26,7 +27,6 @@ class Inspector extends Module {
     $action = $this->create('class', array(
       new ReflectionClass('InspectorClass'), $this));
     
-    // dspf($this->
     // dspf($action->parse());
     // dspf($action->getSourceProperties());
     // return new HTML_Tag('pre', (string) $action);

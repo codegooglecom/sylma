@@ -1,15 +1,11 @@
 <?php
 
-class ModuleBase {
+class ModuleBase extends Namespaced {
   
   protected $oSchema = null;  
   
   // array of classe's object to use within this class with $this->create() loaded in [settings]/classes
   protected $aClasses = array();
-  
-  private $aNamespaces = array();
-  private $sNamespace = '';
-  private $sPrefix = '';
   
   private $sName = '';
   
@@ -73,15 +69,13 @@ class ModuleBase {
     
     if ($mArguments) {
       
-      if (is_string($mArguments)) {
-        
-        if ($file = $this->getFile($mArguments)) $mArguments = $file->getYAML();
-      }
-      
       if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
-      else $this->arguments = new Arguments($mArguments, $this->getName());
+      else $this->arguments = new XArguments($mArguments, $this->getName());
     }
-    else $this->arguments = null;
+    else {
+      
+      $this->arguments = null;
+    }
     
     return $this->getArguments();
   }
@@ -123,50 +117,6 @@ class ModuleBase {
   protected function getSchema() {
     
     return $this->oSchema;
-  }
-  
-  protected function mergeNamespaces(array $aNamespaces = array()) {
-    
-    if ($aNamespaces) return array_merge($this->getNS(), $aNamespaces);
-    else return $this->getNS();
-  }
-  
-  protected function setNamespace($sUri, $sPrefix = '', $bDefault = true) {
-    
-    $this->aNamespaces[$sPrefix] = $sUri;
-    
-    if ($bDefault) {
-      
-      $this->sNamespace = $sUri;
-      $this->sPrefix = $sPrefix;
-    }
-  }
-  
-  protected function setNamespaces(array $aNS) {
-    
-    $this->aNamespaces = $aNS;
-  }
-  
-  public function getNS($sPrefix = null) {
-    
-    if ($sPrefix) return array($sPrefix => array_val($sPrefix, $this->aNamespaces));
-    else return $this->aNamespaces;
-  }
-  
-  public function getNamespace($sPrefix = null) {
-    
-    if ($sPrefix) return array_val($sPrefix, $this->aNamespaces);
-    else return $this->sNamespace;
-  }
-  
-  public function setPrefix($sPrefix) {
-    
-    $this->sPrefix = $sPrefix;
-  }
-  
-  public function getPrefix() {
-    
-    return $this->sPrefix;
   }
   
   /*

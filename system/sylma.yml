@@ -104,7 +104,7 @@ messages:
   format:
     enable: true
   backtrace:
-    enable: true
+    enable: false
     count: 3
   array:
     line-break: false

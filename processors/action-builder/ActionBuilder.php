@@ -296,7 +296,7 @@ class ActionBuilder extends XML_Processor  {
             else {
             
               //("ancestor::*[namespace-uri() = '".SYLMA_NS_ACTIONBUILDER."' and @id-node][position() = 1]");
-              
+              // $oParentNode = $oElement->getDocument()->getByID($oParent->getAttribute('id-node'));
               $oParentNode = $oElement->getDocument()->get("//*[@id='{$oParent->getAttribute('id-node')}']");
               
               $sPath = '#'.$oParentNode->getId().' > '.$oRefNode->getCSSPath($oParentNode);

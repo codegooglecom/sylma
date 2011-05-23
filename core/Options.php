@@ -10,6 +10,7 @@ class Options extends ModuleBase implements ArgumentsInterface {
     
     $this->dDocument = $dDocument;
     
+    // first element define default prefix
     $this->setPrefix($dDocument && $dDocument->getRoot() ? $dDocument->getRoot()->getPrefix() : '');
     
     $this->setNamespaces($aNS);
@@ -19,6 +20,16 @@ class Options extends ModuleBase implements ArgumentsInterface {
   public function getDocument() {
     
     return $this->dDocument;
+  }
+  
+  public function setPrefix($sPrefix) {
+    
+    $this->sPrefix = $sPrefix;
+  }
+  
+  public function getPrefix() {
+    
+    return $this->sPrefix;
   }
   
   protected function parsePath($sPath) {
@@ -90,7 +101,6 @@ class Options extends ModuleBase implements ArgumentsInterface {
         }
       }
     }
-    
     return $nResult;
   }
   
@@ -99,6 +109,8 @@ class Options extends ModuleBase implements ArgumentsInterface {
     if ($oOption = $this->get($sPath, $bDebug)) return $oOption->read();
     else return '';
   }
+  
+  // public function add($mValue = null) {
   
   public function set($sPath, $mValue = null) {
     

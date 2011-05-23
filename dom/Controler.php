@@ -3,7 +3,7 @@
 class XML_Controler {
   
   private static $aStats = array();
-  protected static $aQueries = array();      // Array of running actions
+  public static $aQueries = array();      // Array of running actions
   
   public static function viewStats() {
     
