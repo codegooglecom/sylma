@@ -5,6 +5,12 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
   protected $class;
   protected $aParameters = array();
   
+  /**
+   * NULL means it has never been load, '' means nothing found
+   */
+  protected $aSource = null;
+  protected $sSourceParameters = null;
+  
   public function __construct(ReflectionMethod $reflector, InspectorReflectorInterface $class) {
     
     $this->class = $class;
@@ -31,18 +37,56 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     return $this->getClass()->getControler();
   }
   
-  protected function getSource() {
+  protected function getSource($bText = true, $bDeclaration = false) {
     
-    $iStart = $this->getReflector()->getStartLine();
-    $iLength = $this->getReflector()->getEndLine() - $iStart - 1;
+    $aResult = array();
     
-    return implode('', array_slice($this->getClass()->getSource(), $iStart, $iLength));
+    if ($this->aSource === null) {
+      
+      if (!$aSource = $this->getClass()->getSource()) {
+        
+        $this->throwException('Cannot load source code for method');
+      }
+      
+      $iStart = $this->getReflector()->getStartLine() - $this->getClass()->getOffset() - 1;
+      $iEnd = $this->getReflector()->getEndLine() - $this->getClass()->getOffset();
+      
+      $this->aSource = array_slice($this->getClass()->getSource(), $iStart, $iEnd - $iStart);
+    }
+    
+    if ($this->aSource) {
+      
+      if (!$bDeclaration) $aResult = array_slice($this->aSource, 1, -1);
+      else $aResult = $this->aSource;
+    }
+    
+    if ($bText) return implode('', $aResult);
+    else return $aResult;
+  }
+  
+  protected function getSourceParameters() {
+    
+    if (!$aSource = $this->getParent()->getSource()) {
+      
+      $this->throwException('Cannot load source code for parameters');
+    }
+    
+    preg_match('\((.+)\) {/', $aSource[0], $aResult);
+    $this->sSource = $aResult[0];
+  }
+  
+  public function log($mFrom, $sMessage) {
+    
+    $mFrom = (array) $mFrom;
+    $mFrom[] = '@method ' . $this->getName();
+    
+    return parent::log($mFrom, $sMessage);
   }
   
   public function parse() {
     
     $result = new XML_Element('method', null, array(
-      'name' => $this->getReflector()->getName()), $this->getControler()->getNamespace());
+      'name' => $this->getName()), $this->getControler()->getNamespace());
     
     $result->addNode('source', $this->getSource());
     $result->addNode('comments', $this->getReflector()->getDocComment());
@@ -54,7 +98,7 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     
     return
       '  ' . implode(' ', Reflection::getModifierNames($this->getReflector()->getModifiers())) .
-      ' function ' . $this->getReflector()->getName() .
+      ' function ' . $this->getName() .
       '(' . implode(', ', $this->aParameters) . ") {\n" .
       $this->getSource() .
       "  }";

@@ -22,19 +22,27 @@ class Inspector extends Module {
   
   public function inspect() {
     
-    // dspf($this->getFile('/sylma/system/sylma.yml')->getYAML());
+    $sResult = '';
     
-    $action = $this->create('class', array(
-      new ReflectionClass('InspectorClass'), $this));
+    try {
+      
+      $action = $this->create('class', array(
+        new ReflectionClass('InspectorClass'), $this));
+      
+      dspf($action->parse());
+      $sResult = (string) $action;
+      
+    } catch (Exception $e) {
+      
+      Sylma::sendException($e);
+    }
     
-    // dspf($action->parse());
-    // dspf($action->getSourceProperties());
-    // return new HTML_Tag('pre', (string) $action);
+    return new HTML_Tag('pre', $sResult);
   }
   
-  public function log($sMessage, $sStatut = self::MESSAGES_STATUT) {
+  public function log($mPath, $sMessage, $sStatut = self::MESSAGES_STATUT) {
     
-    parent::log($sMessage, $sStatut);
+    parent::log($mPath, $sMessage, $sStatut);
   }
 }
 

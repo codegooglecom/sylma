@@ -4,7 +4,7 @@
  * Created on 23 oct. 2008
  */
 
-function userErrorHandler($errno, $errstr, $errfile, $errline) {
+function sylmaErrorHandler($errno, $errstr, $errfile, $errline) {
   
   if (Controler::isAdmin()) {
     

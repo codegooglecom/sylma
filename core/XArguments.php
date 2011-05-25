@@ -312,7 +312,7 @@ class XArguments extends Arguments implements ArgumentsInterface {
         
         if ($result && !$iRealCount) {
           
-          $count = new HTML_Em('#'.$iSubCount);
+          $count = '#'.$iSubCount;
           $result->addNode('div', array(new HTML_Em($sPrefix . $sKey), $count), array('style' => 'border-bottom: 1px dotted #eee'));
         }
         
@@ -328,13 +328,10 @@ class XArguments extends Arguments implements ArgumentsInterface {
           if ($sPrefix) $prefix = new HTML_Em($sPrefix);
           else $prefix = null;
           
-          if ($sKey) $key = new HTML_Span($sKey);
-          else $key = null;
-          
           if ($mValue > 1) $value = new HTML_Strong('#'.$mValue);
           else $value = null;
           
-          $result->addNode('div', array($prefix , $key, $value));
+          $result->addNode('div', array($prefix , $sKey, $value));
         }
       }
     }

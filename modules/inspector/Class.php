@@ -8,10 +8,14 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   protected $aMethods = array();
   const METHOD_CLASS = 'method';
   
+  /* File where is located the class */
   protected $file;
-  protected $sSource;
+  
+  protected $aSource;
+  protected $iOffset;
+  
   /**
-   * NULL mean it has never been load, '' means nothing found
+   * NULL means it has never been load, '' means nothing found
    */
   protected $sSourceProperties = null;
   
@@ -26,31 +30,34 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     $this->loadProperties();
   }
   
+  public function getSource($bText = false) {
+    
+    if ($bText) return implode('', $this->aSource);
+    else return $this->aSource;
+  }
+  
   public function getSourceProperties() {
     
     if ($this->sSourceProperties === null) {
       
-      $sName = $this->getReflector()->getName();
+      $sName = $this->getName();
       
-      preg_match("/class {$sName}[\s\w\/]*{([^{]*)function/", implode('', $this->getSource()), $aResult);
-      // dspf($aResult);
+      preg_match("/{([^{]*)function/", $this->getSource(true), $aResult);
+      
       if (!$aResult || empty($aResult[1])) {
         
-        $this->sSourceProperties = '';
-        $this->log(t('No properties found'));
+        $this->throwException(t('No properties found'));
       }
-      else {
-        
-        $this->sSourceProperties = $aResult[1];
-      }
+      
+      $this->sSourceProperties = $aResult[1];
     }
     
     return $this->sSourceProperties;
   }
   
-  public function getSource() {
+  public function getOffset() {
     
-    return $this->sSource;
+    return $this->iOffset;
   }
   
   protected function loadFile() {
@@ -58,13 +65,29 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     if ($sFile = $this->getReflector()->getFileName()) {
       
       $sFile = pathWin2Unix($sFile);
-      $sDirectory = Controler::getDirectory()->getSystemPath();
       
+      $sDirectory = Controler::getDirectory()->getSystemPath();
       $file = Controler::getFile(substr($sFile, strlen($sDirectory) + 1));
       
       $this->file = $file;
-      $this->sSource = $file->readArray();
+      $aSource = $file->readArray();
+      
+      $iStart = $this->getReflector()->getStartLine() - 1;
+      $iEnd = $this->getReflector()->getEndLine();
+      
+      if (count($aSource) < $iEnd) {
+        
+        $this->throw('Cannot load source code, Line end is bigger than file length');
+      }
+      
+      $this->aSource = array_slice($aSource, $iStart, $iEnd - $iStart);
+      $this->iOffset = $iStart;
     }
+  }
+  
+  public function getError() {
+    
+    return 'InspectorException';
   }
   
   protected function loadProperties() {
@@ -91,12 +114,12 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     }
   }
   
-  public function log($sMessage) {
+  public function log($mPath, $sMessage) {
     
-    return parent::log(xt('@class %s in @file %s : %s',
-      $this->getReflector()->getName(),
-      $this->file,
-      $sMessage));
+    $mPath = (array) $mPath;
+    array_push($mPath, '@class ' . $this->getName(), '@file ' . $this->file);
+    
+    return parent::log($mPath, $sMessage);
   }
   
   public function parse() {
@@ -104,7 +127,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     $aContent = $this->aProperties + $this->aMethods;
     
     return new XML_Element('class', $aContent, array(
-      'name' => $this->getReflector()->getName()), $this->getControler()->getNamespace());
+      'name' => $this->getName()), $this->getControler()->getNamespace());
   }
   
   public function __toString() {
@@ -115,7 +138,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     // return self::export($this, false);
     
     return implode(' ', Reflection::getModifierNames($this->getReflector()->getModifiers())) .
-      'class ' . $this->getReflector()->getName() .
+      'class ' . $this->getName() .
       ($sExtension ? ' extends ' . $sExtension : '') . " {\n\n" .
       implode("\n", $this->aProperties) .
       "\n\n" .

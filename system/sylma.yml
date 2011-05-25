@@ -89,7 +89,9 @@ directories:
       group: 0
       mode: 700
       user-mode:
-xml:
+dom:
+  debug:
+    show-queries: false
   rights:
     enable: true
   encoding:

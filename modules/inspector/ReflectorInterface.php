@@ -3,11 +3,6 @@
 interface InspectorReflectorInterface {
   
   /**
-   *
-   */
-  function log($sMessage);
-  
-  /**
    * This method is called in DOM parsing, and will produce an XML document representing the source code
    */
   function parse();

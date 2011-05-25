@@ -12,6 +12,8 @@ class Sylma {
   private static $settings = null;
   private static $logger = null;
   
+  public static $exception = 'SylmaException';
+  
   /**
    * Handle final result for @method render()
    */
@@ -39,8 +41,10 @@ class Sylma {
     
     libxml_use_internal_errors(true);
     
+    require_once('SylmaException.php');
     require_once('Error.php');
-    $sError = set_error_handler("userErrorHandler");
+    $sError = set_error_handler("sylmaErrorHandler");
+    $sError = set_exception_handler("self::sendException");
     
     self::loadLibs();
     
@@ -89,20 +93,24 @@ class Sylma {
    * Log system messages either in database or in a file defined in @settings /messages/log/file if db is not yet ready
    * Arguments can be see as questions : Who, What, Where
    */
-  public static function log($sNamespace, $mMessage, $sStatut = self::LOG_STATUT_DEFAULT) {
+  public static function log($mPath, $mMessage, $sStatut = self::LOG_STATUT_DEFAULT) {
+    
+    $aPath = (array) $mPath;
+    $aPath[] = date('Y-m-d H:m:s');
+    
+    $sPath = implode(' - ', array_reverse($aPath));
+    
+    $aMessage = array($sPath, ' : ', $mMessage);
+    $sMessage = implode('', $aMessage);
     
     if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
       
-      if (self::get('messages/print/all')) {
-        
-        echo $sNamespace . ' >> ' . $mMessage;
-      }
-      
-      Controler::addMessage(array($sNamespace, ' >> ', $mMessage), $sStatut); // temp
+      if (self::get('messages/print/all')) echo $sMessage;
+      Controler::addMessage($aMessage, $sStatut); // temp
     }
     else if (self::get('messages/print/hidden')) {
       
-      echo $sNamespace . ' >> ' . $mMessage . "<br/>\n";
+      echo $sMessage . "<br/>\n";
     }
     
     if (class_exists('Logger')) {
@@ -115,13 +123,19 @@ class Sylma {
       
       // no database instance, use a file
       
-      if ($sPath = self::get('messages/log/file', false)) {
+      if ($sFile = self::get('messages/log/file', false)) {
         
-        $fp = fopen(MAIN_DIRECTORY.$sPath, 'a+');
-        fwrite($fp, "----\n" . $mMessage . ' -- ' . $sStatut . "\n"); //.Controler::getBacktrace()
+        $fp = fopen(MAIN_DIRECTORY.$sFile, 'a+');
+        fwrite($fp, "----\n" . $sMessage . ' -- ' . $sStatut . "\n"); //.Controler::getBacktrace()
         fclose($fp);
       }
     }
+  }
+  
+  public static function sendException(SylmaExceptionInterface $e) {
+    
+    self::log($e->getPath(), $e->getMessage());
+    // while (0 && $e = $e->getPrevious()); // TODO : Enable for PHP 5.3
   }
   
   protected static function loadLibs() {

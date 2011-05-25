@@ -160,7 +160,12 @@ function stringResume($mValue, $iLength = 50, $bXML = false) {
 }
 
 /**
- * Fusionne les clés et les valeurs en insérant une chaîne de séparation
+ * Merge keys and values with a separation value
+ *
+ * @param string sSep The separation string
+ * @param array aArray The array to fusion
+ * 
+ * @return array The new fusionned array
  */
 function fusion($sSep, $aArray) {
   
@@ -172,19 +177,16 @@ function fusion($sSep, $aArray) {
 }
 
 /**
- * Implosion = fusion + implode
+ * Implosion = @function fusion + @function implode
+ *
+ * @param string sSepFusion The separation for fusion (keys + values)
+ * @param string sSepImplode The separation for implode (lines)
+ *
+ * @return string The new "implosed" array
  */
-function implosion($sSepFusion, $sepImplode, $aArray) {
+function implosion($sSepFusion, $sSepImplode, $aArray) {
   
-  return implode($sepImplode, fusion($sSepFusion, $aArray));
-}
-
-/**
- * Remove xml characters : & < >
- */
-function remove_xml($sString) {
-  
-  return str_replace(array('&', '<', '>'), array(), $sString);
+  return implode($sSepImplode, fusion($sSepFusion, $aArray));
 }
 
 /**
@@ -242,7 +244,7 @@ function float_format($mValue, $iDec = 2, $iPoint = '.', $iThousand = '\'') {
  */
 function checkEncoding($sContent) {
   
-  if (Sylma::get('xml/encoding/check') && !mb_check_encoding($sContent, 'UTF-8')) {
+  if (Sylma::get('dom/encoding/check') && !mb_check_encoding($sContent, 'UTF-8')) {
     
     $sContent = utf8_encode($sContent); //t('EREUR D\' ENCODAGE'); TODO , result not always in utf-8
     dspm(xt('L\'encodage n\'est pas utf-8 %s', new HTML_Strong(stringResume($sContent))), 'xml/warning');

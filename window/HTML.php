@@ -43,6 +43,7 @@ class WindowHTML extends XML_Action {
     // Action parsing
     
     $oView = new XML_Document($this);
+    
     if ($oView->isEmpty()) {
       
       throw new Exception('Frontend ne retourne aucun résultat.');
@@ -50,8 +51,7 @@ class WindowHTML extends XML_Action {
     } else {
       
       // Add js onload
-      //$this->dsp();
-      //exit;
+      
       if ($this->sOnLoad) $this->addJS(null, "window.addEvent('domready', function() {\n".$this->sOnLoad."\n});");
       
       if ($oHead = $oView->get('//ns:head')) $oHead->add($this->getHead()->getChildren());
@@ -75,6 +75,12 @@ class WindowHTML extends XML_Action {
       
       if (!$sMessage = Controler::getWindowSettings()->read('messages')) $sMessage = $sBody;
       
+      if (Sylma::get('dom/debug/show-queries')) {
+        
+        $args = new XArguments(XML_Controler::$aQueries);
+        dspm(XArguments::renderTree($args->parseTree()));
+      }
+
       if ($oContainer = $oView->get($sMessage)) $oContainer->shift(Controler::getMessages());
       else {
         
@@ -118,24 +124,9 @@ class WindowHTML extends XML_Action {
       
     } catch(Exception $e) {
       
-      if (Controler::isAdmin()) {
-        
-        dsp($e->getMessage());
-        dsp($e->getFile().' : ligne '.$e->getLine());
-        foreach ($e->getTrace() as $mVal) {
-          
-          echo $mVal['file'].' ['.$mVal['line'].'] '.$mVal['function'].'(';
-          //foreach ($mVal as $sKey => $mPeuimpor) echo $sKey.', ';
-          foreach ($mVal['args'] as $sKey => $mArgument) echo $sKey.' => '.view($mArgument).',<br/>';
-          echo ')<br/>';
-        }
-        /*
-        foreach (debug_backtrace() as $aLine1)
-          foreach ($aLine1 as $aLine2) echo($aLine2);*/
-      }
+      Sylma::sendException($e);
       
       $sResult = (string) xt('Problème lors du chargement du site. Nous nous excusons pour ce désagrément. %s pour revenir à la page d\'accueil', new HTML_Br.new HTML_A('/', t('Cliquez-ici')));
-
     }
     
     return $sResult;

@@ -89,7 +89,7 @@ class XML_Document extends DOMDocument implements Serializable {
     
     if (!$this->isEmpty()) {
       
-      if (Controler::getUser() && Sylma::get('xml/rights/enable')) {
+      if (Controler::getUser() && Sylma::get('dom/rights/enable')) {
         
         $oNodes = $this->query('//*[@ls:owner]', 'ls', SYLMA_NS_SECURITY); // or @ls:mode or @ls:group
         

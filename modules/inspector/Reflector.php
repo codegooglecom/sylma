@@ -15,8 +15,16 @@ abstract class InspectorReflector {
     return $this->controler;
   }
   
-  public function log($sMessage) {
+  protected function getName() {
     
-    $this->getControler()->log($sMessage);
+    return $this->getReflector()->getName();
+  }
+  
+  protected function throwException($sMessage) {
+    
+    $e = new Sylma::$exception($sMessage);
+    
+    $this->log($e->getPath(), $sMessage);
+    throw $e;
   }
 }

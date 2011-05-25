@@ -62,7 +62,10 @@ class XML_Element extends DOMElement implements XML_Composante {
   
   public function getPath() {
     
-    if (!$sLine = $this->getLineNo()) $sLine = 'xx';
+    $sLine = '';
+    if (method_exists($this, 'getLineNo')) $sLine = $this->getLineNo();
+    
+    if (!$sLine) $sLine = 'xx';
     
     return $this->getName(false) . ' (line ' . $sLine . ')';
   }
@@ -179,7 +182,6 @@ class XML_Element extends DOMElement implements XML_Composante {
         $mResult = $this->getDocument()->queryString($mResult);
         
         XML_Controler::addStat('query');
-        
         if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
         
         if ($mResult === null) {
@@ -215,7 +217,6 @@ class XML_Element extends DOMElement implements XML_Composante {
         $mResult = $oXPath->query($sQuery, $this);
         
         XML_Controler::addStat('query');
-        
         if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
         
         // if (!$mResult || !$mResult->length) Controler::addMessage(xt("Element->query(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');

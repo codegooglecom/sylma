@@ -178,7 +178,7 @@ class XSL_Document extends XML_Document {
           if ($oError->file) $sFile = '';
           else if ($this->getFile()) $sFile = $this->getFile()->parse();
           else $sFile = new HTML_Tag('em', 'Fichier inconnu !');
-          
+          //print_r($oError);
           dspm(xt('%s : %s - %s dans %s', new HTML_Strong('Libxml'), xmlize($oError->message), view($this), $sFile), 'warning');
         }
         

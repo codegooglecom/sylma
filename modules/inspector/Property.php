@@ -38,8 +38,7 @@ class InspectorProperty extends InspectorReflector implements InspectorReflector
       '/\$' . $this->getReflector()->getName() . '\s*=\s*([^;]+);/',
       $this->getParent()->getSourceProperties(),
       $aResult);
-    // dspf($aResult);
-    //dspm("/\${$sName}\s*=\s*([^;]+);/");
+    
     if ($aResult && !empty($aResult[1])) $mDefault = ' = '.$aResult[1];
     
     return

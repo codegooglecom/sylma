@@ -905,11 +905,13 @@ class Controler {
   /* *** */
   
   /**
-   * Create an object from a module array using @method buildClass() :
+   * Create an object from a module array using @method buildClass()
+   * 
    * @param array $sKey The key name of the class to use
    * @param array $aModule The module array containing the classes parameters.
    *  Ex : array('path' => 'modules/mymodule', classes' => array('keyname' => array('name' => 'classname', 'file' => 'filename')))
    * @param* array $aArguments The list of arguments to send to __construct method of object created
+   * 
    * @return mixed The object created
    */
   public static function createObject(array $aClass, array $aArguments = array()) {
