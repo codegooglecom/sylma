@@ -116,7 +116,8 @@ class XArguments extends Arguments implements ArgumentsInterface {
       
       case 'self' :
         
-        $mResult = $this->getValue(self::parsePath($sArguments, implode('/', $aPath)));
+      	$aPath = self::parsePath($sArguments, implode('/', $aPath));
+        $mResult = $this->getValue($aPath);
         //if ($aError = self::getError()) dspf($aError);
       break;
       

@@ -11,6 +11,7 @@ class Sylma {
   
   private static $settings = null;
   private static $logger = null;
+  protected static $aControlers;
   
   public static $exception = 'SylmaException';
   
@@ -21,49 +22,15 @@ class Sylma {
   
   public static function init($sServer = '') {
     
-    require_once('Functions.php');
-    require_once('module/Namespaced.php');
-    require_once('ArgumentsInterface.php');
-    require_once('Arguments.php');
-    require_once('Spyc.php');
-    require_once('XArguments.php');
-    
-    $sSylma = SYLMA_PATH . self::PATH_OPTIONS;
-    
-    self::$settings = new XArguments($sSylma, 'sylma');
-    if ($sServer)  self::getSettings()->mergeFile($sServer);
-    
-    // set error report mode
-    if (Sylma::get('debug/enable')) error_reporting(E_ALL);
-    else error_reporting(0);
-    
-    require_once('Controler.php');
-    
-    libxml_use_internal_errors(true);
-    
-    require_once('SylmaException.php');
-    require_once('Error.php');
-    $sError = set_error_handler("sylmaErrorHandler");
-    $sError = set_exception_handler("self::sendException");
-    
-    self::loadLibs();
-    
-    // DB
-    if (self::get('db/enable')) require_once('modules/exist/XML_Database.php');
-    
-    // others
-    require_once('modules/logger/LoggerInterface.php');
-    require_once('modules/logger/Logger.php');
-    require_once('modules/dbx/DBX.php');
-    
-    //ini_set('session.save_path', 'c:/temp/php');
-    //ini_set('session.cookie_lifetime', SESSION_MAX_LIFETIME);
-    ini_set('session.gc_maxlifetime', Sylma::get('users/session/lifetime'));
-    
-    session_start();
+  	require_once('Initializer.php');
+  	
+  	$init = self::$aControlers['init'] = new Initializer();
+  	
+  	self::$settings = $init->loadSettings($sServer, self::PATH_OPTIONS);
+    $init->load(self::PATH_LIB);
     
     self::$result = Controler::trickMe();
-    
+
     //session_write_close();
   }
   
@@ -96,11 +63,11 @@ class Sylma {
   public static function log($mPath, $mMessage, $sStatut = self::LOG_STATUT_DEFAULT) {
     
     $aPath = (array) $mPath;
-    $aPath[] = date('Y-m-d H:m:s');
+    $aPath[] = '@time ' . date('Y-m-d H:m:s');
     
-    $sPath = implode(' - ', array_reverse($aPath));
+    $sPath = implode(' ', array_reverse($aPath));
     
-    $aMessage = array($sPath, ' : ', $mMessage);
+    $aMessage = array($sPath, ' @message ', $mMessage);
     $sMessage = implode('', $aMessage);
     
     if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
@@ -132,60 +99,14 @@ class Sylma {
     }
   }
   
-  public static function sendException(SylmaExceptionInterface $e) {
-    
-    self::log($e->getPath(), $e->getMessage());
-    // while (0 && $e = $e->getPrevious()); // TODO : Enable for PHP 5.3
+  public static function sendError($iNo, $sMessage, $sFile, $iLine) {
+  	
+    $sylmaException = new self::$exception($sMessage);
+    $sylmaException->loadError($iNo, $sMessage, $sFile, $iLine);
+
+    //throw $sylmaException;
   }
-  
-  protected static function loadLibs() {
-    
-    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . self::PATH_LIB);
-    
-    require_once('Global.php');
-    
-    require_once('module/Base.php');
-    require_once('module/Module.php');
-    require_once('module/Extension.php');
-    require_once('module/XDB.php');
-    require_once('XML_Processor.php');
-    
-    require_once('dom/Controler.php');
-    require_once('dom/Document.php');
-    require_once('dom/XML.php');
-    require_once('dom/Element.php');
-    require_once('HTML.php');
-    
-    require_once('core/Options.php');
-    
-    require_once('Redirect.php');
-    require_once('Messages.php');
-    
-    require_once('schemas/XML_Schema.php');
-    
-    require_once('action/Controler.php');
-    require_once('action/Path.php');
-    require_once('action/Array.php');
-    require_once('action/Action.php');
-    
-    require_once('modules/xquery/XQuery.php');
-    require_once('XSL_Document.php');
-    
-    require_once('user/User.php');
-    require_once('user/Cookie.php');
-    
-    require_once('storage/filesys/Resource.php');
-    require_once('storage/filesys/Directory.php');
-    require_once('storage/filesys/File.php');
-    require_once('storage/filesys/SFile.php');
-    
-    require_once('window/WindowInterface.php');
-    require_once('window/Action.php');
-    require_once('window/HTML.php');
-    require_once('window/XML.php');
-    require_once('window/TXT.php');
-    require_once('window/Img.php');
-  }
+
   
   public static function render() {
     

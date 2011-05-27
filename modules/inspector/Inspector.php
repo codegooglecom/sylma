@@ -27,22 +27,18 @@ class Inspector extends Module {
     try {
       
       $action = $this->create('class', array(
-        new ReflectionClass('InspectorClass'), $this));
+        new ReflectionClass('InspectorMethod'), $this));
       
       dspf($action->parse());
       $sResult = (string) $action;
       
     } catch (Exception $e) {
+    	
       
-      Sylma::sendException($e);
+      return null;
     }
     
     return new HTML_Tag('pre', $sResult);
-  }
-  
-  public function log($mPath, $sMessage, $sStatut = self::MESSAGES_STATUT) {
-    
-    parent::log($mPath, $sMessage, $sStatut);
   }
 }
 

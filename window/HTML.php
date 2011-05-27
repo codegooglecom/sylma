@@ -48,71 +48,70 @@ class WindowHTML extends XML_Action {
       
       throw new Exception('Frontend ne retourne aucun résultat.');
       
+    }
+      
+    // Add js onload
+    
+    if ($this->sOnLoad) $this->addJS(null, "window.addEvent('domready', function() {\n".$this->sOnLoad."\n});");
+    
+    if ($oHead = $oView->get('//ns:head')) $oHead->add($this->getHead()->getChildren());
+    else dspm(xt('Impossible de trouver l\'en tête de la fenêtre dans %s', view($oView)), 'action/error');
+    
+    // Put messages and infos
+    
+    $sBody = '//ns:body';
+    
+    // infos
+    
+    if (Controler::isAdmin()) {
+      
+      $oInfos = new XML_Element('div', Controler::getInfos(), array('id' => 'msg-admin'));
+      
+      if ($oContainer = $oView->get($sBody)) $oContainer->add($oInfos);
+      else $oView->add($oInfos);
+    }
+    
+    // messages
+    
+    if (!$sMessage = Controler::getWindowSettings()->read('messages')) $sMessage = $sBody;
+    
+    if (Sylma::get('dom/debug/show-queries')) {
+      
+      $args = new XArguments(XML_Controler::$aQueries);
+      dspm(XArguments::renderTree($args->parseTree()));
+    }
+    
+    if ($oContainer = $oView->get($sMessage)) $oContainer->shift(Controler::getMessages());
+    else {
+      
+      dspm(xt('Containeur %s introuvable', new HTML_Strong($sMessage)), 'action/warning');
+      $oView->add(Controler::getMessages());
+    }
+
+    Controler::useMessages(false);
+    
+    // Fill empty html tags
+    // TODO check not to heavy (metal)
+    if ($oElements = $oView->query(SYLMA_HTML_TAGS, 'html', SYLMA_NS_XHTML)) {
+      
+      foreach ($oElements as $oElement) {
+        
+        if (!$oElement->hasChildren()) $oElement->set(' ');
+      }
+    }
+    
+    // Remove security elements
+    
+    if ($oElements = $oView->query('//@ls:owner | //@ls:mode | //@ls:group', 'ls', SYLMA_NS_SECURITY)) $oElements->remove();
+    
+    if ($oView->isEmpty()) {
+      
+      return (string) xt('Problème lors du chargement du site. Nous nous excusons pour ce désagrément. %s pour revenir à la page d\'accueil', new HTML_Br.new HTML_A('/', t('Cliquez-ici')));
+      
     } else {
       
-      // Add js onload
-      
-      if ($this->sOnLoad) $this->addJS(null, "window.addEvent('domready', function() {\n".$this->sOnLoad."\n});");
-      
-      if ($oHead = $oView->get('//ns:head')) $oHead->add($this->getHead()->getChildren());
-      else dspm(xt('Impossible de trouver l\'en tête de la fenêtre dans %s', view($oView)), 'action/error');
-      
-      // Put messages and infos
-      
-      $sBody = '//ns:body';
-      
-      // infos
-      
-      if (Controler::isAdmin()) {
-        
-        $oInfos = new XML_Element('div', Controler::getInfos(), array('id' => 'msg-admin'));
-        
-        if ($oContainer = $oView->get($sBody)) $oContainer->add($oInfos);
-        else $oView->add($oInfos);
-      }
-      
-      // messages
-      
-      if (!$sMessage = Controler::getWindowSettings()->read('messages')) $sMessage = $sBody;
-      
-      if (Sylma::get('dom/debug/show-queries')) {
-        
-        $args = new XArguments(XML_Controler::$aQueries);
-        dspm(XArguments::renderTree($args->parseTree()));
-      }
-
-      if ($oContainer = $oView->get($sMessage)) $oContainer->shift(Controler::getMessages());
-      else {
-        
-        dspm(xt('Containeur %s introuvable', new HTML_Strong($sMessage)), 'action/warning');
-        $oView->add(Controler::getMessages());
-      }
-
-      Controler::useMessages(false);
-      
-      // Fill empty html tags
-      // TODO check not to heavy (metal)
-      if ($oElements = $oView->query(SYLMA_HTML_TAGS, 'html', SYLMA_NS_XHTML)) {
-        
-        foreach ($oElements as $oElement) {
-          
-          if (!$oElement->hasChildren()) $oElement->set(' ');
-        }
-      }
-      
-      // Remove security elements
-      
-      if ($oElements = $oView->query('//@ls:owner | //@ls:mode | //@ls:group', 'ls', SYLMA_NS_SECURITY)) $oElements->remove();
-      
-      if ($oView->isEmpty()) {
-        
-        return (string) xt('Problème lors du chargement du site. Nous nous excusons pour ce désagrément. %s pour revenir à la page d\'accueil', new HTML_Br.new HTML_A('/', t('Cliquez-ici')));
-        
-      } else {
-        
-        $oView->formatOutput();
-        return $sDocType."\n".$oView->display(false, true);
-      }
+      $oView->formatOutput();
+      return $sDocType."\n".$oView->display(false, true);
     }
   }
   
@@ -124,8 +123,7 @@ class WindowHTML extends XML_Action {
       
     } catch(Exception $e) {
       
-      Sylma::sendException($e);
-      
+    	echo $e;
       $sResult = (string) xt('Problème lors du chargement du site. Nous nous excusons pour ce désagrément. %s pour revenir à la page d\'accueil', new HTML_Br.new HTML_A('/', t('Cliquez-ici')));
     }
     

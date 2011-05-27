@@ -49,13 +49,27 @@ class Module extends ModuleBase {
     return new XML_Action($oPath);
   }
   
+  /**
+   * Load an XSL Template from a path relative to the module's directory
+   * 
+   * @param string $sPath The path to the template, relative to the module's directory
+   * @return null|DOMDocument The loaded template, or null if not found/valid
+   */
   protected function getTemplate($sPath) {
     
     if ($oFile = $this->getFile($sPath)) return new XSL_Document((string) $oFile, MODE_EXECUTION);
     else return null;
   }
   
-  protected function getDocument($sPath, $iMode = MODE_READ) {
+  /**
+   * Load a DOM Document from a path relative to the module's directory
+   * 
+   * @param string $sPath The path to the document, relative to the module's directory
+   * @param integer $iMode The load mode (READ, WRITE, EXECUTE)
+   * 
+   * @return null|DOMDocument The loaded document, or null if not found/valid
+   */
+  protected function getDocument($sPath, $iMode = Sylma::MODE_READ) {
     
     if ($oFile = $this->getFile($sPath)) return new XML_Document((string) $oFile, $iMode);
     else return null;

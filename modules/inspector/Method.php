@@ -75,12 +75,12 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     $this->sSource = $aResult[0];
   }
   
-  public function log($mFrom, $sMessage) {
+  public function throwException($sMessage, $mSender = array()) {
     
-    $mFrom = (array) $mFrom;
-    $mFrom[] = '@method ' . $this->getName();
+    $mSender = (array) $mSender;
+    $mSender[] = '@method ' . $this->getName();
     
-    return parent::log($mFrom, $sMessage);
+    return parent::throwException($sMessage, $mSender);
   }
   
   public function parse() {

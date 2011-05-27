@@ -1112,6 +1112,7 @@ class Controler {
   
   public static function getSystemPath() {
     
+  	//return Sylma::get('directories/system');
     return self::$sSystemPath;
   }
   

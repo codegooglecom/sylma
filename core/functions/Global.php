@@ -18,69 +18,7 @@ function pathWin2Unix($sPath) {
   return str_replace('\\', '/', $sPath);
 }
 
-/*** Array ***/
 
-function array_last($aArray, $mDefault = null) {
-  
-  if ($aArray) return array_val(count($aArray) - 1, $aArray);
-  else return $mDefault;
-}
-
-/**
- * Si il existe, renvoie la valeur de l'index du tableau , sinon renvoie la valeur de $mDefault
- */
-function array_val($sKey, $aArray, $mDefault = null) {
-  
-  //is_array($aArray) && (is_string($sKey) || is_numeric($sKey)) && 
-  
-  if (array_key_exists($sKey, $aArray)) return $aArray[$sKey];
-  else return $mDefault;
-}
-
-function array_clear($aArray, $sDefault = '') {
-  
-  $aCopyArray = $aArray;
-  
-  foreach ($aArray as $sKey => $sValue)if (!$sValue) unset($aCopyArray[$sKey]);
-  
-  return $aCopyArray;
-}
-
-function array_remove($sKey, &$aArray, $bDebug = true) {
-  
-  if ($bDebug || array_key_exists($sKey, $aArray)) {
-    
-    $mValue = $aArray[$sKey];
-    unset($aArray[$sKey]);
-    
-  } else $mValue = null;
-  
-  return $mValue;
-}
-
-/**
- * Will merge array recurively, but instead of replaced by array, similar keys are erased
- * @param array $array1 The source array, for wich values could be replaced
- * @param array $array2 The second array that will override first argument array
- * @author andyidol at gmail dot com - http://www.php.net/manual/en/function.array-merge-recursive.php#102379
- * @author Rodolphe Gerber
- */
-function array_merge_keys(array $array1, array $array2) {
-  
-  foreach($array2 as $key => $val) {
-    
-    if(array_key_exists($key, $array1) && is_array($val)) {
-      
-      $array1[$key] = array_merge_keys($array1[$key], $array2[$key]);
-    }
-    else {
-      
-      $array1[$key] = $val;
-    }
-  }
-
-  return $array1;
-}
 
 function strtobool($sValue, $bDefault = null) {
   
@@ -159,35 +97,6 @@ function stringResume($mValue, $iLength = 50, $bXML = false) {
   return $sValue;
 }
 
-/**
- * Merge keys and values with a separation value
- *
- * @param string sSep The separation string
- * @param array aArray The array to fusion
- * 
- * @return array The new fusionned array
- */
-function fusion($sSep, $aArray) {
-  
-  $aResult = array();
-  
-  foreach ($aArray as $sKey => $sVal) $aResult[] = $sKey.$sSep.$sVal;
-  
-  return $aResult;
-}
-
-/**
- * Implosion = @function fusion + @function implode
- *
- * @param string sSepFusion The separation for fusion (keys + values)
- * @param string sSepImplode The separation for implode (lines)
- *
- * @return string The new "implosed" array
- */
-function implosion($sSepFusion, $sSepImplode, $aArray) {
-  
-  return implode($sSepImplode, fusion($sSepFusion, $aArray));
-}
 
 /**
  * Un-Conversion in UTF-8 of the characters : & " < >

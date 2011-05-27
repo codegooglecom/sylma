@@ -6,7 +6,11 @@
 
 function sylmaErrorHandler($errno, $errstr, $errfile, $errline) {
   
-  if (Controler::isAdmin()) {
+	$bAdmin = class_exists('Controler') ?
+	 Controler::isAdmin() :
+	 Sylma::get('debug/enable'); 
+	
+  if ($bAdmin) {
     
     if (Sylma::get('messages/format/enable') && class_exists('HTML_Tag')) {
       
@@ -18,7 +22,7 @@ function sylmaErrorHandler($errno, $errstr, $errfile, $errline) {
         
     } else $oMessage = "ERREUR [$errno] $errstr - [$errline] - $errfile : <br/>";//.Controler::getBacktrace();
     
-    if (Controler::useMessages()) Controler::addMessage($oMessage, 'error');
+    if (class_exists('Controler') && Controler::useMessages()) Controler::addMessage($oMessage, 'error');
     else if (Sylma::get('debug/enable') && Sylma::get('messages/print/hidden')) echo $oMessage;
     
     return true;

@@ -19,13 +19,25 @@ class Arguments extends Namespaced implements ArgumentsInterface {
   
   public function set($sPath, $mValue = null) {
     
-    if ($aTarget = $this->get($sPath)) {
+  	$aPath = $this->parsePath($sPath);
+  	
+    if ($mTarget =& $this->getValue($aPath)) {
       
-      if ($mValue !== null) $aTarget = $mValue;
-      else unset($aTarget);
+      if ($mValue !== null) $mTarget = $mValue;
+      else unset($mTarget);
+    }
+    else if (($aError = self::getError()) && $aError['name'] == 'unknown') {
+    	
+    	foreach ($aPath as $sKey) {
+    		
+    		$mTarget[$sKey] = array();
+    		$mTarget =& $mTarget[$sKey]; 
+    	}
+    	
+    	$mTarget = $mValue;
     }
     
-    return $aTarget;
+    return $mTarget;
   }
   
   public function get($sPath, $bDebug = true) {
@@ -35,10 +47,16 @@ class Arguments extends Namespaced implements ArgumentsInterface {
     if (!$sPath) $this->log(txt('Empty path is not valid'));
     else {
       
-      $mResult = $this->getValue(self::parsePath($sPath));
+    	$aPath = self::parsePath($sPath);
+    	
+      $mResult = $this->getValue($aPath);
       $aError = self::getError();
       
-      if ($aError && $bDebug) $this->log($aError['name'] . ' - ' . $aError['message'], $sPath);
+      if ($aError && $bDebug) {
+      	
+      	$this->log($aError['name'] . ' - ' . $aError['message'], $sPath);
+      	$mResult = null;
+      }
     }
     
     return $mResult;
@@ -64,17 +82,19 @@ class Arguments extends Namespaced implements ArgumentsInterface {
     return $aResult;
   }
   
-  protected function getValue(array $aPath = array()) {
+  protected function &getValue(array &$aPath = array()) {
     
+  	self::$aError = array();
     $mCurrent = $this->aArray;
     $mResult = null;
     $aParentPath = array();
     $sKey = '[none]';
     
-    while ($aPath) {
+    while ($aPath && !self::getError()) {
       
       if (!is_array($mCurrent)) {
         
+      	$mResult = $mCurrent;
         self::setError('lost', txt('Key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
       }
       else {
@@ -98,7 +118,6 @@ class Arguments extends Namespaced implements ArgumentsInterface {
   protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array()) {
     
     $mResult = null;
-    self::$aError = array();
     
     $sKey = array_shift($aPath);
     array_push($aParentPath, $sKey);

@@ -19,6 +19,10 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
    */
   protected $sSourceProperties = null;
   
+  /**
+   * @param $class The reflector to link to this class 
+   * @param $controler The parent element, eg. The module's class 
+   */
   public function __construct(ReflectionClass $class, ModuleBase $controler) {
     
     $this->controler = $controler;
@@ -75,9 +79,9 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
       $iStart = $this->getReflector()->getStartLine() - 1;
       $iEnd = $this->getReflector()->getEndLine();
       
-      if (count($aSource) < $iEnd) {
+      if (1 || count($aSource) < $iEnd) {
         
-        $this->throw('Cannot load source code, Line end is bigger than file length');
+        $this->throwException('Cannot load source code, Line end is bigger than file length');
       }
       
       $this->aSource = array_slice($aSource, $iStart, $iEnd - $iStart);
@@ -114,12 +118,14 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     }
   }
   
-  public function log($mPath, $sMessage) {
+  public function throwException($sMessage, $mSender = array()) {
     
-    $mPath = (array) $mPath;
-    array_push($mPath, '@class ' . $this->getName(), '@file ' . $this->file);
+    $mSender = (array) $mSender;
+    array_push($mSender,
+    	'@class ' . $this->getName(),
+    	'@file ' . $this->file);
     
-    return parent::log($mPath, $sMessage);
+    return parent::throwException($sMessage, $mSender);
   }
   
   public function parse() {

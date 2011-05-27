@@ -20,11 +20,14 @@ abstract class InspectorReflector {
     return $this->getReflector()->getName();
   }
   
-  protected function throwException($sMessage) {
+  protected function throwException($sMessage, $mSender = array()) {
+  	
+    $mSender = (array) $mSender;
     
     $e = new Sylma::$exception($sMessage);
+    $e->setPath($mSender);
+    $e->loadException();
     
-    $this->log($e->getPath(), $sMessage);
     throw $e;
   }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Cookie extends XDB_Module {
+class Cookie extends ModuleBase {
   
   protected $sUser = '';
   
