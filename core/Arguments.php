@@ -193,29 +193,57 @@ class Arguments extends Namespaced implements ArgumentsInterface {
    * @param? XML_Document $oSchema The schema that will be used by the Options object
    * @param? string $sPath An optional sub-path to extract the arguments from
    */
-  public function getOptions(XML_Element $oRoot, XML_Document $oSchema = null, $sPath = '') {
+  public function getOptions(DOMNode $oRoot, DOMDocument $oSchema = null, $sPath = '') {
     
-    $this->getElement($oRoot, $sPath);
+    self::getElement($oRoot, $sPath);
     
     return new XML_Options(new XML_Document($oRoot), $oSchema);
   }
   
-  public function getElement(XML_Element $oRoot, $sPath = '') {
+  public static function buildDocument(array $aArray, $sNamespace) {
+    
+    $root = new XML_Element('default', null, array(), $sNamespace);
+    
+    self::buildNode($root, $aArray);
+    
+    return new XML_Document($root->getFirst());
+  }
+  
+  public function getElement(ElementInterface $root, $sPath = '') {
     
     if ($sPath) $aArray = $this->get($sPath);
     else $aArray = $this->aArray;
     
-    $this->buildElement($oRoot, $aArray);
+    self::buildNode($root, $aArray);
   }
   
-  private function buildElement(XML_Element $oParent, $aArray) {
+  private static function buildNode(NodeInterface $parent, array $aArray) {
     
     foreach ($aArray as $sKey => $mValue) {
       
-      $oElement = $oParent->addNode($sKey);
-      
-      if (is_array($mValue)) $this->buildElement($oElement, $mValue);
-      else $oElement->set($mValue);
+      if ($mValue) {
+        
+        if (is_integer($sKey)) {
+          
+          $node = $parent;
+        }
+        else {
+          
+          if ($sKey[0] == '@') {
+            
+            $parent->setAttribute(substr($sKey, 1), $mValue);
+            continue;
+          }
+          else {
+            
+            $node = $parent->addNode($sKey);
+          }
+        }
+        
+        if (is_array($mValue)) self::buildNode($node, $mValue);
+        else $node->add($mValue);
+        
+      }
     }
   }
   

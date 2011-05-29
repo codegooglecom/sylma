@@ -3,6 +3,7 @@
 include('ReflectorInterface.php');
 include('Reflector.php');
 include('Class.php');
+include('Constant.php');
 include('Property.php');
 include('Method.php');
 include('Parameter.php');
@@ -20,25 +21,22 @@ class Inspector extends Module {
     $this->setNamespace(self::NS);
   }
   
-  public function inspect() {
-    
-    $sResult = '';
+  public function getClass($sClass) {
     
     try {
       
       $action = $this->create('class', array(
-        new ReflectionClass('InspectorMethod'), $this));
+        new ReflectionClass($sClass), $this));
       
+      //dspf($action->parse());
+      //$sResult = (string) $action;
       dspf($action->parse());
-      $sResult = (string) $action;
+      return $action->parse();
       
-    } catch (Exception $e) {
+    } catch (SylmaException $e) {
     	
-      
       return null;
     }
-    
-    return new HTML_Tag('pre', $sResult);
   }
 }
 

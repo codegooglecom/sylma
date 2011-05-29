@@ -7,3 +7,5 @@ classes:
     name: InspectorParameter
   property:
     name: InspectorProperty
+  constant:
+    name: InspectorConstant

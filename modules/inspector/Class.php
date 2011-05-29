@@ -1,18 +1,28 @@
 <?php
-
-class InspectorClass extends InspectorReflector implements InspectorReflectorInterface {
+interface InspectorTest {
   
-  protected $aProperties = array();
+  
+}
+class InspectorClass extends InspectorReflector implements InspectorReflectorInterface, InspectorTest {
+  
+  const EXCEPTION_NO_SOURCE = 'No file source found';
+  const CONSTANT_CLASS = 'constant';
   const PROPERTY_CLASS = 'property';
-  
-  protected $aMethods = array();
   const METHOD_CLASS = 'method';
   
   /* File where is located the class */
+  protected $controler;
   protected $file;
   
   protected $aSource;
   protected $iOffset;
+  
+  protected $aConstants = array();
+  protected $aProperties = array();
+  protected $aMethods = array();
+  
+  protected $sExtends = '';
+  protected $aInterfaces = array();
   
   /**
    * NULL means it has never been load, '' means nothing found
@@ -30,8 +40,15 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     
     $this->loadFile();
     
+    $this->loadParents();
+    $this->loadConstants();
     $this->loadMethods();
     $this->loadProperties();
+  }
+  
+  protected function getControler() {
+    
+    return $this->controler;
   }
   
   public function getSource($bText = false) {
@@ -43,6 +60,8 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   public function getSourceProperties() {
     
     if ($this->sSourceProperties === null) {
+      
+       $this->sSourceProperties = '';
       
       $sName = $this->getName();
       
@@ -79,7 +98,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
       $iStart = $this->getReflector()->getStartLine() - 1;
       $iEnd = $this->getReflector()->getEndLine();
       
-      if (1 || count($aSource) < $iEnd) {
+      if (count($aSource) < $iEnd) {
         
         $this->throwException('Cannot load source code, Line end is bigger than file length');
       }
@@ -92,6 +111,15 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   public function getError() {
     
     return 'InspectorException';
+  }
+  
+  protected function loadConstants() {
+    
+    foreach ($this->getReflector()->getConstants() as $sName => $sValue) {
+      
+      $this->aConstants[] = $this->getControler()->create(self::CONSTANT_CLASS, array(
+          $sName, $sValue, $this));
+    }
   }
   
   protected function loadProperties() {
@@ -110,11 +138,25 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     
     foreach ($this->getReflector()->getMethods() as $method) {
       
-      if ($method->getDeclaringClass() == $this->getReflector()) {
-        
-        $this->aMethods[$method->getName()] = $this->getControler()->create(self::METHOD_CLASS, array(
+      $this->aMethods[] = $this->getControler()->create(self::METHOD_CLASS, array(
           $method, $this));
-      }
+    }
+  }
+  
+  protected function loadParents() {
+    
+    if (!$aSource = $this->getSource()) {
+      
+      $this->throwException(self::EXCEPTION_NO_SOURCE);
+    }
+    
+    preg_match('/' . $this->getName() . '(?:\s+extends\s+(?P<extends>\w+))?(?:\s+implements\s+(?P<implements>[\w,\s]+))?/', $aSource[0], $aMatch);
+    
+    if (!empty($aMatch['extends'])) $this->sExtends = $aMatch['extends'];
+    
+    if (!empty($aMatch['implements'])) {
+      
+      $this->aInterfaces = array_map('trim', explode(',', $aMatch['implements']));
     }
   }
   
@@ -122,32 +164,47 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     
     $mSender = (array) $mSender;
     array_push($mSender,
-    	'@class ' . $this->getName(),
-    	'@file ' . $this->file);
+      '@class ' . $this->getName(),
+      '@file ' . $this->file);
     
     return parent::throwException($sMessage, $mSender);
   }
   
   public function parse() {
     
-    $aContent = $this->aProperties + $this->aMethods;
+    $node = Arguments::buildDocument(array(
+      'class' => array( 
+        '@name' => $this->getName(),
+        'extension' => $this->sExtends,
+        $this->aConstants,
+        $this->aProperties,
+        $this->aMethods,
+      ),
+    ), $this->getControler()->getNamespace());
     
-    return new XML_Element('class', $aContent, array(
-      'name' => $this->getName()), $this->getControler()->getNamespace());
+    if ($this->aInterfaces) {
+      
+      foreach ($this->aInterfaces as $sInterface)
+        $node->addNode('interface', $sInterface);
+    }
+    
+    return $node;
   }
   
   public function __toString() {
     
-    $sExtension = ($parent = $this->getReflector()->getParentClass()) ?
-      $parent->getName() : '';
-    
-    // return self::export($this, false);
+    foreach ($this->aMethods as $method)
+      if ($method->getReflector()->getDeclaringClass() == $this->getReflector())
+        $aMethods[] = $method;
     
     return implode(' ', Reflection::getModifierNames($this->getReflector()->getModifiers())) .
       'class ' . $this->getName() .
-      ($sExtension ? ' extends ' . $sExtension : '') . " {\n\n" .
+      ($this->sExtends ? ' extends ' . $this->sExtends : '') .
+      ($this->aInterfaces ? ' implements ' . implode(', ', $this->aInterfaces) : '') . " {\n\n" .
+      implode("\n", $this->aConstants) .
+      ($this->aConstants ? "\n\n" : '') .
       implode("\n", $this->aProperties) .
-      "\n\n" .
+      ($this->aProperties ? "\n\n" : '') .
       implode("\n\n", $this->aMethods) .
       "\n}";
   }

@@ -3,7 +3,7 @@
 /**
  * XML_Element ..
  */
-class XML_Element extends DOMElement implements XML_Composante {
+class XML_Element extends DOMElement implements ElementInterface {
   
   /**
    * @param string $sName Full name of the element (prefix + local name)

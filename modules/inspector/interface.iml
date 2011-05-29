@@ -2,5 +2,6 @@
 <class xmlns="http://www.sylma.org/interface">
   <file>Inspector.php</file>
   <name>Inspector</name>
-  <method return-default="true" name="inspect" path="inspect"/>
+  <method return-default="true" path="get-class" name="getClass">
+  	<argument name="class" format="php-string"></argument></method>
 </class>

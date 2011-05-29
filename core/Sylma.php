@@ -5,8 +5,8 @@ class Sylma {
   const PATH_LIB = 'core';
   const PATH_OPTIONS = '/system/sylma.yml';
   const MODE_EXECUTE = 1;
-  const MODE_READ = 1;
-  const MODE_WRITE = 1;
+  const MODE_WRITE = 2;
+  const MODE_READ = 4;
   const LOG_STATUT_DEFAULT = 'notice';
   
   private static $settings = null;
@@ -107,7 +107,6 @@ class Sylma {
     //throw $sylmaException;
   }
 
-  
   public static function render() {
     
     return self::$result;

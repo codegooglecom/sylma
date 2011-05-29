@@ -3,7 +3,7 @@
 abstract class InspectorReflector {
   
   protected $reflector;
-  protected $controler;
+  protected $parent;
   
   protected function getReflector() {
     
@@ -12,7 +12,12 @@ abstract class InspectorReflector {
   
   protected function getControler() {
     
-    return $this->controler;
+    return $this->getParent()->getControler();
+  }
+  
+  protected function getParent() {
+    
+    return $this->parent;
   }
   
   protected function getName() {

@@ -47,9 +47,7 @@ class Initializer {
     libxml_use_internal_errors(true);
     
     require_once('SylmaException.php');
-    require_once('Error.php');
     set_error_handler("Sylma::sendError");
-    //set_error_handler("sylmaErrorHandler");
     //set_exception_handler("self::sendException");
     
     $this->loadLibs($sCore);
@@ -82,7 +80,10 @@ class Initializer {
     
     require_once('dom/Controler.php');
     require_once('dom/Document.php');
+    require_once('dom/NodeInterface.php');
     require_once('dom/XML.php');
+    require_once('dom/Nodelist.php');
+    require_once('dom/ElementInterface.php');
     require_once('dom/Element.php');
     require_once('HTML.php');
     

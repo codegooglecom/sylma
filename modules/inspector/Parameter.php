@@ -2,65 +2,67 @@
 
 class InspectorParameter extends InspectorReflector implements InspectorReflectorInterface {
   
-  protected $method;
+  protected $parent;
   
-  public function __construct(ReflectionParameter $reflector, InspectorReflectorInterface $method) {
+  protected $sCast;
+  protected $sDefault;
+  protected $sValue;
+  
+  public function __construct(ReflectionParameter $reflector, InspectorReflectorInterface $parent) {
     
-    $this->method = $method;
+    $this->parent = $parent;
     $this->reflector = $reflector;
-  }
-  
-  protected function getMethod() {
     
-    return $this->class;
+    $this->load();
   }
   
   protected function getControler() {
     
-    return $this->getClass()->getControler();
+    return $this->getParent()->getControler();
+  }
+  
+  protected function load() {
+    
+    // value
+    $this->sValue = $this->getReflector()->isOptional() ?
+      $this->getReflector()->getDefaultValue() :
+      '';
+    
+    // default  
+    
+    $sSource = $this->getParent()->getSourceParameters();
+    
+    preg_match('/(\w*)\s*\$' . $this->getName() . '(?:\s*=\s*([^,\)\(]*))?/', $sSource, $aMatch);
+    
+    if (!empty($aMatch[1])) $this->sCast = $aMatch[1];
+    
+    if (!empty($aMatch[2])) {
+      
+      $sDefault = $aMatch[2];
+      if ($sDefault == 'array') $sDefault = 'array()';
+      
+      $this->sDefault = $sDefault;
+    }
   }
   
   public function parse() {
     
-    $aAttr = array(
-      'name' => $this->getReflector()->getName()
-    );
-    
-    if ($this->getReflector()->isOptional())
-      $aAttr['default'] = $this->getReflector()->getDefaultValue();
-    
-    return new XML_Element('parameter', null, $aAttr, $this->getControler()->getNamespace());
+    return Arguments::buildDocument(array(
+      'parameter' => array(
+        '@name' => $this->getName(),
+        'cast' => $this->sCast,
+        'default' => $this->sDefault,
+        'value' => $this->sValue,
+      ),
+    ), $this->getControler()->getNamespace());
   }
   
   public function __toString() {
     
-    $mDefault = '';
-    
-    if ($this->getReflector()->isDefaultValueAvailable()) {
-      
-      $mDefault = $this->getReflector()->getDefaultValue();
-      // dspf($mDefault);
-      // dspm(gettype($mDefault));
-      
-      switch (gettype($mDefault)) {
-        
-        case 'string' : $mDefault = $mDefault ? addQuote($mDefault) : "''"; break;
-        case 'integer' : break;
-        case 'boolean' : $mDefault = strtoupper(booltostr($mDefault)); break;
-      }
-      
-      // dspm($mDefault);
-      // dspm('-----');
-      $mDefault = ' = '.$mDefault;
-    }
-    
-    $class = $this->getReflector()->getClass();
-    
     return
-      ($this->getReflector()->isArray() ? 'array ' : '') .
-      ($class ? $class->getName() . ' ' : '') .
+      ($this->sCast ? $this->sCast . ' ' : '') .
       ($this->getReflector()->isPassedByReference() ? '&' : '') .
       '$' . $this->getReflector()->getName() .
-      $mDefault;
+      ($this->sDefault ? ' = ' . $this->sDefault : '');
   }
 }

@@ -2,21 +2,26 @@
 
 class InspectorMethod extends InspectorReflector implements InspectorReflectorInterface {
   
-  protected $class;
+  protected $parent;
   protected $aParameters = array();
   
   /**
-   * NULL means it has never been load, '' means nothing found
+   * NULL means it has never been loaded, ''/array() means nothing found
    */
   protected $aSource = null;
   protected $sSourceParameters = null;
   
-  public function __construct(ReflectionMethod $reflector, InspectorReflectorInterface $class) {
+  public function __construct(ReflectionMethod $reflector, InspectorReflectorInterface $parent) {
     
-    $this->class = $class;
+    $this->parent = $parent;
     $this->reflector = $reflector;
     
     $this->loadParameters();
+  }
+  
+  public function getReflector() {
+    
+    return parent::getReflector();
   }
   
   protected function loadParameters() {
@@ -27,14 +32,9 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     }
   }
   
-  protected function getClass() {
-    
-    return $this->class;
-  }
-  
   protected function getControler() {
     
-    return $this->getClass()->getControler();
+    return $this->getParent()->getControler();
   }
   
   protected function getSource($bText = true, $bDeclaration = false) {
@@ -43,15 +43,17 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     
     if ($this->aSource === null) {
       
-      if (!$aSource = $this->getClass()->getSource()) {
+    	$this->aSource = array();
+    	
+      if (!$aSource = $this->getParent()->getSource()) {
         
         $this->throwException('Cannot load source code for method');
       }
       
-      $iStart = $this->getReflector()->getStartLine() - $this->getClass()->getOffset() - 1;
-      $iEnd = $this->getReflector()->getEndLine() - $this->getClass()->getOffset();
+      $iStart = $this->getReflector()->getStartLine() - $this->getParent()->getOffset() - 1;
+      $iEnd = $this->getReflector()->getEndLine() - $this->getParent()->getOffset();
       
-      $this->aSource = array_slice($this->getClass()->getSource(), $iStart, $iEnd - $iStart);
+      $this->aSource = array_slice($this->getParent()->getSource(), $iStart, $iEnd - $iStart);
     }
     
     if ($this->aSource) {
@@ -64,15 +66,22 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     else return $aResult;
   }
   
-  protected function getSourceParameters() {
+  public function getSourceParameters() {
     
-    if (!$aSource = $this->getParent()->getSource()) {
-      
-      $this->throwException('Cannot load source code for parameters');
-    }
+  	if ($this->sSourceParameters === null) {
+  		
+  		$this->sSourceParameters = '';
+  		
+	    if (!$aSource = $this->getSource(false, true)) {
+	      
+	      $this->throwException('Cannot load source code for parameters');
+	    }
+	    
+	    preg_match('/\((.+)\) {/', $aSource[0], $aResult);
+	    $this->sSourceParameters = $aResult[0];
+  	}
     
-    preg_match('\((.+)\) {/', $aSource[0], $aResult);
-    $this->sSource = $aResult[0];
+    return $this->sSourceParameters;
   }
   
   public function throwException($sMessage, $mSender = array()) {
@@ -85,18 +94,33 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
   
   public function parse() {
     
-    $result = new XML_Element('method', null, array(
-      'name' => $this->getName()), $this->getControler()->getNamespace());
+    $node = Arguments::buildDocument(array(
+      'method' => array(
+        '@name' => $this->getName(),
+        'modifiers' => $this->getReflector()->getModifiers(),
+        'comments' => $this->getReflector()->getDocComment(),
+        $this->aParameters,
+        'source' => $this->getSource(),
+      ),
+    ), $this->getControler()->getNamespace());
     
-    $result->addNode('source', $this->getSource());
-    $result->addNode('comments', $this->getReflector()->getDocComment());
+    if ($this->getReflector()->getDeclaringClass() != $this->getParent()->getReflector()) {
+      
+      $node->setAttribute('class', $this->getReflector()->getDeclaringClass()->getName());
+    }
     
-    return $result;
+    return $node; 
   }
   
   public function __toString() {
+      
+    if ($sComment = $this->getReflector()->getDocComment()) {
+      
+      $sComment = "  " . $sComment . "\n";
+    }
     
     return
+      $sComment .
       '  ' . implode(' ', Reflection::getModifierNames($this->getReflector()->getModifiers())) .
       ' function ' . $this->getName() .
       '(' . implode(', ', $this->aParameters) . ") {\n" .

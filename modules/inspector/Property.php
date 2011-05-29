@@ -4,51 +4,45 @@ class InspectorProperty extends InspectorReflector implements InspectorReflector
   
   protected $parent;
   
+  protected $sDefault;
+  
   public function __construct(ReflectionProperty $reflector, InspectorReflectorInterface $parent) {
     
     $this->parent = $parent;
     $this->reflector = $reflector;
+    
+    $this->load();
   }
   
-  protected function getParent() {
+  protected function load() {
     
-    return $this->parent;
-  }
-  
-  protected function getControler() {
+    $sSource = $this->getParent()->getSourceProperties();
     
-    return $this->getParent()->getControler();
+    preg_match('/\$' . $this->getName() . '\s*=\s*([^;]+);/', $sSource, $aMatch);
+    
+    if ($aMatch && !empty($aMatch[1])) $this->sDefault = $aMatch[1];
   }
   
   public function parse() {
     
-    $aAttr = array(
-      'name' => $this->getReflector()->getName()
-    );
-    
-    // $aAttr['default'] = $this->getReflector()->getDefaultValue();
-    
-    return new XML_Element('property', null, $aAttr, $this->getControler()->getNamespace());
-  }
-  
-  public function display() {
-    
-    $mDefault = '';
-    preg_match(
-      '/\$' . $this->getReflector()->getName() . '\s*=\s*([^;]+);/',
-      $this->getParent()->getSourceProperties(),
-      $aResult);
-    
-    if ($aResult && !empty($aResult[1])) $mDefault = ' = '.$aResult[1];
-    
-    return
-      '  ' . implode(' ', Reflection::getModifierNames($this->getReflector()->getModifiers())) .
-      ' $' . $this->getReflector()->getName() .
-      $mDefault . ';';
+    return Arguments::buildDocument(array(
+      'property' => array(
+        '@name' => $this->getName(),
+        'modifiers' => $this->getReflector()->getModifiers(),
+        'default' => $this->sDefault,
+      ),
+    ), $this->getControler()->getNamespace());
   }
   
   public function __toString() {
     
-    return $this->display();
-  }
+    $sComment = $this->getReflector()->getDocComment();
+    $aModifiers = Reflection::getModifierNames($this->getReflector()->getModifiers());
+    
+    return
+      ($sComment ? "\n  " . $sComment . "\n" : '') .
+      '  ' . implode(' ', $aModifiers) .
+      ' $' . $this->getReflector()->getName() .
+      ($this->sDefault ? ' = ' . $this->sDefault : '') . ';';
+      }
 }
