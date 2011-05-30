@@ -77,7 +77,7 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
 	      $this->throwException('Cannot load source code for parameters');
 	    }
 	    
-	    preg_match('/\((.+)\) {/', $aSource[0], $aResult);
+	    preg_match('/\((.+)\)\s*(?:{|;)/', $aSource[0], $aResult);
 	    $this->sSourceParameters = $aResult[0];
   	}
     
@@ -97,10 +97,12 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     $node = Arguments::buildDocument(array(
       'method' => array(
         '@name' => $this->getName(),
+        '@class' => $this->getReflector()->getDeclaringClass()->getName(),
         'modifiers' => $this->getReflector()->getModifiers(),
         'comments' => $this->getReflector()->getDocComment(),
         $this->aParameters,
-        'source' => $this->getSource(),
+        'source' => $this->getReflector()->isUserDefined() ? $this->getSource() : '',
+        'final' => $this->getReflector()->isFinal(),
       ),
     ), $this->getControler()->getNamespace());
     

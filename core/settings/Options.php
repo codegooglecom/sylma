@@ -1,7 +1,7 @@
 <?php
 
 
-class Options extends ModuleBase implements ArgumentsInterface {
+class Options extends ModuleBase implements SettingsInterface {
   
   private $dDocument = null;
   private $aOptions = array(); // cache array
@@ -58,7 +58,7 @@ class Options extends ModuleBase implements ArgumentsInterface {
     return $bResult;
   }
   
-  public function get($sPath, $bDebug = true) {
+  public function get($sPath = '', $bDebug = true) {
     
     $nResult = null;
     
@@ -104,7 +104,7 @@ class Options extends ModuleBase implements ArgumentsInterface {
     return $nResult;
   }
   
-  public function read($sPath, $bDebug = true) {
+  public function read($sPath = '', $bDebug = true) {
     
     if ($oOption = $this->get($sPath, $bDebug)) return $oOption->read();
     else return '';
@@ -112,7 +112,7 @@ class Options extends ModuleBase implements ArgumentsInterface {
   
   // public function add($mValue = null) {
   
-  public function set($sPath, $mValue = null) {
+  public function set($sPath = '', $mValue = null) {
     
     $mResult = '';
     

@@ -1,9 +1,6 @@
 <?php
-interface InspectorTest {
-  
-  
-}
-class InspectorClass extends InspectorReflector implements InspectorReflectorInterface, InspectorTest {
+
+class InspectorClass extends InspectorReflector implements InspectorReflectorInterface {
   
   const EXCEPTION_NO_SOURCE = 'No file source found';
   const CONSTANT_CLASS = 'constant';
@@ -21,10 +18,18 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   protected $aProperties = array();
   protected $aMethods = array();
   
-  protected $sExtends = '';
+  protected $extends;
   protected $aInterfaces = array();
   
   /**
+   * An object reading the comment of the class
+   * @var InspectorCommentInterface
+   */
+  protected $comment;
+  
+  /**
+   * The string between the declaration of class and the first method
+   * containing the properties and constants
    * NULL means it has never been load, '' means nothing found
    */
   protected $sSourceProperties = null;
@@ -33,14 +38,23 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
    * @param $class The reflector to link to this class 
    * @param $controler The parent element, eg. The module's class 
    */
-  public function __construct(ReflectionClass $class, ModuleBase $controler) {
+  public function __construct($mClass, ModuleBase $controler) {
     
     $this->controler = $controler;
-    $this->reflector = $class;
     
-    $this->loadFile();
+    if (is_string($mClass)) $this->reflector = new ReflectionClass($mClass);
+    else $this->reflector = $mClass;
     
-    $this->loadParents();
+    if ($this->getReflector()->isUserDefined()) {
+      
+      $this->loadFile();
+      $this->loadParents();
+    }
+    else {
+      
+      $this->loadSytemParents();
+    }
+    
     $this->loadConstants();
     $this->loadMethods();
     $this->loadProperties();
@@ -104,6 +118,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
       }
       
       $this->aSource = array_slice($aSource, $iStart, $iEnd - $iStart);
+      
       $this->iOffset = $iStart;
     }
   }
@@ -138,8 +153,21 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     
     foreach ($this->getReflector()->getMethods() as $method) {
       
-      $this->aMethods[] = $this->getControler()->create(self::METHOD_CLASS, array(
-          $method, $this));
+      if ($method->getDeclaringClass() == $this->getReflector()) {
+        
+        $this->aMethods[] = $this->getControler()->create(
+          self::METHOD_CLASS,
+          array($method, $this));
+      }
+    }
+  }
+  
+  protected function loadSytemParents() {
+    
+    if ($class = $this->getReflector()->getParentClass()) {
+      
+      $this->extends = $this->getControler()->create('class',
+        array($class, $this->getControler()));
     }
   }
   
@@ -152,12 +180,21 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     
     preg_match('/' . $this->getName() . '(?:\s+extends\s+(?P<extends>\w+))?(?:\s+implements\s+(?P<implements>[\w,\s]+))?/', $aSource[0], $aMatch);
     
-    if (!empty($aMatch['extends'])) $this->sExtends = $aMatch['extends'];
+    if (!empty($aMatch['extends'])) {
+      
+      $this->extends = $this->getControler()->create('class', 
+        array($aMatch['extends'], $this->getControler()));
+    }
     
     if (!empty($aMatch['implements'])) {
       
       $this->aInterfaces = array_map('trim', explode(',', $aMatch['implements']));
     }
+  }
+  
+  protected function loadComment() {
+    
+    $this->comment = $this->getControler()->create('comment', $this->getReflector()->getDocComment());
   }
   
   public function throwException($sMessage, $mSender = array()) {
@@ -175,7 +212,9 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     $node = Arguments::buildDocument(array(
       'class' => array( 
         '@name' => $this->getName(),
-        'extension' => $this->sExtends,
+        'extension' => $this->extends,
+        'package' => $this->getReflector()->isUserDefined() ? 'php' : '', 
+        //'comment' => $this->comment->getClass(),
         $this->aConstants,
         $this->aProperties,
         $this->aMethods,
@@ -192,10 +231,6 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   }
   
   public function __toString() {
-    
-    foreach ($this->aMethods as $method)
-      if ($method->getReflector()->getDeclaringClass() == $this->getReflector())
-        $aMethods[] = $method;
     
     return implode(' ', Reflection::getModifierNames($this->getReflector()->getModifiers())) .
       'class ' . $this->getName() .

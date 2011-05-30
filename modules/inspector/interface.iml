@@ -3,5 +3,7 @@
   <file>Inspector.php</file>
   <name>Inspector</name>
   <method return-default="true" path="get-class" name="getClass">
-  	<argument name="class" format="php-string"></argument></method>
+  	<argument name="class" format="php-string"></argument>
+  </method>
+  <method return-default="true" path="test" name="test"/>
 </class>

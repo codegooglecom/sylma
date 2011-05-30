@@ -9,10 +9,10 @@ class Initializer {
     require_once('functions/Text.php');
     require_once('functions/Arrays.php');
     require_once('module/Namespaced.php');
-    require_once('ArgumentsInterface.php');
-    require_once('Arguments.php');
-    require_once('Spyc.php');
-    require_once('XArguments.php');
+    require_once('settings/SettingsInterface.php');
+    require_once('settings/Arguments.php');
+    require_once('settings/Spyc.php');
+    require_once('settings/XArguments.php');
 	}
 	
 	public function loadSettings($sServer, $sSylma) {
@@ -66,9 +66,9 @@ class Initializer {
     if (Sylma::get('db/enable')) $this->loadXDB();
 	}
   
-  protected function loadLibs() {
+  protected function loadLibs($sCore) {
     
-    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . $sPathLib);
+    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . $sCore);
     
     require_once('functions/Global.php');
     
@@ -87,7 +87,7 @@ class Initializer {
     require_once('dom/Element.php');
     require_once('HTML.php');
     
-    require_once('core/Options.php');
+    require_once('settings/Options.php');
     
     require_once('Redirect.php');
     require_once('Messages.php');

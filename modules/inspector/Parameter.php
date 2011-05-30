@@ -13,7 +13,10 @@ class InspectorParameter extends InspectorReflector implements InspectorReflecto
     $this->parent = $parent;
     $this->reflector = $reflector;
     
-    $this->load();
+    if ($this->getParent()->getReflector()->isUserDefined()) {
+      
+      $this->load();
+    }
   }
   
   protected function getControler() {
@@ -32,7 +35,7 @@ class InspectorParameter extends InspectorReflector implements InspectorReflecto
     
     $sSource = $this->getParent()->getSourceParameters();
     
-    preg_match('/(\w*)\s*\$' . $this->getName() . '(?:\s*=\s*([^,\)\(]*))?/', $sSource, $aMatch);
+    preg_match('/(\w*)\s*&?\$' . $this->getName() . '(?:\s*=\s*([^,\)\(]*))?/', $sSource, $aMatch);
     
     if (!empty($aMatch[1])) $this->sCast = $aMatch[1];
     

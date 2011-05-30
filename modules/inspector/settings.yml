@@ -1,6 +1,8 @@
 classes:
   class:
     name: InspectorClass
+    classes :
+      comment : InspectorCommentClass
   method:
     name: InspectorMethod
   parameter:

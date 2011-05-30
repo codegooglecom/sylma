@@ -1,6 +1,6 @@
 <?php
 
-class XArguments extends Arguments implements ArgumentsInterface {
+class XArguments extends Arguments implements SettingsInterface {
   
   public function __construct($mValue, $sNamespace = '') {
     
@@ -117,7 +117,7 @@ class XArguments extends Arguments implements ArgumentsInterface {
       case 'self' :
         
       	$aPath = self::parsePath($sArguments, implode('/', $aPath));
-        $mResult = $this->getValue($aPath);
+        $mResult = $this->locateValue($aPath);
         //if ($aError = self::getError()) dspf($aError);
       break;
       

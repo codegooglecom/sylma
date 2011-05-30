@@ -1,6 +1,13 @@
 <?php
 
-class Arguments extends Namespaced implements ArgumentsInterface {
+/**
+ * This class act as an interface to arrays with dom-like functions get/set/add
+ * It can also be used with YAML files with the extended version @class XArguments
+ * @author Rodolphe Gerber
+ *
+ */
+
+class Arguments extends Namespaced implements SettingsInterface {
   
   const VARIABLE_PREFIX = '@sylma:';
   const MESSAGES_STATUT = Sylma::LOG_STATUT_DEFAULT;
@@ -17,11 +24,11 @@ class Arguments extends Namespaced implements ArgumentsInterface {
     $this->sNamespace = $sNamespace;
   }
   
-  public function set($sPath, $mValue = null) {
+  public function set($sPath = '', $mValue = null) {
     
   	$aPath = $this->parsePath($sPath);
   	
-    if ($mTarget =& $this->getValue($aPath)) {
+    if ($mTarget =& $this->locateValue($aPath)) {
       
       if ($mValue !== null) $mTarget = $mValue;
       else unset($mTarget);
@@ -40,16 +47,36 @@ class Arguments extends Namespaced implements ArgumentsInterface {
     return $mTarget;
   }
   
-  public function get($sPath, $bDebug = true) {
+  public function query($sPath = '', $bDebug = true) {
+    
+    return (array) $this->getValue($sPath, $bDebug);
+  }
+  
+  public function get($sPath = '', $bDebug = true) {
+    
+    $mResult = $this->getValue($sPath, $bDebug);
+    
+    if (!self::getError() && is_array($mResult)) {
+      
+      $mResult = new Arguments($mResult, $this->getNamespace());
+    }
+    
+    return $mResult;
+  }
+  
+  protected function getValue($sPath = '', $bDebug = true) {
     
     $mResult = null;
     
-    if (!$sPath) $this->log(txt('Empty path is not valid'));
+    if (!$sPath) {
+      
+      $mResult = $this->aArray;
+    }
     else {
       
     	$aPath = self::parsePath($sPath);
     	
-      $mResult = $this->getValue($aPath);
+      $mResult = $this->locateValue($aPath);
       $aError = self::getError();
       
       if ($aError && $bDebug) {
@@ -82,7 +109,7 @@ class Arguments extends Namespaced implements ArgumentsInterface {
     return $aResult;
   }
   
-  protected function &getValue(array &$aPath = array()) {
+  protected function &locateValue(array &$aPath = array()) {
     
   	self::$aError = array();
     $mCurrent = $this->aArray;
@@ -152,7 +179,7 @@ class Arguments extends Namespaced implements ArgumentsInterface {
     );
   }
   
-  public function read($sPath, $bDebug = true) {
+  public function read($sPath = '', $bDebug = true) {
     
     $sResult = $this->get($sPath, $bDebug);
     
@@ -252,4 +279,3 @@ class Arguments extends Namespaced implements ArgumentsInterface {
     Sylma::log($this->getNamespace(), $sMessage, $sStatut);
   }
 }
-

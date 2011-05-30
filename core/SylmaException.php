@@ -10,21 +10,22 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
 	protected $aPath = array();
 	protected $aCall = array();
 	protected $bError = false;
+	protected $iOffset = 1;
 	
-	public function loadException() {
+	public function loadException($iOffset = 1) {
 		
     // for exceptions : line 1, file 2, class/method 2
     
 		$aTrace = $this->getTrace();
 		
-    if (count($aTrace) < 3) {
+    if (count($aTrace) < $iOffset + 2) {
       
       echo 'bad exception call'; // TODO
     }
     else {
     	
-	    $aCall = $aTrace[1];
-	    $aCaller = $aTrace[2];
+	    $aCall = $aTrace[$iOffset];
+	    $aCaller = $aTrace[$iOffset + 1];
 	    
 	    $this->aCall = array(
 	      'type' => 'method',

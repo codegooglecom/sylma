@@ -4,6 +4,12 @@
     <le:name>Inspector : Class</le:name>
     <le:argument format="php-string"/>
   </le:settings>
+  <le:window>
+    <li:add-css le:format="string">
+      <le:directory/>
+      <le:argument>/class.css</le:argument>
+    </li:add-css>
+  </le:window>
   <le:action path="interface/get-class">
     <le:get-argument/>
     <li:parse>

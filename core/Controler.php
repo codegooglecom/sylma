@@ -46,7 +46,11 @@ class Controler {
     
     // Authentication : load user's session var - $_SESSION['user']
     
-    self::$user = self::createObject(Sylma::get('users/classes/user'));
+    if (!self::$user = self::createObject(Sylma::get('users/classes/user'))) {
+      
+      Sylma::throwException(txt('Cannot load user'));
+    }
+    
     self::$user->load();
     
     // Define error_report
@@ -60,7 +64,7 @@ class Controler {
     self::$iBacktraceLimit = Sylma::get('messages/backtrace/count');
     
     // Root directory
-    self::$oDirectory = new XML_Directory('', '', Sylma::get('directories/root/rights'));
+    self::$oDirectory = new XML_Directory('', '', Sylma::get('directories/root/rights')->query());
     
     // Load general parameters - root.xml
     self::loadSettings();
@@ -736,8 +740,15 @@ class Controler {
           
         } else if ($mArgument instanceof XML_Action) {
           
-          $oContainer = $mArgument->getPath()->parse();
-          $oContainer->addClass('hidden');
+          if ($path = $mArgument->getPath()) {
+            
+            $oContainer = $mArgument->getPath()->parse();
+            $oContainer->addClass('hidden');
+          }
+          else {
+            
+            $oContainer = null;
+          }
           
           $mContent = array(get_class($mArgument), $oContainer);
           
@@ -914,18 +925,16 @@ class Controler {
    * 
    * @return mixed The object created
    */
-  public static function createObject(array $aClass, array $aArguments = array()) {
+  public static function createObject(SettingsInterface $class, array $aArguments = array()) {
     
     $result = null;
     
-    if (!$sClass = array_val('name', $aClass)) { // has name ?
+    if (!$sClass = $class->get('name')) { // has name ?
       
-      Sylma::log(txt('Cannot build object. No "name" defined in class %s', var_export($aClass, true)), 'action/error');
+      Sylma::throwException(txt('Cannot build object. No "name" defined in class'));
     }
-    else {
-      
-      $result = self::buildClass($sClass, array_val('file', $aClass), $aArguments);
-    }
+    
+    $result = self::buildClass($sClass, $class->get('file', false), $aArguments);
     
     return $result;
   }

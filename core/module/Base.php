@@ -44,33 +44,43 @@ class ModuleBase extends Namespaced {
     
     if (!$this->getArguments()) {
       
-      $this->log(txt('Cannot build object @class %s. No settings defined', $sName));
-    }
-    else if (!$aClass = $this->getArgument('classes/' . $sName)) { // has class ?
-      
-      $this->log(txt('Cannot build object @class %s. No settings defined for these class', $sName));
-    }
-    else {
-      
-      // set absolute path for relative classe file's path
-      
-      if (array_key_exists('file', $aClass) && $aClass['file'] && $aClass['file'][0] != '/' && ($sPath = $this->getArgument('path'))) {
-        
-        $aClass['file'] = Controler::getAbsolutePath($aClass['file'], $this->getDirectory());
-      }
-      
-      $result = Controler::createObject($aClass, $aArguments);
+      $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
     }
     
-    return $result;
+    $aPath = explode('/', $sName);
+    array_unshift($aPath, null);
+    
+    $sPath = implode('/classes/', $aPath);
+    
+    if (!$class = $this->getArgument($sPath)) {
+      
+      $this->throwException(txt('Cannot build object @class %s. No settings defined for these class', $sName));
+    }
+    
+    // set absolute path for relative classe file's path
+    
+    if (($sFile = $class->get('file', false)) && $sFile != '/' && ($sPath = $this->getArgument('path'))) {
+      
+      $class->set('file', Controler::getAbsolutePath($sFile, $this->getDirectory()));
+    }
+    
+    return Controler::createObject($class, $aArguments);
   }
   
   protected function setArguments($mArguments = null, $bMerge = true) {
     
     if ($mArguments) {
       
-      if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
-      else $this->arguments = new XArguments($mArguments, $this->getName());
+      if (is_array($mArguments)) {
+        
+        if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
+        else $this->arguments = new XArguments($mArguments, $this->getName());
+      }
+      else {
+        
+        if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments->query());
+        else $this->arguments = $mArguments;
+      }
     }
     else {
       
@@ -117,6 +127,14 @@ class ModuleBase extends Namespaced {
   protected function getSchema() {
     
     return $this->oSchema;
+  }
+  
+  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+    
+    $mSender = (array) $mSender;
+    $mSender[] = '@namespace ' . $this->getNamespace();
+    
+    Sylma::throwException($sMessage, $mSender, $iOffset);
   }
   
   /*

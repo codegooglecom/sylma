@@ -29,8 +29,15 @@ class Sylma {
   	self::$settings = $init->loadSettings($sServer, self::PATH_OPTIONS);
     $init->load(self::PATH_LIB);
     
-    self::$result = Controler::trickMe();
-
+    try {
+      
+      self::$result = Controler::trickMe();
+    }
+    catch (SylmaExceptionInterface $e) {
+      
+      if (self::get('debug/enable')) echo $e;
+    }
+    
     //session_write_close();
   }
   
@@ -97,6 +104,16 @@ class Sylma {
         fclose($fp);
       }
     }
+  }
+  
+  public static function throwException($sMessage, array $aPath = array(), $iOffset = 1) {
+    
+    $e = new Sylma::$exception($sMessage);
+    
+    $e->setPath($aPath);
+    $e->loadException($iOffset);
+    
+    throw $e;
   }
   
   public static function sendError($iNo, $sMessage, $sFile, $iLine) {
