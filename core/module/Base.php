@@ -59,11 +59,14 @@ class ModuleBase extends Namespaced {
     
     // set absolute path for relative classe file's path
     
-    if (($sFile = $class->get('file', false)) && $sFile != '/' && ($sPath = $this->getArgument('path'))) {
+    if (!$sFile = $class->get('file', false)) {
       
-      $class->set('file', Controler::getAbsolutePath($sFile, $this->getDirectory()));
+      $sFile = $class->get('name') . '.php';
     }
-    
+    //dspf($sFile);
+    //dspf(path_absolute($sFile, $this->getDirectory()));
+    $class->set('file', path_absolute($sFile, $this->getDirectory()));
+    //dspf($class->query());
     return Controler::createObject($class, $aArguments);
   }
   
@@ -73,12 +76,12 @@ class ModuleBase extends Namespaced {
       
       if (is_array($mArguments)) {
         
-        if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
+        if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
         else $this->arguments = new XArguments($mArguments, $this->getName());
       }
       else {
         
-        if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments->query());
+        if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
         else $this->arguments = $mArguments;
       }
     }
@@ -110,7 +113,7 @@ class ModuleBase extends Namespaced {
   
   protected function setSchema($mSchema, $bNamespace = true, $sPrefix = '') {
     
-    if (is_string($mSchema)) $mSchema = $this->getDocument($mSchema);
+    if (is_string($mSchema)) $mSchema = $this->getDocument($mSchema, Sylma::MODE_EXECUTE);
     
     if ($mSchema && !$mSchema->isEmpty()) { // !$this->getNamespace() && TODO REM
       

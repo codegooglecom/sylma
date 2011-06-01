@@ -7,7 +7,7 @@ class Messages extends XML_Document {
   private $oLast = null;
   private $aNS = array('lm' => SYLMA_NS_MESSAGES);
   
-  public function __construct(XML_Document $oSchema = null, array $mMessages = array()) {
+  public function __construct(XML_Document $oSchema = null, $mMessages = array()) {
     
     parent::__construct('messages');
     

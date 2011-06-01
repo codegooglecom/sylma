@@ -2,7 +2,9 @@ classes:
   class:
     name: InspectorClass
     classes :
-      comment : InspectorCommentClass
+      comment :
+        file : Comment.php
+        name : InspectorCommentClass
   method:
     name: InspectorMethod
   parameter:
@@ -11,3 +13,5 @@ classes:
     name: InspectorProperty
   constant:
     name: InspectorConstant
+  element:
+    name: XML_Element

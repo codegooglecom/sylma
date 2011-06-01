@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <class xmlns="http://www.sylma.org/interface">
-  <name>User</name>
-  <method path="is-member" name="isMember">
-    <argument name="group">
-      <format>php-string</format>
-      <format>php-integer</format>
-    </argument>
-  </method>
-  <method path="get-directory" name="getDirectory" return-default="true"/>
-  <method path="logout" name="logout" return-default="true"/>
+	<name>User</name>
+	<method path="is-member" name="isMember">
+		<argument name="group">
+			<format>php-string</format>
+			<format>php-integer</format>
+		</argument>
+	</method>
+	<method path="get-directory" name="getDirectory" return-default="true" />
+	<method path="logout" name="logout" return-default="true" />
 </class>

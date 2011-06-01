@@ -41,6 +41,16 @@ class Sylma {
     //session_write_close();
   }
   
+  public static function setControler($sName, $controler) {
+    
+    self::$aControlers[$sName] = $controler;
+  }
+  
+  public static function getControler($sName) {
+    
+    return array_val($sName, self::$aControlers);
+  }
+  
   protected static function getSettings($sPath = '') {
     
     if ($sPath) return self::getSettings()->get($sPath);

@@ -1,25 +1,5 @@
 <?php
 
-function extractDirectory($sPath, $bObject = false) {
-  
-  $sPath = substr($sPath, strlen(getcwd().MAIN_DIRECTORY) + 1);
-  if (SYLMA_XAMPP_BUG && isset($_ENV['OS']) && strpos($_ENV['OS'], 'Win') !== false) $sPath = str_replace('\\', '/', $sPath);
-  else if (preg_match("/Win/", getenv("HTTP_USER_AGENT" ))) $sPath = str_replace('\\', '/', $sPath);
-  //echo 'yo';
-  //print_r($_ENV);
-  $sResult = substr($sPath, 0, strlen($sPath) - strlen(strrchr($sPath, '/')));
-  
-  if ($bObject) return Controler::getDirectory($sResult);
-  else return $sResult;
-}
-
-function pathWin2Unix($sPath) {
-  
-  return str_replace('\\', '/', $sPath);
-}
-
-
-
 function strtobool($sValue, $bDefault = null) {
   
   if (strtolower($sValue) == 'true') return true;
@@ -189,12 +169,4 @@ function view($mVar, $bFormat = false) {
   return Controler::formatResource($mVar, $bFormat);
 }
 
-/*
- * Pour le débuggage, affiche une variable dans un tag <pre> qui affiche les retours à la ligne
- **/
-function dsp($mVar) {
-  
-  echo '<pre>';
-  print_r($mVar);
-  echo '</pre>';
-}
+

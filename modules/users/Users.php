@@ -74,7 +74,7 @@ class Users extends DBX_Module {
         $sRedirect = $this->readOption('redirect', '/', false);
         $redirect->setPath($sRedirect);
         
-        $redirect->addMessage(xt('Bienvenue %s', $user->getArgument('first-name')), 'success');
+        //$redirect->addMessage(xt('Bienvenue %s', $user->getArgument('first-name')), 'success');
       }
     }
     

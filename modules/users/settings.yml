@@ -1,0 +1,23 @@
+classes:
+  user:
+    name: XUser
+    file: /sylma/modules/users/XUser.php
+  cookie:
+    name: Cookie
+    file: /sylma/user/Cookie.php
+path: /users
+# Path to edit a user, name will be add as first indexed arg
+edit: /sylma/modules/users/edit
+profil: profil.xml
+cookies:
+  name: sylma-user
+  # (!) This value should be rewrited for a good cookie security
+  secret-key: This value is not really secret
+  lifetime:
+    # 8h
+    short: 28800
+    # 14j
+    normal: 403200
+session:
+  name: sylma-user
+  lifetime: 28800

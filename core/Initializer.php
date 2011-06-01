@@ -8,6 +8,7 @@ class Initializer {
 		
     require_once('functions/Text.php');
     require_once('functions/Arrays.php');
+    require_once('functions/Paths.php');
     require_once('module/Namespaced.php');
     require_once('settings/SettingsInterface.php');
     require_once('settings/Arguments.php');
@@ -17,9 +18,7 @@ class Initializer {
 	
 	public function loadSettings($sServer, $sSylma) {
 		
-    $sSylma = SYLMA_PATH . $sSylma;
-    
-    $settings = new XArguments($sSylma, 'sylma');
+    $settings = new XArguments(substr(SYLMA_RELATIVE_PATH, 1) . $sSylma, 'sylma');
     if ($sServer)  $settings->mergeFile($sServer);
     
     return $settings;

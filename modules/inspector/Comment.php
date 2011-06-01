@@ -13,12 +13,16 @@ class InspectorComment {
   
   public function parseValue() {
     
-    preg_match('`/**[*\s]*(\s+\*\s+(.+)$)+`', $this->sComment, $aMatch);
-    dspf($aMatch);
+    preg_match('`/\*\*[*\s]*(\s+\*\s+(.+)$)+`', $this->sComment, $aMatch);
   }
 }
 
 class InspectorCommentClass extends InspectorComment {
+  
+  public function getClass() {
+    
+    return $this->sComment;
+  }
   
   public function parse() {
     

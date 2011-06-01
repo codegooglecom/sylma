@@ -10,6 +10,9 @@
       <le:argument>/class.css</le:argument>
     </li:add-css>
   </le:window>
+  <p>
+    <a href="[$sylma-directory]">&lt; Back to index</a>
+  </p>
   <le:action path="interface/get-class">
     <le:get-argument/>
     <li:parse>

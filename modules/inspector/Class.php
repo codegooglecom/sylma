@@ -58,6 +58,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     $this->loadConstants();
     $this->loadMethods();
     $this->loadProperties();
+    $this->loadComment();
   }
   
   protected function getControler() {
@@ -132,8 +133,11 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     
     foreach ($this->getReflector()->getConstants() as $sName => $sValue) {
       
-      $this->aConstants[] = $this->getControler()->create(self::CONSTANT_CLASS, array(
+      if ($this->getReflector()->hasConstant($sName)) {
+        
+        $this->aConstants[] = $this->getControler()->create(self::CONSTANT_CLASS, array(
           $sName, $sValue, $this));
+      }
     }
   }
   
@@ -194,7 +198,8 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   
   protected function loadComment() {
     
-    $this->comment = $this->getControler()->create('comment', $this->getReflector()->getDocComment());
+    $this->comment = $this->getControler()->create('class/comment',
+      array($this->getReflector()->getDocComment()));
   }
   
   public function throwException($sMessage, $mSender = array()) {
@@ -214,7 +219,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
         '@name' => $this->getName(),
         'extension' => $this->extends,
         'package' => $this->getReflector()->isUserDefined() ? 'php' : '', 
-        //'comment' => $this->comment->getClass(),
+        'comment' => $this->comment->getClass(),
         $this->aConstants,
         $this->aProperties,
         $this->aMethods,

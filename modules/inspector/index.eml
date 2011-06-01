@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:la="http://www.sylma.org/processors/action-builder" xmlns:ins="http://www.sylma.org/modules/inspector">
+  <le:settings>
+    <le:name>Inspector</le:name>
+  </le:settings>
+  <le:window>
+    <li:add-css le:format="string">
+      <le:directory/>
+      <le:argument>/class.css</le:argument>
+    </li:add-css>
+  </le:window>
+  <le:action path="interface/get-declared">
+    <li:parse>
+      <le:template>
+				<xsl:stylesheet version="1.0" extension-element-prefixes="func" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ins="http://www.sylma.org/modules/inspector" xmlns:func="http://exslt.org/functions" xmlns:set="http://exslt.org/sets" ins:ns="null">
+				  <xsl:template match="/*">
+				    <p>
+				      <xsl:apply-templates/>
+			      </p>
+				  </xsl:template>
+				  <xsl:template match="ins:class">
+			      <a href="[$sylma-directory]/class/{.}"><xsl:value-of select="."/></a>
+				  </xsl:template>
+				</xsl:stylesheet>
+      </le:template>
+    </li:parse>
+  </le:action>
+</le:action>

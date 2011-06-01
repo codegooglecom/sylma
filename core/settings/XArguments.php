@@ -7,8 +7,11 @@ class XArguments extends Arguments implements SettingsInterface {
     // set namespace first for logging
     $this->setNamespace($sNamespace);
     
+    $aArray = array();
+    
     if (is_string($mValue)) $aArray = $this->loadYAML($mValue);
-    else $aArray = $mValue;
+    else if (is_array($mValue)) $aArray = $mValue;
+    else $this->log(txt('Can only accepts array or string as first argument - given : %s', gettype($mValue)));
     
     parent::__construct($aArray, $sNamespace);
   }
@@ -28,7 +31,7 @@ class XArguments extends Arguments implements SettingsInterface {
     }
     else {
       
-      $this->merge(self::loadYAML($sPath));
+      $this->mergeArray(self::loadYAML($sPath));
     }
   }
   
@@ -37,27 +40,75 @@ class XArguments extends Arguments implements SettingsInterface {
     return $this->parseYAMLProperties($sValue, $aParentPath);
   }
   
+  public function get($sPath = '', $bDebug = true) {
+    
+    $mResult = $this->getValue($sPath, $bDebug);
+    
+    if (!self::getError() && is_array($mResult)) {
+      
+      $mResult = new XArguments($mResult, $this->getNamespace());
+    }
+    
+    return $mResult;
+  }
+  
   protected function loadYAML($sPath) {
     
     $aResult = array();
     
-    if (!file_exists($sPath)) {
+    try {
       
-      $this->log(txt('Cannot find configuration file in @file %s', $sPath));
-    }
-    else {
-      
-      if (!$sContent = file_get_contents($sPath)) {
+      if ($this->useFile()) {
         
-        $this->log(txt('@file %s is empty', $sPath));
-      }
-      else {
+        if (!$file = Controler::getFile($sPath)) {
+          
+          $this->throwException(txt('Cannot find configuration file in @file %s', $sPath));
+        }
+        
+        if (!$sContent = $file->read()) {
+          
+          $this->throwException(txt('@file %s is empty', $file));
+        }
         
         $aResult = $this->parseYAML($sContent);
       }
+      else {
+        
+        $aResult = $this->loadYAMLFree(path_absolute($sPath, MAIN_DIRECTORY));
+      }
+    }
+    catch (SylmaExceptionInterface $e) {
+      
+      return null;
     }
     
     return $aResult;
+  }
+  
+  /**
+   * Determine if filesys module is ready
+   */
+  protected function useFile() {
+    
+    return (bool) Sylma::getControler('storage/filesys');
+  }
+  
+  protected function loadYAMLFree($sPath) {
+    
+    $aResult = array();
+    if ($sPath{0} == '/') $sPath = substr($sPath, 1);
+    
+    if (!file_exists($sPath)) {
+      
+      $this->throwException(txt('Cannot find configuration file in @file %s', $sPath));
+    }
+    
+    if (!$sContent = file_get_contents($sPath)) {
+      
+      $this->throwException(txt('@file %s is empty', $sPath));
+    }
+    
+    return $this->parseYAML($sContent);
   }
   
   protected function parseYAML($sContent) {
@@ -105,12 +156,11 @@ class XArguments extends Arguments implements SettingsInterface {
         
         if (!$sPath = $this->parseYAMLString($sArguments)) {
           
-          $this->log(txt('Cannot load parameter for %s in %s', $sName, $sArguments), 'error');
+          $this->throwException(txt('Cannot load parameter for %s in %s', $sName, $sArguments));
         }
-        else {
-          
-          $mResult = self::loadYAML(MAIN_DIRECTORY . $sPath);
-        }
+        
+        if (!$this->useFile()) $sPath = substr($sPath, 1);  
+        $mResult = self::loadYAML($sPath);
         
       break;
       
@@ -118,12 +168,12 @@ class XArguments extends Arguments implements SettingsInterface {
         
       	$aPath = self::parsePath($sArguments, implode('/', $aPath));
         $mResult = $this->locateValue($aPath);
-        //if ($aError = self::getError()) dspf($aError);
+        
       break;
       
       default :
         
-        $this->log(txt('Unkown YAML property call : %s', $sName), 'error');
+        $this->throwException(txt('Unkown YAML property call : %s', $sName));
     }
     
     return $mResult;

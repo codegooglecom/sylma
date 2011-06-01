@@ -5,5 +5,5 @@
   <method return-default="true" path="get-class" name="getClass">
   	<argument name="class" format="php-string"></argument>
   </method>
-  <method return-default="true" path="test" name="test"/>
+  <method return-default="true" path="get-declared" name="getDeclared"/>
 </class>

@@ -28,21 +28,18 @@ class Arguments extends Namespaced implements SettingsInterface {
     
   	$aPath = $this->parsePath($sPath);
   	
-    if ($mTarget =& $this->locateValue($aPath)) {
-      
-      if ($mValue !== null) $mTarget = $mValue;
-      else unset($mTarget);
-    }
-    else if (($aError = self::getError()) && $aError['name'] == 'unknown') {
-    	
-    	foreach ($aPath as $sKey) {
-    		
-    		$mTarget[$sKey] = array();
-    		$mTarget =& $mTarget[$sKey]; 
-    	}
-    	
-    	$mTarget = $mValue;
-    }
+  	$mTarget =& $this->locateValue($aPath, false, true);
+  	
+  	if (!$mTarget) $mTarget =& $this->aArray;
+  	
+  	foreach ($aPath as $sKey) {
+  		
+  		$mTarget[$sKey] = array();
+  		$mTarget =& $mTarget[$sKey]; 
+  	}
+    
+    if ($mValue !== null) $mTarget = $mValue;
+    else unset($mTarget);
     
     return $mTarget;
   }
@@ -74,15 +71,14 @@ class Arguments extends Namespaced implements SettingsInterface {
     }
     else {
       
-    	$aPath = self::parsePath($sPath);
-    	
-      $mResult = $this->locateValue($aPath);
-      $aError = self::getError();
-      
-      if ($aError && $bDebug) {
-      	
-      	$this->log($aError['name'] . ' - ' . $aError['message'], $sPath);
-      	$mResult = null;
+      try {
+        
+        $aPath = self::parsePath($sPath);
+        $mResult = $this->locateValue($aPath, $bDebug);
+      }
+      catch (SylmaExceptionInterface $e) {
+        
+        return null;
       }
     }
     
@@ -109,56 +105,56 @@ class Arguments extends Namespaced implements SettingsInterface {
     return $aResult;
   }
   
-  protected function &locateValue(array &$aPath = array()) {
+  protected function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {
     
   	self::$aError = array();
-    $mCurrent = $this->aArray;
+    $mCurrent =& $this->aArray;
     $mResult = null;
     $aParentPath = array();
     $sKey = '[none]';
     
-    while ($aPath && !self::getError()) {
+    while ($aPath) {
       
       if (!is_array($mCurrent)) {
         
-      	$mResult = $mCurrent;
-        self::setError('lost', txt('Key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+        if ($bReturn) $mResult =& $mCurrent;
+        else if ($bDebug) $this->throwException(txt('Bad key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+      }
+      else if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug)) {
+        
+        $mCurrent =& $mCurrent[$sKey];
+        
+        // run hypotheticals parse on strings
+        if (is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
+        
+        // if last, save result
+        if (!$aPath) $mResult =& $mCurrent;
       }
       else {
         
-        if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath)) {
-          
-          $mCurrent =& $mCurrent[$sKey];
-          
-          // run hypotheticals parse on strings
-          if (is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
-          
-          // if last, save result
-          if (!$aPath) $mResult = $mCurrent;
-        }
+        if ($bReturn) $mResult =& $mCurrent;
+        break;
       }
     }
     
     return $mResult;
   }
   
-  protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array()) {
+  protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
     
     $mResult = null;
-    
     $sKey = array_shift($aPath);
     array_push($aParentPath, $sKey);
     
     if (!array_key_exists($sKey, $aArray)) {
       
-      self::setError('unknown', txt('Key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
-    }
-    else {
+      array_unshift($aPath, $sKey);
+      if ($bDebug) $this->throwException(txt('Unknown key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
       
-      $mResult = $sKey;
+      $sKey = '';
     }
     
-    return $mResult;
+    return $sKey;
   }
   
   protected function parseValue($sValue, $aParentPath) {
@@ -192,9 +188,14 @@ class Arguments extends Namespaced implements SettingsInterface {
     return $sResult;
   }
   
-  public function merge(array $aArray) {
+  public function mergeArray(array $aArray) {
     
     $this->aArray = $this->mergeArrays($this->aArray, $aArray);
+  }
+  
+  public function merge(SettingsInterface $with) {
+    
+    $this->mergeArray($with->query());
   }
   
   private function mergeArrays(array $array1, array $array2) {
@@ -272,6 +273,11 @@ class Arguments extends Namespaced implements SettingsInterface {
         
       }
     }
+  }
+  
+  protected function throwException($sMessage) {
+    
+    Sylma::throwException($sMessage, array('@namespace ' . $this->getNamespace()));
   }
   
   protected function log($sMessage, $sStatut = self::MESSAGES_STATUT) {

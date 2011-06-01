@@ -46,7 +46,7 @@ class Controler {
     
     // Authentication : load user's session var - $_SESSION['user']
     
-    if (!self::$user = self::createObject(Sylma::get('users/classes/user'))) {
+    if (!self::$user = self::createObject(Sylma::get('modules/users/classes/user'))) {
       
       Sylma::throwException(txt('Cannot load user'));
     }
@@ -65,6 +65,7 @@ class Controler {
     
     // Root directory
     self::$oDirectory = new XML_Directory('', '', Sylma::get('directories/root/rights')->query());
+    Sylma::setControler('storage/filesys', self::$oDirectory);
     
     // Load general parameters - root.xml
     self::loadSettings();
@@ -933,7 +934,7 @@ class Controler {
       
       Sylma::throwException(txt('Cannot build object. No "name" defined in class'));
     }
-    
+    //dspf($class->query());
     $result = self::buildClass($sClass, $class->get('file', false), $aArguments);
     
     return $result;
@@ -949,42 +950,44 @@ class Controler {
   public static function buildClass($sClass, $sFile = '', $aArguments = array()) {
     
     $result = null;
+    $sMain = Sylma::get('directories/root/path');
     
-    if ($sFile) {
+    if (!class_exists($sClass)) {
+      
+      if (!$sFile) {
+        
+        Sylma::throwException(txt('Cannot build unknown @class %s without file path', $sClass));
+      }
       
       // include the file
       
-      $sFile = Sylma::get('directories/root/path') . $sFile;
+      $sFile = $sMain . $sFile;
       
       if (file_exists($sFile)) require_once($sFile);
       else {
         
-        dspm(xt('Cannot build object %s. File %s not found !',
-          new HTML_Strong($sClass), new HTML_Strong($sFile)), 'action/error');
+        Sylma::throwException(txt('Cannot build object of @class %s. @file %s not found !', $sClass, $sFile));
       }
     }
     
-    if (!class_exists($sClass)) { // class exists ?
+    if (!class_exists($sClass)) {
       
-      dspm(xt('Cannot build object. The class %s does not seem to exists !',
-        new HTML_Strong($sClass)), 'action/error');
-      
-    } else {
-      
-      // creation of object
-      
-      // caching classes improve performances
-      if (array_key_exists($sClass, self::$aClasses)) $reflected = self::$aClasses[$sClass];
-      else $reflected = self::$aClasses[$sClass] = new ReflectionClass($sClass);
-      
-      if ($aArguments) $result = $reflected->newInstanceArgs($aArguments);
-      else $result = $reflected->newInstance();
-      
-      // These 2 following functions doesn't work, keep here for futur brainstorming
-      //
-      // $result = new $sClass(list($aArguments));
-      // $result = call_user_func_array(array($sClass, '__construct'), $aArguments);
+      Sylma::throwException(txt('Cannot build object. @class %s doesn\'t exists !', $sClass));
     }
+    
+    // creation of object
+    
+    // caching classes improve performances
+    if (array_key_exists($sClass, self::$aClasses)) $reflected = self::$aClasses[$sClass];
+    else $reflected = self::$aClasses[$sClass] = new ReflectionClass($sClass);
+    
+    if ($aArguments) $result = $reflected->newInstanceArgs($aArguments);
+    else $result = $reflected->newInstance();
+    
+    // These 2 following functions doesn't work, keep here for futur brainstorming
+    //
+    // $result = new $sClass(list($aArguments));
+    // $result = call_user_func_array(array($sClass, '__construct'), $aArguments);
     
     return $result;
 

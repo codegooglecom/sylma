@@ -43,13 +43,21 @@ class InspectorConstant extends InspectorReflector implements InspectorReflector
   
   public function parse() {
     
-    return Arguments::buildDocument(array(
-      'constant' => array(
-        '@name' => $this->getName(),
-        'default' => $this->sDefault,
-        'value' => $this->sValue,
-      ),
-    ), $this->getControler()->getNamespace());
+    if (!$this->sDefault) {
+      
+      // no default means it belongs to another class
+      return null;
+    }
+    else {
+      
+      return Arguments::buildDocument(array(
+        'constant' => array(
+          '@name' => $this->getName(),
+          'default' => $this->sDefault,
+          'value' => $this->sValue,
+        ),
+      ), $this->getControler()->getNamespace());
+    }
   }
   
   public function __toString() {
