@@ -567,11 +567,24 @@
   
   <xsl:template match="lc:enumeration">
     <xsl:param name="value"/>
+    <xsl:variable name="title">
+      <xsl:choose>
+        <xsl:when test="@lc:title != ''">
+          <xsl:value-of select="@lc:title"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <option>
+      <xsl:attribute name="value">
+        <xsl:value-of select="."/>
+      </xsl:attribute>
       <xsl:if test="$value = text()">
         <xsl:attribute name="selected">selected</xsl:attribute>
       </xsl:if>
-      <xsl:value-of select="."/>
+      <xsl:value-of select="$title"/>
     </option>
   </xsl:template>
   

@@ -2085,7 +2085,7 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
       
       if ($oChild->getName() != 'attribute') {
         
-        $this->aRestrictions[] = array($oChild->getName(), $sValue);
+        $this->aRestrictions[] = array($oChild->getName(), $sValue, $oChild);
         
       } else {
         
@@ -2122,7 +2122,7 @@ class XSD_Type extends XSD_Container { // complex or simple, but defined
         
         foreach ($this->getRestrictions() as $aRestriction) {
           
-          $oContent->addNode($aRestriction[0], $aRestriction[1], null, $this->getNamespace());
+          $oContent->addNode($aRestriction[0], $aRestriction[1], $aRestriction[2]->getAttributes(), $this->getNamespace());
         }
       }
       
