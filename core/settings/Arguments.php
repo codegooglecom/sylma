@@ -3,7 +3,7 @@
 /**
  * This class act as an interface to arrays with dom-like functions get/set/add
  * It can also be used with YAML files with the extended version @class XArguments
- * @author Rodolphe Gerber
+ * @author rodolphe.gerber (at) gmail.com
  *
  */
 
@@ -216,16 +216,19 @@ class Arguments extends Namespaced implements SettingsInterface {
   }
   
   /**
-   * Build a Options object with his own arguments
-   * @param XML_Element $oRoot The root node to insert the results to
-   * @param? XML_Document $oSchema The schema that will be used by the Options object
+   * Build an object @class Options with his own array
+   * 
+   * @param DOMNode $oRoot The root node to insert the results to
+   * @param? DOMDocument|null $oSchema The schema that will be used by the Options object
    * @param? string $sPath An optional sub-path to extract the arguments from
+   * 
+   * @return ElementInterface The new builded node, containing the xml version of this array
    */
-  public function getOptions(DOMNode $oRoot, DOMDocument $oSchema = null, $sPath = '') {
+  public function getOptions(DOMNode $root, DOMDocument $schema = null, $sPath = '') {
     
-    self::getElement($oRoot, $sPath);
+    self::getElement($root, $sPath);
     
-    return new XML_Options(new XML_Document($oRoot), $oSchema);
+    return new XML_Options(new XML_Document($root), $schema);
   }
   
   public static function buildDocument(array $aArray, $sNamespace) {

@@ -1,14 +1,9 @@
 <?php
 
-include('ReflectorInterface.php');
-include('Reflector.php');
-include('Class.php');
-include('Constant.php');
-include('Property.php');
-include('Method.php');
-include('Parameter.php');
-
 class Inspector extends Module {
+  
+  const ELEMENT_CLASS = 'element';
+  const CLASS_CLASS = 'class'; // :(
   
   const MESSAGES_STATUT = 'warning';
   const NS = 'http://www.sylma.org/modules/inspector';
@@ -28,7 +23,7 @@ class Inspector extends Module {
       $system = new XArguments((string) $this->getFile('system-classes.yml'));
       $aAll = get_declared_classes();
       
-      $root = $this->create('element', array('classes', null, null, self::NS));
+      $root = $this->create(self::ELEMENT_CLASS, array('classes', null, null, self::NS));
       foreach (array_diff($aAll, $system->query()) as $sClass) $root->addNode('class', $sClass);
       
       return $root->getDocument();
@@ -43,9 +38,11 @@ class Inspector extends Module {
     
     try {
       
-      $class = $this->create('class', array($sClass, $this));
+      include('Method.php');
       
-      //dspf($class->parse());
+      $class = $this->create(self::CLASS_CLASS, array($sClass, $this));
+      
+      dspf($class->parse());
       return $class->parse();
       
     } catch (SylmaException $e) {

@@ -1,11 +1,13 @@
 <?php
 
-class InspectorClass extends InspectorReflector implements InspectorReflectorInterface {
+require_once('ReflectorCommented.php');
+
+class InspectorClass extends InspectorReflectorCommented implements InspectorReflectorInterface {
   
   const EXCEPTION_NO_SOURCE = 'No file source found';
-  const CONSTANT_CLASS = 'constant';
-  const PROPERTY_CLASS = 'property';
-  const METHOD_CLASS = 'method';
+  const CONSTANT_CLASS = 'class/constant';
+  const PROPERTY_CLASS = 'class/property';
+  const METHOD_CLASS = 'class/method';
   
   /* File where is located the class */
   protected $controler;
@@ -22,14 +24,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
   protected $aInterfaces = array();
   
   /**
-   * An object reading the comment of the class
-   * @var InspectorCommentInterface
-   */
-  protected $comment;
-  
-  /**
-   * The string between the declaration of class and the first method
-   * containing the properties and constants
+   * The string between the declaration of class and the first method containing the properties and constants
    * NULL means it has never been load, '' means nothing found
    */
   protected $sSourceProperties = null;
@@ -58,7 +53,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     $this->loadConstants();
     $this->loadMethods();
     $this->loadProperties();
-    $this->loadComment();
+    $this->loadComment('class/comment');
   }
   
   protected function getControler() {
@@ -196,12 +191,6 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
     }
   }
   
-  protected function loadComment() {
-    
-    $this->comment = $this->getControler()->create('class/comment',
-      array($this->getReflector()->getDocComment()));
-  }
-  
   public function throwException($sMessage, $mSender = array()) {
     
     $mSender = (array) $mSender;
@@ -219,7 +208,7 @@ class InspectorClass extends InspectorReflector implements InspectorReflectorInt
         '@name' => $this->getName(),
         'extension' => $this->extends,
         'package' => $this->getReflector()->isUserDefined() ? 'php' : '', 
-        'comment' => $this->comment->getClass(),
+        $this->comment,
         $this->aConstants,
         $this->aProperties,
         $this->aMethods,

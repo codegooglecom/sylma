@@ -487,19 +487,16 @@ class Controler {
     
     $oMessage = new HTML_Strong(t('Authentification').' : ');
     
-    if (self::getUser()) $oUser = $oView->addMultiItem($oMessage, self::getUser());
+    if (self::getUser()) {
+      
+      $oUser = $oView->addMultiItem($oMessage, self::getUser());
+      
+      if ($cookie = self::getUser()->getCookie()) $oUser->add(new HTML_Br, new HTML_Tag('em', 'EXP: ' . date('Y-m-d H:i', $cookie->iExpiration)));
+    }
     else $oUser = $oView->addMultiItem($oMessage, new HTML_Tag('em', t('- aucun -')));
     
-    $oUser->add(new HTML_Br, new HTML_Tag('em', $_SERVER['REMOTE_ADDR'])); // IP
-    /*
-    if (self::getUser()->isReal()) {
-      
-      $oMessage = new HTML_Strong(t('Groupe(s)').' : ');
-      
-      if (self::getUser()->getGroups()) $oView->addMultiItem($oMessage, implode(', ', self::getUser()->getGroups()));
-      else $oView->addMultiItem($oMessage, new HTML_Tag('em', t('- aucun -')));
-    }
-    */
+    $oUser->add(new HTML_Br, new HTML_Tag('em', 'IP: ' . $_SERVER['REMOTE_ADDR'])); // IP
+    
     $oView->addMultiItem(new HTML_Strong(t('Adresse').' : '), self::getPath());
     
     $oMessage = new HTML_Strong(t('Redirection').' : ');

@@ -1,5 +1,63 @@
 /* Document CSS */
 
-.inspector-extends {
-	opacity : 0.5;
+.sylma-ins-class h3 {
+  font-size: 1.4em;
+  font-style: italic;
+  color : #467CA2;
+  border-bottom: 1px dotted gray;
+  text-align: center;
+  padding-right: 20px;
+  padding-bottom: 0.5em;
+}
+
+.sylma-ins-class h4 {
+  padding-top: 0.5em;
+  border-top: 1px solid #ddd;
+  text-align: right;
+  padding-right: 20px;
+  margin-bottom: 0;
+}
+
+.sylma-ins-class > ul > li {
+  margin-left: 1.5em;
+  padding-left: 1em;
+  list-style-type: square;
+}
+.sylma-ins-class code {
+  background-color: #EEEEEE;
+  border: 1px solid #CCCCCC;
+  display: block;
+  margin: 1em 0;
+  padding: 0.5em;
+}
+.sylma-ins-required {
+  _text-decoration: underline;
+}
+
+.sylma-ins-optional {
+  opacity : 0.65;
+  font-style: italic;
+}
+
+.sylma-ins-extends {
+	opacity : 0.65;
+}
+
+.sylma-ins-comment {
+  color: gray;
+  font-style: italic;
+  padding-left: 1em;
+  border-left: 1px solid #ccc;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.sylma-ins-comment ul {
+  margin-left: 1em;
+}
+
+.sylma-ins-property .sylma-ins-comment p,
+.sylma-ins-method .sylma-ins-comment p {
+  margin-top: 0;
+  margin-bottom: 0;
 }

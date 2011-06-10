@@ -1,5 +1,7 @@
 <?php
 
+require_once('ReflectorInterface.php');
+
 abstract class InspectorReflector {
   
   protected $reflector;

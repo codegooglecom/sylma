@@ -66,17 +66,19 @@ class Explorer {
       
       if ($bDirectory) { // directory
         
-        if (!$oDirectory = Controler::getDirectory($sPath)) dspm(t('Répertoire introuvable'), 'error');
+        if (!$oDirectory = Controler::getDirectory($sPath)) dspm(txt('Répertoire %s introuvable', $sPath), 'error');
         else if ($bResult = $oDirectory->updateRights($sOwner, $sGroup, $sMode))
-          dspm(t('Mise-à-jour des droits du répertoire effectuée'), 'success');
-        
-      } else { // file
+            dspm(t('Mise-à-jour des droits du répertoire effectuée'), 'success');
+      }
+      else { // file
         
         if (!$oFile = Controler::getFile($sPath)) dspm(t('Fichier introuvable'), 'error');
         else if ($bResult = $oFile->updateRights($sOwner, $sGroup, $sMode))
           dspm(t('Mise-à-jour des droits du fichier effectuée'), 'success');
       }
     } 
+    
+    if (!$bResult) dspm(txt('Impossible de modifier les droits d\'accès', $sPath), 'error');
     
     return booltoint($bResult);
   }

@@ -2,13 +2,20 @@
 <xsl:stylesheet version="1.0" extension-element-prefixes="func" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ins="http://www.sylma.org/modules/inspector" xmlns:func="http://exslt.org/functions" xmlns:set="http://exslt.org/sets">
   
   <xsl:param name="inspect" select="concat($sylma-directory, '/class/')"/>
-  <xsl:param name="extends" select="'inspector-extends'"/>
+  
+  <xsl:param name="class-class">sylma-ins-class</xsl:param>
+  <xsl:param name="class-extends">sylma-ins-extends</xsl:param>
+  <xsl:param name="class-comment">sylma-ins-comment</xsl:param>
+  <xsl:param name="class-method">sylma-ins-method</xsl:param>
+  <xsl:param name="class-property">sylma-ins-property</xsl:param>
+  <xsl:param name="class-optional">sylma-ins-optional</xsl:param>
+  <xsl:param name="class-required">sylma-ins-required</xsl:param>
   
 	<xsl:template match="/*">
-		<div>
+		<div class="{$class-class}">
 		  <h2><xsl:value-of select="@name"/></h2>
 		  <p>
-		    <xsl:value-of select="ins:comment"/>
+		    <xsl:apply-templates select="ins:comment"/>
 		  </p>
 		  <xsl:if test="ins:extension">
 		    <p>
@@ -71,7 +78,7 @@
     <xsl:for-each select="$set">
        <xsl:sort select="@name"/>
        <xsl:apply-templates select=".">
-         <xsl:with-param name="class" select="$extends"/>
+         <xsl:with-param name="class" select="$class-extends"/>
        </xsl:apply-templates>
      </xsl:for-each>
      <xsl:apply-templates select="ins:extension/*" mode="extends">
@@ -103,22 +110,21 @@
 	<xsl:template match="ins:property">
 	  <xsl:param name="class"/>
 	  <li>
-	    <xsl:if test="$class">
-	      <xsl:attribute name="class">
-	        <xsl:value-of select="$class"/>
-	      </xsl:attribute>
-	    </xsl:if>
+      <xsl:attribute name="class">
+        <xsl:value-of select="concat($class-property, ' ', $class)"/>
+      </xsl:attribute>
 	    <xsl:apply-templates select="ins:modifiers"/>
       <strong>$<xsl:value-of select="@name"/></strong>
       <xsl:if test="ins:default">
          = <span><xsl:value-of select="ins:default"/></span>
       </xsl:if>
+      <xsl:apply-templates select="ins:comment"/>
     </li>
 	</xsl:template>
 	
 	<xsl:template match="ins:method">
 	  <xsl:param name="class" select="''"/>
-	  <li class="inspector-method {$class}">
+	  <li class="{$class-method} {$class}">
       <strong><xsl:value-of select="@name"/></strong>
       <span>(<xsl:copy-of select="ins:implode(ins:parameter)"/> )</span>
       <xsl:variable name="methods" select="../ins:extension//ins:method[@name = current()/@name]"/>
@@ -126,17 +132,66 @@
       <xsl:for-each select="$methods">
         <xsl:copy-of select="ins:get-class(@class)"/>
       </xsl:for-each>
+      <xsl:apply-templates select="ins:comment"/>
     </li>
 	</xsl:template>
 	
 	<xsl:template match="ins:parameter">
-	  <xsl:apply-templates select="ins:cast"/>
-	  <span>$<xsl:value-of select="@name"/></span>
-	  <xsl:if test="ins:default">
-	    = <span><xsl:value-of select="ins:default"/></span>
-	  </xsl:if>
+    <span>
+      <xsl:attribute name="class">
+        <xsl:choose>
+          <xsl:when test="ins:default">
+            <xsl:value-of select="$class-optional"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$class-required"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+      <xsl:apply-templates select="ins:cast"/>
+      <span>$<xsl:value-of select="@name"/></span>
+    </span>
 	</xsl:template>
 	
+	<xsl:template match="ins:comment">
+    <xsl:variable name="value">
+      <xsl:choose>
+        <xsl:when test="ins:description">
+          
+        </xsl:when>
+        <xsl:when test="ins:return">
+          <xsl:copy-of select="ins:return"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:if test="ins:description | ins:return">
+      <div class="{$class-comment}">
+        <xsl:if test="ins:description">
+          <p><xsl:copy-of select="ins:description/node()"/></p>
+        </xsl:if>
+        <xsl:if test="*[local-name() != 'description']">
+          <div>
+            <xsl:apply-templates select="ins:author | ins:return"/>
+          </div>
+        </xsl:if>
+      </div>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="ins:author">
+    <div>
+      <strong>@author : </strong>
+      <xsl:value-of select="."/>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="ins:return">
+    <div>
+      <strong>@return : </strong>
+      <xsl:value-of select="."/>
+    </div>
+  </xsl:template>
+  
 	<xsl:template match="ins:cast">
     <xsl:choose>
       <xsl:when test=". = 'array'">

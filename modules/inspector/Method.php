@@ -1,6 +1,10 @@
 <?php
 
-class InspectorMethod extends InspectorReflector implements InspectorReflectorInterface {
+require_once('ReflectorCommented.php');
+
+class InspectorMethod extends InspectorReflectorCommented implements InspectorReflectorInterface {
+  
+  const PARAMETER_CLASS = 'class/method/parameter';
   
   protected $parent;
   protected $aParameters = array();
@@ -17,6 +21,7 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     $this->reflector = $reflector;
     
     $this->loadParameters();
+    $this->loadComment('class/method/comment');
   }
   
   public function getReflector() {
@@ -28,7 +33,7 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
     
     foreach ($this->getReflector()->getParameters() as $parameter) {
       
-      $this->aParameters[] = $this->getControler()->create('parameter', array($parameter, $this));
+      $this->aParameters[] = $this->getControler()->create(self::PARAMETER_CLASS, array($parameter, $this));
     }
   }
   
@@ -99,7 +104,7 @@ class InspectorMethod extends InspectorReflector implements InspectorReflectorIn
         '@name' => $this->getName(),
         '@class' => $this->getReflector()->getDeclaringClass()->getName(),
         'modifiers' => $this->getReflector()->getModifiers(),
-        'comments' => $this->getReflector()->getDocComment(),
+        $this->comment,
         $this->aParameters,
         'source' => $this->getReflector()->isUserDefined() ? $this->getSource() : '',
         'final' => $this->getReflector()->isFinal(),

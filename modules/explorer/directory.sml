@@ -7,11 +7,39 @@
       <ls:mode>710</ls:mode>
     </ls:security>
   </self>
-  <file name="explorer.css">
-    <ls:security>
+  <file name="folder.png">
+    <ls:security xmlns:ls="http://www.sylma.org/security">
       <ls:owner>root</ls:owner>
       <ls:group>users</ls:group>
-      <ls:mode>730</ls:mode>
+      <ls:mode>740</ls:mode>
+    </ls:security>
+  </file>
+  <file name="file.png">
+    <ls:security xmlns:ls="http://www.sylma.org/security">
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>740</ls:mode>
+    </ls:security>
+  </file>
+  <file name="explorer.css">
+    <ls:security xmlns:ls="http://www.sylma.org/security">
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>740</ls:mode>
+    </ls:security>
+  </file>
+  <file name="explorer.js">
+    <ls:security xmlns:ls="http://www.sylma.org/security">
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>740</ls:mode>
+    </ls:security>
+  </file>
+  <file name="directory-up.png">
+    <ls:security xmlns:ls="http://www.sylma.org/security">
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>740</ls:mode>
     </ls:security>
   </file>
 </directory>

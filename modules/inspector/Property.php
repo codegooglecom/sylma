@@ -1,6 +1,6 @@
 <?php
 
-class InspectorProperty extends InspectorReflector implements InspectorReflectorInterface {
+class InspectorProperty extends InspectorReflectorCommented implements InspectorReflectorInterface {
   
   protected $parent;
   
@@ -12,6 +12,7 @@ class InspectorProperty extends InspectorReflector implements InspectorReflector
     $this->reflector = $reflector;
     
     $this->load();
+    $this->loadComment('class/property/comment');
   }
   
   protected function load() {
@@ -30,6 +31,7 @@ class InspectorProperty extends InspectorReflector implements InspectorReflector
         '@name' => $this->getName(),
         'modifiers' => $this->getReflector()->getModifiers(),
         'default' => $this->sDefault,
+        $this->comment,
       ),
     ), $this->getControler()->getNamespace());
   }

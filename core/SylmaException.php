@@ -38,7 +38,39 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
     $this->save();
 	}
 	
-	public function loadError($iNo, $sMessage, $sFile, $iLine) {
+	public function setPath(array $aPath) {
+		
+		$this->aPath = $aPath;
+	}
+  
+	protected function getPath() {
+		
+		$sSystem = MAIN_DIRECTORY . '/' . SYLMA_PATH;
+		
+		$sCaller = array_val('type', $this->aCall, 'unknown');
+		$sCall = array_val('value', $this->aCall, 'unknown');
+		
+		$aPath = array(
+		  '@' . $sCaller => $sCall . '()',
+      '@line' => $this->getLine(),
+      '@file' => substr($this->getFile() ,strlen($sSystem) - 1),
+      '@exception' => get_class($this) . ' [' . $this->getCode() . ']',
+    );
+    
+		return array_merge($this->aPath, fusion(' ', $aPath));
+	}
+	
+  public static function loadError($iNo, $sMessage, $sFile, $iLine) {
+  	
+    if ($iNo & Sylma::get('users/root/error-level')) {
+      
+      $exception = new Sylma::$exception($sMessage);
+      $exception->importError($iNo, $sMessage, $sFile, $iLine);
+    }
+    //throw $sylmaException;
+  }
+	
+	public function importError($iNo, $sMessage, $sFile, $iLine) {
 		
 		$this->code = $iNo;
 		$this->message = $sMessage;
@@ -68,29 +100,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
     
     $this->save();
 	}
-	
-	public function setPath(array $aPath) {
-		
-		$this->aPath = $aPath;
-	}
   
-	protected function getPath() {
-		
-		$sSystem = MAIN_DIRECTORY . '/' . SYLMA_PATH;
-		
-		$sCaller = array_val('type', $this->aCall, 'unknown');
-		$sCall = array_val('value', $this->aCall, 'unknown');
-		
-		$aPath = array(
-		  '@' . $sCaller => $sCall . '()',
-      '@line' => $this->getLine(),
-      '@file' => substr($this->getFile() ,strlen($sSystem) - 1),
-      '@exception' => get_class($this) . ' [' . $this->getCode() . ']',
-    );
-    
-		return array_merge($this->aPath, fusion(' ', $aPath));
-	}
-	
 	public function save() {
 		
 		Sylma::log($this->getPath(), $this->getMessage());

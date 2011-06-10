@@ -40,7 +40,7 @@ class XML_Resource {
   
   public function isOwner() {
     
-    return Controler::getUser()->isName($this->getOwner());
+    return Controler::getUser()->getName() == $this->getOwner();
   }
   
   public function getFullPath() {

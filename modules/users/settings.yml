@@ -16,7 +16,7 @@ cookies:
   lifetime:
     # 8h
     short: 28800
-    # 14j
+    # ~7j
     normal: 403200
 session:
   name: sylma-user

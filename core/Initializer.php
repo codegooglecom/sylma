@@ -14,6 +14,9 @@ class Initializer {
     require_once('settings/Arguments.php');
     require_once('settings/Spyc.php');
     require_once('settings/XArguments.php');
+    
+    require_once('SylmaException.php');
+    set_error_handler("SylmaException::loadError");
 	}
 	
 	public function loadSettings($sServer, $sSylma) {
@@ -25,7 +28,7 @@ class Initializer {
 	}
 	
 	public function load($sCore) {
-		
+    
     // set error report mode
     if (Sylma::get('debug/enable')) {
       
@@ -45,8 +48,6 @@ class Initializer {
     
     libxml_use_internal_errors(true);
     
-    require_once('SylmaException.php');
-    set_error_handler("Sylma::sendError");
     //set_exception_handler("self::sendException");
     
     $this->loadLibs($sCore);
@@ -58,7 +59,7 @@ class Initializer {
     
     //ini_set('session.save_path', 'c:/temp/php');
     //ini_set('session.cookie_lifetime', SESSION_MAX_LIFETIME);
-    ini_set('session.gc_maxlifetime', Sylma::get('users/session/lifetime'));
+    ini_set('session.gc_maxlifetime', Sylma::get('modules/users/session/lifetime'));
     
     session_start();
     

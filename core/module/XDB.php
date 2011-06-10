@@ -35,10 +35,17 @@ class BadObject {
   }
 }
 
+/**
+ * Allow use of @class Module with XML database specifics methods
+ * @author rodolphe.gerber (at) gmail.com
+ */
 class XDB_Module extends ModuleExtension {
   
   /* Global */
   
+  /**
+   * @return XML_Database The XML database controler
+   */
   protected function getDB() {
     
     if (!$db = Controler::getDatabase()) $db = new BadObject($this->getNamespace(), 'database');

@@ -126,14 +126,6 @@ class Sylma {
     throw $e;
   }
   
-  public static function sendError($iNo, $sMessage, $sFile, $iLine) {
-  	
-    $sylmaException = new self::$exception($sMessage);
-    $sylmaException->loadError($iNo, $sMessage, $sFile, $iLine);
-
-    //throw $sylmaException;
-  }
-
   public static function render() {
     
     return self::$result;

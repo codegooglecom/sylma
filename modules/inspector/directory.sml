@@ -3,8 +3,15 @@
   <propagate>
     <ls:security>
       <ls:owner>root</ls:owner>
-      <ls:group>0</ls:group>
-      <ls:mode>770</ls:mode>
+      <ls:group>users</ls:group>
+      <ls:mode>710</ls:mode>
     </ls:security>
   </propagate>
+  <file name="class.css">
+    <ls:security>
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>740</ls:mode>
+    </ls:security>
+  </file>
 </directory>
