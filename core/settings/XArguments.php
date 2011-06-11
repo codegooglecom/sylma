@@ -196,7 +196,7 @@ class XArguments extends Arguments implements SettingsInterface {
    * Transform an uni-dimensional array of strings in multiple-dimensions array of grouped strings
    * The values are associate or separate if string begins, or not, with the same characters
    * 
-   * <code:yaml>
+   * <code language="yaml">
    * abc, abdef, abc, ab, defgo, deasd, dearg
    * # become
    * ab :

@@ -5,11 +5,17 @@
   
   <xsl:param name="class-class">sylma-ins-class</xsl:param>
   <xsl:param name="class-extends">sylma-ins-extends</xsl:param>
+  <xsl:param name="class-group">sylma-ins-group</xsl:param>
   <xsl:param name="class-comment">sylma-ins-comment</xsl:param>
   <xsl:param name="class-method">sylma-ins-method</xsl:param>
   <xsl:param name="class-property">sylma-ins-property</xsl:param>
   <xsl:param name="class-optional">sylma-ins-optional</xsl:param>
   <xsl:param name="class-required">sylma-ins-required</xsl:param>
+  <xsl:param name="class-parameter">sylma-ins-parameter</xsl:param>
+  <xsl:param name="class-return">sylma-ins-return</xsl:param>
+  <xsl:param name="class-name">sylma-ins-name</xsl:param>
+  <xsl:param name="class-dollar">sylma-ins-dollar</xsl:param>
+  <xsl:param name="class-basetype">sylma-ins-basetype</xsl:param>
   
 	<xsl:template match="/*">
 		<div class="{$class-class}">
@@ -72,18 +78,22 @@
 	<xsl:template match="ins:class" mode="extends">
 	  <xsl:param name="element"/>
 	  <xsl:variable name="set" select="ins:*[local-name() = $element and not(@name = current()/ancestor::ins:class/ins:*[local-name() = $element]/@name)]"/>
-	  <xsl:if test="$set">
-	    <h4><em>herited from </em><xsl:copy-of select="ins:get-class(@name)"/></h4>
+    <xsl:if test="$set">
+      <li class="{$class-group} clear-block">
+        <ul>
+          <h4><em>herited from </em><xsl:copy-of select="ins:get-class(@name)"/></h4>
+          <xsl:for-each select="$set">
+             <xsl:sort select="@name"/>
+             <xsl:apply-templates select=".">
+               <xsl:with-param name="class" select="$class-extends"/>
+             </xsl:apply-templates>
+           </xsl:for-each>
+           <xsl:apply-templates select="ins:extension/*" mode="extends">
+             <xsl:with-param name="element" select="$element"/>
+           </xsl:apply-templates>
+        </ul>
+      </li>
     </xsl:if>
-    <xsl:for-each select="$set">
-       <xsl:sort select="@name"/>
-       <xsl:apply-templates select=".">
-         <xsl:with-param name="class" select="$class-extends"/>
-       </xsl:apply-templates>
-     </xsl:for-each>
-     <xsl:apply-templates select="ins:extension/*" mode="extends">
-       <xsl:with-param name="element" select="$element"/>
-     </xsl:apply-templates>
 	</xsl:template>
 	
 	<xsl:template match="ins:interface">
@@ -97,11 +107,9 @@
 	<xsl:template match="ins:constant">
 	  <xsl:param name="class"/>
 	  <li>
-      <xsl:if test="$class">
-        <xsl:attribute name="class">
-          <xsl:value-of select="$class"/>
-        </xsl:attribute>
-      </xsl:if>
+      <xsl:attribute name="class">
+        <xsl:value-of select="concat($class-property, ' ', $class)"/>
+      </xsl:attribute>
       <strong><xsl:value-of select="@name"/></strong> = 
       <span><xsl:value-of select="ins:default"/></span>
     </li>
@@ -149,58 +157,73 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:apply-templates select="ins:cast"/>
-      <span>$<xsl:value-of select="@name"/></span>
+      <span class="{$class-dollar}">$</span>
+      <span class="{$class-name}"><xsl:value-of select="@name"/></span>
     </span>
 	</xsl:template>
 	
 	<xsl:template match="ins:comment">
-    <xsl:variable name="value">
-      <xsl:choose>
-        <xsl:when test="ins:description">
-          
-        </xsl:when>
-        <xsl:when test="ins:return">
-          <xsl:copy-of select="ins:return"/>
-        </xsl:when>
-      </xsl:choose>
-    </xsl:variable>
     <xsl:if test="ins:description | ins:return">
       <div class="{$class-comment}">
         <xsl:if test="ins:description">
           <p><xsl:copy-of select="ins:description/node()"/></p>
         </xsl:if>
-        <xsl:if test="*[local-name() != 'description']">
-          <div>
-            <xsl:apply-templates select="ins:author | ins:return"/>
-          </div>
+        <xsl:variable name="properties" select="*[local-name() != 'description']"/>
+        <xsl:if test="$properties">
+          <ul>
+            <xsl:for-each select="$properties">
+              <li>
+                <xsl:apply-templates select="." mode="comment"/>
+              </li>
+            </xsl:for-each>
+          </ul>
         </xsl:if>
       </div>
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="ins:author">
-    <div>
-      <strong>@author : </strong>
-      <xsl:value-of select="."/>
-    </div>
+  <xsl:template match="*" mode="comment">
+    <strong>@<xsl:value-of select="local-name()"/> : </strong>
+    <xsl:value-of select="."/>
   </xsl:template>
   
-  <xsl:template match="ins:return">
-    <div>
-      <strong>@return : </strong>
-      <xsl:value-of select="."/>
-    </div>
+  <xsl:template match="ins:author" mode="comment">
+  </xsl:template>
+  
+  <xsl:template match="ins:parameter" mode="comment">
+    <xsl:attribute name="class">
+      <xsl:if test="@required != 'true'">
+        <xsl:value-of select="concat($class-optional, ' ')"/>
+      </xsl:if>
+      <xsl:value-of select="$class-parameter"/>
+    </xsl:attribute>
+    <strong>@param</strong>
+    <xsl:if test="@required != 'true'">?</xsl:if>
+    <xsl:apply-templates select="ins:cast"/>
+    <span class="{$class-dollar}">$</span>
+    <span class="{$class-name}"><xsl:value-of select="@name"/></span> : 
+    <span><xsl:value-of select="ins:description"/></span>
+  </xsl:template>
+  
+  <xsl:template match="ins:return" mode="comment">
+    <xsl:attribute name="class">
+      <xsl:value-of select="$class-return"/>
+    </xsl:attribute>
+    <strong>@return </strong>
+    <xsl:apply-templates select="ins:cast"/> : 
+    <xsl:value-of select="ins:description"/>
   </xsl:template>
   
 	<xsl:template match="ins:cast">
     <xsl:choose>
-      <xsl:when test=". = 'array'">
-        <span>array</span>
+      <xsl:when test=". = 'array' or . = 'null' or . = 'boolean' or . = 'string' or . = 'mixed'">
+        <span class="{$class-basetype}"><xsl:value-of select="."/></span>
       </xsl:when>
       <xsl:otherwise>
         <xsl:copy-of select="ins:get-class(.)"/>
       </xsl:otherwise>
     </xsl:choose>
+    <xsl:if test="position() != last()"> |</xsl:if>
 	</xsl:template>
 	
 	<func:function name="ins:get-class">
@@ -219,7 +242,6 @@
 		      <xsl:if test="position() &gt; 1">
 		        <xsl:value-of select="$separator" />
 		      </xsl:if>
-		      
 		      <xsl:apply-templates select="." />
 		    </xsl:for-each>
 	    </func:result>

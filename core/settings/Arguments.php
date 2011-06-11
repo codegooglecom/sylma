@@ -265,6 +265,18 @@ class Arguments extends Namespaced implements SettingsInterface {
             $parent->setAttribute(substr($sKey, 1), $mValue);
             continue;
           }
+          else if ($sKey[0] == '#') {
+            
+            foreach ($mValue as $mSubValue) {
+              
+              $node = $parent->addNode(substr($sKey, 1));
+              
+              if (is_array($mSubValue)) self::buildNode($node, $mSubValue);
+              else $node->add($mSubValue);
+            }
+            
+            $mValue = null;
+          }
           else {
             
             $node = $parent->addNode($sKey);

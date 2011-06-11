@@ -8,28 +8,54 @@
   text-align: center;
   padding-right: 20px;
   padding-bottom: 0.5em;
+  
+  clear: both;
 }
 
 .sylma-ins-class h4 {
-  padding-top: 0.5em;
-  border-top: 1px solid #ddd;
-  text-align: right;
+  padding: 0;
+  margin: 0;
   padding-right: 20px;
-  margin-bottom: 0;
+  float: right;
+  clear: none;
 }
 
-.sylma-ins-class > ul > li {
+li.sylma-ins-constant,
+li.sylma-ins-property,
+li.sylma-ins-method {
   margin-left: 1.5em;
   padding-left: 1em;
   list-style-type: square;
+  float: left;
+  clear: left;
 }
+
+li.sylma-ins-group {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+  padding-top: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border-top: 1px solid #ddd;
+  float: left;
+  width: 100%;
+}
+
+.sylma-ins-basetype {
+  font-family : Lucida console;
+  color: #851919;
+}
+
 .sylma-ins-class code {
   background-color: #EEEEEE;
   border: 1px solid #CCCCCC;
   display: block;
   margin: 1em 0;
   padding: 0.5em;
+  display: none;
 }
+
 .sylma-ins-required {
   _text-decoration: underline;
 }
@@ -50,14 +76,48 @@
   border-left: 1px solid #ccc;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
+  _max-height: 4em;
+  overflow: hidden;
+}
+
+.sylma-ins-comment:hover {
+  color: black;
+  max-height: 100%;
 }
 
 .sylma-ins-comment ul {
   margin-left: 1em;
+  margin-top: 0.5em;
+  display: none;
+}
+
+.sylma-ins-comment:hover code,
+.sylma-ins-comment:hover ul {
+  display: block;
 }
 
 .sylma-ins-property .sylma-ins-comment p,
 .sylma-ins-method .sylma-ins-comment p {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.sylma-ins-return {
+  _margin-top: 0.5em;
+}
+
+.sylma-ins-return strong {
+  color: #467CA2;
+}
+
+.sylma-ins-parameter .sylma-ins-name {
+  _text-decoration: underline;
+  font-weight: bold;
+  color: gray;
+}
+
+.sylma-ins-dollar {
+  opacity: 0.35;
+  margin-right: -0.3em;
+  display: none;
 }

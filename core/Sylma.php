@@ -116,14 +116,28 @@ class Sylma {
     }
   }
   
+  public static function loadException(Exception $e) {
+    
+    $newException = new Sylma::$exception;
+    $newException->loadException($e);
+    
+    return $newException;
+  }
+  
   public static function throwException($sMessage, array $aPath = array(), $iOffset = 1) {
     
     $e = new Sylma::$exception($sMessage);
     
     $e->setPath($aPath);
-    $e->loadException($iOffset);
+    $e->load($iOffset);
     
     throw $e;
+  }
+  
+  public function isWindows() {
+    
+    //return (isset($_ENV['OS']) && strpos($_ENV['OS'], 'Win') !== false);
+    return PHP_OS == 'WINNT';
   }
   
   public static function render() {

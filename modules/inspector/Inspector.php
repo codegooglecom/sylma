@@ -42,13 +42,20 @@ class Inspector extends Module {
       
       $class = $this->create(self::CLASS_CLASS, array($sClass, $this));
       
-      dspf($class->parse());
+      //dspf($class->parse());
       return $class->parse();
-      
-    } catch (SylmaException $e) {
-    	
-      return null;
     }
+    catch (SylmaException $e) {
+      
+      
+    }
+    catch (Exception $e) {
+      
+      Sylma::loadException($e);
+      //$e->loadException();
+    }
+    
+    return null;
   }
 }
 

@@ -10,13 +10,18 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
 	protected $aPath = array();
 	protected $aCall = array();
 	protected $bError = false;
+  
+  /**
+   * Allow import of other classes, used class is showed in message
+   */
+  protected $sClass = 'SylmaException';
 	protected $iOffset = 1;
 	
-	public function loadException($iOffset = 1) {
+	public function load($iOffset = 1, $aTrace = array()) {
 		
     // for exceptions : line 1, file 2, class/method 2
     
-		$aTrace = $this->getTrace();
+		$aTrace = $aTrace ? $aTrace : $this->getTrace();
 		
     if (count($aTrace) < $iOffset + 2) {
       
@@ -45,16 +50,25 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
   
 	protected function getPath() {
 		
-		$sSystem = MAIN_DIRECTORY . '/' . SYLMA_PATH;
-		
+    if (Sylma::isWindows()) {
+      
+      $sSystem = $_SERVER['DOCUMENT_ROOT'] . '/' . MAIN_DIRECTORY;
+      $sPath = pathWin2Unix(substr($this->getFile() ,strlen($sSystem)));
+    }
+    else {
+      
+      $sSystem = MAIN_DIRECTORY . '/';
+      $sPath = substr($this->getFile() ,strlen($sSystem) - 1);
+    }
+    
 		$sCaller = array_val('type', $this->aCall, 'unknown');
 		$sCall = array_val('value', $this->aCall, 'unknown');
 		
 		$aPath = array(
 		  '@' . $sCaller => $sCall . '()',
       '@line' => $this->getLine(),
-      '@file' => substr($this->getFile() ,strlen($sSystem) - 1),
-      '@exception' => get_class($this) . ' [' . $this->getCode() . ']',
+      '@file' => $sPath,
+      '@exception' => $this->sClass . ' [' . $this->getCode() . ']',
     );
     
 		return array_merge($this->aPath, fusion(' ', $aPath));
@@ -70,6 +84,17 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
     //throw $sylmaException;
   }
 	
+	public function loadException(Exception $e) {
+    
+    $this->code = $e->getCode();
+    $this->message = $e->getMessage();
+    $this->file = $e->getFile();
+    $this->line = $e->getLine();
+    $this->sClass = get_class($e);
+    
+    $this->load(3, $e->getTrace());
+  }
+  
 	public function importError($iNo, $sMessage, $sFile, $iLine) {
 		
 		$this->code = $iNo;

@@ -4,6 +4,10 @@ class InspectorComment extends InspectorReflector {
   
   const LINE_BREAK = "\n";
   
+  const RETURN_PREG = '/^\s*([\w\|]+)+(?:\s+(.+))?$/';
+  const PARAMETER_PREG = '/^\s*([\w\|]+)+\s*\$(\w+)(.+)$/';
+  const COMMENT_PREG = '/[\s*]*(?:@(\w+))?(.*)/';
+  
   protected $sComment = '';
   protected $properties;
   
@@ -26,15 +30,60 @@ class InspectorComment extends InspectorReflector {
     
     foreach ($aLines as $sLine) {
       
-      preg_match('/[\s*]*(?:@(\w+))?(.*)/', $sLine, $aMatch);
+      preg_match(self::COMMENT_PREG, $sLine, $aMatch);
       
       if ($aMatch) {
         
         $sToken = $aMatch[1];
         $sValue = $aMatch[2];
         
-        if ($sToken) $aProperties[$sToken] = trim($sValue);
-        else $sResult .= trim($sValue) . self::LINE_BREAK;
+        if ($sToken) {
+          
+          if ($sToken == 'param') {
+            
+            $bOptional = false;
+            
+            if ($sValue{0} == '?') {
+              
+              $sValue = substr($sValue, 1);
+              $bOptional = true;
+            }
+            
+            preg_match(self::PARAMETER_PREG, $sValue, $aMatch);
+            
+            $sCast = $aMatch[1];
+            $sName = $aMatch[2];
+            $sValue = $aMatch[3];
+            
+            if (!array_key_exists('#parameter', $aProperties)) $aProperties['#parameter'] = array();
+            $aProperties['#parameter'][] = array(
+              '@name' => $sName,
+              '@required' => booltostr(!$bOptional),
+              '#cast' => (array) explode('|', $sCast),
+              'description' => trim($sValue),
+            );
+          }
+          else if ($sToken == 'return') {
+            
+            preg_match(self::RETURN_PREG, $sValue, $aMatch);
+            
+            $sCast = $aMatch[1];
+            $sValue = $aMatch[2];
+            
+            $aProperties['return'] = array(
+              '#cast' => (array) explode('|', $sCast),
+              'description' => trim($sValue),
+            );
+          }
+          else {
+            
+            $aProperties[$sToken] = trim($sValue);
+          }
+        }
+        else {
+          
+          $sResult .= trim($sValue) . self::LINE_BREAK;
+        }
       }
     }
     
@@ -65,7 +114,7 @@ class InspectorCommentClass extends InspectorComment {
 
 class InspectorCommentMethod extends InspectorComment {
   
-
+  
 }
 
 class InspectorCommentProperty extends InspectorComment {
