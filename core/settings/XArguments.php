@@ -2,6 +2,11 @@
 
 class XArguments extends Arguments implements SettingsInterface {
   
+  /**
+   * Special calls use this prefix use in YAML files
+   */
+  const VARIABLE_PREFIX = '@sylma:';
+  
   public function __construct($mValue, $sNamespace = '') {
     
     // set namespace first for logging
@@ -11,7 +16,7 @@ class XArguments extends Arguments implements SettingsInterface {
     
     if (is_string($mValue)) $aArray = $this->loadYAML($mValue);
     else if (is_array($mValue)) $aArray = $mValue;
-    else $this->log(txt('Can only accepts array or string as first argument - given : %s', gettype($mValue)));
+    else $this->throwException(txt('Can only accepts array or string as first argument - given : %s', gettype($mValue)));
     
     parent::__construct($aArray, $sNamespace);
   }
@@ -35,7 +40,7 @@ class XArguments extends Arguments implements SettingsInterface {
     }
   }
   
-  protected function parseValue($sValue, $aParentPath) {
+  protected function parseValue($sValue, array $aParentPath = array()) {
     
     return $this->parseYAMLProperties($sValue, $aParentPath);
   }
@@ -44,7 +49,7 @@ class XArguments extends Arguments implements SettingsInterface {
     
     $mResult = $this->getValue($sPath, $bDebug);
     
-    if (!self::getError() && is_array($mResult)) {
+    if (is_array($mResult)) {
       
       $mResult = new XArguments($mResult, $this->getNamespace());
     }
@@ -118,6 +123,9 @@ class XArguments extends Arguments implements SettingsInterface {
   }
   
   protected function parseYAMLProperties($sValue, array $aPath) {
+    
+    // TODO : strange bug, with @ as first char of value. See /system/sylma.yml/actions
+    if (ord($sValue{0}) === 0) $sValue{0} = '@';
     
     $mResult = $sValue;
     $iStart = strrpos($sValue, self::VARIABLE_PREFIX);

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/interface" xmlns:ls="http://www.sylma.org/security">
+  <file>Menus.php</file>
+  <name>TreeMenus</name>
+  <method-construct>
+    <argument name="document" format="DOMDocument"/>
+    <argument name="action" required="false">
+      <format>XML_Action</format>
+      <format>php-string</format>
+    </argument>
+  </method-construct>
+  <method path="is-root" name="isRoot"/>
+  <method path="build-group" name="buildGroup" return-default="true">
+    <argument format="php-string" name="name"/>
+    <argument format="XSL_Document" name="template"/>
+    <argument format="php-string" name="extension" required="false"/>
+  </method>
+  <method path="get-group" name="getGroup" return-default="true">
+    <argument format="php-string"/>
+  </method>
+  <method path="get-title" name="getTitle" return-default="true"/>
+  <method path="get-breadcrumb" name="getBreadcrumb" return-default="true"/>
+  <method path="update" static="true" name="update" return-default="true" ls:owner="root" ls:group="users" ls:mode="710">
+    <argument name="from" format="php-string"/>
+    <argument name="to" format="php-string"/>
+  </method>
+</class>

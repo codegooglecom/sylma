@@ -7,7 +7,7 @@
   <interface class="User">/sylma/user/interface.iml</interface>
   <interface class="WindowAction">/sylma/window/action.iml</interface>
   <interface class="Redirection">/sylma/window/redirection.iml</interface>
-  <interface class="XML_Action">/sylma/action/interface.iml</interface>
+  <interface class="XML_Action">/sylma/action/action.iml</interface>
   <interface class="XML_Database">/sylma/modules/exist/interface.iml</interface>
   <interface class="XML_Directory">/sylma/storage/filesys/directory.iml</interface>
   <interface class="XML_Document">/sylma/dom/document.iml</interface>

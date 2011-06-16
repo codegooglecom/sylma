@@ -51,9 +51,9 @@ class InspectorComment extends InspectorReflector {
             
             preg_match(self::PARAMETER_PREG, $sValue, $aMatch);
             
-            $sCast = $aMatch[1];
-            $sName = $aMatch[2];
-            $sValue = $aMatch[3];
+            $sCast = array_val(1, $aMatch);
+            $sName = array_val(2, $aMatch);
+            $sValue = array_val(3, $aMatch);
             
             if (!array_key_exists('#parameter', $aProperties)) $aProperties['#parameter'] = array();
             $aProperties['#parameter'][] = array(
@@ -67,8 +67,8 @@ class InspectorComment extends InspectorReflector {
             
             preg_match(self::RETURN_PREG, $sValue, $aMatch);
             
-            $sCast = $aMatch[1];
-            $sValue = $aMatch[2];
+            $sCast = array_val(1, $aMatch, 'unknown');
+            $sValue = array_val(2, $aMatch, '[empty]');
             
             $aProperties['return'] = array(
               '#cast' => (array) explode('|', $sCast),

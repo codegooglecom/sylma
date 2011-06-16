@@ -37,7 +37,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
 	      'value' => $aCaller['class'] . $aCaller['type'] . $aCaller['function']);
 	    
 	    $this->line = $aCall['line'];
-	    $this->file = $aCaller['file'];
+	    $this->file = $aCall['file'];
     }
     
     $this->save();
@@ -128,7 +128,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
   
 	public function save() {
 		
-		Sylma::log($this->getPath(), $this->getMessage());
+		Sylma::log($this->getPath(), $this->getMessage(), 'error');
 	}
   
   /**
@@ -136,7 +136,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
    */  
 	public function __toString() {
   	
-  	return  implode(' ', $this->getPath()) . ' @message ' . $this->getMessage() . '<br/>';
+  	return  implode(' ', $this->getPath()) . ' @message ' . $this->getMessage();
   }
 }
 

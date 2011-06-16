@@ -92,10 +92,11 @@ class XML_File extends XML_Resource {
   /**
    * Get the copy of the corresponding document
    * Call XML_Document->loadFile() via new instance, that will put a copy here of the document with setDocument()
+   * @param integer $iMode : The mode used to load the document
    */
-  public function getDocument() {
+  public function getDocument($iMode = Sylma::MODE_READ) {
     
-    return new XML_Document((string) $this);
+    return new XML_Document((string) $this, $iMode);
   }
   
   /**

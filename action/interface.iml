@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <class xmlns="http://www.sylma.org/interface" xmlns:ls="http://www.sylma.org/security">
-  <file>Controler.php</file>
-  <name>XML_Action</name>
-  <extends>XML_Document</extends>
-  <method name="setStatut" path="set-statut">
-    <argument name="id" required="false" format="php-integer"/>
-  </method>
-  <method name="getVariable" path="get-variable" return-default="true">
-    <argument name="key" format="php-string"/>
-    <argument name="debug" format="php-boolean"/>
-  </method>
-  <method name="setVariable" path="set-variable">
-    <argument name="key" format="php-string"/>
-    <argument name="value"/>
-  </method>
-  <method name="getStatut" path="get-statut"/>
-  <method name="getPath" path="get-path" return-default="true"/>
-  <method return-default="true" name="getAbsolutePath" path="get-absolute-path">
-    <argument name="path" format="php-string"/>
-  </method>
+  <file>Interface.php</file>
+  <name>ActionInterface</name>
+  <extends>ModuleBase</extends>
+  <method path="test" name="test"/>
 </class>

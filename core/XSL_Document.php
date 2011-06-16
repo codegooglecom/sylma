@@ -159,31 +159,34 @@ class XSL_Document extends XML_Document {
     }
   }
   
-  public function parseDocument(XML_Document $oDocument, $bXML = true) { // WARNING, XML_Document typed can cause crashes
+  public function parseDocument(XML_Document $doc, $bXML = true) { // WARNING, XML_Document typed can cause crashes
     
     $mResult = null;
     
-    if ($oDocument && !$oDocument->isEmpty() && !$this->isEmpty()) {
+    if ($doc && !$doc->isEmpty() && !$this->isEmpty()) {
       
       $this->includeExternals();
       
+      libxml_use_internal_errors(true);
+      
       $this->getProcessor()->importStylesheet($this);
       
-      $sResult = $this->getProcessor()->transformToXML($oDocument);
+      $sResult = $this->getProcessor()->transformToXML($doc);
       
-      if (Controler::isAdmin() && libxml_get_errors()) { // TODO, nice view
+      if (Controler::isAdmin()) { // TODO, nice view
         
         foreach (libxml_get_errors() as $oError) {
-          //dspf(get_object_vars($oError));
+          
           if ($oError->file) $sFile = '';
           else if ($this->getFile()) $sFile = $this->getFile()->parse();
           else $sFile = new HTML_Tag('em', 'Fichier inconnu !');
           //print_r($oError);
-          dspm(xt('%s : %s - %s dans %s', new HTML_Strong('Libxml'), xmlize($oError->message), view($this), $sFile), 'warning');
+          dspm(xt('%s : %s - %s dans %s', new HTML_Strong('Libxml'), xmlize($oError->message), view($doc), $sFile), 'error');
         }
-        
-        libxml_clear_errors();
       }
+      
+      libxml_clear_errors();
+      libxml_use_internal_errors(false);
       
       if ($bXML) {
         

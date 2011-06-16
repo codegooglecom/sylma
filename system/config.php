@@ -1,13 +1,6 @@
 <?php
 
-define('SYLMA_PATH_LOGIN',    '/login');
-define('SYLMA_PATH_LOGOUT',   '/logout');
-define('SYLMA_PATH_USER_EDIT',   '/sylma/modules/users/edit/');
-define('SYLMA_PATH_ERROR',    '/error');
 define('SYLMA_XAMPP_BUG',    false);
-
-define('SYLMA_PATH_MODULES',   '/modules');
-define('SYLMA_PATH_TEMP',   '/config/tmp');
 
 define('SYLMA_PATH_INTERFACES', '/sylma/interfaces');
 define('SYLMA_PATH_INTERFACES_INDEX', '/sylma/system/interfaces.cml');

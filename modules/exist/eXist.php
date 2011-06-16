@@ -39,7 +39,7 @@
  *   if ( !empty($result["XML"]) )
  *	  foreach ( $result["XML"] as $xml)
  *        	print htmlspecialchars($xml) . "<br />";
- *   print "</pre>";
+ *   print "</pre>";</code>
  *
  * @access   public
  */

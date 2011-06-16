@@ -1,6 +1,8 @@
 <?php
 
-class XML_Controler {
+class XML_Controler extends Module {
+  
+  const NS = 'http://www.sylma.org/dom/controler';
   
   private static $aStats = array();
   public static $aQueries = array();      // Array of running actions
@@ -9,10 +11,15 @@ class XML_Controler {
     
     // self::addStat('load', 1); // precog ;)
     
-    $oResult = new XML_Document('statistics');
+    $result = new XML_Document;
+    $result->addNode('statistics', null, null, self::NS);
     
-    $oResult->addArray(self::$aStats, 'category');
-    return $oResult->parseXSL(new XSL_Document(Controler::getSettings('messages/statistic-template/@path'), MODE_EXECUTION));
+    foreach (self::$aStats as $sKey => $iValue) {
+      
+      $result->addNode('category', $iValue, array('name' => $sKey));
+    }
+    
+    return $result->parseXSL(new XSL_Document(Controler::getSettings('messages/statistic-template/@path'), MODE_EXECUTION));
   }
   
   public static function getStats() {

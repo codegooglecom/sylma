@@ -4,7 +4,8 @@
  * Created on 17 oct. 2008
  */
 
-require('protected/sylma/Init.php'); // set SYLMA path
 define('MAIN_DIRECTORY', 'protected'); // set site path
+require(MAIN_DIRECTORY . '/sylma/Init.php'); // set SYLMA path
 
-echo Sylma::init('server.yml'); // relative path to yaml server's config file
+Sylma::init('server.yml'); // relative path to yaml server's config file
+echo Sylma::render();

@@ -69,7 +69,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
   
   public function getSourceProperties() {
     
-    if ($this->sSourceProperties === null) {
+    if ($this->getReflector()->isUserDefined() && $this->sSourceProperties === null) {
       
        $this->sSourceProperties = '';
       

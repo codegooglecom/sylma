@@ -123,7 +123,7 @@ class WindowHTML extends XML_Action {
       
     } catch(Exception $e) {
       
-    	echo $e;
+    	//echo $e;
       $sResult = (string) xt('Problème lors du chargement du site. Nous nous excusons pour ce désagrément. %s pour revenir à la page d\'accueil', new HTML_Br.new HTML_A('/', t('Cliquez-ici')));
     }
     

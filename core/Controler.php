@@ -122,7 +122,7 @@ class Controler {
         
         $oAction = new XML_Action(self::getPath(), $oRedirect, array(), self::getWindow());
         
-        if ($oAction->isEmpty() && Sylma::get('actions/redirect/enable')) self::errorRedirect(); // no rights / empty main action
+        if ($oAction->isEmpty() && Sylma::get('actions/error/redirect')) self::errorRedirect(); // no rights / empty main action
         else {
           
           if (self::getWindowSettings()->hasAttribute('action')) {
@@ -134,7 +134,10 @@ class Controler {
               self::getWindow()->getPath()->setAssoc('window-action', $oAction);
             }
             
-          } else $oResult = self::getWindow()->loadAction($oAction); // TODO or not todo : make XML_Action
+          } else {
+            
+            $oResult = self::getWindow()->loadAction($oAction);
+          }
         }
       }
       
@@ -266,7 +269,9 @@ class Controler {
         } else {
           
           if ($sInterface = $oInterface->readByName('file')) $sInterface = self::getAbsolutePath($sInterface, $oInterface->getFile()->getParent());
-          $oWindow = self::buildClass($oInterface->readByName('name'), $sInterface, array($sAction, self::getRedirect()));
+          
+          self::loadClass($oInterface->readByName('name'), $sInterface);
+          $oWindow = self::buildClass($oInterface->readByName('name'), array($sAction, self::getRedirect()));
         }
       }
       
@@ -567,14 +572,16 @@ class Controler {
   
   public static function viewResume() {
     
+    
     $oAction = array_pop(self::$aActions);
     
     $oAction->parse(array('time' => self::$iStartTime), false);
     $oTest = $oAction->viewResume();
+    //dspf($oAction->getPath(), 'error');
     // dspf($oTest->query('//ld:file', array('ld' => SYLMA_NS_DIRECTORY))->length);
     $oResume = new XML_Element('controler', $oTest, array(), XML_Action::MONITOR_NS);
-    // dspf($oResume->getNamespace());
-    // dspf($oResume->query('//ld:file', array('ld' => SYLMA_NS_DIRECTORY))->length);
+    //dspf($oResume);
+    // foreach ($oResume->query('//*[local-name() = "file"]', array('ld' => SYLMA_NS_DIRECTORY)) as $el) {dspf($el->getNamespace());dspf($el);}
     $oResume->getFirst()->setAttribute('path', '<controler>');
     $oTemplate = new XSL_Document(Controler::getSettings('actions/template/@path'), MODE_EXECUTION);
     $oTemplate->setParameter('path-editor', Sylma::get('modules/editor/path'));
@@ -624,7 +631,7 @@ class Controler {
     
     if ($sExtension = self::getPath()->getExtension()) $sExtension = '.'.$sExtension;
     
-    $sPath = SYLMA_PATH_ERROR.$sExtension;
+    $sPath = Sylma::get('actions/error/page').$sExtension;
     
     self::doHTTPRedirect(new Redirect($sPath));
   }
@@ -931,8 +938,11 @@ class Controler {
       
       Sylma::throwException(txt('Cannot build object. No "name" defined in class'));
     }
-    //dspf($class->query());
-    $result = self::buildClass($sClass, $class->get('file', false), $aArguments);
+    
+    if (self::loadClass($sClass, $class->get('file', false))) {
+      
+      $result = self::buildClass($sClass, $aArguments);
+    }
     
     return $result;
   }
@@ -944,9 +954,8 @@ class Controler {
    * @param array $aArgument the arguments to use at the __construct call
    * @return null|object the created object
    */
-  public static function buildClass($sClass, $sFile = '', $aArguments = array()) {
+  public static function loadClass($sClass, $sFile = '') {
     
-    $result = null;
     $sMain = Sylma::get('directories/root/path');
     
     if (!class_exists($sClass)) {
@@ -971,6 +980,13 @@ class Controler {
       
       Sylma::throwException(txt('Cannot build object. @class %s doesn\'t exists !', $sClass));
     }
+    
+    return true;
+  }
+  
+  public static function buildClass($sClass, $aArguments = array()) {
+    
+    $result = null;
     
     // creation of object
     
@@ -1045,8 +1061,8 @@ class Controler {
     
     if (Sylma::get('debug/enable') && Sylma::get('messages/print/all')) { // || !self::useMessages()
       
-      if (is_array($mMessage)) foreach ($mMessage as $mContent) echo $mContent.new HTML_Br;
-      else echo $mMessage.new HTML_Br;
+      // if (is_array($mMessage)) foreach ($mMessage as $mContent) echo $mContent.new HTML_Br;
+      // else echo $mMessage.new HTML_Br;
     }
     
     if (Sylma::get('debug/enable') && (Sylma::get('messages/log/enable'))) {

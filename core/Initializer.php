@@ -21,9 +21,9 @@ class Initializer {
 	
 	public function loadSettings($sServer, $sSylma) {
 		
-    $settings = new XArguments(substr(SYLMA_RELATIVE_PATH, 1) . $sSylma, 'sylma');
+    $settings = new XArguments(substr(SYLMA_RELATIVE_PATH, 1) . $sSylma, Sylma::NS);
     if ($sServer)  $settings->mergeFile($sServer);
-    
+    //print_r($settings->query());
     return $settings;
 	}
 	
@@ -46,7 +46,7 @@ class Initializer {
     
     require_once('Controler.php');
     
-    libxml_use_internal_errors(true);
+    libxml_use_internal_errors(false);
     
     //set_exception_handler("self::sendException");
     

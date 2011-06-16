@@ -38,7 +38,7 @@ class XML_Action extends XML_Document {
         else {
           
           $this->dspm(xt('Chemin invalide'), 'action/error');
-          $this->oPath = new XML_Path(SYLMA_PATH_ERROR);
+          $this->oPath = new XML_Path(Sylma::get('action/error/page'));
         }
         
       } else $this->oPath = new XML_Path($mPath, array(), true);
@@ -92,6 +92,7 @@ class XML_Action extends XML_Document {
     
     $oResult = null;
     $sMethod = '';
+    $bStatic = false;
     $aArguments = array();
     
     if ($oInterface = ActionControler::setInterface($oInterface)) {
@@ -113,19 +114,19 @@ class XML_Action extends XML_Document {
         }
       }
       
-      $oObject = $this->buildClass($sClassName, $sFile, $aArguments);
+      $mObject = $this->buildClass($sClassName, $sFile, $aArguments);
       
       if (($sMethod = $this->getPath()->getIndex()) && is_string($sMethod)) {
         
         // simulate action interface call, with args recup (get-redirect) and default return (return)
         
         $oElement = new XML_Element('li:'.$sMethod, null, array('get-redirect' => 'true', 'return' => 'true'), SYLMA_NS_INTERFACE);
-        list($oSubResult, $bSubResult) = $this->runInterfaceMethod($oObject, $oElement, $this);
+        list($oSubResult, $bSubResult) = $this->runInterfaceMethod($mObject, $oElement, $this, $bStatic);
         
         if ($bSubResult) $oResult = $oSubResult;
-        else $oResult = $oObject;
+        else $oResult = $mObject;
         
-      } else $oResult = $oObject;
+      } else $oResult = $mObject;
     }
     
     return $oResult;
@@ -1410,7 +1411,11 @@ class XML_Action extends XML_Document {
     
     // Contrôle de l'existence de la méthode
     
-    if (method_exists($mObject, $sMethodName) || method_exists($mObject, '__call')) {
+    if (is_string($mObject) && !class_exists($mObject)) {
+      
+      $this->log(txt('Class %s does not exist', $mObject));
+    }
+    else if (method_exists($mObject, $sMethodName) || method_exists($mObject, '__call')) {
       
       // Lancement de l'action
       $oResult = null;
@@ -1451,7 +1456,8 @@ class XML_Action extends XML_Document {
     }
     else {
       
-      $this->log(txt('Method %s does not exist in @class %s', $sMethodName, get_class($mObject)), 'error');
+      $this->log(txt('Method %s does not exist in @class %s', $sMethodName,
+        (is_string($mObject) ? $mObject : get_class($mObject))), 'error');
     }
     
     return null;
@@ -1461,7 +1467,7 @@ class XML_Action extends XML_Document {
     
     if ($aArguments) $aArguments = $aArguments['arguments'];
     
-    if ($oObject = Controler::buildClass($sClassName, $sFile, $aArguments)) {
+    if (Controler::loadClass($sClassName, $sFile) && ($oObject = Controler::buildClass($sClassName, $aArguments))) {
       
       if (Controler::useStatut('action/report')) {
         
@@ -1978,162 +1984,172 @@ class XML_Action extends XML_Document {
     
     if ($this->aProcessors) foreach ($this->aProcessors as $oProcessor) $oProcessor->startAction($this);
     
-    if ($this->isEmpty()) {
+    try {
       
-      if ($bMessage) $this->log(txt('Empty document'), 'error');
+      if ($this->isEmpty()) {
+        
+        if ($bMessage) $this->log(txt('Empty document'), 'error');
+      }
+      else {
+        
+        $oRoot = $this->getRoot();
+        $oDocument = new XML_Document($oRoot);
+        
+        if (Controler::useStatut('action/report')) {
+          
+          $oSeek = new HTML_Span(t('>>> Début'), array('style' => 'color: green;'));
+          dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek, $this->getPath()->parse()), new HTML_Hr), 'action/report');
+        }
+        
+        switch ($oRoot->getNamespace()) {
+          
+          /* Execution */
+          
+          case SYLMA_NS_EXECUTION :
+            
+            switch ($oRoot->getName(true)) {
+              
+              // action
+              
+              case 'action' :
+                
+                if ($this->loadSettings($oDocument->getByName('settings', SYLMA_NS_EXECUTION))) {
+                  
+                  if ($this->getSettings() && !$this->getSettings()->isEmpty()
+                    && ($oReturn = $this->getSettings()->getByName('return', SYLMA_NS_EXECUTION)))
+                    $sReturn = $oReturn->getAttribute('format');
+                  else $sReturn = '';
+                  
+                  // set default variables
+                  
+                  $this->setVariables(array(
+                    'sylma-user' => Controler::getUser()->getName(),
+                    'sylma-directory' => (string) $this->getDirectory(),
+                    'sylma-lang' => (string) Controler::getSettings('infos/lang'),
+                  ));
+                  
+                  switch ($sReturn) {
+                    
+                    case 'XML_Document' :
+                      
+                      $oResult = new XML_Document($this->buildArgument($oDocument->getFirst()));
+                      
+                    break;
+                    
+                    case 'Redirect' :
+                    case 'mixed' :
+                      
+                      $oResult = $this->buildArgument($oDocument->getFirst());
+                      // if ($oDocument->countChildren() > 1) $this->dspm(xt('Mode mixed'), 'warning');
+                    break;
+                    
+                    default :
+                      
+                      $oResult = new XML_Document('temp');
+                      
+                      $oMethod = new XML_Element('li:add', $oDocument->getRoot()->getChildren(), null, SYLMA_NS_INTERFACE);
+                      $this->runInterfaceMethod($oResult, $oMethod, ActionControler::getInterface($oResult, $this->getRedirect()));
+                      
+                      if (!$oResult->isEmpty()) $oResult = $oResult->getRoot()->getChildren();
+                      else $this->log(txt('No value returned'), 'warning');
+                  }
+                  
+                } else {
+                  
+                  $this->setStatut('error');
+                  $this->log(txt('Parsing abort ..'), 'error');
+                }
+                
+              break;
+              
+              case 'interface' :
+                
+                if (!$oSettings = $this->getByName('settings', SYLMA_NS_EXECUTION)) {
+                  
+                  $this->log(txt('@element %s is missing', 'settings'), 'warning');
+                  
+                } else {
+                  
+                  if ($oAction = $oSettings->getByName('use-action')) {
+                    
+                    if (!$sPath = $oAction->getAttribute('path')) {
+                      
+                      $this->log(txt('@attribute %s is missing in @element %s', 'path', $oAction->getPath()), 'error');
+                    }
+                    else {
+                      
+                      $oInterface = new XML_Document($sPath);
+                      Action_Builder::buildInterface($oInterface);
+                    }
+                    
+                  } else if ($sClass = $oSettings->readByName('class', SYLMA_NS_EXECUTION)) {
+                    
+                    $oInterface = ActionControler::getInterface($sClass);
+                  }
+                  
+                  $oSettings->remove();
+                  
+                  if ($oRoot->hasChildren()) {
+                    
+                    $aArguments = $this->loadElementArguments($oRoot);
+                    $this->getPath()->pushIndex($aArguments['index']);
+                    $this->getPath()->mergeAssoc($aArguments['assoc']);
+                  }
+                  
+                  if ($oInterface) {
+                    
+                    $oResult = $this->loadInterface($oInterface);
+                    list($oSubResult, $bSubReturn) = $this->runInterfaceList($oResult, $oRoot);
+                  }
+                }
+                
+              break;
+              
+              default :
+                
+                $this->log(txt('Invalid root @element %s', $oRoot->getPath()), 'warning');
+                
+              break;
+            }
+            
+          break;
+          
+          /* Interface */
+          
+          case SYLMA_NS_INTERFACE :
+            
+            $oResult = $this->loadInterface($oRoot);
+            
+          break;
+          
+          default :
+            
+            $this->log(txt('Invalid namespace for @element %s', $oRoot->getPath()), 'warning');
+            
+          break;
+          
+        }
+        
+        if (Controler::useStatut('action/report')) {
+          
+          $oSeek = new HTML_Span(t('<<< Fin'), array('style' => 'color: red;'));
+          dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek,$this->getPath()->parse()), new HTML_Hr), 'action/report');
+        }
+        
+        if (!$this->getStatut()) $this->setStatut('success');
+        if (is_object($oResult) && $oResult instanceof Redirect) {
+          
+          $this->setStatut('redirect');
+          $this->setRedirect($oResult);
+        }
+      }
     }
-    else {
+    catch (SylmaExceptionInterface $e) {
+    
+    }
+    catch (Exception $e) {
       
-      $oRoot = $this->getRoot();
-      $oDocument = new XML_Document($oRoot);
-      
-      if (Controler::useStatut('action/report')) {
-        
-        $oSeek = new HTML_Span(t('>>> Début'), array('style' => 'color: green;'));
-        dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek, $this->getPath()->parse()), new HTML_Hr), 'action/report');
-      }
-      
-      switch ($oRoot->getNamespace()) {
-        
-        /* Execution */
-        
-        case SYLMA_NS_EXECUTION :
-          
-          switch ($oRoot->getName(true)) {
-            
-            // action
-            
-            case 'action' :
-              
-              if ($this->loadSettings($oDocument->getByName('settings', SYLMA_NS_EXECUTION))) {
-                
-                if ($this->getSettings() && !$this->getSettings()->isEmpty()
-                  && ($oReturn = $this->getSettings()->getByName('return', SYLMA_NS_EXECUTION)))
-                  $sReturn = $oReturn->getAttribute('format');
-                else $sReturn = '';
-                
-                // set default variables
-                
-                $this->setVariables(array(
-                  'sylma-user' => Controler::getUser()->getName(),
-                  'sylma-directory' => (string) $this->getDirectory(),
-                  'sylma-lang' => (string) Controler::getSettings('infos/lang'),
-                ));
-                
-                switch ($sReturn) {
-                  
-                  case 'XML_Document' :
-                    
-                    $oResult = new XML_Document($this->buildArgument($oDocument->getFirst()));
-                    
-                  break;
-                  
-                  case 'Redirect' :
-                  case 'mixed' :
-                    
-                    $oResult = $this->buildArgument($oDocument->getFirst());
-                    // if ($oDocument->countChildren() > 1) $this->dspm(xt('Mode mixed'), 'warning');
-                  break;
-                  
-                  default :
-                    
-                    $oResult = new XML_Document('temp');
-                    
-                    $oMethod = new XML_Element('li:add', $oDocument->getRoot()->getChildren(), null, SYLMA_NS_INTERFACE);
-                    $this->runInterfaceMethod($oResult, $oMethod, ActionControler::getInterface($oResult, $this->getRedirect()));
-                    
-                    if (!$oResult->isEmpty()) $oResult = $oResult->getRoot()->getChildren();
-                    else $this->log(txt('No value returned'), 'warning');
-                }
-                
-              } else {
-                
-                $this->setStatut('error');
-                $this->log(txt('Parsing abort ..'), 'error');
-              }
-              
-            break;
-            
-            case 'interface' :
-              
-              if (!$oSettings = $this->getByName('settings', SYLMA_NS_EXECUTION)) {
-                
-                $this->log(txt('@element %s is missing', 'settings'), 'warning');
-                
-              } else {
-                
-                if ($oAction = $oSettings->getByName('use-action')) {
-                  
-                  if (!$sPath = $oAction->getAttribute('path')) {
-                    
-                    $this->log(txt('@attribute %s is missing in @element %s', 'path', $oAction->getPath()), 'error');
-                  }
-                  else {
-                    
-                    $oInterface = new XML_Document($sPath);
-                    Action_Builder::buildInterface($oInterface);
-                  }
-                  
-                } else if ($sClass = $oSettings->readByName('class', SYLMA_NS_EXECUTION)) {
-                  
-                  $oInterface = ActionControler::getInterface($sClass);
-                }
-                
-                $oSettings->remove();
-                
-                if ($oRoot->hasChildren()) {
-                  
-                  $aArguments = $this->loadElementArguments($oRoot);
-                  $this->getPath()->pushIndex($aArguments['index']);
-                  $this->getPath()->mergeAssoc($aArguments['assoc']);
-                }
-                
-                if ($oInterface) {
-                  
-                  $oResult = $this->loadInterface($oInterface);
-                  list($oSubResult, $bSubReturn) = $this->runInterfaceList($oResult, $oRoot);
-                }
-              }
-              
-            break;
-            
-            default :
-              
-              $this->log(txt('Invalid root @element %s', $oRoot->getPath()), 'warning');
-              
-            break;
-          }
-          
-        break;
-        
-        /* Interface */
-        
-        case SYLMA_NS_INTERFACE :
-          
-          $oResult = $this->loadInterface($oRoot);
-          
-        break;
-        
-        default :
-          
-          $this->log(txt('Invalid namespace for @element %s', $oRoot->getPath()), 'warning');
-          
-        break;
-        
-      }
-      
-      if (Controler::useStatut('action/report')) {
-        
-        $oSeek = new HTML_Span(t('<<< Fin'), array('style' => 'color: red;'));
-        dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek,$this->getPath()->parse()), new HTML_Hr), 'action/report');
-      }
-      
-      if (!$this->getStatut()) $this->setStatut('success');
-      if (is_object($oResult) && $oResult instanceof Redirect) {
-        
-        $this->setStatut('redirect');
-        $this->setRedirect($oResult);
-      }
+      Sylma::loadException($e);
     }
     
     // Stop processors
@@ -2174,7 +2190,7 @@ class XML_Action extends XML_Document {
       case 'error' : // Error
         
         //dspm(xt('Action "%s" impossible, argument(s) invalide(s) !', new HTML_Strong($this->getPath())), 'error');
-        if (Sylma::get('actions/redirect/enable')) Controler::errorRedirect();
+        if (Sylma::get('actions/error/redirect')) Controler::errorRedirect();
         
       break;
       
@@ -2190,9 +2206,11 @@ class XML_Action extends XML_Document {
   
   protected function log($mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
     
-    $sContent = '@path ' . $this->getPath() . ' - ' . $mMessage;
+    $aPath = array(
+      '@namespace ' . $this->getNamespace(),
+      '@file ' . $this->getPath());
     
-    return Sylma::log($this->getNamespace(), $sContent, $sStatut);
+    return Sylma::throwException($mMessage, $aPath);
   }
 }
 

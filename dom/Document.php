@@ -1,6 +1,8 @@
 <?php
 
-class XML_Document extends DOMDocument implements Serializable {
+require_once('DocumentInterface.php');
+
+class XML_Document extends DOMDocument implements DocumentInterface, Serializable {
   
   private $iMode = null;
   private $oFile = null;

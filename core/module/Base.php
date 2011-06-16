@@ -79,6 +79,10 @@ class ModuleBase extends Namespaced {
         if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
         else $this->arguments = new XArguments($mArguments, $this->getName());
       }
+      else if (is_string($mArguments)) {
+        
+        $this->arguments = new XArguments((string) $this->getFile($mArguments));
+      }
       else {
         
         if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);

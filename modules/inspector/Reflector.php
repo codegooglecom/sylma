@@ -31,10 +31,6 @@ abstract class InspectorReflector {
   	
     $mSender = (array) $mSender;
     
-    $e = new Sylma::$exception($sMessage);
-    $e->setPath($mSender);
-    $e->loadException();
-    
-    throw $e;
+    Sylma::throwException($sMessage, $mSender);
   }
 }

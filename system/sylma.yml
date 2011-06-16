@@ -5,7 +5,7 @@ general:
 modules:
   path: /sylma/modules
   users: @sylma:import @sylma:self ../path; + /users/settings.yml;
-  editor:
+  editor :
     path: /modules/editeur
   inspector: @sylma:import @sylma:self ../path; + /inspector/settings.yml;
 users:
@@ -96,12 +96,8 @@ messages:
     file : /debug.log
   rights:
     enable: true
-actions:
-  redirect:
-    # Redirect on action's error to 404
-    enable: true
-  stats:
-    # Display actions infos (memory leak !)
-    enable: true
+actions: @sylma:import /sylma/action/action.yml;
+
+
 
 

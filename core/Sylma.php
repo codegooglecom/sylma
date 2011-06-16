@@ -2,6 +2,8 @@
 
 class Sylma {
   
+  const NS = 'http://www.sylma.org';
+  
   const PATH_LIB = 'core';
   const PATH_OPTIONS = '/system/sylma.yml';
   const MODE_EXECUTE = 1;
@@ -35,7 +37,7 @@ class Sylma {
     }
     catch (SylmaExceptionInterface $e) {
       
-      if (self::get('debug/enable')) echo $e;
+      //if (self::get('debug/enable')) echo $e;
     }
     
     //session_write_close();
@@ -86,10 +88,10 @@ class Sylma {
     
     $aMessage = array($sPath, ' @message ', $mMessage);
     $sMessage = implode('', $aMessage);
-    
+    //print_r(debug_backtrace());
     if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
       
-      if (self::get('messages/print/all')) echo $sMessage;
+      if (self::get('messages/print/all')) echo $sMessage."<br/>\n";
       Controler::addMessage($aMessage, $sStatut); // temp
     }
     else if (self::get('messages/print/hidden')) {

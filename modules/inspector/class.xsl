@@ -187,9 +187,6 @@
     <xsl:value-of select="."/>
   </xsl:template>
   
-  <xsl:template match="ins:author" mode="comment">
-  </xsl:template>
-  
   <xsl:template match="ins:parameter" mode="comment">
     <xsl:attribute name="class">
       <xsl:if test="@required != 'true'">

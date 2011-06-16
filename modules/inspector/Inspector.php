@@ -28,7 +28,7 @@ class Inspector extends Module {
       
       return $root->getDocument();
       
-    } catch (SylmaException $e) {
+    } catch (SylmaExceptionInterface $e) {
       
       return null;
     }
@@ -45,7 +45,7 @@ class Inspector extends Module {
       //dspf($class->parse());
       return $class->parse();
     }
-    catch (SylmaException $e) {
+    catch (SylmaExceptionInterface $e) {
       
       
     }

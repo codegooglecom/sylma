@@ -1,5 +1,7 @@
 <?php
 
+require_once('ElementInterface.php');
+
 /**
  * XML_Element ..
  */
@@ -608,10 +610,20 @@ class XML_Element extends DOMElement implements ElementInterface {
         
         if (method_exists($mValue, 'parse')) {
           
-          $mResult = $mValue->parse();
+          try {
+            
+            $mResult = $mValue->parse();
+            
+            if ($mResult != $mValue) return $this->insert($mResult, $oNext);
+            else Controler::addMessage(xt('L\'objet parsé de classe "%s" ne doit pas se retourner lui-même !', new HTML_Strong(get_class($mValue))), 'xml/error');
+          }
+          catch (SylmaExceptionInterface $e) {
           
-          if ($mResult != $mValue) return $this->insert($mResult, $oNext);
-          else Controler::addMessage(xt('L\'objet parsé de classe "%s" ne doit pas se retourner lui-même !', new HTML_Strong(get_class($mValue))), 'xml/error');
+          }
+          catch (Exception $e) {
+            
+            Sylma::loadException($e);
+          }
           
         } else $mValue = $this->insertText($mValue, $oNext); // Forced string
       }
@@ -753,10 +765,10 @@ class XML_Element extends DOMElement implements ElementInterface {
   
   /**
    * Return the list of children of the current element with {@link $childNodes}
-   * @param string sNamespace if set, only children of this namespace will be returned,
+   * @param string $sNamespace if set, only children of this namespace will be returned,
    *   by default calls are recursive so all children of children will be returned too
-   * @param integer iDepth if set, and namespace param too, childrens of children are returned on iDepth levels
-   * @param boolean bCleanComments if true, XML_Comment's will be removed from result
+   * @param integer $iDepth if set, and namespace param too, childrens of children are returned on iDepth levels
+   * @param boolean $bCleanComments if true, XML_Comment's will be removed from result
    * @return XML_NodeList A list of children and/or XML_NodeList of children if namespace defined and iDepth != 0
    */
   public function getChildren($sNamespace = null, $iDepth = null, $bCleanComments = false) {

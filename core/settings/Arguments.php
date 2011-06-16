@@ -1,22 +1,20 @@
 <?php
 
 /**
- * This class act as an interface to arrays with dom-like functions get/set/add
+ * This class act as an interface to arrays of arrays/objects/strings with dom-like functions get/set/add
  * It can also be used with YAML files with the extended version @class XArguments
+ * 
  * @author rodolphe.gerber (at) gmail.com
- *
  */
 
 class Arguments extends Namespaced implements SettingsInterface {
   
-  const VARIABLE_PREFIX = '@sylma:';
   const MESSAGES_STATUT = Sylma::LOG_STATUT_DEFAULT;
-  protected $aArray = array();
   
   /**
-   * Store an error if occurs, in form : <code>array('name' => '', 'message' => '')</code>
+   * The default main array
    */
-  protected static $aError = array();
+  protected $aArray = array();
   
   public function __construct(array $aArray = array(), $sNamespace = '') {
     
@@ -53,7 +51,7 @@ class Arguments extends Namespaced implements SettingsInterface {
     
     $mResult = $this->getValue($sPath, $bDebug);
     
-    if (!self::getError() && is_array($mResult)) {
+    if (is_array($mResult)) {
       
       $mResult = new Arguments($mResult, $this->getNamespace());
     }
@@ -61,6 +59,14 @@ class Arguments extends Namespaced implements SettingsInterface {
     return $mResult;
   }
   
+  /**
+   * Calls getter's related method, it's an interface between @method get() and @method locateValue()
+   *
+   * @param? string $sPath The path to look for
+   * @param? boolean $bDebug If set to FALSE, no exception will be thrown if path is incorrect
+   *
+   * @return null|mixed The value localized by path, or NULL
+   */
   protected function getValue($sPath = '', $bDebug = true) {
     
     $mResult = null;
@@ -85,6 +91,14 @@ class Arguments extends Namespaced implements SettingsInterface {
     return $mResult;
   }
   
+  /**
+   * Split a path in an array of keys. Allow use of '..' to get upper levels
+   *
+   * @param string $sPath A relative or absolute path to split
+   * @param? string $sParent The parent path if @param $sPath is relative
+   *
+   * @return array An array of keys
+   */
   protected static function parsePath($sPath, $sParent = '') {
     
     if ($sPath[0] == '/') $sPath = substr($sPath, 1);
@@ -105,9 +119,17 @@ class Arguments extends Namespaced implements SettingsInterface {
     return $aResult;
   }
   
+  /**
+   * Main search method, it will go through the tree to localize value
+   *
+   * @param array $aPath The array of keys to look for
+   * @param boolean $bDebug If set to FALSE, no exception will be thrown if path is incorrect
+   * @param boolean $bReturn If set to TRUE, return the result even though path is incorrect
+   *
+   * @return null|mixed The value localized by path, or NULL
+   */
   protected function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {
     
-  	self::$aError = array();
     $mCurrent =& $this->aArray;
     $mResult = null;
     $aParentPath = array();
@@ -117,8 +139,15 @@ class Arguments extends Namespaced implements SettingsInterface {
       
       if (!is_array($mCurrent)) {
         
-        if ($bReturn) $mResult =& $mCurrent;
-        else if ($bDebug) $this->throwException(txt('Bad key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+        if (is_object($mCurrent) && $mCurrent instanceof SettingsInterface) {
+          
+          $mResult =& $mCurrent->locateValue($aPath, $bDebug, $bReturn);
+        }
+        else {
+          
+          if ($bReturn) $mResult =& $mCurrent;
+          else if ($aPath && $bDebug) $this->throwException(txt('Bad key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+        }
       }
       else if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug)) {
         
@@ -140,7 +169,17 @@ class Arguments extends Namespaced implements SettingsInterface {
     return $mResult;
   }
   
-  protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
+  /**
+   * Get next key in paths when traversing the tree
+   * 
+   * @param array $aArray The current array of values
+   * @param array $aPath The current key's path
+   * @param? array $aParentPath The parent key's
+   * @param? boolean $bDebug if set to TRUE, no exception will be thrown if path is incorrect
+   *
+   * @return string The next valid key or empty if not found
+   */
+  private function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
     
     $mResult = null;
     $sKey = array_shift($aPath);
@@ -157,22 +196,18 @@ class Arguments extends Namespaced implements SettingsInterface {
     return $sKey;
   }
   
-  protected function parseValue($sValue, $aParentPath) {
+  /**
+   * This methods does nothing as is.
+   * It allows extended class to update value when loading, usefull with @class XArguments and YAML files
+   * 
+   * @param string $sValue The value to edit
+   * @param? array $aParentPath The path to the value
+   *
+   * @return string The same value as @param $sValue
+   */
+  protected function parseValue($sValue, array $aParentPath = array()) {
     
     return $sValue;
-  }
-  
-  protected static function getError() {
-    
-    return self::$aError;
-  }
-  
-  protected static function setError($sName, $sArgument) {
-    
-    self::$aError = array(
-      'name' => $sName,
-      'message' => $sArgument,
-    );
   }
   
   public function read($sPath = '', $bDebug = true) {
@@ -198,13 +233,16 @@ class Arguments extends Namespaced implements SettingsInterface {
     $this->mergeArray($with->query());
   }
   
-  private function mergeArrays(array $array1, array $array2) {
+  private function mergeArrays(array $array1, array $array2, array $aPath = array()) {
     
     foreach($array2 as $key => $val) {
       
-      if(array_key_exists($key, $array1) && is_array($val)) {
+      if(array_key_exists($key, $array1)) {
         
-        $array1[$key] = $this->mergeArrays($array1[$key], $array2[$key]);
+        if (is_string($array1[$key])) $array1[$key] = $this->parseValue($array1[$key], $aPath);
+        
+        if (is_array($array1[$key]) && is_array($val)) $array1[$key] = $this->mergeArrays($array1[$key], $val, $aPath + array($key));
+        else $array1[$key] = $val;
       }
       else {
         
@@ -216,7 +254,7 @@ class Arguments extends Namespaced implements SettingsInterface {
   }
   
   /**
-   * Build an object @class Options with his own array
+   * Build an @class Options's object with this argument's array
    * 
    * @param DOMNode $oRoot The root node to insert the results to
    * @param? DOMDocument|null $oSchema The schema that will be used by the Options object
@@ -292,7 +330,7 @@ class Arguments extends Namespaced implements SettingsInterface {
   
   protected function throwException($sMessage) {
     
-    Sylma::throwException($sMessage, array('@namespace ' . $this->getNamespace()));
+    Sylma::throwException($sMessage, array('@namespace ' . $this->getNamespace()), 1);
   }
   
   protected function log($sMessage, $sStatut = self::MESSAGES_STATUT) {
