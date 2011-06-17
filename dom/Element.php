@@ -64,12 +64,27 @@ class XML_Element extends DOMElement implements ElementInterface {
   
   public function getPath() {
     
+    $sResult = '';
+    
     $sLine = '';
     if (method_exists($this, 'getLineNo')) $sLine = $this->getLineNo();
     
     if (!$sLine) $sLine = 'xx';
+    $sResult .= $this->getName(true);
     
-    return $this->getName(false) . ' (line ' . $sLine . ')';
+    // if @id or @name, display it
+    
+    if ($sID = $this->getAttribute('id')) $sResult .= '[@id = ' . $sID . ']';
+    else if ($sName = $this->getAttribute('name')) $sResult .= '[@name = ' . $sName . ']';
+    
+    $sResult .=  ' (line ' . $sLine . ')';
+    
+    if ($this->getDocument() && ($file = $this->getDocument()->getFile())) {
+      
+      $sResult .= ' @file ' . $file;
+    }
+    
+    return $sResult;
   }
   
   /**

@@ -7,6 +7,7 @@
   <xsl:param name="class-extends">sylma-ins-extends</xsl:param>
   <xsl:param name="class-group">sylma-ins-group</xsl:param>
   <xsl:param name="class-comment">sylma-ins-comment</xsl:param>
+  <xsl:param name="class-item">sylma-ins-item</xsl:param>
   <xsl:param name="class-method">sylma-ins-method</xsl:param>
   <xsl:param name="class-property">sylma-ins-property</xsl:param>
   <xsl:param name="class-optional">sylma-ins-optional</xsl:param>
@@ -16,6 +17,7 @@
   <xsl:param name="class-name">sylma-ins-name</xsl:param>
   <xsl:param name="class-dollar">sylma-ins-dollar</xsl:param>
   <xsl:param name="class-basetype">sylma-ins-basetype</xsl:param>
+  <xsl:param name="class-cast">sylma-ins-cast</xsl:param>
   
 	<xsl:template match="/*">
 		<div class="{$class-class}">
@@ -108,7 +110,7 @@
 	  <xsl:param name="class"/>
 	  <li>
       <xsl:attribute name="class">
-        <xsl:value-of select="concat($class-property, ' ', $class)"/>
+        <xsl:value-of select="concat($class-property, ' ', $class, ' ', $class-item)"/>
       </xsl:attribute>
       <strong><xsl:value-of select="@name"/></strong> = 
       <span><xsl:value-of select="ins:default"/></span>
@@ -119,7 +121,7 @@
 	  <xsl:param name="class"/>
 	  <li>
       <xsl:attribute name="class">
-        <xsl:value-of select="concat($class-property, ' ', $class)"/>
+        <xsl:value-of select="concat($class-property, ' ', $class, ' ', $class-item)"/>
       </xsl:attribute>
 	    <xsl:apply-templates select="ins:modifiers"/>
       <strong>$<xsl:value-of select="@name"/></strong>
@@ -132,7 +134,7 @@
 	
 	<xsl:template match="ins:method">
 	  <xsl:param name="class" select="''"/>
-	  <li class="{$class-method} {$class}">
+	  <li class="{$class-item} {$class-method} {$class}">
       <strong><xsl:value-of select="@name"/></strong>
       <span>(<xsl:copy-of select="ins:implode(ins:parameter)"/> )</span>
       <xsl:variable name="methods" select="../ins:extension//ins:method[@name = current()/@name]"/>
@@ -212,14 +214,16 @@
   </xsl:template>
   
 	<xsl:template match="ins:cast">
-    <xsl:choose>
-      <xsl:when test=". = 'array' or . = 'null' or . = 'boolean' or . = 'string' or . = 'mixed'">
-        <span class="{$class-basetype}"><xsl:value-of select="."/></span>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:copy-of select="ins:get-class(.)"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <span class="{$class-cast}">
+      <xsl:choose>
+        <xsl:when test=". = 'array' or . = 'null' or . = 'boolean' or . = 'string' or . = 'mixed'">
+          <span class="{$class-basetype}"><xsl:value-of select="."/></span>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:copy-of select="ins:get-class(.)"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </span>
     <xsl:if test="position() != last()"> |</xsl:if>
 	</xsl:template>
 	

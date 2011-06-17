@@ -226,6 +226,16 @@ class HTML_Document extends XML_Helper {
   }
 }
 
+class HTML_A extends HTML_Tag {
+  
+  public function __construct($sHref = '', $mChild = '', $aAttributes = array()) {
+    
+    parent::__construct('a', $mChild, $aAttributes);
+    $this->setAttribute('href', $sHref);
+    //$this->forceClosure();
+  }
+}
+
 class HTML_Icone extends HTML_A {
   
   public function __construct($sHref = '', $sSrc = '', $sTitle = '', $aAttributes = array()) {
@@ -298,16 +308,6 @@ class HTML_IEComment extends HTML_Comment {
   public function __construct($oValue, $sVersion = '') {
     
     parent::__construct("[if IE$sVersion]>$oValue<![endif]");
-  }
-}
-
-class HTML_A extends HTML_Tag {
-  
-  public function __construct($sHref = '', $mChild = '', $aAttributes = array()) {
-    
-    parent::__construct('a', $mChild, $aAttributes);
-    $this->setAttribute('href', $sHref);
-    //$this->forceClosure();
   }
 }
 

@@ -1,4 +1,4 @@
-namespace: http://www.sylma.org/modules/tree-menu
+namespace: http://www.sylma.org/modules/menus
 classes:
   document:
     name : XML_Document

@@ -20,14 +20,23 @@
   clear: none;
 }
 
-li.sylma-ins-constant,
-li.sylma-ins-property,
-li.sylma-ins-method {
+li.sylma-ins-item {
   margin-left: 1.5em;
+  _width: 90%;
   padding-left: 1em;
   list-style-type: square;
   float: left;
   clear: left;
+  cursor: default;
+  padding-right: 1em;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  border-radius: 7px;
+}
+
+li.sylma-ins-item:hover {
+  background-color: #ddd;
+  padding: 0.3em 1em;
 }
 
 li.sylma-ins-group {
@@ -40,6 +49,14 @@ li.sylma-ins-group {
   border-top: 1px solid #ddd;
   float: left;
   width: 100%;
+}
+
+.sylma-ins-cast {
+  display: none;
+}
+
+li.sylma-ins-method:hover .sylma-ins-cast {
+  display: inline;
 }
 
 .sylma-ins-basetype {
@@ -69,6 +86,10 @@ li.sylma-ins-group {
 	opacity : 0.65;
 }
 
+.sylma-ins-extends:hover {
+  opacity: 1.0;
+}
+
 .sylma-ins-comment {
   color: gray;
   font-style: italic;
@@ -80,7 +101,7 @@ li.sylma-ins-group {
   overflow: hidden;
 }
 
-.sylma-ins-comment:hover {
+.sylma-ins-item:hover .sylma-ins-comment {
   color: black;
   max-height: 100%;
 }
@@ -91,8 +112,8 @@ li.sylma-ins-group {
   display: none;
 }
 
-.sylma-ins-comment:hover code,
-.sylma-ins-comment:hover ul {
+.sylma-ins-item:hover code,
+.sylma-ins-item:hover ul {
   display: block;
 }
 

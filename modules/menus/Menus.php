@@ -3,6 +3,7 @@
 class TreeMenus extends Module {
   
   const PREFIX = 'menu';
+  const CSS_ACTIVE = 'menu-active';
   
   private $document;
   private $action;
@@ -36,7 +37,7 @@ class TreeMenus extends Module {
       
       do {
         
-        $current->addClass('active');
+        $current->addClass(self::CSS_ACTIVE);
         
         $category = $breadcrumb->shift($current);
         $category->cleanChildren();
