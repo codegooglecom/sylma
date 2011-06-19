@@ -800,7 +800,7 @@ class XML_Action extends XML_Document {
             
             if (is_string($mPath)) $mPath = $this->getAbsolutePath($mPath);
             
-            $mResult = new $sClass($mPath, $iMode);
+            $mResult = new $sClass($mPath, $iMode, $oElement->testAttribute('include'));
             
             if ($sClass == 'XSL_Document') $this->setGlobalVariables($mResult); // auto variables
             

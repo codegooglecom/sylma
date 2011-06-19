@@ -9,7 +9,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
   private $bInclude = true;
   private $bTemp = false; // WARNING, must be set to false, temp files are deleted on __destruct
   
-  public function __construct($mChildren = '', $iMode = MODE_READ, $bInclude = true) {
+  public function __construct($mChildren = '', $iMode = MODE_READ, $bInclude = false) {
     
     parent::__construct('1.0', 'utf-8');
     
@@ -255,7 +255,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
             XML_Controler::addStat('file');
             $oFile->isFileSecured($this->appendLoadRights());
             
-            // if ($this->useInclude()) $this->includeExternals(); // include
+            if ($this->useInclude()) $this->includeExternals(); // include
           }
           
         } else dspm (xt('Problème lors du chargement du fichier %s', new HTML_Strong($oFile)), 'file/error');

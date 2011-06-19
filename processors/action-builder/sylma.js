@@ -94,12 +94,12 @@ var sylma = {
       'url' : '/index.txt?sylma-result-id=' + sID, 
       'onSuccess' : function(oResult) {
         
-        //sylma.dsp(' - DEBUT - ');
+        //sylma.log(' - DEBUT - ');
         sylma[sName] = sylma.buildRoot(oResult);
         if (oSuccess) oSuccess();
         
         Array.each(self.aToBuild, function(item) { item(); });
-        //sylma.dsp(' - FIN - ');
+        //sylma.log(' - FIN - ');
     }}).get();
   },
   
@@ -107,7 +107,7 @@ var sylma = {
     
     var result;
     
-    if (!object) this.dsp('Aucun objet reçu pour "' + sPath + '"');
+    if (!object) this.log('Aucun objet reçu pour "' + sPath + '"');
     else {
       for (var i in object) { var bluh; } // TODO ??
       
@@ -121,7 +121,7 @@ var sylma = {
   },
   
   buildObject: function(object, sPath, parentLayer, rootObject, iDepth) {
-    // sylma.dsp(this.aToBuild.length);
+    // sylma.log(this.aToBuild.length);
     var sKey, sName, oSub, bRoot, eNode, isRoot;
     var oResult = {};
     var bResult = true;
@@ -141,14 +141,14 @@ var sylma = {
       if (!iDepth) iDepth = 0;
       else if (iDepth > 10) {
         
-        this.dsp('Trop de récursion !');
+        this.log('Trop de récursion !');
         return;
       }
       
       if (object['init']['extend-base']) {
         
         var sClassBase = object['init']['extend-base'];
-        if (!sClassBase) this.dsp('Classe de base vide !');
+        if (!sClassBase) this.log('Classe de base vide !');
       }
       
       if (object['init']['extend-class']) {
@@ -166,20 +166,20 @@ var sylma = {
           sClassName = sClassName[0] == '[' ? sClassName : '.' + sClassName;
           
           try { eval('oResult = new window' + sClassName + sArgs); }
-          catch(e) { this.dsp('Nom de classe introuvable : window' + sClassName + '<br/>' + e); bResult = false; };
+          catch(e) { this.log('Nom de classe introuvable : window' + sClassName + '<br/>' + e); bResult = false; };
           
         } else {
           
           try { eval('oResult = new window' + sClassBase + sClassName + sArgs); }
           catch(e) {
             
-            this.dsp("Classe '" + sClassName + "' introuvable ou invalide dans la classe de base window'" + sClassBase + "'<br/>" + e); 
+            this.log("Classe '" + sClassName + "' introuvable ou invalide dans la classe de base window'" + sClassBase + "'<br/>" + e); 
             bResult = false;
           };
         }
       }
       
-      if (!bResult) this.dsp('Erreur :: Impossible de créer l\'objet');
+      if (!bResult) this.log('Erreur :: Impossible de créer l\'objet');
       else if (!rootObject) rootObject = oResult;
     }
     
@@ -225,15 +225,15 @@ var sylma = {
               
             } else { // Sylma others
               
-              this.dsp('Type d\'object inconnu : ' + sKey);
-              this.dsp(this.view(object['properties']));
+              this.log('Type d\'object inconnu : ' + sKey);
+              this.log(this.view(object['properties']));
             }
             
           } else if (sType == 'string') oResult[sKey] = oSub;// JS String
-          else this.dsp('Type \'' + sType + '\' inconnu dans ' + sKey + ' !'); // JS Others
+          else this.log('Type \'' + sType + '\' inconnu dans ' + sKey + ' !'); // JS Others
         }
       }
-      //sylma.dsp(sPath);
+      //sylma.log(sPath);
       if (object['methods']) this.buildMethods(object, oResult);
       if (oResult.onBuilt) this.aToBuild.push(oResult.onBuilt.bind(oResult));
       
@@ -289,7 +289,7 @@ var sylma = {
       
       method = object.methods[sMethod];
       
-      if (!sylma.methods) sylma.dsp('Liste des méthodes introuvable');
+      if (!sylma.methods) sylma.log('Liste des méthodes introuvable');
       else {
         
         if (sylma.methods[sMethod]) {
@@ -316,12 +316,12 @@ var sylma = {
               }
               else {
                 
-                this.dsp('Erreur :: Objet DOM introuvable - path : "' + method['path-node'] + '" - id : ' + method['id-node']);
+                this.log('Erreur :: Objet DOM introuvable - path : "' + method['path-node'] + '" - id : ' + method['id-node']);
               }
               
             } else {
               
-              this.dsp("Erreur :: Méthode '" + sMethod + "' invalide !");
+              this.log("Erreur :: Méthode '" + sMethod + "' invalide !");
             }
           }
           else { // method
@@ -331,7 +331,7 @@ var sylma = {
         }
         else {
           
-          this.dsp("Erreur :: Méthode '" + sMethod + "' introuvable !");
+          this.log("Erreur :: Méthode '" + sMethod + "' introuvable !");
         }
       }
     }
@@ -395,7 +395,7 @@ var sylma = {
     
     var aKeys = sKeys.split(',');
     var aResults = new Array();
-    // sylma.dsp(e.code);
+    // sylma.log(e.code);
     for (var i = 0; i < aKeys.length; i++) {
       // alert(aKeys[i]);
       switch (aKeys[i]) {
@@ -408,7 +408,7 @@ var sylma = {
       
       aResults.push(iKey);
     }
-    //sylma.dsp(e.code + ' - ' + aResults.contains(e.code));
+    //sylma.log(e.code + ' - ' + aResults.contains(e.code));
     if (e.code && aResults.contains(e.code)) {
       
       var oBounded = sylma.methods[sMethod].bind(this, e);
@@ -458,7 +458,7 @@ var sylma = {
       case 7 : break; // version="1.0" encoding="utf-8"
       case 8 : break // doctype
       
-      default : sylma.dsp('Impossible d\'ajouter ' + xml.nodeValue + ' de type ' + xml.nodeType);
+      default : sylma.log('Impossible d\'ajouter ' + xml.nodeValue + ' de type ' + xml.nodeType);
     }
     
     return parent;
@@ -524,7 +524,7 @@ var sylma = {
         
         if (!oContentContainer) {
           
-          sylma.dsp('Réponse du serveur illisible', 'error');
+          sylma.log('Réponse du serveur illisible', 'error');
         }
         else {
           
@@ -617,14 +617,14 @@ var sylma = {
         self.aToBuild = new Array();
         
         var oNewObject = self.buildRoot(oResponse, oOptions.name, oOptions.parent, oOptions.root);
-        // sylma.dsp(this.aToBuild.length);
+        // sylma.log(this.aToBuild.length);
         if (oOptions.position) oNewObject['sylma-position'] = oOptions.position;
-        // sylma.dsp(oOptions.parent['sylma-path'] + ' / ' + oOptions.name);
+        // sylma.log(oOptions.parent['sylma-path'] + ' / ' + oOptions.name);
         if (oOptions['old-name']) eval('delete(oOptions.parent.' + oOptions['old-name'] + ')'); // delete old object
         if (oNewObject) eval('oOptions.parent.' + oOptions.name + ' = oNewObject'); // insert new object
-        // sylma.dsp('oOptions.parent.' + oOptions.name + ' = oNewObject');
+        // sylma.log('oOptions.parent.' + oOptions.name + ' = oNewObject');
         
-        // sylma.dsp(self.aToBuild.length);
+        // sylma.log(self.aToBuild.length);
         Array.each(self.aToBuild, function(item) { item(); });
         
         oOptions.resultObject = oNewObject;
@@ -740,7 +740,7 @@ var sylma = {
   
   /* Utils */
   
-  dsp : function(sContent, sStatut) {
+  log : function(sContent, sStatut) {
     
     if (SYLMA_IS_ADMIN) {
       
@@ -749,9 +749,15 @@ var sylma = {
     }
   },
   
+  dsp : function(sContent, sStatut) {
+    
+    this.log(sContent, sStatut);
+    this.log('Using sylma.dsp() is deprecated');
+  },
+  
   dspf : function(obj) {
     
-    this.dsp(this.view(obj));
+    this.log(this.view(obj));
   },
   
   view : function(obj, parent, recursion) {
@@ -786,7 +792,7 @@ var sylma = {
     }
     
     return sContent;
-    //this.dsp(sContent);
+    //this.log(sContent);
   }
 
 };
@@ -804,14 +810,17 @@ sylma.classes.Base = new Class({
       var eNode = $(oArgs['object']['init']['id-node']);
       
       if (eNode) {
-        //sylma.dsp(oArgs['path'] + ' : ' + oArgs['parent']['sylma-path'] + ' / ' + eNode.get('class'));
+        //sylma.log(oArgs['path'] + ' : ' + oArgs['parent']['sylma-path'] + ' / ' + eNode.get('class'));
         this.node =  eNode;
-        eNode.store('ref-object', this);
         
-      } else sylma.dsp("Erreur : Element lié à l'objet '" + oArgs['object']['init']['id-node'] + "' introuvable !");
+        eNode.store('ref-object', this);
+        eNode.store('parent-object', oArgs['parent']);
+        eNode.store('root-object', oArgs['root']);
+        
+      } else sylma.log("Erreur : Element lié à l'objet '" + oArgs['object']['init']['id-node'] + "' introuvable !");
     }
     
-    //sylma.dsp(oArgs['path'] + ' : ' + oArgs['parent']['sylma-path']);
+    //sylma.log(oArgs['path'] + ' : ' + oArgs['parent']['sylma-path']);
     
     this.parentObject = oArgs['parent']; // Attach parent object
     this['sylma-path'] = oArgs['path']; // Attach parent object ref
@@ -823,7 +832,7 @@ sylma.classes.Base = new Class({
     return this['sylma-path'];
   },
   
-  setTimer : function(sName, callback, iTime, el) {
+  setTimer : function(sName, callback, iTime, el, bTimeout) {
     
     el = el || this;
     
@@ -832,7 +841,8 @@ sylma.classes.Base = new Class({
     
     if (!this.timer) this.timer = new Array();
     
-    this.timer[sName] = window.setInterval(bound, iTime);
+    if (bTimeout) this.timer[sName] = window.setTimeout(bound, iTime);
+    else this.timer[sName] = window.setInterval(bound, iTime);
   },
   
   clearTimer : function(sName) {
@@ -874,8 +884,8 @@ sylma.classes.request = new Class({
   'parseAction' : function(oResult, bText) {
     
     var oContainer = $('msg-admin');
-    // sylma.dsp(oResult.childNodes[0].tagName);
-    //if (!$(oResult)) {sylma.dsp(typeOf(oResult));sylma.dsp(bText);}
+    // sylma.log(oResult.childNodes[0].tagName);
+    //if (!$(oResult)) {sylma.log(typeOf(oResult));sylma.log(bText);}
     
     if (!oResult) {
       
@@ -885,13 +895,13 @@ sylma.classes.request = new Class({
       
       if (typeOf(oResult) != 'element') oResult = oResult.firstChild;
       //oResult = 
-      //sylma.dsp(typeOf(oResult));
+      //sylma.log(typeOf(oResult));
       
       
       if (Browser.ie) {
         
         oResult = sylma.createXML(oResult);
-        // sylma.dsp(typeOf(oResult));
+        // sylma.log(typeOf(oResult));
         // var oContent = oResult.('content')[0];
       }
       
@@ -1057,7 +1067,7 @@ sylma.classes.layer = new Class({
     } else if (this.isOpen) {
       
       this.node.fade('out');
-       //sylma.dsp('[hide] ' + this.node.id);
+       //sylma.log('[hide] ' + this.node.id);
     }
     
     this.isOpen = false;
@@ -1156,7 +1166,7 @@ sylma.classes['menu-common'] = new Class({
     
     this.resetParent();
     if (this.originNode) this.originNode.grab(this.node);
-    if (!this.node.getChildren().length) sylma.dsp('tools perdus [a] !');
+    if (!this.node.getChildren().length) sylma.log('tools perdus [a] !');
   }
 });
 

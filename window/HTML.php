@@ -111,7 +111,8 @@ class WindowHTML extends XML_Action {
     } else {
       
       $oView->formatOutput();
-      return $sDocType."\n".$oView->display(false, true);
+      // return $sDocType."\n".$oView->display(false, true);
+      return $sDocType."\n".$oView->display(false, false);
     }
   }
   
@@ -119,6 +120,7 @@ class WindowHTML extends XML_Action {
     
     try {
       
+      Controler::setContentType('xhtml');
       $sResult = $this->printXML();
       
     } catch(Exception $e) {

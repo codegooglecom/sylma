@@ -473,6 +473,8 @@ class Controler {
       case 'xml' :
       case 'xsl' : return 'text/xml';
       
+      case 'xhtml' : return 'application/xhtml+xml';
+      
       default : return 'plain/text';
     }
   }
