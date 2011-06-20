@@ -67,6 +67,7 @@ directories:
       user-mode:
 dom:
   debug:
+    # display all xpath queries in a formatted table containing paths grouped by count
     show-queries: false
   rights:
     enable: true

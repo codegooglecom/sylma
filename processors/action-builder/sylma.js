@@ -13,6 +13,14 @@ var sylma = {
   aToBuild : new Array(),
   /* global */
   
+  browser : {
+    
+    firefox : Browser.firefox,
+    safari : Browser.safari,
+    chrome : Browser.chrome,
+    ie : Browser.ie,
+  },
+  
   inttobool : function(sValue) {
     
     return parseInt(sValue) === 1 ? true : false;
@@ -468,11 +476,18 @@ var sylma = {
     
     if (node) {
       
-      if (bFast) node.setStyle('opacity', 0.1);
+      if (node.style) {
+        
+        if (bFast) node.setStyle('opacity', 0.1);
+        else {
+          
+          node.get('tween').set('duration', 'short');
+          node.tween('opacity', 0.1);
+        }
+      }
       else {
         
-        node.get('tween').set('duration', 'short');
-        node.tween('opacity', 0.1);
+        
       }
     }
   },
@@ -483,7 +498,7 @@ var sylma = {
     
     if (node) {
       
-      if (node.hasClass('sylma-loading')) {
+      if (node['class'] && node.hasClass('sylma-loading')) {
         
         var iFrom = node.getStyle('opacity');
         node.setStyle('opacity', iFrom);
