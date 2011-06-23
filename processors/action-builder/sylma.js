@@ -117,15 +117,20 @@ var sylma = {
     
     if (!object) this.log('Aucun objet reçu pour "' + sPath + '"');
     else {
-      for (var i in object) { var bluh; } // TODO ??
       
-      //if (!oRoot) oRoot = oParent;
-      if (!sPath) sPath = i;
+      sRoot = this.getFirstProperty(object);
+      if (!sPath) sPath = sRoot;
       
-      result = this.buildObject(object[i], sPath, oParent, oRoot);
+      result = this.buildObject(object[sRoot], sPath, oParent, oRoot);
     }
     
     return result;
+  },
+  
+  getFirstProperty : function(object) {
+    
+    for (var i in object) { var bluh; }
+    return i;
   },
   
   buildObject: function(object, sPath, parentLayer, rootObject, iDepth) {
@@ -478,6 +483,8 @@ var sylma = {
       
       if (node.style) {
         
+        $(node).store('old-opacity', node.getStyle('opacity'));
+        // sylma.log('disable : ' + node.getStyle('opacity'));
         if (bFast) node.setStyle('opacity', 0.1);
         else {
           
@@ -498,12 +505,14 @@ var sylma = {
     
     if (node) {
       
-      if (node['class'] && node.hasClass('sylma-loading')) {
+      if (node.getAttribute('class').search(/sylma-loading/) >= 0) {
         
-        var iFrom = node.getStyle('opacity');
-        node.setStyle('opacity', iFrom);
-        
-        node.removeClass('sylma-loading')
+        iOpacity = $(node).retrieve('old-opacity');
+        // node.setStyle('opacity', iFrom);
+        // sylma.log(iFrom);
+        // sylma.log(node.getAttribute('style'));
+        if (node['class']) $(node).removeClass('sylma-loading');
+        else node.removeAttribute('class');
       }
       
       node.get('tween').set('duration', 100);
@@ -628,6 +637,8 @@ var sylma = {
       'onSuccess' : function(oResponse) {
         
         if (!oOptions.parent) oOptions.parent = sylma;
+        if (!oOptions.name) oOptions.name = self.getFirstProperty(oResponse);
+        if (oOptions.namePrefix) oOptions.name = oOptions.namePrefix + oOptions.name;
         
         self.aToBuild = new Array();
         
@@ -636,9 +647,9 @@ var sylma = {
         if (oOptions.position) oNewObject['sylma-position'] = oOptions.position;
         // sylma.log(oOptions.parent['sylma-path'] + ' / ' + oOptions.name);
         if (oOptions['old-name']) eval('delete(oOptions.parent.' + oOptions['old-name'] + ')'); // delete old object
-        if (oNewObject) eval('oOptions.parent.' + oOptions.name + ' = oNewObject'); // insert new object
+        if (oNewObject) eval('oOptions.parent["' + oOptions.name + '"] = oNewObject'); // insert new object
         // sylma.log('oOptions.parent.' + oOptions.name + ' = oNewObject');
-        
+        // sylma.log(oOptions.parent);
         // sylma.log(self.aToBuild.length);
         Array.each(self.aToBuild, function(item) { item(); });
         
@@ -646,7 +657,6 @@ var sylma = {
         
         // at last : onSuccess function
         if (oOptions.onSuccess) oOptions.onSuccess(oNewObject);
-        
     }}).get();
   },
   
@@ -760,7 +770,7 @@ var sylma = {
     if (SYLMA_IS_ADMIN) {
       
       if (SYLMA_USE_CONSOLE) console.log(sContent);
-      else this.sendPopup(sContent, sStatut);
+      // else this.sendPopup(sContent, sStatut);
     }
   },
   
@@ -965,8 +975,18 @@ sylma.classes.layer = new Class({
   
   initialize : function(oArgs) {
     
-    if (oArgs['hidden']) this.isOpen = false;
     this.parent(oArgs);
+    
+    if (oArgs['hidden']) {
+      
+      this.isOpen = false;
+      
+      this.node.setStyles({
+        'opacity' : 0,
+        'visibility' : 'hidden'
+      });
+    }
+    
   },
   
   getPath : function() {

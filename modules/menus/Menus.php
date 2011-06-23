@@ -33,7 +33,11 @@ class TreeMenus extends Module {
     $breadcrumb = $this->create('document');
     $breadcrumb->addNode('breadcrumb', null, array(), $this->getNamespace());
     
-    if ($current = $this->document->get("//*[@absolute-path=\"$sPath\"]")) {
+    $nodes = $this->document->query("//*[@absolute-path=\"$sPath\"]");
+    
+    if ($nodes->length) {
+      
+      $current = $nodes->item($nodes->length - 1);
       
       do {
         

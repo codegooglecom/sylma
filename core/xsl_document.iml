@@ -9,6 +9,9 @@
   <method path="remove-parameter" name="removeParameter">
     <argument format="php-string" name="local-name"/>
   </method>
+  <method path="set-parameters" name="setParameters">
+    <argument format="php-array" name="parameters"/>
+  </method>
   <method path="set-parameter" name="setParameter">
     <argument format="php-string" name="name"/>
     <argument name="value">
