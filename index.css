@@ -1,0 +1,10 @@
+
+ul.sylma-tools {
+  padding: 1em 0 1em 2em;
+  margin: 2em;
+  font-size: 1.2em;
+  font-style:italic;
+  border: 1px solid #eee;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}

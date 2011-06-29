@@ -12,16 +12,6 @@ class ModuleBase extends Namespaced {
   private $oDirectory = null;
   private $arguments = null;
   
-  protected function setName($sName) {
-    
-    return $this->sName = $sName;
-  }
-  
-  public function getName() {
-    
-    return $this->sName;
-  }
-  
   protected function setDirectory($mPath) {
     
     if (is_string($mPath)) $this->oDirectory = extractDirectory($mPath);
@@ -33,12 +23,26 @@ class ModuleBase extends Namespaced {
     return $this->oDirectory;
   }
   
+  /**
+   * Get a file object relative to the module's directory set in @method setDirectory()
+   *
+   * @param string $sPath The relative or absolute path to the file
+   * @return storage\filesys\FileInterface|null The file corresponding to the path given, or NULL if none found
+   */
   protected function getFile($sPath) {
     
     return Controler::getFile(Controler::getAbsolutePath($sPath, $this->getDirectory()));
   }
   
-  public function create($sName, $aArguments = array()) {
+  /**
+   * Build an object defined in @settings classes
+   * 
+   * @param string $sName The short name of the class
+   * @param array $aArguments The arguments sent to the object on contstruction
+   *
+   * @return mixed The object builded
+   */
+  public function create($sName, array $aArguments = array()) {
     
     $result = null;
     
@@ -136,6 +140,13 @@ class ModuleBase extends Namespaced {
     return $this->oSchema;
   }
   
+  /**
+   * Throw a customized exception to the main controler
+   * 
+   * @param string $sMessage The message describing the exception
+   * @param array|string $mSender A list of keys or a single key describing the previous classes throwing this exception
+   * @param integer $iOffset The number of calls before final sent to main controler. This will be used to localize the call in backtrace
+   */
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
     
     $mSender = (array) $mSender;
@@ -144,21 +155,38 @@ class ModuleBase extends Namespaced {
     Sylma::throwException($sMessage, $mSender, $iOffset);
   }
   
-  /*
-   * Add a log message with the @class Logger
+  /**
+   * Escape a string for secured queries to module's related storage system
+   * <code>
+   * list($spUser, $spPassword) = $this->escape(array($sUser, sha1($sPassword)));
+   * </code>
+   * 
+   * @param string|array A single or a list of values to escape
+   * @return string|array An escaped string or array of values
+   */
+  
+  protected function escape() {
+    
+    if (func_num_args() == 1) return addQuote(func_get_arg(0));
+    else return addQuote(func_get_args());
+  }
+  
+  /**
+   * Log a message
    * @param mixed|DOMNode|string|array $mMessage The message to send, will be parsed or stringed
    * @param $sStatut The statut of message : see @file /system/allowed-messages.xml for more infos
-   **/
+   */
   protected function log($mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
     
     return Sylma::log($this->getNamespace(), $mMessage, $sStatut);
   }
+  
   /**
    * Alias of log for ascendent compatibility
    */
   protected function dspm($mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
     
-    $oPath = new HTML_Div(xt('Module %s -&gt; %s', view($this->getName()), new HTML_Strong($this->getDirectory())),
+    $oPath = new HTML_Div(xt('Module %s -&gt; %s', view($this->getNamespace()), new HTML_Strong($this->getDirectory())),
       array('style' => 'font-weight: bold; padding: 5px 0 5px;'));
     return dspm(array($oPath, $mMessage, new HTML_Tag('hr')), $sStatut);
   }

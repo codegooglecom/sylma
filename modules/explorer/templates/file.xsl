@@ -31,6 +31,7 @@
         </div>
       </xsl:variable>
       <div class="resource {name()}">
+        <la:event name="mouseover">if (!%parent-object%.parentObject.tools.resource !== %ref-object%) return this.fireEvent('mouseenter');</la:event>
         <la:event name="mouseenter"><![CDATA[var tools = %ref-object%.rootObject.tools;
 
 if (!tools.isLocked()) return tools.show(this);
@@ -53,7 +54,7 @@ return true;]]></la:event>
         <xsl:choose>
           <xsl:when test="contains('jpg,jpeg,gif,png', @extension)">
             <la:property name="isImage">true</la:property>
-            <a class="preview clear-block preview-image" href="{@full-path}?width=800&amp;height=650">
+            <a class="preview clearfix preview-image" href="{@full-path}?width=800&amp;height=650">
               <img src="{@full-path}?width=96&amp;height=50"/>
               <xsl:copy-of select="$security"/>
             </a>

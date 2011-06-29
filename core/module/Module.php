@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Simple generic class intended to be extends by about every modules used with Sylma
+ * 
+ * - Settings in DOM Document with @method getSettings() (global settings) and @method getOptions() (context settings)
+ * - Main directory relative calls (actions, documents, templates)
+ */
 class Module extends ModuleBase {
   
   private $oSettings = null;  // global module settings
@@ -75,8 +81,6 @@ class Module extends ModuleBase {
     else return null;
   }
   
-  /*** Options ***/
-  
   protected function setOptions(XML_Document $oOptions, XML_Document $oSchema = null, $aNS = array()) {
     
     $this->oOptions = new Options($oOptions, $oSchema, $this->mergeNamespaces($this->getNS(), $aNS));
@@ -89,12 +93,32 @@ class Module extends ModuleBase {
     return $this->oOptions;
   }
   
+  /**
+   * Return a setting result from @interface SettingsInterface object set with @method setOptions()
+   *
+   * @param string $sPath The path to the value wanted
+   * @param mixed The default value to return if no value is found
+   * @param boolean If set to TRUE, an exception will be sent
+   *
+   * @return mixed The value found at the location of @param $sPath or null if not found
+   */
   protected function getOption($sPath, $mDefault = null, $bDebug = false) {
     
-    if ($this->getOptions() !== null) $eResult = $this->getOptions()->get($sPath, $bDebug);
-    return isset($eResult) ? $eResult : $mDefault;
+    $result = null;
+    
+    if ($this->getOptions() !== null) $result = $this->getOptions()->get($sPath, $bDebug);
+    return $result ? $result : $mDefault;
   }
   
+  /**
+   * Return a string formated option read with @method getOptions()
+   *
+   * @param string $sPath The path to the value wanted
+   * @param mixed The default value to return if no value is found
+   * @param boolean If set to TRUE, an @interface SylmaExceptionInterface object will be sent
+   *
+   * @return string|null The value found at the location of @param $sPath or null if not found
+   */
   protected function readOption($sPath, $mDefault = null, $bDebug = false) {
     
     $sResult = null;

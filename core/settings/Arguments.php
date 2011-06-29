@@ -109,12 +109,14 @@ class Arguments extends Namespaced implements SettingsInterface {
     
     $aResult = array();
     
-    foreach ($aPath as $sPath) {
+    foreach ($aPath as $sSubPath) {
       
-      if ($sPath != '..') $aResult[] = $sPath;
-      else if (!$aResult) Sylma::log(self::NS, txt('Cannot use .. when current level is root in @path /%s', $sPath));
+      if ($sSubPath != '..') $aResult[] = $sSubPath;
+      else if (!$aResult) Sylma::log(self::NS, txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
       else array_pop($aResult);
     }
+    
+    if ($sPath && !$aPath) $this->throwException(txt('Cannot parse path %s', $sPath));
     
     return $aResult;
   }
@@ -154,7 +156,7 @@ class Arguments extends Namespaced implements SettingsInterface {
         $mCurrent =& $mCurrent[$sKey];
         
         // run hypotheticals parse on strings
-        if (is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
+        if ($mCurrent && is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
         
         // if last, save result
         if (!$aPath) $mResult =& $mCurrent;
@@ -323,7 +325,6 @@ class Arguments extends Namespaced implements SettingsInterface {
         
         if (is_array($mValue)) self::buildNode($node, $mValue);
         else $node->add($mValue);
-        
       }
     }
   }
@@ -336,5 +337,16 @@ class Arguments extends Namespaced implements SettingsInterface {
   protected function log($sMessage, $sStatut = self::MESSAGES_STATUT) {
     
     Sylma::log($this->getNamespace(), $sMessage, $sStatut);
+  }
+  
+  public function __toString() {
+    
+    if (count($this->aArray) == 1) {
+      
+      $mValue = array_pop($this->aArray);
+      if (!is_array($mValue)) return (string) $mValue;
+    }
+    
+    $this->throwException(txt('Cannot render an array as a string'));
   }
 }

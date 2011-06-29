@@ -17,19 +17,24 @@
       </le:default>
     </le:argument>
     <le:processor path="/sylma/processors/action-builder" namespace="http://www.sylma.org/processors/action-builder"/>
-    <le:path run="true">
-      <li:get-directory>
-        <li:get-parent set-variable="directory"/>
-      </li:get-directory>
-    </le:path>
+    <le:get-argument name="path">
+      <li:if>
+        <le:get-argument name="path">
+          <li:get-parent set-variable="parent"/>
+        </le:get-argument>
+      </li:if>
+      <li:if-not>
+        <le:controler>
+          <li:get-directory set-variable="parent"/>
+        </le:controler>
+      </li:if-not>
+    </le:get-argument>
   </le:settings>
   <la:layer name="mozaic" extend-base="sylma.explorer-classes" class="mozaic">
     <la:property name="sylma-send-method">get</la:property>
     <la:property name="parentDirectory">
       <le:string>
-        <le:get-argument name="path">
-          <li:get-parent/>
-        </le:get-argument>
+        <le:get-variable name="parent"/>
       </le:string>
     </la:property>
     <la:property name="currentDirectory">
@@ -37,7 +42,7 @@
         <le:get-argument name="path"/>
       </le:string>
     </la:property>
-    <div class="clear-block">
+    <div class="clearfix">
       <la:event name="click" limit="self"><![CDATA[%ref-object%.rootObject.tools.hide();
 return true;]]></la:event>
       <div>
@@ -57,7 +62,7 @@ layer.update({'path' : path});
 return false;
 
 ]]></la:event>
-          <img src="[$directory]/directory-up.png"/>
+          <img src="[$sylma-directory]/../directory-up.png"/>
         </a>
         <span>
           <le:string>

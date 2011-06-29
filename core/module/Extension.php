@@ -6,11 +6,6 @@ class ModuleExtension extends Module {
   // concerned methods are getDirectory(), getFile(), getDocument() and runAction()
   private $aDirectories = array();
   
-  protected function setName($sName) {
-    
-    if (!$this->getName()) parent::setName($sName);
-  }
-  
   /**
    * Set the working directory for this module. It can be retrieve with @method getDirectory()
    * Multiple directories can be used, see @method addDirectory() for more details
@@ -23,16 +18,21 @@ class ModuleExtension extends Module {
   }
   
   /**
-   * Add a directory to the directories stack. When loading a file or an action,
+   * Add a directory to the directories stack. When loading a file or an action
    * directories will be scan from last to first to find corresponding file.
-   * @return XML_Directory The current module directory
+   * 
+   * @param string|XML_Path $mPath The absolute path where is located the directory
+   * @param string $sClass The class to link to the directory added
+   * 
+   * @return string|XML_Directory The added directory
    */
   protected function addDirectory($mPath, $sClass = '') {
     
     if (!$sClass) $sClass = get_class($this);
-    if (is_string($mPath)) $mPath = extractDirectory($mPath, true);
+    if (is_string($mPath)) $mPath = extractDirectory($mPath);
     
     $this->aDirectories[$sClass] = $mPath;
+    return $mPath;
   }
   
   /**

@@ -1,6 +1,6 @@
 <?php
 
-function extractDirectory($sPath, $bObject = false) {
+function extractDirectory($sPath, $bObject = true) {
   
   $sPath = substr($sPath, strlen(getcwd().MAIN_DIRECTORY) + 1);
   if (SYLMA_XAMPP_BUG && Sylma::isWindows()) $sPath = str_replace('\\', '/', $sPath);

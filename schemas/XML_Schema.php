@@ -24,6 +24,8 @@
 
 class XSD_Parser extends ModuleBase {
   
+  const NS = 'http://www.sylma.org/schemas';
+  
   private $aOptions = array(
     'model' => false, // if false, it will not build the model
     'messages' => true, // if false, validation and building will stop at first error
@@ -49,10 +51,9 @@ class XSD_Parser extends ModuleBase {
   
   public function __construct(XML_Document $oSchema, XML_Document $oDatas = null, $aOptions = array()) {
     
-    $this->setName('schemas');
     $this->setDirectory(__file__);
     
-    $this->setNamespace(SYLMA_NS_SCHEMAS, 'lc');
+    $this->setNamespace(self::NS, 'lc');
     $this->setNamespace(SYLMA_NS_XSD, 'xs', false);
     
     if ($aOptions) $this->aOptions = array_merge($this->aOptions, $aOptions);

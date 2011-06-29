@@ -34,15 +34,34 @@ class Inspector extends Module {
     }
   }
   
+  public function stringClass($sClass) {
+    
+    $result = null;
+    
+    try {
+      
+      $class = $this->create(self::CLASS_CLASS, array($sClass, $this, false));
+      $doc = $class->parse();
+      // dspf($doc);
+      if ($doc && !$doc->isEmpty()) $sResult = $doc->parseXSL($this->getTemplate('class-string.xsl'), false);
+      
+      $result = new HTML_Tag('pre', $sResult);
+    }
+    catch (SylmaExceptionInterface $e) {
+      
+      
+    }
+    
+    return $result;
+  }
+  
   public function getClass($sClass) {
     
     try {
       
-      include('Method.php');
-      
       $class = $this->create(self::CLASS_CLASS, array($sClass, $this));
       
-      //dspf($class->parse());
+      // dspf($class->parse());
       return $class->parse();
     }
     catch (SylmaExceptionInterface $e) {

@@ -50,7 +50,7 @@
       
       <xsl:when test="lc:element-is-complex($element)">
         
-        <div class="field field-complex clear-block">
+        <div class="field field-complex clearfix">
           <xsl:if test="not(lc:element-is-multiple($element))">
             <h3><xsl:value-of select="lc:element-get-title($element)"/></h3>
           </xsl:if>
@@ -65,7 +65,7 @@
         
         <xsl:variable name="file" select="lc:get-file()"/>
         
-        <div class="field field-file clear-block">
+        <div class="field field-file clearfix">
           <xsl:apply-templates select="." mode="label">
             <xsl:with-param name="element" select="$element"/>
           </xsl:apply-templates>
@@ -121,7 +121,7 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:if test="not(@lc:editable = 'false')">
-      <div class="field clear-block type-{$class}">
+      <div class="field clearfix type-{$class}">
         <xsl:apply-templates select="." mode="label">
           <xsl:with-param name="element" select="$element"/>
         </xsl:apply-templates>

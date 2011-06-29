@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lc="http://www.sylma.org/schemas" targetNamespace="http://www.sylma.org/schemas/test" xmlns="http://www.sylma.org/schemas/test">
+  <xs:element name="commande" lc:gen-id="id">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="beruf" type="xs:integer" lc:title="spécialité" lc:key-ref="document('db://ext/specialites')/*/*"/>
+        <xs:element name="funktion" lc:title="Titre" lc:duplicate="urlize funktion-urlize">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:maxLength value="150"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="funktion-urlize" type="xs:string" lc:editable="false" lc:visible="false"/>
+        <xs:element name="eintritt" type="xs:string" lc:title="début de la mission" minOccurs="0"/>
+        <xs:element name="date-debut" type="xs:date" lc:title="début de la mission"/>
+        <xs:element name="typarbeit" lc:title="description du poste" lc:line-break="true" lc:duplicate="wikize typarbeit-wikize">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:minLength value="100"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="typarbeit-wikize" lc:editable="false" lc:visible="false">
+          <xs:complexType mixed="true">
+            <xs:sequence>
+              <xs:any namespace="http://www.w3.org/1999/xhtml" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="experience_level" lc:title="Niveau d'expérience" default="none">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration lc:title="Sans">none</xs:enumeration>
+              <xs:enumeration lc:title="- 2 ans">less_than_two_years</xs:enumeration>
+              <xs:enumeration lc:title="2 - 5 ans">two_to_five_years</xs:enumeration>
+              <xs:enumeration lc:title="+ 5 ans">more_than_five_years</xs:enumeration>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="special_conditions" lc:title="Conditions spéciales" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="weekend_job" lc:title="Travail le week-end" type="xs:boolean" minOccurs="0"/>
+              <xs:element name="night_job" lc:title="Travail de nuit" type="xs:boolean" minOccurs="0"/>
+              <xs:element name="oncall_job" lc:title="Astreinte" type="xs:boolean" minOccurs="0"/>
+              <xs:element name="job_seniority" lc:title="Reprise d'ancienneté" type="xs:boolean" minOccurs="0"/>
+              <xs:element name="housing_benefit" lc:title="Aide au logement" type="xs:boolean" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="date-publish" type="xs:date" lc:title="mise en ligne"/>
+        <xs:element name="date-end" type="xs:date" lc:title="fin de la diffusion" lc:default-query="substring(xs:string(current-date() + xs:yearMonthDuration('P1M')), 1, 10)"/>
+        <xs:element name="export-emploisoignant" type="xs:boolean" lc:title="emploisoignant.com" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="xml:id" type="xs:string" lc:visible="false" lc:title="ID"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

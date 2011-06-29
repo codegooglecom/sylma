@@ -784,7 +784,8 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
       } else Controler::addMessage(xt('Document : Méthode %s introuvable', new HTML_Strong($sMethod)), 'xml/error');
       
     } else Controler::addMessage(xt('Document vide : Impossible d\'appliquer la méthode %s', new HTML_Strong($sMethod)), 'xml/error');
-    
+    // } else Sylma::throwException(txt('Empty document cannot use method %s', $sMethod), array('@file ' . $this->getFile()));
+    // cause wsod
     return $oResult;
   }
   

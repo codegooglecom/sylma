@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" extension-element-prefixes="func" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ins="http://www.sylma.org/modules/inspector" xmlns:func="http://exslt.org/functions" xmlns:set="http://exslt.org/sets">
   
+  <xsl:import href="functions.xsl"/>
+  
   <xsl:param name="inspect" select="concat($sylma-directory, '/class/')"/>
+  
+  <xsl:param name="class-prefix">sylma-ins</xsl:param>
   
   <xsl:param name="class-class">sylma-ins-class</xsl:param>
   <xsl:param name="class-extends">sylma-ins-extends</xsl:param>
@@ -81,7 +85,7 @@
 	  <xsl:param name="element"/>
 	  <xsl:variable name="set" select="ins:*[local-name() = $element and not(@name = current()/ancestor::ins:class/ins:*[local-name() = $element]/@name)]"/>
     <xsl:if test="$set">
-      <li class="{$class-group} clear-block">
+      <li class="{$class-group} clearfix">
         <ul>
           <h4><em>herited from </em><xsl:copy-of select="ins:get-class(@name)"/></h4>
           <xsl:for-each select="$set">
@@ -121,7 +125,7 @@
 	  <xsl:param name="class"/>
 	  <li>
       <xsl:attribute name="class">
-        <xsl:value-of select="concat($class-property, ' ', $class, ' ', $class-item)"/>
+        <xsl:value-of select="concat($class-property, ' ', $class, ' ', $class-item, ' ', $class-prefix, '-', @access)"/>
       </xsl:attribute>
 	    <xsl:apply-templates select="ins:modifiers"/>
       <strong>$<xsl:value-of select="@name"/></strong>
@@ -134,7 +138,7 @@
 	
 	<xsl:template match="ins:method">
 	  <xsl:param name="class" select="''"/>
-	  <li class="{$class-item} {$class-method} {$class}">
+	  <li class="{$class-item} {$class-method} {$class} {$class-prefix}-{@access}">
       <strong><xsl:value-of select="@name"/></strong>
       <span>(<xsl:copy-of select="ins:implode(ins:parameter)"/> )</span>
       <xsl:variable name="methods" select="../ins:extension//ins:method[@name = current()/@name]"/>
@@ -167,10 +171,15 @@
 	<xsl:template match="ins:comment">
     <xsl:if test="ins:description | ins:return">
       <div class="{$class-comment}">
-        <xsl:if test="ins:description">
-          <p><xsl:copy-of select="ins:description/node()"/></p>
-        </xsl:if>
-        <xsl:variable name="properties" select="*[local-name() != 'description']"/>
+        <xsl:choose>
+          <xsl:when test="ins:description">
+            <p><xsl:copy-of select="ins:description/node()"/></p>
+          </xsl:when>
+          <xsl:otherwise test="ins:description">
+            <p><xsl:copy-of select="ins:description/node()"/></p>
+          </xsl:otherwise>
+        </xsl:choose>
+        <xsl:variable name="properties" select="*[local-name() != 'description' and local-name() != 'source']"/>
         <xsl:if test="$properties">
           <ul>
             <xsl:for-each select="$properties">
@@ -216,7 +225,7 @@
 	<xsl:template match="ins:cast">
     <span class="{$class-cast}">
       <xsl:choose>
-        <xsl:when test=". = 'array' or . = 'null' or . = 'boolean' or . = 'string' or . = 'mixed'">
+        <xsl:when test=". = 'array' or . = 'null' or . = 'boolean' or . = 'string' or . = 'mixed' or . = 'integer'">
           <span class="{$class-basetype}"><xsl:value-of select="."/></span>
         </xsl:when>
         <xsl:otherwise>
@@ -232,21 +241,6 @@
 	  <func:result>
 	    <a href="{$inspect}{$name}"><xsl:value-of select="$name"/></a>
 	  </func:result>
-	</func:function>
-	
-	<func:function name="ins:implode">
-    <xsl:param name="items" />
-    <xsl:param name="separator" select="', '" />
-    <xsl:if test="$items">
-	    <func:result>
-		    <xsl:for-each select="$items">
-		      <xsl:if test="position() &gt; 1">
-		        <xsl:value-of select="$separator" />
-		      </xsl:if>
-		      <xsl:apply-templates select="." />
-		    </xsl:for-each>
-	    </func:result>
-	  </xsl:if>
 	</func:function>
 	
 </xsl:stylesheet>

@@ -130,7 +130,7 @@
         
       </xsl:when>
       <xsl:otherwise>
-        <div class="clear-block message-error">
+        <div class="clearfix message-error">
           Invalid field <strong><xsl:value-of select="name()"/></strong> element. Please contact admin.
         </div>
       </xsl:otherwise>
@@ -178,7 +178,7 @@
         </xsl:when>
         
         <xsl:otherwise>
-          <div class="clear-block message-error">
+          <div class="clearfix message-error">
             Invalid field @<strong><xsl:value-of select="name()"/></strong> attribute. Please contact admin.
           </div>
         </xsl:otherwise>
@@ -234,7 +234,7 @@
           <xsl:when test="$is-multiple">
             
             <la:layer>
-              <div class="field clear-block {$statut}">
+              <div class="field clearfix {$statut}">
                 <xsl:copy-of select="$full-content"/>
                 <xsl:apply-templates select="." mode="multiple-remove">
                   <xsl:with-param name="element" select="$element"/>
@@ -245,7 +245,7 @@
           </xsl:when>
           
           <xsl:otherwise>
-            <div class="field clear-block {$statut}" id="field-container-{$name}">
+            <div class="field clearfix {$statut}" id="field-container-{$name}">
               <xsl:copy-of select="$full-content"/>              
             </div>
           </xsl:otherwise>
@@ -273,7 +273,7 @@
       <div>
         <xsl:choose>
           <xsl:when test="lc:element-is-multiple($element)">
-            <div class="field-complex field-multiple clear-block {$statut}">
+            <div class="field-complex field-multiple clearfix {$statut}">
               <xsl:apply-templates select="." mode="multiple-remove">
                 <xsl:with-param name="element" select="$element"/>
               </xsl:apply-templates>
@@ -288,7 +288,7 @@
           </xsl:when>
           
           <xsl:otherwise>
-            <div class="field-complex clear-block {$statut}">
+            <div class="field-complex clearfix {$statut}">
               
               <xsl:apply-templates select="lc:get-model()/lc:annotations/lc:message"/>
               

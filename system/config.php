@@ -17,7 +17,6 @@ define('SYLMA_NS_DIRECTORY', 'http://www.sylma.org/directory');
 define('SYLMA_NS_SECURITY', 'http://www.sylma.org/security');
 define('SYLMA_NS_INTERFACE', 'http://www.sylma.org/interface');
 define('SYLMA_NS_MESSAGES', 'http://www.sylma.org/messages');
-define('SYLMA_NS_SCHEMAS', 'http://www.sylma.org/schemas');
 
 define('SYLMA_NS_PROCESSOR_FORM', '/sylma/processors/form/schema');
 define('SYLMA_NS_FORM_SCHEMA', 'http://schemas.sylma.org/form-schema');

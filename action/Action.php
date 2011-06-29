@@ -834,7 +834,6 @@ class XML_Action extends XML_Document {
             'security' => SYLMA_NS_SECURITY,
             'interface' => SYLMA_NS_INTERFACE,
             'message' => SYLMA_NS_MESSAGES,
-            'schemas' => SYLMA_NS_SCHEMAS,
             'xsd' => SYLMA_NS_XSD);
           
           if (!$sNamespace = $oElement->read()) {

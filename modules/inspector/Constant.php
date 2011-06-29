@@ -31,16 +31,6 @@ class InspectorConstant extends InspectorReflector implements InspectorReflector
     if (!empty($aMatch[1])) $this->sDefault = $aMatch[1];
   }
   
-  protected function getParent() {
-    
-    return $this->parent;
-  }
-  
-  protected function getControler() {
-    
-    return $this->getParent()->getControler();
-  }
-  
   public function parse() {
     
     if (!$this->sDefault) {

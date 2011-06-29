@@ -1,6 +1,8 @@
 <?php
 
-class XML_File extends XML_Resource {
+require_once('FileInterface.php');
+
+class XML_File extends XML_Resource implements FileInterface {
   
   private $oDocument = null;
   private $sExtension = '';

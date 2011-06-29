@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:cmd="http://www.pronoxa.ch/commandes" xmlns:la="http://www.sylma.org/processors/action-builder" version="1.0">
   <xsl:template match="/*">
     <div class="pager">
-      <div class="clear-block">
+      <div class="clearfix">
         <xsl:if test="@total &gt; 1">
           <xsl:choose>
             <xsl:when test="@page &gt; 1">

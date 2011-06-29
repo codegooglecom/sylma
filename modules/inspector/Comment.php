@@ -4,8 +4,8 @@ class InspectorComment extends InspectorReflector {
   
   const LINE_BREAK = "\n";
   
-  const RETURN_PREG = '/^\s*([\w\|]+)+(?:\s+(.+))?$/';
-  const PARAMETER_PREG = '/^\s*([\w\|]+)+\s*\$(\w+)(.+)$/';
+  const RETURN_PREG = '/^\s*([\w\|\\\]+)+(?:\s+(.+))?$/';
+  const PARAMETER_PREG = '/^\s*([\w\|\\\]+)+\s*\$(\w+)(.+)$/';
   const COMMENT_PREG = '/[\s*]*(?:@(\w+))?(.*)/';
   
   protected $sComment = '';
@@ -94,16 +94,19 @@ class InspectorComment extends InspectorReflector {
   //protected function parseValue()
   
   public function parse() {
-    // dspf(array(
-      // 'comment' => array(
-        // 'description' => strtoxml(nl2br(trim($this->sValue))),
-      // ) + $this->properties->query(),
-    // ));
-    return Arguments::buildDocument(array(
+    
+    if (!$this->sComment) return null;
+    else return Arguments::buildDocument(array(
       'comment' => array(
+        'source' => (string) $this->sComment,
         'description' => strtoxml(nl2br(trim($this->sValue))),
       ) + $this->properties->query(),
     ), $this->getControler()->getNamespace());
+  }
+  
+  public function __toString() {
+    
+    return $this->sComment;
   }
 }
 

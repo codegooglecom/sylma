@@ -8,7 +8,7 @@
     <xsl:param name="id" select="@lc:temp-file"/>
     
     <la:layer class="file">
-      <div class="field-file-container clear-block">
+      <div class="field-file-container clearfix">
         <input type="hidden" name="{$name}[path]" value="{@full-path}"/>
         <input type="hidden" name="{$name}[name]" value="{$title}"/>
         <input type="hidden" name="{$name}[id]" value="{$id}"/>

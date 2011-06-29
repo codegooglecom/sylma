@@ -1,0 +1,25 @@
+
+li.sylma-test {
+  padding: 0;
+  margin-left: 1em;
+}
+
+.sylma-test-passed {
+  background-color: #9bff9b;
+}
+
+.sylma-test-failed {
+  background-color: #ffc9c9;
+}
+
+.sylma-tests h3,
+.sylma-tests h4,
+.sylma-tests h5,
+.sylma-tests h6 {
+  padding: 0;
+  margin: 5px 0;
+}
+
+.sylma-tests ul {
+  padding-left: 1em;
+}

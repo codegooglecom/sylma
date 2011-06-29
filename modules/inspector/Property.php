@@ -29,6 +29,7 @@ class InspectorProperty extends InspectorReflectorCommented implements Inspector
     return Arguments::buildDocument(array(
       'property' => array(
         '@name' => $this->getName(),
+        '@access' => $this->getAccess(),
         'modifiers' => $this->getReflector()->getModifiers(),
         'default' => $this->sDefault,
         $this->comment,

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:ls="http://www.sylma.org/security" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml">
+  <le:settings>
+    <le:name>Tools</le:name>
+  </le:settings>
+  <le:window>
+    <li:add-css le:format="string">
+      <le:directory/>
+      <le:argument>/index.css</le:argument>
+    </li:add-css>
+  </le:window>
+  <ul class="sylma-tools">
+    <li>
+      <a href="/sylma/modules/explorer">Explorer</a>
+    </li>
+    <li>
+      <a href="/sylma/modules/inspector">Inspector</a>
+    </li>
+    <li>
+      <a href="/sylma/modules/test">Tests</a>
+    </li>
+  </ul>
+</le:action>

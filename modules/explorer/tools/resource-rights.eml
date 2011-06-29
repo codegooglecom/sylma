@@ -6,11 +6,11 @@
   <la:object class="menu" name="rights">
     <form class="sylma-tools" id="resource-tools-rights">
       <la:event name="submit"><![CDATA[return %ref-object%.parentObject.updateRights();]]></la:event>
-      <div class="clear-block">
+      <div class="clearfix">
         <label for="resource-owner">Owner :</label>
         <input type="text" name="resource-owner" id="resource-owner"/>
       </div>
-      <div class="clear-block">
+      <div class="clearfix">
         <label for="resource-group">Group :</label>
         <input type="text" name="resource-group" id="resource-group"/>
       </div>

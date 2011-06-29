@@ -24,7 +24,7 @@ class Explorer {
     
     $sPath = array_val('resource', $_POST);
     
-    $oAction = new XML_Action(extractDirectory(__file__).'/resource.eml');
+    $oAction = new XML_Action(extractDirectory(__file__, false).'/resource.eml');
     $oAction->getPath()->pushIndex(Controler::getDirectory($sPath));
     
     return $oAction;

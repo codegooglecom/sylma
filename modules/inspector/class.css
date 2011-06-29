@@ -23,12 +23,13 @@
 li.sylma-ins-item {
   margin-left: 1.5em;
   _width: 90%;
-  padding-left: 1em;
-  list-style-type: square;
+  padding-left: 2em;
+  list-style-type: none;
   float: left;
   clear: left;
   cursor: default;
   padding-right: 1em;
+  background: url(images/bullet_green.png) no-repeat 0 2px;
   -moz-border-radius: 7px;
   -webkit-border-radius: 7px;
   border-radius: 7px;
@@ -36,8 +37,11 @@ li.sylma-ins-item {
 
 li.sylma-ins-item:hover {
   background-color: #ddd;
-  padding: 0.3em 1em;
+  padding: 0.3em 1em 0.3em 2em;
 }
+
+li.sylma-ins-protected { background-image: url(images/bullet_orange.png); }
+li.sylma-ins-private { background-image: url(images/bullet_delete.png); }
 
 li.sylma-ins-group {
   list-style-type: none;

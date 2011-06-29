@@ -24,6 +24,16 @@ class User extends Module {
     $this->setGroups($aGroups);
   }
   
+  protected function setName($sName) {
+    
+    return $this->sName = $sName;
+  }
+  
+  public function getName() {
+    
+    return $this->sName;
+  }
+  
   public function authenticate($sUser, $sPassword) {
     
     $sResult = null;
@@ -122,6 +132,12 @@ class User extends Module {
     }
   }
   
+  public function getDirectory() {
+    
+    if ($this->getName()) return Controler::getDirectory($this->getArgument('path').'/'.$this->getName());
+    else return null;
+  }
+  
   protected function loadProfile() {
     
     $this->setDirectory(Controler::getDirectory($this->getArgument('path') . '/' . $this->getName()));
@@ -145,15 +161,17 @@ class User extends Module {
   
   protected function loadGroups() {
     
-    $aGroups = Sylma::get('users/authenticated/groups')->query();
+    $aGroups = $this->getArgument('authenticated/groups')->query();
     $sUser = $this->getName();
     
     $oAllGroups = $this->getDocument($this->readSettings('groups/@path'), MODE_EXECUTION);
     
-    $oGroups = $oAllGroups->query("group[@owner = $sUser]/@name | group[member = $sUser]/@name");
+    $oGroups = $oAllGroups->query("group[@owner = '$sUser']/@name | group[member = '$sUser']/@name");
     foreach ($oGroups as $oAttribute) $aGroups[] = $oAttribute->getValue();
     
-    $this->setGroups($aGroups);
+    if (Controler::isAdmin()) $aGroups = array_merge($aGroups, $this->getArgument('root/groups')->query());
+    
+    $this->setGroups(array_unique($aGroups));
   }
   
   public function getCookie() {

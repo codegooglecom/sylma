@@ -2,7 +2,7 @@
 
 class Users extends DBX_Module {
   
-  const MODULE_NAME = 'users';
+  const NS = 'http://www.sylma.org/modules/users';
   
   const LOGIN_SCHEMA = 'login.xsd';
   const LOGIN_TEMPLATE = 'form/index.xsl';
@@ -14,8 +14,6 @@ class Users extends DBX_Module {
   const OPTION_MODULE = 'modules/users';
   
   public function __construct(XML_Directory $directory = null, XML_Document $dSchema = null, XML_Document $dOptions = null) {
-    
-    $this->setName(self::MODULE_NAME);
     
     $this->setArguments(Sylma::get(self::OPTION_MODULE));
     $this->getArguments()->merge(Sylma::get(self::OPTION_USERS));

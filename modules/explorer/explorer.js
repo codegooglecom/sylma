@@ -132,7 +132,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
     Extends: sylma.classes['menu-common'],
     resource : undefined,
     
-    'show' : function(eTarget) {
+    show : function(eTarget) {
       
       if (this.firstShow(eTarget)) {
         
@@ -143,7 +143,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
       return this.parent(eTarget);
     },
     
-    'hide' : function(bQuick) {
+    hide : function(bQuick) {
       
       // this.updateRights();
       this.clearSub(bQuick);
@@ -151,7 +151,7 @@ var oExplorerClasses = sylma[sExplorerClasses] = {
       return this.parent(bQuick);
     },
     
-    'isLocked' : function() {
+    isLocked : function() {
       
       for (var i in this.sub) {
         

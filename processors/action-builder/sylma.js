@@ -511,7 +511,7 @@ var sylma = {
         // node.setStyle('opacity', iFrom);
         // sylma.log(iFrom);
         // sylma.log(node.getAttribute('style'));
-        if (node['class']) $(node).removeClass('sylma-loading');
+        if (node.className) $(node).removeClass('sylma-loading');
         else node.removeAttribute('class');
       }
       
@@ -1157,8 +1157,9 @@ sylma.classes.menuAlert = new Class({
   
   hide : function() {
     
-    $(document.body).setStyles({'height' : 'auto', 'overflow' : 'auto'});
-    this.overlay.fade('out');
+    // TODO define the goal of this
+    // $(document.body).setStyles({'height' : 'auto', 'overflow' : 'auto'});
+    // this.overlay.fade('out');
     this.parent();
   },
 });

@@ -11,7 +11,6 @@ class Cookie extends ModuleBase {
   
   public function __construct() {
     
-    $this->setName('cookie');
     $this->setArguments(Sylma::get('modules/users/cookies'));
     
     $this->validate();

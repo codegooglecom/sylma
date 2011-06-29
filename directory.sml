@@ -7,4 +7,11 @@
       <ls:mode>711</ls:mode>
     </ls:security>
   </propagate>
+  <file name="index.css">
+    <ls:security>
+      <ls:owner>root</ls:owner>
+      <ls:group>0</ls:group>
+      <ls:mode>744</ls:mode>
+    </ls:security>
+  </file>
 </directory>

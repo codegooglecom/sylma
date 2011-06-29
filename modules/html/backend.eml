@@ -27,7 +27,7 @@
             <a lang="en" id="header-title" class="notranslate" href="/">Sylma</a>
           </h1>
         </div>
-        <div id="center" class="clear-block">
+        <div id="center" class="clearfix">
           <div id="menus">
             <ul>
               <li>

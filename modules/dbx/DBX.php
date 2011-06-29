@@ -1,5 +1,7 @@
 <?php
 
+require_once('schemas/XML_Schema.php');
+
 class DBX_Module extends XDB_Module {
   
   private $oModel = null;
@@ -7,14 +9,12 @@ class DBX_Module extends XDB_Module {
   
   public function __construct(XML_Directory $oDirectory, XML_Document $oSchema = null, XML_Document $oOptions = null) {
     
-    $this->setName('dbx');
-    
     $this->addDirectory(__file__, __class__);
     $this->addDirectory($oDirectory);
     
     $this->setNamespace('http://www.sylma.org/modules/dbx', 'dbx', false);
     $this->setNamespace(SYLMA_NS_XHTML, 'html', false);
-    $this->setNamespace(SYLMA_NS_SCHEMAS, 'lc', false);
+    $this->setNamespace(XSD_Parser::NS, 'lc', false);
     
     if ($oOptions) {
     
@@ -505,7 +505,8 @@ class DBX_Module extends XDB_Module {
   }
   
   /**
-   * Build the form to add an element
+   * Build the form to add an item
+   * 
    * @param Redirect $oRedirect The redirect object containing POST request
    * @param string $sFormID The token generated for the form
    * @param XML_Document $oTemplate The main template that will be used for parsing

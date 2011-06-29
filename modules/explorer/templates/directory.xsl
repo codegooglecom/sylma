@@ -22,6 +22,7 @@
         <xsl:text>/resource</xsl:text>
       </la:property>
       <div class="resource {name()}">
+        <la:event name="mouseover">if (!%parent-object%.parentObject.tools.resource !== %ref-object%) return this.fireEvent('mouseenter');</la:event>
         <la:event name="mouseenter"><![CDATA[var tools = %ref-object%.rootObject.tools;
 
 if (!tools.isLocked()) return tools.show(this);

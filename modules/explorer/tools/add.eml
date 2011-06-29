@@ -4,7 +4,7 @@
     <le:name>Créer une resource</le:name>
   </le:settings>
   <la:layer name="addResource">
-    <div class="clear-block" id="resource-tools-add">
+    <div class="clearfix" id="resource-tools-add">
       <a href="#">
         <span id="jumploader-caller">Ajouter des fichiers</span>
         <la:event name="click"><![CDATA[%ref-object%.rootObject.toggleUploader();

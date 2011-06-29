@@ -3,9 +3,7 @@
   <le:settings>
     <le:name>Sylma</le:name>
   </le:settings>
-  <p>Bienvenue</p>
-  <p>
-Vous vous trouvez sur l'interface de gestion de votre site web. Depuis ici vous allez pouvoir modifier votre site, la manière dont il s'affiche, et les fonctionnalités proposés.
-  </p>
-  <le:action path="/sylma/modules/explorer"/>
+  <h2>Welcome</h2>
+  <p>You will find here access to the main tools to update and customize Sylma.</p>
+  <le:action path="tools"/>
 </le:action>

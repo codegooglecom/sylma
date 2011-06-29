@@ -66,7 +66,7 @@
         </xsl:if>
       </div>
       <xsl:if test="lem:sub-actions">
-        <div class="msg-action-sub clear-block">
+        <div class="msg-action-sub clearfix">
           <xsl:for-each select="lem:sub-actions/lem:action">
             <div class="msg-action-weights">
               <xsl:apply-templates select="lem:stats/*" mode="sub"/>

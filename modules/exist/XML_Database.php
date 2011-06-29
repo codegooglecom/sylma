@@ -12,7 +12,6 @@ class XML_Database extends ModuleBase {
   public function __construct() {
     
     $this->setArguments(Sylma::get('db'));
-    $this->setName('database');
     
     $this->setNamespace($this->getArgument('namespace'));
     $this->sCollection = $this->getArgument('collection');

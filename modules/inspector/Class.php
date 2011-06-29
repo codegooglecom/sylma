@@ -9,9 +9,17 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
   const PROPERTY_CLASS = 'class/property';
   const METHOD_CLASS = 'class/method';
   
-  /* File where is located the class */
   protected $controler;
+  
+  /**
+   * File where is located the class
+   */
   protected $file;
+  
+  /**
+   * Used by @method useParent()
+   */
+  protected $bParent = true;
   
   protected $aSource;
   protected $iOffset;
@@ -30,15 +38,20 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
   protected $sSourceProperties = null;
   
   /**
-   * @param $class The reflector to link to this class 
-   * @param $controler The parent element, eg. The module's class 
+   * @param string|ReflectorInterface $class The reflector to link to this class 
+   * @param $controler The parent element, eg. The module's class
+   * @param boolean $bParent Sent to @method useParent()
    */
-  public function __construct($mClass, ModuleBase $controler) {
+  public function __construct($mClass, ModuleBase $controler, $bParent = true) {
     
     $this->controler = $controler;
     
     if (is_string($mClass)) $this->reflector = new ReflectionClass($mClass);
     else $this->reflector = $mClass;
+    
+    if (!$this->getReflector()) $this->throwException('No reflector has been defined');
+    
+    $this->useParent($bParent);
     
     if ($this->getReflector()->isUserDefined()) {
       
@@ -161,12 +174,27 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     }
   }
   
+  /**
+   * If set to TRUE (default) and the class extends a parent class, the parent class will be loaded with all elements and sub-classes
+   *
+   * @param* boolean $bParent The new value, NULL will not change the value
+   * @return The current value
+   */
+  public function useParent($bParent = null) {
+    
+    if ($bParent !== null) $this->bParent = $bParent;
+    return $this->bParent;
+  }
+  
+  /**
+   * Load parent classes (extends & implements)
+   */
   protected function loadSytemParents() {
     
     if ($class = $this->getReflector()->getParentClass()) {
       
-      $this->extends = $this->getControler()->create('class',
-        array($class, $this->getControler()));
+      if ($this->useParent()) $this->extends = $this->getControler()->create('class', array($class, $this->getControler()));
+      else $this->extends = $class->getName();
     }
   }
   
@@ -181,8 +209,8 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     if (!empty($aMatch['extends'])) {
       
-      $this->extends = $this->getControler()->create('class', 
-        array($aMatch['extends'], $this->getControler()));
+      if ($this->useParent()) $this->extends = $this->getControler()->create('class', array($aMatch['extends'], $this->getControler()));
+      else $this->extends = $aMatch['extends'];
     }
     
     if (!empty($aMatch['implements'])) {
