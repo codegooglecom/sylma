@@ -102,7 +102,7 @@ class WindowHTML extends XML_Action {
     
     // Remove security elements
     
-    if ($oElements = $oView->query('//@ls:owner | //@ls:mode | //@ls:group', 'ls', SYLMA_NS_SECURITY)) $oElements->remove();
+    // if ($oElements = $oView->query('//@ls:owner | //@ls:mode | //@ls:group', 'ls', SYLMA_NS_SECURITY)) $oElements->remove();
     
     if ($oView->isEmpty()) {
       
@@ -112,7 +112,7 @@ class WindowHTML extends XML_Action {
       
       $oView->formatOutput();
       // return $sDocType."\n".$oView->display(false, true);
-      return $sDocType."\n".$oView->display(false, false);
+      return $sDocType."\n".$oView->display(true, false);
     }
   }
   

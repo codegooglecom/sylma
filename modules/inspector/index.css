@@ -4,6 +4,17 @@
   min-height: 220px;
 }
 
+.sylma-ins-module em {
+  display: block;
+  font-size: 0.8em;
+  margin-bottom: 0.5em;
+  color: #ccc;
+}
+
+.sylma-ins-module h4 {
+  margin: 0;
+}
+
 .sylma-ins-module li ul {
   padding-left: 1em;
 }

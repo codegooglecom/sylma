@@ -613,35 +613,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
     
     if ($nChild) {
       
-      $bTest = 0;
-      // $bTest = $nChild instanceof DOMElement &&
-        // $nChild->getName() == 'action' &&
-        // $nChild->useNamespace(XML_Action::MONITOR_NS);
-      
-      if ($bTest) {
-        // dspf($nChild);
-        $iResult = $nChild->query('.//ld:file', array('ld' => SYLMA_NS_DIRECTORY))->length;
-      }
-      /*if ($nChild instanceof HTML_Tag) {
-        
-        $nChild = $nChild->cloneNode(true);
-        $nChild->parse();
-      }*/
-      
       $eResult = parent::importNode($nChild, $bDepth);
-      
-      if ($bTest) {
-          
-          // dspf($eResult);
-          $iResult2 = $eResult->query('.//ld:file', array('ld' => SYLMA_NS_DIRECTORY))->length;
-          if ($iResult != $iResult2) {
-            
-            $eResult = parent::importNode($nChild, false);
-            
-            foreach ($nChild->getChildren() as $oChild) $eResult->add(parent::importNode($oChild, true));
-            dspm(":( $iResult / $iResult2");
-          }
-      }
       
     } else Controler::addMessage('Document->importNode : No object', 'xml/error');
     

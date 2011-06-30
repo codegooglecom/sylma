@@ -83,7 +83,7 @@
       <span>
         <xsl:value-of select="concat(@name, ' : ')"/>
       </span>
-      <xsl:copy-of select="."/>
+      <xsl:copy-of select="./node()"/>
     </div>
   </xsl:template>
   
@@ -101,7 +101,7 @@
           </span>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:copy-of select="."/>
+      <xsl:copy-of select="./node()"/>
     </div>
   </xsl:template>
   

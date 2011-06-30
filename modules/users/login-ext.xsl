@@ -8,7 +8,7 @@
   <xsl:template match="usr:*" mode="notice"/>
   <xsl:template match="usr:*" mode="actions">
     <div class="field-actions">
-      <button type="button" onclick="document.location.replace('/http(.)+/', '/https\1/')">
+      <button type="button" onclick="document.location = document.location.href.replace(/^http/, 'https');">
         Passer en mode sécurisé
       </button>
       <input type="submit" value="Connexion"/>

@@ -1146,10 +1146,8 @@ class XML_Action extends XML_Document {
     }
   }
   
-  private function replaceVariables($sTest, $bReturn = false) {
+  private function replaceVariables($sValue, $bReturn = false) {
     
-    // $sValue = unxmlize($sTest);
-    $sValue = $sTest;
     preg_match_all('/\[\$([\w-]+)\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE);
     
     if ($aResults && $aResults[0]) {
@@ -1170,7 +1168,7 @@ class XML_Action extends XML_Document {
       return $sValue;
     }
     
-    if ($bReturn) return $sTest;
+    if ($bReturn) return $sValue;
     else return null;
   }
   
@@ -1916,7 +1914,7 @@ class XML_Action extends XML_Document {
       
       foreach ($this->aSubActions as $oSubAction) {
         
-        $oTest = $oSubActions->add($oSubAction);
+        $oSubActions->add($oSubAction);
       }
       
       // evaluate stat weight with children's

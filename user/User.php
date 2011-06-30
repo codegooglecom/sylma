@@ -109,7 +109,7 @@ class User extends Module {
       
       // no session
       
-      if ($cookie && ($sUser = $cookie->getUser())) {
+      if ($this->getCookie() && ($sUser = $this->getCookie()->getUser())) {
         
         // has cookie
         
@@ -224,8 +224,10 @@ class User extends Module {
     }
     else {
       
-      return in_array($mGroup, $this->aGroups);
+      return in_array($mGroup, $this->aGroups, true);
     }
+    
+    return false;
   }
   
   public function getMode($sOwner, $sGroup, $sMode, $oOrigin = null) {

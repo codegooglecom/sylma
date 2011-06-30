@@ -18,12 +18,10 @@ define('SYLMA_NS_SECURITY', 'http://www.sylma.org/security');
 define('SYLMA_NS_INTERFACE', 'http://www.sylma.org/interface');
 define('SYLMA_NS_MESSAGES', 'http://www.sylma.org/messages');
 
-define('SYLMA_NS_PROCESSOR_FORM', '/sylma/processors/form/schema');
 define('SYLMA_NS_FORM_SCHEMA', 'http://schemas.sylma.org/form-schema');
 
 //define('SYLMA_HTML_TAGS', "//html:*[local-name() != 'link']");
 define('SYLMA_HTML_TAGS', '//html:div | //html:span | //html:a | //html:ul | //html:h2 | //html:iframe | //html:textarea | //html:script | //html:table | //html:strong | //html:p | //html:button');
-define('SYLMA_FIELD_PREFIX', 'field-');
 
 define('SYLMA_SECURITY_FILE', 'directory.sml');
 define('SYLMA_DEFAULT_MODE', 0770);

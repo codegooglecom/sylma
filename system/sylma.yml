@@ -13,7 +13,7 @@ users:
     error-level: 6143
     arguments: [ ]
     groups:
-      - 0
+      - '0'
   # server user for cron jobs
   server:
     name: server

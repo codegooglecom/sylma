@@ -110,7 +110,7 @@ class Inspector extends Module {
   public function getClass($sClass, $sFile = '') {
     
     $result = null;
-    dspf(get_include_path());
+    
     try {
       
       if ($sFile) Controler::loadClass($sClass, $sFile);

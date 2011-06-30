@@ -15,7 +15,6 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
    * The default main array
    */
   protected $aArray = array();
-  protected $iPosition = 0;
   
   public function __construct(array $aArray = array(), $sNamespace = '') {
     

@@ -36,15 +36,26 @@ class Users extends DBX_Module {
     
     if (isset($_SERVER['HTTPS'])) $dTemplate->setParameter('https', $_SERVER['HTTPS']);
     
-    // dspf($this->getOptions()->getDocument());
-    // dspf($this->getTemplateExtension());
+    $sRemember = $this->getArgument('cookies/remember/name');
     
-    return $this->add(
+    $this->setNamespace(SYLMA_NS_XSD, 'xs', false);
+    
+    if (array_key_exists($sRemember, $_COOKIE) &&
+        strtobool($_COOKIE[$sRemember]) &&
+        $this->getSchema() &&
+        ($el = $this->getSchema()->get('//xs:element[@name="remember"]', $this->getNS()))) {
+      
+      $el->setAttribute('default', '1');
+    }
+    
+    $result = $this->add(
       $redirect,
       $this->setFormID(),
       $dTemplate,
       $this->readOption('add-do-path', false),
-      $this->getTemplateExtension());
+      $this->getTemplateExtension())->parse();
+      
+    return $result;
   }
   
   public function login(Redirect $redirect) {
@@ -69,8 +80,8 @@ class Users extends DBX_Module {
         Controler::setUser($user);
         $user->load($bRemember);
         
-        $sRedirect = $this->readOption('redirect', '/', false);
-        $redirect->setPath($sRedirect);
+        $sRedirect = $this->readOption('redirect', '/');
+        if ($sRedirect) $redirect->setPath($sRedirect);
         
         //$redirect->addMessage(xt('Bienvenue %s', $user->getArgument('first-name')), 'success');
       }

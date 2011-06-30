@@ -124,7 +124,7 @@ class Module extends ModuleBase {
     $sResult = null;
     
     if ($this->getOptions() !== null) $sResult = $this->getOptions()->read($sPath, $bDebug);
-    return isset($sResult) ? $sResult : $mDefault;
+    return $sResult ? $sResult : $mDefault;
   }
   
   public function getFullPrefix() {
