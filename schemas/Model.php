@@ -1,6 +1,6 @@
 <?php
 
-require_once('abstract\Instance.php');
+require_once('abstract/Instance.php');
 
 class XSD_Model extends XSD_Instance { // XSD_ElementInstance
   

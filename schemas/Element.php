@@ -1,6 +1,6 @@
 <?php
 
-require_once('abstract\Node.php');
+require_once('abstract/Node.php');
 
 class XSD_Element extends XSD_Node {
   

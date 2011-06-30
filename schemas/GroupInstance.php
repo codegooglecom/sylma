@@ -1,6 +1,6 @@
 <?php
 
-require_once('abstract\Instance.php');
+require_once('abstract/Instance.php');
 
 class XSD_GroupInstance extends XSD_Instance {
   

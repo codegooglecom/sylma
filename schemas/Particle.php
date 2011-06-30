@@ -1,6 +1,6 @@
 <?php
 
-require_once('abstract\Class.php');
+require_once('abstract/Class.php');
 require_once('ParticleInstance.php');
 
 class XSD_Particle extends XSD_Class {

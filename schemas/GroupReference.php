@@ -1,6 +1,6 @@
 <?php
 
-require_once('abstract\Class.php');
+require_once('abstract/Class.php');
 
 class XSD_GroupReference extends XSD_Class {
   

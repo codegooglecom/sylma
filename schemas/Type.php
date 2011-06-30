@@ -1,6 +1,6 @@
 <?php
 
-require_once('abstract\Container.php');
+require_once('abstract/Container.php');
 
 class XSD_Type extends XSD_Container { // complex or simple, but defined
   

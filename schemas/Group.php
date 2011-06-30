@@ -1,6 +1,6 @@
 <?php
 
-require_once('abstract\Container.php');
+require_once('abstract/Container.php');
 require_once('GroupInstance.php');
 require_once('GroupReference.php');
 
