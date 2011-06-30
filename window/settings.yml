@@ -1,0 +1,13 @@
+classes :
+  action :
+    name : WindowAction
+  image :
+    name : WindowImg
+  text :
+    name : WindowTXT
+  xml :
+    name : WindowXML
+  html :
+    name : WindowHTML
+  redirection :
+    name : Redirection

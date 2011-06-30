@@ -1,5 +1,7 @@
 <?php
 
+require_once('core/module/Module.php');
+
 class Inspector extends Module {
   
   const ELEMENT_CLASS = 'element';
@@ -21,6 +23,7 @@ class Inspector extends Module {
     try {
       
       $system = new XArguments((string) $this->getFile('system-classes.yml'));
+      $system->merge(new XArguments((string) $this->getFile('sylma-classes.yml')));
       $aAll = get_declared_classes();
       
       $root = $this->create(self::ELEMENT_CLASS, array('classes', null, null, self::NS));
@@ -40,9 +43,9 @@ class Inspector extends Module {
     
     try {
       
-      $class = $this->create(self::CLASS_CLASS, array($sClass, $this, false));
+      $class = $this->create(self::CLASS_CLASS, array($sClass, $this, array('parent' => false)));
       $doc = $class->parse();
-      // dspf($doc);
+      
       if ($doc && !$doc->isEmpty()) $sResult = $doc->parseXSL($this->getTemplate('class-string.xsl'), false);
       
       $result = new HTML_Tag('pre', $sResult);
@@ -55,14 +58,67 @@ class Inspector extends Module {
     return $result;
   }
   
-  public function getClass($sClass) {
+  /**
+   * Read the module @settings /classes
+   */
+  public function getModule($sSettings) {
+    
+    $args = new XArguments($sSettings, $this->getNamespace());
+    
+    return Arguments::buildDocument(array('classes' => array('#class' => $this->extractClasses($args))), $this->getNamespace());
+  }
+  
+  private function extractClasses(SettingsInterface $class) {
+    
+    $aResult = array();
+    
+    if ($classes = $class->get('classes', false)) {
+      
+      foreach ($classes as $sKey => $subClass) $aResult[] = $this->createClass($sKey, $subClass);
+    }
+    
+    return $aResult;
+  }
+  
+  private function createClass($sName, SettingsInterface $class) {
+    
+    return array(
+      '@key' => $sName,
+      '@name' => $class->get('name'),
+      'file' => $class->get('file', false),
+      '#class' => $this->extractClasses($class),
+    );
+  }
+  
+  /**
+   * Load full class and sub-classes
+   */
+  public function getClassSettings($sKey, $sPath) {
+    
+    $args = new XArguments($sPath, $this->getNamespace());
+    $class = $this->loadClass($sKey, $args);
+    
+    if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $args->getFile()->getParent()));
+    if (!$class->read('name')) $this->throwException(txt('No name defined for class %s', $sKey));
+    
+    return $this->getClass($class->read('name'), $class->read('file', false));
+  }
+  
+  /**
+   * Load full class and sub-classes
+   */
+  public function getClass($sClass, $sFile = '') {
+    
+    $result = null;
     
     try {
       
+      if ($sFile) Controler::loadClass($sClass, $sFile);
+      
       $class = $this->create(self::CLASS_CLASS, array($sClass, $this));
       
-      // dspf($class->parse());
-      return $class->parse();
+      $result = $class->parse();
+      if ($sFile) $result->setAttribute('file', $sFile);
     }
     catch (SylmaExceptionInterface $e) {
       
@@ -71,10 +127,9 @@ class Inspector extends Module {
     catch (Exception $e) {
       
       Sylma::loadException($e);
-      //$e->loadException();
     }
     
-    return null;
+    return $result;
   }
 }
 

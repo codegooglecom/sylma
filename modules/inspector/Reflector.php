@@ -1,8 +1,9 @@
 <?php
 
+require_once('core/module/Base.php');
 require_once('ReflectorInterface.php');
 
-abstract class InspectorReflector {
+abstract class InspectorReflector extends ModuleBase {
   
   protected $reflector;
   protected $parent;
@@ -36,10 +37,10 @@ abstract class InspectorReflector {
     return $this->getReflector() ? $this->getReflector()->getName() : null;
   }
   
-  protected function throwException($sMessage, $mSender = array()) {
+  protected function throwException($sMessage, $mSender = array(), $iOffset = 1) {
   	
     $mSender = (array) $mSender;
     
-    Sylma::throwException($sMessage, $mSender);
+    Sylma::throwException($sMessage, $mSender, $iOffset);
   }
 }

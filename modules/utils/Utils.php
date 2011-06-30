@@ -84,7 +84,7 @@ class Utils {
       dspm(xt('Action : %s', new HTML_Strong($sPath)));
       dspm(xt('Temps total : %s', new HTML_Strong(number_format($iTotalTime, 3).' s')));
       dspm(xt('Nombre d\'appels : %s', $oCalls));
-      dspm(new HTML_Hr());
+      dspm(new HTML_Tag('hr'));
       dspm(xt('Mémoire utilisée : %s', new HTML_Strong(formatMemory(memory_get_peak_usage()))));
       dspm(xt('Temps moyen : %s', new HTML_Strong(number_format($iAverageTime, 3).' s')));
       dspm(xt('Variation : %s%%', new HTML_Strong(number_format($iDeltaTime, 1))));

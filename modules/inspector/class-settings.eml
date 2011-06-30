@@ -2,8 +2,8 @@
 <le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:la="http://www.sylma.org/processors/action-builder">
   <le:settings>
     <le:name>Inspector : Class</le:name>
-    <le:argument format="php-string"/>
-    <le:argument format="php-string" name="file" required="false"/>
+    <le:argument format="php-string" name="path"/>
+    <le:argument format="php-string" name="key"/>
   </le:settings>
   <le:window>
     <li:add-css le:format="string">
@@ -14,9 +14,9 @@
   <p>
     <a href="[$sylma-directory]">&lt; Back to index</a>
   </p>
-  <le:action path="interface/get-class">
-    <le:get-argument/>
-    <le:get-argument name="file"/>
+  <le:action path="interface/get-class-settings">
+    <le:get-argument name="key"/>
+    <le:get-argument name="path"/>
     <li:parse>
       <le:template path="class.xsl"/>
     </li:parse>

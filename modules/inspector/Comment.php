@@ -1,5 +1,7 @@
 <?php
 
+require_once('Reflector.php');
+
 class InspectorComment extends InspectorReflector {
   
   const LINE_BREAK = "\n";

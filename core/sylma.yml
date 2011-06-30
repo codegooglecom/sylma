@@ -1,0 +1,23 @@
+classes :
+  sylma :
+    name : Sylma
+  initializer :
+    name : Initializer
+  exception :
+    name : SylmaException
+  controler :
+    name : Controler
+  redirect :
+    name : Redirect
+  messages :
+    name : Messages
+  message :
+    name : Message
+  user :
+    name : User
+  cookie :
+    name : Cookie
+  logger :
+    name : Logger
+  xsl :
+    name : XSL_Document

@@ -80,7 +80,7 @@ class XML_Database extends ModuleBase {
           dspm(array(
             new HTML_Strong(t('Erreur dans la requête : ')),
             $this->getError(),
-            new HTML_Hr,
+            new HTML_Tag('hr'),
             new HTML_Tag('pre', $sQuery)), 'db/warning');
             
         } else if (($sError = $this->getSession()->getError()) && $sError != 'ERROR: No data found!') {

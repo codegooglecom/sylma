@@ -1,0 +1,23 @@
+classes :
+  tag :
+    name : HTML_Tag
+  styleattr :
+    name : HTML__Style
+  a :
+    name : HTML_A
+  script :
+    name : HTML_Script
+  style :
+    name : HTML_Style
+  span :
+    name : HTML_Span
+  div :
+    name : HTML_Div
+  strong :
+    name : HTML_Strong
+  em :
+    name : HTML_Em
+  br :
+    name : HTML_Br
+  ul :
+    name : HTML_Ul

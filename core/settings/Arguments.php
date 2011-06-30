@@ -7,7 +7,7 @@
  * @author rodolphe.gerber (at) gmail.com
  */
 
-class Arguments extends Namespaced implements SettingsInterface {
+class Arguments extends Namespaced implements SettingsInterface, Iterator {
   
   const MESSAGES_STATUT = Sylma::LOG_STATUT_DEFAULT;
   
@@ -15,11 +15,12 @@ class Arguments extends Namespaced implements SettingsInterface {
    * The default main array
    */
   protected $aArray = array();
+  protected $iPosition = 0;
   
   public function __construct(array $aArray = array(), $sNamespace = '') {
     
     if (is_array($aArray)) $this->aArray = $aArray;
-    $this->sNamespace = $sNamespace;
+    $this->setNamespace($sNamespace);
   }
   
   public function set($sPath = '', $mValue = null) {
@@ -148,7 +149,7 @@ class Arguments extends Namespaced implements SettingsInterface {
         else {
           
           if ($bReturn) $mResult =& $mCurrent;
-          else if ($aPath && $bDebug) $this->throwException(txt('Bad key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+          else if ($aPath && $bDebug) $this->throwException(txt('Bad key %s in %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 3);
         }
       }
       else if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug)) {
@@ -190,7 +191,7 @@ class Arguments extends Namespaced implements SettingsInterface {
     if (!array_key_exists($sKey, $aArray)) {
       
       array_unshift($aPath, $sKey);
-      if ($bDebug) $this->throwException(txt('Unknown key %s in %s', $sKey, implode('/', $aParentPath + $aPath)));
+      if ($bDebug) $this->throwException(txt('Unknown key %s in %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 4);
       
       $sKey = '';
     }
@@ -239,20 +240,32 @@ class Arguments extends Namespaced implements SettingsInterface {
     
     foreach($array2 as $key => $val) {
       
-      if(array_key_exists($key, $array1)) {
-        
-        if (is_string($array1[$key])) $array1[$key] = $this->parseValue($array1[$key], $aPath);
-        
-        if (is_array($array1[$key]) && is_array($val)) $array1[$key] = $this->mergeArrays($array1[$key], $val, $aPath + array($key));
-        else $array1[$key] = $val;
-      }
+      if (is_integer($key)) $array1[] = $val;
       else {
         
-        $array1[$key] = $val;
+        if(array_key_exists($key, $array1)) {
+          
+          if (is_string($array1[$key])) $array1[$key] = $this->parseValue($array1[$key], $aPath);
+          
+          if (is_array($array1[$key]) && is_array($val)) $array1[$key] = $this->mergeArrays($array1[$key], $val, $aPath + array($key));
+          else $array1[$key] = $val;
+        }
+        else {
+          
+          $array1[$key] = $val;
+        }
       }
     }
     
     return $array1;
+  }
+  
+  public function getDocument($sNamespace = '') {
+    
+    if (count($this->aArray) > 1) $this->throwException(txt('Cannot build document with more than one root value with @namespace %s', $sNamespace));
+    if (!$sNamespace) $sNamespace = $this->getNamespace();
+    
+    self::buildDocument($this->aArray, $sNamespace);
   }
   
   /**
@@ -329,9 +342,36 @@ class Arguments extends Namespaced implements SettingsInterface {
     }
   }
   
-  protected function throwException($sMessage) {
+  public function rewind() {
     
-    Sylma::throwException($sMessage, array('@namespace ' . $this->getNamespace()), 1);
+    reset($this->aArray);
+  }
+  
+  public function current() {
+    
+    $sKey = key($this->aArray);
+    
+    return $this->get($sKey);
+  }
+  
+  public function key() {
+    
+    return key($this->aArray);
+  }
+  
+  public function next() {
+    
+    next($this->aArray);
+  }
+  
+  public function valid() {
+    
+    return current($this->aArray) !== false;
+  }
+  
+  protected function throwException($sMessage, $iOffset = 1) {
+    
+    Sylma::throwException($sMessage, array('@namespace ' . $this->getNamespace()), $iOffset);
   }
   
   protected function log($sMessage, $sStatut = self::MESSAGES_STATUT) {

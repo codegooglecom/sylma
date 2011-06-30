@@ -1,5 +1,8 @@
 <?php
 
+require_once('ReflectorInterface.php');
+require_once('ReflectorCommented.php');
+
 class InspectorProperty extends InspectorReflectorCommented implements InspectorReflectorInterface {
   
   protected $parent;

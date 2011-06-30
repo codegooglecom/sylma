@@ -236,8 +236,8 @@ class Controler {
     
     if (!$sExtension = $oPath->parseExtension(true)) $sExtension = 'html';
     $sExtension = strtolower($sExtension);
-    
-    if (self::isAdmin() && ($oPath->getIndex(0, true) == 'show-report' || isset($_POST['sylma_show_report']))) {
+    // print_r($oPath->getAllArguments());
+    if (self::isAdmin() && ($oPath->getAssoc('show-report') || isset($_POST['sylma_show_report']))) {
       
       $oPath->getIndex();
       

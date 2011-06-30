@@ -193,7 +193,7 @@ class XSL_Document extends XML_Document {
         $mResult = strtoxml(substr($sResult, 22), array(), true); //, array(), true
         if ($mResult && $mResult->length == 1) $mResult = new XML_Document($mResult);
         
-        //if ($mResult->isEmpty()) Controler::addMessage(array(t('Un problème est survenu lors de la transformation XSL !'),new HTML_Hr,$sResult), 'xml/warning');
+        //if ($mResult->isEmpty()) Controler::addMessage(array(t('Un problème est survenu lors de la transformation XSL !'),new HTML_Tag('hr'),$sResult), 'xml/warning');
         
       } else $mResult = $sResult;
       //} else $mResult = substr($sResult, 21);

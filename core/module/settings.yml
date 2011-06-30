@@ -1,0 +1,14 @@
+classes :
+  namespaced :
+    name : Namespaced
+  base :
+    name : ModuleBase
+  module :
+    name : Module
+  extension :
+    name : ModuleExtension
+  xdb :
+    name : XDB_Module
+  badobject :
+    name : BadObject
+  

@@ -1997,7 +1997,7 @@ class XML_Action extends XML_Document {
         if (Controler::useStatut('action/report')) {
           
           $oSeek = new HTML_Span(t('>>> Début'), array('style' => 'color: green;'));
-          dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek, $this->getPath()->parse()), new HTML_Hr), 'action/report');
+          dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek, $this->getPath()->parse()), new HTML_Tag('hr')), 'action/report');
         }
         
         switch ($oRoot->getNamespace()) {
@@ -2132,7 +2132,7 @@ class XML_Action extends XML_Document {
         if (Controler::useStatut('action/report')) {
           
           $oSeek = new HTML_Span(t('<<< Fin'), array('style' => 'color: red;'));
-          dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek,$this->getPath()->parse()), new HTML_Hr), 'action/report');
+          dspm(array(xt('%s de l\'exécution du fichier %s', $oSeek,$this->getPath()->parse()), new HTML_Tag('hr')), 'action/report');
         }
         
         if (!$this->getStatut()) $this->setStatut('success');

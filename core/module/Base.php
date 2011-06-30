@@ -51,27 +51,34 @@ class ModuleBase extends Namespaced {
       $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
     }
     
+    $class = $this->loadClass($sName, $this->getArguments('classes'));
+    if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $this->getDirectory()));
+    
+    return Controler::createObject($class, $aArguments);
+  }
+  
+  protected function loadClass($sName, $args) {
+    
     $aPath = explode('/', $sName);
     array_unshift($aPath, null);
     
     $sPath = implode('/classes/', $aPath);
     
-    if (!$class = $this->getArgument($sPath)) {
+    if (!$class = $args->get($sPath)) {
       
       $this->throwException(txt('Cannot build object @class %s. No settings defined for these class', $sName));
     }
     
     // set absolute path for relative classe file's path
     
-    if (!$sFile = $class->get('file', false)) {
+    if (!$sFile = $class->read('file', false)) {
       
-      $sFile = $class->get('name') . '.php';
+      $sFile = $class->read('name') . '.php';
     }
-    //dspf($sFile);
-    //dspf(path_absolute($sFile, $this->getDirectory()));
-    $class->set('file', path_absolute($sFile, $this->getDirectory()));
-    //dspf($class->query());
-    return Controler::createObject($class, $aArguments);
+    
+    
+    
+    return $class;
   }
   
   protected function setArguments($mArguments = null, $bMerge = true) {
@@ -106,7 +113,7 @@ class ModuleBase extends Namespaced {
     return $this->arguments;
   }
   
-  protected function getArgument($sPath, $mDefault = null, $bDebug = true) {
+  protected function getArgument($sPath, $mDefault = null, $bDebug = false) {
     
     $mResult = $mDefault;
     

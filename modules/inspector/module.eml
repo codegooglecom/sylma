@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:la="http://www.sylma.org/processors/action-builder" xmlns:ins="http://www.sylma.org/modules/inspector">
+  <le:settings>
+    <le:name>Load module</le:name>
+    <le:argument format="php-string" name="title"/>
+    <le:argument format="php-string" name="path"/>
+    <le:return format="XML_Document"/>
+  </le:settings>
+  <le:action path="interface/get-module">
+    <le:get-argument name="path"/>
+    <li:parse>
+      <le:template path="module.xsl">
+        <li:set-parameters>
+          <le:array>
+            <le:argument le:key="file">
+              <le:get-argument name="path"/>
+            </le:argument>
+            <le:argument le:key="title">
+              <le:get-argument name="title"/>
+            </le:argument>
+          </le:array>
+        </li:set-parameters>
+      </le:template>
+    </li:parse>
+  </le:action>
+</le:action>

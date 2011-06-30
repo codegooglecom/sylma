@@ -1,0 +1,9 @@
+/* Document CSS */
+
+.sylma-ins-module {
+  min-height: 220px;
+}
+
+.sylma-ins-module li ul {
+  padding-left: 1em;
+}

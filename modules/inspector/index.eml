@@ -6,9 +6,55 @@
   <le:window>
     <li:add-css le:format="string">
       <le:directory/>
-      <le:argument>/class.css</le:argument>
+      <le:argument>/index.css</le:argument>
     </li:add-css>
   </le:window>
+  <div class="clearfix">
+    <le:action path="module">
+      <le:argument name="path">/sylma/core/module/settings.yml</le:argument>
+      <le:argument name="title">Module</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/core/settings/settings.yml</le:argument>
+      <le:argument name="title">Settings</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/action/action.yml</le:argument>
+      <le:argument name="title">Action</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/dom/settings.yml</le:argument>
+      <le:argument name="title">DOM</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/schemas/settings.yml</le:argument>
+      <le:argument name="title">Schemas</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/window/settings.yml</le:argument>
+      <le:argument name="title">Window</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/storage/filesys/settings.yml</le:argument>
+      <le:argument name="title">File system</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/core/sylma.yml</le:argument>
+      <le:argument name="title">Sylma</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/modules/inspector/settings.yml</le:argument>
+      <le:argument name="title">Inspector</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/core/exist.yml</le:argument>
+      <le:argument name="title">eXist</le:argument>
+    </le:action>
+    <le:action path="module">
+      <le:argument name="path">/sylma/core/html.yml</le:argument>
+      <le:argument name="title">HTML</le:argument>
+    </le:action>
+  </div>
   <le:action path="interface/get-declared">
     <li:parse>
       <le:template>

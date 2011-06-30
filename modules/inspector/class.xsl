@@ -22,6 +22,7 @@
   <xsl:param name="class-dollar">sylma-ins-dollar</xsl:param>
   <xsl:param name="class-basetype">sylma-ins-basetype</xsl:param>
   <xsl:param name="class-cast">sylma-ins-cast</xsl:param>
+  <xsl:param name="class-static">sylma-ins-static</xsl:param>
   
 	<xsl:template match="/*">
 		<div class="{$class-class}">
@@ -125,6 +126,7 @@
 	  <xsl:param name="class"/>
 	  <li>
       <xsl:attribute name="class">
+        <xsl:if test="@static = 'true'"><xsl:value-of select="concat($class-static, ' ')"/></xsl:if>
         <xsl:value-of select="concat($class-property, ' ', $class, ' ', $class-item, ' ', $class-prefix, '-', @access)"/>
       </xsl:attribute>
 	    <xsl:apply-templates select="ins:modifiers"/>
@@ -138,7 +140,11 @@
 	
 	<xsl:template match="ins:method">
 	  <xsl:param name="class" select="''"/>
-	  <li class="{$class-item} {$class-method} {$class} {$class-prefix}-{@access}">
+	  <li>
+      <xsl:attribute name="class">
+        <xsl:if test="@static = 'true'"><xsl:value-of select="concat($class-static, ' ')"/></xsl:if>
+        <xsl:value-of select="concat($class-item, ' ', $class-method, ' ', $class, ' ', $class-prefix, '-', @access)"/>
+      </xsl:attribute>
       <strong><xsl:value-of select="@name"/></strong>
       <span>(<xsl:copy-of select="ins:implode(ins:parameter)"/> )</span>
       <xsl:variable name="methods" select="../ins:extension//ins:method[@name = current()/@name]"/>
@@ -239,7 +245,12 @@
 	<func:function name="ins:get-class">
 	  <xsl:param name="name" select="."/>
 	  <func:result>
-	    <a href="{$inspect}{$name}"><xsl:value-of select="$name"/></a>
+      <xsl:variable name="require">
+        <xsl:if test="/*/@file">
+          <xsl:value-of select="concat('&amp;file=', /*/@file)"/>
+        </xsl:if>
+      </xsl:variable>
+	    <a href="{$inspect}{$name}{$require}"><xsl:value-of select="$name"/></a>
 	  </func:result>
 	</func:function>
 	

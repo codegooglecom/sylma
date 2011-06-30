@@ -7,6 +7,11 @@ class XArguments extends Arguments implements SettingsInterface {
    */
   const VARIABLE_PREFIX = '@sylma:';
   
+  /**
+   * File used in @method loadYAML()
+   */
+  private $file;
+  
   public function __construct($mValue, $sNamespace = '') {
     
     // set namespace first for logging
@@ -75,6 +80,7 @@ class XArguments extends Arguments implements SettingsInterface {
           $this->throwException(txt('@file %s is empty', $file));
         }
         
+        $this->file = $file;
         $aResult = $this->parseYAML($sContent);
       }
       else {
@@ -96,6 +102,11 @@ class XArguments extends Arguments implements SettingsInterface {
   protected function useFile() {
     
     return (bool) Sylma::getControler('storage/filesys');
+  }
+  
+  public function getFile() {
+    
+    return $this->file;
   }
   
   protected function loadYAMLFree($sPath) {

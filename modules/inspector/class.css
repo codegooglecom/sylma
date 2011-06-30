@@ -59,6 +59,10 @@ li.sylma-ins-group {
   display: none;
 }
 
+.sylma-ins-static > strong {
+  text-decoration: underline;
+}
+
 li.sylma-ins-method:hover .sylma-ins-cast {
   display: inline;
 }

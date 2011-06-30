@@ -1,5 +1,6 @@
 <?php
 
+require_once('ReflectorInterface.php');
 require_once('ReflectorCommented.php');
 
 class InspectorMethod extends InspectorReflectorCommented implements InspectorReflectorInterface {

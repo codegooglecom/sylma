@@ -1,5 +1,8 @@
 <?php
 
+require_once('ReflectorInterface.php');
+require_once('Reflector.php');
+
 class InspectorParameter extends InspectorReflector implements InspectorReflectorInterface {
   
   protected $parent;

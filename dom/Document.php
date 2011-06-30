@@ -317,7 +317,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
       if (!@parent::loadXML($sContent)) {
         
         dspm(array(t('Chargement texte impossible, contenu invalide :'),
-          new HTML_Hr, stringResume($sContent, 500)), 'xml/warning');
+          new HTML_Tag('hr'), stringResume($sContent, 500)), 'xml/warning');
           
         dspm(new HTML_Tag('pre', $sContent));
         return false;

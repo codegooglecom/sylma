@@ -35,60 +35,9 @@ function strtoxml($sValue, array $aNS = array(), $bMessage = false) {
     
     $mResult = $oDocument->getRoot()->getChildren();
     
-  } else if ($bMessage) dspm(array(t('StrToXml : Transformation impossible'), new HTML_Hr, $sValue), 'xml/warning');
+  } else if ($bMessage) dspm(array(t('StrToXml : Transformation impossible'), new HTML_Tag('hr'), $sValue), 'xml/warning');
   
   return $mResult;
-}
-
-class XML_Helper extends XML_Document {
-  
-  private $aBlocs = array();
-  
-  public function __construct($mChildren = '') {
-    
-    if ($mChildren === '') $mChildren = new HTML_Div('', array('class' => 'helper'));
-    
-    parent::__construct($mChildren);
-  }
-  
-  public function loadAction($sPath, $oRedirect = null) {
-    
-    return new Action($sPath, $oRedirect);
-  }
-  
-  public function addAction($sPath, $oRedirect = null) {
-    
-    $this->add($this->loadAction($sPath, $oRedirect));
-  }
-  
-  public function setBloc($sKey, $mValue) {
-    
-    if ($sKey) $this->aBlocs[$sKey] = $mValue;
-    return $mValue;
-  }
-  
-  public function addBloc($sKey, $oTarget = null) {
-    
-    if ($oTarget && $oTarget instanceof XML_Element) return $oTarget->add($this->getBloc($sKey));
-    else return $this->add($this->getBloc($sKey));
-  }
-  
-  public function getBloc($sKey) {
-    
-    if (!array_key_exists($sKey, $this->aBlocs)) {
-      
-      $oBloc = new XML_Element($sKey);
-      $this->aBlocs[$sKey] = $oBloc;
-    }
-    
-    return $this->aBlocs[$sKey];
-  }
-  
-  public function parse() {
-    
-    if (!$this->isEmpty()) return $this->getRoot();
-    else return null;
-  }
 }
 
 class XML_Attribute extends DOMAttr implements NodeInterface {

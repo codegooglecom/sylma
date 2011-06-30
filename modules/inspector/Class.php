@@ -1,5 +1,6 @@
 <?php
 
+require_once('ReflectorInterface.php');
 require_once('ReflectorCommented.php');
 
 class InspectorClass extends InspectorReflectorCommented implements InspectorReflectorInterface {
@@ -15,11 +16,6 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
    * File where is located the class
    */
   protected $file;
-  
-  /**
-   * Used by @method useParent()
-   */
-  protected $bParent = true;
   
   protected $aSource;
   protected $iOffset;
@@ -40,18 +36,16 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
   /**
    * @param string|ReflectorInterface $class The reflector to link to this class 
    * @param $controler The parent element, eg. The module's class
-   * @param boolean $bParent Sent to @method useParent()
    */
-  public function __construct($mClass, ModuleBase $controler, $bParent = true) {
+  public function __construct($mClass, ModuleBase $controler, array $aArguments = array()) {
     
+    $this->setArguments($aArguments);
     $this->controler = $controler;
     
     if (is_string($mClass)) $this->reflector = new ReflectionClass($mClass);
     else $this->reflector = $mClass;
     
     if (!$this->getReflector()) $this->throwException('No reflector has been defined');
-    
-    $this->useParent($bParent);
     
     if ($this->getReflector()->isUserDefined()) {
       
@@ -91,11 +85,13 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
       preg_match("/{([^{]*)function/", $this->getSource(true), $aResult);
       
       if (!$aResult || empty($aResult[1])) {
-        
-        $this->throwException(t('No properties found'));
+        // dspf($this->getSource(true));
+        // $this->throwException(t('No properties found'));
       }
-      
-      $this->sSourceProperties = $aResult[1];
+      else {
+        
+        $this->sSourceProperties = $aResult[1];
+      }
     }
     
     return $this->sSourceProperties;
@@ -153,6 +149,8 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     foreach ($this->getReflector()->getProperties() as $property) {
       
+      if ($this->getArgument('no-private', false) && $property->isPrivate()) continue;
+      
       if ($property->getDeclaringClass() == $this->getReflector()) {
         
         $this->aProperties[] = $this->getControler()->create(self::PROPERTY_CLASS, array(
@@ -165,6 +163,8 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     foreach ($this->getReflector()->getMethods() as $method) {
       
+      if ($this->getArgument('no-private', false) && $method->isPrivate()) continue;
+      
       if ($method->getDeclaringClass() == $this->getReflector()) {
         
         $this->aMethods[] = $this->getControler()->create(
@@ -175,25 +175,16 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
   }
   
   /**
-   * If set to TRUE (default) and the class extends a parent class, the parent class will be loaded with all elements and sub-classes
-   *
-   * @param* boolean $bParent The new value, NULL will not change the value
-   * @return The current value
-   */
-  public function useParent($bParent = null) {
-    
-    if ($bParent !== null) $this->bParent = $bParent;
-    return $this->bParent;
-  }
-  
-  /**
    * Load parent classes (extends & implements)
    */
   protected function loadSytemParents() {
     
     if ($class = $this->getReflector()->getParentClass()) {
       
-      if ($this->useParent()) $this->extends = $this->getControler()->create('class', array($class, $this->getControler()));
+      if ($this->getArgument('parent', true)) {
+        
+        $this->extends = $this->getControler()->create('class', array($class, $this->getControler(), array('no-private' => true)));
+      }
       else $this->extends = $class->getName();
     }
   }
@@ -209,7 +200,10 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     if (!empty($aMatch['extends'])) {
       
-      if ($this->useParent()) $this->extends = $this->getControler()->create('class', array($aMatch['extends'], $this->getControler()));
+      if ($this->getArgument('parent', true)) {
+        
+        $this->extends = $this->getControler()->create('class', array($aMatch['extends'], $this->getControler(), array('no-private' => true)));
+      }
       else $this->extends = $aMatch['extends'];
     }
     
@@ -226,7 +220,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
       '@class ' . $this->getName(),
       '@file ' . $this->file);
     
-    return parent::throwException($sMessage, $mSender);
+    return parent::throwException($sMessage, $mSender, 2);
   }
   
   public function parse() {
