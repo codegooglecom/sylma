@@ -348,7 +348,6 @@ class XML_Action extends XML_Document {
       }
     }
     
-    //echo 'fin : '.$oElement->getName();
     return $aArguments;
   }
   

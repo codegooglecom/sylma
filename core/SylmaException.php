@@ -25,7 +25,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
 		
     if (count($aTrace) < $iOffset + 2) {
       
-      echo 'bad exception call'; // TODO
+      // echo 'bad exception call'; // TODO
     }
     else {
     	
@@ -33,8 +33,8 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
 	    $aCaller = $aTrace[$iOffset + 1];
 	    
 	    $this->aCall = array(
-	      'type' => 'method',
-	      'value' => $aCaller['class'] . $aCaller['type'] . $aCaller['function']);
+	      'type' => array_key_exists('class', $aCaller) ? 'method' : 'function',
+	      'value' => array_val('class', $aCaller) . array_val('type', $aCaller) . array_val('function', $aCaller));
 	    
 	    $this->line = $aCall['line'];
 	    $this->file = $aCall['file'];
@@ -109,7 +109,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
     
     if (count($aTrace) < 2) {
       
-      echo 'bad exception call'; // TODO
+      // echo 'bad exception call'; // TODO
     }
     else {
       

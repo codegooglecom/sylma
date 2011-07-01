@@ -6,6 +6,11 @@ class User extends Module {
   private $bValid = false;
   private $sSID = ''; // session ID
   
+  /**
+   * Used by @method needProfile()
+   */
+  private $bProfil = false;
+  
   private $aGroups = array();
   private $cookie;
   
@@ -114,7 +119,7 @@ class User extends Module {
         // has cookie
         
         $this->setName($sUser);
-        $this->loadProfile();
+        $this->bProfil = true;
       }
       else {
         
@@ -134,20 +139,30 @@ class User extends Module {
   
   public function getDirectory() {
     
-    if ($this->getName()) return Controler::getDirectory($this->getArgument('path').'/'.$this->getName());
+    if ($this->getName()) return Controler::getDirectory($this->getArgument('path') . '/' . $this->getName());
     else return null;
   }
   
-  protected function loadProfile() {
+  /**
+   * Define if the profil need to be load by main Controler.
+   * Used when session is lost, profil cannot be loaded before filesys
+   */
+  public function needProfile() {
     
-    $this->setDirectory(Controler::getDirectory($this->getArgument('path') . '/' . $this->getName()));
+    return $this->bProfil;
+  }
+  
+  public function loadProfile() {
+    
+    if (!Controler::getDirectory()) Sylma::throwException(txt('Directory is not yet ready'));
     
     $sProfil = $this->getArgument('profil');
     $dProfil = $this->getDocument($sProfil);
     
     if (!$dProfil || $dProfil->isEmpty()) {
       
-      $this->dspm(xt('Cannot load profile in %s', $sProfil), 'error');
+      $this->log($this->getArgument('path') . '/' . $this->getName());
+      $this->log(txt('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
     }
     else {
       
@@ -164,10 +179,13 @@ class User extends Module {
     $aGroups = $this->getArgument('authenticated/groups')->query();
     $sUser = $this->getName();
     
-    $oAllGroups = $this->getDocument($this->readSettings('groups/@path'), MODE_EXECUTION);
+    $oAllGroups = $this->getDocument('/config/groups.xml', MODE_EXECUTION);
     
-    $oGroups = $oAllGroups->query("group[@owner = '$sUser']/@name | group[member = '$sUser']/@name");
-    foreach ($oGroups as $oAttribute) $aGroups[] = $oAttribute->getValue();
+    if ($oAllGroups) {
+      
+      $oGroups = $oAllGroups->query("group[@owner = '$sUser']/@name | group[member = '$sUser']/@name");
+      foreach ($oGroups as $oAttribute) $aGroups[] = $oAttribute->getValue();
+    }
     
     if (Controler::isAdmin()) $aGroups = array_merge($aGroups, $this->getArgument('root/groups')->query());
     
@@ -192,7 +210,7 @@ class User extends Module {
       
       $this->setName($aSession[0]);
       $this->setGroups($aSession[1]);
-      $this->setOptions($aSession[2]);
+      if ($aSession[2]) $this->setOptions($aSession[2]);
     }
     
     return $this->getName();
@@ -200,7 +218,10 @@ class User extends Module {
   
   protected function saveSession() {
     
-    $_SESSION[$this->getArgument('session/name')] = serialize(array($this->getName(), $this->getGroups(), $this->getOptions()->getDocument()));
+    $options = null;
+    if ($this->getOptions()) $options = $this->getOptions()->getDocument();
+    
+    $_SESSION[$this->getArgument('session/name')] = serialize(array($this->getName(), $this->getGroups(), $options));
   }
   
   /*** Groups ***/

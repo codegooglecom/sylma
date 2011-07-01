@@ -102,7 +102,7 @@ class WindowHTML extends XML_Action {
     
     // Remove security elements
     
-    // if ($oElements = $oView->query('//@ls:owner | //@ls:mode | //@ls:group', 'ls', SYLMA_NS_SECURITY)) $oElements->remove();
+    if ($oElements = $oView->query('//@ls:owner | //@ls:mode | //@ls:group', 'ls', SYLMA_NS_SECURITY)) $oElements->remove();
     
     if ($oView->isEmpty()) {
       
@@ -125,7 +125,6 @@ class WindowHTML extends XML_Action {
       
     } catch(Exception $e) {
       
-    	//echo $e;
       $sResult = (string) xt('Problème lors du chargement du site. Nous nous excusons pour ce désagrément. %s pour revenir à la page d\'accueil', new HTML_Br.new HTML_A('/', t('Cliquez-ici')));
     }
     

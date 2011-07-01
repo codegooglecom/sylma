@@ -785,24 +785,6 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
     return $oResult;
   }
   
-  public function dspm() {
-    
-    dspf($this);
-  }
-  
-  public function dsp($bHtml = false) {
-    
-    echo $this->view(true, true, $bHtml);
-    /*
-    $oView = new XML_Document($this);
-    $oView->formatOutput();
-    
-    $oPre = new XML_Element('pre');
-    $oPre->addText($oView);
-    
-    echo $oPre;*/
-  }
-  
   public function display($bHtml = false, $bDeclaration = true) {
     
     $sResult = '';

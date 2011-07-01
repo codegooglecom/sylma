@@ -11,6 +11,9 @@ class Sylma {
   const MODE_READ = 4;
   const LOG_STATUT_DEFAULT = 'notice';
   
+  /**
+   * @var SettingsInterface
+   */
   private static $settings = null;
   private static $logger = null;
   protected static $aControlers;
@@ -19,6 +22,7 @@ class Sylma {
   
   /**
    * Handle final result for @method render()
+   * @var mixed
    */
   private static $result = null;
   
@@ -69,7 +73,7 @@ class Sylma {
     $this->logger = $logger;
   }
   
-  public static function get($sPath, $bDebug = true) {
+  public static function get($sPath = '', $bDebug = true) {
     
     if (self::getSettings()) return self::getSettings()->get($sPath, $bDebug);
     else return $bDebug;

@@ -386,6 +386,8 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
       if (!is_array($mValue)) return (string) $mValue;
     }
     
-    $this->throwException(txt('Cannot render an array as a string'));
+    $this->log(txt('Cannot render an array as a string'));
+    
+    return '';
   }
 }

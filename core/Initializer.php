@@ -22,8 +22,8 @@ class Initializer {
 	public function loadSettings($sServer, $sSylma) {
 		
     $settings = new XArguments(substr(SYLMA_RELATIVE_PATH, 1) . $sSylma, Sylma::NS);
-    if ($sServer)  $settings->mergeFile($sServer);
-    //print_r($settings->query());
+    if ($sServer) $settings->mergeFile($sServer);
+    
     return $settings;
 	}
 	

@@ -67,6 +67,8 @@ class Controler {
     self::$oDirectory = new XML_Directory('', '', Sylma::get('directories/root/rights')->query());
     Sylma::setControler('storage/filesys', self::$oDirectory);
     
+    if (self::$user->needProfile()) self::$user->loadProfile();
+    
     // Load general parameters - root.xml
     self::loadSettings();
     
@@ -675,7 +677,6 @@ class Controler {
   public static function error404() {
     
     header('HTTP/1.0 404 Not Found');
-    // echo 'Erreur 404 :\'(';
     exit;
   }
   

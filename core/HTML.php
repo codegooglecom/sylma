@@ -68,7 +68,6 @@ class HTML_Tag extends XML_Element {
     
     // if ($this->bForceClosure && !$this->hasChildren()) $this->add(' ');
     if ($this->bForceClosure && !$this->read()) $this->add("\n");
-    //echo 'hello : '.$this->getName().' / ';
   }
   
   public function __toString() {

@@ -63,9 +63,6 @@ class XML_Path {
     $this->sSimplePath = $sPath;
     
     if ($bParse) $this->parsePath($bArguments, $bDebug);
-    
-    // echo $sPath;
-    // dsp($this->aArguments);
   }
   
   public function parsePath($bArguments = true, $bDebug = true) {

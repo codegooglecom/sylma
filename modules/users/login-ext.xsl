@@ -1,4 +1,7 @@
 <xsl:stylesheet extension-element-prefixes="usr" xmlns:usr="http://www.sylma.org/modules/users/login" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" usr:ns="null">
+  
+  <xsl:param name="https"/>
+  
   <xsl:template match="usr:*" mode="form-child">
     <xsl:attribute name="id">sylma-user-login</xsl:attribute>
   </xsl:template>
@@ -8,9 +11,11 @@
   <xsl:template match="usr:*" mode="notice"/>
   <xsl:template match="usr:*" mode="actions">
     <div class="field-actions">
-      <button type="button" onclick="document.location = document.location.href.replace(/^http/, 'https');">
-        Passer en mode sécurisé
-      </button>
+      <xsl:if test="not($https)">
+        <button type="button" onclick="document.location = document.location.href.replace(/^http/, 'https');">
+          Passer en mode sécurisé
+        </button>
+      </xsl:if>
       <input type="submit" value="Connexion"/>
     </div>
   </xsl:template>

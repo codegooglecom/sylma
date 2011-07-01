@@ -56,7 +56,7 @@ class ActionControler {
           
           $oDirectory = $oInterface->getDocument()->getFile()->getParent();
           $oDocument = new XML_Document(Controler::getAbsolutePath($sPath, $oDirectory), MODE_EXECUTION);
-          //echo Controler::getAbsolutePath($sPath, $oInterface->getDocument()->getFile());
+          
           if ($oParentInterface = self::buildInterface($oDocument)) $oInterface->add($oParentInterface->query('*'));
           
         } else dspm(xt('Extension de classe %s invalide', view($oExtends)), 'action/warning');

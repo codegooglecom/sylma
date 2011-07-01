@@ -31,7 +31,7 @@ class Module extends ModuleBase {
       
       // try to load from the name
       
-      if ($this->getName() && ($oSettings = Controler::getSettings()->get("module[@name='{$this->getName()}']"))) {
+      if ($this->getName() && Controler::getSettings() && ($oSettings = Controler::getSettings()->get("module[@name='{$this->getName()}']"))) {
         
         $this->oSettings = new Options(new XML_Document($oSettings), null); // TODO, schemas and namespaces
       }
@@ -107,7 +107,7 @@ class Module extends ModuleBase {
     $result = null;
     
     if ($this->getOptions() !== null) $result = $this->getOptions()->get($sPath, $bDebug);
-    return $result ? $result : $mDefault;
+    return isset($result) ? $result : $mDefault;
   }
   
   /**

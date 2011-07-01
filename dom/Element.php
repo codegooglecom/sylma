@@ -1240,17 +1240,6 @@ class XML_Element extends DOMElement implements ElementInterface {
     return $oResult;
   }
   
-  public function dsp($bHtml = false) {
-    
-    $oResult = clone $this;
-    $oResult->formatOutput();
-    
-    if ($bHTML) $sResult = xmlize($oResult);
-    else $sResult = $oResult;
-    
-    echo new HTML_Tag('pre', unxmlize($sResult));
-  }
-  
   public function messageParse() {
     
     return new HTML_Div($this->viewResume(), array('class' => 'message-element'));
