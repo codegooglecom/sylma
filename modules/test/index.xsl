@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/test" version="1.0">
   
+  <xsl:variable name="class-failed">sylma-test-failed</xsl:variable>
+  <xsl:variable name="class-title">sylma-test-title</xsl:variable>
+  
   <xsl:template match="/test:tests">
     <div>
       <xsl:apply-templates/>
@@ -19,18 +22,27 @@
         </xsl:choose>
       </xsl:variable>
       <xsl:element name="{$title}">
-        <xsl:value-of select="@name"/>
+        <xsl:attribute name="class">
+          <xsl:value-of select="$class-title"/>
+        </xsl:attribute>
+        <xsl:value-of select="test:description"/> -
+        <xsl:variable name="failed" select="count(.//test:test[test:result = 'false'])"/>
+        <em>
+          <xsl:choose>
+            <xsl:when test="$failed">
+              <span><xsl:value-of select="$failed"/></span>
+            </xsl:when>
+            <xsl:otherwise>0</xsl:otherwise>
+          </xsl:choose>
+          <xsl:text> failed</xsl:text> /
+          <xsl:value-of select="count(.//test:test)"/>
+        </em>
       </xsl:element>
-      <xsl:apply-templates select="test:description"/>
       <xsl:apply-templates select="test:group">
         <xsl:with-param name="depth" select="$depth + 1"/>
       </xsl:apply-templates>
       <xsl:apply-templates select="test:test"/>
     </ul>
-  </xsl:template>
-  
-  <xsl:template match="test:description">
-    <p><xsl:value-of select="."/></p>
   </xsl:template>
   
   <xsl:template match="test:test">
@@ -43,6 +55,12 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:value-of select="@name"/>
+      @valid <xsl:value-of select="@expected"/>
+      <xsl:if test="test:message">
+        <p>
+          <xsl:value-of select="test:message"/>
+        </p>
+      </xsl:if>
     </li>
   </xsl:template>
   

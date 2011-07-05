@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<tst:generation xmlns:tst="http://www.sylma.org/schemas/test" xmlns="http://www.sylma.org" xmlns:lc="http://www.sylma.org/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <tst:schema>
-    <xs:element name="commande" lc:gen-id="id"/>
-  </tst:schema>
-  <tst:expected>
-    <commande id="id[\w\d]"/>
-  </tst:expected>
-</tst:generation>

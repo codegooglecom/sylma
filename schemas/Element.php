@@ -20,6 +20,9 @@ class XSD_Element extends XSD_Node {
   public function validate(XSD_Instance $oInstance, $aPath = array(), $bMessages = true) {
     
     array_shift($aPath);
+    
+    if (!$this->getType()) $this->getParser()->throwException(txt('Cannot validate element, no type defined'));
+    
     return $this->getType()->validate($oInstance, $aPath, $bMessages);
   }
   

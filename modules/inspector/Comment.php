@@ -7,7 +7,7 @@ class InspectorComment extends InspectorReflector {
   const LINE_BREAK = "\n";
   
   const RETURN_PREG = '/^\s*([\w\|\\\]+)+(?:\s+(.+))?$/';
-  const PARAMETER_PREG = '/^\s*([\w\|\\\]+)+\s*\$(\w+)(.+)$/';
+  const PARAMETER_PREG = '/^\s*([\w\|\\\]+)+\s*(?:\$(\w+))?(.+)$/';
   const COMMENT_PREG = '/[\s*]*(?:@(\w+))?(.*)/';
   
   protected $sComment = '';

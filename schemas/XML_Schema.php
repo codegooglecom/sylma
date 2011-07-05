@@ -105,6 +105,8 @@ class XSD_Parser extends ModuleBase {
     if ($sPath = $this->getOption('path')) $aPath = explode('/', $sPath);
     else $aPath = array();
     
+    if (!$aPath && !$oRoot) $this->throwException(txt('No root defined'));
+    
     $sRoot = $aPath ? $aPath[0] : $oRoot->getName();
     
     if (!$this->getSchema()) {
@@ -144,7 +146,8 @@ class XSD_Parser extends ModuleBase {
     } else {
       
       $this->isValid(false);
-      $this->dspm('no root', 'action/error');
+      dspf($this->getSchema());
+      $this->throwException(txt('Root element %s not found in schema', $sRoot));
       
       foreach ($this->getSchema()->query("/*/xs:element", $this->getNS()) as $oElement) {
         // TODO, no valid root element or not at all
@@ -400,6 +403,11 @@ class XSD_Parser extends ModuleBase {
   public function addMessage($oSource, $oMessage) {
     
     $this->aMessages[] = array($oSource, $oMessage);
+  }
+  
+  public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+    
+    return parent::throwException($sMessage, $mSender, $iOffset);
   }
   
   public function parse() {

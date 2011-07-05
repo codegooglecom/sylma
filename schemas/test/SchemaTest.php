@@ -21,27 +21,63 @@ class schemaTest extends Test {
     parent::__construct();
   }
   
+  private function loadSchema(DocumentInterface $doc) {
+    
+    if (!$eSchema = $doc->get('self:schema', $this->getNS())) {
+      
+      $this->throwException('No schema defined', '@file ' . $doc->getFile());
+    }
+    
+    $schema = new XML_Document;
+    $schema->addNode('schema', $eSchema->getChildren(), array('targetNamespace' => $this->getNamespace('target')), $this->getNamespace());
+    
+    return $schema;
+  }
+  
   public function generate(DocumentInterface $doc) {
     
     $aResult = array();
+    $schema = $this->loadSchema($doc);
     
-    foreach ($doc->query('//self:document', $this->getNS()) as $doc) {
+    if ((!$expected = $doc->get('self:expected', $this->getNS())) || !$expected->isComplex()) {
       
+      $this->throwException('No schema defined', '@file ' . $doc->getFile());
     }
+    
+    $sName = $expected->getAttribute('name');
+    $sExpected = $expected->getAttribute('expected');
+    
+    $expected = $this->createNode('sylma-schema', $expected->getChildren(), array(), 'schema');
+    
+    if ((!$test = $doc->get('self:document', $this->getNS())) || !$test->isComplex()) {
+      
+      $this->throwException('No document defined', '@file ' . $doc->getFile());
+    }
+    
+    $test = new XML_Document($test->getFirst());
+    $model = $test->getModel($schema);
+    
+    if (!$model || $model->isEmpty() || !($root = $model->getRoot())) $this->throwException('No valid model returned', '@file ' . $doc->getFile());
+    
+    $iResult = $root->compare($expected);
+    
+    $aResult = array(
+      'result' => booltostr($iResult === XML_Element::COMPARE_SUCCESS),
+      '@expected' => strtoupper($sExpected),
+      '@name' => $sName,
+    );
+    
+    if ($iResult !== XML_Element::COMPARE_SUCCESS) $aResult['message'] = '@node ' . $root->compareBadNode->getPath();
+    // dspf($model);
+    // dspf($expected);
     
     return $aResult;
   }
   
   public function validate(DocumentInterface $doc) {
     
-    $eSchema = $doc->get('self:schema', $this->getNS());
-    
-    if (!$eSchema || $eSchema->isEmpty()) $this->throwException('No schema defined', '@file ' . $doc->getFile());
-    
-    $schema = new XML_Document;
-    $schema->addNode('schema', $eSchema->getChildren(), array('targetNamespace' => $this->getNamespace('target')), $this->getNamespace());
-    
     $aResult = array();
+    $schema = $this->loadSchema($doc);
     
     foreach ($doc->query('self:document', $this->getNS()) as $test) {
       
@@ -50,6 +86,7 @@ class schemaTest extends Test {
       
       $aResult[] = array(
         'result' => booltostr($test->testAttribute('expected') === $bResult),
+        '@expected' => strtoupper($test->getAttribute('expected')),
         '@name' => $test->getAttribute('name'));
     }
     
@@ -64,14 +101,23 @@ class schemaTest extends Test {
     
     $aValidation = $aGeneration = array();
     
-    foreach ($this->getDirectory()->getFiles(array('xml')) as $file) {
+    foreach ($this->getDirectory()->getFiles(array('xml'), null, null) as $file) {
       
-      $doc = $file->getDocument();
+      $doc = $file->getDocument(Sylma::MODE_READ, true);
       
-      switch ($doc->getRoot()->getName()) {
+      if (!$root = $doc->getRoot()) continue;
+      
+      try {
         
-        case 'validation' : $aValidation[] = $this->validate($doc); break;
-        case 'generation' : $aGeneration[] = $this->generate($doc); break;
+        switch ($root->getName()) {
+          
+          case 'validation' : $aValidation[] = $this->validate($doc); break;
+          case 'generation' : $aGeneration[] = $this->generate($doc); break;
+        }
+      }
+      catch (SylmaException $e) {
+        
+        continue;
       }
     }
     
@@ -88,7 +134,7 @@ class schemaTest extends Test {
           array(
             '@name' => 'generation',
             'description' => t('Generation of model'),
-            '#group' => $aGeneration,
+            '#test' => $aGeneration,
           ),
         ),
       ),

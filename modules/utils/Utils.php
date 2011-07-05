@@ -43,13 +43,13 @@ class Utils {
     $iCalls = 0;
     $iBiggerTime = 0;
     
-    $oAction = null;
-    $oResult = new XML_Document('root');
+    $action = null;
     
     $iStart = microtime(true);
     
-    $oPath = new XML_Path($sPath, array(), true, true, false);
-    if (!$oPath->getPath()) {
+    $path = new XML_Path($sPath, array(), true, true, false);
+    
+    if (!$path->getPath()) {
       
       dspm(xt('L\'action %s n\'existe pas !', new HTML_Strong($sPath)), 'warning');
     }
@@ -57,15 +57,18 @@ class Utils {
       
       while ($iCount) {
         
-        $oAction = new XML_Action($sPath);
+        $action = new XML_Action($sPath);
         $iActionTime = microtime(true);
         
-        $oResult->add($oAction); // parse
+        $result = $action->parse();
         
         $iDeltaTime = microtime(true) - $iActionTime;
         if ($iDeltaTime > $iBiggerTime) $iBiggerTime = $iDeltaTime;
         
-        if (microtime(true) - $iStart > $iMaxTime) $iCount = 0;
+        if (microtime(true) - $iStart > $iMaxTime) {
+          
+          $iCount = 0;
+        }
         else {
           
           $iCount--;
@@ -74,22 +77,30 @@ class Utils {
       }
       
       $iTotalTime = microtime(true) - $iStart;
-      $iAverageTime = $iTotalTime / $iCalls;
-      $iDeltaTime = ((100 / $iAverageTime) * ($iBiggerTime - $iAverageTime));
       
-      $oCalls = new HTML_Strong($iCalls);
-      if ($iCalls != $iMaxCount) $oCalls->setAttribute('style', 'color : red');
+      if ($iCalls) {
+        
+        $iAverageTime = $iTotalTime / $iCalls;
+        $iDeltaTime = ((100 / $iAverageTime) * ($iBiggerTime - $iAverageTime));
+      }
+      else {
+        
+        $iAverageTime = $iDeltaTime = 0;
+      }
+      
+      $eCalls = new HTML_Strong($iCalls);
+      if ($iCalls != $iMaxCount) $eCalls->setAttribute('style', 'color : red');
       
       dspm(t('Test terminé'), 'success');
       dspm(xt('Action : %s', new HTML_Strong($sPath)));
       dspm(xt('Temps total : %s', new HTML_Strong(number_format($iTotalTime, 3).' s')));
-      dspm(xt('Nombre d\'appels : %s', $oCalls));
+      dspm(xt('Nombre d\'appels : %s', $eCalls));
       dspm(new HTML_Tag('hr'));
       dspm(xt('Mémoire utilisée : %s', new HTML_Strong(formatMemory(memory_get_peak_usage()))));
       dspm(xt('Temps moyen : %s', new HTML_Strong(number_format($iAverageTime, 3).' s')));
       dspm(xt('Variation : %s%%', new HTML_Strong(number_format($iDeltaTime, 1))));
     }
     
-    return $oAction;
+    return $result;
   }
 }

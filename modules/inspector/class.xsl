@@ -23,6 +23,8 @@
   <xsl:param name="class-basetype">sylma-ins-basetype</xsl:param>
   <xsl:param name="class-cast">sylma-ins-cast</xsl:param>
   <xsl:param name="class-static">sylma-ins-static</xsl:param>
+  <xsl:param name="class-parameter">sylma-ins-parameter</xsl:param>
+  <xsl:param name="class-parameters">sylma-ins-parameters</xsl:param>
   
 	<xsl:template match="/*">
 		<div class="{$class-class}">
@@ -146,7 +148,7 @@
         <xsl:value-of select="concat($class-item, ' ', $class-method, ' ', $class, ' ', $class-prefix, '-', @access)"/>
       </xsl:attribute>
       <strong><xsl:value-of select="@name"/></strong>
-      <span>(<xsl:copy-of select="ins:implode(ins:parameter)"/> )</span>
+      <div class="{$class-parameters}">(<xsl:copy-of select="ins:implode(ins:parameter)"/> )</div>
       <xsl:variable name="methods" select="../ins:extension//ins:method[@name = current()/@name]"/>
       <xsl:if test="$methods"> also found in </xsl:if>
       <xsl:for-each select="$methods">
@@ -157,8 +159,9 @@
 	</xsl:template>
 	
 	<xsl:template match="ins:parameter">
-    <span>
+    <div>
       <xsl:attribute name="class">
+        <xsl:value-of select="concat($class-parameter, ' ')"/>
         <xsl:choose>
           <xsl:when test="ins:default">
             <xsl:value-of select="$class-optional"/>
@@ -171,7 +174,7 @@
       <xsl:apply-templates select="ins:cast"/>
       <span class="{$class-dollar}">$</span>
       <span class="{$class-name}"><xsl:value-of select="@name"/></span>
-    </span>
+    </div>
 	</xsl:template>
 	
 	<xsl:template match="ins:comment">

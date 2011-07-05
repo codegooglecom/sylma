@@ -11,7 +11,7 @@
         <xsl:value-of select="concat(text(), ' ')"/>
       </td>
       <td>
-        <xsl:value-of select="@key"/>
+        <xsl:value-of select="@name"/>
       </td>
     </tr>
   </xsl:template>

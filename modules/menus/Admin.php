@@ -105,7 +105,7 @@ class TreeMenusAdmin extends Module {
       
       // Browse tree
       
-      if ($oElement->hasElementChildren()) {
+      if ($oElement->isComplex()) {
         
         // children
         

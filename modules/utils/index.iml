@@ -7,7 +7,7 @@
   </method>
   <method name="testAction" path="test-action" ls:owner="root" ls:group="0" ls:mode="700">
     <argument format="php-string" name="path"/>
-    <argument required="false" format="php-integer" name="time"/>
+    <argument required="false" format="php-integer" name="time" default="10"/>
     <argument required="false" format="php-integer" name="count"/>
   </method>
 </class>

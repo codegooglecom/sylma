@@ -20,7 +20,7 @@ class ActionControler {
         
         if ($oInterface = self::buildInterface($oInterface, $sClass)) {
           
-          if (Controler::useStatut('action/report')) Controler::addMessage(array(xt('Chargement de l\'interface "%s"', new HTML_Strong($sClass)), $oInterface->messageParse()), 'action/report');
+          if (Controler::useStatut('action/report')) Controler::addMessage(array(xt('Chargement de l\'interface "%s"', new HTML_Strong($sClass)), view($oInterface)), 'action/report');
           return $oInterface;
         }
         

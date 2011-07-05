@@ -74,7 +74,16 @@ abstract class XSD_Basic { // Used by XSD_Container, XSD_Class
   
   protected function dspm($mMessage, $sStatut = SYLMA_MESSAGES_DEFAULT_STAT) {
     
-    $sPath = xt('Schema : %s', $this->getParser()->getSchema()->getFile()->parse());
+    if ($file = $this->getParser()->getSchema()->getFile()) {
+      
+      $sFile = $file->parse();
+    }
+    else {
+      
+      $sFile = '[unknown]';
+    }
+    
+    $sPath = xt('Schema : %s', $sFile);
     
     return dspm(array($sPath, new HTML_Tag('hr'), $mMessage), $sStatut);
   }

@@ -41,7 +41,7 @@ class DBX_Module extends XDB_Module {
   
   /**
    * Build a document with the first node indicate in dbx options
-   * @*param string $sName Customized name for root node
+   * @param? string $sName Customized name for root node
    * @return XML_Document The resulting "only rooted" document
    */
   protected function getEmpty($sName = '') {

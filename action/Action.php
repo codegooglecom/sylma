@@ -193,7 +193,7 @@ class XML_Action extends XML_Document {
           if (Controler::useStatut('action/report')) dspm(array(
             t('Construction [ifc] :'),
             Controler::formatResource($mResult),
-            $oChild->messageParse()), 'action/report');
+            view($oChild)), 'action/report');
           
         } else {
           
@@ -1176,7 +1176,7 @@ class XML_Action extends XML_Document {
     $mResult = $oProcessor->loadElement($oElement, $this);
     
     
-    /*if ($oElement->hasElementChildren()) {
+    /*if ($oElement->isComplex()) {
       
       if ($oProcessor->useInterface()) list($mSubResult, $bSubReturn) = $this->runInterfaceList($mResult, $oElement);
       else $mSubResult = $this->buildArgument($oElement->getChildren());
@@ -1286,9 +1286,9 @@ class XML_Action extends XML_Document {
     
     if ($bRedirect) $aArguments = array_merge($this->getPath()->getArgument('index'), $this->getPath()->getArgument('assoc'));
     else $aArguments = array_merge(array_val('index', $aSourceArguments, array()), array_val('assoc', $aSourceArguments, array()));
-	
-	// merge $_POST values
-	if ($oMethod->testAttribute('use-post')) $aArguments = array_merge($aArguments, $_POST);
+    
+    // merge $_POST values
+    if ($oMethod->testAttribute('use-post')) $aArguments = array_merge($aArguments, $_POST);
     
     // CALL argument
     
@@ -1323,19 +1323,20 @@ class XML_Action extends XML_Document {
             }
           }
         }
-        
-      } else {
+      }
+      else {
         
         $this->log(txt('Not enough arguments in @element %s!', $oMethod->getPath()), 'action/warning');
         $bError = true;
       }
-      
-    } else {
+    }
+    else {
       
       // Normal arguments (defined number)
       
       $aMethodArguments = array();
       $bUseAssoc = false;
+      $aDefaults = array();
       
       foreach($oChildren as $iArgument => $oChild) {
         
@@ -1347,7 +1348,8 @@ class XML_Action extends XML_Document {
           $mArgument = $aArguments[$sName];
           $bUseAssoc = $bAssoc = $bExist = true;
           
-        } else if (!$bUseAssoc && array_key_exists($iArgument, $aArguments)) {
+        }
+        else if (!$bUseAssoc && array_key_exists($iArgument, $aArguments)) {
           
           $mArgument = $aArguments[$iArgument];
           $bExist = true;
@@ -1368,19 +1370,25 @@ class XML_Action extends XML_Document {
           
           $bSubError = !$this->validArgumentType($mArgument, $aFormats, $oMethod, $oChild->testAttribute('allow-null', false));
           
-          if (!$bSubError) $aResultArguments[] = $mArgument;
-          if (!$bError) $bError = $bSubError;
+          if (!$bSubError) {
+            
+            while ($aDefaults) $aResultArguments[] = array_pop($aDefaults);
+            $aResultArguments[] = $mArgument;
+          }
           
-        } else if ($oChild->testAttribute('required') !== false) {
+          if (!$bError) $bError = $bSubError;
+        }
+        else if ($oChild->testAttribute('required') !== false) {
           
           $this->log(txt('Required argument %s in @element %s is missing',
             $oChild->getAttribute('name'), $oMethod->getPath()), 'error');
           
           $bError = true;
+        }
+        else if ($bUseAssoc && !$oChild->isLast()) {
           
-        } else if ($bUseAssoc && !$oChild->isLast()) {
-          
-          $aResultArguments[] = null;
+          // shift index if some arguments are ommit, only usefull in assoc mode
+          $aDefaults[] = $oChild->getAttribute('default');
         }
       }
     }
@@ -1933,7 +1941,7 @@ class XML_Action extends XML_Document {
           if ($fValue) $fSubWeight = (1 / $fValue) * $fSubValue;
           else $fSubWeight = 0;
           
-          $oStat->addAttributes(array(
+          $oStat->setAttributes(array(
             'weight-color' => inter_color($fSubWeight),
             'total-value' => float_format($fValue, 2)));
           
@@ -1941,7 +1949,7 @@ class XML_Action extends XML_Document {
           $fResultValue -= $fSubValue;
         }
         
-        $aStats[$sName]->addAttributes(array(
+        $aStats[$sName]->setAttributes(array(
           'sub-weight-color' => inter_color($fWeight),
           'value' => float_format($fResultValue)));
       }

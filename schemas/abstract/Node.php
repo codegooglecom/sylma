@@ -59,7 +59,6 @@ abstract class XSD_Node extends XSD_Container { // Used by XSD_Element, XSD_Attr
     } else {
       
       if ($sType) $this->oType = $this->getParser()->getType($sType, $oSource, $aPath);
-      else $this->dspm(xt('Aucun type défini pour %s', view($oSource)), 'xml/warning');
     }
   }
   

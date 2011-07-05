@@ -82,6 +82,11 @@ class Initializer {
     require_once('dom/Document.php');
     require_once('dom/NodeInterface.php');
     require_once('dom/XML.php');
+    require_once('dom/Attribute.php');
+    require_once('dom/CData.php');
+    require_once('dom/Fragment.php');
+    require_once('dom/Comment.php');
+    require_once('dom/Text.php');
     require_once('dom/Nodelist.php');
     require_once('dom/ElementInterface.php');
     require_once('dom/Element.php');

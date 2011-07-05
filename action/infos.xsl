@@ -12,10 +12,7 @@
       <div class="msg-action-main">
         <xsl:if test="lem:sub-actions">
           <div class="msg-action-sub-weights">
-            <xsl:apply-templates select="lem:stats/*" mode="normal">
-              <xsl:with-param name="color" select="@sub-weight-color"/>
-              <xsl:with-param name="sub">1</xsl:with-param>
-            </xsl:apply-templates>
+            <xsl:apply-templates select="lem:stats/*" mode="normal"/>
           </div>
         </xsl:if>
         <div class="msg-action-label">
@@ -120,13 +117,20 @@
     </xsl:choose>
   </xsl:template>
   
+  <xsl:template match="lem:stat" mode="normal">
+    <xsl:apply-templates select=".">
+      <xsl:with-param name="color" select="@sub-weight-color"/>
+      <xsl:with-param name="sub">1</xsl:with-param>
+    </xsl:apply-templates>
+  </xsl:template>
+  
   <xsl:template match="lem:stat" mode="sub">
-    <xsl:apply-templates select="." mode="normal">
+    <xsl:apply-templates select=".">
       <xsl:with-param name="color" select="@weight-color"/>
     </xsl:apply-templates>
   </xsl:template>
   
-  <xsl:template match="lem:stat" mode="normal">
+  <xsl:template match="lem:stat">
     <xsl:param name="color" select="string('rgb(123, 123, 123)')"/>
     <xsl:param name="sub"/>
     <div style="background-color: {$color}" class="msg-action-stat msg-action-stat-{@name}">

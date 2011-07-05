@@ -47,6 +47,14 @@ class Module extends ModuleBase {
     $this->oSettings = new Options($dSettings, $dSchema, $this->mergeNamespaces($this->getNS(), $aNS));
   }
   
+  /**
+   * Create a DOM element using module's default namespace if not specified
+   */
+  public function createNode($sName, $mContent = '', array $aAttributes = array(), $sPrefix = '') {
+    
+    return new XML_Element($sName, $mContent, $aAttributes, $this->getNamespace($sPrefix));
+  }
+  
   protected function runAction($sPath, $aArguments = array()) {
     
     $sPath = Controler::getAbsolutePath($sPath, $this->getDirectory());

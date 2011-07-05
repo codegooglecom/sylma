@@ -7,6 +7,18 @@ require_once('ElementInterface.php');
  */
 class XML_Element extends DOMElement implements ElementInterface {
   
+  const COMPARE_SUCCESS = 0;
+  const COMPARE_BAD_ELEMENT = 1;
+  const COMPARE_BAD_ATTRIBUTE = 2;
+  const COMPARE_BAD_CHILD = 3;
+  
+  /**
+   * Contains the first bad element found from last comparison, or null if none found
+   * Used by @method compare()
+   * @var null|NodeInterface
+   */
+  public $compareBadNode = null;
+  
   /**
    * @param string $sName Full name of the element (prefix + local name)
    * @param mixed $mContent Content of the element
@@ -39,13 +51,13 @@ class XML_Element extends DOMElement implements ElementInterface {
         
         $oElement = parent::createElementNS($sUri, $sName);
         $oElement->add($oContent);
-        $oElement->addAttributes($aAttributes);
+        $oElement->setAttributes($aAttributes);
       }
       
     } else */
     $this->set($mContent);
     
-    if ($aAttributes) $this->addAttributes($aAttributes);
+    if ($aAttributes) $this->setAttributes($aAttributes);
   }
   
   /**
@@ -171,7 +183,7 @@ class XML_Element extends DOMElement implements ElementInterface {
       if ($sResultUri) $oXPath->registerNamespace($sPrefix, $sResultUri);
       else {
         
-        // if (Controler::useStatut('warning')) Controler::addMessage(xt('Element : Aucun URI pour le préfix "%s" !', new HTML_Strong($sPrefix)), 'xml/warning');
+        // if (Controler::useStatut('warning')) dspm(xt('Element : Aucun URI pour le préfix "%s" !', new HTML_Strong($sPrefix)), 'xml/warning');
         // ////// LOOP CRASH TODO /////// //
         return null;
       }
@@ -204,10 +216,10 @@ class XML_Element extends DOMElement implements ElementInterface {
         if ($mResult === null) {
           
           $mResult = '';
-          if (Controler::useStatut('xml/report')) Controler::addMessage(xt("Element->read(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');
+          if (Controler::useStatut('xml/report')) dspm(xt("Element->read(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');
         }
         
-      } else if (Controler::useStatut('xml/report')) Controler::addMessage(xt("Element->read(%s) : Impossible de crée l'objet XPath", new HTML_Strong($sQuery)), 'xml/report');
+      } else if (Controler::useStatut('xml/report')) dspm(xt("Element->read(%s) : Impossible de crée l'objet XPath", new HTML_Strong($sQuery)), 'xml/report');
       
       return $mResult;
       
@@ -236,15 +248,15 @@ class XML_Element extends DOMElement implements ElementInterface {
         XML_Controler::addStat('query');
         if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
         
-        // if (!$mResult || !$mResult->length) Controler::addMessage(xt("Element->query(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');
+        // if (!$mResult || !$mResult->length) dspm(xt("Element->query(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');
         // ////// report & notice type will crash system, maybe something TODO /////// //
         return new XML_NodeList($mResult);
         
-      } else if (Controler::useStatut('xml/report')) Controler::addMessage(xt("Element->query(%s) : Impossible de crée l'objet XPath", new HTML_Strong($sQuery)), 'xml/report');
+      } else if (Controler::useStatut('xml/report')) dspm(xt("Element->query(%s) : Impossible de crée l'objet XPath", new HTML_Strong($sQuery)), 'xml/report');
       
     } else {
       
-      // if ($this->isEmpty()) Controler::addMessage(xt('Element->query(%s) : Requête impossible, élément vide !', new HTML_Strong($sQuery)), 'xml/warning');
+      // if ($this->isEmpty()) dspm(xt('Element->query(%s) : Requête impossible, élément vide !', new HTML_Strong($sQuery)), 'xml/warning');
       dspm('Element : Requête vide ou invalide !', 'xml/warning'); // TODO possible recursive bug with messages
     }
     
@@ -371,6 +383,13 @@ class XML_Element extends DOMElement implements ElementInterface {
     $this->setAttribute('class', $sClasses);
   }
   
+  /**
+   * Concatenate the given value with the one yet existing in the corresponding attribute
+   * 
+   * @param string $sName The name of the attribute to edit
+   * @param string $sValue The value to add at the end of the attribute
+   * @param string $sNamespace The namespace of the attribute to look for
+   */
   public function pushAttribute($sName, $sValue, $sNamespace = null) {
     
     $sCurrent = $this->getAttribute($sName, $sNamespace);
@@ -378,41 +397,11 @@ class XML_Element extends DOMElement implements ElementInterface {
   }
   
   /**
-   * Import then add with {@link setAttributeNode()} an attribute object to the element
-   * @param XML_Attribute $oAttribute Attribute to add to the element
-   * @return XML_Attribute The attribute added to the element
-   */
-  /*public function addAttribute(XML_Attribute $oAttribute) {
-    
-    //$oAttribute = clone $oAttribute;
-    
-    if ($oAttribute->getDocument() && $oAttribute->getDocument() != $this->getDocument()) {
-      
-      $oAttribute = $this->getDocument()->importNode($oAttribute, false);
-    }
-    
-    $this->setAttributeNode($oAttribute);
-    
-    return $oAttribute;
-  }*/
-  
-  /**
-   * Remove all attributes then add the new ones via {@link addAttributes}
-   * @param array $aAttributes The associative array containing the name of the attribute in the key and the value in the array values
-   * @return array The associative array passed in argument
-   */
-  public function setAttributes($aAttributes) {
-    
-    $this->cleanAttributes();
-    return $this->addAttributes($aAttributes);
-  }
-  
-  /**
    * Set an associative array of attributes via {@link setAttribute()}
-   * @param array $aAttributes The associative array containing the name of the attribute in the key and the value in the array values
+   * @param array $mAttributes The associative array containing the name of the attribute in the key and the value in the array values
    * @return array The associative array passed in argument
    */
-  public function addAttributes($mAttributes) {
+  public function setAttributes($mAttributes) {
     
     if (is_array($mAttributes)) foreach ($mAttributes as $sKey => $sValue) $this->setAttribute($sKey, $sValue);
     else if (is_object($mAttributes)) foreach ($mAttributes as $oAttribute) $this->setAttributeNode($oAttribute);
@@ -565,7 +554,7 @@ class XML_Element extends DOMElement implements ElementInterface {
     $mResult = null;
     
     if (!$this->isRoot() && $this->getParent()) $mResult = $this->getParent()->insert(func_get_args(), $this);
-    else dspm(array(t('Element : Impossible d\'insérer un noeud avant le noeud racine'), $this->messageParse()),
+    else dspm(array(t('Element : Impossible d\'insérer un noeud avant le noeud racine'), view($this)),
  'xml/error');
     
     return $mResult;
@@ -630,7 +619,7 @@ class XML_Element extends DOMElement implements ElementInterface {
             $mResult = $mValue->parse();
             
             if ($mResult != $mValue) return $this->insert($mResult, $oNext);
-            else Controler::addMessage(xt('L\'objet parsé de classe "%s" ne doit pas se retourner lui-même !', new HTML_Strong(get_class($mValue))), 'xml/error');
+            else dspm(xt('L\'objet parsé de classe "%s" ne doit pas se retourner lui-même !', new HTML_Strong(get_class($mValue))), 'xml/error');
           }
           catch (SylmaExceptionInterface $e) {
           
@@ -729,11 +718,11 @@ class XML_Element extends DOMElement implements ElementInterface {
         
         if ($mContent instanceof XML_NodeList) {
           
-          if ($mContent->length > 1) Controler::addMessage(array(t('L\'élément parent ne peut être remplacé que par un unique enfant !'), $this->messageParse()), 'xml/error');
+          if ($mContent->length > 1) dspm(array(t('L\'élément parent ne peut être remplacé que par un unique enfant !'), view($this)), 'xml/error');
           else $mContent = $mContent->item(0);
         }
         
-        if (!($mContent instanceof XML_Element)) Controler::addMessage(array(t('L\'élément parent ne peut être remplacé que par un objet XML_Element !'), $this->messageParse()), 'xml/error');
+        if (!($mContent instanceof XML_Element)) dspm(array(t('L\'élément parent ne peut être remplacé que par un objet XML_Element !'), view($this)), 'xml/error');
         else {
           // TODO : strange things
           if ($mContent->isDefaultNamespace($mContent->getNamespace())) {
@@ -878,7 +867,7 @@ class XML_Element extends DOMElement implements ElementInterface {
   
   public function toArray($sAttribute = null, $iDepthAttribute = 0) {
     
-    if (!$this->hasChildren() || $this->isTextElement()) $mValue = $this->getValue();
+    if ($this->isEmpty() || $this->isSimple()) $mValue = $this->getValue();
     else {
       
       $mValue = array();
@@ -988,29 +977,22 @@ class XML_Element extends DOMElement implements ElementInterface {
     return !$this->hasChildren();
   }
   
+  /**
+   * Test wether element has element children or not
+   * @return boolean TRUE if the element contains children element (opposite to text)
+   */
   public function isComplex() {
     
-    return ($this->hasChildren() && ($this->countChildren() > 1 || $this->getFirst()->isElement()));
-  }
-  
-  public function isSimple() {
-    
-    return (!$this->hasElementChildren() && $this->hasChildren());
+    return ($this->hasChildren() && ($this->countChildren() > 1 || $this->getFirst()->isElement())); // TODO normalize
   }
   
   /**
-   * Test wether actual element has children or not
-   * @return boolean The children actual existenz fact (or not)
+   * Test wether element has text child or not
+   * @return boolean TRUE if the element contains child text (opposite to text)
    */
-  
-  public function hasElementChildren() { // TODO remove
+  public function isSimple() {
     
-    return $this->isComplex();
-  }
-  
-  public function isTextElement() { // TODO remove
-    
-    return $this->isSimple();
+    return ($this->hasChildren() && !$this->isComplex());
   }
   
   public function isText() {
@@ -1021,6 +1003,89 @@ class XML_Element extends DOMElement implements ElementInterface {
   public function isElement() {
     
     return true;
+  }
+  
+  private static function compareAttributes($el1, $el2) {
+    
+    if ($el2->getAttributes()->length > $el1->getAttributes()->length) {
+      
+      $eltmp = $el1;
+      $el1 = $el2;
+      $el2 = $eltmp;
+    }
+    
+    foreach ($el1->getAttributes() as $attribute) {
+      
+      if (substr($attribute->getName(), 0, 6) == 'xmlns:') continue;
+      
+      $compare = $el2->getAttributeNode($attribute->getName(), $attribute->getNamespace());
+      if (!$compare || $compare->read() != $attribute->read()) {
+        
+        return $attribute;
+      }
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Compare two elements and their content, ignore xmlns attributes
+   * Not identical, but relevant to @method isEqualNode()
+   * WARNING : Actually it degrades current element for comparison (TODO)
+   *
+   * @param NodeInterface $element The element to compare with this one
+   * @param? array $aPath The previous compared element for backtrace debug
+   *
+   * @return integer @const self::COMPARE_SUCCESS, @const self::COMPARE_BAD_ELEMENT, @const self::COMPARE_BAD_CHILD, @const self::COMPARE_BAD_ATTRIBUTE
+   */
+  public function compare(NodeInterface $element, $aPath = array()) {
+    
+    $aPath[] = $this->getName();
+    
+    if ($element->isText() ||
+      !($this->getName() == $element->getName()) ||
+      !($this->useNamespace($element->getNamespace()))) {
+      
+      $this->compareBadNode = $this;
+      return self::COMPARE_BAD_ELEMENT;
+    }
+    
+    $attribute = self::compareAttributes($this, $element);
+    
+    if ($attribute !== true) {
+      
+      $this->compareBadNode = $attribute;
+      return self::COMPARE_BAD_ATTRIBUTE;
+    }
+    
+    if ($this->getChildren()->length != $element->getChildren()->length) {
+      
+      $this->compareBadNode = $this;
+      return self::COMPARE_BAD_CHILD;
+    }
+    else {
+      
+      foreach ($element->getChildren() as $iKey => $child) {
+        
+        if ($selfChild = $this->getChildren()->item($iKey)) {
+          
+          $iResult = $selfChild->compare($child, $aPath);
+          
+          if ($iResult !== self::COMPARE_SUCCESS) {
+            
+            $this->compareBadNode = $selfChild->compareBadNode;
+            return self::COMPARE_BAD_CHILD;
+          }
+        }
+        else {
+          
+          $this->compareBadNode = $this;
+          return self::COMPARE_BAD_CHILD;
+        }
+      }
+    }
+    
+    return self::COMPARE_SUCCESS;
   }
   
   /*** Properties ***/
@@ -1081,18 +1146,17 @@ class XML_Element extends DOMElement implements ElementInterface {
     return $oResult;
   }
   
-  /*
+  /**
    * Will update namespaces of this element and children of it using namespaces defined in $mFrom to namespaces defined in $mTo
    * WARNING : can cause crash in undefined cicumstances. TODO
    * 
    * @param null|string|array $mFrom An array of namespaces to look for, if it is a string, $mTo should be a string too
    * @param null|string|array $mTo An array of namespaces to update element's to
    * @param string|array $mPrefix corresponding prefixes
-   * @param null|XML_Element|XML_Document the parent node to set element to
+   * @param null|XML_Element|XML_Document $oParent The parent node to set element to
    *
    * @return XML_Element New element with updated namespaces
-   **/
-  
+   */
   public function updateNamespaces($mFrom = null, $mTo = null, $mPrefix = '', $oParent = null) {
     
     if (is_array($mFrom)) {
@@ -1166,11 +1230,6 @@ class XML_Element extends DOMElement implements ElementInterface {
     return $this->textContent;
   }
   
-  public function addText($sValue) {
-    
-    return $this->insertText($sValue);
-  }
-  
   /*** Render ***/
   
   public function parseXSL($oTemplate) {
@@ -1240,23 +1299,18 @@ class XML_Element extends DOMElement implements ElementInterface {
     return $oResult;
   }
   
-  public function messageParse() {
+  // public function cloneNode($bDepth = true) {
     
-    return new HTML_Div($this->viewResume(), array('class' => 'message-element'));
-  }
-  
-  public function cloneNode($bDepth = true) {
-    
-    if ($this->getParent() && $this->getPrefix() && !$this->getParent()->useNamespace($this->getNamespace())) { // TODO, bug ?
+    // if ($this->getParent() && $this->getPrefix() && !$this->getParent()->useNamespace($this->getNamespace())) { // TODO, bug ?
       
-      $oResult = new XML_Element($this->getName(false), null, null, $this->getNamespace());
-      $oResult->cloneAttributes($this);
-      if ($bDepth) $oResult->add($this->getChildren());
+      // $oResult = new XML_Element($this->getName(false), null, null, $this->getNamespace());
+      // $oResult->cloneAttributes($this);
+      // if ($bDepth) $oResult->add($this->getChildren());
       
-    } else $oResult = parent::cloneNode($bDepth);
+    // } else $oResult = parent::cloneNode($bDepth);
     
-    return $oResult;
-  }
+    // return $oResult;
+  // }
   
   public function __clone() {
     
@@ -1284,12 +1338,12 @@ class XML_Element extends DOMElement implements ElementInterface {
         
       } else {
         
-        Controler::addMessage(t('Elément vide :('), 'xml/warning');
+        dspm(t('Elément vide :('), 'xml/warning');
         return '';
       }
 		// } catch ( Exception $e ) {
       
-			// Controler::addMessage('Element : '.$e->getMessage(), 'xml/error');
+			// dspm('Element : '.$e->getMessage(), 'xml/error');
 		// }
   }
 }

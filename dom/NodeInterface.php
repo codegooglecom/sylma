@@ -9,4 +9,5 @@ interface NodeInterface {
   public function getParent();
   public function getPrevious();
   public function getNext();
+  public function getPath();
 }

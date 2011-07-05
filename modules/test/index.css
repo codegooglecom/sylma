@@ -1,15 +1,28 @@
 
 li.sylma-test {
   padding: 0;
+  padding: 2px 0.5em;
   margin-left: 1em;
+  
 }
 
-.sylma-test-passed {
-  background-color: #9bff9b;
+.sylma-tests ul {
+  border-left: 1px solid #ddd;
 }
 
-.sylma-test-failed {
+li.sylma-test-passed {
+  _background-color: #9bff9b;
+  color: gray;
+  display: none;
+}
+
+li.sylma-test-failed {
   background-color: #ffc9c9;
+  font-weight: bold;
+}
+
+.sylma-test-title span {
+  color: red;
 }
 
 .sylma-tests h3,
@@ -22,4 +35,14 @@ li.sylma-test {
 
 .sylma-tests ul {
   padding-left: 1em;
+}
+
+.sylma-tests ul > p {
+  margin-bottom: 1em;
+}
+
+.sylma-test p {
+  margin: 0;
+  font-style: italic;
+  font-weight: normal;
 }

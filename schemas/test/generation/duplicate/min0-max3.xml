@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:generation xmlns:tst="http://www.sylma.org/schemas/test" xmlns="http://www.sylma.org" xmlns:lc="http://www.sylma.org/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <tst:schema>
+    <xs:element name="special_conditions">
+      <xs:complexType>
+        <xs:sequence>
+          <xs:element name="weekend_job" type="xs:boolean" minOccurs="0" maxOccurs="3"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+  </tst:schema>
+  <tst:document>
+    <special_conditions/>
+  </tst:document>
+  <tst:expected name="Duplicated node : [min=0][max=3]" expected="true">
+    <special_conditions lc:model="1">
+      <lc:link-add name="weekend_job">special_conditions/weekend_job</lc:link-add>
+    </special_conditions>
+    <lc:schemas>
+      <lc:base name="sylma-special_conditions" lc:complex="true">
+        <lc:sequence>
+          <lc:element name="weekend_job" basic-type="xs:boolean" minOccurs="0" maxOccurs="3"/>
+        </lc:sequence>
+      </lc:base>
+      <lc:element name="special_conditions" type="sylma-special_conditions"/>
+      <lc:model name="special_conditions" id="1" base="sylma-special_conditions">
+        <lc:schema/>
+      </lc:model>
+    </lc:schemas>
+  </tst:expected>
+</tst:generation>

@@ -140,7 +140,7 @@ class XML_Directory extends XML_Resource {
   }
   
   /*
-   * Browse then return list of files inside the directory and sub-directories if iDepth != null
+   * Browse then return list of files inside the directory and sub-directories if iDepth == null | >0
    */
   public function getFiles(array $aExtensions = array(), $sPreg = null, $iDepth = 0) {
     

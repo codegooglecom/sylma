@@ -38,6 +38,7 @@ li.sylma-ins-item {
 li.sylma-ins-item:hover {
   background-color: #ddd;
   padding: 0.3em 1em 0.3em 2em;
+  background-position: 0 5px;
 }
 
 li.sylma-ins-protected { background-image: url(images/bullet_orange.png); }
@@ -98,6 +99,11 @@ li.sylma-ins-method:hover .sylma-ins-cast {
   opacity: 1.0;
 }
 
+.sylma-ins-parameters,
+.sylma-ins-parameters .sylma-ins-parameter {
+  display: inline;
+}
+
 .sylma-ins-comment {
   color: gray;
   font-style: italic;
@@ -139,7 +145,7 @@ li.sylma-ins-method:hover .sylma-ins-cast {
   color: #467CA2;
 }
 
-.sylma-ins-parameter .sylma-ins-name {
+.sylma-ins-comment .sylma-ins-parameter .sylma-ins-name {
   _text-decoration: underline;
   font-weight: bold;
   color: gray;

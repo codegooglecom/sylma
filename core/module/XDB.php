@@ -138,13 +138,6 @@ class XDB_Module extends ModuleExtension {
     return $this->getDB()->callDocument($sDocument).$sPath;
   }
   
-  /* Various */
-  
-  public function createNode($sName, $mContent = '', array $aAttributes = array(), $sPrefix = '') {
-    
-    return new XML_Element($sName, $mContent, $aAttributes, $this->getNamespace($sPrefix));
-  }
-  
   public function getCurrentDate() {
     
     return date('Y-m-d\TH:i:sP'); // 2011-02-11T16:20:53.921+01:00

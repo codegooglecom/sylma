@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:generation xmlns:tst="http://www.sylma.org/schemas/test" xmlns="http://www.sylma.org" xmlns:lc="http://www.sylma.org/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <tst:schema>
+    <xi:include href="min1-max3.xsd"/>
+  </tst:schema>
+  <tst:document>
+    <special_conditions/>
+  </tst:document>
+  <tst:expected name="Duplicated node [@min=1][@max=3] missing required child" expected="false">
+    <special_conditions lc:model="1">
+      <weekend_job lc:model="2"/>
+      <lc:link-add name="weekend_job">special_conditions/weekend_job</lc:link-add>
+    </special_conditions>
+    <lc:schemas>
+      <lc:base name="sylma-special_conditions" lc:complex="true">
+        <lc:sequence>
+          <lc:element name="weekend_job" basic-type="xs:boolean" minOccurs="1" maxOccurs="3"/>
+        </lc:sequence>
+      </lc:base>
+      <lc:element name="special_conditions" type="sylma-special_conditions"/>
+      <lc:model name="special_conditions" id="1" base="sylma-special_conditions">
+        <lc:schema>
+          <lc:model name="weekend_job" id="2" statut="missing">
+            <lc:annotations>
+              <lc:message context="content" statut="invalid">Ce champ doit être indiqué</lc:message>
+            </lc:annotations>
+          </lc:model>
+        </lc:schema>
+      </lc:model>
+    </lc:schemas>
+  </tst:expected>
+</tst:generation>

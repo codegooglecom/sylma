@@ -95,10 +95,11 @@ class XML_File extends XML_Resource implements FileInterface {
    * Get the copy of the corresponding document
    * Call XML_Document->loadFile() via new instance, that will put a copy here of the document with setDocument()
    * @param integer $iMode : The mode used to load the document
+   * @param boolean $bInclude : see @method DocumentInterface::__construct()
    */
-  public function getDocument($iMode = Sylma::MODE_READ) {
+  public function getDocument($iMode = Sylma::MODE_READ, $bInclude = false) {
     
-    return new XML_Document((string) $this, $iMode);
+    return new XML_Document((string) $this, $iMode, $bInclude);
   }
   
   /**

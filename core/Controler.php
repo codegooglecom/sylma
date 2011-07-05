@@ -591,6 +591,7 @@ class Controler {
     $oTemplate->setParameter('path-editor', Sylma::get('modules/editor/path'));
     // dspf($oResume->getDocument());
     // dspf($oTemplate);
+    
     return $oResume->getDocument()->parseXSL($oTemplate);
   }
   

@@ -169,7 +169,7 @@ class ModuleBase extends Namespaced {
    * </code>
    * 
    * @param string|array A single or a list of values to escape
-   * @return string|array An escaped string or array of values
+   * @return string|array An escaped string or array of strings
    */
   
   protected function escape() {
@@ -181,7 +181,7 @@ class ModuleBase extends Namespaced {
   /**
    * Log a message
    * @param mixed|DOMNode|string|array $mMessage The message to send, will be parsed or stringed
-   * @param $sStatut The statut of message : see @file /system/allowed-messages.xml for more infos
+   * @param string $sStatut The statut of the message : see @file /system/allowed-messages.xml for more infos
    */
   protected function log($mMessage, $sStatut = Sylma::LOG_STATUT_DEFAULT) {
     

@@ -182,7 +182,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
       
     } else {
       
-      $oExternals = $this->query('//xi:include', array('xi' => SYLMA_NS_XINCLUDE));
+      $oExternals = $this->query('//xi:*', array('xi' => SYLMA_NS_XINCLUDE));
       
       if ($oExternals->length) {
         
@@ -198,12 +198,11 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
               
               $oDocument->includeExternals($aPaths, $iLevel + 1);
               
-              switch ($oExternal->getName(true)) {
+              switch ($oExternal->getName()) {
                 
                 case 'include' : $oExternal->replace($oDocument->getChildren()); break;
                 case 'import' : $this->shift($oDocument->getChildren()); break;
               }
-              
             }
           }
           
@@ -247,6 +246,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
           
           if (Controler::useStatut('xml/report')) Controler::addMessage(xt('Chargement du fichier %s', new HTML_Strong($oFile)), 'xml/report');
           
+          if ($this->useInclude()) $this->includeExternals(); // include
           $oFile->setDocument($this); // PUT a copy in XML_File
           
           if ($this->isEmpty()) Controler::addMessage(xt('Aucun contenu dans %s', $oFile->parse()), 'xml/warning');
@@ -254,8 +254,6 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
             
             XML_Controler::addStat('file');
             $oFile->isFileSecured($this->appendLoadRights());
-            
-            if ($this->useInclude()) $this->includeExternals(); // include
           }
           
         } else dspm (xt('Problème lors du chargement du fichier %s', new HTML_Strong($oFile)), 'file/error');
