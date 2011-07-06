@@ -68,8 +68,6 @@ class schemaTest extends Test {
     );
     
     if ($iResult !== XML_Element::COMPARE_SUCCESS) $aResult['message'] = '@node ' . $root->compareBadNode->getPath();
-    // dspf($model);
-    // dspf($expected);
     
     return $aResult;
   }
@@ -91,7 +89,6 @@ class schemaTest extends Test {
     }
     
     return array(
-      '@name' => $doc->getFile()->getName(),
       'description' => $doc->read('self:description', $this->getNS()),
       '#test' => $aResult,
     );
@@ -123,16 +120,13 @@ class schemaTest extends Test {
     
     $result = Arguments::buildDocument(array(
       'group' => array(
-        '@name' => 'Schemas',
         'description' => t('W3C Schemas validation and generation'),
         '#group' => array(
           array(
-            '@name' => 'validation',
             'description' => t('Validation of document'),
             '#group' => $aValidation,
           ),
           array(
-            '@name' => 'generation',
             'description' => t('Generation of model'),
             '#test' => $aGeneration,
           ),

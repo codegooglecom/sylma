@@ -55,7 +55,7 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:value-of select="@name"/>
-      @valid <xsl:value-of select="@expected"/>
+      <xsl:apply-templates select="@expected"/>
       <xsl:if test="test:message">
         <p>
           <xsl:value-of select="test:message"/>
@@ -63,5 +63,7 @@
       </xsl:if>
     </li>
   </xsl:template>
+  
+  <xsl:template match="@expected">@valid <xsl:value-of select="."/></xsl:template>
   
 </xsl:stylesheet>

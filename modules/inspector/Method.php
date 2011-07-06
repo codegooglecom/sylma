@@ -90,17 +90,17 @@ class InspectorMethod extends InspectorReflectorCommented implements InspectorRe
     return $this->sSourceParameters;
   }
   
-  public function throwException($sMessage, $mSender = array()) {
+  public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
     
     $mSender = (array) $mSender;
     $mSender[] = '@method ' . $this->getName();
     
-    return parent::throwException($sMessage, $mSender);
+    return parent::throwException($sMessage, $mSender, $iOffset);
   }
   
   public function parse() {
     
-    $node = Arguments::buildDocument(array(
+    $node = Arguments::buildFragment(array(
       'method' => array(
         '@name' => $this->getName(),
         '@class' => $this->getReflector()->getDeclaringClass()->getName(),

@@ -5,6 +5,7 @@ require_once('Reflector.php');
 class InspectorComment extends InspectorReflector {
   
   const LINE_BREAK = "\n";
+  const USE_XML = false;
   
   const RETURN_PREG = '/^\s*([\w\|\\\]+)+(?:\s+(.+))?$/';
   const PARAMETER_PREG = '/^\s*([\w\|\\\]+)+\s*(?:\$(\w+))?(.+)$/';
@@ -98,17 +99,17 @@ class InspectorComment extends InspectorReflector {
   public function parse() {
     
     if (!$this->sComment) return null;
-    else return Arguments::buildDocument(array(
+    else return Arguments::buildFragment(array(
       'comment' => array(
         'source' => (string) $this->sComment,
-        'description' => strtoxml(nl2br(trim($this->sValue))),
+        'description' => self::USE_XML ? strtoxml(nl2br(trim($this->sValue))) : trim($this->sValue),
       ) + $this->properties->query(),
     ), $this->getControler()->getNamespace());
   }
   
   public function __toString() {
     
-    return $this->sComment;
+    return (string) $this->sComment;
   }
 }
 

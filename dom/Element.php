@@ -581,7 +581,13 @@ class XML_Element extends DOMElement implements ElementInterface {
     
     if (is_object($mValue)) {
       
-      if ($mValue instanceof XML_Element || $mValue instanceof XML_Text || $mValue instanceof XML_CData || $mValue instanceof XML_Comment) {
+      if ($mValue instanceof XML_Fragment) {
+        
+        /* Fragment */
+        
+        $mValue = $this->insertChild($mValue); // TODO
+      }
+      else if ($mValue instanceof XML_Element || $mValue instanceof XML_Text || $mValue instanceof XML_CData || $mValue instanceof XML_Comment) {
         
         /* XML Base nodes */
         

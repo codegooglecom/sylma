@@ -4,6 +4,7 @@
   <xsl:import href="functions.xsl"/>
   
   <xsl:param name="inspect" select="concat($sylma-directory, '/class/')"/>
+  <xsl:param name="time" select="concat($sylma-directory, '/interface/time/')"/>
   
   <xsl:param name="class-prefix">sylma-ins</xsl:param>
   
@@ -28,6 +29,7 @@
   
 	<xsl:template match="/*">
 		<div class="{$class-class}">
+      <xsl:apply-templates select="." mode="tools"/>
 		  <h2><xsl:value-of select="@name"/></h2>
 		  <p>
 		    <xsl:apply-templates select="ins:comment"/>
@@ -73,6 +75,17 @@
 		</div>
 	</xsl:template>
 	
+  <xsl:template match="ins:class" mode="tools">
+    <div class="right">
+    <xsl:variable name="require">
+      <xsl:if test="/*/@file">
+        <xsl:value-of select="concat('&amp;file=', /*/@file)"/>
+      </xsl:if>
+    </xsl:variable>
+    <a href="{$time}{@name}{$require}">Timer</a>
+    </div>
+  </xsl:template>
+  
   <xsl:template match="ins:class" mode="normal">
     <xsl:param name="element"/>
     <xsl:for-each select="ins:*[local-name() = $element]">

@@ -56,7 +56,7 @@ class XArguments extends Arguments implements SettingsInterface {
     
     if (is_array($mResult)) {
       
-      $mResult = new XArguments($mResult, $this->getNamespace());
+      $mResult = new self($mResult, $this->getNamespace());
     }
     
     return $mResult;

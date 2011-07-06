@@ -477,7 +477,13 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
           
       if (is_object($mValue)) {
         
-        if ($mValue instanceof XML_Document && !method_exists($mValue, 'parse')) {
+        if ($mValue instanceof XML_Fragment) {
+          
+          /* XML_Fragment */
+          
+          $mResult = $this->setChild($mValue);
+        }
+        else if ($mValue instanceof XML_Document && !method_exists($mValue, 'parse')) {
           
           /* XML_Document */
           
@@ -578,6 +584,16 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
     // $this->appendRights();
     
     return $oChild;
+  }
+  
+  public static function createFragment($sNamespace = null) {
+    
+    $doc = new self;
+    
+    $fragment = $doc->createDocumentFragment();
+    $fragment->setNamespace($sNamespace);
+    
+    return $fragment;
   }
   
   /**

@@ -28,8 +28,8 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
   	
   	$mTarget =& $this->locateValue($aPath, false, true);
   	
-  	if (!$mTarget) $mTarget =& $this->aArray;
-  	
+  	if ($mTarget === null) $mTarget =& $this->aArray;
+    
   	foreach ($aPath as $sKey) {
   		
   		$mTarget[$sKey] = array();
@@ -37,9 +37,10 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
   	}
     
     if ($mValue !== null) $mTarget = $mValue;
-    else unset($mTarget);
+    else $mTarget = null;
     
-    return $mTarget;
+    if ($mTarget !== null) return $this->get($sPath);
+    else return null;
   }
   
   public function query($sPath = '', $bDebug = true) {
@@ -49,11 +50,11 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
   
   public function get($sPath = '', $bDebug = true) {
     
-    $mResult = $this->getValue($sPath, $bDebug);
+    $mResult =& $this->getValue($sPath, $bDebug);
     
     if (is_array($mResult)) {
       
-      $mResult = new Arguments($mResult, $this->getNamespace());
+      $mResult = new self($mResult, $this->getNamespace());
     }
     
     return $mResult;
@@ -67,24 +68,25 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
    *
    * @return null|mixed The value localized by path, or NULL
    */
-  protected function getValue($sPath = '', $bDebug = true) {
+  protected function &getValue($sPath = '', $bDebug = true) {
     
     $mResult = null;
     
     if (!$sPath) {
       
-      $mResult = $this->aArray;
+      $mResult =& $this->aArray;
     }
     else {
       
       try {
         
         $aPath = self::parsePath($sPath);
-        $mResult = $this->locateValue($aPath, $bDebug);
+        $mResult =& $this->locateValue($aPath, $bDebug);
       }
       catch (SylmaExceptionInterface $e) {
         
-        return null;
+        $mResult = null;
+        return $mResult;
       }
     }
     
@@ -141,14 +143,25 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
       
       if (!is_array($mCurrent)) {
         
-        if (is_object($mCurrent) && $mCurrent instanceof SettingsInterface) {
+        if ($mCurrent instanceof SettingsInterface) {
           
           $mResult =& $mCurrent->locateValue($aPath, $bDebug, $bReturn);
+          break;
         }
         else {
           
-          if ($bReturn) $mResult =& $mCurrent;
-          else if ($aPath && $bDebug) $this->throwException(txt('Bad key %s in %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 3);
+          if ($bReturn) {
+            
+            $mResult =& $mCurrent;
+            break;
+          }
+          else if ($aPath && $bDebug) {
+            
+            $this->throwException(
+              txt('No array in @path %s. Cannot browse with @path %s',
+              implode('/', $aParentPath), implode('/', $aParentPath + $aPath)),
+              count($aPath) + 3);
+          }
         }
       }
       else if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug)) {
@@ -187,7 +200,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
     $sKey = array_shift($aPath);
     array_push($aParentPath, $sKey);
     
-    if (!array_key_exists($sKey, $aArray)) {
+    if (!array_key_exists($sKey, $aArray) || $aArray[$sKey] === null) {
       
       array_unshift($aPath, $sKey);
       if ($bDebug) $this->throwException(txt('Unknown key %s in %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 4);
@@ -261,10 +274,15 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
   
   public function getDocument($sNamespace = '') {
     
+    return new XML_Document($this->getFragment());
+  }
+  
+  public function getFragment($sNamespace = '') {
+    
     if (count($this->aArray) > 1) $this->throwException(txt('Cannot build document with more than one root value with @namespace %s', $sNamespace));
     if (!$sNamespace) $sNamespace = $this->getNamespace();
     
-    self::buildDocument($this->aArray, $sNamespace);
+    return self::buildFragment($this->aArray, $sNamespace);
   }
   
   /**
@@ -285,11 +303,16 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
   
   public static function buildDocument(array $aArray, $sNamespace) {
     
-    $root = new XML_Element('default', null, array(), $sNamespace);
+    return new XML_Document(self::buildFragment($aArray, $sNamespace));
+  }
+  
+  public static function buildFragment(array $aArray, $sNamespace) {
     
-    self::buildNode($root, $aArray);
+    $doc = XML_Document::createFragment($sNamespace);
     
-    return new XML_Document($root->getFirst());
+    self::buildNode($doc, $aArray);
+    
+    return $doc;
   }
   
   public function getElement(ElementInterface $root, $sPath = '') {
@@ -300,7 +323,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
     self::buildNode($root, $aArray);
   }
   
-  private static function buildNode(NodeInterface $parent, array $aArray) {
+  private static function buildNode(DOMNode $parent, array $aArray) {
     
     foreach ($aArray as $sKey => $mValue) {
       
@@ -324,6 +347,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
               $node = $parent->addNode(substr($sKey, 1));
               
               if (is_array($mSubValue)) self::buildNode($node, $mSubValue);
+              else if ($mSubValue instanceof SettingsInterface) self::buildNode($node, $mSubValue->query());
               else $node->add($mSubValue);
             }
             
@@ -336,6 +360,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
         }
         
         if (is_array($mValue)) self::buildNode($node, $mValue);
+        else if ($mValue instanceof SettingsInterface) self::buildNode($node, $mValue->query());
         else $node->add($mValue);
       }
     }
@@ -380,14 +405,18 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
   
   public function __toString() {
     
+    $sResult = '';
+    
     if (count($this->aArray) == 1) {
       
-      $mValue = array_pop($this->aArray);
-      if (!is_array($mValue)) return (string) $mValue;
+      list(,$val) = each($this->aArray);
+      $sResult = (string) $val;
+    }
+    else {
+      
+      $this->log(txt('Cannot render an array as a string'));
     }
     
-    $this->log(txt('Cannot render an array as a string'));
-    
-    return '';
+    return $sResult;
   }
 }

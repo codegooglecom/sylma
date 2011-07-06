@@ -16,6 +16,10 @@ li.sylma-test-passed {
   display: none;
 }
 
+.sylma-tests-class li.sylma-test-passed {
+  display: list-item;
+}
+
 li.sylma-test-failed {
   background-color: #ffc9c9;
   font-weight: bold;

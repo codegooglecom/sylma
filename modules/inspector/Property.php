@@ -29,7 +29,7 @@ class InspectorProperty extends InspectorReflectorCommented implements Inspector
   
   public function parse() {
     
-    return Arguments::buildDocument(array(
+    return Arguments::buildFragment(array(
       'property' => array(
         '@name' => $this->getName(),
         '@access' => $this->getAccess(),

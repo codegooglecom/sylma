@@ -2,15 +2,15 @@
 
 class ModuleBase extends Namespaced {
   
-  protected $oSchema = null;  
+  private $oSchema = null;  
   
   // array of classe's object to use within this class with $this->create() loaded in [settings]/classes
-  protected $aClasses = array();
+  private $aClasses = array();
   
   private $sName = '';
   
   private $oDirectory = null;
-  private $arguments = null;
+  protected $arguments = null;
   
   protected function setDirectory($mPath) {
     
@@ -88,7 +88,7 @@ class ModuleBase extends Namespaced {
       if (is_array($mArguments)) {
         
         if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
-        else $this->arguments = new XArguments($mArguments, $this->getName());
+        else $this->arguments = new XArguments($mArguments, $this->getNamespace());
       }
       else if (is_string($mArguments)) {
         
@@ -117,11 +117,10 @@ class ModuleBase extends Namespaced {
     
     $mResult = $mDefault;
     
-    if ($this->getArguments()) {
-      
-      $mResult = $this->getArguments()->get($sPath, $bDebug);
-      if (!$mResult && $mDefault !== 'null') $mResult = $mDefault;
-    }
+    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
+    
+    $mResult = $this->getArguments()->get($sPath, $bDebug);
+    if ($mResult === null && $mDefault !== 'null') $mResult = $mDefault;
     
     return $mResult;
   }

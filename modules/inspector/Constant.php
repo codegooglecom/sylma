@@ -43,7 +43,7 @@ class InspectorConstant extends InspectorReflector implements InspectorReflector
     }
     else {
       
-      return Arguments::buildDocument(array(
+      return Arguments::buildFragment(array(
         'constant' => array(
           '@name' => $this->getName(),
           'default' => $this->sDefault,

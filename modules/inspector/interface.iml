@@ -6,6 +6,10 @@
   	<argument name="class" format="php-string"/>
   	<argument name="file" format="php-string" required="false" allow-null="true"/>
   </method>
+  <method return-default="true" path="time" name="timeClass">
+  	<argument name="class" format="php-string"/>
+  	<argument name="file" format="php-string" required="false" allow-null="true"/>
+  </method>
   <method return-default="true" path="get-class-settings" name="getClassSettings">
   	<argument name="key" format="php-string"/>
   	<argument name="path" format="php-string"/>

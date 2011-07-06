@@ -37,6 +37,33 @@ class Inspector extends Module {
     }
   }
   
+  public function timeClass($sClass, $sFile = '') {
+    
+    $result = null;
+    
+    try {
+      
+      require_once('modules/utils/Timer.php');
+      
+      if ($sFile) Controler::loadClass($sClass, $sFile);
+      
+      $class = $this->create(self::CLASS_CLASS, array($sClass, $this, array('parent' => false)));
+      $doc = $class->parse();
+      
+      if ($doc && !$doc->isEmpty()) {
+        
+        $sResult = $doc->parseXSL($this->getTemplate('class-time.xsl'), false);
+        $result = new HTML_Tag('pre', $sResult);
+      }
+      
+    }
+    catch (SylmaExceptionInterface $e) {
+    
+    }
+    
+    return $result;
+  }
+  
   public function stringClass($sClass) {
     
     $result = null;
@@ -46,12 +73,13 @@ class Inspector extends Module {
       $class = $this->create(self::CLASS_CLASS, array($sClass, $this, array('parent' => false)));
       $doc = $class->parse();
       
-      if ($doc && !$doc->isEmpty()) $sResult = $doc->parseXSL($this->getTemplate('class-string.xsl'), false);
-      
-      $result = new HTML_Tag('pre', $sResult);
+      if ($doc && !$doc->isEmpty()) {
+        
+        $sResult = $doc->parseXSL($this->getTemplate('class-string.xsl'), false);
+        $result = new HTML_Tag('pre', $sResult);
+      }
     }
     catch (SylmaExceptionInterface $e) {
-      
       
     }
     
@@ -65,7 +93,7 @@ class Inspector extends Module {
     
     $args = new XArguments($sSettings, $this->getNamespace());
     
-    return Arguments::buildDocument(array('classes' => array('#class' => $this->extractClasses($args))), $this->getNamespace());
+    return new XML_Document(Arguments::buildFragment(array('classes' => array('#class' => $this->extractClasses($args))), $this->getNamespace()));
   }
   
   private function extractClasses(SettingsInterface $class) {
@@ -90,10 +118,7 @@ class Inspector extends Module {
     );
   }
   
-  /**
-   * Load full class and sub-classes
-   */
-  public function getClassSettings($sKey, $sPath) {
+  protected function buildClass($sKey, $sPath) {
     
     $args = new XArguments($sPath, $this->getNamespace());
     $class = $this->loadClass($sKey, $args);
@@ -101,6 +126,15 @@ class Inspector extends Module {
     if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $args->getFile()->getParent()));
     if (!$class->read('name')) $this->throwException(txt('No name defined for class %s', $sKey));
     
+    return $class;
+  }
+  
+  /**
+   * Load full class and sub-classes
+   */
+  public function getClassSettings($sKey, $sPath) {
+    
+    $class = $this->buildClass($sKey, $sPath);
     return $this->getClass($class->read('name'), $class->read('file', false));
   }
   

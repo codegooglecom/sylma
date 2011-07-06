@@ -53,7 +53,7 @@ class InspectorParameter extends InspectorReflector implements InspectorReflecto
   
   public function parse() {
     
-    return Arguments::buildDocument(array(
+    return Arguments::buildFragment(array(
       'parameter' => array(
         '@name' => $this->getName(),
         'cast' => $this->sCast,

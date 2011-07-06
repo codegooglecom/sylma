@@ -19,6 +19,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
   
   protected $aSource;
   protected $iOffset;
+  protected $sExtends = '';
   
   protected $aConstants = array();
   protected $aProperties = array();
@@ -213,19 +214,19 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     }
   }
   
-  public function throwException($sMessage, $mSender = array()) {
+  public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
     
     $mSender = (array) $mSender;
     array_push($mSender,
       '@class ' . $this->getName(),
       '@file ' . $this->file);
     
-    return parent::throwException($sMessage, $mSender, 2);
+    return parent::throwException($sMessage, $mSender, $iOffset);
   }
   
   public function parse() {
     
-    $node = Arguments::buildDocument(array(
+    $node = Arguments::buildFragment(array(
       'class' => array( 
         '@name' => $this->getName(),
         'extension' => $this->extends,
@@ -237,13 +238,13 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
       ),
     ), $this->getControler()->getNamespace());
     
-    if ($this->aInterfaces) {
+    if ($this->aInterfaces && $node->getFirst()) {
       
       foreach ($this->aInterfaces as $sInterface)
-        $node->addNode('interface', $sInterface);
+        $node->getFirst()->addNode('interface', $sInterface);
     }
     
-    return $node;
+    return new XML_Document($node);
   }
   
   public function __toString() {

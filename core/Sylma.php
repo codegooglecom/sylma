@@ -50,6 +50,7 @@ class Sylma {
   public static function setControler($sName, $controler) {
     
     self::$aControlers[$sName] = $controler;
+    return $controler;
   }
   
   public static function getControler($sName) {
@@ -140,7 +141,7 @@ class Sylma {
     throw $e;
   }
   
-  public function isWindows() {
+  public static function isWindows() {
     
     //return (isset($_ENV['OS']) && strpos($_ENV['OS'], 'Win') !== false);
     return PHP_OS == 'WINNT';
