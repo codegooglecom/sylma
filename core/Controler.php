@@ -738,6 +738,7 @@ class Controler {
             } else {
               
               $oContainer = $mArgument->view(true, true, $bDecode);
+              // $oContainer = new HTML_Tag('pre', $mArgument->display(true, true));
               $oContainer->addClass('hidden');
               
               $mContent = array(get_class($mArgument), $oContainer);

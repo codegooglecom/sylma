@@ -64,6 +64,6 @@
     </li>
   </xsl:template>
   
-  <xsl:template match="@expected">@valid <xsl:value-of select="."/></xsl:template>
+  <xsl:template match="@expected"> @valid <xsl:value-of select="."/></xsl:template>
   
 </xsl:stylesheet>

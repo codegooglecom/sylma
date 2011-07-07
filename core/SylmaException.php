@@ -9,7 +9,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
 	
 	protected $aPath = array();
 	protected $aCall = array();
-	protected $bError = false;
+	protected static $bThrowError = false;
   
   /**
    * Allow import of other classes, used class is showed in message
@@ -81,9 +81,19 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
       $exception = new Sylma::$exception($sMessage);
       $exception->importError($iNo, $sMessage, $sFile, $iLine);
     }
-    //throw $sylmaException;
+    
+    if (self::throwError()) throw $sylmaException;
   }
 	
+  /**
+   * If set to TRUE, errors will be thrown as exceptions, else errors will only be logged and displayed to admin
+   */
+  public static function throwError($bThrow = null) {
+    
+    if ($bThrow !== null) self::$bThrowError = $bThrow;
+    return self::$bThrowError;
+  }
+  
 	public function loadException(Exception $e) {
     
     $this->code = $e->getCode();

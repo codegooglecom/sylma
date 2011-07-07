@@ -83,7 +83,7 @@ class ModuleBase extends Namespaced {
   
   protected function setArguments($mArguments = null, $bMerge = true) {
     
-    if ($mArguments) {
+    if ($mArguments !== null) {
       
       if (is_array($mArguments)) {
         
@@ -94,7 +94,7 @@ class ModuleBase extends Namespaced {
         
         $this->arguments = new XArguments((string) $this->getFile($mArguments));
       }
-      else {
+      else if (is_object($mArguments)) {
         
         if ($this->getArguments() && $bMerge) $this->getArguments()->merge($mArguments);
         else $this->arguments = $mArguments;

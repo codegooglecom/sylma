@@ -70,6 +70,11 @@ class XArguments extends Arguments implements SettingsInterface {
       
       if ($this->useFile()) {
         
+        if ($file = $this->getFile()) {
+          
+          $sPath = path_absolute($sPath, (string) $file->getParent());
+        }
+        
         if (!$file = Controler::getFile($sPath)) {
           
           $this->throwException(txt('Cannot find configuration file in @file %s', $sPath));

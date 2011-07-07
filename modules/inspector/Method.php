@@ -100,18 +100,18 @@ class InspectorMethod extends InspectorReflectorCommented implements InspectorRe
   
   public function parse() {
     
-    $node = Arguments::buildFragment(array(
-      'method' => array(
-        '@name' => $this->getName(),
-        '@class' => $this->getReflector()->getDeclaringClass()->getName(),
-        '@access' => $this->getAccess(),
-        '@static' => booltostr($this->getReflector()->isStatic()),
-        $this->comment,
-        $this->aParameters,
-        'source' => $this->getReflector()->isUserDefined() ? $this->getSource() : '',
-        'final' => $this->getReflector()->isFinal(),
-      ),
-    ), $this->getControler()->getNamespace());
+    $aResult = array(
+      '@name' => $this->getName(),
+      '@class' => $this->getReflector()->getDeclaringClass()->getName(),
+      '@access' => $this->getAccess(),
+      '@static' => booltostr($this->getReflector()->isStatic()),
+      $this->comment,
+      $this->aParameters,
+      'source' => (!$this->getParent()->getArgument('parent') && $this->getReflector()->isUserDefined() ? $this->getSource() : ''),
+      'final' => $this->getReflector()->isFinal(),
+    );
+    
+    $node = Arguments::buildFragment(array('method' => $aResult), $this->getControler()->getNamespace());
     
     if ($this->getReflector()->getDeclaringClass() != $this->getParent()->getReflector()) {
       

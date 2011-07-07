@@ -30,9 +30,10 @@
   <xsl:value-of select="concat($break, $tab, $break, $tab)"/>
   <xsl:apply-templates select="@access"/>function <xsl:value-of select="@name"/>(<xsl:value-of select="ins:implode(ins:parameter)"/>
   <xsl:value-of select="concat(') {', $break)"/>
-    Timer::open(__class__, __method__);
+    $timer = Sylma::getControler('timer');
+    $timer->open(__method__);
     $result = parent::<xsl:value-of select="@name"/>(<xsl:value-of select="ins:implode-call(ins:parameter)"/>);
-    Timer::close();
+    $timer->close();
     
     return $result;
   <xsl:text>}</xsl:text>

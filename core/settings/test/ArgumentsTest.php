@@ -5,6 +5,7 @@ require_once('modules/test/Test.php');
 class ArgumentsTest extends Test {
   
   const NS = 'http://www.sylma.org/core/settings/test';
+  const TITLE = 'Arguments';
   
   public function __construct() {
     
@@ -39,16 +40,27 @@ class ArgumentsTest extends Test {
         
         $sPrepare = $prepare->read();
         $sExpected = $expected->read();
+        $sDirectory = (string) $file->getParent();
+        
         $bResult = false;
         
         try {
           
-          eval('$closure = function() { ' . $sPrepare . '; };');
-          $args = $closure();
-          eval('$closure = function($args) { ' . $sExpected . '; };');
-          $bResult = $closure($args);
+          if (eval('$closure = function($sDirectory) { ' . $sPrepare . '; };') === null) {
+            
+            $args = $closure($sDirectory);
+            
+            if ($args instanceof Arguments) {
+              
+              if (eval('$closure = function($args) { ' . $sExpected . '; };') === null) {
+                
+                $bResult = $closure($args);
+              }
+            }
+          }
         }
         catch (SylmaExceptionInterface $e) {
+          
           
         }
         
@@ -57,7 +69,11 @@ class ArgumentsTest extends Test {
           'result' => booltostr($bResult),
         );
         
-        if (!$bResult) $aTest['message'] = '';
+        if (!$bResult) {
+          
+          $aTest['message'] = '';
+        }
+        
         $aTests[] = $aTest;
       }
       
@@ -74,7 +90,7 @@ class ArgumentsTest extends Test {
     
     $result = Arguments::buildDocument(array(
       'group' => array(
-        'description' => 'Arguments',
+        'description' => t(self::TITLE),
         '#group' => $this->load(),
       ),
     ), $this->getNamespace());

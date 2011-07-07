@@ -100,22 +100,32 @@
 	<xsl:template match="ins:class" mode="extends">
 	  <xsl:param name="element"/>
 	  <xsl:variable name="set" select="ins:*[local-name() = $element and not(@name = current()/ancestor::ins:class/ins:*[local-name() = $element]/@name)]"/>
-    <xsl:if test="$set">
-      <li class="{$class-group} clearfix">
-        <ul>
-          <h4><em>herited from </em><xsl:copy-of select="ins:get-class(@name)"/></h4>
-          <xsl:for-each select="$set">
-             <xsl:sort select="@name"/>
-             <xsl:apply-templates select=".">
-               <xsl:with-param name="class" select="$class-extends"/>
-             </xsl:apply-templates>
-           </xsl:for-each>
-           <xsl:apply-templates select="ins:extension/*" mode="extends">
-             <xsl:with-param name="element" select="$element"/>
-           </xsl:apply-templates>
-        </ul>
-      </li>
-    </xsl:if>
+    <xsl:choose>
+      
+      <xsl:when test="$set">
+        <li class="{$class-group} clearfix">
+          <ul>
+            <h4><em>herited from </em><xsl:copy-of select="ins:get-class(@name)"/></h4>
+            <xsl:for-each select="$set">
+              <xsl:sort select="@name"/>
+              <xsl:apply-templates select=".">
+                <xsl:with-param name="class" select="$class-extends"/>
+              </xsl:apply-templates>
+            </xsl:for-each>
+            <xsl:apply-templates select="ins:extension/*" mode="extends">
+              <xsl:with-param name="element" select="$element"/>
+            </xsl:apply-templates>
+          </ul>
+        </li>
+      </xsl:when>
+      
+      <xsl:otherwise>
+        <xsl:apply-templates select="ins:extension/*" mode="extends">
+          <xsl:with-param name="element" select="$element"/>
+        </xsl:apply-templates>
+      </xsl:otherwise>
+      
+    </xsl:choose>
 	</xsl:template>
 	
 	<xsl:template match="ins:interface">

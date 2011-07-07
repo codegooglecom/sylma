@@ -98,13 +98,19 @@ class InspectorComment extends InspectorReflector {
   
   public function parse() {
     
-    if (!$this->sComment) return null;
-    else return Arguments::buildFragment(array(
-      'comment' => array(
-        'source' => (string) $this->sComment,
+    $result = null;
+    
+    if ($this->sComment) {
+      
+      $aResult = array(
         'description' => self::USE_XML ? strtoxml(nl2br(trim($this->sValue))) : trim($this->sValue),
-      ) + $this->properties->query(),
-    ), $this->getControler()->getNamespace());
+        'source' => $this->sComment,
+      );
+      
+      $result = Arguments::buildFragment(array('comment' => $aResult) + $this->properties->query(), $this->getControler()->getNamespace());
+    }
+    
+    return $result;
   }
   
   public function __toString() {

@@ -12,24 +12,22 @@ class Timer extends Module {
     list($sClass, $sMethod) = explode('::', $sMethod);
     
     if (!array_key_exists($sClass, $this->aClasses)) $this->aClasses[$sClass] = array();
-    if (!array_key_exists($sMethod, $this->aClasses[$sClass])) $this->aClasses[$sClass][$sMethod] = array('calls' => 0, 'time' => 0);
+    if (!array_key_exists($sMethod, $this->aClasses[$sClass])) $this->aClasses[$sClass][$sMethod] = array('@name' => $sMethod, 'calls' => 0, 'time' => 0);
     
     $aMethod =& $this->aClasses[$sClass][$sMethod];
-    $aMethod['current'] = microtime(true);
     $aMethod['calls']++;
     
-    $this->aStack[] = array($sClass, $sMethod);
+    $this->aStack[] = array($sClass, $sMethod, microtime(true));
   }
   
   public function close() {
     
     if (!count($this->aStack)) return;
-    list($sClass, $sMethod) = array_pop($this->aStack);
+    list($sClass, $sMethod, $iCurrent) = array_pop($this->aStack);
     
     $aMethod =& $this->aClasses[$sClass][$sMethod];
     
-    $aMethod['time'] = $aMethod['time'] + (microtime(true) - $aMethod['current']);
-    unset($aMethod['current']);
+    $aMethod['time'] = $aMethod['time'] + (microtime(true) - $iCurrent);
   }
   
   public function parse() {
@@ -69,19 +67,17 @@ class TimerArgs extends Timer {
         'time' => 0));
     }
     
-    $method->set('current', microtime(true));
     $method->set('calls', $method->get('calls') + 1);
     
-    $this->aStack[] = $method;
+    $this->aStack[] = array($method, microtime(true));
   }
   
   public function close() {
     
     if (!count($this->aStack)) return;
-    $method = array_pop($this->aStack);
+    list($method, $iCurrent) = array_pop($this->aStack);
     
-    $method->set('time', $method->get('time') + (microtime(true) - $method->get('current')));
-    $method->set('current');
+    $method->set('time', $method->get('time') + (microtime(true) - $iCurrent));
   }
   
   public function parse() {

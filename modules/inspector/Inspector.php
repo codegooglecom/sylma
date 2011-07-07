@@ -16,6 +16,9 @@ class Inspector extends Module {
     
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS);
+    
+    // require_once('modules/utils/Timer.php');
+    // Sylma::setControler('timer', new TimerArgs);
   }
   
   public function getDeclared() {
@@ -42,8 +45,6 @@ class Inspector extends Module {
     $result = null;
     
     try {
-      
-      require_once('modules/utils/Timer.php');
       
       if ($sFile) Controler::loadClass($sClass, $sFile);
       
@@ -163,6 +164,7 @@ class Inspector extends Module {
       Sylma::loadException($e);
     }
     
+    // dspf(Sylma::getControler('timer')->parse());
     return $result;
   }
 }
