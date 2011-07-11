@@ -51,13 +51,17 @@ class ModuleBase extends Namespaced {
       $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
     }
     
-    $class = $this->loadClass($sName, $this->getArguments('classes'));
-    if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $this->getDirectory()));
+    $class = $this->loadClass($sName, $this->getArguments());
+    
+    $sInlineDirectory = $this->getArguments()->getLastDirectory();
+    $sDirectory = $sInlineDirectory ? $sInlineDirectory : (string) $this->getDirectory();
+    
+    if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $sDirectory));
     
     return Controler::createObject($class, $aArguments);
   }
   
-  protected function loadClass($sName, $args) {
+  protected function loadClass($sName, SettingsInterface $args) {
     
     $aPath = explode('/', $sName);
     array_unshift($aPath, null);
@@ -68,15 +72,6 @@ class ModuleBase extends Namespaced {
       
       $this->throwException(txt('Cannot build object @class %s. No settings defined for these class', $sName));
     }
-    
-    // set absolute path for relative classe file's path
-    
-    if (!$sFile = $class->read('file', false)) {
-      
-      $sFile = $class->read('name') . '.php';
-    }
-    
-    
     
     return $class;
   }

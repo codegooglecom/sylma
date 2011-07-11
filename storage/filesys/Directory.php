@@ -199,7 +199,7 @@ class XML_Directory extends XML_Resource {
    * @param $bDebug If true, send an error message if no access is found
    * @return XML_File the file requested
    */
-  public function getFile($sName, $bDebug = false) {
+  public function getFile($sName, $iDebug = 0) {
     
     $this->loadRights();
     
@@ -207,7 +207,7 @@ class XML_Directory extends XML_Resource {
       
       if (!array_key_exists($sName, $this->aFiles)) {
         
-        $oFile = new XML_File($this->getFullPath(), $sName, $this->getRights(), $this, $bDebug);
+        $oFile = new XML_File($this->getFullPath(), $sName, $this->getRights(), $this, $iDebug);
         
         if ($oFile->doExist()) {
           
@@ -219,7 +219,12 @@ class XML_Directory extends XML_Resource {
           if (Controler::getUser()) $this->aFiles[$sName] = $oFile;
           else return $oFile;
           
-        } else $this->aFiles[$sName] = null;
+        } else {
+          
+          $this->aFiles[$sName] = null;
+          
+          if ($iDebug && FileInterface::DEBUG_EXIST) return $oFile;
+        }
       }
       
       return $this->aFiles[$sName];

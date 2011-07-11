@@ -40,9 +40,9 @@ class InspectorParameter extends InspectorReflector implements InspectorReflecto
     
     preg_match('/(\w*)\s*&?\$' . $this->getName() . '(?:\s*=\s*([^,\)\(]*))?/', $sSource, $aMatch);
     
-    if (!empty($aMatch[1])) $this->sCast = $aMatch[1];
+    if (isset($aMatch[1])) $this->sCast = $aMatch[1];
     
-    if (!empty($aMatch[2])) {
+    if (isset($aMatch[2])) {
       
       $sDefault = $aMatch[2];
       if ($sDefault == 'array') $sDefault = 'array()';
@@ -56,6 +56,7 @@ class InspectorParameter extends InspectorReflector implements InspectorReflecto
     return Arguments::buildFragment(array(
       'parameter' => array(
         '@name' => $this->getName(),
+        '@reference' => booltostr($this->getReflector()->isPassedByReference()), // deprecated
         'cast' => $this->sCast,
         'default' => $this->sDefault,
         'value' => $this->sValue,

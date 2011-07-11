@@ -105,8 +105,8 @@ class Module extends ModuleBase {
    * Return a setting result from @interface SettingsInterface object set with @method setOptions()
    *
    * @param string $sPath The path to the value wanted
-   * @param mixed The default value to return if no value is found
-   * @param boolean If set to TRUE, an exception will be sent
+   * @param mixed $mDefault The default value to return if no value is found
+   * @param boolean $bDebug If set to TRUE, exceptions launched in class will be thrown.
    *
    * @return mixed The value found at the location of @param $sPath or null if not found
    */

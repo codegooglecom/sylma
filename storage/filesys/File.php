@@ -12,27 +12,35 @@ class XML_File extends XML_Resource implements FileInterface {
   
   private $bFileSecured = false;
   
-  public function __construct($sPath, $sName, array $aRights, XML_Directory $oParent, $bDebug) {
+  public function __construct($sPath, $sName, array $aRights, XML_Directory $oParent, $iDebug) {
     
     $this->sFullPath = $sName ? $sPath.'/'.$sName : $sPath;
     $sPath = MAIN_DIRECTORY.$this->getFullPath();
     
-    if (is_file($sPath)) {
+    $bExist = is_file($sPath);
+    
+    if ($bExist || $iDebug & self::DEBUG_EXIST) {
       
       $this->aRights = $aRights;
       $this->sName = $sName;
       $this->sPath = $sPath;
       $this->oParent = $oParent;
       
-      $this->iSize = filesize($sPath);
-      $this->iChanged = filemtime($sPath);
+      if ($bExist) {
+        
+        $this->iSize = filesize($sPath);
+        $this->iChanged = filemtime($sPath);
+      }
       
       if ($iExtension = strrpos($sName, '.')) $this->sExtension = substr($sName, $iExtension + 1);
       else $this->sExtension = '';
       
-      $this->doExist(true);
+      $this->doExist($bExist);
+    }
+    else if ($iDebug & self::DEBUG_LOG) {
       
-    } else if ($bDebug) dspm(xt('Fichier %s introuvable dans %s', view($sName), $oParent->parse()), 'file/notice');
+      dspm(xt('Fichier %s introuvable dans %s', view($sName), $oParent->parse()), 'file/notice');
+    }
   }
   
   public function getLastChange() {
@@ -191,17 +199,15 @@ class XML_File extends XML_Resource implements FileInterface {
    * Move a file with or without security rights, depends on @param $bSecured
    * - This file must be writable
    * - The target file shouldn't exist
-   * - The target directory must be writable
-   * 
-   * If @param $bSecured is set to TRUE :
-   * - Rights will be kept
-   * 
-   * If @param $bSecured is set to FALSE :
-   * - Rights will not be kept and new rights will depends on new parent directory
-   * - The target directory must be readable, but not necessary writable
+   * - The target directory must be writable (see @param $bSecured)
    * 
    * @param string $sDirectory Targeted directory
    * @param string $sName Optional new name
+   * @param boolean $bSecured :
+   * - If set to TRUE : Rights will be kept
+   * - If set to FALSE :
+   *   - Rights will not be kept and new rights will depends on new parent directory
+   *   - The target directory must be readable, but not necessary writable
    * @return null|string|XML_File If $bSecured is set to true, the resulting new XML_file if move success or null if not
    *    If $bSecured is set to false, then it will return (string) path if move success or null if not.
    */
@@ -290,7 +296,14 @@ class XML_File extends XML_Resource implements FileInterface {
   
   public function saveText($sContent) {
     
-    return file_put_contents($this->getRealPath(), $sContent);
+    $bResult = false;
+    
+    if ($this->checkRights(Sylma::MODE_WRITE)) {
+      
+      $bResult = file_put_contents($this->getRealPath(), $sContent);
+    }
+    
+    return $bResult;
   }
   /*
    * Call parent directory to reload (re-create) an XML_File reference, this one will be destroy

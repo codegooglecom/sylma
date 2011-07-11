@@ -7,7 +7,8 @@ interface SettingsInterface {
   //public function query($sPath = '', $bDebug = true);
   public function set($sPath = '', $mValue = null);
   //public function add($sPath = '', $mValue = null);
-  
+  public function setParent(SettingsInterface $parent);
+  public function getParent();
   // public function merge();
   // public function parse();
   // public function __toString();

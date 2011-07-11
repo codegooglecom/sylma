@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" extension-element-prefixes="func" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ins="http://www.sylma.org/modules/inspector" xmlns:func="http://exslt.org/functions" xmlns:set="http://exslt.org/sets">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ins="http://www.sylma.org/modules/inspector" xmlns:func="http://exslt.org/functions" xmlns="http://www.w3.org/1999/xhtml">
   
-  <xsl:import href="functions.xsl"/>
+  <xsl:import href="/sylma/xslt/string.xsl"/>
   
   <xsl:param name="inspect" select="concat($sylma-directory, '/class/')"/>
   <xsl:param name="time" select="concat($sylma-directory, '/interface/time/')"/>
@@ -65,7 +65,7 @@
         </ul>
       </xsl:if>
       <xsl:if test="//ins:method">
-        <ul>
+        <ul class="clearfix">
           <h3>Methods</h3>
           <xsl:apply-templates select="." mode="normal">
             <xsl:with-param name="element">method</xsl:with-param>
@@ -104,8 +104,8 @@
       
       <xsl:when test="$set">
         <li class="{$class-group} clearfix">
+          <h4><em>herited from </em><xsl:copy-of select="ins:get-class(@name)"/></h4>
           <ul>
-            <h4><em>herited from </em><xsl:copy-of select="ins:get-class(@name)"/></h4>
             <xsl:for-each select="$set">
               <xsl:sort select="@name"/>
               <xsl:apply-templates select=".">
@@ -171,7 +171,7 @@
         <xsl:value-of select="concat($class-item, ' ', $class-method, ' ', $class, ' ', $class-prefix, '-', @access)"/>
       </xsl:attribute>
       <strong><xsl:value-of select="@name"/></strong>
-      <div class="{$class-parameters}">(<xsl:copy-of select="ins:implode(ins:parameter)"/> )</div>
+      <div class="{$class-parameters}">(<xsl:copy-of select="lx:implode(ins:parameter)"/> )</div>
       <xsl:variable name="methods" select="../ins:extension//ins:method[@name = current()/@name]"/>
       <xsl:if test="$methods"> also found in </xsl:if>
       <xsl:for-each select="$methods">

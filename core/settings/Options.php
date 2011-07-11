@@ -17,6 +17,16 @@ class Options extends ModuleBase implements SettingsInterface {
     if ($dSchema) $this->setSchema($dSchema);
   }
   
+  public function setParent(SettingsInterface $parent) {
+    
+    $this->parent = $parent;
+  }
+  
+  public function getParent() {
+    
+    return $this->parent;
+  }
+  
   public function getDocument() {
     
     return $this->dDocument;

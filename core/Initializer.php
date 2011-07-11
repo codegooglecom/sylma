@@ -68,7 +68,7 @@ class Initializer {
   
   protected function loadLibs($sCore) {
     
-    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . $sCore);
+    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . $sCore . SYLMA_PATH_SEPARATOR . MAIN_DIRECTORY);
     
     require_once('functions/Global.php');
     

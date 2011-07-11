@@ -24,10 +24,6 @@
         $args->get('def') === '456'
     </tst:expected>
   </tst:test>
-  <tst:test name="Self reference">
-    <tst:prepare>return new XArguments($sDirectory . '/self.yml');</tst:prepare>
-    <tst:expected>return $args->get('def') === 123</tst:expected>
-  </tst:test>
   <tst:test name="Import with relative path">
     <tst:prepare>return new XArguments($sDirectory . '/import-relative.yml');</tst:prepare>
     <tst:expected>
@@ -51,12 +47,60 @@
         $args->get('jkl/def') === '456'
       </tst:expected>
   </tst:test>
+  <tst:test name="Self reference">
+    <tst:prepare>
+      return new XArguments(array(
+        'abc' => 123,
+        'def' => '@sylma:self ../abc;',
+      ));
+    </tst:prepare>
+    <tst:expected>
+      return
+        $args->get('def') === 123
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Import's merge">
+    <tst:prepare>
+      $arg1 = new XArguments(array(
+        'abc' => "@sylma:import $sDirectory/simple.yml;",
+      ));
+      $arg2 = new XArguments(array(
+        'abc' => "@sylma:import $sDirectory/simple2.yml;",
+      ));
+      
+      $arg1->merge($arg2);
+      return $arg1;
+    </tst:prepare>
+    <tst:expected>
+      return
+        $args->get('abc/alpha') === 'red' &amp;&amp;
+        $args->get('abc/beta') === 10
+      </tst:expected>
+  </tst:test>
+  <tst:test name="Import, get and merge">
+    <tst:prepare>
+      $arg1 = new XArguments(array(
+        'abc' => "@sylma:import $sDirectory/simple.yml;",
+      ));
+      $arg2 = new XArguments(array(
+        'abc' => "@sylma:import $sDirectory/simple2.yml;",
+      ));
+      $arg1->get('abc'); // will resolve token
+      $arg1->merge($arg2);
+      return $arg1;
+    </tst:prepare>
+    <tst:expected>
+      return
+        $args->get('abc/alpha') === 'red' &amp;&amp;
+        $args->get('abc/beta') === 10
+      </tst:expected>
+  </tst:test>
   <tst:test name="Import with absolute path and self reference">
     <tst:prepare>
       return new XArguments(array(
-        'directory' => '/sylma/core/settings/test/',
+        'directory' => $sDirectory,
         'jkl' => 789,
-        'mno' => '@sylma:import @sylma:self /directory; + simple.yml;',
+        'mno' => '@sylma:import @sylma:self /directory; + /simple.yml;',
       ));
     </tst:prepare>
     <tst:expected>

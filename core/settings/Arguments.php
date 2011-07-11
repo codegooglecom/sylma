@@ -15,11 +15,23 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
    * The default main array
    */
   protected $aArray = array();
+  private $parent;
   
-  public function __construct(array $aArray = array(), $sNamespace = '') {
+  public function __construct(array $aArray = array(), $sNamespace = '', SettingsInterface $parent = null) {
     
     if (is_array($aArray)) $this->aArray = $aArray;
     $this->setNamespace($sNamespace);
+    if ($parent) $this->setParent($parent);
+  }
+  
+  public function setParent(SettingsInterface $parent) {
+    
+    $this->parent = $parent;
+  }
+  
+  public function getParent() {
+    
+    return $this->parent;
   }
   
   public function set($sPath = '', $mValue = null) {
@@ -36,8 +48,14 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
   		$mTarget =& $mTarget[$sKey]; 
   	}
     
-    if ($mValue !== null) $mTarget = $mValue;
-    else $mTarget = null;
+    if ($mValue !== null) {
+      
+      $mTarget = $mValue;
+    }
+    else {
+      
+      $mTarget = null;
+    }
     
     if ($mTarget !== null) return $this->get($sPath);
     else return null;
@@ -54,7 +72,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
     
     if (is_array($mResult)) {
       
-      $mResult = new self($mResult, $this->getNamespace());
+      $mResult = new self($mResult, $this->getNamespace(), $this);
     }
     
     return $mResult;
@@ -114,8 +132,11 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
     foreach ($aPath as $sSubPath) {
       
       if ($sSubPath != '..') $aResult[] = $sSubPath;
-      else if (!$aResult) Sylma::log(self::NS, txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
-      else array_pop($aResult);
+      else {
+        
+        if (!$aResult) $this->throwException(self::NS, txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
+        else array_pop($aResult);
+      }
     }
     
     if ($sPath && !$aPath) $this->throwException(txt('Cannot parse path %s', $sPath));
@@ -132,6 +153,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
    *
    * @return null|mixed The value localized by path, or NULL
    */
+  
   protected function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {
     
     $mCurrent =& $this->aArray;
@@ -145,6 +167,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
         
         if ($mCurrent instanceof SettingsInterface) {
           
+          $mCurrent->setParent($this);
           $mResult =& $mCurrent->locateValue($aPath, $bDebug, $bReturn);
           break;
         }
@@ -194,7 +217,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
    *
    * @return string The next valid key or empty if not found
    */
-  private function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
+  protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
     
     $mResult = null;
     $sKey = array_shift($aPath);
@@ -257,7 +280,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
         
         if(array_key_exists($key, $array1)) {
           
-          if (is_string($array1[$key])) $array1[$key] = $this->parseValue($array1[$key], $aPath);
+          // if (is_string($array1[$key])) $array1[$key] = $this->parseValue($array1[$key], $aPath); // TODO parse token before or not ?
           
           if (is_array($array1[$key]) && is_array($val)) $array1[$key] = $this->mergeArrays($array1[$key], $val, $aPath + array($key));
           else $array1[$key] = $val;
@@ -327,7 +350,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
     
     foreach ($aArray as $sKey => $mValue) {
       
-      if ($mValue) {
+      if ($mValue !== null) {
         
         if (is_integer($sKey)) {
           
@@ -364,6 +387,33 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
         else $node->add($mValue);
       }
     }
+  }
+  
+  /**
+   * Replace @class SettingsInterface and remove null values from array
+   * @param array $aArray The array to use
+   * @return array A new array with replaced values
+   */
+  public static function normalizeArray(array $aArray) {
+    
+    $aResult = array();
+    
+    foreach ($aArray as $sKey => $mVal) {
+      
+      if ($mVal instanceof SettingsInterface) {
+        
+        $mVal = self::normalizeArray($mVal->query());
+      }
+      
+      if ($mVal !== null) $aResult[$sKey] = $mVal;
+    }
+    
+    return $aResult;
+  }
+  
+  public function normalize() {
+    
+    $this->aArray = self::normalizeArray($this->aArray);
   }
   
   public function rewind() {

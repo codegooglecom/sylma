@@ -1,0 +1,9 @@
+classes:
+  timer:
+    file : TimerArray.php
+    name : TimerArray
+  xarguments :
+    name : XArguments
+  _timer:
+    file : TimerArguments.php
+    name : TimerArguments

@@ -229,6 +229,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     $node = Arguments::buildFragment(array(
       'class' => array( 
         '@name' => $this->getName(),
+        '@file' => (string) $this->file,
         'extension' => $this->extends,
         'package' => $this->getReflector()->isUserDefined() ? 'php' : '', 
         $this->comment,

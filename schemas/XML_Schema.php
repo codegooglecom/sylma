@@ -51,7 +51,7 @@ class XSD_Parser extends ModuleBase {
   public function __construct(XML_Document $oSchema, XML_Document $oDatas = null, $aOptions = array()) {
     
     $this->setDirectory(__file__);
-    $this->setArguments('settings.yml');
+    $this->setArguments(Sylma::get('schemas'));
     
     $this->setNamespace(self::NS, 'lc');
     $this->setNamespace(SYLMA_NS_XSD, 'xs', false);

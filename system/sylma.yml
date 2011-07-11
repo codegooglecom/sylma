@@ -100,6 +100,7 @@ messages:
   rights:
     enable: true
 actions: @sylma:import /sylma/action/action.yml;
+schemas: @sylma:import /sylma/schemas/settings.yml;
 
 
 

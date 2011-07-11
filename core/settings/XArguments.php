@@ -6,13 +6,14 @@ class XArguments extends Arguments implements SettingsInterface {
    * Special calls use this prefix use in YAML files
    */
   const VARIABLE_PREFIX = '@sylma:';
-  
+  const DIRECTORY_TOKEN = 'sylma-directory';
   /**
    * File used in @method loadYAML()
    */
   private $file;
+  private $sLastDirectory;
   
-  public function __construct($mValue, $sNamespace = '') {
+  public function __construct($mValue, $sNamespace = '', SettingsInterface $parent = null) {
     
     // set namespace first for logging
     $this->setNamespace($sNamespace);
@@ -23,7 +24,7 @@ class XArguments extends Arguments implements SettingsInterface {
     else if (is_array($mValue)) $aArray = $mValue;
     else $this->throwException(txt('Can only accepts array or string as first argument - given : %s', gettype($mValue)));
     
-    parent::__construct($aArray, $sNamespace);
+    parent::__construct($aArray, $sNamespace, $parent);
   }
   
   public function mergeFile($sPath) {
@@ -36,12 +37,12 @@ class XArguments extends Arguments implements SettingsInterface {
       }
       else {
         
-        $this->merge(self::loadYAML($file->getRealPath()));
+        $this->merge(self::loadYAML($file->getRealPath(), false));
       }
     }
     else {
       
-      $this->mergeArray(self::loadYAML($sPath));
+      $this->mergeArray(self::loadYAML($sPath, false));
     }
   }
   
@@ -50,19 +51,26 @@ class XArguments extends Arguments implements SettingsInterface {
     return $this->parseYAMLProperties($sValue, $aParentPath);
   }
   
+  protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
+    
+    if (array_key_exists(self::DIRECTORY_TOKEN, $aArray)) $this->setLastDirectory($aArray[self::DIRECTORY_TOKEN]);
+    
+    return parent::extractValue($aArray, $aPath, $aParentPath, $bDebug);
+  }
+  
   public function get($sPath = '', $bDebug = true) {
     
-    $mResult = $this->getValue($sPath, $bDebug);
+    $mResult =& $this->getValue($sPath, $bDebug);
     
     if (is_array($mResult)) {
       
-      $mResult = new self($mResult, $this->getNamespace());
+      $mResult = new self($mResult, $this->getNamespace(), $this);
     }
     
     return $mResult;
   }
   
-  protected function loadYAML($sPath) {
+  protected function loadYAML($sPath, $bFirstLoad = true) {
     
     $aResult = array();
     
@@ -85,7 +93,7 @@ class XArguments extends Arguments implements SettingsInterface {
           $this->throwException(txt('@file %s is empty', $file));
         }
         
-        $this->file = $file;
+        if ($bFirstLoad) $this->file = $file;
         $aResult = $this->parseYAML($sContent);
       }
       else {
@@ -112,6 +120,20 @@ class XArguments extends Arguments implements SettingsInterface {
   public function getFile() {
     
     return $this->file;
+  }
+  
+  protected function setLastDirectory($sDirectory) {
+    
+    $this->sLastDirectory = $sDirectory;
+    if ($this->getParent()) $this->getParent()->setLastDirectory($sDirectory);
+  }
+  
+  public function getLastDirectory() {
+    
+    if ((!$sResult = $this->sLastDirectory) && $this->getFile()) $sResult = (string) $this->getFile()->getParent();
+    if (!$sResult && $this->getParent()) $sResult = $this->getParent()->getLastDirectory();
+    
+    return $sResult;
   }
   
   protected function loadYAMLFree($sPath) {
@@ -183,8 +205,10 @@ class XArguments extends Arguments implements SettingsInterface {
           $this->throwException(txt('Cannot load parameter for %s in %s', $sName, $sArguments));
         }
         
-        if (!$this->useFile()) $sPath = substr($sPath, 1);  
-        $mResult = self::loadYAML($sPath);
+        if (!$this->useFile()) $sPath = substr($sPath, 1);
+        
+        $mResult = self::loadYAML($sPath, false);
+        if (is_array($mResult)) $mResult[self::DIRECTORY_TOKEN] = dirname($sPath);
         
       break;
       
@@ -209,6 +233,13 @@ class XArguments extends Arguments implements SettingsInterface {
     $sResult = '';
     
     return implode('', array_map('trim', $aArguments));
+  }
+  
+  public function dump() {
+    
+    $this->normalize();
+    
+    return Spyc::YAMLDump($this->aArray);
   }
   
   public function parseTree() {

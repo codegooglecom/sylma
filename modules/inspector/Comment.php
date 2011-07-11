@@ -107,7 +107,9 @@ class InspectorComment extends InspectorReflector {
         'source' => $this->sComment,
       );
       
-      $result = Arguments::buildFragment(array('comment' => $aResult) + $this->properties->query(), $this->getControler()->getNamespace());
+      $result = Arguments::buildFragment(array(
+        'comment' => $aResult + $this->properties->query(),
+      ), $this->getControler()->getNamespace());
     }
     
     return $result;

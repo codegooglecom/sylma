@@ -105,6 +105,7 @@ class InspectorMethod extends InspectorReflectorCommented implements InspectorRe
       '@class' => $this->getReflector()->getDeclaringClass()->getName(),
       '@access' => $this->getAccess(),
       '@static' => booltostr($this->getReflector()->isStatic()),
+      '@reference' => booltostr($this->getReflector()->returnsReference()),
       $this->comment,
       $this->aParameters,
       'source' => (!$this->getParent()->getArgument('parent') && $this->getReflector()->isUserDefined() ? $this->getSource() : ''),

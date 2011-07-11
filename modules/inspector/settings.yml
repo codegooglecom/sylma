@@ -1,4 +1,7 @@
 classes:
+  controler :
+    file : Inspector.php
+    name : Inspector
   class:
     file : Class.php
     name : InspectorClass

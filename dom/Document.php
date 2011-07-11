@@ -818,6 +818,11 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
     return $sResult;
   }
   
+  public function dspm() {
+    
+    dspf($this);
+  }
+  
   public function __toString() {
     
     return $this->display();

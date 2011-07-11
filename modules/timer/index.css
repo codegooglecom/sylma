@@ -1,0 +1,14 @@
+.sylma-timer {
+  border-bottom: 2px dotted gray;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+
+.sylma-timer li em {
+  font-size: 0.8em;
+}
+
+.sylma-timer-weight {
+  background-color: #ccc;
+  height: 5px;
+}

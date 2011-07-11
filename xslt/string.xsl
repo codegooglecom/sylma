@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:lx="http://ns.sylma.org/xslt" xmlns:func="http://exslt.org/functions" xmlns:exsl="http://exslt.org/common" version="1.0" extension-element-prefixes="lx func exsl">
+  
   <func:function name="lx:string-resume">
     <xsl:param name="string"/>
     <xsl:param name="max-length"/>
@@ -20,6 +21,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </func:function>
+  
   <func:function name="lx:substring-before-last">
     <xsl:param name="string"/>
     <xsl:param name="search"/>
@@ -28,6 +30,7 @@
     </xsl:variable>
     <func:result select="substring($string, 1, string-length($string) - string-length($after-string) - 1)"/>
   </func:function>
+  
   <func:function name="lx:substring-after-last">
     <xsl:param name="string"/>
     <xsl:param name="search"/>
@@ -40,6 +43,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </func:function>
+  
   <func:function name="lx:split">
     <xsl:param name="string" select="''"/>
     <xsl:param name="pattern" select="' '"/>
@@ -74,6 +78,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </func:function>
+  
   <xsl:template name="lx:_split-characters">
     <xsl:param name="string"/>
     <xsl:if test="$string">
@@ -85,6 +90,7 @@
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
+  
   <xsl:template name="lx:_split-pattern">
     <xsl:param name="string"/>
     <xsl:param name="pattern"/>
@@ -107,12 +113,14 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
   <func:function name="lx:to-upper">
     <xsl:param name="str"/>
     <xsl:variable name="lower" select="'abcdefghijklmnopqrstuvwxyz'"/>
     <xsl:variable name="upper" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
     <func:result select="translate($str,$lower,$upper)"/>
   </func:function>
+  
   <func:function name="lx:first-case">
     <xsl:param name="str"/>
     <xsl:variable name="firstLetter" select="substring($str,1,1)"/>
@@ -122,4 +130,20 @@
     <xsl:variable name="translate" select="translate($firstLetter,$lower,$upper)"/>
     <func:result select="concat($translate,$restString)"/>
   </func:function>
+  
+	<func:function name="lx:implode">
+    <xsl:param name="items" />
+    <xsl:param name="separator" select="', '" />
+    <xsl:if test="$items">
+	    <func:result>
+		    <xsl:for-each select="$items">
+		      <xsl:if test="position() &gt; 1">
+		        <xsl:value-of select="$separator" />
+		      </xsl:if>
+		      <xsl:apply-templates select="." />
+		    </xsl:for-each>
+	    </func:result>
+	  </xsl:if>
+	</func:function>
+  
 </xsl:stylesheet>
