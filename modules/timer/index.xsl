@@ -3,6 +3,7 @@
   
   <xsl:param name="weight" select="500"/>
   
+  <xsl:variable name="class-class">sylma-timer-class</xsl:variable>
   <xsl:variable name="class-weight">sylma-timer-weight</xsl:variable>
   
 	<xsl:template match="/time:classes">
@@ -10,13 +11,15 @@
   </xsl:template>
   
 	<xsl:template match="time:class">
-    <xsl:variable name="total" select="sum(.//time:time)"/>
-    <h3><xsl:value-of select="@name"/><em><xsl:value-of select="ceiling($total * 1000)"/> ms</em></h3>
-    <ul>
-      <xsl:apply-templates>
-        <xsl:with-param name="avg" select="1 div ($total div count(*)) * ($weight div count(*))"/>
-      </xsl:apply-templates>
-    </ul>
+    <div class="{$class-class} col-2 left">
+      <xsl:variable name="total" select="sum(.//time:time)"/>
+      <h3><xsl:value-of select="@name"/><em><xsl:value-of select="ceiling($total * 1000)"/> ms</em></h3>
+      <ul>
+        <xsl:apply-templates>
+          <xsl:with-param name="avg" select="1 div ($total div count(*)) * ($weight div count(*))"/>
+        </xsl:apply-templates>
+      </ul>
+    </div>
   </xsl:template>
   
   <xsl:template match="time:method">

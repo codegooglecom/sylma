@@ -374,7 +374,7 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
               else $node->add($mSubValue);
             }
             
-            $mValue = null;
+            continue;
           }
           else {
             

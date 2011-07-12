@@ -14,7 +14,7 @@
       <le:argument>/index.css</le:argument>
     </li:add-css>
   </le:window>
-  <div class="sylma-timer">
+  <div class="sylma-timer clearfix">
     <le:document>
       <le:get-variable name="timer"/>
       <li:parse>
