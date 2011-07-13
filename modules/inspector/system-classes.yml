@@ -171,3 +171,6 @@ SWFInput
 SWFBrowserFont
 SWFFontCollection
 SWFCharacter
+dotnet
+PDFlibException
+PDFlib

@@ -112,7 +112,7 @@ class WindowHTML extends XML_Action {
       
       $oView->formatOutput();
       // return $sDocType."\n".$oView->display(false, true);
-      return $sDocType."\n".$oView->display(true, false);
+      return $oView->display(true, false);
     }
   }
   
@@ -120,8 +120,48 @@ class WindowHTML extends XML_Action {
     
     try {
       
-      Controler::setContentType('xhtml');
-      $sResult = $this->printXML();
+      // @copyright following code to keystonewebsites.com - http://keystonewebsites.com/articles/mime_type.php
+      // @updated by Rodolphe Gerber
+      
+      $sCharset = 'utf-8';
+      $sMime = 'text/html';
+      
+      if(stristr($_SERVER["HTTP_ACCEPT"],"application/xhtml+xml")) {
+        
+        if(preg_match("/application\/xhtml\+xml;q=([01]|0\.\d{1,3}|1\.0)/i", $_SERVER["HTTP_ACCEPT"], $aMatches)) {
+          
+          $sXHtml = $aMatches[1];
+          
+          if(preg_match("/text\/html;q=([01]|0\.\d{1,3}|1\.0)/i", $_SERVER["HTTP_ACCEPT"], $aMatches)) {
+            
+            $sHtml = $aMatches[1];
+            
+            if((float)$sXHtml >= (float)$sHtml) {
+              
+              $sMime = "application/xhtml+xml";
+            }
+          }
+        }
+        else {
+          
+          $sMime = "application/xhtml+xml";
+        }
+      }
+      
+      if($sMime == "application/xhtml+xml") {
+        
+        $sProlog = '<?xml version="1.0" encoding="' . $sCharset . '" ?>' . "\n" .
+        '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+      }
+      else {
+        
+        $sProlog = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
+      }
+      
+      header("Content-Type: $sMime;charset=$sCharset");
+      header("Vary: Accept");
+      
+      $sResult = $sProlog . "\n" . $this->printXML();
       
     } catch(Exception $e) {
       

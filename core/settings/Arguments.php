@@ -280,10 +280,19 @@ class Arguments extends Namespaced implements SettingsInterface, Iterator {
         
         if(array_key_exists($key, $array1)) {
           
-          // if (is_string($array1[$key])) $array1[$key] = $this->parseValue($array1[$key], $aPath); // TODO parse token before or not ?
+          if (is_string($array1[$key]) && is_array($val)) {
+            
+            $array1[$key] = $this->parseValue($array1[$key], $aPath);
+          }
           
-          if (is_array($array1[$key]) && is_array($val)) $array1[$key] = $this->mergeArrays($array1[$key], $val, $aPath + array($key));
-          else $array1[$key] = $val;
+          if (is_array($array1[$key]) && is_array($val)) {
+            
+            $array1[$key] = $this->mergeArrays($array1[$key], $val, $aPath + array($key));
+          }
+          else {
+            
+            $array1[$key] = $val;
+          }
         }
         else {
           
