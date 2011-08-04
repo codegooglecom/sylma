@@ -10,6 +10,7 @@ modules:
   inspector: @sylma:import @sylma:self ../path; + /inspector/settings.yml;
 users:
   root:
+    # E_ALL | E_STRICT | E_NOTICE = 32767
     error-level: 6143
     arguments: [ ]
     groups:

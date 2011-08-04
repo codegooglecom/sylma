@@ -483,17 +483,17 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
           
           $mResult = $this->setChild($mValue);
         }
-        else if ($mValue instanceof XML_Document && !method_exists($mValue, 'parse')) {
+        else if ($mValue instanceof DOMDocument && !method_exists($mValue, 'parse')) {
           
           /* XML_Document */
           
-          if ($mValue->getRoot()) {
+          if ($mValue->documentElement) {
             
-            $mResult = $this->setChild($mValue->getRoot());
+            $mResult = $this->setChild($mValue->documentElement);
             
           } else Controler::addMessage('Document->set() - Document vide', 'xml/notice');
           
-        } else if ($mValue instanceof XML_Element) {
+        } else if ($mValue instanceof DOMElement) {
           
           /* XML_Element */
           
@@ -572,7 +572,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
     
     if ($oChild && is_object($oChild)) {
       
-      if ((bool) $oChild->getDocument() && ($oChild->getDocument() !== $this)) {
+      if ((bool) $oChild->ownerDocument && ($oChild->ownerDocument !== $this)) {
         
         $oChild = $this->importNode($oChild);
       }

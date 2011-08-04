@@ -2,6 +2,8 @@
 
 class XSL_Document extends XML_Document {
   
+  const NS = 'http://www.w3.org/1999/XSL/Transform';
+  
   private $oProcessor = null;
   
   public function __construct($mChildren = '', $iMode = MODE_READ, $bInclude = true) {
@@ -138,14 +140,15 @@ class XSL_Document extends XML_Document {
       
     } else {
       
-      $oExternals = $this->query('/*/xsl:include | /*/xsl:import', array('xsl' => SYLMA_NS_XSLT));
+      $exts = new XML_NodeList($this->getRoot()->queryByName('include', self::NS));
+      $exts->addArray($this->getRoot()->queryByName('import', self::NS));
       
-      if ($oExternals->length) {
+      if ($exts->length) {
         
         if ($this->getFile()) $aPaths[] = (string) $this->getFile();
         $aMarks = $this->query('le:mark', array('le' => SYLMA_NS_EXECUTION)); // look for mark elements source
         
-        foreach ($oExternals as $oExternal) {
+        foreach ($exts as $oExternal) {
           
           if ($oFile = $this->buildExternal($oExternal, $aPaths)) {
             
@@ -171,7 +174,15 @@ class XSL_Document extends XML_Document {
       
       $this->getProcessor()->importStylesheet($this);
       
-      $sResult = $this->getProcessor()->transformToXML($doc);
+      if ($bXML) {
+        
+        $mResult = $this->getProcessor()->transformToDoc($doc);
+        $mResult = new XML_Document($mResult);
+      }
+      else {
+        
+        $mResult = $this->getProcessor()->transformToXML($doc);
+      }
       
       if (Controler::isAdmin()) { // TODO, nice view
         
@@ -180,23 +191,13 @@ class XSL_Document extends XML_Document {
           if ($oError->file) $sFile = '';
           else if ($this->getFile()) $sFile = $this->getFile()->parse();
           else $sFile = new HTML_Tag('em', 'Fichier inconnu !');
-          //print_r($oError);
+          
           dspm(xt('%s : %s - %s dans %s', new HTML_Strong('Libxml'), xmlize($oError->message), view($doc), $sFile), 'error');
         }
       }
       
       libxml_clear_errors();
       libxml_use_internal_errors(false);
-      
-      if ($bXML) {
-        
-        $mResult = strtoxml(substr($sResult, 22), array(), true); //, array(), true
-        if ($mResult && $mResult->length == 1) $mResult = new XML_Document($mResult);
-        
-        //if ($mResult->isEmpty()) Controler::addMessage(array(t('Un problème est survenu lors de la transformation XSL !'),new HTML_Tag('hr'),$sResult), 'xml/warning');
-        
-      } else $mResult = $sResult;
-      //} else $mResult = substr($sResult, 21);
       
       XML_Controler::addStat('parse');
     }

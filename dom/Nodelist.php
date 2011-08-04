@@ -104,14 +104,22 @@ class XML_NodeList implements Iterator {
     $this->length++;
   }
   
+  public function addArray($aValue) {
+    
+    foreach ($aValue as $oNode) $this->addNode($oNode);
+  }
+  
   public function add($mValue) {
     
     if ($mValue) {
       
       if (is_array($mValue) || // TODO, bad test
-        (is_object($mValue) && ($mValue instanceof DOMNodeList || $mValue instanceof DOMNamedNodeMap || $mValue instanceof Iterator))) {
+        (is_object($mValue) &&
+          ($mValue instanceof DOMNodeList ||
+          $mValue instanceof DOMNamedNodeMap ||
+          $mValue instanceof Iterator))) {
         
-        foreach ($mValue as $oNode) $this->addNode($oNode);
+        $this->addArray($mValue);
         
       } else $this->addNode($mValue);
     }

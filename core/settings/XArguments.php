@@ -98,7 +98,7 @@ class XArguments extends Arguments implements SettingsInterface {
       }
       else {
         
-        $aResult = $this->loadYAMLFree(path_absolute($sPath, MAIN_DIRECTORY));
+        $aResult = $this->loadYAMLFree(path_absolute($sPath, Sylma::ROOT));
       }
     }
     catch (SylmaExceptionInterface $e) {

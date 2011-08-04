@@ -44,6 +44,7 @@ class Utils {
     $iBiggerTime = 0;
     
     $action = null;
+    $result = null;
     
     $iStart = microtime(true);
     
@@ -96,11 +97,84 @@ class Utils {
       dspm(xt('Temps total : %s', new HTML_Strong(number_format($iTotalTime, 3).' s')));
       dspm(xt('Nombre d\'appels : %s', $eCalls));
       dspm(new HTML_Tag('hr'));
-      dspm(xt('Mémoire utilisée : %s', new HTML_Strong(formatMemory(memory_get_peak_usage()))));
+      dspm(xt('Mémoire max. utilisée : %s', new HTML_Strong(formatMemory(memory_get_peak_usage()))));
       dspm(xt('Temps moyen : %s', new HTML_Strong(number_format($iAverageTime, 3).' s')));
       dspm(xt('Variation : %s%%', new HTML_Strong(number_format($iDeltaTime, 1))));
     }
     
     return $result;
+  }
+  
+  public function analyzeScripts() {
+    
+    $aMethods = array();
+    
+    $dir = Controler::getDirectory();
+    $aFiles = $dir->getFiles(array('php'), null, null);
+    
+    foreach ($aFiles as $file) {
+      
+      if ($sValue = $file->read()) {
+        
+        dspm(xt('Text found in file %s',
+          $file->parse()
+        ));
+        
+        preg_match_all('/->(\w+)\(/', $sValue, $aMatch);
+        
+        foreach ($aMatch[1] as $sMethod) {
+          
+          if (!array_key_exists($sMethod, $aMethods)) $aMethods[$sMethod] = 0;
+          $aMethods[$sMethod]++;
+        }
+      }
+    }
+    
+    asort($aMethods);
+    
+    // print_r($aMethods);
+    dspf($aMethods);
+    
+    return xt('%s file(s) analysed', new HTML_Strong(count($aFiles)));
+  }
+  
+  public function analyzeDocuments() {
+    
+    $aNamespaces = array();
+    
+    $dir = Controler::getDirectory();
+    $aFiles = $dir->getFiles(array('eml', 'iml', 'xsl', 'sml'), null, null);
+    
+    foreach ($aFiles as $file) {
+      
+      if (($doc = $file->getDocument()) && !$doc->isEmpty()) {
+        
+        $els = $doc->query('//*');
+        
+        dspm(xt('%s elements found in file %s',
+          new HTML_Strong($els->length),
+          $file->parse()
+        ));
+        
+        foreach ($els as $el) {
+          
+          $sNamespace = $el->getNamespace();
+          $sElement = $el->getName();
+          
+          if (!array_key_exists($sNamespace, $aNamespaces)) $aNamespaces[$sNamespace] = array();
+          if (!array_key_exists($sElement, $aNamespaces[$sNamespace])) $aNamespaces[$sNamespace][$sElement] = 0;
+          
+          $aNamespaces[$sNamespace][$sElement]++;
+          
+          if (!$sNamespace) dspm(xt('No namespace defined for element %s', $el->getPath()));
+        }
+      }
+    }
+    
+    foreach ($aNamespaces as &$aElements) asort($aElements);
+    
+    dspf($aNamespaces);
+    
+    return xt('%s file(s) analysed', new HTML_Strong(count($aFiles)));
   }
 }

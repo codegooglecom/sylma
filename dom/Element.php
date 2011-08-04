@@ -246,7 +246,9 @@ class XML_Element extends DOMElement implements ElementInterface {
         $mResult = $oXPath->query($sQuery, $this);
         
         XML_Controler::addStat('query');
-        if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
+        if (Controler::isAdmin() &&
+          (Sylma::get('actions/stats/enable') ||
+          Sylma::get('dom/debug/show-queries'))) XML_Controler::addQuery($sQuery);
         
         // if (!$mResult || !$mResult->length) dspm(xt("Element->query(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');
         // ////// report & notice type will crash system, maybe something TODO /////// //
@@ -281,10 +283,17 @@ class XML_Element extends DOMElement implements ElementInterface {
     else return '';
   }
   
-  public function getByName($sName, $sUri = null) {
+  public function queryByName($sName, $sUri = null) {
     
     if ($sUri) $aResults = $this->getElementsByTagNameNS($sUri, $sName);
     else $aResults = $this->getElementsByTagName($sName);
+    
+    return $aResults;
+  }
+  
+  public function getByName($sName, $sUri = null) {
+    
+    $aResults = $this->queryByName($sName, $sUri);
     
     if ($aResults->length) return $aResults->item(0);
     else return null;

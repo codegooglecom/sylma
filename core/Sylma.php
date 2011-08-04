@@ -3,7 +3,7 @@
 class Sylma {
   
   const NS = 'http://www.sylma.org';
-  
+  const ROOT = SYLMA_ROOT;
   const PATH_LIB = 'core';
   const PATH_OPTIONS = '/system/sylma.yml';
   const MODE_EXECUTE = 1;
@@ -62,16 +62,6 @@ class Sylma {
     
     if ($sPath) return self::getSettings()->get($sPath);
     else return self::$settings;
-  }
-  
-  protected static function getLogger() {
-    
-    return $this->logger;
-  }
-  
-  protected static function setLogger(LoggerInterface $logger) {
-    
-    $this->logger = $logger;
   }
   
   public static function get($sPath = '', $bDebug = true) {
@@ -143,7 +133,6 @@ class Sylma {
   
   public static function isWindows() {
     
-    //return (isset($_ENV['OS']) && strpos($_ENV['OS'], 'Win') !== false);
     return PHP_OS == 'WINNT';
   }
   
