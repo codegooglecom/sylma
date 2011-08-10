@@ -1,67 +1,25 @@
 <?php
 
-namespace \sylma\storage\fs\basic
+namespace sylma\storage\fs\basic\security;
 use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-class security extends ModuleBase {
-  
-  const NAME = 'directory.sml';
-  
-  private $doc;
-  private $directory;
-  
-  public function __construct(fs\directory $directory) {
-    
-    $this->directory = $directory;
-    $sPath = $directory->getFullPath() . '/' . self::NAME;
-    
-    if (file_exists(Sylma::ROOT . $sPath)) {
-      
-      $this->doc = new dom\document;
-      $this->getDocument()->loadFreeFile($sPath);
-    }
-  }
-  
-  public function getDocument() {
-    
-    return $this->doc;
-  }
-  
-  public function getParent() {
-    
-    return $this->oDirectory;
-  }
+require_once('Manager.php');
+require_once('storage/fs/security/updater.php');
+
+class Updater implements fs\security\updater extends Manager {
   
   public function build() {
     
     if ($this->getDocument()) dspm(xt('Le fichier de sécurité dans %s existe déjà', $this->getParent()), 'file/error');
     else {
       
-      $doc = new XML_Document;
-      $doc->addNode('directory', null, null, SYLMA_NS_DIRECTORY);
+      $doc = new \XML_Document;
+      $doc->addNode('directory', null, null, $this->getControler()->getNamespace());
       
-      $this->getParent()->addFreeDocument(SYLMA_SECURITY_FILE, $doc);
+      $this->getParent()->addFreeDocument(self::NS, $doc);
       
       $this->doc = $doc;
     }
-  }
-  
-  public function getDirectory() {
-    
-    if ($this->getDocument()) return $this->getDocument()->getByName('self', SYLMA_NS_DIRECTORY);
-    else return null;
-  }
-  
-  public function getPropagation() {
-    
-    if ($this->getDocument()) return $this->getDocument()->getByName('propagate', SYLMA_NS_DIRECTORY);
-    else return null;
-  }
-  
-  public function getFile($sName) {
-    
-    if ($this->getDocument()) return $this->getDocument()->get('ld:file[@name="'.xmlize($sName).'"]', 'ld', SYLMA_NS_DIRECTORY);
-    else return null;
   }
   
   public function updateFileName($sName, $sNewName) {

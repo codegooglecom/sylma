@@ -86,7 +86,7 @@ class Sylma {
     //print_r(debug_backtrace());
     if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
       
-      if (self::get('messages/print/all')) echo $sMessage."<br/>\n";
+      if (self::get('messages/print/visible')) echo $sMessage."<br/>\n";
       Controler::addMessage($aMessage, $sStatut); // temp
     }
     else if (self::get('messages/print/hidden')) {

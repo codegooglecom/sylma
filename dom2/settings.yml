@@ -1,0 +1,8 @@
+classes :
+  @sylma-classbase : \sylma\dom
+  document :
+    interface : document
+    name : basic\document
+  element :
+    interface : element
+    name : basic\element

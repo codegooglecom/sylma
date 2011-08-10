@@ -17,11 +17,11 @@ function pathWin2Unix($sPath) {
   return str_replace('\\', '/', $sPath);
 }
 
-function path_absolute($sTarget, $mSource = '') {
+function path_absolute($sTarget, $mSource = '', $sChar = '/') {
   
-  if (!$sTarget || $sTarget{0} == '/') return $sTarget;
+  if (!$sTarget || $sTarget{0} == $sChar) return $sTarget;
   else {
     
-    return $mSource.'/'.$sTarget;
+    return $mSource . $sChar . $sTarget;
   }
 }

@@ -1064,7 +1064,7 @@ class Controler {
       $mMessage = array($mMessage, Controler::getBacktrace());
     }
     
-    if (Sylma::get('debug/enable') && Sylma::get('messages/print/all')) { // || !self::useMessages()
+    if (Sylma::get('debug/enable') && Sylma::get('messages/print/visible')) { // || !self::useMessages()
       
       // if (is_array($mMessage)) foreach ($mMessage as $mContent) echo $mContent.new HTML_Br;
       // else echo $mMessage.new HTML_Br;

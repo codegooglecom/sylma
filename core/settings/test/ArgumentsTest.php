@@ -5,7 +5,7 @@ require_once('modules/test/Test.php');
 class ArgumentsTest extends Test {
   
   const NS = 'http://www.sylma.org/core/settings/test';
-  const TITLE = 'Arguments';
+  protected $sTitle = 'Arguments';
   
   public function __construct() {
     
@@ -50,7 +50,11 @@ class ArgumentsTest extends Test {
             
             $args = $closure($sDirectory);
             
-            if ($args instanceof Arguments) {
+            if (!($args instanceof Arguments)) {
+              
+              $this->throwException('Bad test, no valid argument returned');
+            }
+            else {
               
               if (eval('$closure = function($args) { ' . $sExpected . '; };') === null) {
                 
@@ -60,7 +64,6 @@ class ArgumentsTest extends Test {
           }
         }
         catch (SylmaExceptionInterface $e) {
-          
           
         }
         
@@ -84,18 +87,6 @@ class ArgumentsTest extends Test {
     }
     
     return $aResult;
-  }
-  
-  public function parse() {
-    
-    $result = Arguments::buildDocument(array(
-      'group' => array(
-        'description' => t(self::TITLE),
-        '#group' => $this->load(),
-      ),
-    ), $this->getNamespace());
-    
-    return $result;
   }
 }
 

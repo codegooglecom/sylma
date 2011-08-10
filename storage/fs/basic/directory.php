@@ -1,6 +1,14 @@
 <?php
 
-class XML_Directory extends XML_Resource {
+namespace sylma\storage\fs\basic;
+use \sylma\dom, \sylma\storage\fs;
+
+require_once('Resource.php');
+require_once('storage/fs/directory.php');
+
+class Directory extends Resource implements fs\directory {
+  
+  const NS = 'http://www.sylma.org/storage/fs/basic/directory';
   
   private $aDirectories = array();
   private $aFiles = array();
@@ -9,16 +17,17 @@ class XML_Directory extends XML_Resource {
   
   private $aChildrenRights = null;
   
-  public function __construct($sPath, $sName, $aRights = array(), $oParent = null) {
+  public function __construct($sPath, $sName, array $aRights = array(), fs\directory $parent = null, fs\controler $controler = null) {
     
     $this->sFullPath = $sName ? $sPath.'/'.$sName : $sPath;
+    $this->controler = $controler;
     
-    if (is_dir(MAIN_DIRECTORY.$this->getFullPath())) {
+    if (is_dir(\Sylma::ROOT . $this->getFullPath())) {
       
       $this->aRights = $this->aChildrenRights = $aRights;
       $this->sName = $sName;
       $this->sPath = $sPath;
-      $this->oParent = $oParent;
+      $this->parent = $parent;
       
       $this->doExist(true);
       $this->loadRights();
@@ -50,24 +59,19 @@ class XML_Directory extends XML_Resource {
     
     if (!$this->isSecured()) {
       
-      if (Controler::getUser()) {
+      if (\Controler::getUser()) {
         
-        $this->oSettings = new XML_SFile($this);
+        $this->oSettings = $this->getControler()->create('security', array($this, $this->getControler()));
         
-        if ($this->getSettings()->getDocument()) { // read security file
-          
-          // self rights
-          
-          if ($aRights = $this->setRights($this->getSettings()->getDirectory())) $this->aChildrenRights = $aRights;
-          
-          // children rights
-          
-          if (($oChildrenRights = $this->getSettings()->getPropagation()) &&
-            ($aChildrenRights = $this->extractRights($oChildrenRights))) $this->aChildrenRights = $aChildrenRights;
-          
-        } else $this->setRights();
+        // self rights
+        if ($aRights = $this->setRights($this->getSettings()->getDirectory())) $this->aChildrenRights = $aRights;
         
-      } else if (Controler::useStatut('file/report')) Controler::addMessage(xt('Sécurisation suspendue dans "%s"', new HTML_Strong($this->getFullPath())), 'file/report');
+        // children rights
+        if ($aChildrenRights = $this->getSettings()->getPropagation()) $this->aChildrenRights = $aChildrenRights;
+        
+        if (!$this->isSecured()) $this->setRights();
+        
+      } else if (\Controler::useStatut('file/report')) \Controler::addMessage(xt('Sécurisation suspendue dans "%s"', new \HTML_Strong($this->getFullPath())), 'file/report');
     }
   }
   
@@ -86,7 +90,7 @@ class XML_Directory extends XML_Resource {
   
   public function browse($aExtensions, $aPaths = array(), $iDepth = null) {
     
-    $aFiles = scandir(MAIN_DIRECTORY.$this->getFullPath(), 0);
+    $aFiles = scandir(\Sylma::ROOT.$this->getFullPath(), 0);
     $oElement = $this->parseXML();
     
     if ($iDepth === null || $iDepth > 0) {
@@ -128,15 +132,6 @@ class XML_Directory extends XML_Resource {
     //if ($oElement->isEmpty() && $this->getUserMode() != 0) return null;
     //else 
     return $oElement;
-  }
-  
-  /**
-   * Add a file into this directory via XML_Document->freeSave()
-   */
-  
-  public function addFreeDocument($sName, XML_Document $oDocument) {
-    
-    $oDocument->saveFree($this, $sName);
   }
   
   /*
@@ -194,7 +189,7 @@ class XML_Directory extends XML_Resource {
   }
   
   /**
-   * Build an XML_File, check existenz and right access
+   * Build a file, check existenz and right access
    * @param $sName The name + extension of the file
    * @param $bDebug If true, send an error message if no access is found
    * @return XML_File the file requested
@@ -207,23 +202,27 @@ class XML_Directory extends XML_Resource {
       
       if (!array_key_exists($sName, $this->aFiles)) {
         
-        $oFile = new XML_File($this->getFullPath(), $sName, $this->getRights(), $this, $iDebug);
+        $oFile = $this->getControler()->create('file', array(
+          $this
+          $sName,
+          $this->getRights(),
+          $iDebug,
+        ));
         
         if ($oFile->doExist()) {
           
-          if (!$mRights = $this->getSettings()->getFile($sName)) $mRights = $this->getChildrenRights();
+          if (!$aRights = $this->getSettings()->getFile($sName)) $aRights = $this->getChildrenRights();
           
-          //if (((string) $sName) == 'root.xml') print_r($mRights);
-          $oFile->setRights($mRights);
+          $oFile->setRights($aRights);
           
-          if (Controler::getUser()) $this->aFiles[$sName] = $oFile;
+          if (\Controler::getUser()) $this->aFiles[$sName] = $oFile;
           else return $oFile;
           
         } else {
           
           $this->aFiles[$sName] = null;
           
-          if ($iDebug && FileInterface::DEBUG_EXIST) return $oFile;
+          if ($iDebug && \FileInterface::DEBUG_EXIST) return $oFile;
         }
       }
       
@@ -243,7 +242,12 @@ class XML_Directory extends XML_Resource {
       
       if (!array_key_exists($sName, $this->aDirectories)) {
         
-        $oDirectory = new XML_Directory($this->getFullPath(), $sName, $this->getChildrenRights(), $this);
+        $oDirectory = $this->getControler()->create('directory', array(
+          $this->getFullPath(),
+          $sName,
+          $this->getChildrenRights(),
+          $this,
+        ));
         
         if ($oDirectory->doExist()) $this->aDirectories[$sName] = $oDirectory;
         else $this->aDirectories[$sName] = null;
@@ -291,30 +295,6 @@ class XML_Directory extends XML_Resource {
     return null;
   }
   
-  public function addDirectory($sName) {
-    
-    $oDirectory = null;
-    
-    if (!$oDirectory = $this->getDirectory($sName)) {
-      
-      if ($sName && $this->checkRights(MODE_WRITE)) {
-        
-        $sPath = MAIN_DIRECTORY.$this.'/'.$sName;
-        
-        mkdir($sPath, SYLMA_DEFAULT_MODE);
-        
-        unset($this->aDirectories[$sName]);
-        $oDirectory = $this->getDirectory($sName);
-        
-        //dspm(xt('Création du répertoire %s', new HTML_Strong($oDirectory)), 'file/notice');
-        
-        //} else dspm(xt('Création du répertoire %s impossible', new HTML_Stong($this.$sName)), 'file/error');
-      }
-    }
-    
-    return $oDirectory;
-  }
-  
   public function checkRights($iMode) {
     
     $this->loadRights();
@@ -324,72 +304,16 @@ class XML_Directory extends XML_Resource {
     return false;
   }
   
-  /**
-   * Change rights in corresponding SECURITY_FILE
-   */
-  public function updateRights($sOwner, $sGroup, $sMode) {
-    
-    if ($this->checkRightsArguments($sOwner, $sGroup, $sMode)) {
-      
-      return $this->getSettings()->updateDirectory($sOwner, $sGroup, $sMode);
-    }
-    
-    return false;
-  }
-  
-  public function rename($sNewName) {
-    
-    $oResult = null;
-    
-    if ($this->checkRights(MODE_WRITE)) {
-      
-      if (rename($this->getRealPath(), $this->getParent()->getRealPath().'/'.$sNewName)) {
-        
-        $oResult = $this->getParent()->updateDirectory($sNewName);
-        Controler::addMessage(t('Répertoire renommé !'), 'success');
-        
-      } else Controler::addMessage(t('Impossible de renommer le répertoire !'), 'warning');
-    }
-    
-    return $oResult;
-  }
-  
   public function getSystemPath() {
     
-    return Controler::getSystemPath().'/'.$this->getRealPath();
+    return \Controler::getSystemPath().'/'.$this->getRealPath();
   }
   
   public function getRealPath() {
     
-    return $this->getParent() ? MAIN_DIRECTORY.$this : MAIN_DIRECTORY;
+    return $this->getParent() ? \Sylma::ROOT .$this : \Sylma::ROOT;
   }
   
-  public function delete($bDeleteChildren = false) {
-    
-    $bResult = false;
-    
-    if ($this->checkRights(MODE_WRITE)) {
-      
-      if ($bDeleteChildren) {
-        
-        if ($this === Controler::getDirectory()) dspm('Impossible de supprimer le répertoire principal !', 'file/error');
-        else {
-          
-          $this->browse(array(), array(), 1);
-          
-          foreach ($this->aFiles as $oFile) if ($oFile) $oFile->delete();
-          foreach ($this->aDirectories as $oDirectory) $oDirectory->delete(true);
-        }
-      }
-      
-      $bResult = rmdir(MAIN_DIRECTORY.$this);
-      
-      $this->getParent()->updateDirectory($this->getName());
-    }
-    
-    return $bResult;
-  }
-    
   public function parseXML() {
     
     if (!$sName = xmlize($this->getName())) {
@@ -399,7 +323,7 @@ class XML_Directory extends XML_Resource {
       
     } else $sPath = $this->getFullPath();
     
-    return new XML_Element('directory', null, array(
+    return new \XML_Element('directory', null, array(
       'full-path' => xmlize($sPath),
       'owner' => $this->getOwner(),
       'group' => $this->getGroup(),
@@ -412,7 +336,7 @@ class XML_Directory extends XML_Resource {
   
   public function parse() {
     
-    return new HTML_A(Controler::getSettings('module[@name="explorer"]/path').'?path='.$this->getFullPath(), $this->getFullPath());
+    return new \HTML_A(\Controler::getSettings('module[@name="explorer"]/path').'?path='.$this->getFullPath(), $this->getFullPath());
   }
   
   public function __toString() {

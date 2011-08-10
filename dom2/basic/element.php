@@ -14,7 +14,15 @@ class Element extends DOMElement implements element {
   public function query($sQuery, $mNS = '', $sUri = '')
   public function get($sQuery, $mNS = '', $sUri = '')
   public function readByName($sName, $sUri = null)
-  public function getByName($sName, $sUri = null)
+  
+  public function getByName($sName, $sUri = null) {
+    
+    $aResults = $this->queryByName($sName, $sUri);
+    
+    if ($aResults->length) return $aResults->item(0);
+    else return null;
+  }
+  
   public function getById($sId)
   public function testAttribute($sName, $sUri = '')
   public function setAttribute($sName, $sValue = '', $sUri = null)

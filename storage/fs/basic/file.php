@@ -1,27 +1,43 @@
 <?php
 
-namespace \sylma\storage\fs\basic
-use \sylma\dom, \sylma\storage\fs;
+namespace sylma\storage\fs\basic;
+use \sylma\storage\fs;
 
-require_once('resource.php');
+require_once('Resource.php');
 require_once('storage/fs/file.php');
 
-class file extends resource implements fs\file {
+class File extends Resource implements fs\file {
   
   const NS = 'http://www.sylma.org/storage/fs/basic/file';
+  const DOM_CONTROLER = 'dom';
   
-  private $oDocument = null;
+  /**
+   * @var string
+   */
   private $sExtension = '';
-  private $iSize = 0;
-  private $iChanged = 0;
+  
+  /**
+   * Size of the file in octets(o)
+   * @var integer
+   */
+  private $iSize = null;
+  
+  /**
+   * Date of last changed in unix timestamp
+   * @var integer
+   */
+  private $iChanged = null;
+  
   private $oSettings = null;
   
   private $bFileSecured = false;
   
-  public function __construct($sPath, $sName, array $aRights, fs\directory $oParent, $iDebug) {
+  public function __construct(fs\directory $parent, $sName, array $aRights, $iDebug) {
     
-    $this->sFullPath = $sName ? $sPath.'/'.$sName : $sPath;
-    $sPath = MAIN_DIRECTORY.$this->getFullPath();
+    $sPath = $parent->getFullPath();
+    
+    $this->sFullPath = $sPath . '/' . $sName;
+    $sPath = $this->getRealPath();
     
     $bExist = is_file($sPath);
     
@@ -30,13 +46,7 @@ class file extends resource implements fs\file {
       $this->aRights = $aRights;
       $this->sName = $sName;
       $this->sPath = $sPath;
-      $this->oParent = $oParent;
-      
-      if ($bExist) {
-        
-        $this->iSize = filesize($sPath);
-        $this->iChanged = filemtime($sPath);
-      }
+      $this->parent = $parent;
       
       if ($iExtension = strrpos($sName, '.')) $this->sExtension = substr($sName, $iExtension + 1);
       else $this->sExtension = '';
@@ -45,11 +55,13 @@ class file extends resource implements fs\file {
     }
     else if ($iDebug & self::DEBUG_LOG) {
       
-      dspm(xt('Fichier %s introuvable dans %s', view($sName), $oParent->parse()), 'file/notice');
+      $this->getControler()->throwException(txt('@file %s does not exist', $sPath));
     }
   }
   
   public function getLastChange() {
+    
+    if ($this->iChanged === null && $this->doExist()) $this->iChanged = filemtime($this->getRealPath());
     
     return $this->iChanged;
   }
@@ -77,6 +89,8 @@ class file extends resource implements fs\file {
   
   public function getSize() {
     
+    if ($this->iSize === null && $this->doExist()) $this->iSize = filesize($this->getRealPath());
+    
     return $this->iSize;
   }
   
@@ -96,39 +110,24 @@ class file extends resource implements fs\file {
   }
   
   /**
-   * Get the real corresponding XML_Document without appending rights control
-   */
-  public function getFreeDocument() {
-    
-    if (!$this->oDocument) $this->getDocument(); // will load XML_Document in the XML_Document->loadFile() with setDocument(), maybe TODO
-    
-    return $this->oDocument;
-  }
-  
-  /**
-   * Get the copy of the corresponding document
-   * Call XML_Document->loadFile() via new instance, that will put a copy here of the document with setDocument()
+   * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
-   * @param boolean $bInclude : see @method DocumentInterface::__construct()
    */
-  public function getDocument($iMode = Sylma::MODE_READ, $bInclude = false) {
+  public function getDocument($iMode = Sylma::MODE_READ) {
     
-    return new XML_Document((string) $this, $iMode, $bInclude);
-  }
-  
-  /**
-   * Each XML_Document loads will register in the corresponding XML_File
-   * This function will clone the document to avoid secured elements deleting
-   * @param XML_Document $oDocument The XML_Document caller
-   */
-  public function setDocument(XML_Document $oDocument) {
+    if (!$controler = \Sylma::getControler(self::DOM_CONTROLER)) {
+      
+      $this->throwException(t('File controler is not yet defined'));
+    }
     
-    if ($oDocument->isEmpty()) $oDocument = new XML_Document;
-    else $oDocument = new XML_Document($oDocument->getRoot()); // getRoot avoid parsing of specials classes like actions
+    $doc = $this->getControler()->create('file/document');
     
-    $oDocument->setFile($this);
+    $doc->setControler($controler);
+    $doc->registerClasses();
+    $doc->setFile($this);
+    $doc->loadFile($iMode);
     
-    $this->oDocument = $oDocument;
+    return $doc;
   }
   
   public function checkRights($iMode) {
@@ -154,19 +153,6 @@ class file extends resource implements fs\file {
     return $this->getParent()->getSettings($bRecursive);
   }
   
-  /**
-   * Change rights in corresponding SECURITY_FILE
-   */
-  public function updateRights($sOwner, $sGroup, $sMode) {
-    
-    if ($this->checkRightsArguments($sOwner, $sGroup, $sMode)) {
-      
-      return $this->getSettings()->updateFile($this->getName(), $sOwner, $sGroup, $sMode);
-    }
-    
-    return false;
-  }
-  
   public function readArray() {
     
     return file($this->getRealPath(), FILE_SKIP_EMPTY_LINES);
@@ -175,149 +161,6 @@ class file extends resource implements fs\file {
   public function read() {
     
     return file_get_contents($this->getRealPath());
-  }
-  
-  /**
-   * Alias of moveSecured() with $bSecured set to true. Move a file WITH security rights
-   * 
-   * @param string $sDirectory Targeted directory
-   * @param string $sName Optional new name
-   * @return null|XML_File The result from moveSecured() with $bSecured set to true
-   */
-  public function move($sDirectory, $sName = '') {
-    
-    return $this->moveSecured($sDirectory, $sName);
-  }
-  
-  /**
-   * Alias of moveSecured() with $bSecured set to false. Move a file WITHOUT security rights
-   * 
-   * @param string $sDirectory Targeted directory
-   * @param string $sName Optional new name
-   * @return null|string The result from moveSecured() with $bSecured set to false
-   */
-  public function moveFree($sDirectory, $sName = '') {
-    
-    return $this->moveSecured($sDirectory, $sName, false);
-  }
-  
-  /**
-   * Move a file with or without security rights, depends on @param $bSecured
-   * - This file must be writable
-   * - The target file shouldn't exist
-   * - The target directory must be writable (see @param $bSecured)
-   * 
-   * @param string $sDirectory Targeted directory
-   * @param string $sName Optional new name
-   * @param boolean $bSecured :
-   * - If set to TRUE : Rights will be kept
-   * - If set to FALSE :
-   *   - Rights will not be kept and new rights will depends on new parent directory
-   *   - The target directory must be readable, but not necessary writable
-   * @return null|string|XML_File If $bSecured is set to true, the resulting new XML_file if move success or null if not
-   *    If $bSecured is set to false, then it will return (string) path if move success or null if not.
-   */
-  protected function moveSecured($sDirectory, $sNewName = '', $bSecured = true) {
-    
-    $oResult = null;
-    
-    if ($this->checkRights(MODE_WRITE)) {
-      
-      $sName = $this->getName();
-      if (!$sNewName) $sNewName = $sName;
-      
-      if ((!$oDirectory = Controler::getDirectory($sDirectory)) ||
-        ($bSecured && !$oDirectory->checkRights(MODE_WRITE))) {
-        
-        dspm(xt('Impossible de déplacer %s dans %s, le répertoire est introuvable ou privé',
-          $this->parse(), new HTML_Strong($sDirectory)), 'warning');
-      }
-      else if (rename($this->getRealPath(), $oDirectory->getRealPath().'/'.$sNewName)) {
-        
-        $this->update();
-        
-        if ($oDirectory != $this->getParent()) {
-          
-          if ($bSecured) $oDirectory->getSettings()->updateFile($sNewName,
-            $this->getOwner(), $this->getGroup(), $this->getMode()); // copy security attributes
-          
-          $this->getSettings()->deleteFile($sName);
-        }
-        
-        if ($bSecured) $oResult = $oDirectory->updateFile($sNewName);
-        else $oResult = $oDirectory.'/'.$sNewName; // if not secured, target file may be not readable
-        
-        // Controler::addMessage(t('Fichier déplacé !'), 'success');
-        
-        // update directory settings
-        $this->getSettings()->updateFileName($this->getName(), $sName);
-        
-      } else dspm(t('Impossible de déplacer le fichier !'), 'warning');
-    }
-    
-    return $oResult;
-  }
-  
-  public function rename($sNewName) {
-    
-    $oResult = null;
-    
-    if ($this->checkRights(MODE_WRITE)) {
-      
-      if (rename($this->getRealPath(), $this->getParent()->getRealPath().'/'.$sNewName)) {
-        
-        $this->update();
-        $oResult = $this->getParent()->updateFile($sNewName);
-        
-        Controler::addMessage(t('Fichier renommé !'), 'success');
-        
-        // update directory settings
-        $this->getSettings()->updateFileName($this->getName(), $sNewName);
-        
-      } else Controler::addMessage(t('Impossible de renommer le fichier !'), 'warning');
-    }
-    
-    return $oResult;
-  }
-  
-  public function delete($bMessage = true, $bUpdateDirectory = true) {
-    
-    $bResult = null;
-    
-    if ($this->checkRights(MODE_WRITE)) {
-      
-      if ($bResult = unlink($this->getSystemPath())) {
-        
-        if ($bUpdateDirectory) $this->update();
-        
-        // update directory settings
-        $this->getSettings()->deleteFile($this->getName());
-        
-        if ($bMessage) dspm(xt('Suppression du fichier %s', $this->parse()), 'file/notice');
-      }
-    }
-    
-    return $bResult;
-  }
-  
-  public function saveText($sContent) {
-    
-    $bResult = false;
-    
-    if ($this->checkRights(Sylma::MODE_WRITE)) {
-      
-      $bResult = file_put_contents($this->getRealPath(), $sContent);
-    }
-    
-    return $bResult;
-  }
-  /*
-   * Call parent directory to reload (re-create) an XML_File reference, this one will be destroy
-   */
-  
-  public function update() {
-    
-    $this->getParent()->updateFile($this->getName());
   }
   
   public function parse() {

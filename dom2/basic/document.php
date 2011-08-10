@@ -5,30 +5,61 @@ use \sylma\dom, \sylma\storage\fs;
 
 require_once('dom2/document.php');
 
-class document extends \DOMDocument implements dom\document {
+class Document extends \DOMDocument implements dom\document {
   
   const NS = 'http://www.sylma.org/dom/basic/document';
   
   /**
-   * File linked
+   * See @method setControler()
+   * @var dom\Controler
+   */
+  private $controler;
+  
+  /**
+   * See @method setFile()
+   * @var fs\file
    */
   private $file;
   
   public function __construct($sVersion = '1.0', $sEncoding = 'utf-8') {
     
     parent::__construct($sVersion, $sEncoding);
-    
   }
   
   // public function isEmpty()
   // public function getFile()
+  
+  public function getControler() {
+    
+    return $this->controler;
+  }
+  
+  public function setControler(dom\Controler $controler) {
+    
+    $this->controler = $controler;
+  }
+  
+  public function registerClasses(core\argument $settings = null) {
+    
+    if (!$this->getControler()) {
+      
+      $this->throwException(t('Cannot register classes, no controler has been defined'));
+    }
+    
+    $aClasses = $this->getControler()->getClasses($settings);
+    
+    foreach ($aClasses as $sOrigin => $sReplacement) {
+      
+      $this->registerNodeClass($sOrigin, $sReplacement);
+    }
+  }
   
   public function setFile(fs\file $file) {
     
     $this->file = $file;
   }
   
-  public function loadFile($iMode = Sylma::MODE_READ) {
+  public function loadFile() {
     
     $bResult = false;
     
@@ -37,14 +68,61 @@ class document extends \DOMDocument implements dom\document {
       $this->throwException(t('No file defined'));
     }
     
-    if (!$this->getFile()->checkRights($iMode) {
+    return $this->loadContent($iMode);;
+  }
+  
+  protected function loadContent() {
+    
+    $sContent = $this->getFile()->read();
+    
+    $reader = new \XMLReader;
+    $reader->XML($sContent);
+    
+    $aNamespaces = $this->lookupNamespaces($reader);
+    
+    return parent::load($this->getFile()->getFullPath());
+  }
+  
+  private function lookupNamespaces(\XMLReader $reader) {
+    
+    $aNamespaces = array();
+    
+    while ($reader->read()) {
       
-      $this->throwException(t('Forbidden access in this mode'));
+      switch ($reader->nodeType) {
+        
+        // case \XMLReader::NONE : break;
+        case \XMLReader::ELEMENT :
+          
+          $aNamespaces[$reader->namespaceURI] = true;
+          
+          if($reader->hasAttributes) {
+            
+            while($reader->moveToNextAttribute()) {
+              
+              $aNamespaces[$reader->namespaceURI] = true;
+            }
+          }
+          
+          if (!$reader->isEmptyElement) {
+            
+            $aNamespaces = array_merge($aNamespaces, $this->lookupContent($reader));
+          }
+          
+        break;
+        // case \XMLReader::ATTRIBUTE : break;
+        // case \XMLReader::TEXT : break;
+        case \XMLReader::END_ELEMENT : //dspf($reader->expand(new \XML_Element)); break 2;
+        // case \XMLReader::XML_DECLARATION : break;
+      }
     }
     
-    $bResult = parent::load($file->getRealPath());
+    return $aNamespaces;
+  }
+  
+  public function registerNamespaces(array $aNamespaces = array()) {
     
-    return $bResult;
+    
   }
   
   // public function getRoot()

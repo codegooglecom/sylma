@@ -3,7 +3,7 @@
 namespace sylma\parser\action;
 use sylma\dom, sylma\parser;
 
-class basic implements parser\action {
+class Basic implements parser\action {
   
   private $doc;
   

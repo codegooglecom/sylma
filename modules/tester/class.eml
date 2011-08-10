@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/test">
+  <le:settings>
+    <le:name>Test class</le:name>
+    <le:argument format="\sylma\modules\tester\test"/>
+    <le:document le:set-variable="doc">
+      <test:tests>
+        <le:get-argument/>
+      </test:tests>
+    </le:document>
+  </le:settings>
+  <le:window>
+    <li:add-css le:format="string">
+      <le:directory/>
+      <le:argument>/index.css</le:argument>
+    </li:add-css>
+  </le:window>
+  <div class="sylma-tests sylma-tests-class">
+    <le:get-variable name="doc" return="false">
+      <li:parse>
+        <le:template path="index.xsl"/>
+      </li:parse>
+    </le:get-variable>
+  </div>
+</le:action>

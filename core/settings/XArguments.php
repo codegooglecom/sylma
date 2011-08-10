@@ -6,7 +6,11 @@ class XArguments extends Arguments implements SettingsInterface {
    * Special calls use this prefix use in YAML files
    */
   const VARIABLE_PREFIX = '@sylma:';
-  const DIRECTORY_TOKEN = 'sylma-directory';
+  const DIRECTORY_TOKEN = '@sylma-directory';
+  
+  private $aTokens = array();
+  private $aResultTokens = array();
+  
   /**
    * File used in @method loadYAML()
    */
@@ -53,7 +57,13 @@ class XArguments extends Arguments implements SettingsInterface {
   
   protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
     
-    if (array_key_exists(self::DIRECTORY_TOKEN, $aArray)) $this->setLastDirectory($aArray[self::DIRECTORY_TOKEN]);
+    if ($this->aTokens) {
+      
+      foreach ($this->aTokens as $sToken => $mValue) {
+        
+        if (array_key_exists($sToken, $aArray)) $this->setToken($sToken, $aArray[$sToken]);
+      }
+    }
     
     return parent::extractValue($aArray, $aPath, $aParentPath, $bDebug);
   }
@@ -122,15 +132,31 @@ class XArguments extends Arguments implements SettingsInterface {
     return $this->file;
   }
   
-  protected function setLastDirectory($sDirectory) {
+  public function getToken($sToken) {
     
-    $this->sLastDirectory = $sDirectory;
-    if ($this->getParent()) $this->getParent()->setLastDirectory($sDirectory);
+    if (array_key_exists($sToken, $this->aResultTokens)) return $this->aResultTokens[$sToken];
+    else return null;
+  }
+  
+  public function setToken($sKey, $mValue) {
+    
+    $this->aResultTokens[$sKey] = $mValue;
+    if ($this->getParent()) $this->getParent()->setToken($sKey, $mValue);
+  }
+  
+  public function unRegisterToken($sToken) {
+    
+    if (array_key_exists($sToken, $this->aTokens)) unset($this->aTokens[$sToken]);
+  }
+  
+  public function registerToken($sToken) {
+    
+    $this->aTokens[$sToken] = null;
   }
   
   public function getLastDirectory() {
     
-    if ((!$sResult = $this->sLastDirectory) && $this->getFile()) $sResult = (string) $this->getFile()->getParent();
+    if ((!$sResult = $this->getToken(self::DIRECTORY_TOKEN)) && $this->getFile()) $sResult = (string) $this->getFile()->getParent();
     if (!$sResult && $this->getParent()) $sResult = $this->getParent()->getLastDirectory();
     
     return $sResult;
