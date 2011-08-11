@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/interface">
+  <file>Basic.php</file>
+  <name>\sylma\storage\fs\test\Basic</name>
+  <method-construct>
+    <argument format="\sylma\storage\fs\controler"/>
+  </method-construct>
+</class>
