@@ -20,9 +20,9 @@ class Manager implements fs\security\manager {
     $this->directory = $directory;
     //$sPath = $directory->getFullPath() . '/' . self::FILENAME;
     
-    if ($file = $directory->getFreeFile(self::FILENAME)) {
+    if (\Controler::getUser() && ($file = $directory->getFreeFile(self::FILENAME))) {
       
-      $this->document = $file->getDocument();
+      $this->document = $file->getFreeDocument();
     }
   }
   
@@ -74,6 +74,8 @@ class Manager implements fs\security\manager {
    **/
   protected function extractRights(dom\element $el = null) {
     
+    $aResult = array();
+    
     if ($el && ($el = $el->getByName('security', self::NS))) {
       
       $sOwner = $el->readByName('owner', self::NS);
@@ -84,7 +86,7 @@ class Manager implements fs\security\manager {
       
       if ($iMode !== null) {
         
-        return array(
+        $aResult = array(
           'owner' => $sOwner,
           'group' => $sGroup,
           'mode' => $sMode,
@@ -93,7 +95,7 @@ class Manager implements fs\security\manager {
       }
     }
     
-    return array();
+    return $aResult;
   }
 }
 

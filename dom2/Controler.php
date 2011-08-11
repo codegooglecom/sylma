@@ -2,10 +2,12 @@
 
 namespace sylma\dom;
 
-class Controler extends \ModuleManager {
+class Controler extends \Module {
   
   const NS = 'http://www.sylma.org/dom/controler';
   const SETTINGS = 'settings.yml';
+  
+  const DIRECTORY_TOKEN = '@sylma-directory';
   const CLASSBASE_TOKEN = '@sylma-classbase';
   
   protected $aDefaultClasses = array();
@@ -23,15 +25,17 @@ class Controler extends \ModuleManager {
     $this->setNamespace(self::NS);
   }
   
-  public function registerDocument(dom\document $doc, core\argument $settings = null) {
+  public function getClasses(core\argument $settings = null) {
     
     $aClasses = array();
     
-    if (!$this->aClasses || $settings) {
+    if (!$this->aDefaultClasses || $settings) {
       
       $this->getArguments()->registerToken(self::CLASSBASE_TOKEN);
+      $this->getArguments()->registerToken(self::DIRECTORY_TOKEN);
       
-      $classes = $this->getArguments()->get('classes')->merge($settings->get('classes'));
+      $classes = $this->getArguments()->get('classes');
+      if ($settings) $classes->merge($settings);
       
       foreach ($this->aClasses as $sKey => $sClass) {
         
@@ -42,11 +46,18 @@ class Controler extends \ModuleManager {
             $class->set('name', path_absolute($class->read('name'), $sClassBase, '\\'));
           }
           
-          $aClasses[$sClass] = $class->get('name');
+          if (!class_exists($class->read('name'))) {
+            
+            if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $class->getLastDirectory()));
+            \Controler::loadClass($class->read('name'), $class->read('file', false));
+          }
+          
+          $aClasses[$sClass] = $class->read('name');
         }
       }
       
       $this->getArguments()->unRegisterToken(self::CLASSBASE_TOKEN);
+      $this->getArguments()->unRegisterToken(self::DIRECTORY_TOKEN);
       
       if (!$settings) $this->aDefaultClasses = $aClasses;
     }

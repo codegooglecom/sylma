@@ -37,7 +37,7 @@ class File extends Resource implements fs\file {
     $sPath = $parent->getFullPath();
     
     $this->sFullPath = $sPath . '/' . $sName;
-    $sPath = $this->getRealPath();
+    $sPath = \Sylma::ROOT . '/' . $this->sFullPath;
     
     $bExist = is_file($sPath);
     
@@ -113,11 +113,16 @@ class File extends Resource implements fs\file {
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
    */
-  public function getDocument($iMode = Sylma::MODE_READ) {
+  public function getFreeDocument() {
+    
+    if (!$this->getControler()) {
+      
+      \Sylma::throwException(t('File controler is not ready'), array(), 0);
+    }
     
     if (!$controler = \Sylma::getControler(self::DOM_CONTROLER)) {
       
-      $this->throwException(t('File controler is not yet defined'));
+      $this->getControler()->throwException(t('DOM controler is not yet defined'));
     }
     
     $doc = $this->getControler()->create('file/document');
@@ -125,9 +130,18 @@ class File extends Resource implements fs\file {
     $doc->setControler($controler);
     $doc->registerClasses();
     $doc->setFile($this);
-    $doc->loadFile($iMode);
+    $doc->loadFile();
     
     return $doc;
+  }
+  
+  /**
+   * Get a copy of the corresponding document
+   * @param integer $iMode : The mode used to load the document
+   */
+  public function getDocument($iMode = \Sylma::MODE_READ) {
+    
+    return $this->getFreeDocument();
   }
   
   public function checkRights($iMode) {

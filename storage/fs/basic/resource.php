@@ -90,6 +90,12 @@ abstract class Resource {
     return $this->aRights['user-mode'];
   }
   
+  /**
+   * Read or set if resource accesses has ever been loaded
+   * 
+   * @param bool|null $bSecured if given, the parameter will change to this value
+   * @return boolean TRUE if resource has been secured, FALSE elsewhere
+   */
   protected function isSecured($bSecured = null) {
     
     if ($bSecured === null) return $this->bSecured;
@@ -131,9 +137,8 @@ abstract class Resource {
     
     return $aRights;
   }
-  
   /**
-   * Check rights arguments for update in updateRights
+   * Check rights arguments for update in @method updateRights()
    */
   protected function checkRightsArguments($sOwner, $sGroup, $sMode) {
     

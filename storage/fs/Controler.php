@@ -31,7 +31,7 @@ class Controler extends \ModuleManager {
     else return $sResult;
   }
   
-  public static function getDirectory($sPath = '') {
+  public function getDirectory($sPath = '') {
     
     if ($sPath && $sPath != '/') {
       
@@ -46,7 +46,7 @@ class Controler extends \ModuleManager {
     }
   }
   
-  public static function getFile($sPath, $mSource = null, $bDebug = false) {
+  public function getFile($sPath, $mSource = null, $bDebug = false) {
     
     $sPath = path_absolute($sPath, $mSource);
     
@@ -55,5 +55,12 @@ class Controler extends \ModuleManager {
     
     return $this->getDirectory()->getDistantFile($aPath, $bDebug);
   }
-
+  
+  public function throwException($sMessage, $mSender = array(), $iOffset = 1) {
+    
+    $mSender = (array) $mSender;
+    $mSender[] = '@namespace ' . $this->getNamespace();
+    
+    \Sylma::throwException($sMessage, $mSender, $iOffset);
+  }
 }

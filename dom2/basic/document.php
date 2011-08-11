@@ -28,6 +28,18 @@ class Document extends \DOMDocument implements dom\document {
   
   // public function isEmpty()
   // public function getFile()
+  public function __call($sMethod, $aArgs) {
+    
+    $mResult = null;
+    
+    if ($root = $this->getRoot()) {
+      
+      $method = new \ReflectionMethod($this->getRoot(), $sMethod);
+      $mResult = $method->invokeArgs($root, $aArgs);
+    }
+    
+    return $mResult;
+  }
   
   public function getControler() {
     
@@ -59,6 +71,11 @@ class Document extends \DOMDocument implements dom\document {
     $this->file = $file;
   }
   
+  public function getFile() {
+    
+    return $this->file;
+  }
+  
   public function loadFile() {
     
     $bResult = false;
@@ -68,7 +85,7 @@ class Document extends \DOMDocument implements dom\document {
       $this->throwException(t('No file defined'));
     }
     
-    return $this->loadContent($iMode);;
+    return $this->loadContent();;
   }
   
   protected function loadContent() {
@@ -80,7 +97,7 @@ class Document extends \DOMDocument implements dom\document {
     
     $aNamespaces = $this->lookupNamespaces($reader);
     
-    return parent::load($this->getFile()->getFullPath());
+    return parent::loadXML($this->getFile()->read());
   }
   
   private function lookupNamespaces(\XMLReader $reader) {
@@ -106,7 +123,7 @@ class Document extends \DOMDocument implements dom\document {
           
           if (!$reader->isEmptyElement) {
             
-            $aNamespaces = array_merge($aNamespaces, $this->lookupContent($reader));
+            $aNamespaces = array_merge($aNamespaces, $this->lookupNamespaces($reader));
           }
           
         break;
@@ -125,7 +142,12 @@ class Document extends \DOMDocument implements dom\document {
     
   }
   
-  // public function getRoot()
+  public function getRoot() {
+    
+    if (isset($this->documentElement)) return $this->documentElement;
+    else return null;
+  }
+  
   // public function add()
   // public function set()
   public function createElement($sName, $oContent = '', $aAttributes = null, $sUri = null) {

@@ -13,7 +13,7 @@ class Directory extends Resource implements fs\directory {
   private $aDirectories = array();
   private $aFiles = array();
   private $aFreeFiles = array();
-  private $oSettings = null;
+  private $settings = null;
   
   private $aChildrenRights = null;
   
@@ -30,7 +30,7 @@ class Directory extends Resource implements fs\directory {
       $this->parent = $parent;
       
       $this->doExist(true);
-      $this->loadRights();
+      if ($parent) $this->loadRights();
     }
   }
   
@@ -46,32 +46,33 @@ class Directory extends Resource implements fs\directory {
    */
   public function getSettings($bRecursive = false) {
     
-    if ($bRecursive && !$this->oSettings) {
+    if ($bRecursive && !$this->settings) {
       
       if ($this->getParent()) return $this->getParent()->getSettings(true);
       else dspm(t('Aucun fichier de sécurité dans le répertoire parent'), 'file/error');
     }
     
-    return $this->oSettings;
+    return $this->settings;
   }
   
   private function loadRights() {
     
-    if (!$this->isSecured()) {
+    if (!$this->isSecured() && \Controler::getUser()) {
       
-      if (\Controler::getUser()) {
+      $this->settings = $this->getControler()->create('security', array($this, $this->getControler()));
+      
+      $aRights = $this->getSettings()->getDirectory();
+      
+      // self rights
+      if ($aRights) $this->aChildrenRights = $aRights;
+      
+      // children rights
+      if ($aChildrenRights = $this->getSettings()->getPropagation()) {
         
-        $this->oSettings = $this->getControler()->create('security', array($this, $this->getControler()));
-        
-        // self rights
-        if ($aRights = $this->setRights($this->getSettings()->getDirectory())) $this->aChildrenRights = $aRights;
-        
-        // children rights
-        if ($aChildrenRights = $this->getSettings()->getPropagation()) $this->aChildrenRights = $aChildrenRights;
-        
-        if (!$this->isSecured()) $this->setRights();
-        
-      } else if (\Controler::useStatut('file/report')) \Controler::addMessage(xt('Sécurisation suspendue dans "%s"', new \HTML_Strong($this->getFullPath())), 'file/report');
+        $this->aChildrenRights = $aChildrenRights;
+      }
+      
+      $this->setRights($aRights);
     }
   }
   
@@ -171,7 +172,7 @@ class Directory extends Resource implements fs\directory {
   }
   
   /**
-   * Unload then reload file/document, maybe TODO to optimize by keeping the doc
+   * Unload then reload file
    */
   public function updateFile($sName) {
     
@@ -188,6 +189,18 @@ class Directory extends Resource implements fs\directory {
     return $this->getDirectory($sName);
   }
   
+  public function getFreeFile($sName, $iDebug = 0) {
+    
+    $file = $this->getControler()->create('file', array(
+        $this,
+        $sName,
+        $this->getRights(),
+        $iDebug,
+      ));
+    
+    if ($file->doExist()) return $file;
+  }
+  
   /**
    * Build a file, check existenz and right access
    * @param $sName The name + extension of the file
@@ -202,12 +215,7 @@ class Directory extends Resource implements fs\directory {
       
       if (!array_key_exists($sName, $this->aFiles)) {
         
-        $oFile = $this->getControler()->create('file', array(
-          $this
-          $sName,
-          $this->getRights(),
-          $iDebug,
-        ));
+        $oFile = $this->getFreeFile($sName);
         
         if ($oFile->doExist()) {
           
@@ -234,6 +242,8 @@ class Directory extends Resource implements fs\directory {
   
   public function getDirectory($sName) {
     
+    // if directory's rights has not yet been loaded, cause of user not yet loaded in @method __construct()'s call
+    // mainly for config files and related directories rights
     $this->loadRights();
     
     if ($sName == '.') return $this;
@@ -259,7 +269,7 @@ class Directory extends Resource implements fs\directory {
     return null;
   }
   
-  public function getDistantFile($aPath, $bDebug = false) {
+  public function getDistantFile(array $aPath, $bDebug = false) {
     
     if ($aPath) {
       

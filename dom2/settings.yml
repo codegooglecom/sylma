@@ -1,8 +1,10 @@
 classes :
   @sylma-classbase : \sylma\dom
   document :
+    file : basic/Document.php
     interface : document
-    name : basic\document
+    name : basic\Document
   element :
+    file : basic/Element.php
     interface : element
-    name : basic\element
+    name : basic\Element

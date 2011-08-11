@@ -61,7 +61,11 @@ class XArguments extends Arguments implements SettingsInterface {
       
       foreach ($this->aTokens as $sToken => $mValue) {
         
-        if (array_key_exists($sToken, $aArray)) $this->setToken($sToken, $aArray[$sToken]);
+        if (array_key_exists($sToken, $aArray)) {
+          
+          $this->setToken($sToken, $aArray[$sToken]);
+          unset($aArray[$sToken]);
+        }
       }
     }
     
@@ -75,6 +79,10 @@ class XArguments extends Arguments implements SettingsInterface {
     if (is_array($mResult)) {
       
       $mResult = new self($mResult, $this->getNamespace(), $this);
+      
+      // copy tokens
+      $mResult->aTokens = $this->aTokens;
+      $mResult->aResultTokens = $this->aResultTokens;
     }
     
     return $mResult;

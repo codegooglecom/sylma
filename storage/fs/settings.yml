@@ -7,6 +7,7 @@ classes :
     name : basic\File
     classes :
       document :
+        file : /sylma/dom2/basic/Document.php
         interface : \sylma\dom\document
         name : \sylma\dom\basic\Document
   directory :
@@ -17,6 +18,7 @@ classes :
     name : basic\security\Manager
     classes :
       document :
+        file : /sylma/dom2/basic/Document.php
         interface : \sylma\dom\document
         name : \sylma\dom\basic\Document
   
