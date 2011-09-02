@@ -1,3 +1,7 @@
+controler :
+  action : @sylma:import ../parser/action/settings.yml
+  dom : @sylma:import ../dom/settings.yml
+  fs : @sylma:import ../storage/fs/settings.yml
 debug:
   enable: false
 general:

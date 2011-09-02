@@ -138,6 +138,31 @@ class Utils {
     return xt('%s file(s) analysed', new HTML_Strong(count($aFiles)));
   }
   
+  /**
+   * Doesn't work yet
+   */
+  public function analyzeEncoding() {
+    
+    $aNamespaces = array();
+    
+    $dir = Controler::getDirectory();
+    $aFiles = $dir->getFiles(array('yml', 'php', 'iml', 'eml'), null, null);
+    // $aFiles = $dir->getFiles(array('sml', 'xsl', 'xml', 'xsd', 'cml', 'txt', 'htaccess'), null, null);
+    
+    foreach ($aFiles as $file) {
+      
+      $sContent = $file->read();
+      
+      if (!mb_detect_encoding($sContent, 'UTF-8', true)) {
+        
+        dspm(xt('The file %s is not utf-8', new HTML_Strong((string) $file)), 'warning');
+      }
+      else dspf(mb_detect_encoding($sContent, 'UTF-8', true));
+    }
+    
+    return xt('%s file(s) analysed', new HTML_Strong(count($aFiles)));
+  }
+  
   public function analyzeDocuments() {
     
     $aNamespaces = array();

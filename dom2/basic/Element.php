@@ -1,20 +1,130 @@
 <?php
 
 namespace sylma\dom\basic;
-use sylma\dom;
+use \sylma\dom;
 
 require_once('dom2/element.php');
 
 class Element extends \DOMElement implements dom\element {
   
   // public function __construct()
-  // public function getDocument()
+  
+  /**
+   * @return dom\document The parent document
+   */
+  public function getDocument() {
+    
+    return $this->ownerDocument;
+  }
+  
+  public function getControler() {
+    
+    return $this->getDocument()->getControler();
+  }
+  
   // public function getPath()
-  // *private function buildXPath
-  // public function read($sQuery = '', $mNS = '', $sUri = '')
-  // public function query($sQuery, $mNS = '', $sUri = '')
-  // public function get($sQuery, $mNS = '', $sUri = '')
-  // public function readByName($sName, $sUri = null)
+  
+  /**
+   * Create a DOMXPath object
+   * @return DOMXPath An XPath associated with querie's namespaces
+   */
+  private function buildXPath(array $aNS = array()) {
+    
+    $xpath = new \DOMXPath($this->getDocument());
+    foreach ($aNS as $sPrefix => $sNamespace) $xpath->registerNamespace($sPrefix, $sNamespace);
+    
+    return $xpath;
+  }
+  
+  /**
+   * Evaluation of an xpath expression with text returned
+   * 
+   * @param string $sQuery The query to evaluate
+   * @param array $aNS Prefixes as keys and related namespaces
+   * 
+   * @return string The result of the evaluated expression
+   */
+  public function read($sQuery = '', array $aNS = array()) {
+    
+    $sResult = '';
+    
+    if ($sQuery) {
+      
+      $xpath = $this->buildXPath($aNS);
+      
+      $mResult = $xpath->evaluate($sQuery, $this);
+      $this->getControler()->addStat('evaluation', array($sQuery, $aNS));
+      
+      if ($mResult instanceof \DOMNodeList) {
+        
+        foreach ($mResult as $node) {
+          
+          $sResult .= (string) $node;
+        }
+      }
+      else {
+        
+        $sResult = (string) $mResult;
+      }
+      
+    } else {
+      
+      $sResult = $this->nodeValue;
+    }
+    
+    return $sResult;
+  }
+  
+  /**
+   * Evaluation of an xpath expression with a list returned
+   * 
+   * @param string $sQuery Query to evaluate
+   * @param array $aNS Prefixes as keys and related namespaces
+   * 
+   * @return dom\collection|\DOMNodeList The result of the evaluated expression
+   */
+  public function query($sQuery, $aNS, $bConvert = true) {
+    
+    if ($bConvert) $result = $this->getControler()->create('collection');
+    else $result = null;
+    
+    if ($sQuery) {
+      
+      $xpath = $this->buildXPath($aNS);
+      
+      $domlist = $xpath->query($sQuery, $this);
+      $this->getControler()->addStat('query', array($sQuery, $aNS));
+      
+      if ($bConvert) $result->addArray($domlist);
+      else $result = $domlist;
+    }
+    
+    return $result;
+  }
+  
+  /**
+   * Evaluation of an xpath expression with an element returned
+   * 
+   * @param string $sQuery Query to evaluate
+   * @param array $aNS Prefixes as keys and related namespaces
+   * 
+   * @return dom\element The first element resulting from the XPath query
+   */
+  public function get($sQuery, array $aNS = array()) {
+    
+    $result = null;
+    
+    $collection = $this->query($sQuery, $aNS, false);
+    if ($collection && $collection->length) $result = $collection->item(0);
+    
+    return $result;
+  }
+  
+  public function readByName($sName, $sUri = null) {
+    
+    if ($el = $this->getByName($sName, $sUri)) return $el->read();
+    else return '';
+  }
   
   public function queryByName($sName, $sUri = null) {
     
@@ -124,4 +234,8 @@ class Element extends \DOMElement implements dom\element {
   // public function compare(NodeInterface $element, $aPath = array())
   // public function updateNamespaces($mFrom = null, $mTo = null, $mPrefix = '', $oParent = null)
   
+  public function __toString() {
+    
+    return $this->nodeValue;
+  }
 }

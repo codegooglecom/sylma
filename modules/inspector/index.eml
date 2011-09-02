@@ -11,7 +11,7 @@
   </le:window>
   <div class="clearfix">
     <le:action path="module">
-      <le:argument name="path">/sylma/core/module/settings.yml</le:argument>
+      <le:argument name="path">/sylma/core/module/old/settings.yml</le:argument>
       <le:argument name="title">Module</le:argument>
     </le:action>
     <le:action path="module">
@@ -35,7 +35,7 @@
       <le:argument name="title">Window</le:argument>
     </le:action>
     <le:action path="module">
-      <le:argument name="path">/sylma/storage/filesys/settings.yml</le:argument>
+      <le:argument name="path">/sylma/storage/fs/settings.yml</le:argument>
       <le:argument name="title">File system</le:argument>
     </le:action>
     <le:action path="module">

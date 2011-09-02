@@ -10,4 +10,16 @@ class Test extends Module implements TestInterface {
     
     $this->setNamespace(self::NS, 'test');
   }
+  
+  public function parse() {
+    
+    $result = \Arguments::buildDocument(array(
+      'group' => array(
+        'description' => t($this->sTitle),
+        '#group' => $this->load(),
+      ),
+    ), $this->getNamespace());
+    
+    return $result;
+  }
 }

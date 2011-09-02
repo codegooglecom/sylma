@@ -1,6 +1,6 @@
 <?php
 
-require_once('core/module/Base.php');
+require_once('core/module/old/Base.php');
 require_once('ReflectorInterface.php');
 
 abstract class InspectorReflector extends ModuleBase {

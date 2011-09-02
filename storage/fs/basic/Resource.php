@@ -122,15 +122,19 @@ abstract class Resource {
         'mode' => $this->getMode(),
         'user-mode' => $this->getUserMode());
       
-      if (\Controler::getUser()) {
+      $user = \Sylma::getControler('user', false);
+      
+      if ($user) {
         
-        $aRights['user-mode'] = \Controler::getUser()->getMode(
+        $aRights['user-mode'] = $user->getMode(
           $aRights['owner'],
           $aRights['group'],
           $aRights['mode']
         );
       }
     }
+    
+    //if (!$aRights['user-mode']) dspm((string) $this, 'error');
     
     $this->aRights = $aRights;
     $this->isSecured(true);
@@ -150,42 +154,39 @@ abstract class Resource {
       
       if ($bOwner || $bGroup || $bMode) {
         
+        $user = \Sylma::getControler('user');
         $bResult = true;
         
         // Check validity
         
         if ($bOwner) {
           
-          $bOwner = false;
-          dspm(t('Changement d\'utilisateur impossible pour le moment'), 'file/warning');
+          $this->throwException(t('Cannot change owner'));
         }
         
-        if ($bGroup && !\Controler::getUser()->isMember($sGroup)) {
+        if ($bGroup && !$user->isMember($sGroup)) {
           
-          $bResult = false;
-          dspm(t('Vous n\'avez pas les droits sur ce groupe ou il n\'existe pas !'), 'file/warning');
+          $this->throwException(txt('You have no rights on group %s or it doesn\'t exist', $sGroup));
         }
         
-        $iMode = \Controler::getUser()->getMode($sOwner, $sGroup, $sMode);
+        $iMode = $user->getMode($sOwner, $sGroup, $sMode);
         
         if ($bMode && $iMode === null) {
           
-          $bResult = false;
-          dspm(t('Les arguments pour la mise-à-jour ne sont pas valides'), 'file/warning');
+          $this->throwException(t('Arguments are not valid'));
         }
         
         if ($bMode && !($iMode & MODE_READ)) {
           
-          $bResult = false;
-          dspm(t('Vous ne pouvez pas retirer tous les droits de lecture'), 'file/warning');
+          $this->throwException(t('You cannot remove read access'));
         }
         
-        // all datas are ok, or not modified
+        // all datas are ok or not modified
         
-        if ($bResult && ($bOwner || $bGroup || $bMode)) return true;
+        return true;
       }
       
-    } else dspm('Vous n\'avez pas les droits pour faire des modifications !', 'file/warning');
+    } else $this->throwException(t('You are not the owner of this resource'));
     
     return false;
   }
@@ -198,6 +199,16 @@ abstract class Resource {
     );
     
     return Sylma::log($aPath, $mMessage, $sStatut);
+  }
+  
+  protected function throwException($sMessage) {
+    
+    $aPath = array(
+      '@namespace ' . self::NS,
+      '@resource ' . (string) $this,
+    );
+    
+    $this->getControler()->throwException($sMessage, $aPath);
   }
   
   public function __toString() {

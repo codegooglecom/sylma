@@ -52,6 +52,7 @@ class Controler {
     }
     
     self::$user->load();
+    Sylma::setControler('user', self::$user);
     
     // Define error_report
     self::setReportLevel();
@@ -721,7 +722,8 @@ class Controler {
         
         $aValue = array(new HTML_Div(xt('array[%s](%s)', new HTML_Strong(count($mArgument)), $oContent), array('class' => 'array' . ($bLineBreak ? ' array-break' : ''))), 'violet');
         
-      } else if (is_object($mArgument)) {
+      }
+      else if (is_object($mArgument)) {
         
         // Objects
         
@@ -748,7 +750,8 @@ class Controler {
             
           } else $aValue = array(array(get_class($mArgument), ' => ', $mArgument->viewResume(160, false)), 'purple');
           
-        } else if ($mArgument instanceof XML_Action) {
+        }
+        else if ($mArgument instanceof XML_Action) {
           
           if ($path = $mArgument->getPath()) {
             
@@ -764,7 +767,8 @@ class Controler {
           
           $aValue = array(new HTML_Div($mContent, array('class' => 'element')), 'magenta');
           
-        } else if ($mArgument instanceof XML_Element) {
+        }
+        else if ($mArgument instanceof XML_Element) {
           
           if ($mArgument->isReal()) { // prevent from dom lost cf. http://bugs.php.net/bug.php?id=39593
             
@@ -781,7 +785,8 @@ class Controler {
             } else $aValue = array($mArgument->getName(), 'gray');// else $aValue = array(new HTML_Span($mArgument->viewResume(160, false)), 'gray');
           } else $aValue = array(new HTML_Span('-DEAD-', array('class' => 'element')), 'blue');
           
-        } else if ($mArgument instanceof XML_NodeList) {
+        }
+        else if ($mArgument instanceof XML_NodeList) {
           
           if ($mArgument->length) {
           
@@ -804,7 +809,8 @@ class Controler {
           
           $aValue = array(new HTML_Div(xt('XML_NodeList[%s](%s)', new HTML_Strong($mArgument->length), $oContent), array('class' => 'array')), 'green');
           
-        } else if ($mArgument instanceof XML_Comment) {
+        }
+        else if ($mArgument instanceof XML_Comment) {
           
           $oContainer = new HTML_Tag('pre', xmlize($mArgument));
           //$oContainer = new HTML_Tag('pre', 'Comment');
@@ -814,11 +820,18 @@ class Controler {
             'XML_Comment',
             $oContainer), array('class' => 'element')), 'blue');
           
-        } else if ($mArgument instanceof XML_Text) {
+        }
+        else if ($mArgument instanceof XML_Text) {
           
           $aValue = array(stringResume($mArgument, $iMaxLength), 'orange');
+        }
+        else if ($mArgument instanceof \sylma\core\argument) {
           
-        } else {
+          $aResult = $mArgument->dsp();
+          
+          $aValue = array(array('Argument : ', self::formatResource($aResult)), 'red');
+        }
+        else {
           
           $sValue = get_class($mArgument);
           //if (in_array($sValue, array('XML_Directory', 'XML_File'))) $sValue = stringResume($mArgument, 150);
@@ -961,13 +974,13 @@ class Controler {
    */
   public static function loadClass($sClass, $sFile = '') {
     
-    $sMain = Sylma::get('directories/root/path');
+    $sMain = Sylma::ROOT;
     
     if (!class_exists($sClass)) {
       
       if (!$sFile) {
         
-        Sylma::throwException(txt('Cannot build unknown @class %s without file path', $sClass));
+        $sFile = str_replace('\\', '/', $sClass . '.php');
       }
       
       // include the file

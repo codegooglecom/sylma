@@ -132,7 +132,7 @@ class XArguments extends Arguments implements SettingsInterface {
    */
   protected function useFile() {
     
-    return (bool) Sylma::getControler('storage/filesys');
+    return (bool) Sylma::getControler('storage/filesys', false, false);
   }
   
   public function getFile() {

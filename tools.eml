@@ -19,5 +19,8 @@
     <li>
       <a href="/sylma/modules/test">Tests</a>
     </li>
+    <li>
+      <a href="/sylma/modules/tester">Tests V2</a>
+    </li>
   </ul>
 </le:action>

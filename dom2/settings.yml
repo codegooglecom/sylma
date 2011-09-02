@@ -2,9 +2,12 @@ classes :
   @sylma-classbase : \sylma\dom
   document :
     file : basic/Document.php
-    interface : document
     name : basic\Document
   element :
     file : basic/Element.php
-    interface : element
     name : basic\Element
+  collection :
+    file : basic/Collection.php
+    name : basic\Collection
+stats :
+  enable : false

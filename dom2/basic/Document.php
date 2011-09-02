@@ -148,6 +148,11 @@ class Document extends \DOMDocument implements dom\document {
     else return null;
   }
   
+  public function isEmpty() {
+    
+    return !$this->getRoot();
+  }
+  
   // public function add()
   // public function set()
   public function createElement($sName, $oContent = '', $aAttributes = null, $sUri = null) {

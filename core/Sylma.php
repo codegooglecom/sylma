@@ -1,5 +1,7 @@
 <?php
 
+use \sylma\core;
+
 class Sylma {
   
   const NS = 'http://www.sylma.org';
@@ -18,7 +20,7 @@ class Sylma {
   private static $logger = null;
   protected static $aControlers;
   
-  public static $exception = 'SylmaException';
+  public static $exception = '\sylma\core\exception\Basic';
   
   /**
    * Handle final result for @method render()
@@ -28,11 +30,16 @@ class Sylma {
   
   public static function init($sServer = '') {
     
-  	require_once('Initializer.php');
-  	
-  	$init = self::$aControlers['init'] = new Initializer();
-  	
-  	self::$settings = $init->loadSettings($sServer, self::PATH_OPTIONS);
+    require_once('SylmaException.php');
+    require_once('exception/Basic.php');
+    
+    set_error_handler("SylmaException::loadError");
+    
+    require_once('Initializer.php');
+    
+    $init = self::$aControlers['init'] = new Initializer();
+    
+    self::$settings = $init->loadSettings($sServer, self::PATH_OPTIONS);
     $init->load(self::PATH_LIB);
     
     try {
@@ -53,9 +60,44 @@ class Sylma {
     return $controler;
   }
   
-  public static function getControler($sName) {
+  public static function getControler($sName, $bLoad = true, $bDebug = true) {
     
-    return array_val($sName, self::$aControlers);
+    $controler = array_val($sName, self::$aControlers);
+    if ($bLoad && !$controler) $controler = self::loadControler($sName);
+    
+    if ($bLoad && $bDebug && !$controler) self::throwException(txt('Controler %s is not defined', $sName));
+    
+    return $controler;
+  }
+  
+  protected static function loadControler($sName) {
+    
+    $controler = null;
+    
+    switch ($sName) {
+      
+      case 'fs' :
+        
+        require_once('storage/fs/Controler.php');
+        $controler = new sylma\storage\fs\Controler;
+        
+      break;
+      
+      case 'dom' :
+        
+        require_once('dom2/Controler.php');
+        $controler = new sylma\dom\Controler;
+        
+      break;
+      
+      case 'user' :
+        
+        $controler = \Controler::getUser();
+    }
+    
+    if ($controler) self::setControler($sName, $controler);
+    
+    return $controler;
   }
   
   protected static function getSettings($sPath = '') {

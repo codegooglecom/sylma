@@ -1,0 +1,15 @@
+classes :
+  @sylma-classbase : \sylma
+  document :
+    name : dom\basic\Document
+  element :
+    name : dom\basic\Element
+  action :
+    name : parser\action\Basic
+  template :
+    name : parser\xsl\Basic
+  options :
+    name : dom\Argument
+    classes :
+      document :
+        name : dom\basic\Document

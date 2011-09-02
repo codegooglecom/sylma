@@ -40,13 +40,7 @@ class ModuleManager extends Namespaced {
         $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
       }
       
-      $this->getArguments()->registerToken(self::DIRECTORY_TOKEN);
-      $this->getArguments()->registerToken(self::CLASSBASE_TOKEN);
-      
       $class = $this->loadClass($sName, $this->getArguments());
-      
-      $this->getArguments()->unRegisterToken(self::DIRECTORY_TOKEN);
-      $this->getArguments()->unRegisterToken(self::CLASSBASE_TOKEN);
       
       if ($sClassBase = $this->getArguments()->getToken(self::CLASSBASE_TOKEN)) {
         
@@ -59,10 +53,6 @@ class ModuleManager extends Namespaced {
       if ($sFile = $class->read('file', false)) {
         
         $class->set('file', path_absolute($sFile, $sDirectory));
-      }
-      else {
-        
-        $class->set('file', str_replace('\\', '/', $class->get('name') . '.php'));
       }
       
       $this->aClasses[$sName] = $class;
@@ -78,10 +68,16 @@ class ModuleManager extends Namespaced {
     
     $sPath = implode('/classes/', $aPath);
     
+    $args->registerToken(self::DIRECTORY_TOKEN);
+    $args->registerToken(self::CLASSBASE_TOKEN);
+    
     if (!$class = $args->get($sPath)) {
       
       $this->throwException(txt('Cannot build object @class %s. No settings defined for these class', $sName));
     }
+    
+    $args->unRegisterToken(self::DIRECTORY_TOKEN);
+    $args->unRegisterToken(self::CLASSBASE_TOKEN);
     
     return $class;
   }

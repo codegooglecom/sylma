@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic;
-use \sylma\dom, \sylma\storage\fs;
+use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
 require_once('Resource.php');
 require_once('storage/fs/directory.php');
@@ -17,20 +17,20 @@ class Directory extends Resource implements fs\directory {
   
   private $aChildrenRights = null;
   
-  public function __construct($sPath, $sName, array $aRights = array(), fs\directory $parent = null, fs\controler $controler = null) {
+  public function __construct($sName, fs\directory $parent = null, array $aRights = array(), fs\controler $controler = null) {
     
-    $this->sFullPath = $sName ? $sPath.'/'.$sName : $sPath;
+    $this->sFullPath = $parent ? $parent. '/' .$sName : $sName;
     $this->controler = $controler;
+    $this->parent = $parent;
     
-    if (is_dir(\Sylma::ROOT . $this->getFullPath())) {
+    if (is_dir($this->getRealPath())) {
       
       $this->aRights = $this->aChildrenRights = $aRights;
       $this->sName = $sName;
-      $this->sPath = $sPath;
-      $this->parent = $parent;
+      $this->sPath = (string) $parent;
       
       $this->doExist(true);
-      if ($parent) $this->loadRights();
+      $this->loadRights(); //if ($parent) 
     }
   }
   
@@ -49,7 +49,7 @@ class Directory extends Resource implements fs\directory {
     if ($bRecursive && !$this->settings) {
       
       if ($this->getParent()) return $this->getParent()->getSettings(true);
-      else dspm(t('Aucun fichier de sécurité dans le répertoire parent'), 'file/error');
+      else $this->throwException(t('No security file in parent directory'));
     }
     
     return $this->settings;
@@ -57,22 +57,22 @@ class Directory extends Resource implements fs\directory {
   
   private function loadRights() {
     
-    if (!$this->isSecured() && \Controler::getUser()) {
+    if (!$this->isSecured() && \Sylma::getControler('user', false)) {
       
       $this->settings = $this->getControler()->create('security', array($this, $this->getControler()));
       
-      $aRights = $this->getSettings()->getDirectory();
-      
       // self rights
-      if ($aRights) $this->aChildrenRights = $aRights;
+      $aRights = $this->setRights($this->getSettings()->getDirectory());
       
       // children rights
       if ($aChildrenRights = $this->getSettings()->getPropagation()) {
         
         $this->aChildrenRights = $aChildrenRights;
+        
+      } else {
+        
+        $this->aChildrenRights = $aRights;
       }
-      
-      $this->setRights($aRights);
     }
   }
   
@@ -89,25 +89,31 @@ class Directory extends Resource implements fs\directory {
     return $oResult;
   }
   
-  public function browse($aExtensions, $aPaths = array(), $iDepth = null) {
+  public function browse(array $aExtensions, array $aPaths = array(), $iDepth = null, $bRender = true) {
     
-    $aFiles = scandir(\Sylma::ROOT.$this->getFullPath(), 0);
-    $oElement = $this->parseXML();
+    $result = $this->parse();
+    $aPaths += $this->getControler()->getArgument('browse/excluded')->query();
     
+    // if ($this->getName() == '.svn') dspm('pas beau', 'error');
     if ($iDepth === null || $iDepth > 0) {
       
       if ($iDepth) $iDepth--;
+      
+      $aFiles = scandir(\Sylma::ROOT . $this->getFullPath(), 0);
       
       foreach ($aFiles as $sFile) {
         
         if ($sFile != '.' && $sFile != '..') {
           
-          if (($oFile = $this->getFile($sFile)) && $oFile->getUserMode() != 0) {
+          if ($file = $this->getFile($sFile)) {
             
-            if ($aExtensions && !in_array(strtolower($oFile->getExtension()), $aExtensions)) $oFile = null;
-            else $oElement->add($oFile->parseXML());
-            
-          } else if ($oDirectory = $this->getDirectory($sFile)) {
+            if ($file->getUserMode() != 0 && $bRender &&
+              (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions))) {
+              
+              $result->add('#file', $file->parse()->get('file'));
+            }
+          }
+          else if ($dir = $this->getDirectory($sFile)) {
             
             $bValid = true;
             
@@ -115,24 +121,21 @@ class Directory extends Resource implements fs\directory {
               
               switch ($sPath{0}) {
                 
-                case '/' : if ($sPath == $oDirectory->getFullPath()) $bValid = false; break;
-                default : if ($sPath == $oDirectory->getName()) $bValid = false; break;
+                case '/' : if ($sPath == $dir->getFullPath()) $bValid = false; break;
+                default : if ($sPath == $dir->getName()) $bValid = false; break;
               }
             }
             
-            if ($bValid) {
+            if ($bValid && $bRender) {
               
-              if ($iDepth === null || $iDepth) $oElement->add($oDirectory->browse($aExtensions, $aPaths, $iDepth));
-              else $oElement->add($oDirectory->parseXML());
+              $result->add('#directory', $dir->browse($aExtensions, $aPaths, $iDepth)->get('directory'));
             }
-          }
+          } else dspm('RIEN');
         }
       }
     }
     
-    //if ($oElement->isEmpty() && $this->getUserMode() != 0) return null;
-    //else 
-    return $oElement;
+    return $result;
   }
   
   /*
@@ -140,18 +143,22 @@ class Directory extends Resource implements fs\directory {
    */
   public function getFiles(array $aExtensions = array(), $sPreg = null, $iDepth = 0) {
     
-    $this->browse(array(), array(), 1);
+    $this->browse($aExtensions, array(), 1, false);
     $aResult = array();
     
     // Files of current directory
     
     if ($aExtensions) {
       
-      foreach ($this->aFiles as $sFile => $oFile) {
+      foreach ($this->aFiles as $sFile => $file) {
         
-        if ($oFile &&
-          (!$aExtensions || in_array(strtolower($oFile->getExtension()), $aExtensions)) &&
-          (!$sPreg || preg_match($sPreg, $sFile))) $aResult[] = $oFile;
+        if ($file) {
+          
+          $bExtension = !$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions);
+          $bPreg = !$sPreg || preg_match($sPreg, $sFile);
+        
+          if ($bExtension && $bPreg) $aResult[] = $file;
+        }
       }
       
     } else $aResult = array_values($this->aFiles);
@@ -162,9 +169,9 @@ class Directory extends Resource implements fs\directory {
       
       if ($iDepth) $iDepth--;
       
-      foreach ($this->aDirectories as $oDirectory) {
+      foreach ($this->aDirectories as $dir) {
         
-        if ($oDirectory) $aResult = array_merge($aResult, $oDirectory->getFiles($aExtensions, $sPreg, $iDepth));
+        if ($dir) $aResult = array_merge($aResult, $dir->getFiles($aExtensions, $sPreg, $iDepth));
       }
     }
     
@@ -192,8 +199,8 @@ class Directory extends Resource implements fs\directory {
   public function getFreeFile($sName, $iDebug = 0) {
     
     $file = $this->getControler()->create('file', array(
-        $this,
         $sName,
+        $this,
         $this->getRights(),
         $iDebug,
       ));
@@ -203,70 +210,88 @@ class Directory extends Resource implements fs\directory {
   
   /**
    * Build a file, check existenz and right access
+   * If @controler user is not set, then file is returned without rights check but not cached
+   * 
    * @param $sName The name + extension of the file
    * @param $bDebug If true, send an error message if no access is found
-   * @return XML_File the file requested
+   * @return null|fs\file the file requested
    */
   public function getFile($sName, $iDebug = 0) {
     
+    $result = null;
     $this->loadRights();
     
     if ($sName && is_string($sName)) {
       
-      if (!array_key_exists($sName, $this->aFiles)) {
+      if (array_key_exists($sName, $this->aFiles)) {
         
-        $oFile = $this->getFreeFile($sName);
+        // yet builded
+        $result = $this->aFiles[$sName];
+      }
+      else {
         
-        if ($oFile->doExist()) {
+        // not yet builded, build it
+        $file = $this->getFreeFile($sName);
+        
+        if ($file && $file->doExist()) {
           
           if (!$aRights = $this->getSettings()->getFile($sName)) $aRights = $this->getChildrenRights();
           
-          $oFile->setRights($aRights);
+          $file->setRights($aRights);
           
-          if (\Controler::getUser()) $this->aFiles[$sName] = $oFile;
-          else return $oFile;
+          if (\Sylma::getControler('user')) $this->aFiles[$sName] = $file;
           
-        } else {
+          $result = $file;
+        }
+        else {
           
           $this->aFiles[$sName] = null;
-          
-          if ($iDebug && \FileInterface::DEBUG_EXIST) return $oFile;
+          if ($iDebug && fs\file::DEBUG_EXIST) $result = $file;
         }
       }
-      
-      return $this->aFiles[$sName];
     }
     
-    return null;
+    return $result;
   }
   
   public function getDirectory($sName) {
     
-    // if directory's rights has not yet been loaded, cause of user not yet loaded in @method __construct()'s call
-    // mainly for config files and related directories rights
+    $result = null;
+    
+    // Mainly for config files and related directories rights for wich security rights
+    // has not yet been loaded in @method __construct() cause of missing @controler user
     $this->loadRights();
     
-    if ($sName == '.') return $this;
-    else if ($sName == '..') return $this->getParent();
+    if ($sName == '.') {
+      
+      $result = $this;
+    }
+    else if ($sName == '..') {
+      
+      $result = $this->getParent();
+    }
     else if ($sName) {
       
-      if (!array_key_exists($sName, $this->aDirectories)) {
+      if (array_key_exists($sName, $this->aDirectories)) {
         
-        $oDirectory = $this->getControler()->create('directory', array(
-          $this->getFullPath(),
+        // yet builded
+        $result = $this->aDirectories[$sName];
+      }
+      else {
+        
+        // not yet builded, build it
+        $dir = $this->getControler()->create('directory', array(
           $sName,
-          $this->getChildrenRights(),
           $this,
+          $this->getChildrenRights(),
         ));
         
-        if ($oDirectory->doExist()) $this->aDirectories[$sName] = $oDirectory;
+        if ($dir->doExist()) $result = $this->aDirectories[$sName] = $dir;
         else $this->aDirectories[$sName] = null;
       }
-      
-      return $this->aDirectories[$sName];
     }
     
-    return null;
+    return $result;
   }
   
   public function getDistantFile(array $aPath, $bDebug = false) {
@@ -321,38 +346,43 @@ class Directory extends Resource implements fs\directory {
   
   public function getRealPath() {
     
-    return $this->getParent() ? \Sylma::ROOT .$this : \Sylma::ROOT;
-  }
-  
-  public function parseXML() {
-    
-    if (!$sName = xmlize($this->getName())) {
-      
-      $sName = t('<racine>');
-      $sPath = ''; //'/';
-      
-    } else $sPath = $this->getFullPath();
-    
-    return new \XML_Element('directory', null, array(
-      'full-path' => xmlize($sPath),
-      'owner' => $this->getOwner(),
-      'group' => $this->getGroup(),
-      'mode' => $this->getMode(),
-      'read' => booltostr($this->checkRights(MODE_READ)),
-      'write' => booltostr($this->checkRights(MODE_WRITE)),
-      'execution' => booltostr($this->checkRights(MODE_EXECUTION)),
-      'name' => $sName));
+    return \Sylma::ROOT . $this;
   }
   
   public function parse() {
     
-    return new \HTML_A(\Controler::getSettings('module[@name="explorer"]/path').'?path='.$this->getFullPath(), $this->getFullPath());
+    if (!$sName = $this->getName()) {
+      
+      $sName = t('<racine>');
+      $sPath = '';
+      
+    } else {
+      
+      $sPath = $this->getFullPath();
+    }
+    
+    return $this->getControler()->createArgument(array(
+      'directory' => array(
+        'full-path' => $sPath,
+        'owner' => $this->getOwner(),
+        'group' => $this->getGroup(),
+        'mode' => $this->getMode(),
+        'read' => booltostr($this->checkRights(\Sylma::MODE_READ)),
+        'write' => booltostr($this->checkRights(\Sylma::MODE_WRITE)),
+        'execution' => booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
+        'name' => $sName,
+      ),
+    ), self::NS);
+  }
+  
+  public function parseXML() {
+    
+    return $this->getFragment($this->asArray());
   }
   
   public function __toString() {
     
-    if ($this->getFullPath()) return $this->getFullPath();
-    else return '';//'/';
+    return $this->getFullPath();
   }
 }
 

@@ -69,7 +69,6 @@ class XML_Resource {
   
   protected function getUserMode() {
     
-    // if (!array_key_exists('user-mode', $this->aRights)) Controler::addMessage($this, 'success');
     return $this->aRights['user-mode'];
   }
   

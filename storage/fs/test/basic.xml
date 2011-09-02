@@ -1,7 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/storage/fs/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
   <tst:description>Basic manipulation methods</tst:description>
-  <tst:test name="Load existing file">return $controler->getFile($sDirectory . '/file.txt') !== null;</tst:test>
-  <tst:test name="Load non-existing file">return $controler->getFile($sDirectory . '/nofile.txt') === null;</tst:test>
+  <tst:test name="Load existing directory with absolute path">
+    return
+      $controler->getDirectory('/sample1') instanceof \sylma\storage\fs\directory;
+  </tst:test>
+  <tst:test name="Load non-existing root directory">
+    return
+      $controler->getDirectory('/nodirectory') === null;
+  </tst:test>
+  <tst:test name="Load root directory with relative path">
+    return
+      $controler->getDirectory('sample1') instanceof sylma\storage\fs\directory;
+  </tst:test>
+  <tst:test name="Load sub-directory with absolute path">
+    return
+      $controler->getDirectory('/sample1/sub1') instanceof sylma\storage\fs\directory
+  </tst:test>
+  <tst:test name="Load sub-directory with relative path">
+    return
+      $controler->getDirectory('sample1/sub1') instanceof sylma\storage\fs\directory;
+  </tst:test>
+  <tst:test name="Load sub-directory with relative path in two steps">
+    $dir = $controler->getDirectory('/sample1');
+    return
+      $dir->getDirectory('sub1') instanceof sylma\storage\fs\directory;
+  </tst:test>
+  <tst:test name="Load file">
+    return
+      $controler->getFile('/sample1/file.txt') instanceof sylma\storage\fs\file;
+  </tst:test>
+  <tst:test name="Load non-existing file">
+    return
+      $controler->getFile('/nofile.txt') === null;
+  </tst:test>
+  <tst:test name="Read content">
+    $file = $controler->getFile('/sample1/file.txt');
+    return
+      $file->read() === 'abcd';
+  </tst:test>
+  <tst:test name="Load file with .. parent token">
+    $dir = $controler->getDirectory('/sample1/sub1');
+    return
+      $dir->getFile('../file.txt') instanceof sylma\storage\fs\file;
+  </tst:test>
 </tst:tests>
 

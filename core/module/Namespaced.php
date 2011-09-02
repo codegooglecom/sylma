@@ -1,6 +1,8 @@
 <?php
 
-class Namespaced {
+namespace sylma\core\module;
+
+abstract class Namespaced {
   
   private $aNamespaces = array();
   private $sNamespace = '';

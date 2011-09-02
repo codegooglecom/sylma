@@ -1,20 +1,23 @@
 <?php
 
 namespace sylma\storage\fs;
+use \sylma\core;
 
-class Controler extends \ModuleManager {
+require_once('core/module/Filed.php');
+
+class Controler extends core\module\Argumented {
   
   const NS = 'http://www.sylma.org/storage/fs/controler';
   const SETTINGS = 'settings.yml';
   
   protected $directory;
   
-  public function __construct() {
+  public function __construct($sPath = '') {
     
     $sDirectory = $this->extractDirectory(__file__, false);
-    $this->setArguments(new \XArguments(path_absolute(self::SETTINGS, $sDirectory)));
+    $this->setArguments(new core\argument\Filed(path_absolute(self::SETTINGS, $sDirectory)));
     
-    $this->directory = $this->create('directory', array('', '', \Sylma::get('directories/root/rights')->query(), null, $this));
+    $this->directory = $this->create('directory', array($sPath, null, $this->getArgument('rights')->query(), $this));
     
     $this->setNamespace(self::NS);
   }
@@ -29,6 +32,11 @@ class Controler extends \ModuleManager {
     
     if ($bObject) return $this->getDirectory($sResult);
     else return $sResult;
+  }
+  
+  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+    
+    return parent::getArgument($sPath, $mDefault, $bDebug);
   }
   
   public function getDirectory($sPath = '') {

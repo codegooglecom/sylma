@@ -9,7 +9,7 @@ class SylmaException extends Exception implements SylmaExceptionInterface {
 	
 	protected $aPath = array();
 	protected $aCall = array();
-	protected static $bThrowError = true;
+	protected static $bThrowError = false;
   
   /**
    * Allow import of other classes, used class is showed in message

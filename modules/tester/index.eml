@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/test">
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/tester">
   <le:settings>
     <le:name>Tests</le:name>
     <le:document le:set-variable="doc">
       <test:tests>
-        <le:action path="../../schemas/test/interface"/>
-        <le:action path="../../core/settings/test/interface"/>
+        <le:action path="../../core/argument/test/interface"/>
+        <le:action path="../../storage/fs/test/basic"/>
+        <!--<le:action path="../../storage/fs/test/editable"/>-->
       </test:tests>
     </le:document>
   </le:settings>

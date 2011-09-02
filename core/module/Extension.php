@@ -1,6 +1,8 @@
 <?php
 
-class ModuleExtension extends Module {
+namespace sylma\core\module;
+
+class Extension extends Domed {
   
   // All the modules directories listed in the extends stack, added with @method addDirectory()
   // concerned methods are getDirectory(), getFile(), getDocument() and runAction()

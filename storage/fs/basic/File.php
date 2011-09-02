@@ -32,7 +32,7 @@ class File extends Resource implements fs\file {
   
   private $bFileSecured = false;
   
-  public function __construct(fs\directory $parent, $sName, array $aRights, $iDebug) {
+  public function __construct($sName, fs\directory $parent, array $aRights, $iDebug) {
     
     $sPath = $parent->getFullPath();
     
@@ -179,31 +179,26 @@ class File extends Resource implements fs\file {
   
   public function parse() {
     
-    return new HTML_A(Sylma::get('modules/editor/path').'?path='.$this->getFullPath(), $this->getFullPath());
-    //$oLink->add($this->getParent().'/', new HTML_Span($this->getName(), array('class' => 'file-name')));
-    
-    //return $oLink;
-  }
-  
-  public function parseXML() {
-    
     $iSize = ($this->getSize() / 1000);
     
     if ($iSize < 1) $iSize = 1;
     
-    return new XML_Element('file', null, array(
-      'full-path' => $this->getFullPath(),
-      'name' => $this->getName(),
-      'simple-name' => $this->getSimpleName(),
-      'display-name' => $this->getDisplayName(),
-      'owner' => $this->getOwner(),
-      'group' => $this->getGroup(),
-      'mode' => $this->getMode(),
-      'read' => booltostr($this->checkRights(MODE_READ)),
-      'write' => booltostr($this->checkRights(MODE_WRITE)),
-      'execution' => booltostr($this->checkRights(MODE_EXECUTION)),
-      'size' => $iSize,
-      'extension' => $this->getExtension()), SYLMA_NS_DIRECTORY);
+    return $this->getControler()->createArgument(array(
+      'file' => array(
+        'full-path' => $this->getFullPath(),
+        'name' => $this->getName(),
+        'simple-name' => $this->getSimpleName(),
+        'display-name' => $this->getDisplayName(),
+        'owner' => $this->getOwner(),
+        'group' => $this->getGroup(),
+        'mode' => $this->getMode(),
+        'read' => booltostr($this->checkRights(MODE_READ)),
+        'write' => booltostr($this->checkRights(MODE_WRITE)),
+        'execution' => booltostr($this->checkRights(MODE_EXECUTION)),
+        'size' => $iSize,
+        'extension' => $this->getExtension(),
+      ),
+    ), self::NS);
   }
 }
 

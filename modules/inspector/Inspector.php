@@ -1,6 +1,6 @@
 <?php
 
-require_once('core/module/Module.php');
+require_once('core/module/old/Module.php');
 
 class Inspector extends Module {
   
@@ -94,7 +94,13 @@ class Inspector extends Module {
     
     if ($classes = $class->get('classes', false)) {
       
-      foreach ($classes as $sKey => $subClass) $aResult[] = $this->createClass($sKey, $subClass);
+      foreach ($classes as $sKey => $subClass) {
+        
+        if ($sKey{0} != '@') {
+          
+          $aResult[] = $this->createClass($sKey, $subClass);
+        }
+      }
     }
     
     return $aResult;
@@ -115,8 +121,13 @@ class Inspector extends Module {
     $args = new XArguments($sPath, $this->getNamespace());
     $class = $this->loadClass($sKey, $args);
     
-    if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $args->getFile()->getParent()));
-    if (!$class->read('name')) $this->throwException(txt('No name defined for class %s', $sKey));
+    if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $args->getLastDirectory()));
+    if ($sClass = $class->getToken(self::CLASSBASE_TOKEN)) $class->set('name', path_absolute($class->get('name'), $sClass, '\\'));
+    
+    if (!$class->read('name')) {
+      
+      $this->throwException(txt('No name defined for class %s', $sKey));
+    }
     
     return $class;
   }
@@ -139,7 +150,7 @@ class Inspector extends Module {
     
     try {
       
-      if ($sFile) Controler::loadClass($sClass, $sFile);
+      Controler::loadClass($sClass, $sFile);
       
       $class = $this->create(self::CLASS_CLASS, array($sClass, $this));
       

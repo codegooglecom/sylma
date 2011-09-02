@@ -9,14 +9,11 @@ class Initializer {
     require_once('functions/Text.php');
     require_once('functions/Arrays.php');
     require_once('functions/Paths.php');
-    require_once('module/Namespaced.php');
+    require_once('module/old/Namespaced.php');
     require_once('settings/SettingsInterface.php');
     require_once('settings/Arguments.php');
     require_once('settings/Spyc.php');
     require_once('settings/XArguments.php');
-    
-    require_once('SylmaException.php');
-    set_error_handler("SylmaException::loadError");
 	}
 	
 	public function loadSettings($sServer, $sSylma) {
@@ -52,7 +49,7 @@ class Initializer {
     
     $this->loadLibs($sCore);
     
-    require_once('module/XDB.php');
+    require_once('module/old/XDB.php');
             
     require_once('modules/logger/LoggerInterface.php');
     require_once('modules/logger/Logger.php');
@@ -68,18 +65,17 @@ class Initializer {
   
   protected function loadLibs($sCore) {
     
-    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . $sCore . SYLMA_PATH_SEPARATOR . MAIN_DIRECTORY);
+    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . MAIN_DIRECTORY); // SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . $sCore . 
     
     require_once('functions/Global.php');
     
-    require_once('module/Base.php');
-    require_once('module/Module.php');
-    require_once('module/Extension.php');
+    require_once('core/module/old/Base.php');
+    require_once('core/module/old/Module.php');
+    require_once('core/module/old/Extension.php');
     
-    require_once('XML_Processor.php');
+    require_once('core/XML_Processor.php');
     
     require_once('dom/Controler.php');
-    require_once('dom/Document.php');
     require_once('dom/NodeInterface.php');
     require_once('dom/XML.php');
     require_once('dom/Attribute.php');
@@ -89,13 +85,15 @@ class Initializer {
     require_once('dom/Text.php');
     require_once('dom/Nodelist.php');
     require_once('dom/ElementInterface.php');
+    
+    require_once('dom/Document.php');
     require_once('dom/Element.php');
-    require_once('HTML.php');
+    require_once('core/HTML.php');
     
     require_once('settings/Options.php');
     
-    require_once('Redirect.php');
-    require_once('Messages.php');
+    require_once('core/Redirect.php');
+    require_once('core/Messages.php');
     
     require_once('schemas/XML_Schema.php');
     
@@ -105,7 +103,7 @@ class Initializer {
     require_once('action/Action.php');
     
     require_once('modules/xquery/XQuery.php');
-    require_once('XSL_Document.php');
+    require_once('core/XSL_Document.php');
     
     require_once('user/User.php');
     require_once('user/Cookie.php');

@@ -1,0 +1,8 @@
+classes :
+  @sylma-classbase : \sylma\core\argument
+  controler :
+    name : test\controler\Filed
+  basic :
+    name : Basic
+  filed :
+    name : Filed

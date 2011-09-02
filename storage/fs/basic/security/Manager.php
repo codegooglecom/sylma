@@ -60,7 +60,7 @@ class Manager implements fs\security\manager {
   public function getFile($sName) {
     
     $el = null;
-    if ($this->getDocument()) $el = $this->getDocument()->get('ld:file[@name="'.xmlize($sName).'"]', 'ld', $this->getControler()->getNamespace());
+    if ($this->getDocument()) $el = $this->getDocument()->get('ld:file[@name="'.xmlize($sName).'"]', array('ld' => $this->getControler()->getNamespace()));
     
     return $this->extractRights($el);
   }
@@ -82,7 +82,8 @@ class Manager implements fs\security\manager {
       $sGroup = $el->readByName('group', self::NS);
       $sMode = $el->readByName('mode', self::NS);
       
-      $iMode = \Controler::getUser()->getMode($sOwner, $sGroup, $sMode);
+      $user = \Sylma::getControler('user');
+      $iMode = $user->getMode($sOwner, $sGroup, $sMode);
       
       if ($iMode !== null) {
         

@@ -4,6 +4,7 @@
   <file>Utils.php</file>
   <method path="analyze-scripts" return-default="true" name="analyzeScripts"/>
   <method path="analyze-documents" return-default="true" name="analyzeDocuments"/>
+  <method path="analyze-encoding" return-default="true" name="analyzeEncoding"/>
   <method path="clean-document" return-default="true" name="cleanDocument">
     <argument format="php-string" name="path"/>
   </method>

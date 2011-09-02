@@ -7,9 +7,6 @@ class Controler extends \Module {
   const NS = 'http://www.sylma.org/dom/controler';
   const SETTINGS = 'settings.yml';
   
-  const DIRECTORY_TOKEN = '@sylma-directory';
-  const CLASSBASE_TOKEN = '@sylma-classbase';
-  
   protected $aDefaultClasses = array();
   protected $aClasses = array(
     'document' => 'DOMDocument',
@@ -17,6 +14,8 @@ class Controler extends \Module {
   );
   
   protected $directory;
+  
+  protected $aStats = array();
   
   public function __construct() {
     
@@ -67,5 +66,10 @@ class Controler extends \Module {
     }
     
     return $aClasses;
+  }
+  
+  public function addStat($sName, array $aArguments) {
+    
+    if ($this->getArgument('stats/enable')) $this->aStats[$sName][] = $aArguments;
   }
 }
