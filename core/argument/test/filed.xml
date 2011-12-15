@@ -13,8 +13,8 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('abc') === 123 &amp;&amp;
-        $arg->get('def') === '456'
+        $arg->read('abc') === 123 &amp;&amp;
+        $arg->read('def') === '456'
     </tst:expected>
   </tst:test>
   <tst:test name="Construction with a file">
@@ -22,8 +22,8 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('abc') === 123 &amp;&amp;
-        $arg->get('def') === '456'
+        $arg->read('abc') === 123 &amp;&amp;
+        $arg->read('def') === '456'
     </tst:expected>
   </tst:test>
   <tst:test name="Import with relative path">
@@ -31,9 +31,9 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('ghi') === 789 &amp;&amp;
-        $arg->get('jkl/abc') === 123 &amp;&amp;
-        $arg->get('jkl/def') === '456'
+        $arg->read('ghi') === 789 &amp;&amp;
+        $arg->read('jkl/abc') === 123 &amp;&amp;
+        $arg->read('jkl/def') === '456'
       </tst:expected>
   </tst:test>
   <tst:test name="Import with absolute path">
@@ -46,9 +46,9 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('ghi') === 789 &amp;&amp;
-        $arg->get('jkl/abc') === 123 &amp;&amp;
-        $arg->get('jkl/def') === '456'
+        $arg->read('ghi') === 789 &amp;&amp;
+        $arg->read('jkl/abc') === 123 &amp;&amp;
+        $arg->read('jkl/def') === '456'
       </tst:expected>
   </tst:test>
   <tst:test name="Self reference">
@@ -61,7 +61,7 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('def') === 123
+        $arg->read('def') === 123
     </tst:expected>
   </tst:test>
   <tst:test name="Import's merge">
@@ -80,8 +80,8 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('abc/alpha') === 'red' &amp;&amp;
-        $arg->get('abc/beta') === 10
+        $arg->read('abc/alpha') === 'red' &amp;&amp;
+        $arg->read('abc/beta') === 10
       </tst:expected>
   </tst:test>
   <tst:test name="Import, get and merge">
@@ -100,8 +100,8 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('abc/alpha') === 'red' &amp;&amp;
-        $arg->get('abc/beta') === 10
+        $arg->read('abc/alpha') === 'red' &amp;&amp;
+        $arg->read('abc/beta') === 10
       </tst:expected>
   </tst:test>
   <tst:test name="Import with absolute path and self reference">
@@ -115,9 +115,9 @@
     <tst:expected>
       $arg = $controler->get('arg');
       return
-        $arg->get('jkl') === 789 &amp;&amp;
-        $arg->get('mno/abc') === 123 &amp;&amp;
-        $arg->get('mno/def') === '456'
+        $arg->read('jkl') === 789 &amp;&amp;
+        $arg->read('mno/abc') === 123 &amp;&amp;
+        $arg->read('mno/def') === '456'
       </tst:expected>
   </tst:test>
 </tst:tests>

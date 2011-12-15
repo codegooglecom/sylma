@@ -2148,9 +2148,6 @@ class XML_Action extends XML_Document {
         }
       }
     }
-    catch (SylmaExceptionInterface $e) {
-    
-    }
     catch (Exception $e) {
       
       Sylma::loadException($e);

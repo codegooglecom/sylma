@@ -47,11 +47,11 @@
       <le:argument name="title">Inspector</le:argument>
     </le:action>
     <le:action path="module">
-      <le:argument name="path">/sylma/core/exist.yml</le:argument>
+      <le:argument name="path">/sylma/core/old/exist.yml</le:argument>
       <le:argument name="title">eXist</le:argument>
     </le:action>
     <le:action path="module">
-      <le:argument name="path">/sylma/core/html.yml</le:argument>
+      <le:argument name="path">/sylma/core/old/html.yml</le:argument>
       <le:argument name="title">HTML</le:argument>
     </le:action>
   </div>

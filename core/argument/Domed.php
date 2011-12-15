@@ -1,70 +1,86 @@
 <?php
 
 namespace sylma\core\argument;
-use \sylma\core;
+use \sylma\core, \sylma\dom;
 
 require_once('Basic.php');
+require_once('dom2/domable.php');
 
-class Domed extends Basic {
-  
-  public function getDocument($sNamespace = '') {
-    
-    return new \XML_Document($this->getFragment());
-  }
-  
-  public function getFragment($sNamespace = '') {
-    
-    if (count($this->aArray) > 1) $this->throwException(txt('Cannot build document with more than one root value with @namespace %s', $sNamespace));
-    if (!$sNamespace) $sNamespace = $this->getNamespace();
-    
-    return self::buildFragment($this->aArray, $sNamespace);
-  }
+class Domed extends Basic implements dom\domable {
   
   /**
    * Build an @class Options's object with this argument's array
    * 
-   * @param DOMNode $oRoot The root node to insert the results to
-   * @param? DOMDocument|null $oSchema The schema that will be used by the Options object
+   * @param dom\node $oRoot The root node to insert the results to
+   * @param? dom\document|null $oSchema The schema that will be used by the Options object
    * @param? string $sPath An optional sub-path to extract the arguments from
    * 
    * @return ElementInterface The new builded node, containing the xml version of this array
    */
-  public function getOptions(dom\node $root, dom\document $schema = null, $sPath = '') {
+  public function getOptions(dom\document $schema = null, $sPath = '') {
     
-    self::getElement($root, $sPath);
+    require_once('dom2\Argument.php');
     
-    return new XML_Options(new XML_Document($root), $schema);
+    $doc = $this->getDocument();
+    self::getElement($doc, $sPath);
+    
+    return new dom\Argument($doc, $schema);
+  }
+  
+  public function asDOM($sNamespace = '') {
+    
+    if (!$sNamespace) $sNamespace = $this->getNamespace();
+    
+    if (!$sNamespace) {
+      
+      $this->throwException(t('No namespace defined for export as dom document'));
+    }
+    
+    if (count($this->aArray) > 1) {
+      
+      $this->throwException(txt('Cannot build document with more than one root value with @namespace %s', $sNamespace));
+    }
+    
+    $this->normalize();
+    
+    $result = self::buildDocument($this->aArray, $sNamespace);
+    
+    if (!$result || $result->isEmpty()) {
+      
+      $formater = \Sylma::getControler('formater');
+      $this->throwException (txt('Invalid @interface dom\document when exporting with @namespace %s', $sNamespace));
+    }
+    
+    return $result;
   }
   
   public static function buildDocument(array $aArray, $sNamespace) {
     
-    return new \XML_Document(self::buildFragment($aArray, $sNamespace));
+    $dom = \Sylma::getControler('dom');
+    $doc = $dom->create('handler');
+    
+    self::buildNode($doc, $aArray, $sNamespace);
+    
+    return $doc;
   }
   
-  public static function buildFragment(array $aArray, $sNamespace) {
-    
-    $fragment = \XML_Document::createFragment($sNamespace);
-    
-    self::buildNode($fragment, $aArray);
-    
-    return $fragment;
-  }
-  
-  public function getElement(dom\element $root, $sPath = '') {
+  public function getElement(dom\complex $parent, $sPath = '') {
     
     if ($sPath) $aArray = $this->get($sPath);
     else $aArray = $this->aArray;
     
-    self::buildNode($root, $aArray);
+    return self::buildNode($parent, $aArray);
   }
   
-  private static function buildNode(dom\node $parent, array $aArray) {
+  private static function buildNode(dom\complex $parent, array $aArray, $sNamespace) {
     
     foreach ($aArray as $sKey => $mValue) {
       
       if ($mValue !== null) {
         
         if (is_integer($sKey)) {
+          
+          // when integer key use duplicated element's name
           
           $node = $parent;
         }
@@ -79,10 +95,9 @@ class Domed extends Basic {
             
             foreach ($mValue as $mSubValue) {
               
-              $node = $parent->addNode(substr($sKey, 1));
+              $node = $parent->addElement(substr($sKey, 1), null, array(), $sNamespace);
               
-              if (is_array($mSubValue)) self::buildNode($node, $mSubValue);
-              else if ($mSubValue instanceof core\argument) self::buildNode($node, $mSubValue->query());
+              if (is_array($mSubValue)) self::buildNode($node, $mSubValue, $sNamespace);
               else $node->add($mSubValue);
             }
             
@@ -90,14 +105,27 @@ class Domed extends Basic {
           }
           else {
             
-            $node = $parent->addNode($sKey);
+            $node = $parent->addElement($sKey, null, array(), $sNamespace);
           }
         }
         
-        if (is_array($mValue)) self::buildNode($node, $mValue);
-        else if ($mValue instanceof SettingsInterface) self::buildNode($node, $mValue->query());
+        if (is_array($mValue)) self::buildNode($node, $mValue, $sNamespace);
         else $node->add($mValue);
       }
     }
+  }
+  
+  protected static function normalizeObject($val) {
+    
+    if ($val instanceof dom\node) {
+      
+      $mResult = $val;
+    }
+    else {
+      
+      $mResult = parent::normalizeObject($val);
+    }
+    
+    return $mResult;
   }
 }

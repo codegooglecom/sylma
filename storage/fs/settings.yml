@@ -5,27 +5,32 @@ rights:
   user-mode:
 browse :
   excluded : [.svn]
+unsafes :
+  /sylma/dom2/settings.yml
+  #/users/root/dom/simple.eml
+  /sylma/core/module/domed.yml
+  #/sylma/parser/action/settings.yml
+  #/sylma/parser/action/php/settings.yml
 classes :
   @sylma-classbase : \sylma\storage\fs
   controler :
     name : Controler
   file :
-    interface : file
     name : basic\File
     classes :
       document :
-        file : /sylma/dom2/basic/Document.php
-        interface : \sylma\dom\document
-        name : \sylma\dom\basic\Document
+        file : /sylma/dom2/basic/Handler.php
+        name : \sylma\dom\basic\Handler
+      editable :
+        name : basic\editable\File
   directory :
-    interface : directory
     name : basic\Directory
+    classes :
+      editable :
+        name : basic\editable\Directory
   security :
-    interface : security\manager
     name : basic\security\Manager
     classes :
       document :
-        file : /sylma/dom2/basic/Document.php
-        interface : \sylma\dom\document
-        name : \sylma\dom\basic\Document
-  
+        file : /sylma/dom2/basic/Handler.php
+        name : \sylma\dom\basic\Handler

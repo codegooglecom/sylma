@@ -1,5 +1,7 @@
 <?php
 
+use \sylma\dom;
+
 require_once('ElementInterface.php');
 
 /**
@@ -621,6 +623,11 @@ class XML_Element extends DOMElement implements ElementInterface {
         if ($mValue->getRoot()) $mValue = $this->insertChild($mValue->getRoot(), $oNext);
         else $mValue = null;
         
+      } else if ($mValue instanceof dom\document) {
+        
+        if (!$mValue->isEmpty()) $mValue = $this->insertChild($mValue->getRoot(), $oNext);
+        else $mValue = null;
+        
       } else {
         
         /* Undefined object (Action, XML_Action, others) */
@@ -636,14 +643,17 @@ class XML_Element extends DOMElement implements ElementInterface {
             if ($mResult != $mValue) return $this->insert($mResult, $oNext);
             else dspm(xt('L\'objet parsé de classe "%s" ne doit pas se retourner lui-même !', new HTML_Strong(get_class($mValue))), 'xml/error');
           }
-          catch (SylmaExceptionInterface $e) {
-          
-          }
           catch (Exception $e) {
             
-            Sylma::loadException($e);
+            // TODO cause no result on output
+            
+            //Sylma::loadException($e);
+            
+            if (Controler::isAdmin() && !$e instanceof \sylma\core\exception) {
+              echo 'Bad Exception call';
+              echo('<table>' . $e->xdebug_message . '</table>');
+            }
           }
-          
         } else $mValue = $this->insertText($mValue, $oNext); // Forced string
       }
       

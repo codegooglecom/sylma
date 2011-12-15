@@ -3,7 +3,8 @@
 namespace sylma\storage\fs\basic\editable;
 use \sylma\dom, \sylma\storage\fs;
 
-require_once('storage/fs/basic/Directory.php');
+require_once(dirname(__dir__) . '/Directory.php');
+require_once(dirname(dirname(__dir__)) . '/editable/directory.php');
 
 class Directory extends fs\basic\Directory implements fs\editable\directory {
   
@@ -12,28 +13,39 @@ class Directory extends fs\basic\Directory implements fs\editable\directory {
     $oDocument->saveFree($this, $sName);
   }
   
+  /**
+   * Add or get a directory depends it exists or not
+   * 
+   * @param type $sName
+   * @return fs\directory
+   */
   public function addDirectory($sName) {
     
-    $oDirectory = null;
+    $result = null;
     
-    if (!$oDirectory = $this->getDirectory($sName)) {
+    if (!$sName) {
       
-      if ($sName && $this->checkRights(MODE_WRITE)) {
-        
-        $sPath = \Sylma::ROOT.$this.'/'.$sName;
-        
-        mkdir($sPath, SYLMA_DEFAULT_MODE);
-        
-        unset($this->aDirectories[$sName]);
-        $oDirectory = $this->getDirectory($sName);
-        
-        //dspm(xt('Création du répertoire %s', new HTML_Strong($oDirectory)), 'file/notice');
-        
-        //} else dspm(xt('Création du répertoire %s impossible', new HTML_Stong($this.$sName)), 'file/error');
-      }
+      $this->throwException(t('No name defined for new directory'));
     }
     
-    return $oDirectory;
+    if (!$result = $this->getDirectory($sName)) {
+      
+      if (!$this->checkRights(MODE_WRITE)) {
+        
+        $this->throwException(t('You have no rights to add a directory into this directory'));
+      }
+      
+      $sPath = \Sylma::ROOT.$this.'/'.$sName;
+      
+      if (!mkdir($sPath, SYLMA_DEFAULT_MODE)) {
+        
+        $this->throwException(txt('Cannot create directory called %s', $sName));
+      }
+      
+      $result = $this->updateDirectory($sName);
+    }
+    
+    return $result;
   }
   
   public function updateRights($sOwner, $sGroup, $sMode) {

@@ -4,6 +4,7 @@ namespace sylma\core\argument;
 use \sylma\core;
 
 require_once('Domed.php');
+require_once('core/functions/Path.php');
 
 class Filed extends Domed {
   
@@ -99,6 +100,10 @@ class Filed extends Domed {
       $mResult->aTokens = $this->aTokens;
       $mResult->aResultTokens = $this->aResultTokens;
     }
+    else if (!is_object($mResult)) {
+      
+      $this->throwException(txt('%s is not an array', $sPath), 3);
+    }
     
     return $mResult;
   }
@@ -134,7 +139,7 @@ class Filed extends Domed {
       else {
         
         // file controler is not ready
-        $aResult = $this->loadYAMLFree(path_absolute($sPath, \Sylma::ROOT));
+        $aResult = $this->loadYAMLFree(core\functions\path\toAbsolute($sPath, \Sylma::ROOT));
       }
     }
     catch (core\exception $e) {

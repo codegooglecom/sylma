@@ -13,12 +13,29 @@ abstract class Domed extends Filed {
   
   private $options = null;  // contextual settings
   
+  const ARGUMENTS = 'domed.yml';
+  
+  const DOM_CONTROLER = 'dom';
+  const DOM_ELEMENT_PREFIX = 'element';
+  
+  const FILE_CONTROLER = 'fs';
+  
+  protected function loadDefaultArguments() {
+    
+    $fs = \Sylma::getControler(self::FILE_CONTROLER);
+    
+    $dir = $fs->extractDirectory(__file__);
+    $this->setArguments($dir . '/' . self::ARGUMENTS);
+  }
+  
   /**
    * Create a DOM element using module's default namespace if not specified
    */
   public function createNode($sName, $mContent = '', array $aAttributes = array(), $sPrefix = '') {
     
-    return $this->create('element', array($sName, $mContent, $aAttributes, $this->getNamespace($sPrefix)));
+    $dom = \Sylma::getControler(self::DOM_CONTROLER);
+    
+    return $dom->create(self::DOM_ELEMENT_PREFIX, array($sName, $mContent, $aAttributes, $this->getNamespace($sPrefix)));
   }
   
   protected function getAction($sPath, $aArguments = array()) {
@@ -36,22 +53,35 @@ abstract class Domed extends Filed {
    */
   protected function getTemplate($sPath) {
     
-    if ($oFile = $this->getFile($sPath)) return $this->create('template', array((string) $oFile, Sylma::MODE_EXECUTION));
-    else return null;
+    $result = null;
+    $file = $this->getFile($sPath);
+    
+    if ($file) {
+      
+      $result = $this->create('template', array((string) $file, \Sylma::MODE_EXECUTE));
+    }
+    
+    return $result;
   }
   
   /**
    * Load a DOM Document from a path relative to the module's directory
    * 
    * @param string $sPath The path to the document, relative to the module's directory
-   * @param integer $iMode The load mode (READ, WRITE, EXECUTE)
+   * @param integer $iMode The load mode (READ, WRITE, EXECUTION)
    * 
-   * @return null|DOMDocument The loaded document, or null if not found/valid
+   * @return dom\document|null The loaded document, or null if not found/valid
    */
-  protected function getDocument($sPath, $iMode = Sylma::MODE_READ) {
+  protected function getDocument($sPath, $iMode = \Sylma::MODE_READ) {
     
-    if ($oFile = $this->getFile($sPath)) return $this->create('document', array((string) $oFile, $iMode));
-    else return null;
+    $doc = null;
+    
+    if ($file = $this->getFile($sPath)) {
+      
+      $doc = $file->getDocument($iMode);
+    }
+    
+    return $doc;
   }
   
   protected function setOptions(dom\document $options, dom\document $schema = null, $aNS = array()) {

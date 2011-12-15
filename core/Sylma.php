@@ -1,6 +1,6 @@
 <?php
 
-use \sylma\core;
+use \sylma\core, \sylma\modules, \sylma\dom, \sylma\storage;
 
 class Sylma {
   
@@ -30,10 +30,9 @@ class Sylma {
   
   public static function init($sServer = '') {
     
-    require_once('SylmaException.php');
-    require_once('exception/Basic.php');
-    
-    set_error_handler("SylmaException::loadError");
+    require_once('core/exception/Basic.php');
+    //xdebug_disable();
+    set_error_handler(self::$exception . "::loadError");
     
     require_once('Initializer.php');
     
@@ -46,7 +45,7 @@ class Sylma {
       
       self::$result = Controler::trickMe();
     }
-    catch (SylmaExceptionInterface $e) {
+    catch (core\exception $e) {
       
       //if (self::get('debug/enable')) echo $e;
     }
@@ -79,20 +78,27 @@ class Sylma {
       case 'fs' :
         
         require_once('storage/fs/Controler.php');
-        $controler = new sylma\storage\fs\Controler;
+        $controler = new storage\fs\Controler;
         
       break;
       
       case 'dom' :
         
         require_once('dom2/Controler.php');
-        $controler = new sylma\dom\Controler;
+        $controler = new dom\Controler;
         
       break;
       
       case 'user' :
         
         $controler = \Controler::getUser();
+      
+      break;
+      
+      case 'formater' :
+        
+        require_once('modules/formater/Controler.php');
+        $controler = new modules\formater\Controler;
     }
     
     if ($controler) self::setControler($sName, $controler);

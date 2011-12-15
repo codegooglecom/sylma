@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:ls="http://www.sylma.org/security">
+  <le:settings>
+    <le:name>Error</le:name>
+    <le:argument name="redirect" get-post="true" required="false"/>
+  </le:settings>
+  <le:get-argument/>
+</le:action>

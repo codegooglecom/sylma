@@ -843,10 +843,10 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
     
   }*/
   
-  public function __destruct() {
+  //public function __destruct() {
     
-    if ($this->bTemp && $this->getFile()) $this->getFile()->delete(false, false);
-  }
+//    if ($this->bTemp && $this->getFile()) $this->getFile()->delete(false, false);
+  //}
 }
 
 

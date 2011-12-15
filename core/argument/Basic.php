@@ -4,6 +4,7 @@ namespace sylma\core\argument;
 use \sylma\core;
 
 require_once('core/argument.php');
+require_once('core/argumentable.php');
 require_once('core/module/Namespaced.php');
 
 /**
@@ -21,14 +22,25 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
    */
   protected $aArray = array();
   private $parent;
-  public static $test = 0;
+  
   public function __construct(array $aArray = array(), $sNamespace = '', core\argument $parent = null) {
     
-    self::$test++;
-    
     if (is_array($aArray)) $this->aArray = $aArray;
+    
     $this->setNamespace($sNamespace);
     if ($parent) $this->setParent($parent);
+  }
+  
+  public function getNamespace() {
+    
+    $sNamespace = parent::getNamespace();
+    
+    if (!$sNamespace && $this->getParent()) {
+      
+      $sNamespace = $this->getParent()->getNamespace();
+    }
+    
+    return $sNamespace;
   }
   
   public function setParent(core\argument $parent) {
@@ -89,7 +101,10 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
       }
     }
     
-    if ($mTarget !== null) return $this->get($sPath);
+    if ($mTarget !== null && !is_string($mValue)) {
+      
+      return $this->get($sPath);
+    }
     else return null;
   }
   
@@ -103,6 +118,14 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     return (array) $this->getValue($sPath, $bDebug);
   }
   
+  /**
+   * Load a pathed value and return it as argument object. It's opposite to @method read()
+   * 
+   * @param string $sPath The path to look for value
+   * @param boolean $bDebug If TRUE, a result is expected and an exception is thrown if NULL
+   *
+   * @return core\argument|null The value located in the path as an object or NULL if none
+   */
   public function get($sPath = '', $bDebug = true) {
     
     $mResult =& $this->getValue($sPath, $bDebug);
@@ -111,6 +134,10 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
       
       if ($sPath) $mResult = new self($mResult, $this->getNamespace(), $this);
       else return $this;
+    }
+    else if (is_string($mResult)) {
+      
+      return null;
     }
     
     return $mResult;
@@ -264,7 +291,7 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     if (!array_key_exists($sKey, $aArray) || $aArray[$sKey] === null) {
       
       array_unshift($aPath, $sKey);
-      if ($bDebug) $this->throwException(txt('Unknown key %s in %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 4);
+      if ($bDebug) $this->throwException(txt('Unknown key %s in %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
       
       $sKey = '';
     }
@@ -288,15 +315,14 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
   
   public function read($sPath = '', $bDebug = true) {
     
-    $sResult = $this->get($sPath, $bDebug);
+    $mResult =& $this->getValue($sPath, $bDebug);
     
-    if (is_array($sResult)) {
+    if (is_object($mResult) || is_array($mResult)) {
       
-      $this->log("Cannot read array in $sPath");
-      $sResult = '';
+      $this->throwException(txt('%s is not a string', $sPath), 2);
     }
     
-    return $sResult;
+    return $mResult;
   }
   
   public function mergeArray(array $aArray) {
@@ -304,44 +330,75 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     $this->aArray = $this->mergeArrays($this->aArray, $aArray);
   }
   
-  public function merge(core\argument $with) {
+  /**
+   * Recursively merge two argument objects, argument object received as argument (sic) will overwrite this one
+   * @param core\argument $with The argument that will merge on this one
+   */
+  public function merge(core\argument $arg) {
     
-    $this->mergeArray($with->query());
+    $this->mergeArray($arg->query());
   }
   
-  private function mergeArrays(array $array1, array $array2, array $aPath = array()) {
+  private function mergeArrays(array $aFrom, array $aTo, array $aPath = array()) {
     
-    foreach($array2 as $key => $val) {
+    foreach($aTo as $sKey => $mVal) {
       
-      if (is_integer($key)) $array1[] = $val;
+      if (is_integer($sKey)) {
+        
+        $aFrom[] = $mVal;
+      }
       else {
         
-        if(array_key_exists($key, $array1)) {
+        if (array_key_exists($sKey, $aFrom)) {
           
-          if (is_string($array1[$key]) && is_array($val)) {
+          if (is_string($aFrom[$sKey]) && is_array($mVal)) {
             
-            $array1[$key] = $this->parseValue($array1[$key], $aPath);
+            $aFrom[$sKey] = $this->parseValue($aFrom[$sKey], $aPath);
           }
           
-          if (is_array($array1[$key]) && is_array($val)) {
+          if (is_array($aFrom[$sKey]) && is_array($mVal)) {
             
-            $array1[$key] = $this->mergeArrays($array1[$key], $val, $aPath + array($key));
+            $aFrom[$sKey] = $this->mergeArrays($aFrom[$sKey], $mVal, $aPath + array($sKey));
           }
           else {
             
-            $array1[$key] = $val;
+            $aFrom[$sKey] = $mVal;
           }
         }
         else {
           
-          $array1[$key] = $val;
+          $aFrom[$sKey] = $mVal;
         }
       }
     }
     
-    return $array1;
+    return $aFrom;
   }
   
+  protected static function normalizeObject($val) {
+    
+    $mResult = null;
+    
+    if ($val instanceof core\argumentable) {
+      
+      $mResult = self::normalizeArgument($val->asArgument());
+    }
+    else if ($val instanceof core\argument) {
+      
+      $mResult = self::normalizeArgument($val);
+    }
+    else {
+      
+      \Sylma::throwException(txt('Cannot normalize object @class %s', get_class($val)));
+    }
+    
+    return $mResult;
+  }
+  
+  protected static function normalizeArgument(core\argument $arg) {
+    
+    return $arg->asArray();
+  }
   /**
    * Replace @class SettingsInterface and remove null values from array
    * @param array $aArray The array to use
@@ -355,19 +412,15 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
       
       if (is_object($mVal)) {
         
-        if ($mVal instanceof core\argument) {
-          
-          $mResult = self::normalizeArray($mVal->query());
-          // TODO : get tokens
-        }
-        else {
-          
-          $mResult = '[object]' . get_class($mVal);
-        }
-        //else if ($mVal instanceof core\parsable) {
-          
-          //$mVal = $mVal->parse();
-        //}
+        $mResult = static::normalizeObject($mVal);
+        
+        if (!$mResult) $mResult = null;
+      }
+      else if (is_array($mVal)) {
+        
+        $mResult = static::normalizeArray($mVal);
+        
+        if (!$mResult) $mResult = null; // transform empty array to null
       }
       else {
         
@@ -380,9 +433,9 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     return $aResult;
   }
   
-  public function normalize() {
+  public function normalize($bKeepXML = false) {
     
-    $this->aArray = self::normalizeArray($this->aArray);
+    $this->aArray = static::normalizeArray($this->aArray);
   }
   
   public function rewind() {
@@ -425,6 +478,11 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
   public function dsp() {
     
     return self::normalizeArray($this->aArray);
+  }
+  
+  public function asArray() {
+    
+    return static::normalizeArray($this->query());
   }
   
   public function __toString() {

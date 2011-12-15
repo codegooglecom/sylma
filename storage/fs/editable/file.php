@@ -1,6 +1,6 @@
 <?php
 
-namespace storage\fs\editable;
+namespace sylma\storage\fs\editable;
 
 interface file {
   

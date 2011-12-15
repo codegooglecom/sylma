@@ -11,8 +11,14 @@ interface argument {
   //function add($sPath = '', $mValue = null);
   function setParent(argument $parent);
   function getParent();
+  
+  /**
+   * Replace object contained in argument with arrays with use of @method core\parsable::parse()
+   */
+  function normalize();
   // function merge();
   // function parse();
   // function __toString();
+  function asArray();
 }
 

@@ -1,33 +1,23 @@
 <?php
 
 namespace sylma\dom\basic;
-use \sylma\dom, \sylma\storage\fs;
+use \sylma\dom, \sylma\storage\fs, \sylma\core;
 
-require_once('dom2/document.php');
+require_once(dirname(__dir__) . '/document.php');
 
 class Document extends \DOMDocument implements dom\document {
   
-  const NS = 'http://www.sylma.org/dom/basic/document';
+  const NS = 'http://www.sylma.org/dom/basic/Document';
   
-  /**
-   * See @method setControler()
-   * @var dom\Controler
-   */
-  private $controler;
-  
-  /**
-   * See @method setFile()
-   * @var fs\file
-   */
-  private $file;
+  protected $handler;
   
   public function __construct($sVersion = '1.0', $sEncoding = 'utf-8') {
     
     parent::__construct($sVersion, $sEncoding);
+    
+    $this->preserveWhiteSpace = false;
   }
   
-  // public function isEmpty()
-  // public function getFile()
   public function __call($sMethod, $aArgs) {
     
     $mResult = null;
@@ -41,105 +31,41 @@ class Document extends \DOMDocument implements dom\document {
     return $mResult;
   }
   
-  public function getControler() {
+  /**
+   * Allow implementation of node interface
+   * @return dom\document
+   */
+  public function getDocument() {
     
-    return $this->controler;
+    return $this;
   }
   
-  public function setControler(dom\Controler $controler) {
+  public function importNode(\DOMNode $el, $bDeep = true) {
     
-    $this->controler = $controler;
-  }
-  
-  public function registerClasses(core\argument $settings = null) {
+    $result = null;
     
-    if (!$this->getControler()) {
+    if ((bool) $el->ownerDocument && ($el->ownerDocument !== $this)) {
       
-      $this->throwException(t('Cannot register classes, no controler has been defined'));
+      $result = parent::importNode($el, $bDeep);
+    }
+    else {
+      
+      $result = $el;
     }
     
-    $aClasses = $this->getControler()->getClasses($settings);
-    
-    foreach ($aClasses as $sOrigin => $sReplacement) {
-      
-      $this->registerNodeClass($sOrigin, $sReplacement);
-    }
+    return $result;
   }
   
-  public function setFile(fs\file $file) {
+  public function setRoot(dom\element $el) {
     
-    $this->file = $file;
-  }
-  
-  public function getFile() {
+    $result = null;
     
-    return $this->file;
-  }
-  
-  public function loadFile() {
+    if (!$this->isEmpty()) $this->getRoot()->remove();
     
-    $bResult = false;
+    $el = $this->importNode($el);
+    $result = $this->appendChild($el);
     
-    if (!$this->getFile()) {
-      
-      $this->throwException(t('No file defined'));
-    }
-    
-    return $this->loadContent();;
-  }
-  
-  protected function loadContent() {
-    
-    $sContent = $this->getFile()->read();
-    
-    $reader = new \XMLReader;
-    $reader->XML($sContent);
-    
-    $aNamespaces = $this->lookupNamespaces($reader);
-    
-    return parent::loadXML($this->getFile()->read());
-  }
-  
-  private function lookupNamespaces(\XMLReader $reader) {
-    
-    $aNamespaces = array();
-    
-    while ($reader->read()) {
-      
-      switch ($reader->nodeType) {
-        
-        // case \XMLReader::NONE : break;
-        case \XMLReader::ELEMENT :
-          
-          $aNamespaces[$reader->namespaceURI] = true;
-          
-          if($reader->hasAttributes) {
-            
-            while($reader->moveToNextAttribute()) {
-              
-              $aNamespaces[$reader->namespaceURI] = true;
-            }
-          }
-          
-          if (!$reader->isEmptyElement) {
-            
-            $aNamespaces = array_merge($aNamespaces, $this->lookupNamespaces($reader));
-          }
-          
-        break;
-        // case \XMLReader::ATTRIBUTE : break;
-        // case \XMLReader::TEXT : break;
-        case \XMLReader::END_ELEMENT : //dspf($reader->expand(new \XML_Element)); break 2;
-        // case \XMLReader::XML_DECLARATION : break;
-      }
-    }
-    
-    return $aNamespaces;
-  }
-  
-  public function registerNamespaces(array $aNamespaces = array()) {
-    
-    
+    return $result;
   }
   
   public function getRoot() {
@@ -153,25 +79,26 @@ class Document extends \DOMDocument implements dom\document {
     return !$this->getRoot();
   }
   
-  // public function add()
-  // public function set()
-  public function createElement($sName, $oContent = '', $aAttributes = null, $sUri = null) {
+  public function getHandler() {
     
-    return new XML_Element($sName, $oContent, $aAttributes, $sUri, $this);
+    if (!$this->handler) $this->throwException(t('No handler defined'));
+    
+    return $this->handler;
   }
   
-  // public static function createFragment($sNamespace = null) {
+  public function setHandler(dom\handler $handler) {
     
-    // $doc = new self;
-    
-    // $fragment = $doc->createDocumentFragment();
-    // $fragment->setNamespace($sNamespace);
-    
-    // return $fragment;
-  // }
+    $this->handler = $handler;
+  }
   
-  // public function validate(XML_Document $oSchema, array $aOptions = array())
-  // public function __call($sMethod, $aArguments)
+  public function throwException($sMessage, array $aPath = array()) {
+    
+    $handler = $this->getHandler();
+    $aPath[] = '@file ' . $this->getPath();
+    
+    $handler->throwException($sMessage, $aPath);
+  }
+  
   public function display($bHtml = false, $bDeclaration = true) {
     
     $sResult = '';
@@ -190,17 +117,6 @@ class Document extends \DOMDocument implements dom\document {
     
     // return $sResult;
   // }
-  }
-  
-  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
-    
-    $mSender = (array) $mSender;
-    $mSender[] = '@namespace ' . self::NS;
-    
-    if ($this->getFile()) $mSender[] = '@file ' . $this->getFile();
-    else $sMessage .= ' [unknown file]';
-    
-    Sylma::throwException($sMessage, $mSender, $iOffset);
   }
   
   public function serialize() {

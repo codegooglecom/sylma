@@ -1,7 +1,9 @@
 <?php
 
 namespace sylma\dom\basic;
-use \sylma\dom;
+use \sylma\dom, \sylma\core;
+
+//require_once('core/argumentable.php');
 
 class Collection implements \Iterator {
   
@@ -13,7 +15,7 @@ class Collection implements \Iterator {
   
   public function __construct($mValues = null) {
     
-    if ($mValues) $this->add($mValues);
+    if ($mValues) $this->addArray($mValues);
   }
   
   public function getFirst() {

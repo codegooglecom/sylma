@@ -1,6 +1,9 @@
 <?php
 
 namespace sylma\core;
+use \sylma\core;
+
+require_once('core/functions/Path.php');
 
 class Reflector {
   
@@ -54,11 +57,14 @@ class Reflector {
       }
       
       // set class name
-      $class = $this->loadClass($sName, $this->getSettings());
+      if (!$class = $this->loadClass($sName, $this->getSettings())) {
+        
+        $this->throwException(txt('Class %s cannot be load', $sName));
+      }
       
       if ($sClassBase = $this->getSettings()->getToken(self::CLASSBASE_TOKEN)) {
         
-        $class->set('name', path_absolute($class->read('name'), $sClassBase, '\\'));
+        $class->set('name', core\functions\path\toAbsolute($class->read('name'), $sClassBase, '\\'));
       }
       
       // set file name
@@ -109,12 +115,12 @@ class Reflector {
     
     $result = null;
     
-    if (!$sClass = $class->get('name')) { // has name ?
+    if (!$sClass = $class->read('name')) { // has name ?
       
-      \Sylma::throwException(txt('Cannot build object. No "name" defined in class'));
+      \Sylma::throwException(txt('Cannot build object. No "name" defined in class'), array(), 3);
     }
     
-    if (self::includeClass($sClass, $class->get('file', false))) {
+    if (self::includeClass($sClass, $class->read('file', false))) {
       
       $result = $this->buildClass($sClass, $aArguments);
     }

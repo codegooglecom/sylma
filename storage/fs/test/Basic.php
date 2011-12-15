@@ -20,10 +20,15 @@ class Basic extends tester\Basic {
     
     $dir = $this->getDirectory();
     
+    if (!$rights = $this->getArgument('rights')) {
+      
+      $this->throwException('No default rights defined');
+    }
+    
     $controler = $this->create('controler', array(
       (string) $dir,
       null,
-      $this->getArgument('rights')->query(),
+      $rights->query(),
       $this,
     ));
     

@@ -1,25 +1,15 @@
 <?php
 
-namespace sylma\parser\action;
-use sylma\dom, sylma\parser;
-
-class Basic implements parser\action {
-  
-  private $doc;
-  
-  public function __construct(dom\document $doc) {
-    
-    $this->doc = $doc;
-  }
-  
-  public function parse() {
-    
-    dspf('parsed');
-  }
-}
-
 namespace sylma\parser;
+use \sylma\dom, \sylma\storage\fs;
 
-interface action {
+require_once('dom2\domable.php');
 
+interface action extends dom\domable {
+  
+  const NS = 'http://www.sylma.org/parser/action';
+  const FILE_DEFAULT_MODE = \Sylma::MODE_READ;
+  
+  function __construct(fs\file $file, array $aArguments = array());
 }
+

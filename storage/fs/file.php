@@ -1,16 +1,29 @@
 <?php
 
 namespace sylma\storage\fs;
-use \sylma\dom, sylma\storage\fs;
+use \sylma\dom, \sylma\storage\fs, \sylma\core;
 
-interface file {
-  
-  const DEBUG_LOG = 1;
-  const DEBUG_EXIST = 2;
+require_once('resource.php');
+require_once('core/tokenable.php');
+require_once('core/argumentable.php');
+
+interface file extends resource, core\argumentable, core\tokenable {
   
   function __construct($sName, fs\directory $parent, array $aRights, $iDebug);
+  
+  /**
+   * @return dom\document|null An XML document loaded with the content of this file
+   * 
+   */
   function getDocument();
-  function doExist($bExist = null);
-  function parse();
-  function __toString();
+  
+  /**
+   * @return string The content of the text file
+   */
+  function read();
+  
+  /**
+   * @return array The content of the file as an array of lines, usefull for YAML loads
+   */
+  function readArray();
 }

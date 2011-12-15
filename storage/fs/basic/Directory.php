@@ -9,6 +9,9 @@ require_once('storage/fs/directory.php');
 class Directory extends Resource implements fs\directory {
   
   const NS = 'http://www.sylma.org/storage/fs/basic/directory';
+  const USER_CONTROLER = 'user';
+  CONST FILE_ALIAS = 'file';
+  const DIRECTORY_ALIAS = 'directory';
   
   private $aDirectories = array();
   private $aFiles = array();
@@ -19,17 +22,20 @@ class Directory extends Resource implements fs\directory {
   
   public function __construct($sName, fs\directory $parent = null, array $aRights = array(), fs\controler $controler = null) {
     
-    $this->sFullPath = $parent ? $parent. '/' .$sName : $sName;
+    $this->sFullPath = $parent ? $parent. '/' .$sName : '';
     $this->controler = $controler;
     $this->parent = $parent;
+    $this->sName = $sName;
     
-    if (is_dir($this->getRealPath())) {
+    $this->bExist = is_dir($this->getRealPath());
+    
+    if ($this->doExist()) {
       
       $this->aRights = $this->aChildrenRights = $aRights;
-      $this->sName = $sName;
-      $this->sPath = (string) $parent;
       
-      $this->doExist(true);
+      $settings = $this->getControler()->create('security', array($this, $this->getControler()));
+      $this->setSettings($settings);
+      
       $this->loadRights(); //if ($parent) 
     }
   }
@@ -37,6 +43,11 @@ class Directory extends Resource implements fs\directory {
   private function getChildrenRights() {
     
     return $this->aChildrenRights;
+  }
+  
+  protected function setSettings(fs\security\manager $settings) {
+    
+    $this->settings = $settings;
   }
   
   /**
@@ -57,20 +68,18 @@ class Directory extends Resource implements fs\directory {
   
   private function loadRights() {
     
-    if (!$this->isSecured() && \Sylma::getControler('user', false)) {
-      
-      $this->settings = $this->getControler()->create('security', array($this, $this->getControler()));
+    if (!$this->isSecured() && $this->getSettings()->isReady()) {
       
       // self rights
       $aRights = $this->setRights($this->getSettings()->getDirectory());
       
       // children rights
       if ($aChildrenRights = $this->getSettings()->getPropagation()) {
-        
+
         $this->aChildrenRights = $aChildrenRights;
-        
+
       } else {
-        
+
         $this->aChildrenRights = $aRights;
       }
     }
@@ -92,14 +101,17 @@ class Directory extends Resource implements fs\directory {
   public function browse(array $aExtensions, array $aPaths = array(), $iDepth = null, $bRender = true) {
     
     $result = $this->parse();
-    $aPaths += $this->getControler()->getArgument('browse/excluded')->query();
     
-    // if ($this->getName() == '.svn') dspm('pas beau', 'error');
+    if ($excluded = $this->getControler()->getArgument('browse/excluded')) {
+      
+      $aPaths += $excluded->query();
+    }
+    
     if ($iDepth === null || $iDepth > 0) {
       
       if ($iDepth) $iDepth--;
       
-      $aFiles = scandir(\Sylma::ROOT . $this->getFullPath(), 0);
+      $aFiles = scandir($this->getRealPath(), 0);
       
       foreach ($aFiles as $sFile) {
         
@@ -130,7 +142,7 @@ class Directory extends Resource implements fs\directory {
               
               $result->add('#directory', $dir->browse($aExtensions, $aPaths, $iDepth)->get('directory'));
             }
-          } else dspm('RIEN');
+          }
         }
       }
     }
@@ -183,7 +195,7 @@ class Directory extends Resource implements fs\directory {
    */
   public function updateFile($sName) {
     
-    if (array_key_exists($sName, $this->aFiles)) unset($this->aFiles[$sName]);
+    if (array_key_exists($sAlias, $this->aFiles) && array_key_exists($sName, $this->aFiles[$sAlias])) unset($this->aFiles[$sAlias][$sName]);
     return $this->getFile($sName);
   }
   
@@ -192,20 +204,60 @@ class Directory extends Resource implements fs\directory {
    */
   public function updateDirectory($sName) {
     
-    if (array_key_exists($sName, $this->aDirectories)) unset($this->aDirectories[$sName]);
+    $sAlias = $this->getAlias(self::FILE_ALIAS);
+    
+    if (array_key_exists($sAlias, $this->aDirectories) && array_key_exists($sName, $this->aDirectories[$sAlias])) unset($this->aDirectories[$sAlias][$sName]);
     return $this->getDirectory($sName);
+  }
+  
+  protected function getAlias($sClass) {
+    
+    $fs = $this->getControler();
+    
+    if ($sMode = $fs->getMode()) $sClass .= '/' . $sMode;
+    
+    return $sClass;
   }
   
   public function getFreeFile($sName, $iDebug = 0) {
     
-    $file = $this->getControler()->create('file', array(
+    $result = null;
+    $sAlias = $this->getAlias(self::FILE_ALIAS);
+    
+    if (array_key_exists($sAlias, $this->aFiles) && array_key_exists($sName, $this->aFiles[$sAlias])) {
+      
+      $result = $this->aFiles[$sAlias][$sName];
+    }
+    else {
+      
+      $result = $this->loadFreeFile($sName, $iDebug);
+    }
+    
+    return $result;
+  }
+  
+  protected function loadFreeFile($sName, $iDebug) {
+    
+    $result = null;
+    $sClass = $this->getAlias(self::FILE_ALIAS);
+    
+    $file = $this->getControler()->create($sClass, array(
         $sName,
         $this,
         $this->getRights(),
         $iDebug,
       ));
     
-    if ($file->doExist()) return $file;
+    if ($file->doExist() || $iDebug & self::DEBUG_EXIST) {
+      
+      $result = $file;
+    }
+    
+    if (!array_key_exists($sClass, $this->aFiles)) $this->aFiles[$sClass] = array();
+    
+    $this->aFiles[$sClass][$sName] = $result;
+    
+    return $result;
   }
   
   /**
@@ -213,45 +265,63 @@ class Directory extends Resource implements fs\directory {
    * If @controler user is not set, then file is returned without rights check but not cached
    * 
    * @param $sName The name + extension of the file
-   * @param $bDebug If true, send an error message if no access is found
+   * @param $iDebug send an error message if no access is found see @class fs\directory
    * @return null|fs\file the file requested
    */
-  public function getFile($sName, $iDebug = 0) {
+  public function getFile($sName, $iDebug = self::DEBUG_LOG) {
     
     $result = null;
     $this->loadRights();
     
+    if (!$this->isSecured()) {
+      
+      $this->throwException(txt('Unauthorized access to @file %s', $this . '/' . $sName));
+    }
+    
     if ($sName && is_string($sName)) {
       
-      if (array_key_exists($sName, $this->aFiles)) {
+      $sClass = $this->getAlias(self::FILE_ALIAS);
+      
+      if (array_key_exists($sClass, $this->aFiles) && array_key_exists($sName, $this->aFiles[$sClass])) {
         
         // yet builded
-        $result = $this->aFiles[$sName];
+        $file = $this->aFiles[$sClass][$sName];
+        
+        if (!$file->isSecured()) {
+          
+          $this->secureFile($file);
+        }
+        
+        $result = $file;
       }
       else {
         
         // not yet builded, build it
-        $file = $this->getFreeFile($sName);
+        $file = $this->loadFreeFile($sName, $iDebug);
         
-        if ($file && $file->doExist()) {
+        if ($file) {
           
-          if (!$aRights = $this->getSettings()->getFile($sName)) $aRights = $this->getChildrenRights();
-          
-          $file->setRights($aRights);
-          
-          if (\Sylma::getControler('user')) $this->aFiles[$sName] = $file;
-          
+          $this->secureFile($file);
           $result = $file;
         }
         else {
           
-          $this->aFiles[$sName] = null;
-          if ($iDebug && fs\file::DEBUG_EXIST) $result = $file;
+          if ($iDebug & self::DEBUG_EXIST) $result = $file;
         }
       }
     }
     
     return $result;
+  }
+  
+  protected function secureFile(fs\file $file) {
+    
+    //dspf($file);
+    
+    if (!$aRights = $this->getSettings()->getFile($file->getName())) $aRights = $this->getChildrenRights();
+    
+    $file->setRights($aRights);
+    $file->isSecured(true);
   }
   
   public function getDirectory($sName) {
@@ -272,22 +342,24 @@ class Directory extends Resource implements fs\directory {
     }
     else if ($sName) {
       
-      if (array_key_exists($sName, $this->aDirectories)) {
+      $sAlias = $this->getAlias(self::DIRECTORY_ALIAS);
+      
+      if (array_key_exists($sAlias, $this->aDirectories) && array_key_exists($sName, $this->aDirectories[$sAlias])) {
         
         // yet builded
-        $result = $this->aDirectories[$sName];
+        $result = $this->aDirectories[$sAlias][$sName];
       }
       else {
         
         // not yet builded, build it
-        $dir = $this->getControler()->create('directory', array(
+        $dir = $this->getControler()->create($sAlias, array(
           $sName,
           $this,
           $this->getChildrenRights(),
         ));
         
-        if ($dir->doExist()) $result = $this->aDirectories[$sName] = $dir;
-        else $this->aDirectories[$sName] = null;
+        if ($dir->doExist()) $result = $this->aDirectories[$sAlias][$sName] = $dir;
+        else $this->aDirectories[$sAlias][$sName] = null;
       }
     }
     
@@ -346,18 +418,24 @@ class Directory extends Resource implements fs\directory {
   
   public function getRealPath() {
     
-    return \Sylma::ROOT . $this;
+    return ($this->getParent() ? $this->getParent()->getRealPath() . '/' . $this->getName() : \Sylma::ROOT . $this->getName());
   }
   
-  public function parse() {
+  public function asToken() {
     
-    if (!$sName = $this->getName()) {
+    return '@directory ' . (string) $this;
+  }
+  
+  public function asArgument() {
+    
+    if (!$this->getParent()) {
       
       $sName = t('<racine>');
       $sPath = '';
       
     } else {
       
+      $sName = $this->getName();
       $sPath = $this->getFullPath();
     }
     
@@ -373,11 +451,6 @@ class Directory extends Resource implements fs\directory {
         'name' => $sName,
       ),
     ), self::NS);
-  }
-  
-  public function parseXML() {
-    
-    return $this->getFragment($this->asArray());
   }
   
   public function __toString() {

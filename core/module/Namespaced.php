@@ -41,6 +41,38 @@ abstract class Namespaced {
     else return $this->aNamespaces;
   }
   
+  /**
+   * Escape a string for secured queries to module's related storage system
+   * <code>
+   * list($spUser, $spPassword) = $this->escape($sUser, sha1($sPassword));
+   * </code>
+   * 
+   * @param string A single or a list of string values to escape
+   * @return string|array An escaped string or array of strings
+   */
+  public function escape() {
+    
+    $mResult = null;
+    
+    if (func_num_args() != 1) {
+      
+      $mResult = array();
+      
+      foreach (func_get_args() as $mValue) $mResult[] = $this->escapeString($mValue);
+    }
+    else if ($sValue = (string) func_get_arg(0)) {
+      
+      $mResult = $this->escapeString($sValue);
+    }
+    
+    return $mResult;
+  }
+  
+  private function escapeString($sValue) {
+    
+    return "'".addslashes($sValue)."'";
+  }
+  
   protected function mergeNamespaces(array $aNamespaces = array()) {
     
     if ($aNamespaces) return array_merge($this->getNS(), $aNamespaces);

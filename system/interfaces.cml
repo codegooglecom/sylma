@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interfaces>
   <interface class="Action_Array">/sylma/action/array.iml</interface>
-  <interface class="Controler">/sylma/core/controler.iml</interface>
+  <interface class="Controler">/sylma/core/old/controler.iml</interface>
   <interface class="WindowHTML">/sylma/window/html.iml</interface>
   <interface class="Redirect">/sylma/core/redirect.iml</interface>
   <interface class="User">/sylma/user/interface.iml</interface>
@@ -15,5 +15,5 @@
   <interface class="XML_File">/sylma/storage/filesys/file.iml</interface>
   <interface class="XML_NodeList">/sylma/dom/nodelist.iml</interface>
   <interface class="XML_Path">/sylma/action/path.iml</interface>
-  <interface class="XSL_Document">/sylma/core/xsl_document.iml</interface>
+  <interface class="XSL_Document">/sylma/core/old/xsl_document.iml</interface>
 </interfaces>

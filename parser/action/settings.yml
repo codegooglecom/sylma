@@ -1,0 +1,9 @@
+classes :
+  @sylma-classbase : \sylma\parser\action
+  window :
+    name : php\Window
+  basic :
+    name : Basic
+  dom :
+    name : Domed
+  php : @sylma:import php\settings.yml;

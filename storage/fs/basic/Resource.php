@@ -3,9 +3,21 @@
 namespace sylma\storage\fs\basic;
 use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-abstract class Resource {
+require_once('storage/fs/resource.php');
+
+abstract class Resource implements fs\resource {
   
   const NS = 'http://www.sylma.org/storage/fs/basic/resource';
+  
+  /**
+   * Throw exception if a file doesn't exist
+   */
+  const DEBUG_LOG = 1;
+  
+  /**
+   * Return file either if it doesn't exist
+   */
+  const DEBUG_EXIST = 2;
   
   protected $aRights = array();
   
@@ -20,7 +32,8 @@ abstract class Resource {
   protected $parent = null;
   protected $controler = null;
   
-  private $bExist = false;
+  protected $bExist = false;
+  
   private $bSecured = false;
   
   public function getControler() {
@@ -29,23 +42,22 @@ abstract class Resource {
     return $this->controler;
   }
   
-  public function doExist($bExist = null) {
+  public function doExist() {
     
-    if ($bExist !== null) $this->bExist = $bExist;
     return $this->bExist;
   }
   
-  public function getOwner() {
+  protected function getOwner() {
     
     return $this->aRights['owner'];
   }
   
-  public function getGroup() {
+  protected function getGroup() {
     
     return $this->aRights['group'];
   }
   
-  public function getMode() {
+  protected function getMode() {
     
     return $this->aRights['mode'];
   }
@@ -55,28 +67,9 @@ abstract class Resource {
     return $this->sName;
   }
   
-  public function isOwner() {
-    
-    return \Controler::getUser()->getName() == $this->getOwner();
-  }
-  
-  public function getFullPath() {
+  protected function getFullPath() {
     
     return $this->sFullPath;
-  }
-  
-  public function getParents(fs\directory $target = null) {
-    
-    $parent = $this;
-    $aResult = array();
-    
-    while (($parent = $parent->getParent()) && (!$target || ($parent != $target))) {
-      
-      array_unshift($aResult, $parent);
-    }
-    
-    if ($target && !$parent) return null;
-    else return $aResult;
   }
   
   public function getParent() {
@@ -141,6 +134,7 @@ abstract class Resource {
     
     return $aRights;
   }
+  
   /**
    * Check rights arguments for update in @method updateRights()
    */
@@ -208,7 +202,7 @@ abstract class Resource {
       '@resource ' . (string) $this,
     );
     
-    $this->getControler()->throwException($sMessage, $aPath);
+    $this->getControler()->throwException($sMessage, $aPath, 3);
   }
   
   public function __toString() {

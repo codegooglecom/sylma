@@ -116,6 +116,35 @@ class WindowHTML extends XML_Action {
     }
   }
   
+  protected function useApplication() {
+    
+    $bResult = false;
+    
+    if(stristr($_SERVER["HTTP_ACCEPT"],"application/xhtml+xml")) {
+
+      if(preg_match("/application\/xhtml\+xml;q=([01]|0\.\d{1,3}|1\.0)/i", $_SERVER["HTTP_ACCEPT"], $aMatches)) {
+
+        $sXHtml = $aMatches[1];
+
+        if(preg_match("/text\/html;q=([01]|0\.\d{1,3}|1\.0)/i", $_SERVER["HTTP_ACCEPT"], $aMatches)) {
+
+          $sHtml = $aMatches[1];
+
+          if((float)$sXHtml >= (float)$sHtml) {
+
+            $bResult = true;
+          }
+        }
+      }
+      else {
+
+        $bResult = true;
+      }
+    }
+    
+    return $bResult;
+  }
+  
   public function __toString() {
     
     try {
@@ -126,27 +155,7 @@ class WindowHTML extends XML_Action {
       $sCharset = 'utf-8';
       $sMime = 'text/html';
       
-      if(stristr($_SERVER["HTTP_ACCEPT"],"application/xhtml+xml")) {
-        
-        if(preg_match("/application\/xhtml\+xml;q=([01]|0\.\d{1,3}|1\.0)/i", $_SERVER["HTTP_ACCEPT"], $aMatches)) {
-          
-          $sXHtml = $aMatches[1];
-          
-          if(preg_match("/text\/html;q=([01]|0\.\d{1,3}|1\.0)/i", $_SERVER["HTTP_ACCEPT"], $aMatches)) {
-            
-            $sHtml = $aMatches[1];
-            
-            if((float)$sXHtml >= (float)$sHtml) {
-              
-              $sMime = "application/xhtml+xml";
-            }
-          }
-        }
-        else {
-          
-          $sMime = "application/xhtml+xml";
-        }
-      }
+//      if ($this->useApplication()) $sMime = "application/xhtml+xml";
       
       if($sMime == "application/xhtml+xml") {
         
@@ -166,6 +175,11 @@ class WindowHTML extends XML_Action {
     } catch(Exception $e) {
       
       $sResult = (string) xt('Problème lors du chargement du site. Nous nous excusons pour ce désagrément. %s pour revenir à la page d\'accueil', new HTML_Br.new HTML_A('/', t('Cliquez-ici')));
+      
+      if (Controler::isAdmin()) {
+        
+        echo('<table>' . $e->xdebug_message . '</table>');
+      }
     }
     
     return $sResult;

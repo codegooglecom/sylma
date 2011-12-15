@@ -1,0 +1,17 @@
+classes :
+  @sylma-classbase : \sylma\parser\action\php
+  string :
+    name : StringInstance
+  array :
+    name : ArrayInstance
+  numeric :
+    name : NumericInstance
+  object :
+    name : ObjectInstance
+  call :
+    name : CallMethod
+  object-var :
+    name : ObjectVar
+  template :
+    name : Template
+  

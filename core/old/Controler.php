@@ -476,6 +476,7 @@ class Controler {
       case 'xml' :
       case 'xsl' : return 'text/xml';
       
+      case 'html' : return 'text/html';
       case 'xhtml' : return 'application/xhtml+xml';
       
       default : return 'plain/text';
@@ -727,7 +728,15 @@ class Controler {
         
         // Objects
         
-        if ($mArgument instanceof XML_Document && !($mArgument instanceof XML_Action)) {
+        $formater = \Sylma::getControler('formater');
+        
+        if (0 && $mArgument instanceof \sylma\core\argumentable) {
+          
+          $el = $formater->asHTML($mArgument);
+          
+          $aValue = array($el, 'blue');
+        }
+        else if (($mArgument instanceof XML_Document) && !($mArgument instanceof XML_Action)) {
           
           /* XML_Document */
           
@@ -868,14 +877,30 @@ class Controler {
     }
   }
   
-  public static function getBacktrace() {
+  public static function loadBacktrace() {
+    
+    
+  }
+  
+  public static function getBacktrace(array $aBacktrace = array()) {
     
     $aResult = array(); $aLines = array(); $i = 0;
+    $iMaxTraces = Sylma::get('messages/backtrace/count');
+    $iLastUnused = Sylma::get('messages/backtrace/unused');
     
-    $aBackTrace = debug_backtrace();
-    array_shift($aBackTrace);
+    if (!$aBacktrace) {
+      
+      $aBacktrace = debug_backtrace();
+    }
     
-    foreach ($aBackTrace as $aLine) {
+    array_shift($aBacktrace);
+    
+    if (count($aBacktrace) >= $iMaxTraces + $iLastUnused) {
+      
+      $aBacktrace = array_slice($aBacktrace, $iLastUnused, $iMaxTraces);
+    }
+    
+    foreach ($aBacktrace as $aLine) {
       
       if (isset($aLine['line'])) $aLines[] = $aLine['line'];
       else $aLines[] = 'k';
@@ -883,9 +908,11 @@ class Controler {
     
     $aLines[] = 'x';
     
-    foreach ($aBackTrace as $aTrace) {
+    $dir = Controler::getDirectory();
+    
+    foreach ($aBacktrace as $aTrace) {
       
-      if (isset($aTrace['file'])) $sFile = new HTML_Tag('u', strrchr($aTrace['file'], DIRECTORY_SEPARATOR));
+      if (isset($aTrace['file'])) $sFile = new HTML_Tag('u', substr($aTrace['file'], strlen($dir->getSystemPath())));
       else $sFile = 'xxx';
       
       if (isset($aTrace['class'])) $sClass = "::{$aTrace['class']}";

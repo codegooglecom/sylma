@@ -34,28 +34,22 @@ class File extends Resource implements fs\file {
   
   public function __construct($sName, fs\directory $parent, array $aRights, $iDebug) {
     
-    $sPath = $parent->getFullPath();
+    $this->sFullPath = (string) $parent . '/' . $sName;
+    $this->sName = $sName;
+    $this->parent = $parent;
     
-    $this->sFullPath = $sPath . '/' . $sName;
-    $sPath = \Sylma::ROOT . '/' . $this->sFullPath;
+    $this->bExist = is_file($this->getRealPath());
     
-    $bExist = is_file($sPath);
-    
-    if ($bExist || $iDebug & self::DEBUG_EXIST) {
+    if ($this->doExist() || $iDebug & self::DEBUG_EXIST) {
       
       $this->aRights = $aRights;
-      $this->sName = $sName;
-      $this->sPath = $sPath;
-      $this->parent = $parent;
       
       if ($iExtension = strrpos($sName, '.')) $this->sExtension = substr($sName, $iExtension + 1);
       else $this->sExtension = '';
-      
-      $this->doExist($bExist);
     }
     else if ($iDebug & self::DEBUG_LOG) {
       
-      $this->getControler()->throwException(txt('@file %s does not exist', $sPath));
+      $this->throwException(txt('@file %s does not exist', $this->getRealPath()), array(), 16); // todo too depth !
     }
   }
   
@@ -66,21 +60,21 @@ class File extends Resource implements fs\file {
     return $this->iChanged;
   }
   
-  public function getActionPath() {
+  // public function getActionPath() {
     
-    $sPath = substr($this->getFullPath(), 0, strlen($this->getFullPath()) - strlen($this->getExtension()) - 1);
-    return $this->getName() == 'index.eml' ? substr($sPath, 0, -6) : $sPath;
-  }
+    // $sPath = substr($this->getFullPath(), 0, strlen($this->getFullPath()) - strlen($this->getExtension()) - 1);
+    // return $this->getName() == 'index.eml' ? substr($sPath, 0, -6) : $sPath;
+  // }
   
-  public function getSimpleName() {
+  // public function getSimpleName() {
     
-    return substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1);
-  }
+    // return substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1);
+  // }
   
-  public function getDisplayName() {
+  // public function getDisplayName() {
     
-    return str_replace('_', ' ', substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1));
-  }
+    // return str_replace('_', ' ', substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1));
+  // }
   
   public function getExtension() {
     
@@ -115,30 +109,24 @@ class File extends Resource implements fs\file {
    */
   public function getFreeDocument() {
     
-    if (!$this->getControler()) {
+    $result = null;
+    
+    if (!$this->getControler()) { // todo, usefull ?
       
       \Sylma::throwException(t('File controler is not ready'), array(), 0);
     }
     
-    if (!$controler = \Sylma::getControler(self::DOM_CONTROLER)) {
+    if ($dom = \Sylma::getControler(self::DOM_CONTROLER, false, false)) {
       
-      $this->getControler()->throwException(t('DOM controler is not yet defined'));
+      $result = $this->getControler()->create('file/document');
+      
+      $result->setFile($this);
+      $result->loadFile();
     }
     
-    $doc = $this->getControler()->create('file/document');
-    
-    $doc->setControler($controler);
-    $doc->registerClasses();
-    $doc->setFile($this);
-    $doc->loadFile();
-    
-    return $doc;
+    return $result;
   }
   
-  /**
-   * Get a copy of the corresponding document
-   * @param integer $iMode : The mode used to load the document
-   */
   public function getDocument($iMode = \Sylma::MODE_READ) {
     
     return $this->getFreeDocument();
@@ -151,17 +139,6 @@ class File extends Resource implements fs\file {
     return false;
   }
   
-  public function isFileSecured($mSecured = null) {
-    
-    if ($mSecured === null) return $this->bFileSecured;
-    else $this->bFileSecured = $mSecured;
-  }
-  
-  /**
-   * Get security XML_SFile
-   * @param boolean $bRecursive Get last setting file from parents
-   * @return XML_Document|null
-   */
   public function getSettings($bRecursive = false) {
     
     return $this->getParent()->getSettings($bRecursive);
@@ -177,7 +154,12 @@ class File extends Resource implements fs\file {
     return file_get_contents($this->getRealPath());
   }
   
-  public function parse() {
+  public function asToken() {
+    
+    return '@file ' . (string) $this;
+  }
+  
+  public function asArgument() {
     
     $iSize = ($this->getSize() / 1000);
     

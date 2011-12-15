@@ -3,19 +3,19 @@
 namespace sylma\core\module;
 use \sylma\core;
 
-require_once('core/argument/Basic.php');
-require_once('core/Reflector.php');
-require_once('Namespaced.php');
+require_once('core/argument/Domed.php');
+require_once('Exceptionable.php');
+require_once('core/factory.php');
 
-abstract class Argumented extends Namespaced {
-  
-  const NS = 'http://www.sylma.org/core/module/Argumented';
+require_once('core/Reflector.php');
+
+abstract class Argumented extends Exceptionable implements core\factory {
   
   /**
    * Class manager
    */
   private $reflector;
-  protected static $argumentClass = 'sylma\core\argument\Basic';
+  protected static $argumentClass = 'sylma\core\argument\Domed';
   /**
    * Argument object linked to this module, contains various parameters for the module
    */
@@ -34,9 +34,11 @@ abstract class Argumented extends Namespaced {
     return $result;
   }
   
-  public function createArgument($aArguments) {
+  protected function createArgument(array $aArguments, $sNamespace = '') {
     
-    return new self::$argumentClass($aArguments, $this->getNamespace());
+    if (!$sNamespace) $sNamespace = $this->getNamespace();
+    
+    return new static::$argumentClass($aArguments, $sNamespace);
   }
   
   protected function setArguments($mArguments = null, $bMerge = true) {
@@ -46,7 +48,7 @@ abstract class Argumented extends Namespaced {
       if (is_array($mArguments)) {
         
         if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
-        else $this->arguments = new core\argument\Basic($mArguments, $this->getNamespace());
+        else $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
       }
       else if (is_object($mArguments)) {
         
@@ -66,7 +68,6 @@ abstract class Argumented extends Namespaced {
     
     return $this->arguments;
   }
-  
   protected function getArgument($sPath, $mDefault = null, $bDebug = false) {
     
     $mResult = $mDefault;
@@ -74,41 +75,21 @@ abstract class Argumented extends Namespaced {
     if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
     
     $mResult = $this->getArguments()->get($sPath, $bDebug);
-    if ($mResult === null && $mDefault !== 'null') $mResult = $mDefault;
+    if ($mResult === null && $mDefault !== null) $mResult = $mDefault;
     
     return $mResult;
   }
   
-  /**
-   * Throw a customized exception to the main controler
-   * 
-   * @param string $sMessage The message describing the exception
-   * @param array|string $mSender A list of keys or a single key describing the previous classes throwing this exception
-   * @param integer $iOffset The number of calls before final sent to main controler. This will be used to localize the call in backtrace
-   */
-  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+  protected function readArgument($sPath, $mDefault = null, $bDebug = false) {
     
-    $sNamespace = $this->getNamespace() ? $this->getNamespace() : self::NS;
+    $mResult = $mDefault;
     
-    $mSender = (array) $mSender;
-    $mSender[] = '@namespace ' . $sNamespace;
+    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
     
-    \Sylma::throwException($sMessage, $mSender, $iOffset);
-  }
-  
-  /**
-   * Escape a string for secured queries to module's related storage system
-   * <code>
-   * list($spUser, $spPassword) = $this->escape(array($sUser, sha1($sPassword)));
-   * </code>
-   * 
-   * @param string|array A single or a list of values to escape
-   * @return string|array An escaped string or array of strings
-   */
-  protected function escape() {
+    $mResult = $this->getArguments()->read($sPath, $bDebug);
+    if ($mResult === null && $mDefault !== null) $mResult = $mDefault;
     
-    if (func_num_args() == 1) return addQuote(func_get_arg(0));
-    else return addQuote(func_get_args());
+    return $mResult;
   }
   
   /**

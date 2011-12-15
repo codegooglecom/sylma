@@ -1,9 +1,11 @@
 <?php
 
 namespace sylma\storage\fs\basic\editable;
+
 use \sylma\storage\fs;
 
-require_once('storage/fs/basic/File.php');
+require_once(dirname(__dir__) . '/File.php');
+require_once(dirname(dirname(__dir__)) . '/editable/file.php');
 
 class File extends fs\basic\File implements fs\editable\file {
   
@@ -128,10 +130,14 @@ class File extends fs\basic\File implements fs\editable\file {
     
     $bResult = false;
     
-    if ($this->checkRights(Sylma::MODE_WRITE)) {
+    if (!$this->checkRights(\Sylma::MODE_WRITE)) {
       
-      $bResult = file_put_contents($this->getRealPath(), $sContent);
+      $this->throwException(t('You have not right to edit this file'));
     }
+    
+    $bResult = file_put_contents($this->getRealPath(), $sContent);
+    
+    if (!$bResult) $this->throwException (t('Cannot save text content'));
     
     return $bResult;
   }

@@ -1,6 +1,7 @@
 <?php
 
-namespace storage\fs\editable;
+namespace sylma\storage\fs\editable;
+use sylma\dom;
 
 interface directory {
   /**

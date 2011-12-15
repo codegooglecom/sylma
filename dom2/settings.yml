@@ -1,5 +1,8 @@
 classes :
   @sylma-classbase : \sylma\dom
+  handler :
+    file : basic/Handler.php
+    name : basic\Handler
   document :
     file : basic/Document.php
     name : basic\Document
@@ -9,5 +12,15 @@ classes :
   collection :
     file : basic/Collection.php
     name : basic\Collection
+  fragment :
+    file : basic/Fragment.php
+    name : basic\Fragment
+  text :
+    file : basic/Text.php
+    name : basic\Text
 stats :
   enable : false
+namespaces :
+  html : http://www.w3.org/1999/xhtml
+  dom : http://www.sylma.org/dom
+import-depth : 5

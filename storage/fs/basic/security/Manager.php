@@ -3,27 +3,42 @@
 namespace sylma\storage\fs\basic\security;
 use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
+require_once('core/module/Namespaced.php');
 require_once('storage/fs/security/manager.php');
 
-class Manager implements fs\security\manager {
+class Manager extends core\module\Namespaced implements fs\security\manager {
   
   const FILENAME = 'directory.sml';
+  
+  /**
+   * Used only for exception reports
+   */
   const NS = 'http://www.sylma.org/storage/fs/basic/security';
+  const PREFIX = 'fs';
+  
+  const USER_CONTROLER = 'user';
   
   private $document;
   private $directory;
   
   private $controler;
   
+  protected $bReady = false;
+  
   public function __construct(fs\directory $directory) {
     
     $this->directory = $directory;
     //$sPath = $directory->getFullPath() . '/' . self::FILENAME;
     
-    if (\Controler::getUser() && ($file = $directory->getFreeFile(self::FILENAME))) {
-      
-      $this->document = $file->getFreeDocument();
-    }
+    $this->setNamespace($this->getControler()->getNamespace(), self::PREFIX);
+    $this->loadDocument();
+  }
+  
+  public function isReady() {
+    
+    
+    
+    return $this->bReady;
   }
   
   protected function getControler() {
@@ -36,6 +51,25 @@ class Manager implements fs\security\manager {
     return $this->document;
   }
   
+  protected function loadDocument() {
+    
+    if (\Sylma::getControler(self::USER_CONTROLER, false, false)) {
+      
+      if ($file = $this->directory->getFreeFile(self::FILENAME)) {
+        
+        if ($this->document = $file->getFreeDocument()) {
+          
+          $this->document->registerNamespaces($this->getNS());
+          $this->bReady = true;
+        }
+      }
+      else {
+        
+        $this->bReady = true;
+      }
+    }
+  }
+  
   public function getParent() {
     
     return $this->oDirectory;
@@ -43,8 +77,10 @@ class Manager implements fs\security\manager {
   
   public function getDirectory() {
     
+//    if (!$this->isReady()) $this->loadDocument();
+    
     $el = null;
-    if ($this->getDocument()) $el = $this->getDocument()->getByName('self', $this->getControler()->getNamespace());
+    if ($this->getDocument()) $el = $this->getDocument()->get('self');
     
     return $this->extractRights($el);
   }
@@ -52,15 +88,19 @@ class Manager implements fs\security\manager {
   public function getPropagation() {
     
     $el = null;
-    if ($this->getDocument()) $el = $this->getDocument()->getByName('propagate', $this->getControler()->getNamespace());
+    if ($this->getDocument()) $el = $this->getDocument()->get(self::PREFIX . ':propagate', $this->getNS());
     
     return $this->extractRights($el);
   }
   
   public function getFile($sName) {
     
+//    if (!$this->isReady()) $this->loadDocument();
+    
     $el = null;
-    if ($this->getDocument()) $el = $this->getDocument()->get('ld:file[@name="'.xmlize($sName).'"]', array('ld' => $this->getControler()->getNamespace()));
+    $spName = $this->escape($sName);
+    
+    if ($this->getDocument()) $el = $this->getDocument()->get(self::PREFIX . ":file[@name=$spName]", $this->getNS());
     
     return $this->extractRights($el);
   }

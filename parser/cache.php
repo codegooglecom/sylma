@@ -12,3 +12,4 @@ class cache {
     dspf($doc);
   }
 }
+

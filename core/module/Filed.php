@@ -4,12 +4,13 @@ namespace sylma\core\module;
 use \sylma\core, \sylma\storage\fs;
 
 require_once('core/argument/Filed.php');
-require_once('core/functions/Paths.php');
+require_once('core/functions/Path.php');
 require_once('Argumented.php');
 
 abstract class Filed extends Argumented {
   
   protected $directory = null;
+  protected static $argumentClass = 'sylma\core\argument\Filed';
   
   protected function setArguments($mArguments = null, $bMerge = true) {
     
@@ -17,8 +18,12 @@ abstract class Filed extends Argumented {
       
       if (is_string($mArguments)) {
         
-        $file = $this->getFile($mArguments, true);
-        $this->arguments = new core\argument\Filed((string) $file);
+        if (!$file = $this->getFile($mArguments, true)) {
+          
+          $this->throwException(txt('Settings not found in @file %s', $mArguments));
+        }
+        
+        parent::setArguments(new static::$argumentClass((string) $file));
       }
       else {
         
@@ -44,14 +49,16 @@ abstract class Filed extends Argumented {
    */
   protected function setDirectory($mDirectory) {
     
-    if (is_string($mDirectory)) $this->directory = extract_directory($mDirectory);
+    if (is_string($mDirectory)) $this->directory = core\functions\path\extractDirectory($mDirectory);
     else $this->directory = $mDirectory;
+    
+    if (!$this->getDirectory()) $this->throwException(txt('Cannot use %s as a directory'), $mDirectory);
   }
   
   /**
    * @return fs\directory The current directory
    */
-  public function getDirectory() {
+  protected function getDirectory() {
     
     return $this->directory;
   }
@@ -62,14 +69,16 @@ abstract class Filed extends Argumented {
    * @param string $sPath The relative or absolute path to the file
    * @return fs\file|null The file corresponding to the path given, or NULL if none found
    */
-  protected function getFile($sPath, $bDebug = false) {
+  protected function getFile($sPath, $bDebug = true) {
     
-    if (!$fs = \Sylma::getControler('fs')) {
+    $fs = \Sylma::getControler('fs');
+    
+    if (!$directory = $this->getDirectory()) {
       
-      $this->throwException(txt('File controler not yet loaded. Cannot load file %s', $sPath));
+      $this->throwException(t('No directory defined'), array(), 3);
     }
     
-    return $fs->getFile($sPath, $this->getDirectory(), $bDebug);
+    return $fs->getFile($sPath, $directory, $bDebug);
   }
 }
 

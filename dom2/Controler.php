@@ -1,16 +1,22 @@
 <?php
 
 namespace sylma\dom;
+use \sylma\core;
 
-class Controler extends \Module {
+require_once('core/module/Filed.php');
+
+class Controler extends core\module\Filed {
   
-  const NS = 'http://www.sylma.org/dom/controler';
+  const NS = 'http://www.sylma.org/dom';
   const SETTINGS = 'settings.yml';
   
   protected $aDefaultClasses = array();
+  
   protected $aClasses = array(
     'document' => 'DOMDocument',
     'element' => 'DOMElement',
+    'fragment' => 'DOMDocumentFragment',
+    'text' => 'DOMText',
   );
   
   protected $directory;
@@ -22,6 +28,11 @@ class Controler extends \Module {
     $this->setDirectory(__file__);
     $this->setArguments(self::SETTINGS);
     $this->setNamespace(self::NS);
+    
+    foreach ($this->getArgument('namespaces')->query() as $sPrefix => $sNamespace) {
+      
+      $this->setNamespace($sNamespace, $sPrefix, false);
+    }
   }
   
   public function getClasses(core\argument $settings = null) {
@@ -30,8 +41,10 @@ class Controler extends \Module {
     
     if (!$this->aDefaultClasses || $settings) {
       
-      $this->getArguments()->registerToken(self::CLASSBASE_TOKEN);
-      $this->getArguments()->registerToken(self::DIRECTORY_TOKEN);
+      require_once('core/Reflector.php');
+      
+      $this->getArguments()->registerToken(core\Reflector::CLASSBASE_TOKEN);
+      $this->getArguments()->registerToken(core\Reflector::DIRECTORY_TOKEN);
       
       $classes = $this->getArguments()->get('classes');
       if ($settings) $classes->merge($settings);
@@ -40,7 +53,7 @@ class Controler extends \Module {
         
         if ($class = $classes->get($sKey)) {
           
-          if ($sClassBase = $classes->getToken(self::CLASSBASE_TOKEN)) {
+          if ($sClassBase = $classes->getToken(core\Reflector::CLASSBASE_TOKEN)) {
             
             $class->set('name', path_absolute($class->read('name'), $sClassBase, '\\'));
           }
@@ -55,8 +68,8 @@ class Controler extends \Module {
         }
       }
       
-      $this->getArguments()->unRegisterToken(self::CLASSBASE_TOKEN);
-      $this->getArguments()->unRegisterToken(self::DIRECTORY_TOKEN);
+      $this->getArguments()->unRegisterToken(core\Reflector::CLASSBASE_TOKEN);
+      $this->getArguments()->unRegisterToken(core\Reflector::DIRECTORY_TOKEN);
       
       if (!$settings) $this->aDefaultClasses = $aClasses;
     }
@@ -68,8 +81,13 @@ class Controler extends \Module {
     return $aClasses;
   }
   
+  public function readArgument($sPath, $mDefault = null, $bDebug = false) {
+    
+    return parent::readArgument($sPath, $mDefault, $bDebug);
+  }
+  
   public function addStat($sName, array $aArguments) {
     
-    if ($this->getArgument('stats/enable')) $this->aStats[$sName][] = $aArguments;
+    if ($this->readArgument('stats/enable')) $this->aStats[$sName][] = $aArguments;
   }
 }

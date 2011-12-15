@@ -2,27 +2,40 @@
 <tst:tests xmlns:tst="http://www.sylma.org/storage/fs/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
   <tst:description>Basic manipulation methods</tst:description>
   <tst:test name="Load existing directory with absolute path">
+    if (!$dir = $controler->getDirectory('/sample1')) return false;
     return
-      $controler->getDirectory('/sample1') instanceof \sylma\storage\fs\directory;
+      $dir instanceof \sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1';
   </tst:test>
   <tst:test name="Load non-existing root directory">
     return
       $controler->getDirectory('/nodirectory') === null;
   </tst:test>
   <tst:test name="Load root directory with relative path">
+    $dir = $controler->getDirectory('sample1');
     return
-      $controler->getDirectory('sample1') instanceof sylma\storage\fs\directory;
+      $dir instanceof sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1';
+  </tst:test>
+  <tst:test name="Load root and sub-directory with relative path">
+    if (!$dir = $controler->getDirectory('sample1')) return false;
+    $dir = $dir->getDirectory('sub1');
+    return
+      $dir instanceof sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1/sub1';
   </tst:test>
   <tst:test name="Load sub-directory with absolute path">
+    $dir = $controler->getDirectory('/sample1/sub1');
     return
-      $controler->getDirectory('/sample1/sub1') instanceof sylma\storage\fs\directory
+      $dir instanceof sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1/sub1';
   </tst:test>
   <tst:test name="Load sub-directory with relative path">
     return
       $controler->getDirectory('sample1/sub1') instanceof sylma\storage\fs\directory;
   </tst:test>
   <tst:test name="Load sub-directory with relative path in two steps">
-    $dir = $controler->getDirectory('/sample1');
+    if (!$dir = $controler->getDirectory('/sample1')) return false;
     return
       $dir->getDirectory('sub1') instanceof sylma\storage\fs\directory;
   </tst:test>
@@ -35,12 +48,12 @@
       $controler->getFile('/nofile.txt') === null;
   </tst:test>
   <tst:test name="Read content">
-    $file = $controler->getFile('/sample1/file.txt');
+    if (!$file = $controler->getFile('/sample1/file.txt')) return false;
     return
       $file->read() === 'abcd';
   </tst:test>
   <tst:test name="Load file with .. parent token">
-    $dir = $controler->getDirectory('/sample1/sub1');
+    if (!$dir = $controler->getDirectory('/sample1/sub1')) return false;
     return
       $dir->getFile('../file.txt') instanceof sylma\storage\fs\file;
   </tst:test>

@@ -2,29 +2,44 @@
 
 class Initializer {
 	
-	const NS = 'http://www.sylma.org/core/initializer';
-	
-	public function __construct() {
+  const NS = 'http://www.sylma.org/core/initializer';
+  
+  /**
+   * 1. Load primary libraries
+   */
+  public function __construct() {
 		
     require_once('functions/Text.php');
-    require_once('functions/Arrays.php');
-    require_once('functions/Paths.php');
+    require_once('functions/Array.php');
+    //require_once('functions/Path.php');
+    require_once('functions/old.php');
     require_once('module/old/Namespaced.php');
     require_once('settings/SettingsInterface.php');
     require_once('settings/Arguments.php');
     require_once('settings/Spyc.php');
     require_once('settings/XArguments.php');
-	}
-	
-	public function loadSettings($sServer, $sSylma) {
+  }
+  
+  /**
+   * 2. Load global settings
+   * 
+   * @param type $sServer
+   * @param type $sSylma
+   * @return XArguments 
+   */
+  public function loadSettings($sServer, $sSylma) {
 		
     $settings = new XArguments(substr(SYLMA_RELATIVE_PATH, 1) . $sSylma, Sylma::NS);
     if ($sServer) $settings->mergeFile($sServer);
     
     return $settings;
-	}
-	
-	public function load($sCore) {
+  }
+  
+  /**
+   * 3. Load secondary libraries
+   * @param type $sCore 
+   */
+  public function load($sCore) {
     
     // set error report mode
     if (Sylma::get('debug/enable')) {
@@ -41,7 +56,7 @@ class Initializer {
       error_reporting(0);
     }
     
-    require_once('Controler.php');
+    require_once('old/Controler.php');
     
     libxml_use_internal_errors(false);
     
@@ -54,6 +69,8 @@ class Initializer {
     require_once('modules/logger/LoggerInterface.php');
     require_once('modules/logger/Logger.php');
     
+    \Sylma::getControler('formater');
+    
     //ini_set('session.save_path', 'c:/temp/php');
     //ini_set('session.cookie_lifetime', SESSION_MAX_LIFETIME);
     ini_set('session.gc_maxlifetime', Sylma::get('modules/users/session/lifetime'));
@@ -61,8 +78,11 @@ class Initializer {
     session_start();
     
     if (Sylma::get('db/enable')) $this->loadXDB();
-	}
+  }
   
+  /**
+   * Old load, will be progressively erased
+   */
   protected function loadLibs($sCore) {
     
     set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . MAIN_DIRECTORY); // SYLMA_PATH_SEPARATOR . SYLMA_PATH .'/' . $sCore . 
@@ -73,7 +93,7 @@ class Initializer {
     require_once('core/module/old/Module.php');
     require_once('core/module/old/Extension.php');
     
-    require_once('core/XML_Processor.php');
+    require_once('core/old/XML_Processor.php');
     
     require_once('dom/Controler.php');
     require_once('dom/NodeInterface.php');
@@ -88,12 +108,12 @@ class Initializer {
     
     require_once('dom/Document.php');
     require_once('dom/Element.php');
-    require_once('core/HTML.php');
+    require_once('core/old/HTML.php');
     
     require_once('settings/Options.php');
     
     require_once('core/Redirect.php');
-    require_once('core/Messages.php');
+    require_once('core/old/Messages.php');
     
     require_once('schemas/XML_Schema.php');
     
@@ -103,7 +123,7 @@ class Initializer {
     require_once('action/Action.php');
     
     require_once('modules/xquery/XQuery.php');
-    require_once('core/XSL_Document.php');
+    require_once('core/old/XSL_Document.php');
     
     require_once('user/User.php');
     require_once('user/Cookie.php');
