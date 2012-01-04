@@ -1,13 +1,13 @@
 <?php
 
-namespace sylma\parser\action\php;
-use \sylma\parser\action, \sylma\core;
+namespace sylma\parser\action\php\basic;
+use \sylma\parser\action, \sylma\core, \sylma\dom, \sylma\parser\action\php;
 
 require_once('core/module/Argumented.php');
+require_once(dirname(__dir__) . '/window.php');
 require_once('core/controled.php');
-require_once('core/argumentable.php');
 
-class Window extends core\module\Filed implements core\argumentable, core\controled {
+class Window extends core\module\Filed implements php\window, core\controled {
   
   const NS = 'http://www.sylma.org/parser/action/compiler';
   const ARGUMENTS_PATH = 'classes/php';
@@ -30,14 +30,18 @@ class Window extends core\module\Filed implements core\argumentable, core\contro
   // static reference to class
   private $sylma;
   
+  protected static $varCount = 0;
+  
   public function __construct(core\factory $controler) {
     
     $this->setControler($controler);
     $this->setArguments($controler->getArgument(self::ARGUMENTS_PATH));
+    $this->setNamespace(self::NS);
     
-    $self = $this->create('object', array('action\cached'));
+    $self = $this->loadInstance('\sylma\parser\action\Basic');
     
     $this->self = $this->create('object-var', array($self, 'this'));
+    $this->setScope($this);
     //$this->sylma = $this->create('class-static', array('\Sylma'));
   }
   
@@ -62,8 +66,10 @@ class Window extends core\module\Filed implements core\argumentable, core\contro
   }
   
   public function add($mVal) {
-    
-    $this->aContent[] = $mVal;
+    //dspf($mVal);
+    if (is_array($mVal)) $this->aContent = array_merge($this->aContent, $mVal);
+    else $this->aContent[] = $mVal;
+    //dspf($this->aContent);
   }
   
   public function addControler($sName) {
@@ -79,6 +85,72 @@ class Window extends core\module\Filed implements core\argumentable, core\contro
   public function getSylma() {
     
     return $this->sylma;
+  }
+  
+  public function getVarName() {
+    
+    self::$varCount++;
+    return 'var' . self::$varCount;
+  }
+  
+  public function createCall(php\_object $obj, $sMethod, $mReturn, array $aArguments = array()) {
+    
+    if (is_string($mReturn)) {
+      
+      $return = $this->loadInstance($mReturn);
+    }
+    else {
+      
+      $return = $mReturn;
+    }
+    
+    $result = $this->create('call', array($this, $obj, $sMethod, $return, $aArguments));
+    
+    return $result;
+  }
+  
+  public function loadInstance($sName, $sFile = '') {
+    
+    $result = null;
+    
+    if (substr($sName, 0, 4) == 'php:') {
+      
+      switch(substr($sName, 4)) {
+        
+        case 'string' :
+        case 'array' :
+        case 'boolean' :
+        case 'integer' :
+        default :
+          
+          $this->throwException(txt('Unknown php type %s', $this->getReturn()));
+      }
+    }
+    else {
+      
+      $interface = $this->create('interface', array($this, $sName, $sFile));
+      $result = $this->create('object', array($this, $interface));
+    }
+    
+    return $result;
+  }
+  
+  public function createInsert(core\argumentable $val) {
+    
+    //if ($val instanceof dom\node) $result = $val;
+    $result = $this->create('insert', array($this, $val));
+    
+    return $result;
+  }
+  
+  public function setScope(php\scope $scope) {
+    
+    $this->scope = $scope;
+  }
+  
+  public function addScope($val) {
+    
+    $this->scope->add($val);
   }
   
   public function parseArgument($mVar) {
@@ -113,12 +185,13 @@ class Window extends core\module\Filed implements core\argumentable, core\contro
       break;
       
       case 'object' :
-      case 'resource' :
         
-        $arg = $mVar;
+        if ($mVar instanceof php\_object || $mVar instanceof php\scalar || $mVar instanceof dom\node) $arg = $mVar;
+        else $arg = $this->create('object', array($this, $mVar));
         
       break;
       
+      case 'resource' :
       case 'NULL' :
     }
     
@@ -148,6 +221,7 @@ class Window extends core\module\Filed implements core\argumentable, core\contro
     ), self::NS);
     
     $result->get('window')->mergeArray($this->aContent);
+    
     return $result;
   }
 }

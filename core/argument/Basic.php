@@ -475,11 +475,6 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     \Sylma::log($this->getNamespace(), $sMessage, $sStatut);
   }
   
-  public function dsp() {
-    
-    return self::normalizeArray($this->aArray);
-  }
-  
   public function asArray() {
     
     return static::normalizeArray($this->query());

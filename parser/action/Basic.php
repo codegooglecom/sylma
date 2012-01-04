@@ -4,61 +4,81 @@ namespace sylma\parser\action;
 use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
 
 require_once('parser/action.php');
-require_once('core/module/Controled.php');
+require_once('core/controled.php');
+require_once('dom2/domable.php');
+require_once('core/argumentable.php');
+require_once('core/module/Domed.php');
 
-abstract class Basic extends core\module\Controled {
+abstract class Basic extends core\module\Domed implements core\controled, dom\domable {
   
-  const FILE_CONTROLER = 'fs';
-  private $sName;
-  
-  public function setName($sName) {
+  public function __construct(fs\directory $dir, core\factory $controler) {
     
-    $this->sName = $sName;
+    $this->setControler($controler);
+    $this->setDirectory($dir);
+    $this->setNamespace(parser\action::NS);
   }
   
-  public function getName($sName) {
+  protected function loadTemplate(array $aArguments) {
     
-    return $this->sName;
+    $controler = $this->getControler();
+    $file = $controler->getFile();
+    
+    $sTemplate = $file->getParent() . '/#tmp/' . $file->getName() . '.tpl.php';
+    $sResult = $this->includeTemplate($sTemplate, $aArguments);
+    
+    $doc = $controler->create('document');
+    $doc->loadText($sResult, false);
+    
+    return $doc;
   }
   
-  /**
-   *
-   * @param string $sPath An absolute path to the file
-   * @param integer $iMode R/W/E Access mode
-   * @param string $sOutput Type of content expected
-   *   - 'xml'
-   *   - 'txt'
-   * @return dom\handler|string The content of the file 
-   */
-  protected function parseFile($sPath, $iMode = \Sylma::MODE_READ, $sOutput = 'xml') {
+  protected function includeTemplate($sTemplate, array $aArguments) {
+    
+    ob_start();
+    
+    include($sTemplate);
+    $sResult = ob_get_contents();
+    
+    ob_end_clean();
+    
+    return $sResult;
+  }
+  
+  protected function loadArgumentable(core\argumentable $val) {
+    
+    $arg = $val->asArgument();
+    
+    return $this->loadDomable($arg);
+  }
+  
+  protected function loadDomable(dom\domable $val) {
+    
+    $dom = $val->asDOM();
+    
+    return $dom;
+  }
+  
+  public function asDOM() {
     
     $mResult = null;
+    $mAction = $this->parseAction();
     
-    $fs = \Sylma::getControler(self::FILE_CONTROLER);
-    
-    if ($file = $fs->getFile($path, $this->getFile()->getParent())) {
+    if (is_array($mAction)) {
       
-      switch ($sOutput) {
-        
-        case 'txt' :
-          
-          $mResult = $file->read();
-          
-        break;
-        
-        case 'xml' :
-          
-          $mResult = $file->getDocument($iMode);
-          
-        break;
-        
-        default :
-          
-          $this->getControler()->throwException(txt('Unknown output file content type : %s', $sOutput));
-      }
+      $mResult = $this->getControler()->create('document');
+      $mResult->add($mAction);
+    }
+    else if ($mAction instanceof dom\node) {
+      
+      dspf($this->getControler()->getArguments()->get('classes/document'));
+      $mResult = $this->getControler()->create('document');
+      dspf($mResult);
+    }
+    else if ($mAction instanceof dom\domable) {
+      
+      $mResult = $mAction->asDOM();
     }
     
     return $mResult;
-    
   }
 }

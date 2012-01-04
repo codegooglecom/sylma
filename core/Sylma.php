@@ -99,6 +99,15 @@ class Sylma {
         
         require_once('modules/formater/Controler.php');
         $controler = new modules\formater\Controler;
+      
+      break;
+      
+      case 'factory' :
+        
+        require_once('core/Reflector.php');
+        $controler = new core\Reflector;
+        
+      break;
     }
     
     if ($controler) self::setControler($sName, $controler);

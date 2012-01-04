@@ -23,7 +23,7 @@ class Reflector {
   private $aClasses = array();
   private $settings;
   
-  public function __construct(argument $settings) {
+  public function setSettings(core\argument $settings) {
     
     $this->settings = $settings;
   }
@@ -43,44 +43,49 @@ class Reflector {
    */
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
     
-    $result = null;
-    
-    if (array_key_exists($sName, $this->aClasses)) {
-      
-      $class = $this->aClasses[$sName];
-    }
-    else {
-      
-      if (!$this->getSettings()) {
-        
-        $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
-      }
-      
-      // set class name
-      if (!$class = $this->loadClass($sName, $this->getSettings())) {
-        
-        $this->throwException(txt('Class %s cannot be load', $sName));
-      }
-      
-      if ($sClassBase = $this->getSettings()->getToken(self::CLASSBASE_TOKEN)) {
-        
-        $class->set('name', core\functions\path\toAbsolute($class->read('name'), $sClassBase, '\\'));
-      }
-      
-      // set file name
-      if ($sInlineDirectory = $this->getSettings()->getLastDirectory()) $sDirectory = $sInlineDirectory;
-      
-      if ($sFile = $class->read('file', false)) {
-        
-        $class->set('file', path_absolute($sFile, $sDirectory));
-      }
-      
-      $this->aClasses[$sName] = $class;
-    }
+    $class = $this->findClass($sName, $sDirectory);
     
     return $this->createObject($class, $aArguments);
   }
   
+  public function findClass($sName, $sDirectory = '') {
+    
+    $result = null;
+    
+    if (!$this->getSettings()) {
+      
+      $this->throwException(txt('Cannot build object @class %s. No argument defined', $sName));
+    }
+    
+    // set class name
+    if (!$class = $this->loadClass($sName, $this->getSettings())) {
+      
+      $this->throwException(txt('Class %s cannot be load', $sName));
+    }
+    
+    if ($sClassBase = $this->getSettings()->getToken(self::CLASSBASE_TOKEN)) {
+      
+      $class->set('name', core\functions\path\toAbsolute($class->read('name'), $sClassBase, '\\'));
+    }
+    
+    // set file name
+    if ($sInlineDirectory = $this->getSettings()->getLastDirectory()) $sDirectory = $sInlineDirectory;
+    
+    if ($sFile = $class->read('file', false)) {
+      
+      $class->set('file', path_absolute($sFile, $sDirectory));
+    }
+    
+    return $class;
+  }
+  
+  /**
+   * Look through tree argument for classe's key
+   * 
+   * @param type $sName
+   * @param argument $args
+   * @return core\argument 
+   */
   protected function loadClass($sName, argument $args) {
     
     $aPath = explode('/', $sName);
@@ -93,7 +98,7 @@ class Reflector {
     
     if (!$class = $args->get($sPath)) {
       
-      $this->throwException(txt('Cannot build object @class %s. No settings defined for these class', $sName));
+      $this->throwException(txt('Cannot build object @class %s. No argument defined for these class', $sName));
     }
     
     $args->unRegisterToken(self::DIRECTORY_TOKEN);
@@ -103,7 +108,7 @@ class Reflector {
   }
   
   /**
-   * Create an object from a module array using @method buildClass()
+   * Create an object from an argument using @method buildClass()
    * 
    * @param argument $class The argument object containing the classes infos
    *  Ex : array(classes' => array('keyname' => array('name' => 'classname', 'file' => 'filename')))
@@ -129,11 +134,11 @@ class Reflector {
   }
   
   /**
-   * Build an object from the class name with Reflection
-   * @param string $sClass the class name
-   * @param string $sFile the file where the class is declared to include
-   * @param array $aArgument the arguments to use at the __construct call
-   * @return null|object the created object
+   * Include classe's file
+   * 
+   * @param string $sClass
+   * @param string $sFile
+   * @return bool 
    */
   public static function includeClass($sClass, $sFile = '') {
     
@@ -157,7 +162,7 @@ class Reflector {
       }
     }
     
-    if (!class_exists($sClass)) {
+    if (!interface_exists($sClass) && !class_exists($sClass)) {
       
       \Sylma::throwException(txt('Cannot build object. @class %s doesn\'t exists !', $sClass));
     }
@@ -165,6 +170,13 @@ class Reflector {
     return true;
   }
   
+  /**
+   * Build an object from the class name with Reflection
+   * 
+   * @param string $sClass the class name
+   * @param array $aArgument the arguments to use at the __construct call
+   * @return null|object the created object
+   */
   public function buildClass($sClass, array $aArguments = array()) {
     
     $result = null;

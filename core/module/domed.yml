@@ -8,3 +8,6 @@ classes :
     classes :
       document :
         name : \sylma\dom\basic\Handler
+  document :
+    name : \sylma\dom\basic\Handler
+    file : \sylma\dom2\basic\Handler.php

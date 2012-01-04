@@ -103,6 +103,11 @@ class File extends Resource implements fs\file {
     return (bool) $this->oDocument;
   }
   
+  public function getSimpleName() {
+    
+    return substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1);
+  }
+  
   /**
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
@@ -170,7 +175,7 @@ class File extends Resource implements fs\file {
         'full-path' => $this->getFullPath(),
         'name' => $this->getName(),
         'simple-name' => $this->getSimpleName(),
-        'display-name' => $this->getDisplayName(),
+        //'display-name' => $this->getDisplayName(),
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),

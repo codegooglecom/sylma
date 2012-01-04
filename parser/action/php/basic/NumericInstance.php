@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\parser\action\php;
+namespace sylma\parser\action\php\basic;
 use \sylma\core;
 
 require_once('core/argumentable.php');

@@ -218,7 +218,15 @@ class Handler extends dom\basic\Handler {
     if ($bXML) {
       
       $mResult = $this->getProcessor()->transformToDoc($doc->getDocument());
-      $mResult = $dom->create('handler', array($mResult));
+      
+      if ($mResult && $mResult->documentElement) {
+        
+        $mResult = $dom->create('handler', array($mResult));
+      }
+      else {
+        
+        $mResult = null;
+      }
     }
     else {
       

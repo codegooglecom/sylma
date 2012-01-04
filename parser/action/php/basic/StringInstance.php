@@ -1,12 +1,14 @@
 <?php
 
-namespace sylma\parser\action\php;
-use \sylma\core;
+namespace sylma\parser\action\php\basic;
+use \sylma\core, \sylma\parser\action\php;
 
 require_once('core/argumentable.php');
+require_once(dirname(__dir__) . '/scalar.php');
+require_once(dirname(__dir__) . '/_instance.php');
 require_once('core/module/Argumented.php');
 
-class StringInstance extends core\module\Argumented implements core\argumentable {
+class StringInstance extends core\module\Argumented implements core\argumentable, php\scalar, php\_instance {
   
   private $sValue = '';
   

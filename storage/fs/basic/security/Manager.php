@@ -55,7 +55,9 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
     
     if (\Sylma::getControler(self::USER_CONTROLER, false, false)) {
       
-      if ($file = $this->directory->getFreeFile(self::FILENAME)) {
+      require_once(dirname(__dir__) . '/Resource.php');
+      
+      if ($file = $this->directory->getFreeFile(self::FILENAME, fs\basic\Resource::DEBUG_NOT)) {
         
         if ($this->document = $file->getFreeDocument()) {
           

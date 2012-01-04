@@ -11,29 +11,49 @@ require_once('parser\action\Basic.php');
 
 class ActionTest extends Basic {
   
-  public function __construct() {
-    
-  }
-  
   protected function parseAction() {
     
-    <xsl:for-each select="*">
-      <xsl:apply-templates select="."/>
-      <xsl:text>;</xsl:text>
-    </xsl:for-each>
+    $mResult = null;
+    $aArguments = array();
     
-  }
-  
-  public function asArgument() {
+    <xsl:apply-templates select="*"/>
     
-    $result = $this->parseAction();
+    <xsl:choose>
+      
+      <xsl:when test="@use-template">
+    $mResult = $this->loadTemplate($aArguments);
+      </xsl:when>
+      
+      <xsl:otherwise>
+    $mResult = $aArguments;
+      </xsl:otherwise>
+      
+    </xsl:choose>
     
-    if ($result) $result = $result->asArgument();
-    
-    return $result;
+    return $mResult;
   }
 }
 
+  </xsl:template>
+  
+  <xsl:template match="php:assign">
+    <xsl:call-template name="php:assign">
+      <xsl:with-param name="variable" select="php:variable/*"/>
+      <xsl:with-param name="value" select="php:value/*"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template name="php:assign">
+    <xsl:param name="variable"/>
+    <xsl:param name="value"/>
+    <xsl:apply-templates select="$variable"/> = <xsl:apply-templates select="$value"/>;
+  </xsl:template>
+  
+  <xsl:template match="php:insert">
+    <xsl:text>$aArguments[</xsl:text>
+    <xsl:value-of select="@key"/>
+    <xsl:text>] = </xsl:text>
+    <xsl:apply-templates/>;
   </xsl:template>
   
   <xsl:template match="php:call">
@@ -50,7 +70,8 @@ class ActionTest extends Basic {
   </xsl:template>
   
   <xsl:template match="php:var">
-    $<xsl:value-of select="@name"/>
+    <xsl:text>$</xsl:text>
+    <xsl:value-of select="@name"/>
   </xsl:template>
   
   <xsl:template match="php:argument">

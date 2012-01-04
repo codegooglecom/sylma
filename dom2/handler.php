@@ -14,4 +14,5 @@ interface handler extends dom\document, dom\complex {
   function getFile();
   
   function createElement($sName, $mContent = '', array $aAttributes = array(), $sUri = null);
+  function loadText($sContent, $bLoad = false);
 }

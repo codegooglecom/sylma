@@ -732,9 +732,9 @@ class Controler {
         
         if (0 && $mArgument instanceof \sylma\core\argumentable) {
           
-          $el = $formater->asHTML($mArgument);
+          //$el = $formater->asHTML($mArgument);
           
-          $aValue = array($el, 'blue');
+          $aValue = array('argument', 'blue');
         }
         else if (($mArgument instanceof XML_Document) && !($mArgument instanceof XML_Action)) {
           
@@ -836,8 +836,9 @@ class Controler {
         }
         else if ($mArgument instanceof \sylma\core\argument) {
           
-          $aResult = $mArgument->dsp();
+          $aResult = $mArgument->query();
           
+          $aValue = array(array('Argument : ', self::formatResource($aResult)), 'red');
           $aValue = array(array('Argument : ', self::formatResource($aResult)), 'red');
         }
         else {

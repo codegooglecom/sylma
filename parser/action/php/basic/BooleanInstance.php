@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\parser\action\php;
+namespace sylma\parser\action\php\basic;
 
 class BooleanInstance {
   

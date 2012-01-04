@@ -272,27 +272,15 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
       
       $mResult = $this->insertChild($value, $next);
     }
-    else if ($value instanceof dom\parsable) {
+    else if ($value instanceof dom\domable) {
       
-      try {
-        
-        $mResult = $value->parse();
-        
-        if ($mResult != $value) {
-          
-          $this->throwException(t('Parsable object should not return himself'));
-        }
-        
-        $mResult = $this->insert($mResult, $next);
-      }
-      catch (core\exception $e) {
-        
-        // nothing
-      }
-      catch (\Exception $e) {
-        
-        Sylma::loadException($e);
-      }
+      $node = $value->asDOM();
+      $mResult = $this->insert($node, $next);
+    }
+    else if ($value instanceof core\argumentable) {
+      
+      $arg = $value->asArgument();
+      $mResult = $this->insertArgument($arg, $next);
     }
     else if ($value instanceof \DOMDocument || $value instanceof \DOMElement) {
       
@@ -321,6 +309,11 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
     else $mValue = $mResult;
     
     return $mResult;
+  }
+  
+  protected function insertArgument(core\argument $arg, dom\node $next = null) {
+    
+    return $this->insert($arg, $next);
   }
   
   public function insert($mValue, dom\node $next = null) {
@@ -422,6 +415,45 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
     
     // return $this->lastChild;
   // }
+  
+  /**
+   * Remove the actual element
+   * @return mixed Don't know what :( TODO
+   */
+  public function remove() {
+    
+    $mResult = null;
+    
+    if ($this->parentNode) $mResult = $this->parentNode->removeChild($this);
+    
+    return $mResult;
+  }
+  
+  /**
+   * Replace the actual element with the one given in argument
+   * @param XML_Element $oChild The element wish will replace the actual one
+   * @return XML_Element The element added to content
+   */
+  public function replace($mContent) {
+    
+    $result = null;
+    
+    if ($mContent !== $this) {
+      
+      if ($this->isRoot()) {
+        
+        $result = $this->getDocument()->set($mContent);
+        
+      } else {
+        
+        $result = $this->getParent()->insert($mContent, $this);
+        $this->remove();
+      }
+    }
+    
+    return $result;
+  }
+
   public function getFirst() {
     
     return $this->firstChild;

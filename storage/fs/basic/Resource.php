@@ -9,6 +9,7 @@ abstract class Resource implements fs\resource {
   
   const NS = 'http://www.sylma.org/storage/fs/basic/resource';
   
+  const DEBUG_NOT = 0;
   /**
    * Throw exception if a file doesn't exist
    */
@@ -198,7 +199,7 @@ abstract class Resource implements fs\resource {
   protected function throwException($sMessage) {
     
     $aPath = array(
-      '@namespace ' . self::NS,
+      //'@namespace ' . self::NS,
       '@resource ' . (string) $this,
     );
     

@@ -2,7 +2,6 @@
 
 namespace sylma\parser\action\php;
 
-interface ObjectInterface {
-  
-  
+interface _object {
+
 }

@@ -30,6 +30,11 @@ class Controler extends core\module\Argumented {
     return parent::create($sName, $aArguments, $sDirectory);
   }
   
+  public function createArgument(array $aArguments, $sNamespace = '') {
+    
+    return parent::createArgument($aArguments, $sNamespace);
+  }
+  
   public function setMode($sName) {
     
     $this->sMode = $sName;
@@ -72,14 +77,19 @@ class Controler extends core\module\Argumented {
     }
   }
   
-  public function getFile($sPath, $mSource = null, $bDebug = false) {
+  public function getFile($sPath, $mSource = null, $bDebug = true) {
     
     $sPath = path\toAbsolute($sPath, $mSource);
     
     $aPath = explode('/', $sPath);
     array_shift($aPath);
     
-    return $this->getDirectory()->getDistantFile($aPath, $bDebug);
+    require_once('basic/Resource.php');
+    
+    $iDebug = 0;
+    if ($bDebug) $iDebug = basic\Resource::DEBUG_LOG;
+    
+    return $this->getDirectory()->getDistantFile($aPath, $iDebug);
   }
   
   protected function getUnsafes() {

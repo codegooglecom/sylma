@@ -35,6 +35,8 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
   
   private $fragment;
   
+  private $sContent = '';
+  
   /**
    * Namespaces linked to this document also used by nodes
    */
@@ -48,6 +50,7 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
   private $iMode = null;
   
   private $bFragment;
+  
   
   public function __construct($mContent = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
     
@@ -84,7 +87,9 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
   
   public function getRoot() {
     
-    return $this->document->getRoot();
+    $container = $this->getContainer();
+    
+    return $this->getContainer()->getRoot();
   }
   
   public function getControler() {
@@ -125,6 +130,16 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
     $this->document = $doc;
   }
   
+  protected function getContent() {
+    
+    return $this->sContent;
+  }
+  
+  protected function setContent($sContent) {
+    
+    $this->sContent = $sContent;
+  }
+  
   private function setMode($iMode) {
     
     $aModes = array(\Sylma::MODE_EXECUTE, \Sylma::MODE_WRITE, \Sylma::MODE_READ);
@@ -144,8 +159,9 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
     if ($sValue{0} == '/') {
       
       $fs = \Sylma::getControler('fs');
+      $file = $fs->getFile($sValue);
       
-      $this->setFile($fs->getFile($sValue));
+      $this->setFile($file);
       $bResult = $this->loadFile();
     }
     else if ($sValue{0} == '<') {
@@ -259,9 +275,19 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
     return $this->parseContent($this->getFile()->read());
   }
   
-  protected function loadText($sContent) {
+  public function loadText($sContent, $bLoad = true) {
     
-    return $this->parseContent($sContent);
+    $bResult = false;
+    $this->setContent($sContent);
+    
+    if ($bLoad) $bResult = $this->loadContent();
+    
+    return $bResult;
+  }
+  
+  protected function loadContent() {
+    
+    return $this->parseContent($this->getContent());
   }
   
   protected function parseContent($sContent) {
@@ -544,9 +570,21 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
     ), $dom->getNamespace());
   }
   
+  public function asString(dom\node $el = null) {
+    
+    if (!$sResult = $this->getContent()) {
+
+      $doc = $this->getContainer();
+      
+      if ($el) $sResult = $doc->saveXML($el);
+      else $sResult = $doc->saveXML();
+    }
+    
+    return $sResult;
+  }
   // public function add()
   // public function set()
-  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+  public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
     
     $mSender = (array) $mSender;
     
@@ -559,8 +597,17 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
   
   public function __toString() {
     
-    $doc = $this->getContainer();
+    $sResult = '';
     
-    return $doc->saveXML();
+    try {
+      
+      $sResult = $this->asString();
+    }
+    catch (\Exception $e) {
+      
+      \Sylma::log($this->asToken(), $e->getMessage());
+    }
+    
+    return $sResult;
   }
 }

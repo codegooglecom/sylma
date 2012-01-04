@@ -27,6 +27,8 @@ class Handler extends core\module\Domed implements parser\action {
     $this->setControler(\Sylma::getControler(self::CONTROLER_ALIAS));
     $this->setDirectory(__file__);
     $this->loadDefaultArguments();
+    
+    $this->setNamespace($this->getControler()->getNamespace());
   }
   
   public function setControler(core\factory $controler) {
@@ -44,6 +46,13 @@ class Handler extends core\module\Domed implements parser\action {
     $this->file = $file;
   }
   
+  /**
+   * Allow get of object's file or object's directory's files
+   * 
+   * @param string $sPath
+   * @param boolean $bDebug
+   * @return fs\file|null
+   */
   protected function getFile($sPath = '', $bDebug = true) {
     
     if ($sPath) {
@@ -63,12 +72,9 @@ class Handler extends core\module\Domed implements parser\action {
     require_once((string) $file);
     
     $result = null;
-    $action = new ActionTest;
-    $action->setControler($this);
+    $action = new ActionTest($this->getFile()->getParent(), $this);
     
-    $arg = $action->asArgument();
-    
-    if ($arg) $result = $arg->asDOM();
+    $result = $action->asDOM();
     
     return $result;
   }
@@ -78,13 +84,44 @@ class Handler extends core\module\Domed implements parser\action {
     $parser = $this->getControler();
     $doc = $this->getFile()->getDocument();
     
-    $action = $parser->create('dom', array($parser, $doc));
+    $action = $parser->create('dom', array($parser, $doc, $this->getFile()->getParent()));
     
-    $method = $action->asDOM();
+    return $action->asDOM();
+  }
+  
+  protected function parseDOM() {
     
-    $template = $this->getTemplate('php/source.xsl');
+    $file = $this->getFile();
+    $fs = $file->getControler();
     
-    return $template->parseDocument($method, false);
+    $sClass = $file->getName() . '.php';
+    $sTemplate = $file->getName() . '.tpl.php';
+    
+    $fs->setMode('editable');
+    
+    $dir = $fs->getDirectory((string) $file->getParent());
+    $tmpDir = $dir->addDirectory('#tmp');
+    
+    $method = $this->loadDOM();
+    
+    //dspm((string) $method);
+    $class = $tmpDir->getFile($sClass, fs\basic\Resource::DEBUG_EXIST);
+    $template = $this->getTemplate('php/class.xsl');
+    
+    $sResult = $template->parseDocument($method, false);
+    $class->saveText($sResult);
+    
+    $tpl = $tmpDir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
+    $template = $this->getTemplate('php/template.xsl');
+    
+    if ($sResult = $template->parseDocument($method, false)) {
+      
+      $tpl->saveText(substr($sResult, 22));
+    }
+    
+    $fs->setMode('');
+    
+    return $class;
   }
   
   public function asDOM() {
@@ -102,23 +139,11 @@ class Handler extends core\module\Domed implements parser\action {
     
     if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || self::DEBUG_UPDATE) {
       
-      $sResult = $this->loadDOM();
-      
-      $fs = $file->getControler();
-      
-      $fs->setMode('editable');
-      
-      $dir = $fs->getDirectory((string) $file->getParent());
-      $tmpDir = $dir->addDirectory('#tmp');
-      $tmpFile = $tmpDir->getFile($sName, fs\basic\Resource::DEBUG_EXIST);
-      
-      $tmpFile->saveText($sResult);
-      
-      $fs->setMode('');
+      $tmpFile = $this->parseDOM();
     }
     
     $result = $this->runCache($tmpFile);
-    
+    dspm((string) $result);
     return $result;
   }
 }

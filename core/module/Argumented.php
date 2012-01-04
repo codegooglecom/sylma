@@ -4,18 +4,23 @@ namespace sylma\core\module;
 use \sylma\core;
 
 require_once('core/argument/Domed.php');
-require_once('Exceptionable.php');
+require_once('Controled.php');
 require_once('core/factory.php');
 
 require_once('core/Reflector.php');
 
-abstract class Argumented extends Exceptionable implements core\factory {
+abstract class Argumented extends Controled implements core\factory {
+  
+  const FACTORY_CONTROLER = 'factory';
   
   /**
    * Class manager
    */
   private $reflector;
+  private $aClasses = array();
+  
   protected static $argumentClass = 'sylma\core\argument\Domed';
+  
   /**
    * Argument object linked to this module, contains various parameters for the module
    */
@@ -23,13 +28,26 @@ abstract class Argumented extends Exceptionable implements core\factory {
   
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
     
-    if (!$this->getArguments()) {
+    $factory = \Sylma::getControler('factory');
+    
+    if (array_key_exists($sName, $this->aClasses)) {
       
-      $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
+      $class = $this->aClasses[$sName];
+    }
+    else {
+      
+      if (!$this->getArguments()) {
+        
+        $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
+      }
+      
+      $factory->setSettings($this->getArguments());
+      $class = $factory->findClass($sName, $aArguments, $sDirectory);
+      
+      $this->aClasses[$sName] = $class;
     }
     
-    if (!$this->reflector) $this->reflector = new core\Reflector($this->getArguments());
-    $result = $this->reflector->create($sName, $aArguments, $sDirectory);
+    $result = $factory->createObject($class, $aArguments);
     
     return $result;
   }

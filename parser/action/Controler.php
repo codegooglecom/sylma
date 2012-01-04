@@ -13,12 +13,17 @@ class Controler extends core\module\Filed {
     //$this->loadDefaultArguments();
     
     $this->setDirectory(__file__);
-    $this->setArguments('settings.yml');
+    $this->setArguments('controler.yml');
     $this->setNamespace(parser\action::NS);
   }
   
   public function getAction($sPath) {
     
     
+  }
+  
+  public function getDirectory() {
+    
+    return parent::getDirectory();
   }
 }

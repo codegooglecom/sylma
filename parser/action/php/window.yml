@@ -1,5 +1,5 @@
 classes :
-  @sylma-classbase : \sylma\parser\action\php
+  @sylma-classbase : \sylma\parser\action\php\basic
   string :
     name : StringInstance
   array :
@@ -14,4 +14,10 @@ classes :
     name : ObjectVar
   template :
     name : Template
+  assign :
+    name : Assign
+  insert :
+    name : Insert
+  interface :
+    name : _Interface
   

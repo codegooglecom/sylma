@@ -9,7 +9,7 @@ interface domed extends core\controled {
   
   const NS = 'http://www.sylma.org/parser/action';
   
-  function __construct(core\factory $controler, dom\handler $doc);
+  function __construct(core\factory $controler, dom\handler $doc, fs\directory $dir);
   function parseElement(dom\element $el);
 }
 

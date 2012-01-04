@@ -219,7 +219,7 @@ class Directory extends Resource implements fs\directory {
     return $sClass;
   }
   
-  public function getFreeFile($sName, $iDebug = 0) {
+  public function getFreeFile($sName, $iDebug = self::DEBUG_LOG) {
     
     $result = null;
     $sAlias = $this->getAlias(self::FILE_ALIAS);
@@ -251,6 +251,11 @@ class Directory extends Resource implements fs\directory {
     if ($file->doExist() || $iDebug & self::DEBUG_EXIST) {
       
       $result = $file;
+    }
+    
+    if (!$file->doExist() && $iDebug & self::DEBUG_LOG) {
+      
+      $this->throwException(t('File does not exists'));
     }
     
     if (!array_key_exists($sClass, $this->aFiles)) $this->aFiles[$sClass] = array();
@@ -366,25 +371,32 @@ class Directory extends Resource implements fs\directory {
     return $result;
   }
   
-  public function getDistantFile(array $aPath, $bDebug = false) {
+  public function getDistantFile(array $aPath, $iDebug = self::DEBUG_LOG) {
+    
+    $result = null;
     
     if ($aPath) {
       
       if (count($aPath) == 1) {
         
-        return $this->getFile($aPath[0], $bDebug);
+        return $this->getFile($aPath[0], $iDebug);
         
       } else {
         
         $sName = array_shift($aPath);
         
-        $oSubDirectory = $this->getDirectory($sName);
+        $dir = $this->getDirectory($sName);
         
-        if ($oSubDirectory) return $oSubDirectory->getDistantFile($aPath, $bDebug);
+        if (!$dir && $iDebug & self::DEBUG_LOG) {
+          
+          $this->throwException(txt('Directory %s does not exists', $sName));
+        }
+        
+        $result = $dir->getDistantFile($aPath, $iDebug);
       }
     }
     
-    return null;
+    return $result;
   }
   
   public function getDistantDirectory($mPath) {

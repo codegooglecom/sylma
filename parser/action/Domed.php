@@ -3,13 +3,14 @@
 namespace sylma\parser\action;
 use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
 
-require_once('core/module/Controled.php');
+require_once('Reflector.php');
 require_once('parser/domed.php');
 
-class Domed extends core\module\Controled implements parser\domed {
+class Domed extends Reflector implements parser\domed {
   
   const PREFIX = 'le';
   const CONTROLER = 'parser/action';
+  const FORMATER_ALIAS = 'formater';
   
   /**
    * See @method setFile()
@@ -18,27 +19,19 @@ class Domed extends core\module\Controled implements parser\domed {
   private $document;
   private $aArguments = array();
   
+  private $bTemplate = false;
   /**
    * Sub parsers
    * @var array
    */
   private $aParsers = array();
   
-  private $window;
-  
-  public function __construct(core\factory $controler, dom\handler $doc) {
+  public function __construct(core\factory $controler, dom\handler $doc, fs\directory $dir) {
     
     $this->setDocument($doc);
-    
     $this->setControler($controler);
-    //$this->file = $file;
     $this->setNamespace(self::NS, self::PREFIX);
-    
-    //$this->setDirectory(__file__);
-    
-    //$this->setArguments()
-    //$this->loadDefaultArguments();
-    //dspf($this->getArguments());
+    $this->setDirectory($dir);
   }
   
   protected function setDocument(dom\handler $doc) {
@@ -61,21 +54,6 @@ class Domed extends core\module\Controled implements parser\domed {
     return $this->aArguments;
   }
   
-  public function setWindow(php\Window $window) {
-    
-    $this->window = $window;
-  }
-  
-  public function getWindow() {
-    
-    if (!$this->window) {
-      
-      $this->throwException(t('No window defined'));
-    }
-    
-    return $this->window;
-  }
-  
   private function getParser($sUri) {
     
     return array_key_exists($sUri, $this->aParsers) ? $this->aParsers[$sUri] : null;
@@ -96,14 +74,14 @@ class Domed extends core\module\Controled implements parser\domed {
   
   protected function parseSettings(dom\element $settings) {
     
-    foreach ($settings->query() as $el) {
+    foreach ($settings->getChildren() as $el) {
       
       if ($el->getNamespace() == $this->getNamespace()) {
         
         switch ($el->getName()) {
           
           case 'argument' : break;
-          case 'name' : $this->setName($el->read());
+          case 'name' : $this->setName($el->read()); break;
           
           default : $this->parseElement($el);
         }
@@ -134,12 +112,10 @@ class Domed extends core\module\Controled implements parser\domed {
       
       $aArguments = $this->extractArguments($settings);
       $this->parseSettings($settings);
+      $settings->remove();
     }
     
-    $mResult = $this->parseElement($doc->getRoot());
-    
-    if (!is_array($mResult)) $aResult = array($mResult);
-    else $aResult = $mResult;
+    $aResult = $this->parseChildren($doc);
     
     return $aResult;
   }
@@ -174,24 +150,42 @@ class Domed extends core\module\Controled implements parser\domed {
     return $mResult;
   }
   
+  /**
+   *
+   * @param dom\element $el
+   * @return type core\argumentable|array|null
+   */
   public function parseElement(dom\element $el) {
     
     $sNamespace = $el->getNamespace();
-    $result = null;
+    $mResult = null;
     
     if ($sNamespace == $this->getNamespace()) {
       
-      $result = $this->parseElementSelf($el);
+      $mResult = $this->parseElementSelf($el);
     }
     else {
       
-      $result = $this->parseElementForeign($el);
+      $mResult = $this->parseElementForeign($el);
     }
     
-    return $result;
+    return $mResult;
   }
   
+  protected function useTemplate($bValue = null) {
+    
+    if (!is_null($bValue)) $this->bTemplate = $bValue;
+    
+    return $this->bTemplate;
+  }
+  /**
+   *
+   * @param dom\element $el
+   * @return dom\node|array|null
+   */
   protected function parseElementForeign(dom\element $el) {
+    
+    $mResult = null;
     
     if ($parser = $this->getParser($el->getNamespace())) {
       
@@ -199,25 +193,72 @@ class Domed extends core\module\Controled implements parser\domed {
     }
     else {
       
-      $mResult = $el;
+      $this->useTemplate(true);
+      
+      $mResult = $this->getControler()->create('document');
+      $mResult->addElement($el->getName(), null, array(), $el->getNamespace());
+      
+      $mResult->add($this->parseChildren($el));
+      
+      $mResult = $mResult;
     }
     
     return $mResult;
   }
   
+  /**
+   *
+   * @param dom\element $el
+   * @return array
+   */
+  protected function parseChildren(dom\complex $el) {
+    
+    $aResult = array();
+    
+    foreach ($el->getChildren() as $child) {
+      
+      if ($mResult = $this->parseElement($child)) {
+        
+        if ($mResult instanceof dom\node) $mResult = $mResult;
+        else $mResult = $this->getWindow()->createInsert($mResult);
+        
+        $aResult[] = $mResult;
+      }
+    }
+    
+    return $aResult;
+  }
+  
+  /**
+   *
+   * @param dom\element $el
+   * @return core\argumentable|array|null
+   */
   protected function parseElementSelf(dom\element $el) {
     
-    $result = null;
+    $mResult = null;
     
     switch ($el->getName()) {
       
-      case 'action' :
-        
-        $result = $this->parseElement($el->getFirst());
-        
+      case 'action' : $mResult = $this->reflectAction($el); break;
+    
       case 'call' :
         
+        $this->throwException(txt('Cannot use %s here', $el->asToken()));
         
+      case 'directory' :
+        
+        $call = $this->reflectDirectory($el);
+        
+        if ($el->hasChildren()) {
+          
+          $var = $call->getVar();
+          $mResult = $this->runElement($el, $var);
+        }
+        else {
+          
+          $mResult = $call;
+        }
         
       break;
       
@@ -232,7 +273,6 @@ class Domed extends core\module\Controled implements parser\domed {
       case 'function' :
       case 'interface' :
       break;
-      case 'action' :
       case 'xquery' :
       case 'recall' :
       case 'namespace' :
@@ -242,13 +282,13 @@ class Domed extends core\module\Controled implements parser\domed {
       case 'controler' :
         
         $sName = $el->getAttribute('name');
-        $result = $window->setControler($sName);
+        $mResult = $window->setControler($sName);
         
       break;
       
       case 'redirect' :
         
-        $result = $window->create('call', array($window, $window->getSelf(), 'getRedirect'));
+        $mResult = $window->createCall($window->getSelf(), 'getRedirect', 'core\redirect');
         
       break;
       
@@ -267,84 +307,70 @@ class Domed extends core\module\Controled implements parser\domed {
         
         //if ($el->hasChildren())
         
-        $result = $this->reflectDocument($el);
+        $mResult = $this->reflectDocument($el);
         
+      break;
+      
       case 'file' : 
         
-        $result = $this->reflectFile($el);
+        $mResult = $this->reflectFile($el);
         
       break;
         
       case 'template' :
     }
     
-    return $result;
+    return $mResult;
   }
   
-  protected function reflectFile(dom\element $el) {
+  /**
+   *
+   * @param dom\element $el
+   * @param php_objecte $obj
+   * @return core\argumentable|array|null
+   */
+  protected function runElement(dom\element $el, php\_object $obj) {
     
-    $result = null;
+    $mResult = null;
     
-    if (!$sPath = $el->getAttribute('path')) {
+    //if ($el->testAttribute('return', false)) $aResult[] = $obj;
+    
+    foreach ($el->getChildren() as $child) {
       
-      $this->throwException(txt('No path defined for %s', $el->getPath()));
+      if ($child->getName() != 'call' || $child->getNamespace() != $this->getNamespace()) {
+        
+        $this->throwException(txt('Cannot use %s in call context', $el->asToken()));
+      }
+      
+      $sMethod = $child->getAttribute('name');
+      
+      if (!$sMethod) {
+        
+        $this->throwException(txt('No method defined for call in %s', $child->asToken()));
+      }
+      
+      $window = $this->getWindow();
+      
+      // todo arguments
+      
+      $call = $window->createCall($obj, $sMethod, '\sylma\storage\fs\directory', array());
+      
+      if ($child->hasChildren()) {
+        
+        $var = $call->getVar($mResult);
+        $mResult = $this->runElement($child, $var);
+      }
+      else {
+        
+        $mResult = $call;
+      }
     }
     
-    $sPath = core\functions\path\toAbsolute($sPath, $this->getControler()->getDirectory());
-    $window = $this->getWindow();
-    
-    $path = $this->parseString($sPath);
-    
-    if (!$sOutput = $el->getAttribute('output')) $sOutput = 'xml';
-    if (!$iMode = (int) $el->getAttribute('mode')) $iMode = \Sylma::MODE_READ;
-    
-    require_once('core/functions/Text.php');
-    
-    $bParse = strtobool($el->getAttribute('parse-variables'));
-    
-    if ($bParse) {
-      
-      $result = $window->create('template', array($this->parseString($callContent, true)));
-    }
-    else {
-      
-      $result = $window->create('call', array($window, $window->getSelf(), 'parseFile', array($path, $iMode, $sOutput, $bParse)));;
-    }
-    
-    return $result;
-  }
-  
-  protected function reflectDocument(dom\element $el) {
-    
-    
+    return $mResult;
   }
   
   protected function parseAttributes(dom\element $el) {
   
-  }
-  
-  protected function parseString($sValue) {
-    
-    $window = $this->getWindow();
-    
-    preg_match_all('/\[\$([\w-]+)\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE);
-    
-    if ($aResults && $aResults[0]) {
-      
-      $iSeek = 0;
-      
-      foreach ($aResults[1] as $aResult) {
-        
-        $iVarLength = strlen($aResult[0]) + 3;
-        $sVarValue = (string) $window->getVariable($aResult[0]);
-        
-        $sValue = substr($sValue, 0, $aResult[1] + $iSeek - 2) . $sVarValue . substr($sValue, $aResult[1] + $iSeek - 2 + $iVarLength);
-        
-        $iSeek += strlen($sVarValue) - $iVarLength;
-      }
-    }
-    
-    return $window->create('string', array($sValue));
   }
   
   public function asDOM() {
@@ -355,13 +381,21 @@ class Domed extends core\module\Controled implements parser\domed {
     $doc = $this->getDocument();
     $window = $this->getWindow();
     
-    if ($aResult = $this->parseDocument($doc)) $window->setContent($aResult);
-    
+    if ($aResult = $this->parseDocument($doc)) {
+      
+      $window->add($aResult);
+    }
+    //dspf($aResult[1]->asArgument());
     //dspf($aResult);
     
     $arg = $window->asArgument();
+    
     //$tst = $arg->get('window')->query();
     //dspm((string) $tst[1]);
-    return $arg->asDOM();
+    
+    $result = $arg->asDOM();
+    $result->getRoot()->setAttribute('use-template', 'true');
+    
+    return $result;
   }
 }
