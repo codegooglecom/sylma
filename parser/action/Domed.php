@@ -74,13 +74,19 @@ class Domed extends Reflector implements parser\domed {
   
   protected function parseSettings(dom\element $settings) {
     
+    $aResult = array();
+    
     foreach ($settings->getChildren() as $el) {
       
       if ($el->getNamespace() == $this->getNamespace()) {
         
         switch ($el->getName()) {
           
-          case 'argument' : break;
+          case 'argument' :
+            
+            $aResult += $this->reflectSettingsArgument($el);
+            
+          break;
           case 'name' : $this->setName($el->read()); break;
           
           default : $this->parseElement($el);
@@ -91,6 +97,8 @@ class Domed extends Reflector implements parser\domed {
         $this->parseElement($el);
       }
     }
+    
+    return $aResult;
   }
   
   protected function parseDocument(dom\document $doc) {
@@ -111,7 +119,7 @@ class Domed extends Reflector implements parser\domed {
     if ($settings) {
       
       $aArguments = $this->extractArguments($settings);
-      $this->parseSettings($settings);
+      $this->getWindow()->add($this->parseSettings($settings));
       $settings->remove();
     }
     
@@ -266,6 +274,11 @@ class Domed extends Reflector implements parser\domed {
       case 'test-argument' :
       case 'get-all-arguments' :
       case 'get-argument' :
+        
+        $mResult = $this->reflectArgument($el);
+        
+      break;
+      
       // case 'get-settings' :
       case 'set-variable' :
       case 'get-variable' :

@@ -9,15 +9,19 @@ abstract class Reflector extends core\module\Filed {
   
   /**
    *
-   * @var php\Window
+   * @var php_windoww
    */
   private $window;
   
-  public function setWindow(php\window $window) {
+  public function setWindow(php\_window $window) {
     
     $this->window = $window;
   }
   
+  /**
+   *
+   * @return php_window
+   */
   public function getWindow() {
     
     if (!$this->window) {
@@ -55,7 +59,7 @@ abstract class Reflector extends core\module\Filed {
     }
     else {
       
-      $result = $window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array($path, $iMode, $sOutput, $bParse));
+      $result = $window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array($path, $iMode, $sOutput));
     }
     
     return $result;
@@ -108,4 +112,40 @@ abstract class Reflector extends core\module\Filed {
     return $window->createCall($window->getSelf(), 'getDirectory', '\sylma\storage\fs\directory', array());
   }
   
+  protected function reflectGetArgument(dom\element $el) {
+    
+    $window = $this->getWindow();
+    $sName = $el->getAttribute('name');
+    
+    if (!$mVal = $this->getArgument($sName)) {
+      
+      $this->throwException(txt('Unknown argument : %s', $sName));
+    }
+    
+    return $window->createCall($window->getSelf(), 'getArgument', $window->loadInstance($mVal), array($sName));
+  }
+  
+  protected function reflectSettingsArgument(dom\element $el) {
+    
+    $aResult = array();
+    $window = $this->getWindow();
+    
+    $sName = $el->getAttribute('name');
+    $sFormat = $el->getAttribute('format');
+    
+    $val = $window->stringToInstance($sFormat);
+    $call = $window->createCall($window->getSelf(), 'readArgument', $val, array($sName));
+    
+    if ($val instanceof php\basic\StringInstance) {
+      
+      $aResult[] = $window->createCall($window->getSelf(), 'validateString', 'boolean', array($call));
+    }
+    else if ($val instanceof php\_object) {
+      
+      $interface = $val->getInterface();
+      $aResult[] = $window->createCall($window->getSelf(), 'validateObject', 'boolean', array($call, $interface->getName()));
+    }
+    
+    return $aResult;
+  }
 }

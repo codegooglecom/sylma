@@ -11,7 +11,7 @@ class _Interface extends Controled {
   protected $reflection;
   protected $sFile = '';
   
-  public function __construct(php\window $window, $sInterface, $sFile = '') {
+  public function __construct(php\_window $window, $sInterface, $sFile = '') {
     
     $this->setControler($window);
     $this->setName($sInterface);

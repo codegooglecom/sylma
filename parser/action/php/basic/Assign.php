@@ -11,7 +11,7 @@ class Assign extends Controled implements core\argumentable {
   protected $variable;
   protected $value;
   
-  public function __construct(Window $controler, SimpleVar $variable, $value) {
+  public function __construct(Window $controler, _Var $variable, $value) {
     
     $this->variable = $variable;
     $this->value = $value;

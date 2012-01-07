@@ -36,10 +36,12 @@ class Sylma {
     
     require_once('Initializer.php');
     
+    set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH);
+    
     $init = self::$aControlers['init'] = new Initializer();
     
     self::$settings = $init->loadSettings($sServer, self::PATH_OPTIONS);
-    $init->load();
+    $init->load(self::PATH_LIB);
     
     self::setControler('init', $init);
     

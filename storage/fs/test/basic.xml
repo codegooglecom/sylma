@@ -11,13 +11,13 @@
     return
       $controler->getDirectory('/nodirectory') === null;
   </tst:test>
-  <tst:test name="Load root directory with relative path">
+  <tst:test name="Load first level directory with relative path">
     $dir = $controler->getDirectory('sample1');
     return
-      $dir instanceof sylma\storage\fs\directory &amp;&amp;
+      $dir instanceof \sylma\storage\fs\directory &amp;&amp;
       (string) $dir == '/sample1';
   </tst:test>
-  <tst:test name="Load root and sub-directory with relative path">
+  <tst:test name="Load first level and sub-directory with relative path">
     if (!$dir = $controler->getDirectory('sample1')) return false;
     $dir = $dir->getDirectory('sub1');
     return
@@ -45,7 +45,7 @@
   </tst:test>
   <tst:test name="Load non-existing file">
     return
-      $controler->getFile('/nofile.txt') === null;
+      $controler->getFile('/nofile.txt', null, false) === null;
   </tst:test>
   <tst:test name="Read content">
     if (!$file = $controler->getFile('/sample1/file.txt')) return false;

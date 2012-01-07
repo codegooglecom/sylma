@@ -69,11 +69,10 @@ class Handler extends core\module\Domed implements parser\action {
   
   protected function runCache(fs\file $file) {
     
-    require_once((string) $file);
+    require_once($file->getRealPath());
     
     $result = null;
-    $action = new ActionTest($this->getFile()->getParent(), $this);
-    
+    $action = new ActionTest($this->getFile()->getParent(), $this, $this->createArgument($this->aArguments));
     $result = $action->asDOM();
     
     return $result;
@@ -104,7 +103,7 @@ class Handler extends core\module\Domed implements parser\action {
     
     $method = $this->loadDOM();
     
-    //dspm((string) $method);
+    dspm((string) $method);
     $class = $tmpDir->getFile($sClass, fs\basic\Resource::DEBUG_EXIST);
     $template = $this->getTemplate('php/class.xsl');
     
@@ -143,7 +142,7 @@ class Handler extends core\module\Domed implements parser\action {
     }
     
     $result = $this->runCache($tmpFile);
-    dspm((string) $result);
+    //dspm((string) $result);
     return $result;
   }
 }

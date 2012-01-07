@@ -9,17 +9,6 @@ abstract class Resource implements fs\resource {
   
   const NS = 'http://www.sylma.org/storage/fs/basic/resource';
   
-  const DEBUG_NOT = 0;
-  /**
-   * Throw exception if a file doesn't exist
-   */
-  const DEBUG_LOG = 1;
-  
-  /**
-   * Return file either if it doesn't exist
-   */
-  const DEBUG_EXIST = 2;
-  
   protected $aRights = array();
   
   protected $sPath = '';

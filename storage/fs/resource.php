@@ -1,9 +1,27 @@
 <?php
 
 namespace sylma\storage\fs;
+use \sylma\core;
 
-interface resource {
+require_once('core/tokenable.php');
+require_once('core/argumentable.php');
+
+interface resource extends core\argumentable, core\tokenable {
   
+  const DEBUG_NOT = 0;
+  /**
+   * Throw exception if a file doesn't exist
+   */
+  const DEBUG_LOG = 1;
+  
+  /**
+   * Return file either if it doesn't exist
+   */
+  const DEBUG_EXIST = 2;
+  
+  /**
+   * @return core\factory
+   */
   function getControler();
   
   /**
@@ -14,6 +32,7 @@ interface resource {
   
   /**
    * Indicate if the resource exist or not, allow the manipulation of un-existent resource
+   * @return boolean
    */
   function doExist();
   

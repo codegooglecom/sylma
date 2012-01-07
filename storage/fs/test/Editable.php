@@ -5,7 +5,7 @@ use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
 require_once('modules/tester/Basic.php');
 
-class Basic extends tester\Basic {
+class Editable extends tester\Basic {
   
   const NS = 'http://www.sylma.org/storage/fs/test';
   protected $sTitle = 'File system';
@@ -20,18 +20,18 @@ class Basic extends tester\Basic {
     
     $user = \Sylma::getControler('user');
     
-    if (!$dir = $user->getDirectory('tmp')) {
+    if (!$dir = $user->getDirectory('#tmp')) {
       
       $this->throwException(t('No temp directory defined'));
     }
     //dspm((string) $dir);
     // dspf((string) $dir);
     
-    $controler = $this->create('controler', array(
-      (string) $dir,
-      null,
-      $this->getArgument('rights')->query(),
-      $this));
+    $controler = $this->create('controler', array((string) $dir, 'editable'));
+    
+    //$controler->setMode('editable');
+    //dspf($controler->getDirectory());return;
+    $this->setFiles(array($this->getFile('editable.xml')));
     
     $this->setControler($controler);
   }

@@ -12,8 +12,11 @@ class Basic extends tester\Prepare {
   
   public function __construct() {
     
+    \Sylma::getControler('dom');
+    
     $this->setDirectory(__file__);
     $this->setNamespaces(array('self' => self::NS));
+    
     $this->setArguments('settings.yml');
     
     $controler = $this->create('controler');

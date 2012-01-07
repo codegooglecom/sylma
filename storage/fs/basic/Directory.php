@@ -100,7 +100,7 @@ class Directory extends Resource implements fs\directory {
   
   public function browse(array $aExtensions, array $aPaths = array(), $iDepth = null, $bRender = true) {
     
-    $result = $this->parse();
+    $result = $this->asArgument();
     
     if ($excluded = $this->getControler()->getArgument('browse/excluded')) {
       
@@ -117,12 +117,12 @@ class Directory extends Resource implements fs\directory {
         
         if ($sFile != '.' && $sFile != '..') {
           
-          if ($file = $this->getFile($sFile)) {
+          if ($file = $this->getFile($sFile, self::DEBUG_NOT)) {
             
             if ($file->getUserMode() != 0 && $bRender &&
               (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions))) {
               
-              $result->add('#file', $file->parse()->get('file'));
+              $result->add('#file', $file->asArgument()->get('file'));
             }
           }
           else if ($dir = $this->getDirectory($sFile)) {
@@ -130,7 +130,7 @@ class Directory extends Resource implements fs\directory {
             $bValid = true;
             
             foreach ($aPaths as $sPath) {
-              
+
               switch ($sPath{0}) {
                 
                 case '/' : if ($sPath == $dir->getFullPath()) $bValid = false; break;
@@ -150,8 +150,13 @@ class Directory extends Resource implements fs\directory {
     return $result;
   }
   
-  /*
-   * Browse then return list of files inside the directory and sub-directories if iDepth == null | >0
+  /**
+   * Browse then return a list of files inside the directory and optionaly sub-directories
+   * 
+   * @param array $aExtensions File's extensions to be included
+   * @param string $sPreg Regular expression validation
+   * @param integer $iDepth Nbr. of level to look through, or all if 0
+   * @return array 
    */
   public function getFiles(array $aExtensions = array(), $sPreg = null, $iDepth = 0) {
     
@@ -162,10 +167,13 @@ class Directory extends Resource implements fs\directory {
     
     if ($aExtensions) {
       
-      foreach ($this->aFiles as $sFile => $file) {
+      $sClass = $this->getAlias(self::FILE_ALIAS);
+      
+      foreach ($this->aFiles[$sClass] as $sFile => $file) {
         
         if ($file) {
-          
+          //dspf($file);
+          if (!is_object($file)) $this->throwException ('test');
           $bExtension = !$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions);
           $bPreg = !$sPreg || preg_match($sPreg, $sFile);
         
@@ -177,11 +185,13 @@ class Directory extends Resource implements fs\directory {
     
     // Recursion in sub-directory
     
-    if ($iDepth === null || $iDepth > 0) {
+    $sAlias = $this->getAlias(self::DIRECTORY_ALIAS);
+    
+    if (($iDepth === null || $iDepth > 0) && array_key_exists($sAlias, $this->aDirectories)) {
       
       if ($iDepth) $iDepth--;
       
-      foreach ($this->aDirectories as $dir) {
+      foreach ($this->aDirectories[$sAlias] as $dir) {
         
         if ($dir) $aResult = array_merge($aResult, $dir->getFiles($aExtensions, $sPreg, $iDepth));
       }
@@ -195,6 +205,8 @@ class Directory extends Resource implements fs\directory {
    */
   public function updateFile($sName) {
     
+    $sAlias = $this->getAlias(self::FILE_ALIAS);
+    
     if (array_key_exists($sAlias, $this->aFiles) && array_key_exists($sName, $this->aFiles[$sAlias])) unset($this->aFiles[$sAlias][$sName]);
     return $this->getFile($sName);
   }
@@ -204,7 +216,7 @@ class Directory extends Resource implements fs\directory {
    */
   public function updateDirectory($sName) {
     
-    $sAlias = $this->getAlias(self::FILE_ALIAS);
+    $sAlias = $this->getAlias(self::DIRECTORY_ALIAS);
     
     if (array_key_exists($sAlias, $this->aDirectories) && array_key_exists($sName, $this->aDirectories[$sAlias])) unset($this->aDirectories[$sAlias][$sName]);
     return $this->getDirectory($sName);
@@ -214,9 +226,7 @@ class Directory extends Resource implements fs\directory {
     
     $fs = $this->getControler();
     
-    if ($sMode = $fs->getMode()) $sClass .= '/' . $sMode;
-    
-    return $sClass;
+    return $fs->getAlias($sClass);
   }
   
   public function getFreeFile($sName, $iDebug = self::DEBUG_LOG) {

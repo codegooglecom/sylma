@@ -15,14 +15,23 @@ class Controler extends core\module\Argumented {
   private $bEditable = false;
   private $sMode = '';
   
-  public function __construct($sPath = '') {
+  public function __construct($sPath = '', $sMode = '') {
+    
+    $this->setMode($sMode);
     
     $sDirectory = $this->extractDirectory(__file__, false);
     $this->setArguments(new core\argument\Filed(path\toAbsolute(self::SETTINGS, $sDirectory)));
     
-    $this->directory = $this->create('directory', array($sPath, null, $this->getArgument('rights')->query(), $this));
+    $this->directory = $this->create($this->getAlias('directory'), array($sPath, null, $this->getArgument('rights')->query(), $this));
     
     $this->setNamespace(self::NS);
+  }
+  
+  public function getAlias($sClass) {
+    
+    if ($sMode = $this->getMode()) $sClass .= '/' . $sMode;
+    
+    return $sClass;
   }
   
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
@@ -62,14 +71,20 @@ class Controler extends core\module\Argumented {
     return parent::getArgument($sPath, $mDefault, $bDebug);
   }
   
-  public function getDirectory($sPath = '') {
+  public function getDirectory($sPath = '', $bDebug = true) {
     
     if ($sPath && $sPath != '/') {
+      
+      // for relative path use, else @function explode() return empty
+      if ($sPath{0} != '/') $sPath = '/' . $sPath;
       
       $aPath = explode('/', $sPath);
       array_shift($aPath);
       
-      return $this->directory->getDistantDirectory($aPath);
+      $iDebug = 0;
+      if ($bDebug) $iDebug = basic\Resource::DEBUG_LOG;
+      
+      return $this->directory->getDistantDirectory($aPath, $iDebug);
     }
     else {
       

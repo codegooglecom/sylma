@@ -52,7 +52,7 @@ abstract class Filed extends Argumented {
     if (is_string($mDirectory)) $this->directory = core\functions\path\extractDirectory($mDirectory);
     else $this->directory = $mDirectory;
     
-    if (!$this->getDirectory()) $this->throwException(txt('Cannot use %s as a directory'), $mDirectory);
+    if (!$this->getDirectory()) $this->throwException(txt('Cannot use %s as a directory', $mDirectory));
   }
   
   /**

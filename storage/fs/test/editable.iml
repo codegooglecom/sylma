@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <class xmlns="http://www.sylma.org/interface">
-  <file>Basic.php</file>
-  <name>\sylma\storage\fs\test\Basic</name>
+  <file>Editable.php</file>
+  <name>\sylma\storage\fs\test\Editable</name>
 </class>

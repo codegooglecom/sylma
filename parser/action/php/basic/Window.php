@@ -4,10 +4,10 @@ namespace sylma\parser\action\php\basic;
 use \sylma\parser\action, \sylma\core, \sylma\dom, \sylma\parser\action\php;
 
 require_once('core/module/Argumented.php');
-require_once(dirname(__dir__) . '/window.php');
+require_once(dirname(__dir__) . '/_window.php');
 require_once('core/controled.php');
 
-class Window extends core\module\Filed implements php\window, core\controled {
+class Window extends core\module\Filed implements php\_window, core\controled {
   
   const NS = 'http://www.sylma.org/parser/action/compiler';
   const ARGUMENTS_PATH = 'classes/php';
@@ -40,7 +40,7 @@ class Window extends core\module\Filed implements php\window, core\controled {
     
     $self = $this->loadInstance('\sylma\parser\action\Basic');
     
-    $this->self = $this->create('object-var', array($self, 'this'));
+    $this->self = $this->create('object-var', array($this, $self, 'this'));
     $this->setScope($this);
     //$this->sylma = $this->create('class-static', array('\Sylma'));
   }
@@ -66,10 +66,35 @@ class Window extends core\module\Filed implements php\window, core\controled {
   }
   
   public function add($mVal) {
-    //dspf($mVal);
-    if (is_array($mVal)) $this->aContent = array_merge($this->aContent, $mVal);
-    else $this->aContent[] = $mVal;
-    //dspf($this->aContent);
+    
+    $this->scope->addContent($mVal);
+  }
+  
+  public function checkContent($mVal) {
+    
+    if (!is_string($mVal) && !$mVal instanceof core\argumentable) {
+      
+      $formater = \Sylma::getControler('formater');
+      $this->throwException(txt('Cannot add %s in content', $formater->asToken($mVal)));
+    }
+  }
+  
+  public function addContent($mVal) {
+    
+    if (is_array($mVal)) {
+      
+      foreach ($mVal as $mChild) {
+        
+        $this->addContent($mChild);
+      }
+    }
+    else {
+      
+      $this->checkContent($mVal);
+      
+      $line = $this->create('line', array($this, $mVal));
+      $this->aContent[] = $line;
+    }
   }
   
   public function addControler($sName) {
@@ -109,32 +134,6 @@ class Window extends core\module\Filed implements php\window, core\controled {
     return $result;
   }
   
-  public function loadInstance($sName, $sFile = '') {
-    
-    $result = null;
-    
-    if (substr($sName, 0, 4) == 'php:') {
-      
-      switch(substr($sName, 4)) {
-        
-        case 'string' :
-        case 'array' :
-        case 'boolean' :
-        case 'integer' :
-        default :
-          
-          $this->throwException(txt('Unknown php type %s', $this->getReturn()));
-      }
-    }
-    else {
-      
-      $interface = $this->create('interface', array($this, $sName, $sFile));
-      $result = $this->create('object', array($this, $interface));
-    }
-    
-    return $result;
-  }
-  
   public function createInsert(core\argumentable $val) {
     
     //if ($val instanceof dom\node) $result = $val;
@@ -148,54 +147,107 @@ class Window extends core\module\Filed implements php\window, core\controled {
     $this->scope = $scope;
   }
   
-  public function addScope($val) {
+  public function stringToInstance($sFormat) {
     
-    $this->scope->add($val);
+    $result = null;
+    
+    if (substr($sFormat, 0, 4) == 'php-') {
+      
+      $result = $this->stringToScalar(substr($sFormat, 4));
+    }
+    else {
+      
+      $result = $this->loadInstance($sFormat);
+    }
+    
+    return $result;
   }
   
-  public function parseArgument($mVar) {
+  protected function stringToScalar($sFormat, $mVar = null) {
     
-    $arg = null;
+    $result = null;
     
-    switch (gettype($mVar)) {
+    switch ($sFormat) {
       
       case 'boolean' :
         
-        $arg = $this->create('boolean', array($mVar));
+        if (is_null($mVar)) $mVar = false;
+        $result = $this->create('boolean', array($mVar));
         
       break;
       
       case 'integer' :
       case 'double' :
         
-        $arg = $this->create('numeric', array($mVar));
+        if (is_null($mVar)) $mVar = 0;
+        $result = $this->create('numeric', array($mVar));
       
       break;
       
       case 'string' :
         
-        $arg = $this->create('string', array($mVar));
+        if (is_null($mVar)) $mVar = '';
+        $result = $this->create('string', array($mVar));
         
       break;
       
       case 'array' :
         
-        $arg = $this->create('array', array($mVar));
+        if (is_null($mVar)) $mVar = array();
+        $result = $this->create('array', array($mVar));
         
       break;
       
+      default :
+        
+        $this->throwException(txt('Unkown scalar type as argument : %s', $sFormat));
+    }
+    
+    return $result;
+  }
+  
+  public function loadInstance($sName, $sFile = '') {
+    
+    $interface = $this->create('interface', array($this, $sName, $sFile));
+    $result = $this->create('object', array($this, $interface));
+    
+    return $result;
+  }
+  
+  public function argToInstance($mVar) {
+    
+    $arg = null;
+    $sFormat = gettype($mVar);
+    
+    switch ($sFormat) {
+      
       case 'object' :
         
-        if ($mVar instanceof php\_object || $mVar instanceof php\scalar || $mVar instanceof dom\node) $arg = $mVar;
-        else $arg = $this->create('object', array($this, $mVar));
+        if ($mVar instanceof php\_instance || $mVar instanceof php\basic\Called || $mVar instanceof php\_var) $arg = $mVar;
+        else $arg = $this->loadInstance(get_class($mVar));
         
       break;
       
       case 'resource' :
       case 'NULL' :
+        
+        $this->throwException(txt('Cannot handle resource of type %s as argument', $sFormat));
+      
+      break;
+      
+      default :
+        
+        $arg = $this->stringToScalar($sFormat, $mVar);
     }
     
     return $arg;
+  }
+  
+  public function validateFormat(php\_var $var, $sFormat) {
+    
+    $condition = $this->create('condition', array($this, $this->create('not', array($test))));
+    $text = $this->create('function', array($this, 't', array('Bad argument format')));
+    $condition->addContent($this->createCall($this->getSelf(), 'throwException', null, array($text)));
   }
   
   public function asArgument() {

@@ -14,9 +14,10 @@ class Basic extends tester\Basic {
     
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-    $this->setArguments('../settings.yml');
     
     \Sylma::getControler('dom');
+    
+    $this->setArguments('../settings.yml');
     
     $dir = $this->getDirectory();
     
@@ -25,12 +26,9 @@ class Basic extends tester\Basic {
       $this->throwException('No default rights defined');
     }
     
-    $controler = $this->create('controler', array(
-      (string) $dir,
-      null,
-      $rights->query(),
-      $this,
-    ));
+    $controler = $this->create('controler', array((string) $dir));
+    
+    $this->setFiles(array($this->getFile('basic.xml')));
     
     $this->setControler($controler);
   }

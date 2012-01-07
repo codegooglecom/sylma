@@ -14,5 +14,5 @@ define('SYLMA_RELATIVE_PATH', substr($result[0], strlen(MAIN_DIRECTORY)));
 set_include_path(get_include_path() . SYLMA_PATH_SEPARATOR . SYLMA_PATH);
 
 require_once('system/config.php'); 
-require('core/Sylma.php');
+require('core/old/Sylma.php');
 

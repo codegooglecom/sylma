@@ -1,61 +1,19 @@
 <?php
 
+namespace sylma\core;
+
 class Redirect {
   
-  private $sPath = '/'; // URL cible
   private $oPath = null; // URL cible
   private $oSource = null; // URL de provenance
-  private $sWindowType = 'html';
-  private $bIsReal = false; // Défini si le cookie a été redirigé ou non
+  private $sExtension = 'html';
   
-  private $aArguments = array();
-  private $aDocuments = array();
-  private $oMessages;
   
-  public function __construct($sPath = '', $mMessages = array(), $aArguments = array()) {
-    
-    $this->setMessages($mMessages);
+  public function __construct($sPath = '') {
     
     if ($sPath) $this->setPath($sPath);
     
-    $this->aArguments = $aArguments;
-    //$this->setArgument('post', $_POST);
     //$this->setWindowType(Controler::getWindowType());
-  }
-  
-  public function getArgument($sKey) {
-    
-    return (array_key_exists($sKey, $this->aArguments)) ? $this->aArguments[$sKey] : null;
-  }
-  
-  public function setArgumentKey($sArgument, $sKey, $mValue = '') {
-    
-    $mArgument = $this->getArgument($sArgument);
-    
-    if (is_array($mArgument)) {
-      
-      if ($mValue) {
-        
-        $mArgument[$sKey] = $mValue;
-        $this->setArgument($sArgument, $mArgument);
-        
-      } else unset($this->aArguments[$sArgument][$sKey]);
-    }
-  }
-  
-  public function setArgument($sKey, $mValue) {
-    
-    $this->aArguments[$sKey] = $mValue;
-  }
-  
-  public function getArguments() {
-    
-    return $this->aArguments;
-  }
-  
-  public function getDocuments() {
-    
-    return $this->aDocuments;
   }
   
   public function getDocument($sKey) {
@@ -68,22 +26,6 @@ class Redirect {
     $this->aDocuments[$sKey] = $oDocument;
   }
   
-  public function setMessages($mMessages = array()) {
-    
-    $this->oMessages = new Messages(new XML_Document(Controler::getSettings('messages/allowed/@path')), $mMessages);
-  }
-  
-  public function getMessages($sStatut = null) {
-    
-    if ($sStatut) return $this->oMessages->getMessages($sStatut);
-    else return $this->oMessages;
-  }
-  
-  public function addMessage($sMessage = '- message vide -', $sStatut = 'notice', $aArguments = array()) {
-    
-    $this->oMessages->addStringMessage($sMessage, $sStatut, $aArguments);
-  }
-  
   public function getPath() {
     
     return $this->oPath;
@@ -92,9 +34,6 @@ class Redirect {
   public function setPath($oPath) {
     
     $this->oPath = $oPath;
-    return $oPath;
-    // if ($sPath == '/' || $sPath != Controler::getPath()) $this->sPath = $sPath;
-    // else Controler::errorRedirect(t('Un problème de redirection à été détecté !'));
   }
   
   public function getSource() {
@@ -105,7 +44,6 @@ class Redirect {
   public function setSource($oSource) {
     
     $this->oSource = $oSource;
-    return $oSource;
   }
   
   public function isSource($sSource) {
@@ -113,24 +51,14 @@ class Redirect {
     return ((string) $this->oSource == $sSource);
   }
   
-  public function getWindowType() {
+  public function getExtension() {
     
-    return $this->sWindowType;
+    return $this->sExtension;
   }
   
-  public function setWindowType($sWindowType) {
+  public function setExtension($sExtension) {
     
-    $this->sWindowType = $sWindowType;
-  }
-  
-  public function setReal($bValue = 'true') {
-    
-    $this->bIsReal = (bool) $bValue;
-  }
-  
-  public function isReal() {
-    
-    return $this->bIsReal;
+    $this->sExtension = $sExtension;
   }
   
   public function __sleep() {

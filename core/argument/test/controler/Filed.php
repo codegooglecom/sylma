@@ -7,6 +7,16 @@ require_once('core/argument/test/controler.php');
 
 class Filed extends module\Filed implements test\controler {
   
+  public function getDirectory() {
+    
+    return parent::getDirectory();
+  }
+
+  public function getNamespace() {
+    
+    return parent::getNamespace();
+  }
+
   public function setDirectory($mDirectory) {
     
     parent::setDirectory($mDirectory);

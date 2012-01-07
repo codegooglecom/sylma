@@ -43,10 +43,14 @@ class ActionTest extends Basic {
     </xsl:call-template>
   </xsl:template>
   
+  <xsl:template match="php:line">
+    <xsl:apply-templates/>;
+  </xsl:template>
+  
   <xsl:template name="php:assign">
     <xsl:param name="variable"/>
     <xsl:param name="value"/>
-    <xsl:apply-templates select="$variable"/> = <xsl:apply-templates select="$value"/>;
+    <xsl:apply-templates select="$variable"/> = <xsl:apply-templates select="$value"/>
   </xsl:template>
   
   <xsl:template match="php:insert">

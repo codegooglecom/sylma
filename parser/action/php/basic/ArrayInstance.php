@@ -6,7 +6,7 @@ class ArrayInstance {
   
   private $aValues;
   
-  public function __construct(array $aValues) {
+  public function __construct(array $aValues = array()) {
     
     $this->aValues = $aValues;
   }

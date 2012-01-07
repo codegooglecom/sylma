@@ -1,5 +1,7 @@
 <?php
 
+use \sylma\core;
+
 require_once('ReflectorInterface.php');
 require_once('ReflectorCommented.php');
 
@@ -107,7 +109,9 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     if ($sFile = $this->getReflector()->getFileName()) {
       
-      $sFile = pathWin2Unix($sFile);
+      require_once('core/functions/Path.php');
+      
+      $sFile = core\functions\path\winToUnix($sFile);
       
       $sDirectory = Controler::getDirectory()->getSystemPath();
       $file = Controler::getFile(substr($sFile, strlen($sDirectory) + 1));

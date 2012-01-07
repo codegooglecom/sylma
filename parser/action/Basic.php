@@ -11,11 +11,12 @@ require_once('core/module/Domed.php');
 
 abstract class Basic extends core\module\Domed implements core\controled, dom\domable {
   
-  public function __construct(fs\directory $dir, core\factory $controler) {
+  public function __construct(fs\directory $dir, core\factory $controler, core\argument $args) {
     
     $this->setControler($controler);
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
+    $this->setArguments($args);
   }
   
   protected function loadTemplate(array $aArguments) {
@@ -23,7 +24,7 @@ abstract class Basic extends core\module\Domed implements core\controled, dom\do
     $controler = $this->getControler();
     $file = $controler->getFile();
     
-    $sTemplate = $file->getParent() . '/#tmp/' . $file->getName() . '.tpl.php';
+    $sTemplate = $file->getParent()->getRealPath() . '/#tmp/' . $file->getName() . '.tpl.php';
     $sResult = $this->includeTemplate($sTemplate, $aArguments);
     
     $doc = $controler->create('document');
@@ -58,6 +59,24 @@ abstract class Basic extends core\module\Domed implements core\controled, dom\do
     return $dom;
   }
   
+  protected function validateString($sVal) {
+    
+    if (!is_string($sVal)) {
+      
+      $formater = \Sylma::getControler('formater');
+      $this->throwException(txt('Invalid argument type : string expected, %s given', $formater->asToken($sVal)));
+    }
+  }
+  
+  protected function validateObject($val, $sInterface) {
+    
+    if ($val instanceof $sInterface) {
+      
+      $formater = \Sylma::getControler('formater');
+      $this->throwException(txt('Invalid argument type : object expected, %s given', $formater->asToken($sVal)));
+    }
+  }
+  
   public function asDOM() {
     
     $mResult = null;
@@ -68,11 +87,13 @@ abstract class Basic extends core\module\Domed implements core\controled, dom\do
       $mResult = $this->getControler()->create('document');
       $mResult->add($mAction);
     }
+    else if ($mAction instanceof dom\document) {
+      
+      $mResult = $mAction;
+    }
     else if ($mAction instanceof dom\node) {
       
-      dspf($this->getControler()->getArguments()->get('classes/document'));
-      $mResult = $this->getControler()->create('document');
-      dspf($mResult);
+      $mResult = $this->getControler()->create('document', array($mAction));
     }
     else if ($mAction instanceof dom\domable) {
       

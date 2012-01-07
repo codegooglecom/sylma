@@ -8,18 +8,18 @@ require_once('core/module/Domed.php');
 
 abstract class Basic extends core\module\Domed implements test {
   
-  private $controler;
   const NS = 'http://www.sylma.org/modules/tester';
   protected $sTitle;
+  protected $aFiles = array();
   
-  protected function setControler($controler) {
+  protected function getFiles() {
     
-    $this->controler = $controler;
+    return $this->aFiles;
   }
   
-  protected function getControler() {
+  protected function setFiles(array $aFiles) {
     
-    return $this->controler;
+    $this->aFiles = $aFiles;
   }
   
   public function load() {
@@ -27,7 +27,12 @@ abstract class Basic extends core\module\Domed implements test {
     $aResult = array();
     $controler = $this->getControler();
     
-    foreach ($this->getDirectory()->getFiles(array('xml'), null, null) as $file) {
+    if (!$aFiles = $this->getFiles()) {
+      
+      $aFiles = $this->getDirectory()->getFiles(array('xml'), null, null);
+    }
+    
+    foreach ($aFiles as $file) {
       
       $aTests = array();
       $doc = $file->getDocument();

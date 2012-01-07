@@ -312,13 +312,13 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
         // case \XMLReader::NONE : break;
         case \XMLReader::ELEMENT :
           
-          $aNS[$reader->namespaceURI] = true;
+          $aNS[$reader->prefix] = $reader->namespaceURI;
           
           if($reader->hasAttributes) {
             
             while($reader->moveToNextAttribute()) {
               
-              $aNS[$reader->namespaceURI] = true;
+              $aNS[$reader->prefix] = $reader->namespaceURI;
             }
           }
           
@@ -376,7 +376,7 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
     }
     else {
       
-      $sResult = $root->read($sPath);
+      $sResult = $root->read($sQuery, $aNS);
     }
     
     return $sResult;

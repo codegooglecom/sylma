@@ -11,7 +11,7 @@ classes :
   call :
     name : CallMethod
   object-var :
-    name : ObjectVar
+    name : _ObjectVar
   template :
     name : Template
   assign :
@@ -20,4 +20,6 @@ classes :
     name : Insert
   interface :
     name : _Interface
+  line :
+    name : _Line
   

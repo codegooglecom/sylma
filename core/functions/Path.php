@@ -17,6 +17,7 @@ function extractDirectory($sFile, $bObject = true) {
       Sylma::throwException(txt('File controler not yet loaded. Cannot extract path %s', $sFile));
     }
     
+    //echo $fs->getDirectory($sResult);
     return $fs->getDirectory($sResult);
     // return \Controler::getDirectory($sResult);
   }

@@ -12,7 +12,7 @@ class StringInstance extends core\module\Argumented implements core\argumentable
   
   private $sValue = '';
   
-  public function __construct($sValue) {
+  public function __construct($sValue = '') {
     
     $this->sValue = $sValue;
   }

@@ -4,10 +4,8 @@ namespace sylma\storage\fs;
 use \sylma\dom, \sylma\storage\fs, \sylma\core;
 
 require_once('resource.php');
-require_once('core/tokenable.php');
-require_once('core/argumentable.php');
 
-interface file extends resource, core\argumentable, core\tokenable {
+interface file extends fs\resource {
   
   function __construct($sName, fs\directory $parent, array $aRights, $iDebug);
   

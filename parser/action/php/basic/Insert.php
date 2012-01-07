@@ -6,12 +6,15 @@ use \sylma\core, \sylma\dom, \sylma\parser\action\php;
 require_once('core/argumentable.php');
 require_once('core/module/Argumented.php');
 
+/**
+ * Add content result to template, choose for wich as*() method to use for render
+ */
 class Insert extends core\module\Argumented implements core\argumentable, core\controled {
   
   protected $content;
   protected static $iKey = 0;
   
-  public function __construct(php\window $controler, $mContent) {
+  public function __construct(php\_window $controler, $mContent) {
     
     $this->setControler($controler);
     $this->setNamespace($controler->getNamespace());
@@ -29,9 +32,9 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
       
       $this->addContent($mContent->getVar());
     }
-    else if ($mContent instanceof SimpleVar) {
+    else if ($mContent instanceof php\_var) {
       
-      if ($mContent instanceof ObjectVar) {
+      if ($mContent instanceof php\_object) {
         
         $interface = $mContent->getObject()->getInterface();
         
@@ -59,7 +62,7 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
         }
       }
     }
-    else if ($mContent instanceof scalar || $mContent instanceof dom\node) {
+    else if ($mContent instanceof php\_scalar || $mContent instanceof dom\node) {
       
       $this->content = $mContent;
     }

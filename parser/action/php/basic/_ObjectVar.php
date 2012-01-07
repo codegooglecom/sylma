@@ -3,14 +3,17 @@
 namespace sylma\parser\action\php\basic;
 use \sylma\parser\action\php;
 
-require_once('SimpleVar.php');
 require_once(dirname(__dir__) . '/_object.php');
 
-class ObjectVar extends SimpleVar implements php\_object {
+require_once('_Var.php');
+
+class _ObjectVar extends _Var implements php\_object {
   
   protected $object;
   
-  public function __construct(ObjectInstance $object, $sName) {
+  public function __construct(php\_window $controler, ObjectInstance $object, $sName) {
+    
+    $this->setControler($controler);
     
     $this->setName($sName);
     $this->setObject($object);
@@ -28,6 +31,10 @@ class ObjectVar extends SimpleVar implements php\_object {
 
   public function asArgument() {
     
-    return parent::asArgument();
+    return $this->getControler()->createArgument(array(
+      'var' => array(
+        '@name' => $this->getName(),
+      ),
+    ));
   }
 }
