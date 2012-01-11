@@ -31,7 +31,7 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     if ($parent) $this->setParent($parent);
   }
   
-  public function getNamespace() {
+  public function getNamespace($sPrefix = null) {
     
     $sNamespace = parent::getNamespace();
     

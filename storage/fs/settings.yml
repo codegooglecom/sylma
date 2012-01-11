@@ -5,12 +5,6 @@ rights:
   user-mode:
 browse :
   excluded : [.svn]
-unsafes :
-  /sylma/dom2/settings.yml
-  #/users/root/dom/simple.eml
-  /sylma/core/module/domed.yml
-  #/sylma/parser/action/settings.yml
-  #/sylma/parser/action/php/settings.yml
 classes :
   @sylma-classbase : \sylma\storage\fs
   controler :
@@ -24,7 +18,7 @@ classes :
       editable :
         name : basic\editable\File
   directory :
-    name : basic\Directory
+    name : basic\tokened\Directory
     classes :
       editable :
         name : basic\editable\Directory
@@ -34,3 +28,5 @@ classes :
       document :
         file : /sylma/dom2/basic/Handler.php
         name : \sylma\dom\basic\Handler
+system :
+  rights : 0770

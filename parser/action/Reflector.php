@@ -59,7 +59,7 @@ abstract class Reflector extends core\module\Filed {
     }
     else {
       
-      $result = $window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array($path, $iMode, $sOutput));
+      $result = $window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array($path, $iMode));
     }
     
     return $result;
@@ -134,16 +134,31 @@ abstract class Reflector extends core\module\Filed {
     $sFormat = $el->getAttribute('format');
     
     $val = $window->stringToInstance($sFormat);
-    $call = $window->createCall($window->getSelf(), 'readArgument', $val, array($sName));
     
     if ($val instanceof php\basic\StringInstance) {
       
+      $call = $window->createCall($window->getSelf(), 'readArgument', $val, array($sName));
+      $aResult[] = $window->createCall($window->getSelf(), 'validateString', 'boolean', array($call));
+    }
+    else if ($val instanceof php\basic\ArrayInstance) {
+      
+      $call = $window->createCall($window->getSelf(), 'getArgument', $val, array($sName));
       $aResult[] = $window->createCall($window->getSelf(), 'validateString', 'boolean', array($call));
     }
     else if ($val instanceof php\_object) {
       
+      $call = $window->createCall($window->getSelf(), 'getArgument', $val, array($sName));
+      
       $interface = $val->getInterface();
       $aResult[] = $window->createCall($window->getSelf(), 'validateObject', 'boolean', array($call, $interface->getName()));
+    }
+    
+    if ($el->hasChildren()) {
+      
+      if ($validate = $el->get('self:validate')) {
+        
+        
+      }
     }
     
     return $aResult;

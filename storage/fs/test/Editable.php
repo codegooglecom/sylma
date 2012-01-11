@@ -16,19 +16,15 @@ class Editable extends tester\Basic {
     $this->setNamespace(self::NS, 'self');
     $this->setArguments('../settings.yml');
     
-    \Sylma::getControler('dom');
+    $this->getControler('dom');
+    $user = $this->getControler('user');
     
-    $user = \Sylma::getControler('user');
-    
-    if (!$dir = $user->getDirectory('#tmp')) {
-      
-      $this->throwException(t('No temp directory defined'));
-    }
+    $dir = $user->getDirectory('#tmp')->createDirectory();
     //dspm((string) $dir);
     // dspf((string) $dir);
     
-    $controler = $this->create('controler', array((string) $dir, 'editable'));
-    
+    $controler = $this->create('controler');
+    $controler->loadDirectory((string) $dir);
     //$controler->setMode('editable');
     //dspf($controler->getDirectory());return;
     $this->setFiles(array($this->getFile('editable.xml')));

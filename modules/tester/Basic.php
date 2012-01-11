@@ -36,10 +36,11 @@ abstract class Basic extends core\module\Domed implements test {
       
       $aTests = array();
       $doc = $file->getDocument();
+      $doc->registerNamespaces($this->getNS());
       
       if (!$doc || $doc->isEmpty()) $this->throwException(txt('@file %s cannot be load'));
       
-      foreach ($doc->query('self:test', $this->getNS()) as $test) {
+      foreach ($doc->query('self:test') as $test) {
         
         $bResult = $this->test($test, $controler, $doc, $file);
         

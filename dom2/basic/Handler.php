@@ -51,7 +51,6 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
   
   private $bFragment;
   
-  
   public function __construct($mContent = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
     
     $controler = \Sylma::getControler('dom');
@@ -595,13 +594,24 @@ class Handler extends core\module\Namespaced implements dom\handler, core\argume
     \Sylma::throwException($sMessage, $mSender, $iOffset);
   }
   
+  public function saveFile(fs\editable\file $file) {
+    
+    if ($this->isEmpty()) {
+      
+      $this->throwException(txt('You cannot save empty document in %s', $file->asToken()));
+    }
+    
+    $this->getRoot()->prepareHTML();
+    $file->saveText($this->asString());
+  }
+  
   public function __toString() {
     
     $sResult = '';
     
     try {
       
-      $sResult = $this->asString();
+      $sResult = $this->asString($this->getRoot());
     }
     catch (\Exception $e) {
       

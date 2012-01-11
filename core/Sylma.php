@@ -1,6 +1,6 @@
 <?php
 
-use \sylma\core, \sylma\modules, \sylma\dom, \sylma\storage;
+use \sylma\core, \sylma\modules, \sylma\dom, \sylma\storage, \sylma\parser;
 
 class Sylma {
   
@@ -34,7 +34,7 @@ class Sylma {
     //xdebug_disable();
     set_error_handler(self::$exception . "::loadError");
     
-    require_once('Initializer.php');
+    require_once('old/Initializer.php');
     
     $init = self::$aControlers['init'] = new Initializer();
     
@@ -88,6 +88,20 @@ class Sylma {
         
         require_once('storage/fs/Controler.php');
         $controler = new storage\fs\Controler;
+        $controler->loadDirectory();
+        
+      break;
+      
+      case 'fs/editable' :
+        
+        require_once('storage/fs/Controler.php');
+        
+        $controler = new storage\fs\Controler;
+        
+        $controler->setArgument('classes/file/name', $controler->readArgument('classes/file/classes/editable/name'));
+        $controler->setArgument('classes/directory/name', $controler->readArgument('classes/directory/classes/editable/name'));
+        
+        $controler->loadDirectory();
         
       break;
       
@@ -113,8 +127,8 @@ class Sylma {
       
       case 'factory' :
         
-        require_once('core/Reflector.php');
-        $controler = new core\Reflector;
+        require_once('core/factory/Reflector.php');
+        $controler = new core\factory\Reflector;
         
       break;
       
@@ -122,6 +136,13 @@ class Sylma {
         
         $init = self::getControler('init');
         $controler = $init->loadRedirect();
+        
+      break;
+      
+      case 'action' :
+
+        require_once('parser/action/Controler.php');
+        $controler = new parser\action\Controler;
         
       break;
     }

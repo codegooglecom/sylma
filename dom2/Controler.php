@@ -41,10 +41,10 @@ class Controler extends core\module\Filed {
     
     if (!$this->aDefaultClasses || $settings) {
       
-      require_once('core/Reflector.php');
+      require_once('core/factory.php');
       
-      $this->getArguments()->registerToken(core\Reflector::CLASSBASE_TOKEN);
-      $this->getArguments()->registerToken(core\Reflector::DIRECTORY_TOKEN);
+      $this->getArguments()->registerToken(core\factory::CLASSBASE_TOKEN);
+      $this->getArguments()->registerToken(core\factory::DIRECTORY_TOKEN);
       
       $classes = $this->getArguments()->get('classes');
       if ($settings) $classes->merge($settings);
@@ -53,7 +53,7 @@ class Controler extends core\module\Filed {
         
         if ($class = $classes->get($sKey)) {
           
-          if ($sClassBase = $classes->getToken(core\Reflector::CLASSBASE_TOKEN)) {
+          if ($sClassBase = $classes->getToken(core\factory::CLASSBASE_TOKEN)) {
             
             $class->set('name', path_absolute($class->read('name'), $sClassBase, '\\'));
           }
@@ -68,8 +68,8 @@ class Controler extends core\module\Filed {
         }
       }
       
-      $this->getArguments()->unRegisterToken(core\Reflector::CLASSBASE_TOKEN);
-      $this->getArguments()->unRegisterToken(core\Reflector::DIRECTORY_TOKEN);
+      $this->getArguments()->unRegisterToken(core\factory::CLASSBASE_TOKEN);
+      $this->getArguments()->unRegisterToken(core\factory::DIRECTORY_TOKEN);
       
       if (!$settings) $this->aDefaultClasses = $aClasses;
     }

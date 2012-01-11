@@ -17,6 +17,9 @@
     </xsl:processing-instruction>
   </xsl:template>
   
+  <xsl:template match="php:argument">
+  </xsl:template>
+  
   <xsl:template match="*">
     <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
       <xsl:apply-templates select="* | @*"/>

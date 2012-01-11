@@ -9,8 +9,38 @@ require_once('Argumented.php');
 
 abstract class Filed extends Argumented {
   
+  const FS_CONTROLER = 'fs';
+  
   protected $directory = null;
   protected static $argumentClass = 'sylma\core\argument\Filed';
+  
+  protected function createArgument($mArguments, $sNamespace = '') {
+    
+    $result = null;
+    
+    if (is_string($mArguments)) {
+      
+      $result = $this->createArgumentFromString($mArguments, $sNamespace);
+    }
+    else {
+      
+      $result = parent::createArgument($mArguments, $sNamespace);
+    }
+    
+    return $result;
+  }
+  
+  private function createArgumentFromString($sPath, $sNamespace) {
+    
+    if (!$file = $this->getFile($sPath, true)) {
+      
+      $this->throwException(txt('Settings not found in @file %s', $sPath));
+    }
+    
+    $result = parent::createArgument((string) $file, $sNamespace);
+    
+    return $result;
+  }
   
   protected function setArguments($mArguments = null, $bMerge = true) {
     
@@ -18,17 +48,10 @@ abstract class Filed extends Argumented {
       
       if (is_string($mArguments)) {
         
-        if (!$file = $this->getFile($mArguments, true)) {
-          
-          $this->throwException(txt('Settings not found in @file %s', $mArguments));
-        }
-        
-        parent::setArguments(new static::$argumentClass((string) $file));
+        $mArguments = $this->createArgumentFromString($mArguments, $this->getNamespace());
       }
-      else {
-        
-        parent::setArguments($mArguments, $bMerge);
-      }
+      
+      parent::setArguments($mArguments);
     }
     else {
       
@@ -38,9 +61,19 @@ abstract class Filed extends Argumented {
     return $this->getArguments();
   }
   
+  /**
+   * Allow relative paths for classe's files
+   * 
+   * @param type $sName
+   * @param array $aArguments
+   * @param type $sDirectory
+   * @return mixed 
+   */
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
     
-    return parent::create($sName, $aArguments, $this->getDirectory());
+    if (!$sDirectory) $sDirectory = $this->getDirectory('', false);
+    
+    return parent::create($sName, $aArguments, $sDirectory);
   }
   
   /**
@@ -49,18 +82,58 @@ abstract class Filed extends Argumented {
    */
   protected function setDirectory($mDirectory) {
     
-    if (is_string($mDirectory)) $this->directory = core\functions\path\extractDirectory($mDirectory);
-    else $this->directory = $mDirectory;
+    if (is_string($mDirectory)) {
+      
+      $fs = $this->getControler('fs');
+      $this->directory = $fs->extractDirectory($mDirectory);
+    }
+    else {
+      
+      $this->directory = $mDirectory;
+    }
     
-    if (!$this->getDirectory()) $this->throwException(txt('Cannot use %s as a directory', $mDirectory));
+    if (!$this->getDirectory()) {
+      
+      $this->throwException(txt('Cannot use %s as a directory', $mDirectory));
+    }
+  }
+  
+  protected function loadControler($sName) {
+    
+    $result = null;
+    
+    if ($sName == 'fs') {
+      
+      $result = \Sylma::getControler(static::FS_CONTROLER);
+    }
+    else {
+      
+      $result = parent::loadControler($sName);
+    }
+    
+    return $result;
   }
   
   /**
    * @return fs\directory The current directory
    */
-  protected function getDirectory() {
+  protected function getDirectory($sPath = '', $bDebug = true) {
     
-    return $this->directory;
+    if ($sPath) {
+      
+      $result = $this->directory->getControler()->getDirectory($sPath, $bDebug);
+    }
+    else {
+      
+      $result = $this->directory;
+    }
+    
+    if (!$result && $bDebug) {
+      
+      $this->throwException(t('No base directory defined'));
+    }
+    
+    return $result;
   }
   
   /**
@@ -71,7 +144,7 @@ abstract class Filed extends Argumented {
    */
   protected function getFile($sPath, $bDebug = true) {
     
-    $fs = \Sylma::getControler('fs');
+    $fs = $this->getControler(static::FS_CONTROLER);
     
     if (!$directory = $this->getDirectory()) {
       

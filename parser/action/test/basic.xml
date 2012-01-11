@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action">
+  <tst:description>Action</tst:description>
+  <tst:test name="Load text file">
+    <le:action>
+      <le:file path="simple.txt"/>
+    </le:action>
+    <tst:expected>
+      $result instanceof dom\handler &amp;&amp;
+      $result->getRoot() &amp;&amp;
+      $result->getRoot()->getName() == 'file';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

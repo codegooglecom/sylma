@@ -1,0 +1,14 @@
+classes :
+  @sylma-classbase : \sylma\core\factory\test
+  absolute :
+    name : \sylma\core\factory\test\sample\Simple
+  relative :
+    name : sample\Simple
+  argumented :
+    name : sample\Second
+  badname :
+    name : sample\Third
+    file : sample\BadName.php
+  absolute-badname :
+    name : sample\Third
+    file : \sylma\core\factory\test\sample\BadName.php

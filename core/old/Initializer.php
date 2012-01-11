@@ -1,5 +1,7 @@
 <?php
 
+use sylma\core;
+
 class Initializer {
 	
   const NS = 'http://www.sylma.org/core/initializer';
@@ -64,7 +66,9 @@ class Initializer {
     
     //set_exception_handler("self::sendException");
     
+    core\exception\Basic::throwError(false);
     $this->loadLibs();
+    core\exception\Basic::throwError(true);
     
     require_once('core/module/old/XDB.php');
     

@@ -3,15 +3,10 @@
 namespace sylma\storage\fs\basic\editable;
 use \sylma\dom, \sylma\storage\fs;
 
-require_once(dirname(__dir__) . '/Directory.php');
+require_once(dirname(__dir__) . '/tokened/Directory.php');
 require_once(dirname(dirname(__dir__)) . '/editable/directory.php');
 
-class Directory extends fs\basic\Directory implements fs\editable\directory {
-  
-  public function addFreeDocument($sName, dom\document $oDocument) {
-    
-    $oDocument->saveFree($this, $sName);
-  }
+class Directory extends fs\basic\tokened\Directory implements fs\editable\directory {
   
   /**
    * Add or get a directory depends it exists or not
@@ -23,29 +18,66 @@ class Directory extends fs\basic\Directory implements fs\editable\directory {
     
     $result = null;
     
-    if (!$sName) {
+    if (!$result = $this->getDirectory($sName, self::DEBUG_NOT)) {
       
-      $this->throwException(t('No name defined for new directory'));
-    }
-    
-    if (!$result = $this->getDirectory($sName)) {
-      
-      if (!$this->checkRights(MODE_WRITE)) {
-        
-        $this->throwException(t('You have no rights to add a directory into this directory'));
-      }
-      
-      $sPath = \Sylma::ROOT.$this.'/'.$sName;
-      
-      if (!mkdir($sPath, SYLMA_DEFAULT_MODE)) {
-        
-        $this->throwException(txt('Cannot create directory called %s', $sName));
-      }
-      
-      $result = $this->updateDirectory($sName);
+      $result = $this->createDirectory($sName);
     }
     
     return $result;
+  }
+  
+  /**
+   *
+   * @param string $sName
+   * @param boolean $bRandom
+   * @return fs\file|null
+   */
+  public function createFile($sName, $bRandom = false) {
+    
+    if ($bRandom) $sName = 'tmp-' . uniqid() . '.' . $sName;
+    
+    return $this->getFile($sName, self::DEBUG_EXIST);
+  }
+  
+  /**
+   *
+   * @param string $sName
+   * @param boolean $bRandom
+   * @return fs\directory|null
+   */
+  public function createDirectory($sName = '') {
+    
+    if (!$sName) $sName = 'tmp-' . uniqid();
+    
+    if (!$dir = $this->getDirectory($sName, self::DEBUG_EXIST)) {
+      
+      $this->throwException('bla');
+    }
+    $dir->save();
+    
+    return $dir;
+  }
+  
+  public function save() {
+    
+    if ($this->doExist()) {
+      
+      $this->throwException(t('Cannot create, directory exists yet'));
+    }
+    
+    if (!$this->checkRights(MODE_WRITE)) {
+      
+      $this->throwException(t('You have no rights to create this directory'));
+    }
+    
+    dspf($this->getControler()->readArgument('system/rights'));
+    if (!$bResult = mkdir($this->getRealPath(), $this->getControler()->readArgument('system/rights'))) {
+      
+      $this->throwException(txt('Cannot create directory called %s', $sName));
+    }
+    
+    $this->doExist(true);
+    //$result = $this->updateDirectory($sName);
   }
   
   public function updateRights($sOwner, $sGroup, $sMode) {
@@ -75,27 +107,27 @@ class Directory extends fs\basic\Directory implements fs\editable\directory {
     return $oResult;
   }
   
-  public function delete($bDeleteChildren = false) {
+  public function delete() {
     
     $bResult = false;
     
     if ($this->checkRights(\Sylma::MODE_WRITE)) {
       
-      if ($bDeleteChildren) {
-        
-        if ($this === $this->getControler()->getDirectory()) dspm('Impossible de supprimer le répertoire principal !', 'file/error');
-        else {
-          
-          $this->browse(array(), array(), 1);
-          
-          foreach ($this->aFiles as $oFile) if ($oFile) $oFile->delete();
-          foreach ($this->aDirectories as $oDirectory) $oDirectory->delete(true);
-        }
+      if ($this === $this->getControler()->getDirectory()) {
+
+        $this->throwException(t('Cannot delete root directory !'));
       }
       
-      $bResult = rmdir(\Sylma::ROOT . $this);
+      $controler = $this->getControler();
+      $user = $controler->getControler('user');
+      $tmp = $controler->getDirectory((string) $user->getDirectory('#tmp'));
+      
+      $sName = 'trashed-' . uniqid() . '-' . $this->getName();
+      $new = $tmp->createDirectory($sName);
+      $bResult = rename($this->getRealPath(), $new->getRealPath());
       
       $this->getParent()->updateDirectory($this->getName());
+      $tmp->updateDirectory($sName);
     }
     
     return $bResult;

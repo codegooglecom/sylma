@@ -10,3 +10,5 @@ classes :
   document :
     file : \sylma\dom2\basic\Handler.php
     name : \sylma\dom\basic\Handler
+  action :
+    name : Handler

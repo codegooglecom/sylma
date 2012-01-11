@@ -29,14 +29,18 @@ class Directory extends Resource implements fs\directory {
     
     $this->bExist = is_dir($this->getRealPath());
     
+    $this->aRights = $this->aChildrenRights = $aRights;
+    
+    $settings = $this->getControler()->create('security', array($this, $this->getControler()));
+    $this->setSettings($settings);
+    
     if ($this->doExist()) {
       
-      $this->aRights = $this->aChildrenRights = $aRights;
-      
-      $settings = $this->getControler()->create('security', array($this, $this->getControler()));
-      $this->setSettings($settings);
-      
       $this->loadRights(); //if ($parent) 
+    }
+    else if ($sName) {
+      
+      $this->isSecured(true);
     }
   }
   
@@ -167,9 +171,7 @@ class Directory extends Resource implements fs\directory {
     
     if ($aExtensions) {
       
-      $sClass = $this->getAlias(self::FILE_ALIAS);
-      
-      foreach ($this->aFiles[$sClass] as $sFile => $file) {
+      foreach ($this->aFiles as $sFile => $file) {
         
         if ($file) {
           //dspf($file);
@@ -185,13 +187,11 @@ class Directory extends Resource implements fs\directory {
     
     // Recursion in sub-directory
     
-    $sAlias = $this->getAlias(self::DIRECTORY_ALIAS);
-    
-    if (($iDepth === null || $iDepth > 0) && array_key_exists($sAlias, $this->aDirectories)) {
+    if (($iDepth === null || $iDepth > 0)) {
       
       if ($iDepth) $iDepth--;
       
-      foreach ($this->aDirectories[$sAlias] as $dir) {
+      foreach ($this->aDirectories as $dir) {
         
         if ($dir) $aResult = array_merge($aResult, $dir->getFiles($aExtensions, $sPreg, $iDepth));
       }
@@ -205,9 +205,8 @@ class Directory extends Resource implements fs\directory {
    */
   public function updateFile($sName) {
     
-    $sAlias = $this->getAlias(self::FILE_ALIAS);
+    if (array_key_exists($sName, $this->aFiles)) unset($this->aFiles[$sName]);
     
-    if (array_key_exists($sAlias, $this->aFiles) && array_key_exists($sName, $this->aFiles[$sAlias])) unset($this->aFiles[$sAlias][$sName]);
     return $this->getFile($sName);
   }
   
@@ -216,27 +215,18 @@ class Directory extends Resource implements fs\directory {
    */
   public function updateDirectory($sName) {
     
-    $sAlias = $this->getAlias(self::DIRECTORY_ALIAS);
+    if (array_key_exists($sName, $this->aDirectories)) unset($this->aDirectories[$sName]);
     
-    if (array_key_exists($sAlias, $this->aDirectories) && array_key_exists($sName, $this->aDirectories[$sAlias])) unset($this->aDirectories[$sAlias][$sName]);
     return $this->getDirectory($sName);
-  }
-  
-  protected function getAlias($sClass) {
-    
-    $fs = $this->getControler();
-    
-    return $fs->getAlias($sClass);
   }
   
   public function getFreeFile($sName, $iDebug = self::DEBUG_LOG) {
     
     $result = null;
-    $sAlias = $this->getAlias(self::FILE_ALIAS);
     
-    if (array_key_exists($sAlias, $this->aFiles) && array_key_exists($sName, $this->aFiles[$sAlias])) {
+    if (array_key_exists('file', $this->aFiles)) {
       
-      $result = $this->aFiles[$sAlias][$sName];
+      $result = $this->aFiles[$sName];
     }
     else {
       
@@ -249,9 +239,8 @@ class Directory extends Resource implements fs\directory {
   protected function loadFreeFile($sName, $iDebug) {
     
     $result = null;
-    $sClass = $this->getAlias(self::FILE_ALIAS);
     
-    $file = $this->getControler()->create($sClass, array(
+    $file = $this->getControler()->create('file', array(
         $sName,
         $this,
         $this->getRights(),
@@ -268,9 +257,7 @@ class Directory extends Resource implements fs\directory {
       $this->throwException(t('File does not exists'));
     }
     
-    if (!array_key_exists($sClass, $this->aFiles)) $this->aFiles[$sClass] = array();
-    
-    $this->aFiles[$sClass][$sName] = $result;
+    $this->aFiles[$sName] = $result;
     
     return $result;
   }
@@ -295,12 +282,10 @@ class Directory extends Resource implements fs\directory {
     
     if ($sName && is_string($sName)) {
       
-      $sClass = $this->getAlias(self::FILE_ALIAS);
-      
-      if (array_key_exists($sClass, $this->aFiles) && array_key_exists($sName, $this->aFiles[$sClass])) {
+      if (array_key_exists($sName, $this->aFiles)) {
         
         // yet builded
-        $file = $this->aFiles[$sClass][$sName];
+        $file = $this->aFiles[$sName];
         
         if (!$file->isSecured()) {
           
@@ -339,13 +324,18 @@ class Directory extends Resource implements fs\directory {
     $file->isSecured(true);
   }
   
-  public function getDirectory($sName) {
+  public function getDirectory($sName, $iDebug = self::DEBUG_LOG) {
     
     $result = null;
     
     // Mainly for config files and related directories rights for wich security rights
     // has not yet been loaded in @method __construct() cause of missing @controler user
     $this->loadRights();
+    
+    if (!$sName) {
+      
+      $this->throwException(t('Cannot get a directory without name'));
+    }
     
     if ($sName == '.') {
       
@@ -355,27 +345,52 @@ class Directory extends Resource implements fs\directory {
       
       $result = $this->getParent();
     }
-    else if ($sName) {
+    else {
       
-      $sAlias = $this->getAlias(self::DIRECTORY_ALIAS);
-      
-      if (array_key_exists($sAlias, $this->aDirectories) && array_key_exists($sName, $this->aDirectories[$sAlias])) {
+      if (array_key_exists($sName, $this->aDirectories)) {
         
         // yet builded
-        $result = $this->aDirectories[$sAlias][$sName];
+        $result = $this->aDirectories[$sName];
       }
       else {
         
         // not yet builded, build it
-        $dir = $this->getControler()->create($sAlias, array(
-          $sName,
-          $this,
-          $this->getChildrenRights(),
-        ));
-        
-        if ($dir->doExist()) $result = $this->aDirectories[$sAlias][$sName] = $dir;
-        else $this->aDirectories[$sAlias][$sName] = null;
+        $result = $this->loadDirectory($sName, $iDebug);
       }
+    }
+    
+    if (!$result && ($iDebug & self::DEBUG_LOG)) {
+      
+      $this->throwException(txt('@directory %s does not exists', $sName));
+    }
+    
+    return $result;
+  }
+  
+  /**
+   *
+   * @param type $sName
+   * @param type $iDebug
+   * @return fs\directory|null
+   */
+  protected function loadDirectory($sName, $iDebug) {
+    
+    $result = null;
+    
+    $dir = $this->getControler()->create('directory', array(
+      $sName,
+      $this,
+      $this->getChildrenRights(),
+    ));
+    
+    if ($dir->doExist()) {
+      
+      $result = $dir;
+      $this->aDirectories[$sName] = $result;
+    }
+    else if ($iDebug & self::DEBUG_EXIST) {
+      
+      $result = $dir;
     }
     
     return $result;
@@ -409,7 +424,7 @@ class Directory extends Resource implements fs\directory {
     return $result;
   }
   
-  public function getDistantDirectory($mPath) {
+  public function getDistantDirectory($mPath, $iDebug = self::DEBUG_LOG) {
     
     if (is_string($mPath)) $mPath = explode('/', $mPath);
     
@@ -417,7 +432,7 @@ class Directory extends Resource implements fs\directory {
       
       $sName = array_shift($mPath);
       
-      if ($oSubDirectory = $this->getDirectory($sName)) return $oSubDirectory->getDistantDirectory($mPath);
+      if ($oSubDirectory = $this->getDirectory($sName, $iDebug)) return $oSubDirectory->getDistantDirectory($mPath, $iDebug);
       
     } else return $this;
     

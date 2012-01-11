@@ -120,5 +120,41 @@
         $arg->read('mno/def') === '456'
       </tst:expected>
   </tst:test>
+  <tst:test name="Get class name with token">
+    <tst:prepare>
+      $controler->set('arg', $controler->create('filed', array($controler->getDirectory() . '/class.yml')));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $sToken = '@sylma-classbase';
+      
+      $arg->registerToken($sToken);
+      $sName = $arg->read('classes/file/name');
+      $sClass = $arg->getToken($sToken);
+      
+      return
+        $sName == 'basic\File' &amp;&amp;
+        $sClass == '\sylma\storage\fs'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Get class name with token after edit">
+    <tst:prepare>
+      $controler->set('arg', $controler->create('filed', array($controler->getDirectory() . '/class.yml')));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $sToken = '@sylma-classbase';
+      
+      $arg->set('classes/file/name', 'test');
+      
+      $arg->registerToken($sToken);
+      $sName = $arg->read('classes/file/name');
+      $sClass = $arg->getToken($sToken);
+      
+      return
+        $sName == 'test' &amp;&amp;
+        $sClass == '\sylma\storage\fs'
+    </tst:expected>
+  </tst:test>
 </tst:tests>
 

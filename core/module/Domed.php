@@ -16,7 +16,7 @@ abstract class Domed extends Filed {
   const ARGUMENTS = 'domed.yml';
   
   const DOM_CONTROLER = 'dom';
-  const DOM_ELEMENT_PREFIX = 'element';
+  const DOM_DOCUMENT_ALIAS = 'handler';
   
   const FILE_CONTROLER = 'fs';
   
@@ -31,11 +31,11 @@ abstract class Domed extends Filed {
   /**
    * Create a DOM element using module's default namespace if not specified
    */
-  public function createNode($sName, $mContent = '', array $aAttributes = array(), $sPrefix = '') {
+  public function createDocument($mContent) {
     
     $dom = \Sylma::getControler(self::DOM_CONTROLER);
     
-    return $dom->create(self::DOM_ELEMENT_PREFIX, array($sName, $mContent, $aAttributes, $this->getNamespace($sPrefix)));
+    return $dom->create(self::DOM_DOCUMENT_ALIAS, array($mContent));
   }
   
   protected function getAction($sPath, $aArguments = array()) {

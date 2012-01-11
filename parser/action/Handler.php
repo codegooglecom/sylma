@@ -11,17 +11,19 @@ require_once('core\module\Domed.php');
  */
 class Handler extends core\module\Domed implements parser\action {
   
-  const CONTROLER_ALIAS = 'parser/action';
+  const CONTROLER_ALIAS = 'action';
   const DEBUG_UPDATE = true;
+  
+  const FS_CONTROLER = 'fs/editable';
   
   protected $file;
   protected $controler;
   
   protected $aArguments = array();
+  protected $baseDirectory = null;
   
-  public function __construct(fs\file $file, array $aArguments = array()) {
+  public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
     
-    $this->setFile($file);
     $this->aArguments = $aArguments;
     
     $this->setControler(\Sylma::getControler(self::CONTROLER_ALIAS));
@@ -29,18 +31,23 @@ class Handler extends core\module\Domed implements parser\action {
     $this->loadDefaultArguments();
     
     $this->setNamespace($this->getControler()->getNamespace());
-  }
-  
-  public function setControler(core\factory $controler) {
     
-    $this->controler = $controler;
-  }
-  
-  public function getControler() {
+    $this->setFile($file);
     
-    return $this->controler;
+    if ($base) $this->setBaseDirectory($base);
+    else $this->setBaseDirectory($file->getParent());
   }
   
+  protected function getBaseDirectory() {
+    
+    return $this->baseDirectory;
+  }
+  
+  protected function setBaseDirectory(fs\directory $baseDirectory) {
+    
+    $this->baseDirectory = $baseDirectory;
+  }
+    
   protected function setFile(fs\file $file) {
     
     $this->file = $file;
@@ -70,9 +77,9 @@ class Handler extends core\module\Domed implements parser\action {
   protected function runCache(fs\file $file) {
     
     require_once($file->getRealPath());
-    
+    //dspf($this->getBaseDirectory());
     $result = null;
-    $action = new ActionTest($this->getFile()->getParent(), $this, $this->createArgument($this->aArguments));
+    $action = new ActionTest($this->getBaseDirectory(), $this, $this->createArgument($this->aArguments));
     $result = $action->asDOM();
     
     return $result;
@@ -83,22 +90,20 @@ class Handler extends core\module\Domed implements parser\action {
     $parser = $this->getControler();
     $doc = $this->getFile()->getDocument();
     
-    $action = $parser->create('dom', array($parser, $doc, $this->getFile()->getParent()));
+    $action = $parser->create('dom', array($parser, $doc, $this->getBaseDirectory()));
     
     return $action->asDOM();
   }
   
   protected function parseDOM() {
     
-    $file = $this->getFile();
+    $file =  $this->getFile((string) $this->getFile());
     $fs = $file->getControler();
     
     $sClass = $file->getName() . '.php';
     $sTemplate = $file->getName() . '.tpl.php';
     
-    $fs->setMode('editable');
-    
-    $dir = $fs->getDirectory((string) $file->getParent());
+    $dir = $file->getParent();
     $tmpDir = $dir->addDirectory('#tmp');
     
     $method = $this->loadDOM();
@@ -118,8 +123,6 @@ class Handler extends core\module\Domed implements parser\action {
       $tpl->saveText(substr($sResult, 22));
     }
     
-    $fs->setMode('');
-    
     return $class;
   }
   
@@ -129,7 +132,7 @@ class Handler extends core\module\Domed implements parser\action {
     $file = $this->getFile();
     $sName = $file->getName() . '.php';
     
-    $tmpDir = $file->getParent()->getDirectory('#tmp');
+    $tmpDir = $this->getDirectory((string) $file->getParent())->addDirectory('#tmp');
     
     if ($tmpDir) {
       

@@ -17,7 +17,6 @@ class Domed extends Reflector implements parser\domed {
    * @var storage\fs
    */
   private $document;
-  private $aArguments = array();
   
   private $bTemplate = false;
   /**
@@ -42,16 +41,6 @@ class Domed extends Reflector implements parser\domed {
   protected function getDocument() {
     
     return $this->document;
-  }
-  
-  public function setArguments(array $aArguments) {
-    
-    $this->aArguments = $aArguments;
-  }
-  
-  public function getArguments() {
-    
-    return $this->aArguments;
   }
   
   private function getParser($sUri) {

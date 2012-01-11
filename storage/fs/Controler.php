@@ -15,23 +15,26 @@ class Controler extends core\module\Argumented {
   private $bEditable = false;
   private $sMode = '';
   
-  public function __construct($sPath = '', $sMode = '') {
+  public function __construct($sPath = '', core\argument $arg = null) {
     
-    $this->setMode($sMode);
+    $this->setNamespace(self::NS);
     
     $sDirectory = $this->extractDirectory(__file__, false);
     $this->setArguments(new core\argument\Filed(path\toAbsolute(self::SETTINGS, $sDirectory)));
     
-    $this->directory = $this->create($this->getAlias('directory'), array($sPath, null, $this->getArgument('rights')->query(), $this));
-    
-    $this->setNamespace(self::NS);
+    if ($arg) $this->getArguments()->merge($arg);
   }
   
-  public function getAlias($sClass) {
+  public function loadDirectory($sPath = '') {
     
-    if ($sMode = $this->getMode()) $sClass .= '/' . $sMode;
+    $dir = $this->create('directory', array($sPath, null, $this->getArgument('rights')->query(), $this));
     
-    return $sClass;
+    $this->setDirectory($dir);
+  }
+  
+  public function setDirectory(fs\directory $dir) {
+    
+    $this->directory = $dir;
   }
   
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
@@ -39,31 +42,25 @@ class Controler extends core\module\Argumented {
     return parent::create($sName, $aArguments, $sDirectory);
   }
   
-  public function createArgument(array $aArguments, $sNamespace = '') {
+  public function createArgument($mArguments, $sNamespace = '') {
     
-    return parent::createArgument($aArguments, $sNamespace);
+    return parent::createArgument($mArguments, $sNamespace);
   }
   
-  public function setMode($sName) {
+  public function extractDirectory($sFile, $bObject = true) {
     
-    $this->sMode = $sName;
-  }
-  
-  public function getMode() {
+    $sFile = substr($sFile, strlen(getcwd() . \Sylma::ROOT) + 1);
+    if (\Sylma::isWindows()) $sFile = str_replace('\\', '/', $sFile);
     
-    return $this->sMode;
-  }
-  
-  public function extractDirectory($sPath, $bObject = true) {
-    
-    $sPath = substr($sPath, strlen(getcwd() . \Sylma::ROOT) + 1);
-    if (SYLMA_XAMPP_BUG && \Sylma::isWindows()) $sPath = str_replace('\\', '/', $sPath);
-    else if (preg_match("/Win/", getenv("HTTP_USER_AGENT" ))) $sPath = str_replace('\\', '/', $sPath);
-    
-    $sResult = substr($sPath, 0, strlen($sPath) - strlen(strrchr($sPath, '/')));
+    $sResult = substr($sFile, 0, strlen($sFile) - strlen(strrchr($sFile, '/')));
     
     if ($bObject) return $this->getDirectory($sResult);
     else return $sResult;
+  }
+  
+  public function readArgument($sPath, $mDefault = null, $bDebug = false) {
+    
+    return parent::readArgument($sPath, $mDefault, $bDebug);
   }
   
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {
@@ -107,28 +104,15 @@ class Controler extends core\module\Argumented {
     return $this->getDirectory()->getDistantFile($aPath, $iDebug);
   }
   
-  protected function getUnsafes() {
+  public function setArgument($sPath, $mValue) {
     
-    $aResult = array();
-    
-    if ($unsafes = $this->getArgument('unsafes')) {
-      
-      $aResult = $unsafes->query();
-    }
-    
-    return $aResult;
+    return parent::setArgument($sPath, $mValue);
   }
   
-  public function checkUnsafe(fs\file $file) {
-    dspm((string) $file);
-    if (!in_array((string) $file, $this->getUnsafes())) {
-      
-      $this->throwException(txt('%s should be secured', $file->asToken()));
-    }
-    
-    return true;
+  public function getArguments() {
+    return parent::getArguments();
   }
-  
+
   public function throwException($sMessage, $mSender = array(), $iOffset = 1) {
     
     $mSender = (array) $mSender;

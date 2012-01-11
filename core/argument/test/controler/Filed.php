@@ -3,18 +3,19 @@
 namespace sylma\core\argument\test\controler;
 use \sylma\core\argument\test, \sylma\core\module, \sylma\storage\fs;
 
+require_once('core/module/Filed.php');
 require_once('core/argument/test/controler.php');
 
 class Filed extends module\Filed implements test\controler {
   
-  public function getDirectory() {
+  public function getDirectory($sPath = '', $bDebug = true) {
     
     return parent::getDirectory();
   }
-
-  public function getNamespace() {
+  
+  public function getNamespace($sPrefix = null) {
     
-    return parent::getNamespace();
+    return parent::getNamespace($sPrefix);
   }
 
   public function setDirectory($mDirectory) {

@@ -7,7 +7,7 @@ require_once('core/argument/Domed.php');
 require_once('Controled.php');
 require_once('core/factory.php');
 
-require_once('core/Reflector.php');
+//require_once('core/Reflector.php');
 
 abstract class Argumented extends Controled implements core\factory {
   
@@ -23,12 +23,13 @@ abstract class Argumented extends Controled implements core\factory {
   
   /**
    * Argument object linked to this module, contains various parameters for the module
+   * @var core\argument
    */
   protected $arguments = null;
   
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
     
-    $factory = \Sylma::getControler('factory');
+    $factory = $this->getControler(self::FACTORY_CONTROLER);
     
     if (array_key_exists($sName, $this->aClasses)) {
       
@@ -52,11 +53,11 @@ abstract class Argumented extends Controled implements core\factory {
     return $result;
   }
   
-  protected function createArgument(array $aArguments, $sNamespace = '') {
+  protected function createArgument($mArguments, $sNamespace = '') {
     
     if (!$sNamespace) $sNamespace = $this->getNamespace();
     
-    return new static::$argumentClass($aArguments, $sNamespace);
+    return new static::$argumentClass($mArguments, $sNamespace);
   }
   
   protected function setArguments($mArguments = null, $bMerge = true) {
@@ -82,10 +83,15 @@ abstract class Argumented extends Controled implements core\factory {
     return $this->getArguments();
   }
   
+  /**
+   *
+   * @return core\argument
+   */
   protected function getArguments() {
     
     return $this->arguments;
   }
+  
   protected function getArgument($sPath, $mDefault = null, $bDebug = false) {
     
     $mResult = $mDefault;
@@ -108,6 +114,16 @@ abstract class Argumented extends Controled implements core\factory {
     if ($mResult === null && $mDefault !== null) $mResult = $mDefault;
     
     return $mResult;
+  }
+  
+  protected function setArgument($sPath, $mValue) {
+    
+    if (!$this->getArguments()) {
+      
+      $this->setArguments(array());
+    }
+    
+    return $this->getArguments()->set($sPath, $mValue);
   }
   
   /**

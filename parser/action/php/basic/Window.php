@@ -13,7 +13,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   const ARGUMENTS_PATH = 'classes/php';
   
   // Keyed by alias. ex : storage/fs
-  private $aControlers = array();
+  protected $aControlers = array();
   
   // Keyed by namespace. ex : http://www.sylma.org/parser/action
   private $aParsers = array();
@@ -45,19 +45,9 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     //$this->sylma = $this->create('class-static', array('\Sylma'));
   }
   
-  public function createArgument(array $aArguments, $sNamespace = '') {
+  public function createArgument($mArguments, $sNamespace = '') {
     
-    return parent::createArgument($aArguments, $sNamespace);
-  }
-  
-  public function setControler(core\factory $controler) {
-    
-    $this->controler = $controler;
-  }
-  
-  public function getControler() {
-    
-    return $this->controler;
+    return parent::createArgument($mArguments, $sNamespace);
   }
   
   public function setContent(array $aContent) {

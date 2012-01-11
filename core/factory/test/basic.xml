@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/core/factory/test" xmlns="http://www.sylma.org">
+  <tst:description>Basic</tst:description>
+  <tst:test name="create class from absolute name">
+    $arg = $controler->createArgument('basic.yml');
+    $factory = $controler->getFactory();
+    $factory->setSettings($arg);
+    
+    $result = $factory->create('absolute');
+    
+    return $result instanceof \sylma\core\factory\test\sample\Simple;
+  </tst:test>
+  <tst:test name="create class using specified methods">
+    $arg = $controler->createArgument('basic.yml');
+    $factory = $controler->getFactory();
+    $factory->setSettings($arg);
+    
+    $class = $factory->findClass('absolute');
+    $result = $factory->createObject($class);
+    
+    return $result instanceof \sylma\core\factory\test\sample\Simple;
+  </tst:test>
+  <tst:test name="create class from relative name">
+    $arg = $controler->createArgument('basic.yml');
+    $factory = $controler->getFactory();
+    $factory->setSettings($arg);
+    
+    $result = $factory->create('relative');
+    
+    return $result instanceof \sylma\core\factory\test\sample\Simple;
+  </tst:test>
+  <tst:test name="create class from relative name in other file name">
+    $arg = $controler->createArgument('basic.yml');
+    $factory = $controler->getFactory();
+    $factory->setSettings($arg);
+    
+    $result = $factory->create('badname');
+    
+    return $result instanceof \sylma\core\factory\test\sample\Third;
+  </tst:test>
+  <tst:test name="create class from relative name in other absolute file name">
+    $arg = $controler->createArgument('basic.yml');
+    $factory = $controler->getFactory();
+    $factory->setSettings($arg);
+    
+    $result = $factory->create('absolute-badname');
+    
+    return $result instanceof \sylma\core\factory\test\sample\Third;
+  </tst:test>
+  <tst:test name="create class when first altering the datas">
+    $arg = $controler->createArgument('basic.yml');
+    $factory = $controler->getFactory();
+    
+    $arg->get('classes/relative');
+    $arg->set('classes/relative/name', 'sample\Second');
+    
+    $factory->setSettings($arg);
+    
+    $result = $factory->create('relative');
+    
+    return $result instanceof \sylma\core\factory\test\sample\Second;
+  </tst:test>
+  <tst:test name="create class with an argument">
+    $arg = $controler->createArgument('basic.yml');
+    $factory = $controler->getFactory();
+    $factory->setSettings($arg);
+    
+    $result = $factory->create('argumented', array('123'));
+    
+    return
+      $result instanceof \sylma\core\factory\test\sample\Second &amp;&amp;
+      $result->getTest() == '123';
+  </tst:test>
+</tst:tests>
+

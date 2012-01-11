@@ -9,19 +9,47 @@ require_once('Exceptionable.php');
 abstract class Controled extends Exceptionable implements core\controled {
   
   protected $controler;
+  protected $aControlers = array();
   
-  public function setControler(core\factory $controler) {
+  public function setControler(core\factory $controler, $sName = '') {
     
     $this->controler = $controler;
   }
   
-  public function getControler() {
+  public function getControler($sName = '') {
     
-    if (!$this->controler) {
+    $result = null;
+    
+    if ($sName) {
       
-      $this->throwException('No controler defined');
+      $result = $this->loadControler($sName);
+    }
+    else {
+      
+      if (!$this->controler) {
+        
+        $this->throwException('No controler defined');
+      }
+      
+      $result = $this->controler;
     }
     
-    return $this->controler;
+    return $result;
+  }
+  
+  protected function loadControler($sName) {
+    
+    $controler = null;
+    
+    if (array_key_exists($sName, $this->aControlers)) {
+      
+      $controler = $this->aControlers[$sName];
+    }
+    else {
+      
+      $controler = \Sylma::getControler($sName);
+    }
+    
+    return $controler;
   }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/storage/fs/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+  <tst:description>Simple replacements</tst:description>
+  <tst:test name="Replace root dir with token">
+    $controler->getDirectory()->registerToken('#sylma', 'sample1');
+    
+    return
+      ($dir = $controler->getDirectory('#sylma')) &amp;&amp;
+      $dir instanceof \sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1';
+  </tst:test>
+  <tst:test name="Replace sub dir with propagated token">
+    $controler->getDirectory()->registerToken('#tmp', 'sub1', true);
+    
+    return
+      ($dir = $controler->getDirectory('sample1/#tmp')) &amp;&amp;
+      $dir instanceof \sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1/sub1';
+  </tst:test>
+</tst:tests>

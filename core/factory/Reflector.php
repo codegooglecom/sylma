@@ -1,21 +1,12 @@
 <?php
 
-namespace sylma\core;
+namespace sylma\core\factory;
 use \sylma\core;
 
+require_once('core/factory.php');
 require_once('core/functions/Path.php');
 
-class Reflector {
-  
-  /**
-   * Used in @class argument for keeping file path for relative path import
-   */
-  const DIRECTORY_TOKEN = '@sylma-directory';
-  
-  /**
-   * Used in @class argument for keeping trace of last defined class namespace
-   */
-  const CLASSBASE_TOKEN = '@sylma-classbase';
+class Reflector implements core\factory {
   
   /**
    * Classes to use within @method create() loaded in @settings /classes
@@ -63,6 +54,8 @@ class Reflector {
       $this->throwException(txt('Class %s cannot be load', $sName));
     }
     
+    //if ($sName == 'directory') dspf()
+    //dspf(class_exists('\sylma\storage\fs\basic\editable\Directory'));
     if ($sClassBase = $this->getSettings()->getToken(self::CLASSBASE_TOKEN)) {
       
       $class->set('name', core\functions\path\toAbsolute($class->read('name'), $sClassBase, '\\'));
@@ -75,7 +68,7 @@ class Reflector {
       
       $class->set('file', path_absolute($sFile, $sDirectory));
     }
-    
+    //echo($class->read('name')) . '<br/>';
     return $class;
   }
   
@@ -86,7 +79,7 @@ class Reflector {
    * @param argument $args
    * @return core\argument 
    */
-  protected function loadClass($sName, argument $args) {
+  protected function loadClass($sName, core\argument $args) {
     
     $aPath = explode('/', $sName);
     array_unshift($aPath, null);
@@ -116,7 +109,7 @@ class Reflector {
    * 
    * @return mixed The object created
    */
-  public function createObject(argument $class, array $aArguments = array()) {
+  public function createObject(core\argument $class, array $aArguments = array()) {
     
     $result = null;
     

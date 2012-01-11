@@ -5,6 +5,7 @@
     <le:document le:set-variable="doc">
       <test:tests>
         <le:action path="../../core/argument/test/interface"/>
+        <le:action path="../../core/factory/test/interface"/>
         <le:action path="../../storage/fs/test/basic"/>
         <!--<le:action path="../../storage/fs/test/editable"/>-->
       </test:tests>

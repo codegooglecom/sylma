@@ -9,7 +9,7 @@
   </tst:test>
   <tst:test name="Load non-existing root directory">
     return
-      $controler->getDirectory('/nodirectory') === null;
+      $controler->getDirectory('/nodirectory', false) === null;
   </tst:test>
   <tst:test name="Load first level directory with relative path">
     $dir = $controler->getDirectory('sample1');
