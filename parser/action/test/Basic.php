@@ -29,6 +29,11 @@ class Basic extends tester\Basic {
     $this->setControler($controler);
   }
   
+  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+    
+    return parent::getArgument($sPath, $mDefault, $bDebug);
+  }
+  
   protected function setArgument($sPath, $mValue) {
     
     return parent::setArgument($sPath, $mValue);

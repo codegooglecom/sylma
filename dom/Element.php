@@ -213,7 +213,7 @@ class XML_Element extends DOMElement implements ElementInterface {
         $mResult = $this->getDocument()->queryString($mResult);
         
         XML_Controler::addStat('query');
-        if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
+        if (Sylma::read('actions/stats/enable') && Controler::isAdmin()) XML_Controler::addQuery($sQuery);
         
         if ($mResult === null) {
           
@@ -249,8 +249,8 @@ class XML_Element extends DOMElement implements ElementInterface {
         
         XML_Controler::addStat('query');
         if (Controler::isAdmin() &&
-          (Sylma::get('actions/stats/enable') ||
-          Sylma::get('dom/debug/show-queries'))) XML_Controler::addQuery($sQuery);
+          (Sylma::read('actions/stats/enable') ||
+          Sylma::read('dom/debug/show-queries'))) XML_Controler::addQuery($sQuery);
         
         // if (!$mResult || !$mResult->length) dspm(xt("Element->query(%s) : Aucun résultat", new HTML_Strong($sQuery)), 'xml/report');
         // ////// report & notice type will crash system, maybe something TODO /////// //

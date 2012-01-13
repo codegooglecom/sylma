@@ -90,4 +90,13 @@ class Controler extends core\module\Filed {
     
     if ($this->readArgument('stats/enable')) $this->aStats[$sName][] = $aArguments;
   }
+  
+  public function stringToBool($sValue, $bDefaut = false) {
+    
+    $sValue = strtolower($sValue);
+    
+    if (strtolower($sValue) == 'true') return true;
+    else if (strtolower($sValue) == 'false') return false;
+    else return $bDefaut;
+  }
 }

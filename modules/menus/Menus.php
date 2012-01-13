@@ -15,8 +15,8 @@ class TreeMenus extends Module {
     $this->setDirectory(__file__);
     
     $this->setArguments('settings.yml');
-    $this->setNamespace($this->getArgument('namespace'), self::PREFIX);
-    $this->setNamespace(Sylma::get('actions/namespace'), 'le', false);
+    $this->setNamespace($this->readArgument('namespace'), self::PREFIX);
+    $this->setNamespace(Sylma::read('actions/namespace'), 'le', false);
     
     $this->document = $document;
     

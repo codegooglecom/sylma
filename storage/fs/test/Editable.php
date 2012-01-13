@@ -8,28 +8,40 @@ require_once('modules/tester/Basic.php');
 class Editable extends tester\Basic {
   
   const NS = 'http://www.sylma.org/storage/fs/test';
-  protected $sTitle = 'File system';
+  const FS_CONTROLER = 'fs/editable';
+  
+  protected $sTitle = 'File update';
+  
+  /**
+   * @var fs\directory
+   */
+  protected $tmp;
   
   public function __construct() {
+    
+    $this->getControler('dom');
     
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
     $this->setArguments('../settings.yml');
     
-    $this->getControler('dom');
     $user = $this->getControler('user');
+    //dspf($this->getDirectory((string) $user->getDirectory()));
+    //$this->throwException('t');
+    $dir = $this->getDirectory((string) $user->getDirectory())->addDirectory('#tmp')->createDirectory();
+    $this->tmp = $dir;
     
-    $dir = $user->getDirectory('#tmp')->createDirectory();
-    //dspm((string) $dir);
-    // dspf((string) $dir);
-    
-    $controler = $this->create('controler');
+    $controler = $this->create('controler', array('', true));
     $controler->loadDirectory((string) $dir);
-    //$controler->setMode('editable');
-    //dspf($controler->getDirectory());return;
+    
     $this->setFiles(array($this->getFile('editable.xml')));
     
     $this->setControler($controler);
+  }
+  
+  protected function onFinish() {
+    
+    if ($this->tmp) $this->tmp->delete();
   }
 }
 

@@ -13,7 +13,7 @@ class Directory extends Resource implements fs\directory {
   CONST FILE_ALIAS = 'file';
   const DIRECTORY_ALIAS = 'directory';
   
-  private $aDirectories = array();
+  public $aDirectories = array();
   private $aFiles = array();
   private $aFreeFiles = array();
   private $settings = null;
@@ -207,7 +207,7 @@ class Directory extends Resource implements fs\directory {
     
     if (array_key_exists($sName, $this->aFiles)) unset($this->aFiles[$sName]);
     
-    return $this->getFile($sName);
+    return $this->getFile($sName, self::DEBUG_NOT);
   }
   
   /**
@@ -217,7 +217,7 @@ class Directory extends Resource implements fs\directory {
     
     if (array_key_exists($sName, $this->aDirectories)) unset($this->aDirectories[$sName]);
     
-    return $this->getDirectory($sName);
+    return $this->getDirectory($sName, self::DEBUG_NOT);
   }
   
   public function getFreeFile($sName, $iDebug = self::DEBUG_LOG) {

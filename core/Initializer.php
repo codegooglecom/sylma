@@ -31,7 +31,7 @@ class Initializer {
   public function load() {
     
     // set error report mode
-    if (Sylma::get('debug/enable')) {
+    if (Sylma::read('debug/enable')) {
       
       error_reporting(E_ALL);
         
@@ -49,11 +49,11 @@ class Initializer {
     
     //set_exception_handler("self::sendException");
     
-    ini_set('session.gc_maxlifetime', Sylma::get('modules/users/session/lifetime'));
+    ini_set('session.gc_maxlifetime', Sylma::read('modules/users/session/lifetime'));
     
     session_start();
     
-    // if (Sylma::get('db/enable')) $this->loadXDB();
+    // if (Sylma::read('db/enable')) $this->loadXDB();
     
     $iStartTime = microtime(true);
     $sSystemPath = $_SERVER['DOCUMENT_ROOT'];
@@ -69,7 +69,7 @@ class Initializer {
     if ($user->needProfile()) $user->loadProfile();
     
     // init xml database
-    //if (\Sylma::get('db/enable')) self::setDatabase(new XML_Database());
+    //if (\Sylma::read('db/enable')) self::setDatabase(new XML_Database());
     
     $path = $this->create('path');
     $path->loadGET();
@@ -85,7 +85,7 @@ class Initializer {
     
     // Creation of the window
     
-    $factory = \Sylma::get('factory');
+    $factory = \Sylma::getControler('factory');
     $window = $factory->createObject($settings);
     
     $result = $this->loadResults();

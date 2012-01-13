@@ -27,7 +27,7 @@ class Timer extends Module {
     
     Sylma::setControler('timer', $this->create('timer'));
     
-    $this->getArguments()->set('classes/inspector', Sylma::get(self::INSPECTOR_PATH));
+    $this->getArguments()->set('classes/inspector', Sylma::read(self::INSPECTOR_PATH));
     $this->inspector = $this->create(self::INSPECTOR_CLASS);
   }
   
@@ -65,7 +65,7 @@ class Timer extends Module {
     else dspm(xt('Cannot save file at path %s', (string) $file), 'warning');
   }
   
-  protected function loadClasses(SettingsInterface $classes) {
+  protected function loadClasses(\sylma\core\argument $classes) {
     
     $aResult = array();
     

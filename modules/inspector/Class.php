@@ -154,7 +154,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     foreach ($this->getReflector()->getProperties() as $property) {
       
-      if ($this->getArgument('no-private', false) && $property->isPrivate()) continue;
+      if ($this->readArgument('no-private', false) && $property->isPrivate()) continue;
       
       if ($property->getDeclaringClass() == $this->getReflector()) {
         
@@ -168,7 +168,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     foreach ($this->getReflector()->getMethods() as $method) {
       
-      if ($this->getArgument('no-private', false) && $method->isPrivate()) continue;
+      if ($this->readArgument('no-private', false) && $method->isPrivate()) continue;
       
       if ($method->getDeclaringClass() == $this->getReflector()) {
         
@@ -186,7 +186,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     if ($class = $this->getReflector()->getParentClass()) {
       
-      if ($this->getArgument('parent', true)) {
+      if ($this->readArgument('parent', true)) {
         
         $this->extends = $this->getControler()->create('class', array($class, $this->getControler(), array('no-private' => true)));
       }
@@ -205,7 +205,7 @@ class InspectorClass extends InspectorReflectorCommented implements InspectorRef
     
     if (!empty($aMatch['extends'])) {
       
-      if ($this->getArgument('parent', true)) {
+      if ($this->readArgument('parent', true)) {
         
         $this->extends = $this->getControler()->create('class', array($aMatch['extends'], $this->getControler(), array('no-private' => true)));
       }

@@ -28,7 +28,9 @@ abstract class Prepare extends Basic {
       
       if (eval('$closure = function($controler) { ' . $sPrepare . '; };') === null) {
         
-        $closure($controler);
+        $mResult = $closure($controler);
+        
+        $this->onPrepared($mResult);
         
         if (eval('$closure = function($controler) { ' . $sExpected . '; };') === null) {
           
@@ -41,5 +43,10 @@ abstract class Prepare extends Basic {
     }
     
     return $bResult;
+  }
+  
+  protected function onPrepared($mResult) {
+    
+    
   }
 }

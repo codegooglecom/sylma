@@ -36,7 +36,7 @@ class Users extends DBX_Module {
     
     if (isset($_SERVER['HTTPS'])) $dTemplate->setParameter('https', $_SERVER['HTTPS']);
     
-    $sRemember = $this->getArgument('cookies/remember/name');
+    $sRemember = $this->readArgument('cookies/remember/name');
     
     $this->setNamespace(SYLMA_NS_XSD, 'xs', false);
     

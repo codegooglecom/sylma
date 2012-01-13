@@ -77,8 +77,9 @@ class Handler extends core\module\Domed implements parser\action {
   protected function runCache(fs\file $file) {
     
     require_once($file->getRealPath());
-    //dspf($this->getBaseDirectory());
+    
     $result = null;
+    
     $action = new ActionTest($this->getBaseDirectory(), $this, $this->createArgument($this->aArguments));
     $result = $action->asDOM();
     
@@ -104,11 +105,11 @@ class Handler extends core\module\Domed implements parser\action {
     $sTemplate = $file->getName() . '.tpl.php';
     
     $dir = $file->getParent();
-    $tmpDir = $dir->addDirectory('#tmp');
+    $tmpDir = $dir->addDirectory(parser\action::EXPORT_DIRECTORY);
     
     $method = $this->loadDOM();
     
-    dspm((string) $method);
+    //dspm((string) $method);
     $class = $tmpDir->getFile($sClass, fs\basic\Resource::DEBUG_EXIST);
     $template = $this->getTemplate('php/class.xsl');
     
@@ -132,7 +133,7 @@ class Handler extends core\module\Domed implements parser\action {
     $file = $this->getFile();
     $sName = $file->getName() . '.php';
     
-    $tmpDir = $this->getDirectory((string) $file->getParent())->addDirectory('#tmp');
+    $tmpDir = $this->getDirectory((string) $file->getParent())->addDirectory(parser\action::EXPORT_DIRECTORY);
     
     if ($tmpDir) {
       

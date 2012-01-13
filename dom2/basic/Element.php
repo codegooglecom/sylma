@@ -77,7 +77,6 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
         // string result
         $sResult = (string) $mResult;
       }
-      
     } else {
       
       $sResult = $this->nodeValue;
@@ -181,8 +180,25 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
     return (!$this->getParent() || ($this->getParent() === $this->getDocument()));
   }
   
+  public function readAttribute($sName, $sNamespace = '') {
+    
+    if ($sNamespace) $sResult = $this->getAttributeNS($sNamespace, $sName);
+    else $sResult = $this->getAttribute($sName);
+    
+    return $sResult;
+  }
+  
+  public function testAttribute($sAttribute, $mDefault = null, $sNamespace = '') {
+    
+    $bResult = false;
+    
+    if (is_string($mDefault)) $bResult = ($this->readAttribute($sAttribute, $sNamespace) == $mDefault);
+    $bResult = $this->getControler()->stringToBool(($this->readAttribute($sAttribute, $sNamespace)), $mDefault);
+    
+    return $bResult;
+  }
+  
   // public function getById($sId)
-  // public function testAttribute($sName, $sUri = '')
   // public function setAttribute($sName, $sValue = '', $sUri = null)
   // public function setAttributes($mAttributes)
   // public function getAttributes()

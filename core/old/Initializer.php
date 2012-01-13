@@ -6,7 +6,7 @@ class Initializer {
 	
   const NS = 'http://www.sylma.org/core/initializer';
   
-  private static $sArgument = 'XArguments';
+  private static $sArgument = '\sylma\core\argument\Filed';
   
   /**
    * 1. Load primary libraries
@@ -19,9 +19,10 @@ class Initializer {
     require_once('core/functions/old.php');
     require_once('core/module/old/Namespaced.php');
     require_once('core/settings/SettingsInterface.php');
-    require_once('core/settings/Arguments.php');
+    //require_once('core/settings/Arguments.php');
     require_once('core/settings/Spyc.php');
-    require_once('core/settings/XArguments.php');
+    //require_once('core/settings/XArguments.php');
+    require_once('core/argument/Filed.php');
   }
   
   /**
@@ -33,7 +34,7 @@ class Initializer {
    */
   public function loadSettings($sServer, $sSylma) {
 		
-    $settings = new self::$sArgument(substr(SYLMA_RELATIVE_PATH, 1) . $sSylma, Sylma::NS);
+    $settings = new self::$sArgument($sSylma, Sylma::NS);
     if ($sServer) $settings->mergeFile($sServer);
     
     return $settings;
@@ -46,7 +47,7 @@ class Initializer {
   public function load() {
     
     // set error report mode
-    if (Sylma::get('debug/enable')) {
+    if (Sylma::read('debug/enable')) {
       
       error_reporting(E_ALL);
         
@@ -75,15 +76,15 @@ class Initializer {
     require_once('modules/logger/LoggerInterface.php');
     require_once('modules/logger/Logger.php');
     
-    \Sylma::getControler('formater');
+    //\Sylma::getControler('fs');
     
     //ini_set('session.save_path', 'c:/temp/php');
     //ini_set('session.cookie_lifetime', SESSION_MAX_LIFETIME);
-    ini_set('session.gc_maxlifetime', Sylma::get('modules/users/session/lifetime'));
+    ini_set('session.gc_maxlifetime', Sylma::read('modules/users/session/lifetime'));
     
     session_start();
     
-    if (Sylma::get('db/enable')) $this->loadXDB();
+    if (Sylma::read('db/enable')) $this->loadXDB();
   }
   
   /**

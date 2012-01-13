@@ -61,7 +61,7 @@ class ModuleManager extends Namespaced {
     return Controler::createObject($class, $aArguments);
   }
   
-  protected function loadClass($sName, SettingsInterface $args) {
+  protected function loadClass($sName, \sylma\core\argument $args) {
     
     $aPath = explode('/', $sName);
     array_unshift($aPath, null);
@@ -89,11 +89,11 @@ class ModuleManager extends Namespaced {
       if (is_array($mArguments)) {
         
         if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
-        else $this->arguments = new XArguments($mArguments, $this->getNamespace());
+        else $this->arguments = new \sylma\core\argument\Basic($mArguments, $this->getNamespace());
       }
       else if (is_string($mArguments)) {
         
-        $this->arguments = new XArguments((string) $this->getFile($mArguments));
+        $this->arguments = new \sylma\core\argument\Filed((string) $this->getFile($mArguments));
       }
       else if (is_object($mArguments)) {
         
@@ -126,6 +126,19 @@ class ModuleManager extends Namespaced {
     return $mResult;
   }
   
+  protected function readArgument($sPath, $mDefault = null, $bDebug = false) {
+    
+    $mResult = $mDefault;
+    
+    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
+    
+    $mResult = $this->getArguments()->read($sPath, $bDebug);
+    if ($mResult === null && $mDefault !== 'null') $mResult = $mDefault;
+    
+    return $mResult;
+  }
+  
+
   /**
    * Throw a customized exception to the main controler
    * 

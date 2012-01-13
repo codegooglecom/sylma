@@ -15,19 +15,39 @@ class Controler extends core\module\Argumented {
   private $bEditable = false;
   private $sMode = '';
   
-  public function __construct($sPath = '', core\argument $arg = null) {
+  protected static $argumentClass = 'sylma\core\argument\Filed';
+  
+  public function __construct($sPath = '', $bEditable = false, $bFS = true) {
     
     $this->setNamespace(self::NS);
     
     $sDirectory = $this->extractDirectory(__file__, false);
-    $this->setArguments(new core\argument\Filed(path\toAbsolute(self::SETTINGS, $sDirectory)));
     
-    if ($arg) $this->getArguments()->merge($arg);
+    if (!$bFS) $sDirectory = \Sylma::ROOT . $sDirectory;
+    
+    $arg = $this->createArgument(path\toAbsolute(self::SETTINGS, $sDirectory));
+    $this->setArguments($arg);
+    
+    if ($bEditable) $this->setEditable();
+  }
+  
+  protected function setEditable() {
+    
+    $this->setArgument('classes/file/name', $this->readArgument('classes/file/classes/editable/name'));
+    $this->setArgument('classes/directory/name', $this->readArgument('classes/directory/classes/editable/name'));
   }
   
   public function loadDirectory($sPath = '') {
     
     $dir = $this->create('directory', array($sPath, null, $this->getArgument('rights')->query(), $this));
+    
+    if ($tokens = $this->getArgument('tokens')) {
+      
+      foreach ($tokens as $sName => $token) {
+        
+        $dir->registerToken($sName, $token->read('path'), $token->read('propagate', false));
+      }
+    }
     
     $this->setDirectory($dir);
   }

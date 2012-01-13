@@ -376,7 +376,7 @@ class XML_Path {
   public function parse() {
     
     $sPath = (string) $this;
-    return new HTML_A(Sylma::get('modules/editor/path').'?path='.$sPath, $sPath);
+    return new HTML_A(Sylma::read('modules/editor/path').'?path='.$sPath, $sPath);
   }
   
   public function dspm($sMessage, $sStatut) {

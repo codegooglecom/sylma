@@ -49,10 +49,7 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
     
     if (!$sName) $sName = 'tmp-' . uniqid();
     
-    if (!$dir = $this->getDirectory($sName, self::DEBUG_EXIST)) {
-      
-      $this->throwException('bla');
-    }
+    $dir = $this->getDirectory($sName, self::DEBUG_EXIST);
     $dir->save();
     
     return $dir;
@@ -70,8 +67,7 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
       $this->throwException(t('You have no rights to create this directory'));
     }
     
-    dspf($this->getControler()->readArgument('system/rights'));
-    if (!$bResult = mkdir($this->getRealPath(), $this->getControler()->readArgument('system/rights'))) {
+    if (!$bResult = mkdir($this->getRealPath(), 0777)) { //$this->getControler()->readArgument('system/rights')
       
       $this->throwException(txt('Cannot create directory called %s', $sName));
     }
@@ -92,19 +88,19 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
   
   public function rename($sNewName) {
     
-    $oResult = null;
+    $result = null;
     
     if ($this->checkRights(\Sylma::MODE_WRITE)) {
       
-      if (rename($this->getRealPath(), $this->getParent()->getRealPath().'/'.$sNewName)) {
+      if (!rename($this->getRealPath(), $this->getParent()->getRealPath() . '/' . $sNewName)) {
         
-        $oResult = $this->getParent()->updateDirectory($sNewName);
-        $this->log('Resource renommé');
-        
-      } else \Controler::addMessage(t('Impossible de renommer le répertoire !'), 'warning');
+        $this->throwException(t('Cannot rename file for unknown reason'));
+      }
+      
+      $result = $this->getParent()->updateDirectory($sNewName);
     }
     
-    return $oResult;
+    return $result;
   }
   
   public function delete() {
@@ -114,7 +110,7 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
     if ($this->checkRights(\Sylma::MODE_WRITE)) {
       
       if ($this === $this->getControler()->getDirectory()) {
-
+        
         $this->throwException(t('Cannot delete root directory !'));
       }
       
@@ -123,7 +119,8 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
       $tmp = $controler->getDirectory((string) $user->getDirectory('#tmp'));
       
       $sName = 'trashed-' . uniqid() . '-' . $this->getName();
-      $new = $tmp->createDirectory($sName);
+      
+      $new = $tmp->getDirectory($sName, self::DEBUG_EXIST);
       $bResult = rename($this->getRealPath(), $new->getRealPath());
       
       $this->getParent()->updateDirectory($this->getName());

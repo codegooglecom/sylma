@@ -46,13 +46,13 @@ class Controler {
     
     // Authentication : load user's session var - $_SESSION['user']
     
-    if (!self::$user = self::createObject(Sylma::get('modules/users/classes/user'))) {
+    if (!self::$user = Sylma::getControler('user')) {
       
       Sylma::throwException(txt('Cannot load user'));
     }
     
-    self::$user->load();
-    Sylma::setControler('user', self::$user);
+    //self::$user->load();
+    //Sylma::setControler('user', self::$user);
     
     // Define error_report
     self::setReportLevel();
@@ -62,7 +62,7 @@ class Controler {
     
     // Main Messages object
     self::$oMessages = new Messages();
-    self::$iBacktraceLimit = Sylma::get('messages/backtrace/count');
+    self::$iBacktraceLimit = Sylma::read('messages/backtrace/count');
     
     // Root directory
     self::$oDirectory = new XML_Directory('', '', Sylma::get('directories/root/rights')->query());
@@ -77,7 +77,7 @@ class Controler {
     self::useMessages(true);
     
     // init xml database
-    if (Sylma::get('db/enable')) self::setDatabase(new XML_Database());
+    if (Sylma::read('db/enable')) self::setDatabase(new XML_Database());
     
     // Load Redirect session var, if present means it has been redirected - $_SESSION['redirect'], $_POST in 'document'
     $oRedirect = self::loadRedirect();
@@ -125,7 +125,7 @@ class Controler {
         
         $oAction = new XML_Action(self::getPath(), $oRedirect, array(), self::getWindow());
         
-        if ($oAction->isEmpty() && Sylma::get('actions/error/redirect')) self::errorRedirect(); // no rights / empty main action
+        if ($oAction->isEmpty() && Sylma::read('actions/error/redirect')) self::errorRedirect(); // no rights / empty main action
         else {
           
           if (self::getWindowSettings()->hasAttribute('action')) {
@@ -161,14 +161,14 @@ class Controler {
     
     $aResult = array();
     
-    if (Sylma::get('maintenance/enable') && !self::getUser()->isMember('0')) { // continue when admin
+    if (Sylma::read('maintenance/enable') && !self::getUser()->isMember('0')) { // continue when admin
       
       $sPath = isset($_GET['q']) ? $_GET['q'] : '';
       
-      if ($sPath != Sylma::get('maintenance/login-do')) { // continue when 'login-do'
+      if ($sPath != Sylma::read('maintenance/login-do')) { // continue when 'login-do'
         
-        if ($sPath == 'login') $aResult[] = file_get_contents(Sylma::get('maintenance/login'));
-        else $aResult[] = file_get_contents(Sylma::get('maintenance/file'));
+        if ($sPath == 'login') $aResult[] = file_get_contents(Sylma::read('maintenance/login'));
+        else $aResult[] = file_get_contents(Sylma::read('maintenance/file'));
       }
     }
     
@@ -180,15 +180,15 @@ class Controler {
     if (self::isAdmin()) {
       
       // debug or not debug..
-      if (Sylma::get('debug/enable')) error_reporting(E_ALL);
-      else error_reporting(Sylma::get('users/root/error-level'));
+      if (Sylma::read('debug/enable')) error_reporting(E_ALL);
+      else error_reporting(Sylma::read('users/root/error-level'));
       
     } else error_reporting(0);
   }
   
   private static function loadSettings() {
     
-    self::$oSettings = new XML_Document(Sylma::get('general/settings'), Sylma::MODE_EXECUTE);
+    self::$oSettings = new XML_Document(Sylma::read('general/settings'), Sylma::MODE_EXECUTE);
     
     $oAllowed = new XML_Document(self::getSettings('messages/allowed/@path'));
     
@@ -590,7 +590,7 @@ class Controler {
     // foreach ($oResume->query('//*[local-name() = "file"]', array('ld' => SYLMA_NS_DIRECTORY)) as $el) {dspf($el->getNamespace());dspf($el);}
     $oResume->getFirst()->setAttribute('path', '<controler>');
     $oTemplate = new XSL_Document(Controler::getSettings('actions/template/@path'), MODE_EXECUTION);
-    $oTemplate->setParameter('path-editor', Sylma::get('modules/editor/path'));
+    $oTemplate->setParameter('path-editor', Sylma::read('modules/editor/path'));
     // dspf($oResume->getDocument());
     // dspf($oTemplate);
     
@@ -638,7 +638,7 @@ class Controler {
     
     if ($sExtension = self::getPath()->getExtension()) $sExtension = '.'.$sExtension;
     
-    $sPath = Sylma::get('actions/error/page').$sExtension;
+    $sPath = Sylma::read('actions/error/page').$sExtension;
     
     self::doHTTPRedirect(new Redirect($sPath));
   }
@@ -687,7 +687,7 @@ class Controler {
   
   public static function formatResource($mArgument, $bDecode = false, $iMaxLength = 120) {
     
-    if (Sylma::get('messages/format/enable')) {
+    if (Sylma::read('messages/format/enable')) {
       
       if (is_string($mArgument)) {
         
@@ -702,7 +702,7 @@ class Controler {
       else if (is_array($mArgument)) {
         
         // Arrays
-        $bLineBreak = Sylma::get('messages/array/line-break');
+        $bLineBreak = Sylma::read('messages/array/line-break');
         
         if (count($mArgument)) {
           
@@ -740,7 +740,7 @@ class Controler {
           
           /* XML_Document */
           
-          if (Sylma::get('messages/xml/enable')) {
+          if (Sylma::read('messages/xml/enable')) {
             
             if ($mArgument->isEmpty()) {
               
@@ -781,7 +781,7 @@ class Controler {
           
           if ($mArgument->isReal()) { // prevent from dom lost cf. http://bugs.php.net/bug.php?id=39593
             
-            if (Sylma::get('messages/xml/enable')) {
+            if (Sylma::read('messages/xml/enable')) {
               
               $oContainer = $mArgument->view(true, true, $bDecode);
               // $oContainer = new HTML_Span;
@@ -886,8 +886,8 @@ class Controler {
   public static function getBacktrace(array $aBacktrace = array()) {
     
     $aResult = array(); $aLines = array(); $i = 0;
-    $iMaxTraces = Sylma::get('messages/backtrace/count');
-    $iLastUnused = Sylma::get('messages/backtrace/unused');
+    $iMaxTraces = Sylma::read('messages/backtrace/count');
+    $iLastUnused = Sylma::read('messages/backtrace/unused');
     
     if (!$aBacktrace) {
       
@@ -939,7 +939,7 @@ class Controler {
         $oArguments = new HTML_Span($aArguments);
       }
       
-      if (Sylma::get('messages/format/enable')) {
+      if (Sylma::read('messages/format/enable')) {
         
         $aResult[] = new HTML_Div(array(
           '[',
@@ -976,16 +976,16 @@ class Controler {
    * 
    * @return mixed The object created
    */
-  public static function createObject(SettingsInterface $class, array $aArguments = array()) {
+  public static function createObject(\sylma\core\argument $class, array $aArguments = array()) {
     
     $result = null;
     
-    if (!$sClass = $class->get('name')) { // has name ?
+    if (!$sClass = $class->read('name')) { // has name ?
       
       Sylma::throwException(txt('Cannot build object. No "name" defined in class'));
     }
     
-    if (self::loadClass($sClass, $class->get('file', false))) {
+    if (self::loadClass($sClass, $class->read('file', false))) {
       
       $result = self::buildClass($sClass, $aArguments);
     }
@@ -1097,7 +1097,7 @@ class Controler {
   public static function addMessage($mMessage = '- message vide -', $sPath = SYLMA_MESSAGES_DEFAULT_STAT, $aArgs = array()) {
     
     if (Controler::isAdmin() &&
-      Sylma::get('messages/backtrace/enable') &&
+      Sylma::read('messages/backtrace/enable') &&
       strstr($sPath, 'error') &&
       self::$iBacktraceLimit !== 0) {
       
@@ -1105,20 +1105,20 @@ class Controler {
       $mMessage = array($mMessage, Controler::getBacktrace());
     }
     
-    if (Sylma::get('debug/enable') && Sylma::get('messages/print/visible')) { // || !self::useMessages()
+    if (Sylma::read('debug/enable') && Sylma::read('messages/print/visible')) { // || !self::useMessages()
       
       // if (is_array($mMessage)) foreach ($mMessage as $mContent) echo $mContent.new HTML_Br;
       // else echo $mMessage.new HTML_Br;
     }
     
-    if (Sylma::get('debug/enable') && (Sylma::get('messages/log/enable'))) {
+    if (Sylma::read('debug/enable') && (Sylma::read('messages/log/enable'))) {
       
       if (is_array($mMessage)) foreach ($mMessage as $mContent) dspl($mContent."\n");
       else dspl($mMessage."\n");
     }
     
     if (self::getMessages()) self::getMessages()->addMessage(new Message($mMessage, $sPath, $aArgs));
-    else if (Sylma::get('debug/enable') && Sylma::get('messages/print/hidden')) {
+    else if (Sylma::read('debug/enable') && Sylma::read('messages/print/hidden')) {
       
       echo view($mMessage);
     }
@@ -1126,7 +1126,7 @@ class Controler {
   
   public static function useStatut($sStatut) {
     
-    if (!Sylma::get('messages/rights/enable')) return true;
+    if (!Sylma::read('messages/rights/enable')) return true;
     else return self::getMessages()->useStatut($sStatut);
   }
   
@@ -1183,7 +1183,7 @@ class Controler {
   
   public static function getSystemPath() {
     
-  	//return Sylma::get('directories/system');
+  	//return Sylma::read('directories/system');
     return self::$sSystemPath;
   }
   
@@ -1229,7 +1229,7 @@ class Controler {
   
   public static function isAdmin() {
     
-    if (Sylma::get('debug/enable')) return true;
+    if (Sylma::read('debug/enable')) return true;
     else if (self::getUser()) return self::getUser()->isMember('0');
     else return false;
   }

@@ -15,4 +15,5 @@ interface factory {
   const CLASSBASE_TOKEN = '@sylma-classbase';
   
   function create($sName, array $aArguments = array(), $sDirectory = '');
+  function getNamespace($sPrefix = null);
 }

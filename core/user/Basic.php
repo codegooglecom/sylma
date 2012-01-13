@@ -1,9 +1,14 @@
 <?php
 
 namespace sylma\core\user;
-use \sylma\core
+use \sylma\core, sylma\storage\fs;
 
-class Basic extends core\argument\Domed implements core\user {
+require_once('core/module/Argumented.php');
+require_once(dirname(__dir__) . '/user.php');
+
+class Basic extends core\module\Argumented implements core\user {
+  
+  const NS = 'http://www.sylma.org/core/user';
   
   private $sUser = '';
   private $bValid = false;
@@ -17,11 +22,15 @@ class Basic extends core\argument\Domed implements core\user {
   private $aGroups = array();
   private $cookie;
   
-  public function __construct($sName = '', array $aGroups = array(), array $aOptions = array()) {
+  private $directory;
+  
+  public function __construct(core\factory $controler, $sName = '', array $aGroups = array(), array $aOptions = array()) {
     
     $this->setName($sName);
-    $this->setArguments(\Sylma::get('modules/users'));
-    $this->getArguments()->merge(\Sylma::get('users'));
+    $this->setNamespace(self::NS);
+    $this->setControler($controler);
+    
+    $this->setArguments($controler->getArguments());
     
     /*if ($aOptions) {
     
@@ -30,6 +39,11 @@ class Basic extends core\argument\Domed implements core\user {
     }*/
     
     $this->setGroups($aGroups);
+  }
+  
+  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+    
+    return parent::getArgument($sPath, $mDefault, $bDebug);
   }
   
   protected function setName($sName) {
@@ -126,24 +140,50 @@ class Basic extends core\argument\Domed implements core\user {
       }
       else {
         
+        $controler = $this->getControler();
+        
         // no cookie, select the default user
         
-        $server = $this->getArgument('server');
+        $server = $controler->getArgument('server');
         
-        if ($_SERVER['REMOTE_ADDR'] == $server->get('ip')) $options = $server;
-        else $options = $this->getArgument('anonymouse');
+        if ($_SERVER['REMOTE_ADDR'] == $server->read('ip')) $options = $server;
+        else $options = $controler->getArgument('anonymouse');
         
-        $this->setName($options->get('name'));
+        $this->setName($options->read('name'));
         $this->aGroups = $options->query('groups');
         $this->setArguments($options->get('arguments'));
       }
     }
   }
   
-  public function getDirectory() {
+  protected function setDirectory(fs\directory $dir) {
     
-    if ($this->getName()) return Controler::getDirectory($this->getArgument('path') . '/' . $this->getName());
-    else return null;
+    $this->directory = $dir;
+  }
+  
+  public function getDirectory($sPath = '', $bDebug = true) {
+    
+    $result = null;
+    
+    if ($sPath) {
+      
+      $result = $this->getDirectory()->getDistantDirectory($sPath, $bDebug);
+    }
+    else if (!$result = $this->directory) {
+      
+      if (!$this->getName()) {
+        
+        $this->throwException(t('Cannot get directory of an unnamed user'));
+      }
+      
+      $fs = $this->getControler('fs');
+      $dir = $fs->getDirectory($this->readArgument('path') . '/' . $this->getName());
+      
+      $this->setDirectory($dir);
+      $result = $this->getDirectory();
+    }
+    
+    return $result;
   }
   
   /**
@@ -159,18 +199,18 @@ class Basic extends core\argument\Domed implements core\user {
     
     if (!Controler::getDirectory()) \Sylma::throwException(txt('Directory is not yet ready'));
     
-    $sProfil = $this->getArgument('profil');
+    $sProfil = $this->readArgument('profil');
     $dProfil = $this->getDocument($sProfil);
     
     if (!$dProfil || $dProfil->isEmpty()) {
       
-      $this->log($this->getArgument('path') . '/' . $this->getName());
+      $this->log($this->readArgument('path') . '/' . $this->getName());
       $this->log(txt('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
     }
     else {
       
       $dProfil->addNode('full-name', $dProfil->readByName('first-name') . ' ' . $dProfil->readByName('last-name'));
-      $this->setOptions($dProfil);
+      //$this->setOptions($dProfil);
     }
     
     $this->loadGroups();
@@ -202,18 +242,18 @@ class Basic extends core\argument\Domed implements core\user {
   
   protected function loadCookie() {
     
-    $this->cookie = $this->create('cookie');
+    $this->cookie = $this->getControler()->create('cookie', array($this->getControler(), $this->getArgument('cookies')));
   }
-
+  
   protected function loadSession() {
-
-    if ($sSession = array_val($this->getArgument('session/name'), $_SESSION)) {
+    
+    if ($sSession = array_val($this->readArgument('session/name'), $_SESSION)) {
       
       $aSession = unserialize($sSession);
       
       $this->setName($aSession[0]);
       $this->setGroups($aSession[1]);
-      if ($aSession[2]) $this->setOptions($aSession[2]);
+      //if ($aSession[2]) $this->setOptions($aSession[2]);
     }
     
     return $this->getName();
@@ -222,9 +262,9 @@ class Basic extends core\argument\Domed implements core\user {
   protected function saveSession() {
     
     $options = null;
-    if ($this->getOptions()) $options = $this->getOptions()->getDocument();
+    //if ($this->getOptions()) $options = $this->getOptions()->getDocument();
     
-    $_SESSION[$this->getArgument('session/name')] = serialize(array($this->getName(), $this->getGroups(), $options));
+    $_SESSION[$this->readArgument('session/name')] = serialize(array($this->getName(), $this->getGroups(), $options));
   }
   
   /*** Groups ***/
@@ -256,8 +296,9 @@ class Basic extends core\argument\Domed implements core\user {
   
   public function getMode($sOwner, $sGroup, $sMode, $oOrigin = null) {
     
+    //$this->throwException('zone en construction');
     $sMode = (string) $sMode;
-    if ($oOrigin === null) $oOrigin = new XML_Element('null');
+    if ($oOrigin === null) $oOrigin = new \XML_Element('null');
     
     // Validity control of the arguments
     
@@ -300,9 +341,20 @@ class Basic extends core\argument\Domed implements core\user {
     return null;
   }
   
-  public function parse() {
+  public function asArgument() {
     
     $sName = $this->getName() . ' [' . implode(', ', $this->getGroups()) . ']';
-    return new HTML_A($this->getArgument('edit') . '/' . $this->getName(), $sName);
+    
+    return $controler->createArgument(array(
+      'a' => array(
+        '@href' => $this->readArgument('edit') . '/' . $this->getName(),
+        '' => $sName,
+      ),
+    ), \Sylma::read('namespaces/html'));
+  }
+  
+  public function __toString() {
+    
+    return $this->getName();
   }
 }

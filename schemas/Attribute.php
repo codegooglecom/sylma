@@ -28,7 +28,7 @@ class XSD_Attribute extends XSD_Node {
         
       } else if ($sDefault = $this->getSource()->getAttribute('default-query', $this->getNamespace())) {
         
-        if (!Sylma::get('db/enable'))
+        if (!Sylma::read('db/enable'))
           $this->dspm('Impossible de déterminer la valeur par défaut. XQuery est nécessaire', 'xml/warning');
         else $oAttribute->set(Controler::getDatabase()->query($sDefault));
       }

@@ -38,7 +38,7 @@ class XML_Action extends XML_Document {
         else {
           
           $this->dspm(xt('Chemin invalide'), 'action/error');
-          $this->oPath = new XML_Path(Sylma::get('action/error/page'));
+          $this->oPath = new XML_Path(Sylma::read('action/error/page'));
         }
         
       } else $this->oPath = new XML_Path($mPath, array(), true);
@@ -1965,7 +1965,7 @@ class XML_Action extends XML_Document {
     
     // Load stats
     
-    if (Sylma::get('actions/stats/enable') && Controler::isAdmin()) {
+    if (Sylma::read('actions/stats/enable') && Controler::isAdmin()) {
       
       $bStats = true;
       
@@ -2150,7 +2150,7 @@ class XML_Action extends XML_Document {
     }
     catch (Exception $e) {
       
-      Sylma::loadException($e);
+      //Sylma::loadException($e);
     }
     
     // Stop processors
@@ -2191,7 +2191,7 @@ class XML_Action extends XML_Document {
       case 'error' : // Error
         
         //dspm(xt('Action "%s" impossible, argument(s) invalide(s) !', new HTML_Strong($this->getPath())), 'error');
-        if (Sylma::get('actions/error/redirect')) Controler::errorRedirect();
+        if (Sylma::read('actions/error/redirect')) Controler::errorRedirect();
         
       break;
       

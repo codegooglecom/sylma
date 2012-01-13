@@ -4,9 +4,10 @@ namespace sylma\core\factory;
 use \sylma\core;
 
 require_once('core/factory.php');
+require_once('core/module/Exceptionable.php');
 require_once('core/functions/Path.php');
 
-class Reflector implements core\factory {
+class Reflector extends core\module\Exceptionable implements core\factory {
   
   /**
    * Classes to use within @method create() loaded in @settings /classes
@@ -189,10 +190,5 @@ class Reflector implements core\factory {
     // $result = call_user_func_array(array($sClass, '__construct'), $aArguments);
     
     return $result;
-  }
-  
-  public function throwException($sMessage) {
-    
-    \Sylma::throwException($sMessage);
   }
 }

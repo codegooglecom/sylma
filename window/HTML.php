@@ -75,7 +75,7 @@ class WindowHTML extends XML_Action {
     
     if (!$sMessage = Controler::getWindowSettings()->read('messages')) $sMessage = $sBody;
     
-    if (Sylma::get('dom/debug/show-queries')) {
+    if (Sylma::read('dom/debug/show-queries')) {
       
       $args = new XArguments(XML_Controler::$aQueries);
       dspm(XArguments::renderTree($args->parseTree()));

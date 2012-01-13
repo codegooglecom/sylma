@@ -6,7 +6,4 @@
   <le:action path="/sylma/modules/tester/class">
     <le:action path="basic"/>
   </le:action>
-  <le:action path="/sylma/modules/tester/class">
-    <le:action path="tokened"/>
-  </le:action>
 </le:action>

@@ -7,7 +7,7 @@ function xt() {
     $aArguments = func_get_args();
     $sValue = array_shift($aArguments);
     
-    if (count($aArguments) && Sylma::get('messages/format/enable')) return strtoxml(vsprintf(t($sValue), $aArguments));
+    if (count($aArguments) && Sylma::read('messages/format/enable')) return strtoxml(vsprintf(t($sValue), $aArguments));
     else return t($sValue);
   }
   

@@ -25,7 +25,6 @@ abstract class Basic extends core\module\Domed implements test {
   public function load() {
     
     $aResult = array();
-    $controler = $this->getControler();
     
     if (!$aFiles = $this->getFiles()) {
       
@@ -42,16 +41,19 @@ abstract class Basic extends core\module\Domed implements test {
       
       foreach ($doc->query('self:test') as $test) {
         
-        $bResult = $this->test($test, $controler, $doc, $file);
-        
-        $aTest = array(
-          '@name' => $test->getAttribute('name'),
-          'result' => booltostr($bResult),
-        );
-        
-        if (!$bResult) $aTest['message'] = ''; // ? TODO suspicious..
-        
-        $aTests[] = $aTest;
+        if (!$test->testAttribute('disabled', false)) {
+          //dspf($test->readAttribute('disabled'));
+          $bResult = $this->test($test, $this->getControler(), $doc, $file);
+          
+          $aTest = array(
+            '@name' => $test->getAttribute('name'),
+            'result' => booltostr($bResult),
+          );
+          
+          if (!$bResult) $aTest['message'] = ''; // ? TODO suspicious..
+          
+          $aTests[] = $aTest;
+        }
       }
       
       $aResult[] = array(
@@ -59,6 +61,8 @@ abstract class Basic extends core\module\Domed implements test {
         '#test' => $aTests,
       );
     }
+    
+    $this->onFinish();
     
     return $aResult;
   }
@@ -88,13 +92,18 @@ abstract class Basic extends core\module\Domed implements test {
   
   public function parse() {
     
-    $result = \Arguments::buildDocument(array(
+    $result = $this->createArgument(array(
       'group' => array(
         'description' => t($this->sTitle),
         '#group' => $this->load(),
       ),
     ), self::NS);
     
-    return $result;
+    return $result->asDOM();
+  }
+  
+  protected function onFinish() {
+    
+    
   }
 }

@@ -88,7 +88,7 @@ class Inspector extends Module {
     return new XML_Document(Arguments::buildFragment(array('classes' => array('#class' => $this->extractClasses($args))), $this->getNamespace()));
   }
   
-  private function extractClasses(SettingsInterface $class) {
+  private function extractClasses(\sylma\core\argument $class) {
     
     $aResult = array();
     
@@ -106,7 +106,7 @@ class Inspector extends Module {
     return $aResult;
   }
   
-  private function createClass($sName, SettingsInterface $class) {
+  private function createClass($sName, \sylma\core\argument $class) {
     
     return array(
       '@key' => $sName,

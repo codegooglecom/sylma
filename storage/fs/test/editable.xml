@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/storage/fs/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+  <tst:description>Editing methods</tst:description>
+  <tst:test name="Add a directory">
+    $dir = $controler->getDirectory();
+    $result = $dir->addDirectory('mydir');
+    return
+      $result instanceof \sylma\storage\fs\directory &amp;&amp;
+      (string) $result == '/mydir';
+  </tst:test>
+  <tst:test name="Delete a directory" disabled="true">
+    $dir = $controler->getDirectory('mydir');
+    $dir->delete();
+    return
+      $controler->getDirectory('mydir', false) === null;
+  </tst:test>
+  <tst:test name="Create a file" disabled="true">
+    $dir = $controler->getDirectory();
+    $file = $dir->getFile('myfile.txt', \sylma\storage\fs\resource::DEBUG_EXIST);
+    $file->saveText('abc');
+    $file = $controler->getFile('myfile.txt');
+    return
+      $file instanceof \sylma\storage\fs\file &amp;&amp;
+      $file->read() == 'abc';
+  </tst:test>
+  <tst:test name="Rename a file" disabled="true">
+    $file = $controler->getFile('myfile.txt');
+    $file->rename('newname.txt');
+    $newFile = $controler->getFile('newname.txt');
+    
+    return
+      $file->getName() == 'newname.txt' &amp;&amp;
+      $newFile instanceof \sylma\storage\fs\file &amp;&amp;
+      (string) $newFile == 'newname.txt';
+  </tst:test>
+</tst:tests>
+

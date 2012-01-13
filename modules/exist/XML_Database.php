@@ -13,8 +13,8 @@ class XML_Database extends ModuleBase {
     
     $this->setArguments(Sylma::get('db'));
     
-    $this->setNamespace($this->getArgument('namespace'));
-    $this->sCollection = $this->getArgument('collection');
+    $this->setNamespace($this->readArgument('namespace'));
+    $this->sCollection = $this->readArgument('collection');
     
     $this->connect();
   }
@@ -24,12 +24,22 @@ class XML_Database extends ModuleBase {
     try {
       
       // first load from user settings, else load from db settings
-      $aUser = Controler::getUser()->getArgument('db', array(
-        'user' => $this->getArgument('user'),
-        'password' => $this->getArgument('password'),
-      ), false);
       
-      $db = new eXist($aUser['user'], $aUser['password'], $this->getArgument('host'));
+      $arg = Controler::getUser()->getArgument('db');
+      
+      if ($arg) {
+        
+        $aUser = $arg->query();
+      }
+      else {
+        
+        $aUser = array(
+          'user' => $this->readArgument('user'),
+          'password' => $this->readArgument('password'),
+        );
+      }
+      
+      $db = new eXist($aUser['user'], $aUser['password'], $this->readArgument('host'));
       if (!$db->connect()) dspm($db->getError(), 'db/error');
       
       $this->oSession = $db;
@@ -71,9 +81,9 @@ class XML_Database extends ModuleBase {
       $hits = 0;
       $queryTime = 0;
       
-      if ($this->getArgument('debug/run')) $aResult = $this->getSession()->xquery($sQuery);
+      if ($this->readArgument('debug/run')) $aResult = $this->getSession()->xquery($sQuery);
       
-      if ($this->getArgument('debug/run') && !$aResult) { // no result
+      if ($this->readArgument('debug/run') && !$aResult) { // no result
         
         if ($bGetResult && $bMessages) {
           
@@ -111,10 +121,10 @@ class XML_Database extends ModuleBase {
         new HTML_Strong(floatval($queryTime / 1000)),
         new HTML_Strong($hits));
       
-      if ($this->getArgument('debug/queries/show'))
-        dspm(array(t('xquery [query] '), $oResults, new HTML_Tag('pre', $sQuery)), $this->getArgument('debug/queries/statut'));
-      if ($this->getArgument('debug/results/show'))
-        dspm(array(t('xquery [result] '), $oResults, new HTML_Tag('pre', $sResult)), $this->getArgument('debug/results/statut'));
+      if ($this->readArgument('debug/queries/show'))
+        dspm(array(t('xquery [query] '), $oResults, new HTML_Tag('pre', $sQuery)), $this->readArgument('debug/queries/statut'));
+      if ($this->readArgument('debug/results/show'))
+        dspm(array(t('xquery [result] '), $oResults, new HTML_Tag('pre', $sResult)), $this->readArgument('debug/results/statut'));
     }
     
     return $sResult;
@@ -160,9 +170,9 @@ class XML_Database extends ModuleBase {
       
       if ($this->query("xmldb:store($sPath, $sName, $sContent)")) {
         
-        $sUser = $this->getArgument('user');
-        $sGroup = $this->getArgument('default/group');
-        $sMode = $this->getArgument('default/mode');
+        $sUser = $this->readArgument('user');
+        $sGroup = $this->readArgument('default/group');
+        $sMode = $this->readArgument('default/mode');
         
         list($sUser, $sGroup, $sMode) = $this->escape($sUser, $sGroup, $sMode);
         
@@ -201,9 +211,9 @@ class XML_Database extends ModuleBase {
       
       if ($this->query("xmldb:create-collection($sPath, $sName)")) { // if ok, return real path
         
-        $sUser = $this->getArgument('user');
-        $sGroup = $this->getArgument('default/group');
-        $sMode = $this->getArgument('default/mode');
+        $sUser = $this->readArgument('user');
+        $sGroup = $this->readArgument('default/group');
+        $sMode = $this->readArgument('default/mode');
         
         list($sFullPath, $sUser, $sGroup, $sMode) = $this->escape($sFullPath, $sUser, $sGroup, $sMode);
         

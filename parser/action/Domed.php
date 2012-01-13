@@ -351,11 +351,13 @@ class Domed extends Reflector implements parser\domed {
         $this->throwException(txt('No method defined for call in %s', $child->asToken()));
       }
       
-      $window = $this->getWindow();
+      $aArguments = array();
       
       // todo arguments
       
-      $call = $window->createCall($obj, $sMethod, '\sylma\storage\fs\directory', array());
+      $caller = $this->getControler('caller');
+      
+      $call = $caller->reflectCall($obj->getInterface(), $sMethod, $aArguments);
       
       if ($child->hasChildren()) {
         

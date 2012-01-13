@@ -7,6 +7,8 @@
         <le:action path="../../core/argument/test/interface"/>
         <le:action path="../../core/factory/test/interface"/>
         <le:action path="../../storage/fs/test/basic"/>
+        <le:action path="../../storage/fs/test/editable"/>
+        <le:action path="../../parser/action/test/interface"/>
         <!--<le:action path="../../storage/fs/test/editable"/>-->
       </test:tests>
     </le:document>

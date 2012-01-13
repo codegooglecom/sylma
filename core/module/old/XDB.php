@@ -57,7 +57,7 @@ class XDB_Module extends ModuleExtension {
     
     if ($sDocument) {
       
-      if (Controler::isAdmin() && $this->getDB()->getArgument('install')) $this->addDocument($sDocument, $oContent);
+      if (Controler::isAdmin() && $this->getDB()->readArgument('install')) $this->addDocument($sDocument, $oContent);
       $this->sDocument = $sDocument;
     }
   }

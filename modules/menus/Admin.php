@@ -12,8 +12,8 @@ class TreeMenusAdmin extends Module {
     $this->setDirectory(__file__);
     $this->setArguments('settings.yml');
     
-    $this->setNamespace($this->getArgument('namespace'));
-    $this->setNamespace(Sylma::get('actions/namespace'), 'le', false);
+    $this->setNamespace($this->readArgument('namespace'));
+    $this->setNamespace(Sylma::read('actions/namespace'), 'le', false);
     
     $this->from = $this->getDocument($sFrom, Sylma::MODE_EXECUTE);
     

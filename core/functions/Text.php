@@ -26,7 +26,7 @@ function txt() {
  */
 function checkEncoding($sContent) {
   
-  if (Sylma::get('dom/encoding/check') && !mb_check_encoding($sContent, 'UTF-8')) {
+  if (Sylma::read('dom/encoding/check') && !mb_check_encoding($sContent, 'UTF-8')) {
     
     $sContent = utf8_encode($sContent); //t('EREUR D\' ENCODAGE'); TODO , result not always in utf-8
     dspm(xt('L\'encodage n\'est pas utf-8 %s', new HTML_Strong(stringResume($sContent))), 'xml/warning');

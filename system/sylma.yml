@@ -6,9 +6,11 @@ debug:
   enable: false
 general:
   settings: /config/root.xml
+namespaces :
+  html : http://www.w3.org/1999/xhtml
 modules:
   path: /sylma/modules
-  users: @sylma:import @sylma:self ../path; + /users/settings.yml;
+  users: @sylma:import /sylma/core/user/settings.yml;
   editor :
     path: /modules/editeur
   inspector: @sylma:import @sylma:self ../path; + /inspector/settings.yml;

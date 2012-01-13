@@ -1,19 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/storage/fs/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
-  <tst:description>Simple replacements</tst:description>
+  <tst:description>Tokens</tst:description>
   <tst:test name="Replace root dir with token">
-    $controler->getDirectory()->registerToken('#sylma', 'sample1');
+    $controler->getDirectory()->registerToken('test1', 'sample1');
     
     return
-      ($dir = $controler->getDirectory('#sylma')) &amp;&amp;
+      ($dir = $controler->getDirectory('#test1')) &amp;&amp;
+      ($dir2 = $controler->getDirectory()->getDirectory('#test1')) &amp;&amp;
+      $dir === $dir2 &amp;&amp;
       $dir instanceof \sylma\storage\fs\directory &amp;&amp;
       (string) $dir == '/sample1';
   </tst:test>
+  <tst:test name="Replace only root and get it on sub" disabled="true">
+    $controler->getDirectory()->registerToken('test1', 'sample1');
+    $sub = $controler->getDirectory('#test1');
+    $result = null;
+    
+    try {
+      
+      $result = $sub->getDirectory('#test1');
+      return false;
+    }
+    catch (\sylma\core\exception $e) {
+      
+      return true;
+    }
+  </tst:test>
   <tst:test name="Replace sub dir with propagated token">
-    $controler->getDirectory()->registerToken('#tmp', 'sub1', true);
+    $controler->getDirectory()->registerToken('test2', 'sub1', true);
     
     return
-      ($dir = $controler->getDirectory('sample1/#tmp')) &amp;&amp;
+      ($dir = $controler->getDirectory('sample1/#test2')) &amp;&amp;
+      $dir instanceof \sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1/sub1';
+  </tst:test>
+  <tst:test name="Two tokens following">
+    $controler->getDirectory()->registerToken('test1', 'sample1', true);
+    $controler->getDirectory()->registerToken('test2', 'sub1', true);
+    
+    return
+      ($dir = $controler->getDirectory('#test1/#test2')) &amp;&amp;
+      $dir instanceof \sylma\storage\fs\directory &amp;&amp;
+      (string) $dir == '/sample1/sub1';
+  </tst:test>
+  <tst:test name="Register token on sub">
+    $sub = $controler->getDirectory('sample1');
+    $sub->registerToken('test1', 'sub1');
+    
+    return
+      ($dir = $sub->getDirectory('#test1')) &amp;&amp;
       $dir instanceof \sylma\storage\fs\directory &amp;&amp;
       (string) $dir == '/sample1/sub1';
   </tst:test>

@@ -6,6 +6,7 @@
       <le:file path="simple.txt"/>
     </le:action>
     <tst:expected>
+      $result = $controler->getArgument('action');
       $result instanceof dom\handler &amp;&amp;
       $result->getRoot() &amp;&amp;
       $result->getRoot()->getName() == 'file';

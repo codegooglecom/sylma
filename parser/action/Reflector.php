@@ -3,34 +3,9 @@
 namespace sylma\parser\action;
 use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
 
-require_once('core/module/Filed.php');
+require_once(dirname(__DIR__) . '/Reflector.php');
 
-abstract class Reflector extends core\module\Filed {
-  
-  /**
-   *
-   * @var php_windoww
-   */
-  private $window;
-  
-  public function setWindow(php\_window $window) {
-    
-    $this->window = $window;
-  }
-  
-  /**
-   *
-   * @return php_window
-   */
-  public function getWindow() {
-    
-    if (!$this->window) {
-      
-      $this->throwException(t('No window defined'));
-    }
-    
-    return $this->window;
-  }
+abstract class Reflector extends parser\Reflector {
   
   protected function reflectFile(dom\element $el) {
     

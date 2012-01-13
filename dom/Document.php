@@ -91,7 +91,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
     
     if (!$this->isEmpty()) {
       
-      if (Controler::getUser() && Sylma::get('dom/rights/enable')) {
+      if (Controler::getUser() && Sylma::read('dom/rights/enable')) {
         
         $oNodes = $this->query('//*[@ls:owner]', 'ls', SYLMA_NS_SECURITY); // or @ls:mode or @ls:group
         
@@ -237,7 +237,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
         
         // not yet loaded
         
-        if (Sylma::get('actions/stats/enable') && ($oFile->getExtension() != 'eml') && $bLog)
+        if (Sylma::read('actions/stats/enable') && ($oFile->getExtension() != 'eml') && $bLog)
           Controler::infosSetFile($oFile, true); // if action, add it to controler infos array
         
         $bResult = parent::load(MAIN_DIRECTORY.$sPath);
@@ -264,7 +264,7 @@ class XML_Document extends DOMDocument implements DocumentInterface, Serializabl
         
         // already loaded
         
-        if (Sylma::get('actions/stats/enable') && ($oFile->getExtension() != 'eml') && $bLog)
+        if (Sylma::read('actions/stats/enable') && ($oFile->getExtension() != 'eml') && $bLog)
           Controler::infosSetFile($oFile, false);
         
         // GET a copy from XML_File's XML_document instance

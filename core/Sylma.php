@@ -5,16 +5,20 @@ use \sylma\core, \sylma\modules, \sylma\dom, \sylma\storage, \sylma\parser;
 class Sylma {
   
   const NS = 'http://www.sylma.org';
-  const ROOT = SYLMA_ROOT;
-  const PATH_LIB = 'core';
+  
+  const ROOT = SYLMA_ROOT; // ex: protected
+  const PATH = SYLMA_PROTECTED_PATH; // ex: sylma
+  
   const PATH_OPTIONS = '/system/sylma.yml';
+  
   const MODE_EXECUTE = 1;
   const MODE_WRITE = 2;
   const MODE_READ = 4;
+  
   const LOG_STATUT_DEFAULT = 'notice';
   
   /**
-   * @var SettingsInterface
+   * @var core\argument
    */
   private static $settings = null;
   private static $logger = null;
@@ -36,20 +40,23 @@ class Sylma {
     
     require_once('old/Initializer.php');
     
-    $init = self::$aControlers['init'] = new Initializer();
-    
-    self::$settings = $init->loadSettings($sServer, self::PATH_OPTIONS);
-    $init->load();
-    
-    self::setControler('init', $init);
-    
     try {
+      
+      $init = self::$aControlers['init'] = new Initializer();
+      
+      self::$settings = $init->loadSettings($sServer, self::ROOT . self::PATH . self::PATH_OPTIONS);
+      $init->load();
+      
+      self::setControler('init', $init);
+      
+      self::getControler('fs');
       
       self::$result = Controler::trickMe();
     }
     catch (core\exception $e) {
       
-      //if (self::get('debug/enable')) echo $e;
+      print_r($e->getTrace());
+      throw $e;
     }
     
     //session_write_close();
@@ -87,7 +94,7 @@ class Sylma {
       case 'fs' :
         
         require_once('storage/fs/Controler.php');
-        $controler = new storage\fs\Controler;
+        $controler = new storage\fs\Controler('', false, false);
         $controler->loadDirectory();
         
       break;
@@ -96,11 +103,7 @@ class Sylma {
         
         require_once('storage/fs/Controler.php');
         
-        $controler = new storage\fs\Controler;
-        
-        $controler->setArgument('classes/file/name', $controler->readArgument('classes/file/classes/editable/name'));
-        $controler->setArgument('classes/directory/name', $controler->readArgument('classes/directory/classes/editable/name'));
-        
+        $controler = new storage\fs\Controler('', true);
         $controler->loadDirectory();
         
       break;
@@ -114,8 +117,11 @@ class Sylma {
       
       case 'user' :
         
-        $controler = \Controler::getUser();
-      
+        require_once('core/user/Controler.php');
+        
+        $controler = new core\user\Controler;
+        $controler = $controler->getUser();
+        
       break;
       
       case 'formater' :
@@ -158,10 +164,18 @@ class Sylma {
     else return self::$settings;
   }
   
+  public static function read($sPath = '', $bDebug = true) {
+    
+    if (self::getSettings()) return self::getSettings()->read($sPath, $bDebug);
+    
+    return false;
+  }
+  
   public static function get($sPath = '', $bDebug = true) {
     
     if (self::getSettings()) return self::getSettings()->get($sPath, $bDebug);
-    else return $bDebug;
+    
+    return false;
   }
   
   /**
@@ -180,10 +194,10 @@ class Sylma {
     //print_r(debug_backtrace());
     if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
       
-      if (self::get('messages/print/visible')) echo $sMessage."<br/>\n";
+      if (self::read('messages/print/visible')) echo $sMessage."<br/>\n";
       Controler::addMessage($aMessage, $sStatut); // temp
     }
-    else if (self::get('messages/print/hidden')) {
+    else if (self::read('messages/print/hidden')) {
       
       echo $sMessage . "<br/>\n";
     }
@@ -194,11 +208,11 @@ class Sylma {
       
       
     }
-    else if (self::get('messages/log/enable', false)) {
+    else if (self::read('messages/log/enable', false)) {
       
       // no database instance, use a file
       
-      if ($sFile = self::get('messages/log/file', false)) {
+      if ($sFile = self::read('messages/log/file', false)) {
         
         $fp = fopen(MAIN_DIRECTORY.$sFile, 'a+');
         fwrite($fp, "----\n" . $sMessage . ' -- ' . $sStatut . "\n"); //.Controler::getBacktrace()

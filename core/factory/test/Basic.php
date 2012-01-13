@@ -21,14 +21,12 @@ class Basic extends tester\Basic {
     \Sylma::getControler('dom');
     
     $this->setDirectory(__file__);
-    $this->setNamespaces(array(
-        'self' => self::NS,
-    ));
+    $this->setNamespace(self::NS, 'self');
     
-    if (!$factory) $factory = \Sylma::getControler('factory');
+    if (!$factory) $factory = $this->getControler('factory');
     $this->factory = $factory;
     
-    $this->setControler($this);
+    $this->setControler($factory);
   }
   
   public function createArgument($mArguments, $sNamespace = '') {
@@ -44,6 +42,13 @@ class Basic extends tester\Basic {
   public function getFactory() {
     
     return $this->factory;
+  }
+  
+  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+    
+    $controler = $this;
+    
+    return parent::test($test, $controler, $doc, $file);
   }
 }
 

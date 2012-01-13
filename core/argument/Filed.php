@@ -100,7 +100,7 @@ class Filed extends Domed {
       $mResult->aTokens = $this->aTokens;
       $mResult->aResultTokens = $this->aResultTokens;
     }
-    else if (!is_object($mResult)) {
+    else if (!is_object($mResult) && !is_null($mResult)) {
       
       $this->throwException(txt('%s is not an array', $sPath), 3);
     }
@@ -139,12 +139,13 @@ class Filed extends Domed {
       else {
         
         // file controler is not ready
-        $aResult = $this->loadYAMLFree(core\functions\path\toAbsolute($sPath, \Sylma::ROOT));
+        $aResult = $this->loadYAMLFree($sPath);
       }
     }
     catch (core\exception $e) {
       
-      return null;
+      throw $e;
+      //return null;
     }
     
     return $aResult;
@@ -197,7 +198,7 @@ class Filed extends Domed {
     
     $aResult = array();
     
-    $sPath = \Sylma::ROOT . ($sPath{0} != '/' ? '/' : '') . $sPath;
+    //$sPath = ($sPath{0} != '/' ? '/' : '') . $sPath; //\Sylma::ROOT . 
     
     if (!file_exists($sPath)) {
       
@@ -263,7 +264,7 @@ class Filed extends Domed {
           $this->throwException(txt('Cannot load parameter for %s in %s', $sName, $sArguments));
         }
         
-        if (!$this->getControler()) $sPath = substr($sPath, 1);
+        if (!$this->getControler()) $sPath = \Sylma::ROOT . $sPath;
         
         $mResult = self::loadYAML($sPath, false);
         if (is_array($mResult)) $mResult[self::DIRECTORY_TOKEN] = dirname($sPath);

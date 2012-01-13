@@ -24,7 +24,7 @@ abstract class Basic extends core\module\Domed implements core\controled, dom\do
     $controler = $this->getControler();
     $file = $controler->getFile();
     
-    $sTemplate = $file->getParent()->getRealPath() . '/#tmp/' . $file->getName() . '.tpl.php';
+    $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
     $sResult = $this->includeTemplate($sTemplate, $aArguments);
     
     $doc = $controler->create('document');

@@ -13,10 +13,15 @@ abstract class Controled extends Exceptionable implements core\controled {
   
   public function setControler(core\factory $controler, $sName = '') {
     
+    if ($controler === $this) {
+      
+      $this->throwException(t('Cannot use controler as himself'));
+    }
+    
     $this->controler = $controler;
   }
   
-  public function getControler($sName = '') {
+  public function getControler($sName = '', $bDebug = true) {
     
     $result = null;
     
@@ -26,7 +31,7 @@ abstract class Controled extends Exceptionable implements core\controled {
     }
     else {
       
-      if (!$this->controler) {
+      if ($bDebug && !$this->controler) {
         
         $this->throwException('No controler defined');
       }
@@ -52,4 +57,17 @@ abstract class Controled extends Exceptionable implements core\controled {
     
     return $controler;
   }
+  
+  public function getNamespace($sPrefix = null) {
+    
+    $sNamespace = parent::getNamespace();
+    
+    if (!$sNamespace && $this->getControler('', false)) {
+      
+      $sNamespace = $this->getControler()->getNamespace();
+    }
+    
+    return $sNamespace;
+  }
+
 }

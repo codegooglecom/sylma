@@ -532,7 +532,7 @@ class DBX_Module extends XDB_Module {
       $sForm = $this->readOption('ajax', false) == 'true' ? 'form/ajax' : 'form';
       
       $oTemplate->setParameters(array(
-        'action' => $sPath.Sylma::get('form/redirect'),
+        'action' => $sPath.Sylma::read('form/redirect'),
         'form-id' => $sFormID,
       ));
       
