@@ -41,7 +41,7 @@ class Basic extends tester\Basic {
   
   protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
     
-    if (!$node = $test->get('le:action')) {
+    if (!$node = $test->getx('le:action')) {
       
       $this->throwException(txt('Test must build an action'));
     }

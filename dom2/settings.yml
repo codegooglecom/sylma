@@ -1,8 +1,8 @@
 classes :
   @sylma-classbase : \sylma\dom
   handler :
-    file : basic/Handler.php
-    name : basic\Handler
+    file : basic/handler/Rooted.php
+    name : basic\handler\Rooted
   document :
     file : basic/Document.php
     name : basic\Document

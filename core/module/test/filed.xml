@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/core/module/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+  <tst:description>Filed</tst:description>
+  <tst:test name="Get a file">
+    <tst:prepare>
+      $controler->setArgument('module', $controler->create('filed'));
+    </tst:prepare>
+    <tst:expected>
+      $module = $controler->getArgument('module');
+
+      return
+        ($file = $module->getFile('abc.txt')) &amp;&amp;
+        $file instanceof \sylma\storage\fs\file &amp;&amp;
+        $file->read() == 'abc';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Get a directory">
+    <tst:prepare>
+      $controler->setArgument('module', $controler->create('filed'));
+    </tst:prepare>
+    <tst:expected>
+      $module = $controler->getArgument('module');
+      
+      return
+        ($dir = $module->getDirectory('sub')) &amp;&amp;
+        $dir instanceof \sylma\storage\fs\directory &amp;&amp;
+        $dir->getName() == 'sub';
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/core/argument/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+<tst:tests xmlns:tst="http://www.sylma.org/core/argument/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument/test" arg:class="filed">
   <tst:description>Filed</tst:description>
   <tst:test name="Construction with an array">
     <tst:prepare>
-      $controler->set('arg', $controler->create('filed', array(
-        array(
+      $controler->set('arg', $controler->createArgument(array(
           'abc' => 123,
           'def' => '456',
-        )
-      )));
+        )));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
@@ -18,7 +16,7 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Construction with a file">
-    <tst:prepare>$controler->set('arg', $controler->create('filed', array($controler->getDirectory() . '/simple.yml')));</tst:prepare>
+    <tst:prepare>$controler->set('arg', $controler->createArgument('simple.yml'));</tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
       return
@@ -27,7 +25,7 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Import with relative path">
-    <tst:prepare>$controler->set('arg', $controler->create('filed', array($controler->getDirectory() . '/import-relative.yml')));</tst:prepare>
+    <tst:prepare>$controler->set('arg', $controler->createArgument('import-relative.yml'));</tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
       return
@@ -38,10 +36,10 @@
   </tst:test>
   <tst:test name="Import with absolute path">
     <tst:prepare>
-      $controler->set('arg', $controler->create('filed', array(array(
+      $controler->set('arg', $controler->createArgument(array(
         'ghi' => 789,
         'jkl' => '@sylma:import ' . $controler->getDirectory() . '/simple.yml;',
-      ))));
+      )));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
@@ -53,10 +51,10 @@
   </tst:test>
   <tst:test name="Self reference">
     <tst:prepare>
-      $controler->set('arg', $controler->create('filed', array(array(
+      $controler->set('arg', $controler->createArgument(array(
         'abc' => 123,
         'def' => '@sylma:self ../abc;',
-      ))));
+      )));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
@@ -67,12 +65,12 @@
   <tst:test name="Import's merge">
     <tst:prepare>
       $sDirectory = (string) $controler->getDirectory();
-      $arg1 = $controler->create('filed', array(array(
+      $arg1 = $controler->createArgument(array(
         'abc' => "@sylma:import $sDirectory/simple.yml;",
-      )));
-      $arg2 = $controler->create('filed', array(array(
+      ));
+      $arg2 = $controler->createArgument(array(
         'abc' => "@sylma:import $sDirectory/simple2.yml;",
-      )));
+      ));
       
       $arg1->merge($arg2);
       $controler->set('arg', $arg1);
@@ -87,12 +85,12 @@
   <tst:test name="Import, get and merge">
     <tst:prepare>
       $sDirectory = (string) $controler->getDirectory();
-      $arg1 = $controler->create('filed', array(array(
+      $arg1 = $controler->createArgument(array(
         'abc' => "@sylma:import $sDirectory/simple.yml;",
-      )));
-      $arg2 = $controler->create('filed', array(array(
+      ));
+      $arg2 = $controler->createArgument(array(
         'abc' => "@sylma:import $sDirectory/simple2.yml;",
-      )));
+      ));
       $arg1->get('abc'); // will resolve token
       $arg1->merge($arg2);
       $controler->set('arg', $arg1);
@@ -106,11 +104,11 @@
   </tst:test>
   <tst:test name="Import with absolute path and self reference">
     <tst:prepare>
-      $controler->set('arg', $controler->create('filed', array(array(
+      $controler->set('arg', $controler->createArgument(array(
         'directory' => (string) $controler->getDirectory(),
         'jkl' => 789,
         'mno' => '@sylma:import @sylma:self /directory; + /simple.yml;',
-      ))));
+      )));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
@@ -122,7 +120,7 @@
   </tst:test>
   <tst:test name="Get class name with token">
     <tst:prepare>
-      $controler->set('arg', $controler->create('filed', array($controler->getDirectory() . '/class.yml')));
+      $controler->set('arg', $controler->createArgument('class.yml'));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
@@ -139,7 +137,7 @@
   </tst:test>
   <tst:test name="Get class name with token after edit">
     <tst:prepare>
-      $controler->set('arg', $controler->create('filed', array($controler->getDirectory() . '/class.yml')));
+      $controler->set('arg', $controler->createArgument('class.yml'));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');

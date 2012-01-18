@@ -18,7 +18,7 @@ interface complex extends node {
    * 
    * @return dom\collection The result of the evaluated expression
    */
-  function query($sQuery = '', array $aNS = array(), $bConvert = true);
+  function queryx($sQuery = '', array $aNS = array(), $bDebug = true, $bConvert = true);
   
   /**
    * Evaluation of an xpath expression with an element returned
@@ -28,7 +28,7 @@ interface complex extends node {
    * 
    * @return dom\element|null The first element resulting from the XPath query
    */
-  function get($sQuery, array $aNS = array());
+  function getx($sQuery, array $aNS = array(), $bDebug = true);
   
   /**
    * Evaluation of an xpath expression with text returned
@@ -38,7 +38,7 @@ interface complex extends node {
    * 
    * @return string The result of the evaluated expression
    */
-  function read($sQuery = '', array $aNS = array());
+  function readx($sQuery = '', array $aNS = array(), $bDebug = true);
   
   /**
    * Remove the children then add the mixed values given in argument with {@link add()}

@@ -1,4 +1,5 @@
 classes :
+  @sylma-classbase : 
   controler :
     name : XSD_Parser
   element :

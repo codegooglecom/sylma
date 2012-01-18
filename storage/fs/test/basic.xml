@@ -7,9 +7,13 @@
       $dir instanceof \sylma\storage\fs\directory &amp;&amp;
       (string) $dir == '/sample1';
   </tst:test>
-  <tst:test name="Load non-existing root directory">
+  <tst:test name="Load non-existing root directory with exception" catch="\sylma\core\exception">
+    $controler->getDirectory('/nodirectory');
+    return false;
+  </tst:test>
+  <tst:test name="Load non-existing root directory without exception">
     return
-      $controler->getDirectory('/nodirectory', false) === null;
+      $controler->getDirectory('/nodirectory', null, false) === null;
   </tst:test>
   <tst:test name="Load first level directory with relative path">
     $dir = $controler->getDirectory('sample1');
@@ -43,7 +47,11 @@
     return
       $controler->getFile('/sample1/file.txt') instanceof sylma\storage\fs\file;
   </tst:test>
-  <tst:test name="Load non-existing file">
+  <tst:test name="Load non-existing file with exception" catch="\sylma\core\exception">
+    $controler->getFile('/nofile.txt') === null;
+    return false;
+  </tst:test>
+  <tst:test name="Load non-existing file without exception">
     return
       $controler->getFile('/nofile.txt', null, false) === null;
   </tst:test>
@@ -56,6 +64,14 @@
     if (!$dir = $controler->getDirectory('/sample1/sub1')) return false;
     return
       $dir->getFile('../file.txt') instanceof sylma\storage\fs\file;
+  </tst:test>
+  <tst:test name="Load dom document" disabled="true">
+    return
+      ($file = $controler->getFile('sample1/hello.xml')) &amp;&amp;
+      $file instanceof sylma\storage\fs\file &amp;&amp;
+      $doc = $file>getDocument() &amp;&amp;
+      $root = $doc->getRoot() &amp;&amp;
+      $root->read() == 'hello';
   </tst:test>
 </tst:tests>
 

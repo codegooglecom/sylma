@@ -88,12 +88,11 @@ class Controler extends core\module\Argumented {
     return parent::getArgument($sPath, $mDefault, $bDebug);
   }
   
-  public function getDirectory($sPath = '', $bDebug = true) {
+  public function getDirectory($sPath = '', $mSource = null, $bDebug = true) {
     
     if ($sPath && $sPath != '/') {
       
-      // for relative path use, else @function explode() return empty
-      if ($sPath{0} != '/') $sPath = '/' . $sPath;
+      $sPath = path\toAbsolute($sPath, $mSource);
       
       $aPath = explode('/', $sPath);
       array_shift($aPath);
@@ -116,10 +115,10 @@ class Controler extends core\module\Argumented {
     $aPath = explode('/', $sPath);
     array_shift($aPath);
     
-    require_once('basic/Resource.php');
+    require_once('resource.php');
     
     $iDebug = 0;
-    if ($bDebug) $iDebug = basic\Resource::DEBUG_LOG;
+    if ($bDebug) $iDebug = fs\resource::DEBUG_LOG;
     
     return $this->getDirectory()->getDistantFile($aPath, $iDebug);
   }

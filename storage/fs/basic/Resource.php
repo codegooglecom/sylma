@@ -26,10 +26,18 @@ abstract class Resource implements fs\resource {
   
   private $bSecured = false;
   
-  public function getControler() {
+  public function getControler($sName = '') {
     
-    if ($this->getParent()) return $this->getParent()->getControler();
-    return $this->controler;
+    if ($sName) {
+      
+      $controler = $this->getControler();
+      return $controler->getControler($sName);
+    }
+    else {
+      
+      if ($this->getParent()) return $this->getParent()->getControler();
+      return $this->controler;
+    }
   }
   
   public function doExist() {

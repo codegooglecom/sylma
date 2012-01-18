@@ -11,30 +11,20 @@ abstract class Prepare extends Basic {
     
     $bResult = false;
     
-    if (!$prepare = $test->get('self:prepare', $this->getNS())) {
-      
-      $this->throwException('No document defined', '@file ' . $file);
-    }
-    
-    if (!$expected = $test->get('self:expected', $this->getNS())) {
-      
-      $this->throwException('No expectation defined', '@file ' . $file);
-    }
-    
-    $sPrepare = $prepare->read();
-    $sExpected = $expected->read();
+    $sPrepare = $test->read('self:prepare', $this->getNS());
+    $sExpected = $test->read('self:expected', $this->getNS());
     
     try {
       
       if (eval('$closure = function($controler) { ' . $sPrepare . '; };') === null) {
         
-        $mResult = $closure($controler);
+        $mResult = $this->evaluate($closure, $controler);
         
         $this->onPrepared($mResult);
         
         if (eval('$closure = function($controler) { ' . $sExpected . '; };') === null) {
           
-          $bResult = $closure($controler);
+          $bResult = $this->evaluate($closure, $controler);
         }
       }
     }

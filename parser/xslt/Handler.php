@@ -3,9 +3,9 @@
 namespace sylma\parser\xslt;
 use \sylma\dom, \sylma\parser;
 
-require_once('dom2/basic/Handler.php');
+require_once('dom2/basic/handler/Rooted.php');
 
-class Handler extends dom\basic\Handler {
+class Handler extends dom\basic\handler\Rooted {
   
   const NS = 'http://www.w3.org/1999/XSL/Transform';
   const IMPORT_LEVEL_MAX = 10;

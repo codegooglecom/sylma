@@ -60,7 +60,7 @@ class Basic extends core\module\Argumented implements core\user {
     
     $sResult = null;
     
-    $this->setSettings(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
+    $this->setOptions(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
     
     if (!$sUser || !$sPassword) {
       
@@ -68,7 +68,7 @@ class Basic extends core\module\Argumented implements core\user {
     }
     else {
       
-      $dUsers = $this->getDocument($this->readSettings('users/@path'), MODE_EXECUTION);
+      $dUsers = $this->getControler()->getDocument($this->readSettings('users/@path'), \Sylma::MODE_EXECUTE);
       
       if (!$dUsers || $dUsers->isEmpty()) {
         
@@ -76,7 +76,7 @@ class Basic extends core\module\Argumented implements core\user {
       }
       else {
         
-        list($spUser, $spPassword) = addQuote(array($sUser, sha1($sPassword)));
+        list($spUser, $spPassword) = \addQuote(array($sUser, sha1($sPassword)));
         
         if (!$eUser = $dUsers->get("//user[@name = $spUser and @password = $spPassword]")) {
           

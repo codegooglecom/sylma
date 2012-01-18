@@ -33,36 +33,44 @@ abstract class Basic extends core\module\Domed implements test {
     
     foreach ($aFiles as $file) {
       
-      $aTests = array();
       $doc = $file->getDocument();
       $doc->registerNamespaces($this->getNS());
       
       if (!$doc || $doc->isEmpty()) $this->throwException(txt('@file %s cannot be load'));
       
-      foreach ($doc->query('self:test') as $test) {
-        
-        if (!$test->testAttribute('disabled', false)) {
-          //dspf($test->readAttribute('disabled'));
-          $bResult = $this->test($test, $this->getControler(), $doc, $file);
-          
-          $aTest = array(
-            '@name' => $test->getAttribute('name'),
-            'result' => booltostr($bResult),
-          );
-          
-          if (!$bResult) $aTest['message'] = ''; // ? TODO suspicious..
-          
-          $aTests[] = $aTest;
-        }
-      }
+      $aTests = $this->loadDocument($doc, $file);
       
       $aResult[] = array(
-        'description' => $doc->read('self:description', $this->getNS()),
+        'description' => $doc->readx('self:description', $this->getNS()),
         '#test' => $aTests,
       );
     }
     
     $this->onFinish();
+    
+    return $aResult;
+  }
+  
+  protected function loadDocument(dom\handler $doc, fs\file $file) {
+
+    $aResult = array();
+    
+    foreach ($doc->queryx('self:test') as $test) {
+      
+      if (!$test->testAttribute('disabled', false)) {
+        //dspf($test->readAttribute('disabled'));
+        $bResult = $this->test($test, $this->getControler(), $doc, $file);
+        
+        $aTest = array(
+          '@name' => $test->getAttribute('name'),
+          'result' => booltostr($bResult),
+        );
+
+        if (!$bResult) $aTest['message'] = ''; // ? TODO suspicious..
+        
+        $aResult[] = $aTest;
+      }
+    }
     
     return $aResult;
   }
@@ -85,9 +93,30 @@ abstract class Basic extends core\module\Domed implements test {
     }
     catch (core\exception $e) {
       
+      $sCatch = $test->readAttribute('catch', null, false);
+      
+      if ($sCatch && $e instanceof $sCatch) {
+        
+        $bResult = true;
+      }
+      else {
+        
+        $e->save();
+      }
     }
     
     return $bResult;
+  }
+  
+  public function setControler(core\factory $controler, $sName = '') {
+    
+    if ($sName) parent::setControler($controler, $sName);
+    else $this->controler = $controler;
+  }
+  
+  public function getNamespace($sPrefix = null) {
+    
+    return parent::getNamespace($sPrefix);
   }
   
   public function parse() {

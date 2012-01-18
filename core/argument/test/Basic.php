@@ -12,24 +12,27 @@ class Basic extends tester\Prepare {
   
   public function __construct() {
     
-    \Sylma::getControler('dom');
+    $this->getControler('dom');
     
     $this->setDirectory(__file__);
-    $this->setNamespaces(array('self' => self::NS));
+    $this->setNamespace(self::NS, 'self');
     
     $this->setArguments('settings.yml');
     
-    $controler = $this->create('controler');
+    $controler = $this->create('controler', array($this->getDirectory('samples')));
     $controler->setArguments($this->getArguments());
     
     $this->setControler($controler);
   }
   
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function loadDocument(dom\handler $doc, fs\file $file) {
     
-    $controler->setDirectory($file->getParent());
+    if ($doc->getRoot() && ($sClass = $doc->getRoot()->readAttribute('class', $this->getNamespace(), false))) {
+      
+       $this->getControler()->setArgument('class-alias', $sClass);
+    }
     
-    return parent::test($test, $controler, $doc, $file);
+    return parent::loadDocument($doc, $file);
   }
 }
 

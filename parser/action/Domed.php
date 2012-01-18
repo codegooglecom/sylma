@@ -101,7 +101,7 @@ class Domed extends Reflector implements parser\domed {
     
     $doc->registerNamespaces($this->getNS());
     
-    $settings = $doc->get(self::PREFIX . ':settings', $this->getNS());
+    $settings = $doc->getx(self::PREFIX . ':settings', $this->getNS(), false);
     
     // arguments
     

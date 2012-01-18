@@ -50,6 +50,7 @@ class Sylma {
       self::setControler('init', $init);
       
       self::getControler('fs');
+      //self::getControler('dom');
       
       self::$result = Controler::trickMe();
     }

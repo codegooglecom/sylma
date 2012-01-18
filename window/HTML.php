@@ -81,6 +81,13 @@ class WindowHTML extends XML_Action {
       dspm(XArguments::renderTree($args->parseTree()));
     }
     
+    $iCount = \sylma\core\exception\Basic::getCount();
+    
+    if ($iCount > 8) {
+      
+      dspm(xt('%s exceptions has been thrown', new HTML_Strong($iCount - 8)));
+    }
+    
     if ($oContainer = $oView->get($sMessage)) $oContainer->shift(Controler::getMessages());
     else {
       

@@ -121,13 +121,14 @@ class File extends Resource implements fs\file {
       \Sylma::throwException(t('File controler is not ready'), array(), 0);
     }
     
-    if ($dom = \Sylma::getControler(self::DOM_CONTROLER, false, false)) {
+    $dom = $this->getControler('dom');
+    //if ($dom = \Sylma::getControler(self::DOM_CONTROLER, false, false)) {
       
       $result = $this->getControler()->create('file/document');
-      
+
       $result->setFile($this);
       $result->loadFile();
-    }
+    //}
     
     return $result;
   }

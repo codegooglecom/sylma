@@ -42,22 +42,27 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
     return $xpath;
   }
   
-  public function getNamespaces() {
+  public function mergeNamespaces(array $aNamespaces) {
     
     $aResult = array();
     
     $handler = $this->getHandler();
     
-    return $handler->getNamespaces();
+    return $handler->mergeNamespaces($aNamespaces);
   }
   
-  public function read($sQuery = '', array $aNS = array()) {
+  public function read() {
+    
+    return $this->nodeValue;
+  }
+  
+  public function readx($sQuery = '', array $aNS = array(), $bDebug = true) {
     
     $sResult = '';
     
     if ($sQuery) {
       
-      $aNS = array_merge($aNS, $this->getNamespaces());
+      $aNS = $this->mergeNamespaces($aNS);
       
       $xpath = $this->buildXPath($aNS);
       $mResult = $xpath->evaluate($sQuery, $this);
@@ -79,25 +84,35 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
       }
     } else {
       
-      $sResult = $this->nodeValue;
+      $sResult = $this->read();
+    }
+    
+    if (!$sResult && $bDebug) {
+      
+      $this->throwException(txt('No result for read expression : %s', $sQuery));
     }
     
     return $sResult;
   }
   
-  public function query($sQuery = '', array $aNS = array(), $bConvert = true) {
+  public function queryx($sQuery = '', array $aNS = array(), $bDebug = true, $bConvert = true) {
     
     if ($bConvert) $result = $this->getControler()->create('collection');
     else $result = null;
     
     if ($sQuery) {
       
-      $aNS = array_merge($aNS, $this->getNamespaces());
+      $aNS = $this->mergeNamespaces($aNS);
       
       $xpath = $this->buildXPath($aNS);
       $domlist = $xpath->query($sQuery, $this);
       
       $this->getControler()->addStat('query', array($sQuery, $aNS));
+      
+      if ($bDebug && !$domlist->length) {
+        
+        $this->throwException(txt('No result for get/query expression : %s', $sQuery));
+      }
       
       if ($bConvert) $result->addArray($domlist);
       else $result = $domlist;
@@ -110,9 +125,9 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
     return $result;
   }
   
-  public function get($sQuery, array $aNS = array()) {
+  public function getx($sQuery, array $aNS = array(), $bDebug = true) {
     
-    $collection = $this->query($sQuery, $aNS, false);
+    $collection = $this->queryx($sQuery, $aNS, $bDebug, false);
     
     if ($collection && $collection->length) $result = $collection->item(0);
     else $result = null;
@@ -180,10 +195,15 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
     return (!$this->getParent() || ($this->getParent() === $this->getDocument()));
   }
   
-  public function readAttribute($sName, $sNamespace = '') {
+  public function readAttribute($sName, $sNamespace = '', $bDebug = true) {
     
     if ($sNamespace) $sResult = $this->getAttributeNS($sNamespace, $sName);
     else $sResult = $this->getAttribute($sName);
+    
+    if (!$sResult && $bDebug) {
+      
+      $this->throwException(txt('No result for @attribute %s:%s', $sNamespace, $sName));
+    }
     
     return $sResult;
   }
@@ -192,8 +212,8 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
     
     $bResult = false;
     
-    if (is_string($mDefault)) $bResult = ($this->readAttribute($sAttribute, $sNamespace) == $mDefault);
-    $bResult = $this->getControler()->stringToBool(($this->readAttribute($sAttribute, $sNamespace)), $mDefault);
+    if (is_string($mDefault)) $bResult = ($this->readAttribute($sAttribute, $sNamespace, false) == $mDefault);
+    $bResult = $this->getControler()->stringToBool(($this->readAttribute($sAttribute, $sNamespace, false)), $mDefault);
     
     return $bResult;
   }

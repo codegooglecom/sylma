@@ -73,11 +73,14 @@ class Users extends DBX_Module {
       
       $bRemember = (bool) $post->get('remember', false);
       
-      $user = $this->create('user');
+      $controler = new \sylma\core\user\Controler;
+      $user = $controler->getUser();
       
       if ($user->authenticate($sUser, $sPassword, $bRemember)) {
         
+        \Sylma::setControler('user', $user);
         Controler::setUser($user);
+        
         $user->load($bRemember);
         
         $sRedirect = $this->readOption('redirect', '/');

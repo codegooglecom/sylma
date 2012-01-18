@@ -32,11 +32,7 @@ abstract class Filed extends Argumented {
   
   private function createArgumentFromString($sPath, $sNamespace) {
     
-    if (!$file = $this->getFile($sPath, true)) {
-      
-      $this->throwException(txt('Settings not found in @file %s', $sPath));
-    }
-    
+    $file = $this->getFile($sPath);
     $result = parent::createArgument((string) $file, $sNamespace);
     
     return $result;
@@ -121,7 +117,9 @@ abstract class Filed extends Argumented {
     
     if ($sPath) {
       
-      $result = $this->directory->getControler()->getDirectory($sPath, $bDebug);
+      $dir = $this->getDirectory();
+      
+      $result = $dir->getControler()->getDirectory($sPath, $dir, $bDebug);
     }
     else {
       

@@ -6,11 +6,6 @@ use \sylma\core, \sylma\storage\fs;
 interface controler {
   
   /**
-   * Set the current directory
-   */
-  function setDirectory($mDirectory);
-  
-  /**
    * Give the current working directory
    */
   function getDirectory();

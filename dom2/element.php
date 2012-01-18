@@ -10,13 +10,6 @@ interface element extends complex {
   const NS = 'http://www.sylma.org/dom/element';
   
   /**
-   * Allow the localization of the element in string messages
-   * 
-   * @return string The element for message output
-   */
-  function getPath();
-  
-  /**
    * @param string $sName The local name of the element
    * @param string $sUri The URI of the element
    * 
@@ -30,7 +23,7 @@ interface element extends complex {
    */
   function getName($bLocal = true);
   
-  function getAttribute($sName);
+  function readAttribute($sName, $sNamespace = '');
   
   /**
    * Return the namespace of the element, or a one contextual to it

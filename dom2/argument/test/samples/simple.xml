@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<options xmlns="http://www.sylma.org/dom/argument/test">
+  <abc>123</abc>
+  <def>
+    <sub>456</sub>
+    <item name="key1"></item>
+    <item name="key2"></item>
+    <item></item>
+  </def>
+</options>

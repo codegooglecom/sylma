@@ -8,7 +8,12 @@ abstract class Namespaced {
   private $sNamespace = '';
   private $sPrefix = '';
   
-  protected function setNamespace($sUri, $sPrefix = '', $bDefault = true) {
+  protected function setNamespace($sUri, $sPrefix = null, $bDefault = true) {
+    
+    if (!$sUri) {
+      
+      \Sylma::throwException(t('Cannot use empty string as dom namespace'));
+    }
     
     $this->aNamespaces[$sPrefix] = $sUri;
     
@@ -32,7 +37,13 @@ abstract class Namespaced {
   
   protected function setNamespaces(array $aNS) {
     
-    $this->aNamespaces = $aNS;
+    foreach($aNS as $sPrefix => $sNamespace) {
+      
+      // prefix 0 identify main namespace
+      
+      if (!$sPrefix) $this->setNamespace($sNamespace, $sPrefix);
+      else $this->setNamespace($sNamespace, $sPrefix, false);
+    }
   }
   
   public function getNS($sPrefix = null) {

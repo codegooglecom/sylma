@@ -8,6 +8,12 @@ require_once('core/functions/Path.php');
 
 class Basic extends \Exception implements core\exception {
   
+  /**
+   * Number of exceptions created during the script
+   * @var integer
+   */
+  protected static $iCount = 0;
+  
   protected $aPath = array();
   protected $aCall = array();
   protected static $bThrowError = true;
@@ -16,6 +22,18 @@ class Basic extends \Exception implements core\exception {
    * Allow import of other classes, used class is showed in message
    */
   protected $iOffset = 1;
+  
+  public function __construct($message, $code = 0, $previous = null) {
+    
+    self::$iCount++;
+    
+    parent::__construct($message, $code, $previous);
+  }
+  
+  public static function getCount() {
+    
+    return self::$iCount;
+  }
   
   public function load($iOffset = 1, $aTrace = array()) {
     
@@ -41,7 +59,7 @@ class Basic extends \Exception implements core\exception {
       if (array_key_exists('file', $aCall)) $this->file = $aCall['file'];
     }
     
-    $this->save();
+    //$this->save();
   }
   
   public function setPath(array $aPath) {

@@ -1,3 +1,4 @@
+class-alias : basic
 classes :
   @sylma-classbase : \sylma\core\argument
   controler :

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/core/argument/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument/test" arg:class="basic">
+  <tst:description>Basic</tst:description>
+  <tst:test name="A simple read">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument('simple.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      
+      return $arg->read('abc') === '123'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A read with to levels">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument('simple.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      
+      return $arg->read('def/sub') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A bad get" catch="\sylma\core\exception" disabled="true">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument('simple.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $arg->get('abc');
+      
+      return false;
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

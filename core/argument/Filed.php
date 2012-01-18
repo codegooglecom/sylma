@@ -33,10 +33,10 @@ class Filed extends Domed {
   private $file;
   private $sLastDirectory;
   
-  public function __construct($mValue, $sNamespace = '', core\argument $parent = null) {
+  public function __construct($mValue, array $aNS = array(), core\argument $parent = null) {
     
     // set namespace first for logging
-    $this->setNamespace($sNamespace);
+    $this->setNamespaces($aNS);
     
     $aArray = array();
     
@@ -44,7 +44,7 @@ class Filed extends Domed {
     else if (is_array($mValue)) $aArray = $mValue;
     else $this->throwException(txt('Can only accepts array or string as first argument - given : %s', gettype($mValue)));
     
-    parent::__construct($aArray, $sNamespace, $parent);
+    parent::__construct($aArray, array(), $parent);
   }
   
   public function mergeFile($sPath) {
@@ -94,7 +94,7 @@ class Filed extends Domed {
     
     if (is_array($mResult)) {
       
-      $mResult = new self($mResult, $this->getNamespace(), $this);
+      $mResult = new self($mResult, $this->getNS(), $this);
       
       // copy tokens
       $mResult->aTokens = $this->aTokens;
@@ -108,6 +108,13 @@ class Filed extends Domed {
     return $mResult;
   }
   
+  /**
+   * Load content of the file as the YAML content. Allow multiple loads, for stepped controler loads
+   * 
+   * @param type $sPath Path to the file
+   * @param type $bFirstLoad If set to TRUE, the file will be replaced by the new one loaded
+   * @return array The YAML datas
+   */
   protected function loadYAML($sPath, $bFirstLoad = true) {
     
     $aResult = array();

@@ -55,9 +55,12 @@ abstract class Argumented extends Controled implements core\factory {
   
   protected function createArgument($mArguments, $sNamespace = '') {
     
-    if (!$sNamespace) $sNamespace = $this->getNamespace();
     
-    return new static::$argumentClass($mArguments, $sNamespace);
+    if ($sNamespace) $aNS = array($sNamespace);
+    else if ($this->getNamespace()) $aNS = array($this->getNamespace());
+    else $aNS = array();
+    
+    return new static::$argumentClass($mArguments, $aNS);
   }
   
   protected function setArguments($mArguments = null, $bMerge = true) {

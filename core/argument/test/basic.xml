@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/core/argument/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+<tst:tests xmlns:tst="http://www.sylma.org/core/argument/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument/test" arg:class="basic">
   <tst:description>Basic</tst:description>
   <tst:test name="A basic get()">
     <tst:prepare>
-      $controler->set('arg', $controler->create('basic', array(array('abc' => '123'))));
+      $controler->set('arg', $controler->createArgument(array('abc' => '123')));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
@@ -12,7 +12,7 @@
   </tst:test>
   <tst:test name="A basic set()">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $arg->set('abc', '123');
       $controler->set('arg', $arg);
     </tst:prepare>
@@ -23,7 +23,7 @@
   </tst:test>
   <tst:test name="A set() of array">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $arg->set('abc', array('def' => '123', 'ghi' => '456'));
       $controler->set('arg', $arg);
     </tst:prepare>
@@ -36,7 +36,7 @@
   </tst:test>
   <tst:test name="A set() of array with stepped get">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $arg->set('abc', array('def' => '123', 'ghi' => '456'));
       $controler->set('arg', $arg);
     </tst:prepare>
@@ -49,7 +49,7 @@
   </tst:test>
   <tst:test name="A two levels depth set()">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $arg->set('abc/def', '123');
       $controler->set('arg', $arg);
     </tst:prepare>
@@ -60,7 +60,7 @@
   </tst:test>
   <tst:test name="A two levels depth set() of array">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $arg->set('abc/def', array('ghi' => '123', 'jkl' => '456'));
       $controler->set('arg', $arg);
     </tst:prepare>
@@ -73,7 +73,7 @@
   </tst:test>
   <tst:test name="Two two levels depth set()">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $arg->set('abc/def', '123');
       $arg->set('abc/ghi', '345');
       $controler->set('arg', $arg);
@@ -87,7 +87,7 @@
   </tst:test>
   <tst:test name="Two two levels depth set() with floats">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $arg->set('abc/def', 1.23);
       $arg->set('abc/ghi', 3.45);
       $controler->set('arg', $arg);
@@ -101,7 +101,7 @@
   </tst:test>
   <tst:test name="A two levels depth set() with array and tmp object">
     <tst:prepare>
-      $arg = $controler->create('basic');
+      $arg = $controler->createArgument();
       $test = $arg->set('abc/def', array('ghi' => '123'));
       $test->set('lmn', '456');
       $arg->get('abc/def')->set('opq', 789);
@@ -117,14 +117,14 @@
   </tst:test>
   <tst:test name="Merge">
     <tst:prepare>
-      $arg1 = $controler->create('basic', array(array(
+      $arg1 = $controler->createArgument(array(
         'abc' => 123, // not erased
         'def' => '456',
-      )));
-      $arg2 = $controler->create('basic', array(array(
+      ));
+      $arg2 = $controler->createArgument(array(
         'def' => '789',
         'ghi' => true
-      )));
+      ));
       
       $arg1->merge($arg2);
       $controler->set('arg', $arg1);
@@ -139,7 +139,7 @@
   </tst:test>
   <tst:test name="Merge two levels depth">
     <tst:prepare>
-      $arg1 = $controler->create('basic', array(array(
+      $arg1 = $controler->createArgument(array(
         'abc' => array(
           'def' => '123',
           'ghi' => 456,
@@ -150,8 +150,8 @@
           'opq' => true,
         ),
         'rst' => 2323,
-      )));
-      $arg2 = $controler->create('basic', array(array(
+      ));
+      $arg2 = $controler->createArgument(array(
         'abc' => 'alpha', // simple erase array
         'ghi' => array( // array erase array
           'uvw' => false,
@@ -160,7 +160,7 @@
         'rst' => array( // array erase simple
           'xyz' => 'beta'
         ),
-      )));
+      ));
       
       $arg1->merge($arg2);
       $controler->set('arg', $arg1);

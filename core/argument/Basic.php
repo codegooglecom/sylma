@@ -23,11 +23,11 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
   protected $aArray = array();
   private $parent;
   
-  public function __construct(array $aArray = array(), $sNamespace = '', core\argument $parent = null) {
+  public function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
     
     if (is_array($aArray)) $this->aArray = $aArray;
     
-    $this->setNamespace($sNamespace);
+    $this->setNamespaces($aNS);
     if ($parent) $this->setParent($parent);
   }
   
@@ -132,7 +132,7 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     
     if (is_array($mResult)) {
       
-      if ($sPath) $mResult = new self($mResult, $this->getNamespace(), $this);
+      if ($sPath) $mResult = new self($mResult, $this->getNS(), $this);
       else return $this;
     }
     else if (is_string($mResult)) {

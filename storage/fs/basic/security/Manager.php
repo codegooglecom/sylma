@@ -82,7 +82,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
 //    if (!$this->isReady()) $this->loadDocument();
     
     $el = null;
-    if ($this->getDocument()) $el = $this->getDocument()->get('self');
+    if ($this->getDocument()) $el = $this->getDocument()->getx('self', array(), false);
     
     return $this->extractRights($el);
   }
@@ -90,7 +90,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
   public function getPropagation() {
     
     $el = null;
-    if ($this->getDocument()) $el = $this->getDocument()->get(self::PREFIX . ':propagate', $this->getNS());
+    if ($this->getDocument()) $el = $this->getDocument()->getx(self::PREFIX . ':propagate', $this->getNS(), false);
     
     return $this->extractRights($el);
   }
@@ -102,7 +102,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
     $el = null;
     $spName = $this->escape($sName);
     
-    if ($this->getDocument()) $el = $this->getDocument()->get(self::PREFIX . ":file[@name=$spName]", $this->getNS());
+    if ($this->getDocument()) $el = $this->getDocument()->getx(self::PREFIX . ":file[@name=$spName]", $this->getNS(), false);
     
     return $this->extractRights($el);
   }

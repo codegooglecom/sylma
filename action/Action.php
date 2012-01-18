@@ -2150,7 +2150,8 @@ class XML_Action extends XML_Document {
     }
     catch (Exception $e) {
       
-      //Sylma::loadException($e);
+      $e->save();
+      throw $e;
     }
     
     // Stop processors

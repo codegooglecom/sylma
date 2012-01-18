@@ -1,0 +1,17 @@
+class-alias : basic
+classes :
+  @sylma-classbase : \sylma\core\module\test\samples
+  namespaced :
+    name : Namespaced
+  exceptionable :
+    name : Exceptionable
+  controled :
+    name : Controled
+  argumented :
+    name : Argumented
+  filed :
+    name : Filed
+  domed :
+    name : Domed
+  extension :
+    name : Extension
