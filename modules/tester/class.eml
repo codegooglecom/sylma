@@ -2,12 +2,7 @@
 <le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/tester">
   <le:settings>
     <le:name>Test class</le:name>
-    <le:argument format="\sylma\modules\tester\test"/>
-    <le:document le:set-variable="doc">
-      <test:tests>
-        <le:get-argument/>
-      </test:tests>
-    </le:document>
+    <le:argument format="XML_Document"/>
   </le:settings>
   <le:window>
     <li:add-css le:format="string">
@@ -16,10 +11,10 @@
     </li:add-css>
   </le:window>
   <div class="sylma-tests sylma-tests-class">
-    <le:get-variable name="doc" return="false">
+    <le:get-argument return="false">
       <li:parse>
         <le:template path="index.xsl"/>
       </li:parse>
-    </le:get-variable>
+    </le:get-argument>
   </div>
 </le:action>

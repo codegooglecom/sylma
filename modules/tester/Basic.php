@@ -93,16 +93,25 @@ abstract class Basic extends core\module\Domed implements test {
     }
     catch (core\exception $e) {
       
-      $sCatch = $test->readAttribute('catch', null, false);
-      
-      if ($sCatch && $e instanceof $sCatch) {
-        
-        $bResult = true;
-      }
-      else {
-        
-        $e->save();
-      }
+      $bResult = $this->catchException($test, $e);
+    }
+    
+    return $bResult;
+  }
+  
+  protected function catchException(dom\element $test, core\exception $e) {
+    
+    $bResult = false;
+    
+    $sCatch = $test->readAttribute('catch', null, false);
+
+    if ($sCatch && $e instanceof $sCatch) {
+
+      $bResult = true;
+    }
+    else {
+
+      $e->save();
     }
     
     return $bResult;

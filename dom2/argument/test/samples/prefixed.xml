@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tst:options xmlns:tst="http://www.sylma.org/dom/argument/test" xmlns:bla="http://www.sylma.org/dom/argument/test/samples/bla" attr="root">
+  <tst:abc>123</tst:abc>
+  <tst:def value="hello">
+    <bla:sub>789</bla:sub>
+    <tst:sub>456</tst:sub>
+    <tst:item name="key1"></tst:item>
+    <tst:item name="key2"></tst:item>
+    <tst:item></tst:item>
+  </tst:def>
+</tst:options>

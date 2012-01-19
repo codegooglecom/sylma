@@ -3,9 +3,9 @@
 namespace sylma\dom\argument;
 use \sylma\core, sylma\storage\fs;
 
-require_once('Basic.php');
+require_once('Tokened.php');
 
-class Filed extends Basic {
+class Filed extends Tokened {
   
   private $file = null;
   

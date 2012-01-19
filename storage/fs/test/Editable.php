@@ -10,7 +10,7 @@ class Editable extends tester\Basic {
   const NS = 'http://www.sylma.org/storage/fs/test';
   const FS_CONTROLER = 'fs/editable';
   
-  protected $sTitle = 'File update';
+  protected $sTitle = 'Update';
   
   /**
    * @var fs\directory

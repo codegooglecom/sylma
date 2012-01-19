@@ -6,7 +6,7 @@ use sylma\core, sylma\dom;
 require_once('core/module/Controled.php');
 require_once('core/argument.php');
 
-class Basic extends core\module\Controled implements core\argument {
+abstract class Basic extends core\module\Controled implements core\argument {
   
   const NS = 'http://www.sylma.org/dom/argument';
   const PREFIX_DEFAULT = 'self';
@@ -16,27 +16,35 @@ class Basic extends core\module\Controled implements core\argument {
   
   private $aOptions = array(); // cache array
   
+  /**
+   * See @method useAttribute()
+   * @var boolean
+   */
+  protected $bAttribute = false;
+  
   public function __construct(dom\document $doc, array $aNS = array()) {
     
-    $this->setNamespaces($aNS);
+    $this->setDocument($doc);
+    $this->registerNamespaces($aNS);
     
     // first element define default namespace & prefix
     
     if (!$this->getPrefix()) {
+
+      $root = $doc->getRoot();
+      $this->registerNamespaces(array($root->getNamespace()));
+    }
+  }
+  
+  public function loadPrefix() {
+    
+    if (!$this->getPrefix()) {
       
       if ($sNamespace = $this->getNamespace()) {
-
+        
         $this->setNamespace($sNamespace, self::PREFIX_DEFAULT);
       }
-      else {
-
-        $root = $doc->getRoot();
-
-        $this->setNamespace($root->getNamespace(), self::PREFIX_DEFAULT);
-      }
     }
-    
-    $this->setDocument($doc);
   }
   
   public function setParent(core\argument $parent) {
@@ -56,7 +64,6 @@ class Basic extends core\module\Controled implements core\argument {
       $this->throwException(t('Cannot use empty doc as option\'s content'));
     }
     
-    $document->registerNamespaces($this->getNS());
     $this->document = $document;
   }
   
@@ -75,13 +82,51 @@ class Basic extends core\module\Controled implements core\argument {
     
     foreach ($aPath as &$sSub) {
       
-      if (strpos($sSub, ':') === false) {
-        
-        $sSub = $this->getPrefix() . ':' . $sSub;
-      }
+      $sSub = $this->parseName($sSub);
     }
     
     return implode('/', $aPath);
+  }
+  
+  protected function parseName($sName) {
+    
+    $bAttribute = $sName{0} == '@';
+    
+    if ($bAttribute) $this->useAttribute(true);
+    
+    if (!$bAttribute && strpos($sName, ':') === false) {
+      
+      $sName = $this->getPrefix() . ':' . $sName;
+    }
+    
+    return $sName;
+  }
+  
+  /**
+   * Return true if last path used attribute (@)
+   * @param type $bVal
+   * @return type 
+   */
+  protected function useAttribute($bVal = null) {
+    
+    if (!is_null($bVal)) $this->bAttribute = $bVal;
+    
+    return $this->bAttribute;
+  }
+  
+  protected function parseAttribute($sValue) {
+    
+    $mResult = $sValue;
+    
+    if ($this->useAttribute()) {
+      
+      if ($sValue === 'true') $mResult = true;
+      else if ($sValue === 'false') $mResult = false;
+      
+      $this->useAttribute(false);
+    }
+    
+    return $mResult;
   }
   
   public function validate() {
@@ -112,13 +157,14 @@ class Basic extends core\module\Controled implements core\argument {
     $sRealPath = $this->parsePath($sPath);
     
     $result = $this->getDocument()->getx($sRealPath, array(), $bDebug);
-
+    $this->useAttribute(false);
+    
     if (!$result instanceof dom\element || !$result->isComplex()) {
 
       $this->throwException(txt('Cannot use @path %s as complex element', $sPath));
     }
 
-    $result = new self($dom->create('handler', array($result)), null, $this->getNS());
+    $result = new Iterator($dom->create('handler', array($result)), $this->getNS());
     
     return $result;
   }
@@ -126,10 +172,12 @@ class Basic extends core\module\Controled implements core\argument {
   public function read($sPath = '', $bDebug = true) {
     
     $sPath = $this->parsePath($sPath);
-
+    
     $sResult = $this->getDocument()->readx($sPath, array(), $bDebug);
     
-    return $sResult;
+    $mResult = $this->parseAttribute($sResult);
+    
+    return $mResult;
   }
   
   // public function add($mValue = null) {
@@ -155,6 +203,14 @@ class Basic extends core\module\Controled implements core\argument {
   public function asArray() {
     
     
+  }
+  
+  public function registerNamespaces(array $aNS) {
+    
+    $this->setNamespaces($aNS);
+    $this->loadPrefix();
+    
+    $this->getDocument()->registerNamespaces($this->getNS());
   }
   
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {

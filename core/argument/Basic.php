@@ -13,7 +13,7 @@ require_once('core/module/Namespaced.php');
  * 
  * @author rodolphe.gerber (at) gmail.com
  */
-class Basic extends core\module\Namespaced implements core\argument, \Iterator {
+abstract class Basic extends core\module\Namespaced implements core\argument {
   
   const MESSAGES_STATUT = \Sylma::LOG_STATUT_DEFAULT;
   
@@ -132,7 +132,7 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
     
     if (is_array($mResult)) {
       
-      if ($sPath) $mResult = new self($mResult, $this->getNS(), $this);
+      if ($sPath) $mResult = new static($mResult, $this->getNS(), $this);
       else return $this;
     }
     else if (is_string($mResult)) {
@@ -168,8 +168,9 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
       }
       catch (core\exception $e) {
         
-        $mResult = null;
-        return $mResult;
+        throw $e;
+        //$mResult = null;
+        //return $mResult;
       }
     }
     
@@ -436,33 +437,6 @@ class Basic extends core\module\Namespaced implements core\argument, \Iterator {
   public function normalize($bKeepXML = false) {
     
     $this->aArray = static::normalizeArray($this->aArray);
-  }
-  
-  public function rewind() {
-    
-    reset($this->aArray);
-  }
-  
-  public function current() {
-    
-    $sKey = key($this->aArray);
-    
-    return $this->get($sKey);
-  }
-  
-  public function key() {
-    
-    return key($this->aArray);
-  }
-  
-  public function next() {
-    
-    next($this->aArray);
-  }
-  
-  public function valid() {
-    
-    return current($this->aArray) !== false;
   }
   
   protected function throwException($sMessage, $iOffset = 1) {

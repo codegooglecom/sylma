@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml">
+<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:tst="http://www.sylma.org/modules/tester">
   <le:settings>
     <le:name>Test Arguments</le:name>
   </le:settings>
   <le:action path="/sylma/modules/tester/class">
-    <le:action path="interface"/>
+    <le:document>
+      <tst:tests>
+        <le:action path="interface"/>
+      </tst:tests>
+    </le:document>
   </le:action>
 </le:action>

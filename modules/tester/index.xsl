@@ -6,8 +6,27 @@
   
   <xsl:template match="/test:tests">
     <div>
+      <p><strong>Result : <xsl:call-template name="failed"/></strong></p>
       <xsl:apply-templates/>
     </div>
+  </xsl:template>
+  
+  <xsl:template name="failed">
+    <xsl:variable name="failed" select="count(.//test:test[test:result = 'false'])"/>
+    <em>
+      <xsl:variable name="count" select="count(.//test:test)"/>
+      <xsl:choose>
+        <xsl:when test="$failed">
+          <span><xsl:value-of select="$failed"/></span>
+          <xsl:text> / </xsl:text>
+          <xsl:value-of select="$count"/> <xsl:text> failed</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$count"/>
+          <xsl:text> tests</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </em>
   </xsl:template>
   
   <xsl:template match="test:group">
@@ -25,18 +44,7 @@
         <xsl:attribute name="class">
           <xsl:value-of select="$class-title"/>
         </xsl:attribute>
-        <xsl:value-of select="test:description"/> -
-        <xsl:variable name="failed" select="count(.//test:test[test:result = 'false'])"/>
-        <em>
-          <xsl:choose>
-            <xsl:when test="$failed">
-              <span><xsl:value-of select="$failed"/></span>
-            </xsl:when>
-            <xsl:otherwise>0</xsl:otherwise>
-          </xsl:choose>
-          <xsl:text> failed</xsl:text> /
-          <xsl:value-of select="count(.//test:test)"/>
-        </em>
+        <xsl:value-of select="test:description"/> - <xsl:call-template name="failed"/>
       </xsl:element>
       <xsl:apply-templates select="test:group">
         <xsl:with-param name="depth" select="$depth + 1"/>

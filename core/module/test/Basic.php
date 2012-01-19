@@ -17,7 +17,7 @@ class Basic extends tester\Prepare {
     
     $this->setArguments('settings.yml');
     
-    $this->setFiles(array($this->getFile('filed.xml')));
+    $this->setFiles(array($this->getFile('filed.xml'), $this->getFile('domed.xml')));
     $this->setControler($this);
   }
   

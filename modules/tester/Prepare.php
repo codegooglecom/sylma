@@ -30,6 +30,7 @@ abstract class Prepare extends Basic {
     }
     catch (core\exception $e) {
       
+      $bResult = $this->catchException($test, $e);
     }
     
     return $bResult;

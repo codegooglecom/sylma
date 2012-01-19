@@ -2,7 +2,7 @@
 
 namespace sylma\core;
 
-interface argument {
+interface argument extends \Iterator {
   
   function get($sPath = '', $bDebug = true);
   function read($sPath = '', $bDebug = true);

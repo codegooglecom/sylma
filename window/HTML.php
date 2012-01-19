@@ -85,7 +85,7 @@ class WindowHTML extends XML_Action {
     
     if ($iCount > 8) {
       
-      dspm(xt('%s exceptions has been thrown', new HTML_Strong($iCount - 8)));
+      dspm(xt('%s exception(s) has been thrown', new HTML_Strong($iCount - 8)));
     }
     
     if ($oContainer = $oView->get($sMessage)) $oContainer->shift(Controler::getMessages());

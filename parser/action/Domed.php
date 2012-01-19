@@ -152,7 +152,7 @@ class Domed extends Reflector implements parser\domed {
    * @param dom\element $el
    * @return type core\argumentable|array|null
    */
-  public function parseElement(dom\element $el) {
+  protected function parseElement(dom\element $el) {
     
     $sNamespace = $el->getNamespace();
     $mResult = null;
@@ -195,6 +195,7 @@ class Domed extends Reflector implements parser\domed {
       $mResult = $this->getControler()->create('document');
       $mResult->addElement($el->getName(), null, array(), $el->getNamespace());
       
+      $this->parseAttributes($el);
       $mResult->add($this->parseChildren($el));
       
       $mResult = $mResult;
@@ -204,7 +205,7 @@ class Domed extends Reflector implements parser\domed {
   }
   
   /**
-   *
+   * Parse children into main context. Insert results
    * @param dom\element $el
    * @return array
    */
@@ -216,8 +217,10 @@ class Domed extends Reflector implements parser\domed {
       
       if ($mResult = $this->parseElement($child)) {
         
-        if ($mResult instanceof dom\node) $mResult = $mResult;
-        else $mResult = $this->getWindow()->createInsert($mResult);
+        if (!$mResult instanceof dom\node) {
+          
+          $mResult = $this->getWindow()->createInsert($mResult);
+        }
         
         $aResult[] = $mResult;
       }
@@ -231,43 +234,34 @@ class Domed extends Reflector implements parser\domed {
    * @param dom\element $el
    * @return core\argumentable|array|null
    */
-  protected function parseElementSelf(dom\element $el) {
-    
+  public function parseElementSelf(dom\element $el) {
+
     $mResult = null;
-    
+
     switch ($el->getName()) {
-      
+
       case 'action' : $mResult = $this->reflectAction($el); break;
-    
+
       case 'call' :
-        
+
         $this->throwException(txt('Cannot use %s here', $el->asToken()));
-        
+
       case 'directory' :
-        
+
         $call = $this->reflectDirectory($el);
-        
-        if ($el->hasChildren()) {
-          
-          $var = $call->getVar();
-          $mResult = $this->runElement($el, $var);
-        }
-        else {
-          
-          $mResult = $call;
-        }
-        
+        $mResult = $this->runCall($el, $call);
+
       break;
-      
+
       case 'argument' :
       case 'test-argument' :
       case 'get-all-arguments' :
       case 'get-argument' :
-        
+
         $mResult = $this->reflectArgument($el);
-        
+
       break;
-      
+
       // case 'get-settings' :
       case 'set-variable' :
       case 'get-variable' :
@@ -325,50 +319,43 @@ class Domed extends Reflector implements parser\domed {
     return $mResult;
   }
   
+  protected function runCall(dom\element $el, php\basic\CallMethod $call) {
+
+    if ($el->hasChildren()) {
+
+      $var = $call->getVar();
+      $mResult = $this->parseChildrenObject($el, $var);
+    }
+    else {
+
+      $mResult = $call;
+    }
+    
+    return $mResult;
+  }
   /**
-   *
+   * Parse children into object context.
    * @param dom\element $el
    * @param php_objecte $obj
    * @return core\argumentable|array|null
    */
-  protected function runElement(dom\element $el, php\_object $obj) {
+  protected function parseChildrenObject(dom\element $el, php\_object $obj) {
     
-    $mResult = null;
-    
+    $mResult = array();
+    $window = $this->getWindow();
     //if ($el->testAttribute('return', false)) $aResult[] = $obj;
+    
+    $window->setScope($obj);
     
     foreach ($el->getChildren() as $child) {
       
-      if ($child->getName() != 'call' || $child->getNamespace() != $this->getNamespace()) {
-        
-        $this->throwException(txt('Cannot use %s in call context', $el->asToken()));
-      }
-      
-      $sMethod = $child->getAttribute('name');
-      
-      if (!$sMethod) {
-        
-        $this->throwException(txt('No method defined for call in %s', $child->asToken()));
-      }
-      
-      $aArguments = array();
-      
-      // todo arguments
-      
-      $caller = $this->getControler('caller');
-      
-      $call = $caller->reflectCall($obj->getInterface(), $sMethod, $aArguments);
-      
-      if ($child->hasChildren()) {
-        
-        $var = $call->getVar($mResult);
-        $mResult = $this->runElement($child, $var);
-      }
-      else {
-        
-        $mResult = $call;
-      }
+      $caller = $this->getProcessor('caller');
+      $call = $caller->parseElement($child);
     }
+    
+    if (count($mResult) == 1) $mResult = array_pop($mResult);
+    
+    $window->stopScope();
     
     return $mResult;
   }

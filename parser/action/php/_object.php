@@ -2,6 +2,8 @@
 
 namespace sylma\parser\action\php;
 
-interface _object {
+require_once('scope.php');
+
+interface _object extends scope {
 
 }

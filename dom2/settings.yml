@@ -9,6 +9,9 @@ classes :
   element :
     file : basic/Element.php
     name : basic\Element
+  attribute :
+    file : basic/Attribute.php
+    name : basic\Attribute
   collection :
     file : basic/Collection.php
     name : basic\Collection
@@ -18,6 +21,14 @@ classes :
   text :
     file : basic/Text.php
     name : basic\Text
+  argument :
+    file : argument/Tokened.php
+    name : argument\Tokened
+    classes :
+      filed :
+        file : basic/Filed.php
+        name : argument\Filed
+        
 stats :
   enable : false
 namespaces :

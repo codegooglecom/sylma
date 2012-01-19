@@ -17,6 +17,7 @@ class Controler extends core\module\Filed {
     'element' => 'DOMElement',
     'fragment' => 'DOMDocumentFragment',
     'text' => 'DOMText',
+    'attribute' => 'DOMAttr',
   );
   
   protected $directory;

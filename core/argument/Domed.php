@@ -3,10 +3,10 @@
 namespace sylma\core\argument;
 use \sylma\core, \sylma\dom;
 
-require_once('Basic.php');
+require_once('Iterator.php');
 require_once('dom2/domable.php');
 
-class Domed extends Basic implements dom\domable {
+class Domed extends Iterator implements dom\domable {
   
   /**
    * Build an @class Options's object with this argument's array

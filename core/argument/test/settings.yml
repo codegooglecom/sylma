@@ -4,6 +4,6 @@ classes :
   controler :
     name : test\controler\Filed
   basic :
-    name : Basic
+    name : Iterator
   filed :
     name : Filed

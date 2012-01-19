@@ -434,8 +434,24 @@ class Element extends \DOMElement implements dom\element, core\tokenable {
   // *public function isLast()
   // public function isRoot()
   // public function isEmpty()
-  // public function isComplex()
-  // public function isSimple()
+  
+  /**
+   * Test wether element has element children or not
+   * @return boolean TRUE if the element contains children element (opposite to text)
+   */
+  public function isComplex() {
+    
+    return ($this->hasChildren() && ($this->getChildren()->length > 1 || $this->getFirst() instanceof dom\element));
+  }
+  
+  /**
+   * Test wether element has text child or not
+   * @return boolean TRUE if the element contains child text (opposite to text)
+   */
+  public function isSimple() {
+    
+    return ($this->hasChildren() && !$this->isComplex());
+  }
   
   // public function getParent($sNamespace = null) {
     

@@ -17,6 +17,7 @@ abstract class Domed extends Filed {
   
   const DOM_CONTROLER = 'dom';
   const DOM_DOCUMENT_ALIAS = 'handler';
+  const DOM_ARGUMENT_ALIAS = 'argument';
   
   const FILE_CONTROLER = 'fs';
   
@@ -28,6 +29,22 @@ abstract class Domed extends Filed {
     $this->setArguments($dir . '/' . self::ARGUMENTS);
   }
   
+  protected function createArgument($mArguments, $sNamespace = '') {
+    
+    if ($mArguments instanceof dom\document) {
+      
+      $dom = $this->getControler(self::DOM_CONTROLER);
+      $aNS = $sNamespace ? array($sNamespace) : array();
+      
+      $result = $dom->create(self::DOM_ARGUMENT_ALIAS, array($mArguments, $aNS));
+    }
+    else {
+      
+      $result = parent::createArgument($mArguments, $sNamespace);
+    }
+    
+    return $result;
+  }
   /**
    * Create a DOM element using module's default namespace if not specified
    */

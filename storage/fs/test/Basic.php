@@ -8,7 +8,7 @@ require_once('modules/tester/Basic.php');
 class Basic extends tester\Basic {
   
   const NS = 'http://www.sylma.org/storage/fs/test';
-  protected $sTitle = 'File system';
+  protected $sTitle = 'Basic';
   
   public function __construct() {
     

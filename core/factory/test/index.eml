@@ -4,6 +4,10 @@
     <le:name>Test Action</le:name>
   </le:settings>
   <le:action path="/sylma/modules/tester/class">
-    <le:action path="interface"/>
+    <le:document>
+      <tst:tests>
+        <le:action path="interface"/>
+      </tst:tests>
+    </le:document>
   </le:action>
 </le:action>
