@@ -30,7 +30,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   // static reference to class
   private $sylma;
 
-  protected $aScopes = array();
+  public $aScopes = array();
 
   protected static $varCount = 0;
 

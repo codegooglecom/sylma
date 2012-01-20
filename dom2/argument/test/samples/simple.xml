@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <options xmlns="http://www.sylma.org/dom/argument/test" attr="root">
   <abc>123</abc>
+  <empty/>
   <def value="hello">
     <sub>456</sub>
     <item name="key1">item1</item>

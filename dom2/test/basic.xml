@@ -4,13 +4,22 @@
   <tst:test name="Load a file">
     $file = $controler->getFile('samples/hello.xml');
     $doc = $controler->create('handler', array((string) $file));
-    
+
     return
       $doc instanceof \sylma\dom\handler &amp;&amp;
       ($root = $doc->getRoot()) &amp;&amp;
       $root->getName() == 'root' &amp;&amp;
       $root->getNamespace() == 'http://www.sylma.org/dom/test/samples';
   </tst:test>
-  
+  <tst:test name="Save a file">
+    $file = $controler->getFile('samples/hello.xml');
+    $doc = $controler->create('handler', array((string) $file));
+    
+    $sDoc = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;&lt;div&gt;hello&lt;/div&gt;&lt;/root&gt;';
+
+    return $doc->asString() === $sDoc;
+  </tst:test>
+
 </tst:tests>
 

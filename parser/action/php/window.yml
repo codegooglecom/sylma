@@ -12,6 +12,8 @@ classes :
     name : CallMethod
   object-var :
     name : _ObjectVar
+  simple-var :
+    name : _ScalarVar
   template :
     name : Template
   assign :
@@ -22,4 +24,3 @@ classes :
     name : _Interface
   line :
     name : _Line
-  

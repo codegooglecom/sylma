@@ -2,7 +2,7 @@
 
 namespace sylma\parser\action\php;
 
-interface scalar {
-  
-  
+interface _scalar {
+
+
 }

@@ -7,9 +7,12 @@ require_once('core/controled.php');
 
 interface domed extends core\controled {
 
-  const NS = 'http://www.sylma.org/parser/action';
-
-  function __construct(core\factory $controler, dom\handler $doc, fs\directory $dir);
-  function parseElementSelf(dom\element $el);
+  /**
+   *
+   * @param dom\element $el
+   * @return type core\argumentable|array|null
+   */
+  function parse(dom\node $el);
+  function setParent(domed $parent);
 }
 

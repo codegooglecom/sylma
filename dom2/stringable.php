@@ -3,9 +3,9 @@
 namespace sylma\dom;
 
 interface stringable {
-  
+
   /**
    * @return string A DOM valid content
    */
-  function asDOMString();
+  function asString($bFormat = false);
 }
