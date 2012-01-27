@@ -2,8 +2,8 @@ classes :
   @sylma-classbase : \sylma\parser\action\php\basic
   string :
     name : StringInstance
-  array :
-    name : ArrayInstance
+  #array :
+    #name : ArrayInstance
   numeric :
     name : NumericInstance
   object :
@@ -14,8 +14,8 @@ classes :
     name : _ObjectVar
   simple-var :
     name : _ScalarVar
-  template :
-    name : Template
+  #template :
+    #name : Template
   assign :
     name : Assign
   insert :
@@ -24,3 +24,9 @@ classes :
     name : _Interface
   line :
     name : _Line
+  null :
+    name : instance\_Null
+  boolean :
+    name : instance\_Boolean
+  concat :
+    name : _String

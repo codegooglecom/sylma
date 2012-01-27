@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ins="http://www.sylma.org/modules/inspector" xmlns:func="http://exslt.org/functions">
-  
+
   <xsl:output method="text"/>
   <xsl:import href="/sylma/xslt/string.xsl"/>
-  
+
+  <xsl:param name="namespace"/>
+
 <xsl:variable name="break">
 <xsl:text>
 </xsl:text>
@@ -15,6 +17,7 @@
 
 <xsl:template match="/ins:classes">
   <xsl:text>&lt;?php</xsl:text>
+  <xsl:value-of select="concat($break, 'namespace ', $namespace, ';', $break)"/>
   <xsl:apply-templates select="*"/>
 </xsl:template>
 
@@ -24,8 +27,8 @@
   <xsl:apply-templates select="@file"/>
   <xsl:value-of select="$break"/>
   <xsl:value-of select="$break"/>
-  <xsl:value-of select="concat('class Sylma', @name)"/>
-  <xsl:text> extends </xsl:text>
+  <xsl:value-of select="concat('class ', @valid-name)"/>
+  <xsl:text> extends \</xsl:text>
   <xsl:value-of select="@name"/>
   <xsl:text> {</xsl:text>
   <xsl:apply-templates select="ins:method[@access != 'private']"/>
@@ -33,18 +36,18 @@
   <xsl:text>}</xsl:text>
 </xsl:template>
 
-<xsl:template match="@file">require_once('<xsl:value-of select="substring(., 2)"/>');</xsl:template>
+<xsl:template match="@file">require_once('<xsl:value-of select="substring(., 8)"/>');</xsl:template>
 
 <xsl:template match="ins:method">
   <xsl:value-of select="concat($break, $tab, $break, $tab)"/>
   <xsl:apply-templates select="@access | @static[. = 'true']"/>function <xsl:apply-templates select="@reference[. = 'true']"/><xsl:value-of select="@name"/>(<xsl:value-of select="lx:implode(ins:parameter)"/>
-  
+
   <xsl:value-of select="concat(') {', $break)"/>
-    $timer = Sylma::getControler('timer');
+    $timer = \Sylma::getControler('timer');
     $timer->open(__method__);
     $result = parent::<xsl:value-of select="@name"/>(<xsl:value-of select="ins:implode-call(ins:parameter)"/>);
     $timer->close();
-    
+
     return $result;
   <xsl:text>}</xsl:text>
 </xsl:template>

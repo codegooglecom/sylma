@@ -3,37 +3,34 @@
 
   <xsl:output method="text"/>
 
+  <xsl:param name="namespace"/>
+  <xsl:param name="class"/>
+
   <xsl:template match="php:window">&lt;?php
 
-namespace <xsl:value-of select="@namespace"/>;
+namespace <xsl:value-of select="$namespace"/>;
+use sylma\parser;
 
-require_once('parser\action\Basic.php');
+require_once('parser\action\cached\Document.php');
 
-class <xsl:value-of select="@class"/> extends \sylma\parser\action\Basic {
+class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> {
 
-  protected function parseAction() {
+  protected $bTemplate = <xsl:value-of select="@use-template"/>;
 
-    $mResult = null;
+  protected function runAction() {
+
     $aArguments = array();
 
     <xsl:apply-templates select="*"/>
 
-    <xsl:choose>
-
-      <xsl:when test="@use-template">
-    $mResult = $this->loadTemplate($aArguments);
-      </xsl:when>
-
-      <xsl:otherwise>
-    $mResult = $aArguments;
-      </xsl:otherwise>
-
-    </xsl:choose>
-
-    return $mResult;
+    return $aArguments;
   }
 }
 
+  </xsl:template>
+
+  <xsl:template match="php:*">
+    $this->throwException(t('Invalid template @element <xsl:value-of select="local-name()"/>'))
   </xsl:template>
 
   <xsl:template match="php:assign">
@@ -94,8 +91,27 @@ class <xsl:value-of select="@class"/> extends \sylma\parser\action\Basic {
     <xsl:value-of select="."/>
     <xsl:text>'</xsl:text>
   </xsl:template>
+
   <xsl:template match="php:numeric">
     <xsl:value-of select="."/>
   </xsl:template>
+
+  <xsl:template match="php:boolean">
+    <xsl:value-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="php:cast">
+    <xsl:value-of select="concat('(', @type, ')')"/>
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="php:concat">
+    <xsl:for-each select="*">
+      <xsl:apply-templates select="."/>
+      <xsl:if test="position() != last()"> . </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="php:null">NULL</xsl:template>
 
 </xsl:stylesheet>

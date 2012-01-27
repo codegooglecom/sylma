@@ -2,7 +2,7 @@
 
 namespace sylma\dom;
 
-interface collection implements \Iterator {
-  
-  function addArray($aValue);
+interface collection {
+
+  function addCollection(collection $collection);
 }

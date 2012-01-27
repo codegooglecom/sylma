@@ -117,7 +117,7 @@ class Element extends \DOMElement implements dom\element {
         $this->throwException(txt('No result for get/query expression : %s', $sQuery));
       }
 
-      if ($bConvert) $result->addArray($domlist);
+      if ($bConvert) $result->addList($domlist);
       else $result = $domlist;
     }
     else {
@@ -379,9 +379,10 @@ class Element extends \DOMElement implements dom\element {
 
   public function getChildren() {
 
-    $result = $this->getControler()->create('collection', array($this->childNodes));
+    //$result = $this->getControler()->create('collection', array($this->childNodes));
 
-    return $result;
+    //return $result;
+    return $this->getControler()->createCollection($this->childNodes);
   }
   // public function getChildren($sNamespace = null, $iDepth = null, $bCleanComments = false)
   // public function countChildren()
@@ -389,6 +390,11 @@ class Element extends \DOMElement implements dom\element {
   public function hasChildren() {
 
     return $this->hasChildNodes();
+  }
+
+  public function countChildren() {
+
+    return $this->childNodes->length;
   }
 
   public function set() {
@@ -555,10 +561,10 @@ class Element extends \DOMElement implements dom\element {
 
     $sResult = '';
 
-    $sLine = '';
-    if (method_exists($this, 'getLineNo')) $sLine = $this->getLineNo();
+    //$sLine = '';
+    //if (method_exists($this, 'getLineNo')) $sLine = $this->getLineNo();
 
-    if (!$sLine) $sLine = 'xx';
+    //if (!$sLine) $sLine = 'xx';
     //$sResult .= $this->getNamespace() . ':' . $this->getName(true);
     $sResult .= $this->getName(false);
 
@@ -567,14 +573,14 @@ class Element extends \DOMElement implements dom\element {
     if ($sID = $this->getAttribute('id')) $sResult .= '[@id = ' . $sID . ']';
     else if ($sName = $this->getAttribute('name')) $sResult .= '[@name = ' . $sName . ']';
 
-    $sResult .=  ' (line ' . $sLine . ')';
+    //$sResult .=  ' (line ' . $sLine . ')';
 
     return $sResult;
   }
 
   public function asToken() {
 
-    return $this->getHandler()->asToken() . ' @element ' . $this->getPath();
+    return $this->getHandler()->asToken() . ':' . $this->getLineNo() . ' @element ' . $this->getPath();
   }
 
   public function prepareHTML($iLevel = 0) {

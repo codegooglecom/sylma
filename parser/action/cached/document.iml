@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security">
+  <namespace>\sylma\parser\action\cached</namespace>
+  <name>Document</name>
+  <element>http://www.sylma.org/parser/action/basic</element>
+  <method path="get-directory" name="getDirectory" element="directory" return="\sylma\storage\fs\directory">
+    <argument name="path" format="php-string" required="false"/>
+    <argument name="debug" format="php-boolean" required="false"/>
+  </method>
+  <method path="get-file" name="getFile" element="file" return="\sylma\storage\fs\file">
+    <argument name="path" format="php-string"/>
+    <argument name="debug" format="php-boolean" required="false"/>
+  </method>
+  <method path="get-document" name="getDocument" element="document" return="\sylma\dom\handler">
+    <argument name="path" format="php-string"/>
+  </method>
+  <method path="get-template" name="getTemplate" element="template" return="\sylma\parser\xslt\Handler">
+    <argument name="path" format="php-string"/>
+  </method>
+  <method path="get-controler" name="getControler" element="controler" return="\sylma\core\factory">
+    <argument name="alias" format="php-string" required="false"/>
+  </method>
+</class>

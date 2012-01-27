@@ -4,9 +4,8 @@ namespace sylma\dom;
 use sylma\core;
 
 require_once('core/tokenable.php');
-require_once('stringable.php');
 
-interface node extends core\tokenable, stringable {
+interface node extends core\tokenable {
 
   const HANDLER = 666;
   const ELEMENT = \XML_ELEMENT_NODE;
@@ -22,4 +21,6 @@ interface node extends core\tokenable, stringable {
   function getDocument();
   function getType();
   function getParent();
+  function asString($bFormat = false);
+  function __toString();
 }

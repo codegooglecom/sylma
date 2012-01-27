@@ -6,7 +6,7 @@
     <sub>456</sub>
     <item name="key1">item1</item>
     <item name="key2">item2</item>
-    <item></item>
+    <other>other</other>
   </def>
   <true val="true"/>
   <false val="false"/>

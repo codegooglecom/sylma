@@ -1,48 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller">
-  <tst:description>Basic / Caller</tst:description>
-  <tst:test name="Load file">
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Basic</tst:description>
+  <tst:test name="Return simple string">
     <le:action>
-      <le:file path="simple.txt"/>
+      <le:settings>
+        <le:return format="php-string"/>
+      </le:settings>
+      <le:string>abc</le:string>
     </le:action>
     <tst:expected>
-      $result = $controler->getArgument('action');
+      $sResult = $controler->getResult('txt');
 
       return
-        $result instanceof \sylma\dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'file';
+        $sResult === 'abc';
     </tst:expected>
   </tst:test>
-  <tst:test name="Simple call : read text file">
+  <tst:test name="Return array of strings imploded">
     <le:action>
-      <div>
-        <le:file path="simple.txt">
+      <le:text>directory :</le:text>
+      <lm:file path="samples/simple.txt">
+        <li:call name="read"/>
+      </lm:file>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'directory :123';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Return string concat with file content">
+    <le:action>
+      <le:string>
+        <le:text>directory :</le:text>
+        <lm:file path="samples/simple.txt">
           <li:call name="read"/>
-        </le:file>
-      </div>
+        </lm:file>
+      </le:string>
     </le:action>
     <tst:expected>
-      $result = $controler->getArgument('action');
-
-      return $result->getRoot()->asString() == '&lt;div xmlns="http://www.sylma.org"&gt;123&lt;/div&gt;';
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Call with arguments" disabled="true">
-    <le:action>
-      <le:directory>
-        <li:call name="get-directory">
-          <li:argument>samples</li:argument>
-        </li:call>
-      </le:directory>
-    </le:action>
-    <tst:expected>
-      $result = $controler->getArgument('action');
+      $sResult = $controler->getResult('txt');
 
       return
-        $result instanceof dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'directory';
+        $sResult === 'directory :123';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Embedded strings">
+    <le:action>
+      <le:string>
+        <le:text>directory :</le:text>
+        <le:text>
+          <le:string>
+            <le:text>12</le:text>
+            <le:text>3</le:text>
+          </le:string>
+        </le:text>
+      </le:string>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'directory :123';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Array of embedded strings">
+    <le:action>
+      <le:text>directory :</le:text>
+      <le:text>
+        <le:string>
+          <le:text>12</le:text>
+          <le:text>3</le:text>
+        </le:string>
+      </le:text>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'directory :123';
     </tst:expected>
   </tst:test>
 </tst:tests>

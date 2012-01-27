@@ -104,5 +104,10 @@ class Fragment extends \DOMDocumentFragment implements dom\node, dom\fragment {
 
     $this->getControler()->throwException(t('Cannot convert fragment to string'));
   }
+
+  public function __toString() {
+
+    return $this->asString();
+  }
 }
 

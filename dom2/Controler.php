@@ -19,6 +19,7 @@ class Controler extends core\module\Filed {
     'fragment' => 'DOMDocumentFragment',
     'text' => 'DOMText',
     'attribute' => 'DOMAttr',
+    //'collection' => 'DOMNodeList', // See https://bugs.php.net/bug.php?id=48352
   );
 
   protected $directory;
@@ -37,6 +38,11 @@ class Controler extends core\module\Filed {
     }
   }
 
+  public function createCollection(\DOMNodeList $list) {
+
+    require_once('basic/Collection.php');
+    return new basic\Collection($list);
+  }
   public function getClasses(core\argument $settings = null) {
 
     $aClasses = array();

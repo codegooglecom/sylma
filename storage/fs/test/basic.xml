@@ -65,13 +65,24 @@
     return
       $dir->getFile('../file.txt') instanceof sylma\storage\fs\file;
   </tst:test>
-  <tst:test name="Load dom document" disabled="true">
+  <tst:test name="Load dom document">
+    $file = $controler->getFile('sample1/hello.xml');
+
     return
-      ($file = $controler->getFile('sample1/hello.xml')) &amp;&amp;
       $file instanceof sylma\storage\fs\file &amp;&amp;
-      $doc = $file>getDocument() &amp;&amp;
-      $root = $doc->getRoot() &amp;&amp;
+      ($doc = $file->getDocument()) &amp;&amp;
+      $doc instanceof sylma\dom\handler &amp;&amp;
+      ($root = $doc->getRoot()) &amp;&amp;
       $root->read() == 'hello';
+  </tst:test>
+  <tst:test name="Load dom argument">
+    $file = $controler->getFile('sample1/hello.xml');
+
+    return
+      $file instanceof sylma\storage\fs\file &amp;&amp;
+      ($arg = $file->getArgument()) &amp;&amp;
+      $arg instanceof sylma\core\argument &amp;&amp;
+      $arg->read('div') == 'hello';
   </tst:test>
 </tst:tests>
 

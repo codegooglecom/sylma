@@ -29,7 +29,7 @@ abstract class Domed extends Filed {
     $this->setArguments($dir . '/' . self::ARGUMENTS);
   }
 
-  protected function createArgument($mArguments, $sNamespace = '') {
+  /*protected function createArgument($mArguments, $sNamespace = '') {
 
     if ($mArguments instanceof dom\document) {
 
@@ -44,7 +44,7 @@ abstract class Domed extends Filed {
     }
 
     return $result;
-  }
+  }*/
 
   /**
    * Create a DOM document with content sent to it

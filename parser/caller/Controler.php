@@ -21,21 +21,22 @@ class Controler extends core\module\Domed implements parser\domed {
     $this->setArguments('controler.yml');
   }
 
-  protected function loadInterface($sName) {
+  public function getInterface($sName) {
 
     if (!array_key_exists($sName, $this->aInterfaces)) {
 
-      $sDocument = str_replace('\\', '/', $sName) . '.iml';
+      $sDocument = str_replace('\\', '/', strtolower($sName)) . '.iml';
 
-      $doc = $this->getDocument($sDocument);
+      require_once('core/functions/path.php');
+      $file = $this->getFile(core\functions\path\toAbsolute($sDocument));
 
-      $this->aInterfaces[$sName] = $this->create('interface', array($this, $this->createArgument($doc)));
+      $this->aInterfaces[$sName] = $this->create('interface', array($this, $file));
     }
 
     return $this->aInterfaces[$sName];
   }
 
-  protected function getParent() {
+  public function getParent() {
 
     return $this->parent;
   }
@@ -58,10 +59,10 @@ class Controler extends core\module\Domed implements parser\domed {
     return $interface->parseCall($node, $window->getScope());
   }
 
-  protected function loadObject(php\_object $obj) {
+  public function loadObject(php\_object $obj) {
 
     $instance = $obj->getObject();
 
-    return $this->loadInterface($instance->getInterface()->getName());
+    return $this->getInterface($instance->getInterface()->getName());
   }
 }

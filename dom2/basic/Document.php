@@ -148,4 +148,9 @@ class Document extends \DOMDocument implements dom\document {
 
     return $this->getHandler()->asString($bFormat);
   }
+
+  public function __toString() {
+
+    return $this->asString();
+  }
 }

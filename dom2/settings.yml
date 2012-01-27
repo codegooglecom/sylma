@@ -26,9 +26,9 @@ classes :
     name : argument\Tokened
     classes :
       filed :
-        file : basic/Filed.php
+        file : argument/Filed.php
         name : argument\Filed
-        
+
 stats :
   enable : false
 namespaces :

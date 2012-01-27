@@ -1,9 +1,12 @@
 classes:
-  timer:
-    file : TimerArray.php
-    name : TimerArray
-  xarguments :
-    name : XArguments
+  @sylma-classbase : \sylma\modules\timer
+  timer :
+    file : Collection.php
+    name : Collection
   _timer:
-    file : TimerArguments.php
-    name : TimerArguments
+    file : Argument.php
+    name : Argument
+  inspector :
+    file : /sylma/modules/inspector/Inspector.php
+    name : \Inspector
+

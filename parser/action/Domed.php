@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action;
-use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
+use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs, \sylma\parser\action\php;
 
 require_once('Reflector.php');
 require_once('parser/domed.php');
@@ -11,6 +11,11 @@ class Domed extends Reflector implements parser\domed {
   const PREFIX = 'le';
   const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
+
+  const CLASS_DEFAULT = 'sylma\parser\action\cached\Document';
+  const CLASS_PREFIX = 'element';
+
+  const WINDOW_ARGS = 'classes/php';
 
   /**
    * See @method setFile()
@@ -25,12 +30,32 @@ class Domed extends Reflector implements parser\domed {
    */
   private $aParsers = array();
 
+  /**
+   * Interface of new cached class. See @method php\_window::getSelf()
+   * @var parser\caller\Domed
+   */
+  protected $interface;
+
+  protected $return;
+
   public function __construct(core\factory $controler, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
     $this->setControler($controler);
     $this->setNamespace($controler->getNamespace(), self::PREFIX);
     $this->setDirectory($dir);
+
+    $sClass = $this->loadClass($doc);
+
+    $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $sClass));
+    $this->setWindow($window);
+
+    $caller = $this->getControler('caller');
+    $caller->setParent($this);
+
+    $this->setInterface($caller->getInterface($sClass));
+
+    $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
   }
 
   protected function setDocument(dom\handler $doc) {
@@ -43,15 +68,35 @@ class Domed extends Reflector implements parser\domed {
     return $this->document;
   }
 
+  public function getInterface() {
+
+    return $this->interface;
+  }
+
+  public function setInterface(parser\caller\Domed $interface) {
+
+    $this->interface = $interface;
+  }
+
   private function getParser($sUri) {
 
     return array_key_exists($sUri, $this->aParsers) ? $this->aParsers[$sUri] : null;
   }
 
+  protected function loadClass(dom\handler $doc) {
+
+    if (!$sResult = $doc->getRoot()->readAttribute('class', null, false)) {
+
+      $sResult = self::CLASS_DEFAULT;
+    }
+
+    return $sResult;
+  }
+
   protected function extractArguments(dom\element $settings) {
 
     $aResult = array();
-    $args = $settings->queryx('le:argument');
+    $args = $settings->queryx('le:argument', array(), false);
 
     foreach ($args as $arg) {
 
@@ -78,6 +123,8 @@ class Domed extends Reflector implements parser\domed {
           break;
           case 'name' : $this->setName($el->read()); break;
 
+          case 'return' : $this->setReturn($el); break;
+
           default : $this->parseElement($el);
         }
       }
@@ -88,6 +135,18 @@ class Domed extends Reflector implements parser\domed {
     }
 
     return $aResult;
+  }
+
+  protected function setReturn(dom\element $el) {
+
+    $sFormat = $el->readAttribute('format');
+
+    $this->return = $this->getWindow()->stringToInstance($sFormat);
+  }
+
+  protected function getReturn() {
+
+    return $this->return;
   }
 
   protected function parseDocument(dom\document $doc) {
@@ -131,7 +190,7 @@ class Domed extends Reflector implements parser\domed {
 
       case dom\node::TEXT :
 
-        $mResult = $node->read();
+        $mResult = $this->getWindow()->create('string', array((string) $node));
 
       break;
 
@@ -164,7 +223,7 @@ class Domed extends Reflector implements parser\domed {
 
     if ($sNamespace == $this->getNamespace()) {
 
-      $mResult = $this->parseElementSelf($el);
+      $mResult = $this->parseElementAction($el);
     }
     else {
 
@@ -190,9 +249,13 @@ class Domed extends Reflector implements parser\domed {
 
     $mResult = null;
 
-    if ($parser = $this->getParser($el->getNamespace())) {
+    if ($el->getNamespace() == $this->getNamespace('element')) {
 
-      $mResult = $parser->parseElement($el);
+      $mResult = $this->parseElementSelf($el);
+    }
+    else if ($parser = $this->getParser($el->getNamespace())) {
+
+      $mResult = $parser->parse($el);
     }
     else {
 
@@ -202,7 +265,8 @@ class Domed extends Reflector implements parser\domed {
       $mResult->addElement($el->getName(), null, array(), $el->getNamespace());
 
       $this->parseAttributes($el);
-      $mResult->add($this->parseChildren($el));
+
+      if ($aChildren = $this->parseChildren($el)) $mResult->add($aChildren);
 
       $mResult = $mResult;
     }
@@ -235,12 +299,38 @@ class Domed extends Reflector implements parser\domed {
     return $aResult;
   }
 
+  protected function parseElementSelf(dom\element $el) {
+
+    $window = $this->getWindow();
+    $method = $this->getInterface()->loadMethod($el->getName(), 'element');
+    $aArguments = array();
+
+    foreach ($el->getAttributes() as $attr) {
+
+      $aArguments[$attr->getName()] = $this->parseString($attr->getValue());
+    }
+
+    $call = $method->reflectCall($window, $window->getSelf(), $aArguments);
+
+    return $this->getInterface()->runCall($call, $el->getChildren());
+  }
+
+  protected function reflectCall(dom\element $el) {
+
+    $window = $this->getWindow();
+    $sMethod = $el->readAttribute('name');
+
+    $method = $this->getInterface()->loadMethod($sMethod);
+
+    return $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
+  }
+
   /**
    *
    * @param dom\element $el
    * @return core\argumentable|array|null
    */
-  protected function parseElementSelf(dom\element $el) {
+  protected function parseElementAction(dom\element $el) {
 
     $mResult = null;
 
@@ -248,25 +338,15 @@ class Domed extends Reflector implements parser\domed {
 
       case 'action' : $mResult = $this->reflectAction($el); break;
 
-      case 'call' :
+      case 'call' : $mResult = $this->reflectCall($el); break;
 
-        $this->throwException(txt('Cannot use %s here', $el->asToken()));
+      case 'bool' :
+      case 'boolean' : $mResult = $this->reflectBoolean($el); break;
 
-      case 'directory' :
+      case 'string' : $mResult = $this->reflectString($el); break;
 
-        $call = $this->reflectDirectory($el);
-        $mResult = $this->runCall($el, $call);
-
-      break;
-
-      case 'file' :
-
-        $call = $this->reflectFile($el);
-        $mResult = $this->runCall($el, $call);
-
-      break;
-
-      case 'argument' :
+      case 'text' : $mResult = $this->reflectText($el); break;
+      //case 'argument' :
       case 'test-argument' :
       case 'get-all-arguments' :
       case 'get-argument' :
@@ -283,12 +363,12 @@ class Domed extends Reflector implements parser\domed {
       case 'interface' :
       break;
       case 'xquery' :
-      case 'recall' :
+      //case 'recall' :
       case 'namespace' :
       case 'ns' :
       case 'php' :
-      case 'special' :
-      case 'controler' :
+      //case 'special' :
+      //case 'controler' :
 
         $sName = $el->getAttribute('name');
         $mResult = $window->setControler($sName);
@@ -321,6 +401,10 @@ class Domed extends Reflector implements parser\domed {
       break;
 
       case 'template' :
+
+      default :
+
+        $this->throwException(txt('Unknown action element : %s', $el->asToken()));
     }
 
     return $mResult;
@@ -379,9 +463,6 @@ class Domed extends Reflector implements parser\domed {
 
   public function asDOM() {
 
-    $window = $this->getControler()->create('window', array($this->getControler()));
-    $this->setWindow($window);
-
     $doc = $this->getDocument();
     $window = $this->getWindow();
 
@@ -398,7 +479,9 @@ class Domed extends Reflector implements parser\domed {
     //dspm((string) $tst[1]);
 
     $result = $arg->asDOM();
-    $result->getRoot()->setAttribute('use-template', 'true');
+
+    $sTemplate = $this->useTemplate() ? 'true' : 'false';
+    $result->getRoot()->setAttribute('use-template', $sTemplate);
 
     return $result;
   }

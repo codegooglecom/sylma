@@ -31,7 +31,7 @@ class _ObjectVar extends _Var implements php\_object {
 
   public function addContent($mVar) {
 
-    return $this->getControler()->add($mVar);
+    return $this->getControler()->addContent($mVar);
   }
 
   public function asArgument() {

@@ -52,7 +52,7 @@
     <tst:expected>
       $arg = $controler->get('arg');
       $result = $arg->get('empty');
-      
+
       return
         $result instanceof \sylma\core\argument &amp;&amp;
         $result->read() === '';
@@ -144,6 +144,44 @@
       return
         $arg->read('true/@val') === true &amp;&amp;
         $arg->read('false/@val') === false;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Iterate">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument('simple.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $aResult = array();
+
+      foreach ($arg->get('def') as $sName => $val) {
+        $aResult[$sName] = $val->read();
+      }
+
+      return $aResult === array(
+        'sub' => '456',
+        'item' => 'item2',
+        'other' => 'other',
+      );
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Iterate over 1 item">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument('single-item.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $aResult = array();
+
+      foreach ($arg as $sName => $val) {
+      //dspf($val->asString());
+      //dspf($val->read('@name'));
+        $aResult[$sName] = $val->read('@name');
+      }
+//dspf($aResult);
+      return $aResult === array(
+        'argument' => 'path',
+      );
     </tst:expected>
   </tst:test>
 </tst:tests>

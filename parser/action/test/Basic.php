@@ -27,18 +27,26 @@ class Basic extends tester\Basic {
     if (!$controler) $controler = \Sylma::getControler('action');
 
     $this->setControler($controler);
+    //$this->setFiles(array($this->getFile('basic.xml')));
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getResult($sType) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    $action = $this->getArgument('action');
+
+    switch ($sType) {
+
+      case 'dom' : $result = $action->asDOM(); break;
+      case 'txt' : $result = $action->asString(); break;
+      case 'obj' : $result = $action->asObject(); break;
+      default :
+
+        $this->throwException(txt('Unknown action type : %s', $sType));
+    }
+
+    return $result;
   }
-
-  protected function setArgument($sPath, $mValue) {
-
-    return parent::setArgument($sPath, $mValue);
-  }
-
+  
   protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
 
     $result = null;
@@ -46,22 +54,21 @@ class Basic extends tester\Basic {
 
     $fs = $this->getControler('fs');
 
-    $tmp = $fs->getDirectory((string) $this->getDirectory())->addDirectory('#tmp');
-    $dir = $tmp->createDirectory();
-    
+    $dir = $this->createTempDirectory();
+
     try {
 
       $action = $controler->buildAction($this->createDocument($node), array(), $dir, $file->getParent());
-      $this->setArgument('action', $action->asDOM());
+      $this->setArgument('action', $action);
 
-      $result = parent::test($test, $this, $doc, $file);
+      $result = parent::test($test->getx('self:expected'), $this, $doc, $file);
     }
     catch (core\exception $e) {
 
       $e->save();
     }
 
-    $dir->delete();
+    //$dir->delete();
 
     return $result;
   }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security">
+  <namespace>\sylma\storage\fs</namespace>
+  <name>directory</name>
+  <method path="get-directory" name="getDirectory" return="directory">
+    <argument name="path" format="php-string" required="false"/>
+  </method>
+</class>

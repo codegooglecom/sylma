@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action;
-use \sylma\core, \sylma\parser, \sylma\storage\fs;
+use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 
 require_once('parser\action.php');
 require_once('core\module\Domed.php');
@@ -15,6 +15,9 @@ class Handler extends core\module\Domed implements parser\action {
   const DEBUG_UPDATE = true;
 
   const FS_CONTROLER = 'fs/editable';
+
+  const DEBUG_RUN = true;
+  const DEBUG_SHOW = false;
 
   protected $file;
   protected $controler;
@@ -99,13 +102,12 @@ class Handler extends core\module\Domed implements parser\action {
     $aClass = $this->getClassName($this->getFile());
     $sClass = $aClass['namespace'] . '\\' . $aClass['class'];
 
-    $action = new $sClass($this->getBaseDirectory(), $this, $this->createArgument($this->aArguments));
-    $result = $action->asDOM();
+    $result = new $sClass($this->getBaseDirectory(), $this, $this->createArgument($this->aArguments));
 
     return $result;
   }
 
-  protected function loadDOM() {
+  protected function reflectAction() {
 
     $parser = $this->getControler();
     $doc = $this->getFile()->getDocument();
@@ -114,32 +116,35 @@ class Handler extends core\module\Domed implements parser\action {
 
     $result = $action->asDOM();
 
-    $aClass = $this->getClassName($this->getFile());
-
-    $result->getRoot()->setAttributes(array(
-      'namespace' => substr($aClass['namespace'], 1),
-      'class' => $aClass['class'],
-    ));
-
     return $result;
   }
 
-  protected function parseDOM() {
+  protected function buildAction() {
 
     $file =  $this->getFile((string) $this->getFile());
     $fs = $file->getControler();
 
-    $sClass = $file->getName() . '.php';
+    $sPath = $file->getName() . '.php';
     $sTemplate = $file->getName() . '.tpl.php';
 
     $dir = $file->getParent();
     $tmpDir = $dir->addDirectory(parser\action::EXPORT_DIRECTORY);
 
-    $method = $this->loadDOM();
+    $method = $this->reflectAction();
 
-    //dspm((string) $method);
-    $class = $tmpDir->getFile($sClass, fs\basic\Resource::DEBUG_EXIST);
+    if (self::DEBUG_SHOW) dspm((string) $method);
+
+    $class = $tmpDir->getFile($sPath, fs\basic\Resource::DEBUG_EXIST);
+
     $template = $this->getTemplate('php/class.xsl');
+    $aClass = $this->getClassName($this->getFile());
+
+    // set new class and file
+
+    $template->setParameters(array(
+      'namespace' => substr($aClass['namespace'], 1),
+      'class' => $aClass['class'],
+    ));
 
     $sResult = $template->parseDocument($method, false);
     $class->saveText($sResult);
@@ -155,7 +160,7 @@ class Handler extends core\module\Domed implements parser\action {
     return $class;
   }
 
-  public function asDOM() {
+  protected function runAction() {
 
     $result = null;
     $file = $this->getFile();
@@ -170,11 +175,44 @@ class Handler extends core\module\Domed implements parser\action {
 
     if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || self::DEBUG_UPDATE) {
 
-      $tmpFile = $this->parseDOM();
+      $tmpFile = $this->buildAction();
     }
 
-    $result = $this->runCache($tmpFile);
-    //dspm((string) $result);
+    if (self::DEBUG_RUN) $result = $this->runCache($tmpFile);
+
     return $result;
+  }
+
+  protected function parseDOM(dom\domable $val) {
+
+    return $val->asDOM();
+  }
+
+  protected function parseString(core\stringable $mVal) {
+
+    return $mVal->asString();
+  }
+
+  protected function parseObject(action\cached $mVal) {
+
+    return $mVal->asObject();
+  }
+
+  public function asObject() {
+
+    $action = $this->runAction();
+    return $this->parseObject($action);
+  }
+
+  public function asString() {
+
+    $action = $this->runAction();
+    return $this->parseString($action);
+  }
+
+  public function asDOM() {
+
+    $action = $this->runAction();
+    return $this->parseDOM($action);
   }
 }

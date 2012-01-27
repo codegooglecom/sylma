@@ -36,4 +36,9 @@ class Text extends \DOMText implements dom\text {
 
     return '@text in ' . $this->getParent()->asToken();
   }
+
+  public function __toString() {
+
+    return $this->asString();
+  }
 }

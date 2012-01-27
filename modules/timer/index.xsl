@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" extension-element-prefixes="func" xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:time="http://www.sylma.org/modules/utils/timer" xmlns:func="http://exslt.org/functions" xmlns:set="http://exslt.org/sets">
-  
+
   <xsl:param name="weight" select="500"/>
-  
+
   <xsl:variable name="class-class">sylma-timer-class</xsl:variable>
   <xsl:variable name="class-weight">sylma-timer-weight</xsl:variable>
-  
+
 	<xsl:template match="/time:classes">
-    <xsl:apply-templates/>
+    <div>
+      <xsl:apply-templates/>
+    </div>
   </xsl:template>
-  
+
 	<xsl:template match="time:class">
     <div class="{$class-class} col-2 left">
       <xsl:variable name="total" select="sum(.//time:time)"/>
@@ -21,13 +23,13 @@
       </ul>
     </div>
   </xsl:template>
-  
+
   <xsl:template match="time:method">
     <xsl:param name="avg"/>
     <li>
       <xsl:value-of select="@name"/>
       <em>
-        <xsl:value-of select="time:calls"/> calls - 
+        <xsl:value-of select="time:calls"/> calls -
         <xsl:value-of select="concat(ceiling(time:time * 1000), ' ms')"/>
       </em>
       <xsl:call-template name="time:weight">
@@ -36,17 +38,17 @@
       </xsl:call-template>
     </li>
   </xsl:template>
-  
+
   <func:function name="time:abs">
     <xsl:param name="number"/>
     <func:result select="$number * ($number &gt;= 0) - $number * ($number &lt; 0)"/>
   </func:function>
-  
+
   <xsl:template name="time:weight">
     <xsl:param name="value"/>
     <xsl:param name="avg"/>
     <div style="width: {ceiling(time:abs(time:time * $avg))}px;" class="{$class-weight}"/>
   </xsl:template>
-  
+
 </xsl:stylesheet>
 

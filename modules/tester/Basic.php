@@ -28,7 +28,7 @@ abstract class Basic extends core\module\Domed implements test {
 
     if (!$aFiles = $this->getFiles()) {
 
-      $aFiles = $this->getDirectory()->getFiles(array('xml'), null, null);
+      $aFiles = $this->getDirectory()->getFiles(array('xml'), null, 0);
     }
 
     foreach ($aFiles as $file) {
@@ -83,7 +83,7 @@ abstract class Basic extends core\module\Domed implements test {
   protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = false;
-    
+
     try {
 
       if (eval('$closure = function($controler) { ' . $test->read() . '; };') === null) {

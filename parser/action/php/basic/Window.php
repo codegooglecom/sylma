@@ -10,7 +10,6 @@ require_once('core/controled.php');
 class Window extends core\module\Filed implements php\_window, core\controled {
 
   const NS = 'http://www.sylma.org/parser/action/compiler';
-  const ARGUMENTS_PATH = 'classes/php';
 
   // Keyed by alias. ex : storage/fs
   protected $aControlers = array();
@@ -34,13 +33,13 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   protected static $varCount = 0;
 
-  public function __construct(core\factory $controler) {
+  public function __construct(core\factory $controler, core\argument $args, $sClass) {
 
     $this->setControler($controler);
-    $this->setArguments($controler->getArgument(self::ARGUMENTS_PATH));
+    $this->setArguments($args);
     $this->setNamespace(self::NS);
 
-    $self = $this->loadInstance('\sylma\parser\action\Basic');
+    $self = $this->loadInstance($sClass);
 
     $this->self = $this->create('object-var', array($this, $self, 'this'));
     $this->setScope($this);
@@ -66,7 +65,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
     if (!is_string($mVal) && !$mVal instanceof core\argumentable) {
 
-      $formater = \Sylma::getControler('formater');
+      $formater = $this->getControler('formater');
       $this->throwException(txt('Cannot add %s in content', $formater->asToken($mVal)));
     }
   }
@@ -243,7 +242,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       case 'resource' :
       case 'NULL' :
 
-        $this->throwException(txt('Cannot handle resource of type %s as argument', $sFormat));
+        $arg = $this->create('null', array($this));
 
       break;
 
@@ -255,11 +254,16 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return $arg;
   }
 
-  public function validateFormat(php\_var $var, $sFormat) {
+  /*public function validateFormat(php\_var $var, $sFormat) {
 
     $condition = $this->create('condition', array($this, $this->create('not', array($test))));
     $text = $this->create('function', array($this, 't', array('Bad argument format')));
     $condition->addContent($this->createCall($this->getSelf(), 'throwException', null, array($text)));
+  }*/
+
+  public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+
+    return parent::throwException($sMessage, $mSender, $iOffset);
   }
 
   public function asArgument() {
@@ -278,8 +282,11 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       $aControlers[] = $this->create('assign', array($var, $call));
     }
 
+    $interface = $this->getControler()->getInterface();
+
     $result = $this->createArgument(array(
       'window' => array(
+        '@extends' => $interface->getNamespace('php') . '\\' . $interface->getName(),
         $aControlers,
       ),
     ), self::NS);

@@ -6,34 +6,43 @@ use sylma\core, sylma\dom;
 require_once('Basic.php');
 
 class Iterator extends Basic {
-  
+
+  protected $collection;
+
   protected function getChildren() {
-    
-    return $this->getDocument()->getChildren();
+
+    if (!$this->collection) {
+
+      $this->collection = $this->getDocument()->getChildren();
+    }
+
+    return $this->collection;
   }
 
   public function rewind() {
-    
+
     $this->getChildren()->rewind();
   }
-  
+
   public function current() {
-    
-    return $this->getChildren()->current();
+
+    $dom = $this->getControler();
+    return $result = new Iterator($dom->create('handler', array($this->getChildren()->current())), $this->getNS());
   }
-  
+
   public function key() {
-    
-    return $this->getChildren()->key();
+
+    $node = $this->getChildren()->current();
+    return $node->getName();
   }
-  
+
   public function next() {
-    
+
     $this->getChildren()->next();
   }
-  
+
   public function valid() {
-    
+
     return $this->getChildren()->valid();
   }
 }

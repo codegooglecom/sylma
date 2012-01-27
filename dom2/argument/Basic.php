@@ -27,6 +27,8 @@ abstract class Basic extends core\module\Controled implements core\argument {
     $this->setDocument($doc);
     $this->registerNamespaces($aNS);
 
+    $this->setControler($this->getControler('dom'));
+    
     // first element define default namespace & prefix
 
     if (!$this->getPrefix()) {
@@ -152,14 +154,16 @@ abstract class Basic extends core\module\Controled implements core\argument {
   public function get($sPath = '', $bDebug = true) {
 
     $result = null;
-    $dom = $this->getControler('dom');
+    $dom = $this->getControler();
 
     $sRealPath = $this->parsePath($sPath);
 
     $result = $this->getDocument()->getx($sRealPath, array(), $bDebug);
     $this->useAttribute(false);
 
-    if (!$result instanceof dom\element || ($result->hasChildren() && !$result->isComplex())) {
+    $bElement = $result instanceof dom\element;
+
+    if (!$bElement || ($result->hasChildren() && !$result->isComplex())) {
 
       $this->throwException(txt('Cannot use @path %s as complex element', $sPath));
     }
@@ -221,7 +225,8 @@ abstract class Basic extends core\module\Controled implements core\argument {
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
-    $mSender[] = $this->getNamespace();
+    //$mSender[] = $this->getNamespace();
+
     parent::throwException($sMessage, $mSender, $iOffset);
   }
 }

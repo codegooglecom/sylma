@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Callers</tst:description>
+  <tst:test name="Load file with short-call">
+    <le:action>
+      <lm:file path="samples/simple.txt"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof \sylma\dom\handler &amp;&amp;
+        $result->getRoot() &amp;&amp;
+        $result->getRoot()->getName() == 'file';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Load file with short-call and multiple arguments" disabled="true">
+    <le:action>
+      <le:bool value="true" le:set-variable="bool"/>
+      <lm:directory path="samples" debug="[$bool]"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof \sylma\dom\handler &amp;&amp;
+        $result->getRoot() &amp;&amp;
+        $result->getRoot()->getName() == 'file';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Load file with self-call">
+    <le:action>
+      <le:call name="get-file">samples/simple.txt</le:call>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof \sylma\dom\handler &amp;&amp;
+        $result->getRoot() &amp;&amp;
+        $result->getRoot()->getName() == 'file';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Load file with self-call and li:argument">
+    <le:action>
+      <le:call name="get-file">
+        <li:argument>samples/simple.txt</li:argument>
+      </le:call>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof \sylma\dom\handler &amp;&amp;
+        $result->getRoot() &amp;&amp;
+        $result->getRoot()->getName() == 'file';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Load file with self-call and multiple arguments">
+    <le:action>
+      <div>
+        <le:call name="get-file">
+          <li:argument>samples/nofile.txt</li:argument>
+          <le:bool value="false"/>
+        </le:call>
+      </div>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof \sylma\dom\handler &amp;&amp;
+        $result->getRoot() &amp;&amp;
+        $result->getRoot()->getName() == 'div' &amp;&amp;
+        !$result->getRoot()->hasChildren();
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Read a file with short-call called">
+    <le:action>
+      <div>
+        <lm:file path="samples/simple.txt">
+          <li:call name="read"/>
+        </lm:file>
+      </div>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof \sylma\dom\handler &amp;&amp;
+        ($root = $result->getRoot()) &amp;&amp;
+        $root->asString() == '&lt;div xmlns="http://www.sylma.org"&gt;123&lt;/div&gt;';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Load a directory with obj-call">
+    <le:action>
+      <lm:directory>
+        <li:call name="get-directory">
+          <li:argument>samples</li:argument>
+        </li:call>
+      </lm:directory>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof sylma\dom\handler &amp;&amp;
+        $result->getRoot() &amp;&amp;
+        $result->getRoot()->getName() == 'directory';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Load a directory with a two level depth obj/element-call">
+    <le:action>
+      <lm:directory>
+        <li:call name="get-directory">
+          <li:argument>
+            <lm:file path="path.txt">
+              <li:call name="read"/>
+            </lm:file>
+          </li:argument>
+        </li:call>
+      </lm:directory>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+
+      return
+        $result instanceof sylma\dom\handler &amp;&amp;
+        $result->getRoot() &amp;&amp;
+        $result->getRoot()->getName() == 'directory';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

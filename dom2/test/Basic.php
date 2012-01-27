@@ -17,23 +17,12 @@ class Basic extends tester\Basic {
 
     $this->setArguments('settings.yml');
 
-    $this->setFiles(array($this->getFile('basic.xml')));
     $this->setControler($this);
   }
 
   public function getFile($sPath, $bDebug = true) {
 
     return parent::getFile($sPath, $bDebug);
-  }
-
-  public function getTmpDirectory() {
-
-    $fs = $this->getControler('fs/editable');
-    $user = $this->getControler('user');
-
-    $tmp = $fs->getDirectory((string) $user->getDirectory('#tmp'));
-
-    return $tmp->createDirectory();
   }
 }
 

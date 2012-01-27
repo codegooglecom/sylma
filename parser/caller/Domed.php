@@ -11,19 +11,48 @@ class Domed extends core\module\Argumented {
   protected $document;
   protected $aMethods = array();
 
-  public function __construct(core\factory $controler, core\argument $doc) {
+  protected $sName;
+
+  public function __construct(core\factory $controler, fs\file $file) {
 
     $this->setControler($controler);
-    $this->setNamespace($this->getNamespace(), 'self');
+    $this->setFile($file);
 
-    $doc->registerToken('method', 'method', 'name');
+    $this->setArguments($file->getArgument());
+    $this->getArguments()->registerToken('method', 'method', 'path');
+    $this->getArguments()->registerToken('element', 'method', 'element');
 
-    $this->setArguments($doc);
+    if ($sElement = $this->readArgument('element', false)) {
+
+      $this->setNamespace($sElement, 'element', false);
+    }
+
+    $this->setNamespace($this->readArgument('namespace'), 'php', false);
+    $this->setName($this->readArgument('name'));
+  }
+
+  public function getFile() {
+
+    return $this->file;
+  }
+
+  public function setFile(fs\file $file) {
+
+    $this->file = $file;
+  }
+
+  public function getName() {
+
+    return $this->sName;
+  }
+
+  public function setName($sNamespace) {
+
+    $this->sName = $sNamespace;
   }
 
   public function parseCall(dom\element $el, php\basic\_ObjectVar $obj) {
 
-    $window = $obj->getControler();
     $sMethod = $el->getAttribute('name');
 
     if (!$sMethod) {
@@ -31,102 +60,112 @@ class Domed extends core\module\Argumented {
       $this->throwException(txt('No method defined for call in %s', $el->asToken()));
     }
 
-    $method = $this->getMethod($sMethod);
-    $aArguments = $this->loadArguments($el);
+    return $this->loadCall($obj, $this->getMethod($sMethod), $el->getChildren());
+  }
+
+  public function loadCall(php\basic\_ObjectVar $obj, Method $method, dom\collection $args) {
+
+    $aArguments = $this->parseArguments($args);
 
     $call = $method->reflectCall($obj->getControler(), $obj, $aArguments);
 
-    return $this->runCall($call, $el);
+    return $this->runCall($call, $args);
   }
 
-  protected function parseElement(dom\element $el) {
+  protected function parseNode(dom\node $node) {
+
+    return $this->getControler()->getParent()->parse($node);
+  }
+
+  protected function parseArgument(dom\element $el, $iKey) {
+
+    if (!$mKey = $el->readAttribute('argument', $this->getNamespace(), false)) {
+
+      $mKey = $iKey;
+    }
 
     if ($el->getNamespace() == $this->getNamespace()) {
 
-      $mResult = $this->parseElementSelf($el);
+      if ($el->getName() != 'argument') {
+
+        $this->throwException(txt('Invalid %s, argument expected', $el->asToken()));
+      }
+
+      if ($el->countChildren() > 1) {
+
+        $this->throwException(t('There shouldn\'t have more than one child in %s', $el->asToken()));
+      }
+
+      $mResult = $this->parseNode($el->getFirst());
     }
     else {
 
-      $mResult = $this->parseElementForeign($el);
+      $mResult = $this->parseNode($el);
     }
 
-    return $mResult;
+    return $this->createArgument(array(
+      'name' => $mKey,
+      'value' => $mResult,
+    ));
   }
 
-  protected function parseElementForeign(dom\element $el) {
-
-    $mResult = null;
-
-    if ($el->getNamespace() == $this->getParent()->getNamespace()) {
-
-      $mResult = $this->getParent()->parseElementSelf($el);
-    }
-    else {
-
-      $this->throwException(txt('Invalid %s, action\'s element expected', $el->asToken()));
-    }
-
-    return $mResult;
-  }
-
-  protected function parseElementSelf(dom\element $el) {
-
-    switch ($el->getName()) {
-
-      case 'call' : $mResult = $this->parseCall($el); break;
-      case 'argument' : $mResult = $this->parseArgument($el); break;
-
-      default :
-
-        $this->throwException(txt('Invalid %s, call or argument expected', $el->asToken()));
-    }
-
-    return $mResult;
-  }
-
-  protected function parseArgument() {
-
-    return null;
-  }
-
-  protected function loadArguments(dom\element $el) {
+  protected function parseArguments(dom\collection $children) {
 
     $aResult = array();
+    $iKey = 0;
 
-    foreach ($el->getChildren() as $child) {
+    foreach ($children as $child) {
 
-      if ($child->getNamespace() == $this->getNamespace()) break;
-      $aResult[] = $this->parseElement($child);
-      $child->remove();
+      switch ($child->getType()) {
+
+        case dom\node::TEXT :
+
+          $aResult[] = $this->parseNode($child);
+
+        break;
+
+        case dom\node::ELEMENT :
+
+          if ($child->getNamespace() == $this->getNamespace() && $child->getName() == 'call') break;
+
+          $arg = $this->parseArgument($child, $iKey);
+
+          $aResult[$arg->read('name')] = $arg->get('value', false);
+
+        break;
+
+        default :
+
+          $this->throwException(txt('Cannot use %s, valid argument expected', $child->asToken()));
+      }
+
+      $iKey++;
     }
 
     return $aResult;
   }
 
-  protected function runCall(php\basic\CallMethod $call, dom\element $el) {
+  public function runCall(php\basic\CallMethod $call, dom\collection $children) {
 
-    if ($el->hasChildren()) {
+    if ($children->current()) {
 
       $window = $call->getControler();
 
-      $var = $call->getVar($mResult);
+      $var = $call->getVar();
       $window->setScope($var);
 
       $interface = $this->getControler()->loadObject($var);
 
-      if ($el->getChildren()->length == 1) {
+      $aResult = array();
 
-        $mResult = $interface->parseCall($el);
+      while ($child = $children->current()) {
+
+        $children->next();
+        $aResult[] = $interface->parseCall($child, $var);
       }
-      else {
 
-        $mResult = array();
-
-        foreach ($el->getChildren() as $child) {
-
-          $mResult[] = $interface->parseCall($el);
-        }
-      }
+      if (count($aResult) == 1) $mResult = $aResult[0];
+      else $mResult = $aResult;
 
       $window->stopScope();
     }
@@ -148,37 +187,24 @@ class Domed extends core\module\Argumented {
     return $this->aMethods[$sName];
   }
 
-  protected function loadMethod($sMethod) {
-
-    $method = $this->getArgument('#method:'. $sMethod);
-    $aArguments = array();
-
-    foreach ($method as $sElement => $arg) {
-
-      if ($sElement != 'argument' || $arg->getNamespace() != $this->getNamespace()) {
-
-        $this->throwException(txt('Invalid %s', $arg->asToken()));
-      }
-
-      $sName = $arg->read('@name');
-
-      $aArguments[$sName] = array(
-        'format' => $arg->read('@format'),
-        'required' => $arg->read('@required'),
-      );
-    }
+  public function loadMethod($sMethod, $sToken = 'method') {
 
     $controler = $this->getControler();
-    $result = $controler->create('method', array($controler, $method->read('@name'), $method->read('@return'), $aArguments));
+
+    $arg = $this->getArgument('#' . $sToken . ':'. $sMethod);
+    $result = $controler->create('method', array($this, $arg));
 
     return $result;
   }
 
-  protected function parseDocument(dom\handler $doc) {
+  /**
+   * Namespace with prefix php is used here as PHP namespaces with anti-slash instead of slash
+   * @param string|null $sPrefix
+   * @return string
+   */
+  public function getNamespace($sPrefix = null) {
 
-    $window = $this->getWindow();
-
-    $call = $window->createCall($obj, $sMethod, '\sylma\storage\fs\directory', array());
+    return parent::getNamespace($sPrefix);
   }
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {

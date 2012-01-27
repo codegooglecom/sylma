@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/core/module/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
   <tst:description>Domed</tst:description>
-  <tst:test name="Get a file">
+  <tst:test name="Get a file" disabled="true">
     <tst:prepare>
       $controler->setArgument('module', $controler->create('domed'));
     </tst:prepare>
     <tst:expected>
       $module = $controler->getArgument('module');
       $doc = $module->getDocument('hello.xml');
-      
+
       return
         ($result = $module->createArgument($doc)) &amp;&amp;
         $result instanceof \sylma\core\argument &amp;&amp;

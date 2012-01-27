@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<method xmlns="http://www.sylma.org/parser/caller" path="get-directory" name="getDirectory" return="directory">
+  <argument name="path" format="php-string" required="false"/>
+</method>

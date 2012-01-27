@@ -125,7 +125,7 @@
         'def' => '789',
         'ghi' => true
       ));
-      
+
       $arg1->merge($arg2);
       $controler->set('arg', $arg1);
     </tst:prepare>
@@ -161,7 +161,7 @@
           'xyz' => 'beta'
         ),
       ));
-      
+
       $arg1->merge($arg2);
       $controler->set('arg', $arg1);
     </tst:prepare>
@@ -174,6 +174,27 @@
         $arg->read('ghi/opq') === 3434 &amp;&amp;
         $arg->read('ghi/uvw') === false &amp;&amp;
         $arg->read('rst/xyz') === 'beta'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Iterate">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'abc' => '123',
+        'def' => 456,
+      )));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $aResult = array();
+
+      foreach ($arg as $sKey => $sub) {
+        $aResult[$sKey] = $sub;
+      }
+
+      return $aResult == array(
+        'abc' => '123',
+        'def' => 456,
+      );
     </tst:expected>
   </tst:test>
 </tst:tests>

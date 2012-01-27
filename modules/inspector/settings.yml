@@ -1,35 +1,35 @@
 classes:
   controler :
     file : Inspector.php
-    name : Inspector
+    name : \Inspector
   class:
     file : Class.php
-    name : InspectorClass
+    name : \InspectorClass
     classes :
       comment :
         file : Comment.php
-        name : InspectorCommentClass
+        name : \InspectorCommentClass
       method:
         file : Method.php
-        name: InspectorMethod
+        name: \InspectorMethod
         classes :
           parameter:
             file : Parameter.php
-            name : InspectorParameter
+            name : \InspectorParameter
           comment:
             file : Comment.php
-            name: InspectorCommentMethod
+            name: \InspectorCommentMethod
       property:
         file : Property.php
-        name : InspectorProperty
+        name : \InspectorProperty
         classes :
           comment :
             file : Comment.php
-            name : InspectorCommentProperty
+            name : \InspectorCommentProperty
       constant:
         file : Constant.php
-        name : InspectorConstant
+        name : \InspectorConstant
   element :
     name : XML_Element
   argument :
-    name : Arguments
+    name : \sylma\core\argument\Iterator

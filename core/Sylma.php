@@ -7,7 +7,7 @@ class Sylma {
   const NS = 'http://www.sylma.org';
 
   const ROOT = SYLMA_ROOT; // ex: protected
-  const PATH = SYLMA_PROTECTED_PATH; // ex: sylma
+  const PATH = SYLMA_PROTECTED_PATH; // ex: /sylma
 
   const PATH_OPTIONS = '/system/sylma.yml';
 
@@ -157,6 +157,15 @@ class Sylma {
 
         require_once('parser/caller/Controler.php');
         $result = new parser\caller\Controler;
+
+      break;
+
+      case 'timer' :
+
+        require_once('modules/timer/Controler.php');
+        $timer = new modules\timer\Controler;
+
+        $result = $timer->create('timer');
 
       break;
     }

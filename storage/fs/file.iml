@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security">
-  <namespace>\sylma\storage</namespace>
-  <name>fs\file</name>
-  <method path="get-directory" name="getParent" return="fs\directory"/>
+  <namespace>\sylma\storage\fs</namespace>
+  <name>file</name>
+  <method path="get-directory" name="getParent" return="directory"/>
   <method name="getPath" path="get-path" return="php-string"/>
   <method name="read" path="read" return="php-string"/>
 </class>

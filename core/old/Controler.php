@@ -27,13 +27,19 @@ class Controler {
   private static $bUseMessages = false;
   private static $sSystemPath = '';
 
+  public static $aTemp = array();
+
   private static $aActions = null;      // Array of running actions
 
   /**
    * Reflection classes builded with @method buildClass() or @method ModuleBase::create();
    */
   private static $aClasses = array();
+public static function addTest($sKey) {
 
+  if (array_key_exists($sKey, self::$aTemp)) self::$aTemp[$sKey]++;
+  else self::$aTemp[$sKey] = 1;
+}
   public static function trickMe() {
 
     global $aDefaultInitMessages;
@@ -918,11 +924,11 @@ class Controler {
 
       if (isset($aTrace['class'])) $sClass = $aTrace['class'] . '::' . $aTrace['function'];
       else $sClass = '';
-      
+
       if (isset($aTrace['file'])) {
 
         $sLink = 'netbeans://' . $aTrace['file'] . ':' . $aLines[$i];
-        $file = new HTML_A($sLink, $sClass);
+        $file = new HTML_A($sLink, '[' . $aLines[$i] . '] ' . $sClass);
       }
       else $file = 'xxx';
 

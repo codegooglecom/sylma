@@ -67,35 +67,61 @@ class Basic extends \Exception implements core\exception {
     $this->aPath = $aPath;
   }
 
-  protected function getPath() {
+  protected function parsePath() {
 
-    if (\Sylma::isWindows()) {
+    $aResult = $aPath = array();
 
-      $sSystem = $_SERVER['DOCUMENT_ROOT'] . '/' . MAIN_DIRECTORY;
-      $sPath = core\functions\path\winToUnix(substr($this->getFile() ,strlen($sSystem)));
+    foreach ($this->aPath as $sPath) {
+
+      $aResult[] = ' ';
+      $aResult[] = $this->parseString($sPath);
+    }
+
+    return $aResult;
+  }
+
+  protected function parseString($sValue) {
+
+    $aResult = array();
+
+    if ($fs = \Sylma::getControler('fs', false, false)) {
+
+      if (preg_match_all('/@file [^\s]*/', $sValue, $aMatch, PREG_OFFSET_CAPTURE)) {
+
+        $sFile = substr($aMatch[0][0][0], 6);
+        $iFile = $aMatch[0][0][1];
+        $iLength = strlen($sFile) + 6;
+
+        $aResult[] = substr($sValue, 0, $iFile) . ' ';
+        $aResult[] = '@file';
+
+        $sDirectory = $fs->getDirectory()->getSystemPath();
+
+        $aResult[] = new \HTML_A('netbeans://' . $sDirectory . $sFile, $sFile);
+        $aResult[] = substr($sValue, $iFile + $iLength);
+      }
+      else {
+
+        $aResult[] = $sValue;
+      }
     }
     else {
 
-      $sSystem = MAIN_DIRECTORY . '/';
-//      $sPath = substr( ,strlen($sSystem) - 1);
+      $aResult[] = $sValue;
     }
 
-    $sCaller = array_val('type', $this->aCall, 'unknown');
+    return $aResult;
+  }
+
+  protected function getPath() {
+
     $sCall = array_val('value', $this->aCall, 'unknown');
 
-//    $aPath = array(
-//      ,
-//      '@line' => $this->getLine(),
-//      '@file' => new \HTML_A('netbeans://' . $sPath . ':' . $this->getLine(), $sPath),
-//      '@exception' => get_class($this) . ' [' . $this->getCode() . ']',
-//    );
+    $link = new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()');
+    $message = $this->parseString($this->getMessage());
+    $path = $this->parsePath();
 
-    return array(
-      //'@exception' => get_class($this) . ' [' . $this->getCode() . ']',
-      new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()'),
-    );
-
-		//return array_merge($this->aPath, fusion(' ', $aPath));
+		return array($link, $path, ' ', $message);
 	}
 
   public static function loadError($iNo, $sMessage, $sFile, $iLine) {
@@ -163,9 +189,9 @@ class Basic extends \Exception implements core\exception {
   public function save() {
 
     if (\Controler::useMessages()) {
-      
+
       $backtrace = \Controler::getBacktrace($this->getTrace());
-      \Controler::addMessage(array($this->getPath(), ' - ' . $this->getMessage(), $backtrace));
+      \Controler::addMessage(array($this->getPath(), $backtrace));
     }
   }
 
