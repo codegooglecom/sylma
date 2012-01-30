@@ -13,7 +13,7 @@ class Domed extends core\module\Argumented {
 
   protected $sName;
 
-  public function __construct(core\factory $controler, fs\file $file) {
+  public function __construct(Controler $controler, fs\file $file) {
 
     $this->setControler($controler);
     $this->setFile($file);

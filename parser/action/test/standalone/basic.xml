@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/standalone" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Basic</tst:description>
+  <tst:test name="Simple text creation">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/read'));
+    </tst:prepare>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      return $action->asString() === '123';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Call another action in text">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/call-text'));
+    </tst:prepare>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+
+      return
+        $action->asString() === '123';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Call action in dom">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/call-dom'));
+    </tst:prepare>
+    <tst:node>
+      <div>abc</div>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node);
+    </tst:expected>
+  </tst:test>
+</tst:tests>

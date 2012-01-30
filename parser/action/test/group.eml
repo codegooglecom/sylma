@@ -2,8 +2,11 @@
 <le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:tst="http://www.sylma.org/modules/tester">
   <le:settings>
     <le:name>Test Action</le:name>
+    <le:return format="XML_Document"/>
   </le:settings>
-  <le:action path="/sylma/modules/tester/class">
-    <le:action path="group"/>
-  </le:action>
+  <tst:group>
+    <tst:description>Action</tst:description>
+    <le:action path="grouped"/>
+    <le:action path="standalone"/>
+  </tst:group>
 </le:action>

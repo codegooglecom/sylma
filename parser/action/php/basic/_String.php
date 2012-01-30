@@ -3,11 +3,11 @@
 namespace sylma\parser\action\php\basic;
 use sylma\parser\action\php, sylma\core;
 
-require_once(dirname(__dir__) . '/_Scalar.php');
+require_once('instance/_Scalar.php');
 
 require_once('core/argumentable.php');
 
-class _String extends php\basic\_Scalar implements core\argumentable {
+class _String extends instance\_Scalar implements core\argumentable {
 
   protected $sFormat = 'php-string';
 
@@ -28,7 +28,7 @@ class _String extends php\basic\_Scalar implements core\argumentable {
     }
     else {
 
-      $this->aValues[] = $mValue;
+      $this->aValues[] = $this->getControler()->convertToString($mValue);
     }
   }
 
@@ -39,11 +39,11 @@ class _String extends php\basic\_Scalar implements core\argumentable {
       $this->getControler()->throwException(t('No value defined for string'));
     }
 
-    if (count($this->aValues) == 1) {
+    if (count($this->aValues) === 1) {
 
       $aResult = array('cast' => array(
         '@type' => 'string',
-        $this->aValues,
+        array_pop($this->aValues),
       ));
     }
     else {

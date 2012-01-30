@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <class xmlns="http://www.sylma.org/interface">
-  <file>Basic.php</file>
-  <name>\sylma\parser\action\test\Basic</name>
+  <file>Grouped.php</file>
+  <name>\sylma\parser\action\test\grouped\Grouped</name>
 </class>

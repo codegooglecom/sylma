@@ -15,8 +15,8 @@ class Controler extends core\module\Filed {
     //$this->loadDefaultArguments();
 
     $this->setDirectory(__file__);
-    $this->setArguments('controler.yml');
     $this->setNamespace(parser\action::NS);
+    $this->setArguments('controler.yml');
   }
 
   public function runAction($sPath, array $aArguments = array()) {
@@ -25,12 +25,15 @@ class Controler extends core\module\Filed {
     return $action->asDOM();
   }
 
-  public function getAction($sPath, array $aArguments = array()) {
+  public function getAction($sPath, array $aArguments = array(), fs\directory $dir = null) {
 
+    require_once('core/functions/Path.php');
+
+    $path = $this->create('path', array(core\functions\path\toAbsolute($sPath, $dir)));
     $fs = \Sylma::getControler('fs');
-    $file = $fs->getFile($sPath);
+    //$file = $fs->getFile($sPath, true, );
 
-    return $this->create('action', array($file, $aArguments));
+    return $this->create('action', array($path->getFile(), $aArguments));
   }
 
   public function buildAction(dom\handler $doc, array $aArguments = array(), fs\editable\directory $dir = null, fs\directory $base = null) {
@@ -54,8 +57,13 @@ class Controler extends core\module\Filed {
     return $result;
   }
 
+  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+
+    return parent::getArgument($sPath, $mDefault, $bDebug);
+  }
+
   public function getDirectory($sPath = '', $bDebug = true) {
 
-    return parent::getDirectory($sPath = '', $bDebug = true);
+    return parent::getDirectory($sPath, $bDebug);
   }
 }

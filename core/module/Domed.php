@@ -56,11 +56,11 @@ abstract class Domed extends Filed {
     return $dom->create(self::DOM_DOCUMENT_ALIAS, array($mContent));
   }
 
-  protected function getAction($sPath, $aArguments = array()) {
+  protected function getAction($sPath, array $aArguments = array()) {
 
-    $sPath = path_absolute($sPath, $this->getDirectory());
+    $controler = $this->getControler('action');
 
-    return $this->create('action', array($sPath, $aArguments));
+    return $controler->getAction($sPath, $aArguments, $this->getDirectory());
   }
 
   /**

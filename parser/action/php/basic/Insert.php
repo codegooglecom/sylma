@@ -34,7 +34,7 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
     }
     else if ($mContent instanceof php\_object) {
 
-      $interface = $mContent->getObject()->getInterface();
+      $interface = $mContent->getInstance()->getInterface();
 
       if ($interface->isInstance('\sylma\dom\node')) {
 

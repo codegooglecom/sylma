@@ -1,22 +1,22 @@
 <?php
 
-namespace sylma\parser\action\test;
+namespace sylma\parser\action\test\grouped;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
 
 require_once('modules/tester/Basic.php');
 
-class Basic extends tester\Basic {
+class Grouped extends tester\Basic {
 
-  const NS = 'http://www.sylma.org/parser/action/test';
+  const NS = 'http://www.sylma.org/parser/action/test/grouped';
   const FS_CONTROLER = 'fs/editable';
 
-  protected $sTitle = 'Action';
+  protected $sTitle = 'Grouped';
 
   public function __construct(parser\action\Controler $controler = null) {
 
     \Sylma::getControler('dom');
 
-    require_once(dirname(dirname(__dir__)) . '/action.php');
+    require_once('parser/action.php');
 
     $this->setDirectory(__file__);
     $this->setNamespaces(array(
@@ -38,7 +38,8 @@ class Basic extends tester\Basic {
 
       case 'dom' : $result = $action->asDOM(); break;
       case 'txt' : $result = $action->asString(); break;
-      case 'obj' : $result = $action->asObject(); break;
+      case 'object' : $result = $action->asObject(); break;
+      case 'array' : $result = $action->asArray(); break;
       default :
 
         $this->throwException(txt('Unknown action type : %s', $sType));
@@ -46,31 +47,50 @@ class Basic extends tester\Basic {
 
     return $result;
   }
-  
+
   protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
 
-    $result = null;
+    $bResult = null;
     $node = $test->getx('le:action');
 
     $fs = $this->getControler('fs');
 
     $dir = $this->createTempDirectory();
 
-    try {
+    if ($sException = $test->readAttribute('catch', null, false)) {
 
-      $action = $controler->buildAction($this->createDocument($node), array(), $dir, $file->getParent());
-      $this->setArgument('action', $action);
+      $bResult = false;
 
-      $result = parent::test($test->getx('self:expected'), $this, $doc, $file);
+      try {
+
+        $action = $controler->buildAction($this->createDocument($node), array(), $dir, $file->getParent());
+        $action->asArray();
+      }
+      catch (core\exception $e) {
+
+        $bResult = true;
+      }
     }
-    catch (core\exception $e) {
+    else {
 
-      $e->save();
+      try {
+
+        $action = $controler->buildAction($this->createDocument($node), array(), $dir, $file->getParent());
+        $this->setArgument('action', $action);
+
+        $bResult = parent::test($test->getx('self:expected'), $this, $doc, $file);
+      }
+      catch (core\exception $e) {
+
+        $e->save();
+      }
     }
+
+    //if ($bRun)
 
     //$dir->delete();
 
-    return $result;
+    return $bResult;
   }
 }
 

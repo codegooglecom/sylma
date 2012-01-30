@@ -12,7 +12,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   //protected $bTemplate = false;
 
-  public function __construct(fs\directory $dir, core\factory $controler, core\argument $args) {
+  public function __construct(fs\directory $dir, parser\action $controler, core\argument $args) {
 
     require_once('parser/action.php');
 
@@ -63,6 +63,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $this->loadDomable($arg);
   }
 
+  protected function loadStringable(core\stringable $val) {
+
+    return $val->asString();
+  }
+
   protected function validateString($sVal) {
 
     if (!is_string($sVal)) {
@@ -83,7 +88,28 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asObject() {
 
-    return $this->parseAction();
+    $aResult = $this->parseAction();
+
+    if (!$aResult) {
+
+      $this->throwException(txt('No valid object result'));
+    }
+
+    return array_pop($aResult);
+  }
+
+  public function asArray() {
+
+    $aResult = array_values($this->parseAction());
+
+    if (count($aResult) == 1) $aResult = array_pop($aResult);
+
+    if (!is_array($aResult)) {
+
+      $this->throwException(t('No valid array result'));
+    }
+
+    return $aResult;
   }
 
   public function asString() {
@@ -107,5 +133,14 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $sResult;*/
 
     return (string) implode('', $mResult);
+  }
+
+  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+
+    $file = $this->getControler()->getFile();
+
+    $mSender[] = $file->asToken();
+
+    return parent::throwException($sMessage, $mSender, $iOffset);
   }
 }

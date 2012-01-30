@@ -11,7 +11,7 @@ abstract class Controled extends Namespaced implements core\controled {
   protected $controler;
   protected $aControlers = array();
 
-  public function setControler(core\factory $controler, $sName = '') {
+  public function setControler($controler, $sName = '') {
 
     if ($controler === $this) {
 

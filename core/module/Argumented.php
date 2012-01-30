@@ -5,11 +5,11 @@ use \sylma\core;
 
 require_once('core/argument/Domed.php');
 require_once('Controled.php');
-require_once('core/factory.php');
+//require_once('core/factory.php');
 
 //require_once('core/Reflector.php');
 
-abstract class Argumented extends Controled implements core\factory {
+abstract class Argumented extends Controled {
 
   const FACTORY_CONTROLER = 'factory';
 
@@ -28,7 +28,7 @@ abstract class Argumented extends Controled implements core\factory {
   protected $arguments = null;
 
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
-    
+
     $factory = $this->getControler(self::FACTORY_CONTROLER);
 
     if (array_key_exists($sName, $this->aClasses)) {

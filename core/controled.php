@@ -3,7 +3,7 @@
 namespace sylma\core;
 
 interface controled {
-  
-  function setControler(factory $controler);
+
+  function setControler($controler);
   //function getControler();
 }

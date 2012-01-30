@@ -3,13 +3,15 @@
 namespace sylma\parser\action\php\basic\instance;
 use sylma\parser\action\php;
 
-require_once(dirname(__dir__) . '/_Scalar.php');
+require_once('_Scalar.php');
 require_once(dirname(dirname(__dir__)) . '/_instance.php');
 
-class _Boolean extends php\basic\_Scalar implements php\_instance {
+class _Boolean extends _Scalar implements php\_instance {
 
   protected $sFormat = 'php-boolean';
+
   protected $bValue = null;
+  protected $content;
 
   public function __construct(php\_window $controler, $mValue) {
 
@@ -23,7 +25,7 @@ class _Boolean extends php\basic\_Scalar implements php\_instance {
 
     if (is_string($mValue)) {
 
-      if ($mValue == 'true') $bValue = true;
+      if ($mValue == 'true') $this->bValue = true;
       else if ($mValue != 'false') {
 
         $this->throwException(txt('Unknown value for boolean conversion : %s', $mValue));
@@ -31,10 +33,12 @@ class _Boolean extends php\basic\_Scalar implements php\_instance {
     }
     else if (is_numeric($mValue)) {
 
-      $bValue = (bool) $mValue;
+      $this->bValue =  (bool) $mValue;
     }
+    else {
 
-    $this->bValue = $bValue;
+      $this->content = $mValue;
+    }
   }
 
   public function useFormat($sFormat) {
@@ -50,6 +54,15 @@ class _Boolean extends php\basic\_Scalar implements php\_instance {
 
   public function asArgument() {
 
-    return $this->getControler()->createArgument(array('boolean' => $this->getValue(true)));
+    if ($this->content) {
+
+      $mContent = $this->content;
+    }
+    else {
+
+      $mContent = array('@value' => $this->getValue(true));
+    }
+
+    return $this->getControler()->createArgument(array('boolean' => $mContent));
   }
 }

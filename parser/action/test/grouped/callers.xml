@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
   <tst:description>Callers</tst:description>
   <tst:test name="Load file with short-call">
     <le:action>
@@ -114,7 +114,7 @@
       <lm:directory>
         <li:call name="get-directory">
           <li:argument>
-            <lm:file path="path.txt">
+            <lm:file path="samples/path.txt">
               <li:call name="read"/>
             </lm:file>
           </li:argument>

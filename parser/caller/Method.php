@@ -11,7 +11,7 @@ class Method extends core\module\Argumented {
   protected $sReturn;
   protected $aArguments = array();
 
-  public function __construct(core\factory $controler, core\argument $method) {
+  public function __construct(Domed $controler, core\argument $method) {
 
     $this->setControler($controler);
     $this->parseArgument($method);

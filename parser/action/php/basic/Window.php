@@ -33,7 +33,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   protected static $varCount = 0;
 
-  public function __construct(core\factory $controler, core\argument $args, $sClass) {
+  public function __construct(action\Domed $controler, core\argument $args, $sClass) {
 
     $this->setControler($controler);
     $this->setArguments($args);
@@ -49,11 +49,6 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   public function createArgument($mArguments, $sNamespace = '') {
 
     return parent::createArgument($mArguments, $sNamespace);
-  }
-
-  public function setContent(array $aContent) {
-
-    $this->aContent = $aContent;
   }
 
   public function add($mVal) {
@@ -113,7 +108,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
     if (is_string($mReturn)) {
 
-      $return = $this->loadInstance($mReturn);
+      $return = $this->stringToInstance($mReturn);
     }
     else {
 
@@ -158,6 +153,45 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return array_pop($this->aScopes);
   }
 
+  public function convertToString($val) {
+
+    $result = null;
+
+    if ($val instanceof php\_scalar) {
+
+      if ($val instanceof php\_var) $instance = $val->getInstance();
+      else $instance = $val;
+      
+      if ($instance instanceof php\basic\instance\_String || $instance instanceof php\basic\_String) {
+
+        $result = $val;
+      }
+      else {
+
+        $this->throwException(txt('Cannot convert scalar value %s to string', get_class($val)));
+      }
+    }
+    else if ($val instanceof php\basic\Called) {
+
+      $val = $val->getVar();
+      $result = $this->convertToString($val);
+    }
+    else if ($val instanceof php\_object) {
+
+      $interface = $val->getInstance()->getInterface();
+
+      if (!$interface->isInstance('\sylma\core\stringable')) {
+
+        $this->throwException(txt('Cannot convert object %s in string', get_class($val)));
+
+      }
+
+      $result = $this->createCall($this->getSelf(), 'loadStringable', 'php-string', array($val));
+    }
+
+    return $result;
+  }
+
   public function stringToInstance($sFormat) {
 
     $result = null;
@@ -183,7 +217,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       case 'boolean' :
 
         if (is_null($mVar)) $mVar = false;
-        $result = $this->create('boolean', array($mVar));
+        $result = $this->create('boolean', array($this, $mVar));
 
       break;
 
@@ -191,21 +225,21 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       case 'double' :
 
         if (is_null($mVar)) $mVar = 0;
-        $result = $this->create('numeric', array($mVar));
+        $result = $this->create('numeric', array($this, $mVar));
 
       break;
 
       case 'string' :
 
         if (is_null($mVar)) $mVar = '';
-        $result = $this->create('string', array($mVar));
+        $result = $this->create('string', array($this, $mVar));
 
       break;
 
       case 'array' :
 
         if (is_null($mVar)) $mVar = array();
-        $result = $this->create('array', array($mVar));
+        $result = $this->create('array', array($this, $mVar));
 
       break;
 

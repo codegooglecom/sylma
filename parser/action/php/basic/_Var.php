@@ -19,7 +19,7 @@ abstract class _Var extends Controled implements php\_var {
     $this->setInstance($instance);
   }
 
-  protected function getInstance() {
+  public function getInstance() {
 
     return $this->instance;
   }

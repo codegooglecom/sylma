@@ -1,13 +1,13 @@
 classes :
   @sylma-classbase : \sylma\parser\action\php\basic
   string :
-    name : StringInstance
-  #array :
-    #name : ArrayInstance
+    name : instance\_String
+  array :
+    name : instance\_Array
   numeric :
-    name : NumericInstance
+    name : instance\_Numeric
   object :
-    name : ObjectInstance
+    name : instance\_Object
   call :
     name : CallMethod
   object-var :

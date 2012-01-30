@@ -80,6 +80,14 @@ abstract class Basic extends core\module\Domed implements test {
     return $closure($controler);
   }
 
+  /**
+   *
+   * @param dom\element $test
+   * @param type $controler
+   * @param dom\document $doc
+   * @param fs\file $file
+   * @return boolean
+   */
   protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = false;
@@ -117,7 +125,7 @@ abstract class Basic extends core\module\Domed implements test {
     return $bResult;
   }
 
-  public function setControler(core\factory $controler, $sName = '') {
+  public function setControler($controler, $sName = '') {
 
     if ($sName) parent::setControler($controler, $sName);
     else $this->controler = $controler;

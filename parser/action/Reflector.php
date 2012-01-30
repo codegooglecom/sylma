@@ -13,7 +13,7 @@ abstract class Reflector extends parser\Reflector {
 
     if (!$mValue = $el->readAttribute('value', null, false)) {
 
-      if (($sUse = $el->readAttribute('use')) && $sUse != 'and') {
+      /*if (($sUse = $el->readAttribute('use', null, false)) && $sUse != 'and') {
 
         if ($sUse != 'or') {
 
@@ -21,32 +21,53 @@ abstract class Reflector extends parser\Reflector {
         }
 
         $bAnd = false;
+      }*/
+
+      if ($el->countChildren() != 1) {
+
+        $this->throwException(txt('One children or attribute value expected in %s', $el->asToken()));
       }
 
-      if (!$el->getChildren()) {
-
-        $this->throwException(txt('No value defined, children or attribute value expected in %s', $el->asToken()));
-      }
-
-      $aResult = array();
-
-      foreach ($el->getChildren() as $child) {
-
-        $aResult[] = $this->parse($child);
-      }
-
-      $mValue = !$bAnd;
-
-      foreach ($aResult as $mVal) {
-
-        if (!$mVal && $bAnd) break;
-        else if (!$bAnd) break;
-      }
-
-      $mValue = $mVal;
+      $mValue = $this->parse($el->getFirst());
     }
 
     return $this->getWindow()->create('boolean', array($this->getWindow(), $mValue));
+  }
+
+  protected function reflectArray(dom\element $el) {
+
+    $aResult = array();
+    $iKey = 0;
+
+    foreach ($el->getChildren() as $child) {
+
+      if ($child->getType() != dom\node::ELEMENT) {
+
+        $this->throwException(txt('Invalid node type in array : %s', $el->asToken()));
+      }
+
+      if (!$mKey = $child->readAttribute('key', $this->getNamespace(), false)) {
+
+        $mKey = $iKey;
+        $iKey++;
+      }
+
+      if ($child->isElement('item', $this->getNamespace())) {
+
+        $aResult[$mKey] = $this->parse($child->getFirst());
+      }
+      else {
+
+        $aResult[$mKey] = $this->parse($child);
+      }
+    }
+
+    return $this->getWindow()->create('array', array($this->getWindow(), $aResult));
+  }
+
+  protected function reflectNull(dom\element $el) {
+
+    return $this->getWindow()->create('null', array($this->getWindow()));
   }
 
   protected function reflectString(dom\element $el) {
@@ -63,7 +84,9 @@ abstract class Reflector extends parser\Reflector {
 
   protected function reflectText(dom\element $el) {
 
-    return $this->getWindow()->create('string', array((string) $el));
+    $aChildren = $this->parseChildren($el);
+
+    return $this->getWindow()->create('concat', array($this->getWindow(), $aChildren));
   }
 
   protected function parseString($sValue) {
@@ -87,18 +110,42 @@ abstract class Reflector extends parser\Reflector {
       }
     }
 
-    return $window->create('string', array($sValue));
+    return $window->create('string', array($window, $sValue));
   }
 
   protected function reflectAction(dom\element $el) {
 
-    $sPath = $el->getAttribute('path');
+    $window = $this->getWindow();
+    $sPath = $el->readAttribute('path');
 
-    $parser = $this->getControler();
+    $aArguments = array('path' => $sPath);
+
+    if ($el->hasChildren()) {
+
+      $iKey = 0;
+
+      foreach ($el->getChildren() as $child) {
+
+        if ($child->getType() != dom\node::ELEMENT) {
+
+          $this->throwException(txt('Invalid %s, element expected', $child->asToken()));
+        }
+
+        $sKey = $el->readAttribute('name', $this->getNamespace(), false);
+
+        if (!$sKey) $sKey = $iKey;
+
+        $aArguments[$sKey] = $this->parse($child);
+
+        $iKey++;
+      }
+    }
+
+    $result = $window->createCall($window->getSelf(), 'getAction', $window->getSelf()->getInstance(), $aArguments);
 
     //arguments
 
-    return $parser->createAction($sPath);
+    return $result;
   }
 
   protected function reflectGetArgument(dom\element $el) {

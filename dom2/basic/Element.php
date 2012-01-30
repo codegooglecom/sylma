@@ -288,28 +288,31 @@ class Element extends \DOMElement implements dom\element {
 
     $mResult = null;
 
-    if ($value instanceof dom\fragment) {
+    if ($value instanceof dom\node) {
 
-      $mResult = $this->insertChild($value); // TODO
-    }
-    else if ($value instanceof dom\attribute) {
+      if ($value instanceof dom\fragment) {
 
-      $this->setAttributeNode($value);
-    }
-    else if ($value instanceof dom\collection) {
+        $mResult = $this->insertChild($value); // TODO
+      }
+      else if ($value instanceof dom\attribute) {
 
-      foreach ($value as $oChild) $this->insert($oChild, $next);
-    }
-    else if ($value instanceof dom\document) {
+        $this->setAttributeNode($value);
+      }
+      else if ($value instanceof dom\collection) {
 
-      if ($value->getRoot()) $mResult = $this->insertChild($value->getRoot(), $next);
-      else $mResult = null;
-    }
-    else if ($value instanceof dom\node) {
+        foreach ($value as $oChild) $this->insert($oChild, $next);
+      }
+      else if ($value instanceof dom\document) {
 
-      // element, text, cdata, comment
+        if ($value->getRoot()) $mResult = $this->insertChild($value->getRoot(), $next);
+        else $mResult = null;
+      }
+      else {
 
-      $mResult = $this->insertChild($value, $next);
+        // element, text, cdata, comment
+
+        $mResult = $this->insertChild($value, $next);
+      }
     }
     else if ($value instanceof dom\domable) {
 
@@ -462,6 +465,13 @@ class Element extends \DOMElement implements dom\element {
     return ($this->hasChildren() && !$this->isComplex());
   }
 
+  public function isElement($sName, $sNamespace = null) {
+
+    if ($sName != $this->getName()) return false;
+    if ($sNamespace) return $this->getNamespace() == $sNamespace;
+
+    return true;
+  }
   // public function getLast() {
 
     // return $this->lastChild;

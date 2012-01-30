@@ -190,7 +190,7 @@
       foreach ($arg as $sKey => $sub) {
         $aResult[$sKey] = $sub;
       }
-
+      
       return $aResult == array(
         'abc' => '123',
         'def' => 456,

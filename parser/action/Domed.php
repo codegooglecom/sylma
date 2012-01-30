@@ -12,7 +12,7 @@ class Domed extends Reflector implements parser\domed {
   const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
-  const CLASS_DEFAULT = 'sylma\parser\action\cached\Document';
+  const CLASS_DEFAULT = '\sylma\parser\action\cached\Document';
   const CLASS_PREFIX = 'element';
 
   const WINDOW_ARGS = 'classes/php';
@@ -38,7 +38,9 @@ class Domed extends Reflector implements parser\domed {
 
   protected $return;
 
-  public function __construct(core\factory $controler, dom\handler $doc, fs\directory $dir) {
+  // controler : getNamespace, create, getArgument
+
+  public function __construct(Controler $controler, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
     $this->setControler($controler);
@@ -190,7 +192,7 @@ class Domed extends Reflector implements parser\domed {
 
       case dom\node::TEXT :
 
-        $mResult = $this->getWindow()->create('string', array((string) $node));
+        $mResult = $this->getWindow()->create('string', array($this->getWindow(), (string) $node));
 
       break;
 
@@ -266,9 +268,14 @@ class Domed extends Reflector implements parser\domed {
 
       $this->parseAttributes($el);
 
-      if ($aChildren = $this->parseChildren($el)) $mResult->add($aChildren);
+      $mResult->add($this->parseChildren($el));
+      /*if ($el->hasChildren()) {
 
-      $mResult = $mResult;
+        foreach ($el->getChildren() as $child) {
+
+          $mResult->add($this->parse($child));
+        }
+      }*/
     }
 
     return $mResult;
@@ -285,7 +292,11 @@ class Domed extends Reflector implements parser\domed {
 
     foreach ($el->getChildren() as $child) {
 
-      if ($mResult = $this->parseElement($child)) {
+      if ($child->getType() != dom\node::ELEMENT) {
+
+        $aResult[] = $this->parseNode($child);
+      }
+      else if ($mResult = $this->parseElement($child)) {
 
         if (!$mResult instanceof dom\node) {
 
@@ -343,9 +354,12 @@ class Domed extends Reflector implements parser\domed {
       case 'bool' :
       case 'boolean' : $mResult = $this->reflectBoolean($el); break;
 
-      case 'string' : $mResult = $this->reflectString($el); break;
+      case 'string' :
 
-      case 'text' : $mResult = $this->reflectText($el); break;
+      case 'text' : $mResult = $this->reflectString($el); break;
+      case 'null' : $mResult = $this->reflectNull($el); break;
+
+      case 'array' : $mResult = $this->reflectArray($el); break;
       //case 'argument' :
       case 'test-argument' :
       case 'get-all-arguments' :

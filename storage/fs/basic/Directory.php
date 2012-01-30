@@ -174,7 +174,7 @@ class Directory extends Resource implements fs\directory {
       foreach ($this->aFiles as $sFile => $file) {
 
         if ($file) {
-          
+
           $bExtension = !$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions);
           $bPreg = !$sPreg || preg_match($sPreg, $sFile);
 
@@ -256,7 +256,7 @@ class Directory extends Resource implements fs\directory {
       $this->throwException(t('File does not exists'));
     }
 
-    $this->aFiles[$sName] = $result;
+    if ($result) $this->aFiles[$sName] = $result;
 
     return $result;
   }
@@ -285,6 +285,11 @@ class Directory extends Resource implements fs\directory {
 
         // yet builded
         $file = $this->aFiles[$sName];
+
+        if (!$file) {
+
+          $this->throwException(txt('File lost : %s', (string) $this . '/' . $sName));
+        }
 
         if (!$file->isSecured()) {
 

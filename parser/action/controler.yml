@@ -1,3 +1,6 @@
+extensions :
+  - eml
+  - iml
 classes :
   @sylma-classbase : \sylma\parser\action
   window :
@@ -12,3 +15,5 @@ classes :
     name : \sylma\dom\basic\handler\Rooted
   action :
     name : Handler
+  path :
+    name : Path

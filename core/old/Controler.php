@@ -734,7 +734,7 @@ public static function addTest($sKey) {
 
         // Objects
 
-        $formater = \Sylma::getControler('formater');
+        //$formater = \Sylma::getControler('formater');
 
         if (0 && $mArgument instanceof \sylma\core\argumentable) {
 
@@ -842,10 +842,10 @@ public static function addTest($sKey) {
         }
         else if ($mArgument instanceof \sylma\core\argument) {
 
-          $aResult = $mArgument->asArray();
+          //$aResult = $mArgument->asArray();
 
-          $aValue = array(array('Argument : ', self::formatResource($aResult)), 'red');
-          $aValue = array(array('Argument : ', self::formatResource($aResult)), 'red');
+          //$aValue = array(array('Argument : ', self::formatResource($aResult)), 'red');
+          $aValue = array(array('Argument'), 'red');
         }
         else {
 
@@ -964,7 +964,7 @@ public static function addTest($sKey) {
 
       } else {
 
-        $aResult[] = '['.$aLines[$i].'] '.$sFile.$sClass.'::'.$aTrace['function'].'(no display)'.new HTML_Br;
+        $aResult[] = '['.$aLines[$i].'] '.$file.$sClass.'::'.$aTrace['function'].'(no display)'.new HTML_Br;
       }
 
       $i++;

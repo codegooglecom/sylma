@@ -16,13 +16,18 @@ class Iterator extends Basic {
 
     $result = null;
 
-    $sKey = key($this->aArray);
+    $sKey = $this->key();
 
-    if (!$result = $this->get($sKey, false)) {
+    if (!is_null($sKey)) {
 
-      $result = $this->read($sKey);
-      //$this->next();
-      //if ($this->valid()) $result = $this->current();
+      $result = $this->get($sKey, false);
+
+      if (!$result) {
+
+        $result = $this->read($sKey);
+        //$this->next();
+        //if ($this->valid()) $result = $this->current();
+      }
     }
 
     return $result;
@@ -40,6 +45,8 @@ class Iterator extends Basic {
 
   public function valid() {
 
-    return current($this->aArray) !== false;
+    $sKey = key($this->aArray);
+
+    return $sKey !== NULL && $sKey !== FALSE;
   }
 }

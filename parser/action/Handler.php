@@ -3,21 +3,22 @@
 namespace sylma\parser\action;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 
-require_once('parser\action.php');
-require_once('core\module\Domed.php');
+require_once('core/module/Domed.php');
+require_once('parser/action.php');
+require_once('core/stringable.php');
 
 /**
  * "Controller free" class.
  */
-class Handler extends core\module\Domed implements parser\action {
+class Handler extends core\module\Domed implements parser\action, core\stringable {
 
   const CONTROLER_ALIAS = 'action';
-  const DEBUG_UPDATE = true;
 
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_RUN = true;
-  const DEBUG_SHOW = false;
+  const DEBUG_UPDATE = true; // default : false
+  const DEBUG_RUN = true; // default : true
+  const DEBUG_SHOW = false; // default : false
 
   protected $file;
   protected $controler;
@@ -132,7 +133,13 @@ class Handler extends core\module\Domed implements parser\action {
 
     $method = $this->reflectAction();
 
-    if (self::DEBUG_SHOW) dspm((string) $method);
+    if (self::DEBUG_SHOW) {
+      dspm($this->getFile()->asToken());
+      dspm((string) $method);
+    }
+
+
+
 
     $class = $tmpDir->getFile($sPath, fs\basic\Resource::DEBUG_EXIST);
 
@@ -148,6 +155,8 @@ class Handler extends core\module\Domed implements parser\action {
 
     $sResult = $template->parseDocument($method, false);
     $class->saveText($sResult);
+
+    // always try template, only save if result
 
     $tpl = $tmpDir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
     $template = $this->getTemplate('php/template.xsl');
@@ -179,6 +188,10 @@ class Handler extends core\module\Domed implements parser\action {
     }
 
     if (self::DEBUG_RUN) $result = $this->runCache($tmpFile);
+    else {
+
+      $this->throwException(t('No result, DEBUG_RUN set to TRUE'));
+    }
 
     return $result;
   }
@@ -193,7 +206,7 @@ class Handler extends core\module\Domed implements parser\action {
     return $mVal->asString();
   }
 
-  protected function parseObject(action\cached $mVal) {
+  protected function parseObject(parser\action\cached $mVal) {
 
     return $mVal->asObject();
   }
@@ -202,6 +215,12 @@ class Handler extends core\module\Domed implements parser\action {
 
     $action = $this->runAction();
     return $this->parseObject($action);
+  }
+
+  public function asArray() {
+
+    $action = $this->runAction();
+    return $action->asArray();
   }
 
   public function asString() {

@@ -7,7 +7,7 @@
         <le:action path="../../core/argument/test/interface"/>
         <le:action path="../../core/factory/test/interface"/>
         <le:action path="../../storage/fs/test/group"/>
-        <le:action path="../../parser/action/test/interface"/>
+        <le:action path="../../parser/action/test/group"/>
         <le:action path="../../core/module/test/interface"/>
         <le:action path="../../dom2/test/interface"/>
         <le:action path="../../dom2/argument/test/interface"/>

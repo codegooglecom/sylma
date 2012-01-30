@@ -41,7 +41,7 @@ abstract class Called extends Controled implements core\argumentable  {
 
     return $this->return;
   }
-  
+
   protected function setReturn(php\_instance $return) {
 
     $this->return = $return;
@@ -66,7 +66,7 @@ abstract class Called extends Controled implements core\argumentable  {
 
     $var = $this->getReturn();
 
-    if ($var instanceof ObjectInstance) $sAlias = 'object-var';
+    if ($var instanceof instance\_Object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
 
     $var = $window->create($sAlias, array($window, $var, $window->getVarName()));

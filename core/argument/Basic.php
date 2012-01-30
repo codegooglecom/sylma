@@ -16,17 +16,18 @@ require_once('core/module/Namespaced.php');
 abstract class Basic extends core\module\Namespaced implements core\argument {
 
   const MESSAGES_STATUT = \Sylma::LOG_STATUT_DEFAULT;
-
+  const DEBUG_NORMALIZE_RECURSION = false;
   /**
    * The default main array
    */
   protected $aArray = array();
   private $parent;
+  protected static $aNormalizedObjects = array();
 
   public function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
 
     if (is_array($aArray)) $this->aArray = $aArray;
-    
+
     $this->setNamespaces($aNS);
     if ($parent) $this->setParent($parent);
   }
@@ -61,7 +62,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
       $mTarget =& $this->locateValue($aPath, false, true);
 
-      if ($mTarget === null) $mTarget =& $this->aArray;
+      if ($mTarget === null) {
+
+        $mTarget =& $this->aArray;
+      }
 
       foreach ($aPath as $sKey) {
 
@@ -115,7 +119,8 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
   public function query($sPath = '', $bDebug = true) {
 
-    return (array) $this->getValue($sPath, $bDebug);
+    if ($sPath) return (array) $this->getValue($sPath, $bDebug);
+    else return $this->aArray;
   }
 
   /**
@@ -151,11 +156,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
    *
    * @return null|mixed The value localized by path, or NULL
    */
-  protected function &getValue($sPath = '', $bDebug = true) {
+  protected function &getValue($sPath = null, $bDebug = true) {
 
     $mResult = null;
 
-    if (!$sPath) {
+    if ($sPath === null) {
 
       $mResult =& $this->aArray;
     }
@@ -197,10 +202,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     foreach ($aPath as $sSubPath) {
 
-      if ($sSubPath != '..') $aResult[] = $sSubPath;
+      if ($sSubPath !== '..') $aResult[] = $sSubPath;
       else {
 
-        if (!$aResult) $this->throwException(self::NS, txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
+        if (!$aResult) \Sylma::throwException(txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
         else array_pop($aResult);
       }
     }
@@ -292,7 +297,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     if (!array_key_exists($sKey, $aArray) || $aArray[$sKey] === null) {
 
       array_unshift($aPath, $sKey);
-      if ($bDebug) $this->throwException(txt('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
+
+      if ($bDebug) {
+
+        $this->throwException(txt('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
+      }
 
       $sKey = '';
     }
@@ -380,6 +389,18 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     $mResult = null;
 
+    if (self::DEBUG_NORMALIZE_RECURSION) {
+
+      foreach (self::$aNormalizedObjects as $obj) {
+
+        if ($obj === $val) {
+
+          $formater = \Sylma::getControler('formater');
+          \Sylma::throwException(txt('Recursion when normalizing with object : %s', $formater->asToken($val)));
+        }
+      }
+    }
+
     if ($val instanceof core\argumentable) {
 
       $mResult = self::normalizeArgument($val->asArgument());
@@ -392,6 +413,8 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
       \Sylma::throwException(txt('Cannot normalize object @class %s', get_class($val)));
     }
+
+    if (self::DEBUG_NORMALIZE_RECURSION) self::$aNormalizedObjects[] = $val;
 
     return $mResult;
   }
@@ -421,7 +444,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
         $mResult = static::normalizeArray($mVal);
 
-        if (!$mResult) $mResult = null; // transform empty array to null
+        //if (!$mResult) $mResult = null; // transform empty array to null
       }
       else {
 
@@ -465,7 +488,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      $this->log(txt('Cannot render an array as a string'));
+      $this->throwException(txt('Cannot render an array as a string'));
     }
 
     return $sResult;

@@ -6,6 +6,8 @@ use \sylma\core, sylma\storage\fs;
 require_once('Domed.php');
 require_once('core/functions/Path.php');
 
+require_once('spyc.php');
+
 class Filed extends Domed {
 
   /**

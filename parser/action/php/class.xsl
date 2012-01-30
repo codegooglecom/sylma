@@ -97,7 +97,14 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
   </xsl:template>
 
   <xsl:template match="php:boolean">
-    <xsl:value-of select="."/>
+    <xsl:choose>
+      <xsl:when test="@value">
+        <xsl:value-of select="@value"/>
+      </xsl:when>
+      <xsl:otherwise>
+        (bool) <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="php:cast">
@@ -113,5 +120,20 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
   </xsl:template>
 
   <xsl:template match="php:null">NULL</xsl:template>
+
+  <xsl:template match="php:array">
+    <xsl:text>array(</xsl:text>
+    <xsl:for-each select="php:item">
+      <xsl:apply-templates select="."/>
+      <xsl:if test="position() != last()">, </xsl:if>
+    </xsl:for-each>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="php:item">
+    <xsl:apply-templates select="php:key/*"/>
+    <xsl:text> => </xsl:text>
+    <xsl:apply-templates select="php:value/*"/>
+  </xsl:template>
 
 </xsl:stylesheet>

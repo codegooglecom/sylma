@@ -20,11 +20,23 @@
     </tst:prepare>
     <tst:expected>
       $module = $controler->getArgument('module');
-      
+
       return
         ($dir = $module->getDirectory('sub')) &amp;&amp;
         $dir instanceof \sylma\storage\fs\directory &amp;&amp;
         $dir->getName() == 'sub';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Get root directory">
+    <tst:prepare>
+      $controler->setArgument('module', $controler->create('filed'));
+    </tst:prepare>
+    <tst:expected>
+      $module = $controler->getArgument('module');
+
+      return
+        ($dir = $module->getDirectory('/')) &amp;&amp;
+        (string) $dir === '';
     </tst:expected>
   </tst:test>
 </tst:tests>

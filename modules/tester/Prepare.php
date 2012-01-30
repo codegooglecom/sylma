@@ -11,8 +11,8 @@ abstract class Prepare extends Basic {
 
     $bResult = false;
 
-    $sPrepare = $test->readx('self:prepare', $this->getNS());
-    $sExpected = $test->readx('self:expected', $this->getNS());
+    $sPrepare = $test->readx('self:prepare');
+    $sExpected = $test->readx('self:expected');
 
     try {
 

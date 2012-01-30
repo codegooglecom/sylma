@@ -12,4 +12,14 @@ class _ScalarVar extends _Var implements php\_scalar {
 
     return $this->getInstance()->useFormat($sFormat);
   }
+
+  protected function setInstance(php\_instance $instance) {
+
+    if (!$instance instanceof php\_scalar) {
+
+      $this->getControler()->throwException(txt('Bad instance for scalar var : %s', get_class($instance)));
+    }
+
+    parent::setInstance($instance);
+  }
 }

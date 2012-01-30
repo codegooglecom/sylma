@@ -159,7 +159,7 @@ class Handler extends dom\basic\handler\Rooted {
 
       $imports = $dom->create('collection', array($this->getRoot()->queryByName('include', self::NS)));
       $imports->addCollection($this->getRoot()->queryByName('import', self::NS));
-      
+
       if ($imports->length) {
 
         //if ($this->getFile()) $aPaths[] = (string) $this->getFile();
@@ -225,7 +225,7 @@ class Handler extends dom\basic\handler\Rooted {
       }
       else {
 
-        $mResult = null;
+        $this->throwException(t('No result on parsing'));
       }
     }
     else {

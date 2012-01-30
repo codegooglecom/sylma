@@ -61,7 +61,7 @@ class Controler extends core\module\Domed implements parser\domed {
 
   public function loadObject(php\_object $obj) {
 
-    $instance = $obj->getObject();
+    $instance = $obj->getInstance();
 
     return $this->getInterface($instance->getInterface()->getName());
   }
