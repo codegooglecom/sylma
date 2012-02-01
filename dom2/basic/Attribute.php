@@ -48,7 +48,7 @@ class Attribute extends \DOMAttr implements dom\attribute {
     return $this->value;
   }
 
-  public function asString($bFormat = false) {
+  public function asString($iMode = 0) {
 
     return $this->getName(true).'="'.dom\xmlize($this->value).'"';
   }

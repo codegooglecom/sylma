@@ -27,7 +27,7 @@ class Text extends \DOMText implements dom\text {
     return $this->nodeValue;
   }
 
-  public function asString($bFormat = false) {
+  public function asString($iMode = 0) {
 
     return $this->getValue();
   }

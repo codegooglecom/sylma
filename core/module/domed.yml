@@ -1,6 +1,6 @@
 classes :
   action :
-    name : \sylma\parser\action\Basic
+    name : \sylma\parser\action\Handler
   template :
     name : \sylma\parser\xslt\Handler
   options :

@@ -21,11 +21,18 @@ class Controler extends core\module\Domed implements parser\domed {
     $this->setArguments('controler.yml');
   }
 
-  public function getInterface($sName) {
+  public function getInterface($sName, $sFile = '') {
 
     if (!array_key_exists($sName, $this->aInterfaces)) {
 
-      $sDocument = str_replace('\\', '/', strtolower($sName)) . '.iml';
+      if ($sFile) {
+
+        $sDocument = substr($sFile, 0, -4) . '.iml';
+      }
+      else {
+
+        $sDocument = str_replace('\\', '/', strtolower($sName)) . '.iml';
+      }
 
       require_once('core/functions/path.php');
       $file = $this->getFile(core\functions\path\toAbsolute($sDocument));
@@ -61,8 +68,8 @@ class Controler extends core\module\Domed implements parser\domed {
 
   public function loadObject(php\_object $obj) {
 
-    $instance = $obj->getInstance();
+    $interface = $obj->getInstance()->getInterface();
 
-    return $this->getInterface($instance->getInterface()->getName());
+    return $this->getInterface($interface->getName(), $interface->getFile());
   }
 }

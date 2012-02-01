@@ -5,13 +5,15 @@
     <le:action>
       <lm:file path="samples/simple.txt"/>
     </le:action>
+    <tst:node>
+      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+    </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
 
       return
-        $result instanceof \sylma\dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'file';
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
   <tst:test name="Load file with short-call and multiple arguments" disabled="true">
@@ -32,13 +34,15 @@
     <le:action>
       <le:call name="get-file">samples/simple.txt</le:call>
     </le:action>
+    <tst:node>
+      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+    </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
 
       return
-        $result instanceof \sylma\dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'file';
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
   <tst:test name="Load file with self-call and li:argument">
@@ -47,13 +51,15 @@
         <li:argument>samples/simple.txt</li:argument>
       </le:call>
     </le:action>
+    <tst:node>
+      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+    </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
 
       return
-        $result instanceof \sylma\dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'file';
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
   <tst:test name="Load file with self-call and multiple arguments">
@@ -65,14 +71,15 @@
         </le:call>
       </div>
     </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org"/>
+    </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
 
       return
-        $result instanceof \sylma\dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'div' &amp;&amp;
-        !$result->getRoot()->hasChildren();
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
   <tst:test name="Read a file with short-call called">
@@ -83,13 +90,15 @@
         </lm:file>
       </div>
     </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">123</div>
+    </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
 
       return
-        $result instanceof \sylma\dom\handler &amp;&amp;
-        ($root = $result->getRoot()) &amp;&amp;
-        $root->asString() == '&lt;div xmlns="http://www.sylma.org"&gt;123&lt;/div&gt;';
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
   <tst:test name="Load a directory with obj-call">
@@ -100,13 +109,15 @@
         </li:call>
       </lm:directory>
     </le:action>
+    <tst:node>
+      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory"><full-path>/sylma/parser/action/test/grouped/samples</full-path><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><name>samples</name></directory>
+    </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
 
       return
-        $result instanceof sylma\dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'directory';
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
   <tst:test name="Load a directory with a two level depth obj/element-call">
@@ -121,13 +132,15 @@
         </li:call>
       </lm:directory>
     </le:action>
+    <tst:node>
+      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory"><full-path>/sylma/parser/action/test/grouped/samples/sub</full-path><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><name>samples/sub</name></directory>
+    </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
 
       return
-        $result instanceof sylma\dom\handler &amp;&amp;
-        $result->getRoot() &amp;&amp;
-        $result->getRoot()->getName() == 'directory';
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
 </tst:tests>

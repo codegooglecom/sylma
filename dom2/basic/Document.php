@@ -144,9 +144,9 @@ class Document extends \DOMDocument implements dom\document {
     return $this->getHandler()->asToken();
   }
 
-  public function asString($bFormat = false) {
+  public function asString($iMode = 0) {
 
-    return $this->getHandler()->asString($bFormat);
+    return $this->getHandler()->asString($iMode);
   }
 
   public function __toString() {

@@ -40,11 +40,16 @@ abstract class Container extends Basic {
 
   protected function loadContent() {
 
+    $bResult = false;
     //$result = $this->parseNamespaces($this->getContent());
-    $result = $this->getContent();
-    $this->setContent();
 
-    return parent::loadText($result);
+    if ($sResult = $this->getContent()) {
+
+      $this->setContent();
+      parent::loadText($sResult);
+    }
+
+    return $bResult;
   }
 
   protected function getContent() {
@@ -52,8 +57,24 @@ abstract class Container extends Basic {
     return $this->sContent;
   }
 
-  protected function setContent($sContent = '') {
+  public function setContent($sContent = '') {
 
+    if (!is_string($sContent)) {
+
+      $formater = $this->getControler('formater');
+      $this->throwException(txt('Cannot insert %s as document content, string expected', $formater->asToken($sContent)));
+    }
+    
     $this->sContent = $sContent;
+  }
+
+  public function asString($iMode = 0) {
+
+    if (!$sResult = $this->getContent()) {
+
+      $sResult = parent::asString($iMode);
+    }
+
+    return $sResult;
   }
 }

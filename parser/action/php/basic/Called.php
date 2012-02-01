@@ -4,9 +4,11 @@ namespace sylma\parser\action\php\basic;
 use \sylma\core, \sylma\parser\action\php;
 
 require_once('Controled.php');
+
+require_once(dirname(__dir__) . '/linable.php');
 require_once('core/argumentable.php');
 
-abstract class Called extends Controled implements core\argumentable  {
+abstract class Called extends Controled implements php\linable, core\argumentable  {
 
   protected $sName;
 

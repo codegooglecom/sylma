@@ -195,6 +195,13 @@ class Path extends core\module\Argumented {
     return parent::getArgument($sPath, $bDebug);
   }
 
+  public function getArgumentsArray() {
+
+    $args = $this->getArguments();
+
+    return $args->asArray();
+  }
+
   protected function setFile(fs\file $file) {
 
     $this->file = $file;

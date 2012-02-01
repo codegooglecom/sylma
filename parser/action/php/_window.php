@@ -42,7 +42,7 @@ interface _window extends scope, core\argumentable {
   /**
    * @return php\Insert
    */
-  function createInsert(core\argumentable $val);
+  function createInsert($mVal);
 
   function setScope(php\scope $scope);
 

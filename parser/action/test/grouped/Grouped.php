@@ -73,6 +73,11 @@ class Grouped extends tester\Basic {
     }
     else {
 
+      if ($nodeResult = $test->getx('self:node', array(), false)) {
+
+        $this->setArgument('node', $nodeResult->getFirst());
+      }
+
       try {
 
         $action = $controler->buildAction($this->createDocument($node), array(), $dir, $file->getParent());
@@ -92,5 +97,11 @@ class Grouped extends tester\Basic {
 
     return $bResult;
   }
+
+  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+
+    return parent::getArgument($sPath, $mDefault, $bDebug);
+  }
+
 }
 

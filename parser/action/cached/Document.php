@@ -8,21 +8,41 @@ require_once('dom2/domable.php');
 
 abstract class Document extends Basic implements dom\domable {
 
-  protected function loadTemplate(array $aArguments) {
+  protected $sTemplate = '';
 
-    $controler = $this->getControler();
-    $file = $controler->getFile();
+  protected function loadTemplate($iKey, array $aArguments) {
 
-    $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
-    $sResult = $this->includeTemplate($sTemplate, $aArguments);
+    $sResult = $this->includeTemplate($this->sTemplate, $iKey, $aArguments);
 
-    $doc = $controler->create('document');
-    $doc->loadText($sResult, false);
+    $doc = $this->create('document');
+    $doc->setContent($sResult);
 
     return $doc;
   }
 
-  protected function includeTemplate($sTemplate, array $aArguments) {
+  protected function parseAction() {
+
+    $mResult = null;
+    $aArguments = parent::parseAction();
+
+    if ($this->useTemplate()) {
+/*
+      $controler = $this->getControler();
+      $file = $controler->getFile();
+
+      $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
+*/
+      $mResult = $this->loadTemplate(0, $aArguments);
+    }
+    else {
+
+      $mResult = $aArguments;
+    }
+
+    return $mResult;
+  }
+
+  protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {
 
     ob_start();
 
@@ -32,6 +52,11 @@ abstract class Document extends Basic implements dom\domable {
     ob_end_clean();
 
     return $sResult;
+  }
+
+  protected function useTemplate() {
+
+    return (bool) $this->sTemplate;
   }
 
   protected function loadDomable(dom\domable $val) {

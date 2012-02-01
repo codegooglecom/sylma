@@ -4,5 +4,5 @@ namespace sylma\core;
 
 interface stringable {
 
-  function asString();
+  function asString($iMode = 0);
 }

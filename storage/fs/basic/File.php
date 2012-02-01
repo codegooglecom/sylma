@@ -112,7 +112,7 @@ class File extends Resource implements fs\file {
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
    */
-  public function getFreeDocument() {
+  public function getFreeDocument(array $aNS = array()) {
 
     $result = null;
 
@@ -127,15 +127,17 @@ class File extends Resource implements fs\file {
       $result = $this->getControler()->create('file/document');
 
       $result->setFile($this);
+      $result->registerNamespaces($aNS);
       $result->loadFile();
+      
     //}
 
     return $result;
   }
 
-  public function getDocument($iMode = \Sylma::MODE_READ) {
+  public function getDocument(array $aNS = array()) {
 
-    return $this->getFreeDocument();
+    return $this->getFreeDocument($aNS);
   }
 
   public function getArgument() {

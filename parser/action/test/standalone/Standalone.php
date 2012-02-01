@@ -26,6 +26,7 @@ class Standalone extends tester\Prepare {
 
     $this->setControler($controler);
   }
+
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {
 
     return parent::getArgument($sPath, $mDefault, $bDebug);
@@ -34,13 +35,6 @@ class Standalone extends tester\Prepare {
   public function setArgument($sPath, $mValue) {
 
     return parent::setArgument($sPath, $mValue);
-  }
-
-  public function compareNodes(dom\document $node1, dom\node $node2) {
-
-    $node1 = $node1->getRoot();
-    
-    return $node1->asString() === $node2->asString();
   }
 
   protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {

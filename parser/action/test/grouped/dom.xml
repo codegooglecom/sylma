@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>DOM</tst:description>
+  <tst:test name="Build a document">
+    <le:action>
+      <div>
+        <le:document>
+          <h2>
+            <span>hello</span>
+          </h2>
+        </le:document>
+        <div>world</div>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org"><h2 xmlns="http://www.sylma.org"><span>hello</span></h2><div>world</div></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Build two documents">
+    <le:action>
+      <div>
+        <le:document>
+          <h2>
+            <span>hello</span>
+          </h2>
+        </le:document>
+        <le:document>
+          <h3>
+            <ul id="menu">
+              <li>1</li>
+              <li>2</li>
+            </ul>
+          </h3>
+        </le:document>
+        <div>world</div>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org"><h2 xmlns="http://www.sylma.org"><span>hello</span></h2><h3 xmlns="http://www.sylma.org"><ul id="menu"><li>1</li><li>2</li></ul></h3><div>world</div></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Build embeded documents">
+    <le:action>
+      <le:document>
+        <h2>
+          <le:document>
+            <span>hello</span>
+          </le:document>
+        </h2>
+      </le:document>
+    </le:action>
+    <tst:node>
+      <h2 xmlns="http://www.sylma.org"><span xmlns="http://www.sylma.org">hello</span></h2>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Call document">
+    <le:action>
+      <div>
+        <le:document>
+          <h2>
+            <span>hello</span>
+          </h2>
+          <li:call name="getx">
+            <li:argument>/self:h2/self:span</li:argument>
+            <le:ns>*self</le:ns>
+          </li:call>
+        </le:document>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org"><span>hello</span></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+dspf($result->asString());
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+</tst:tests>

@@ -280,6 +280,18 @@ class Element extends \DOMElement implements dom\element {
     return $result;
   }
 
+  public function insertAttribute(\DOMAttr $node) {
+
+    $result = null;
+
+    if ($node->ownerDocument && ($node->ownerDocument !== $this->getDocument())) {
+
+      $node = $this->getDocument()->importNode($node);
+    }
+
+    return $this->setAttributeNode($node);
+  }
+
   // public function addElement($sName, $oContent = '', $aAttributes = null, $sUri = null)
   // public function createElement($sName, $oContent = '', $aAttributes = null, $sUri = null)
   // *public function insertNode($sName, $oContent = '', $aAttributes = null, $sUri = null, $oNext = null, $bPrevious = false)
@@ -296,7 +308,7 @@ class Element extends \DOMElement implements dom\element {
       }
       else if ($value instanceof dom\attribute) {
 
-        $this->setAttributeNode($value);
+        $mResult = $this->insertAttribute($value);
       }
       else if ($value instanceof dom\collection) {
 
@@ -595,7 +607,7 @@ class Element extends \DOMElement implements dom\element {
 
   public function prepareHTML($iLevel = 0) {
 
-    if (!$this->isRoot()) $this->insert("\n".str_repeat('  ', $iLevel), $this->getFirst());
+    if (!$this->isRoot()) $this->getParent()->insert("\n".str_repeat('  ', $iLevel), $this);
 
     foreach ($this->getChildren() as $child) {
 
@@ -628,9 +640,9 @@ class Element extends \DOMElement implements dom\element {
     $controler->throwException($sMessage, $aPath);
   }
 
-  public function asString($bFormat = true) {
+  public function asString($iMode = 0) {
 
-    return $this->getHandler()->elementAsString($this, $bFormat);
+    return $this->getHandler()->elementAsString($this, $iMode);
   }
 
   public function __toString() {

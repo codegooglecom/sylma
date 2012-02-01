@@ -33,7 +33,7 @@ class _Interface extends Controled {
     $this->sName = $sInterface;
   }
 
-  protected function getFile() {
+  public function getFile() {
 
     return $this->sFile;
   }

@@ -100,7 +100,7 @@ class Fragment extends \DOMDocumentFragment implements dom\node, dom\fragment {
     return '@fragment in ' . $this->getParent()->asToken();
   }
 
-  public function asString($bFormat = false) {
+  public function asString($iMode = 0) {
 
     $this->getControler()->throwException(t('Cannot convert fragment to string'));
   }

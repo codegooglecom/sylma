@@ -157,7 +157,7 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
     return $this->loadText($this->getFile()->read());
   }
 
-  public function loadText($sContent, $bLoad = true) {
+  public function loadText($sContent) {
 
     $bResult = $this->document->loadXML($sContent);
 
@@ -245,7 +245,7 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
     ), $dom->getNamespace());
   }
 
-  public function elementAsString(dom\node $el = null, $bFormat = false) {
+  public function elementAsString(dom\node $el = null, $iMode = 0) {
 
     if (!$sResult = $this->getContent()) {
 
@@ -258,9 +258,22 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
     return trim($sResult);
   }
 
-  public function asString($bFormat = false) {
+  public function asString($iMode = 0) {
 
-    return $this->elementAsString();
+    if ($iMode & self::STRING_INDENT) {
+
+      $doc = new self($this->getRoot());
+      $doc->getRoot()->prepareHTML();
+    }
+    else {
+
+      $doc = $this;
+    }
+
+    if ($iMode & self::STRING_NOHEAD) $sResult = $doc->elementAsString($doc->getRoot());
+    else $sResult = $doc->elementAsString();
+
+    return $sResult;
   }
 
   public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
@@ -285,13 +298,18 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
     $file->saveText($this->asString());
   }
 
+  public function dsp() {
+
+    dspm($this->asString());
+  }
+
   public function __toString() {
 
     $sResult = '';
 
     try {
 
-      $sResult = $this->elementAsString($this->getRoot());
+      $sResult = $this->asString(self::STRING_NOHEAD);
     }
     catch (\Exception $e) {
 

@@ -79,14 +79,7 @@ abstract class Reflector extends parser\Reflector {
       $aResult[] = $this->parse($child);
     }
 
-    return $this->getWindow()->create('concat', array($this->getWindow(), $aResult));
-  }
-
-  protected function reflectText(dom\element $el) {
-
-    $aChildren = $this->parseChildren($el);
-
-    return $this->getWindow()->create('concat', array($this->getWindow(), $aChildren));
+    return $this->getWindow()->createString($aResult);
   }
 
   protected function parseString($sValue) {
@@ -110,15 +103,25 @@ abstract class Reflector extends parser\Reflector {
       }
     }
 
-    return $window->create('string', array($window, $sValue));
+    return $window->createString($sValue);
   }
 
   protected function reflectAction(dom\element $el) {
 
+    $result = null;
+
     $window = $this->getWindow();
     $sPath = $el->readAttribute('path');
 
-    $aArguments = array('path' => $sPath);
+    require_once('core/functions/Path.php');
+    $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
+
+    $path = $this->getControler()->create('path', array($sPath));
+
+    $aArguments = array(
+      'file' => (string) $path->getFile(),
+      'arguments' => $path->getArgumentsArray(),
+    );
 
     if ($el->hasChildren()) {
 
@@ -135,15 +138,44 @@ abstract class Reflector extends parser\Reflector {
 
         if (!$sKey) $sKey = $iKey;
 
-        $aArguments[$sKey] = $this->parse($child);
+        $aArguments['arguments'][$sKey] = $this->parse($child);
 
         $iKey++;
       }
     }
 
-    $result = $window->createCall($window->getSelf(), 'getAction', $window->getSelf()->getInstance(), $aArguments);
+    $doc = $path->getFile()->getDocument($this->getNS());
 
-    //arguments
+    $callAction = $window->createCall($window->getSelf(), 'getActionFile', $window->getSelf()->getInstance(), $aArguments);
+    //$window->add($callAction);
+
+    if (!$sReturn = $doc->getx('self:settings/self:return/@format', array(), false)) {
+
+      $sReturn = 'dom';
+    }
+
+    switch ($sReturn) {
+
+      case 'txt' :
+
+        $var = $callAction->getVar();
+        $result = $window->createCall($var, 'asString', 'php-string');
+
+      break;
+
+      case 'dom' :
+
+        $var = $callAction->getVar();
+        $result = $window->createCall($var, 'asDOM', 'php-string');
+
+      break;
+
+      case 'object' :
+      break;
+      default :
+
+        $this->throwException(txt('Unknown return type : %s', $sReturn));
+    }
 
     return $result;
   }
@@ -198,5 +230,79 @@ abstract class Reflector extends parser\Reflector {
     }
 
     return $aResult;
+  }
+
+  protected function reflectCall(dom\element $el) {
+
+    $window = $this->getWindow();
+    $sMethod = $el->readAttribute('name');
+
+    $method = $this->getInterface()->loadMethod($sMethod);
+
+    return $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
+  }
+
+  protected function reflectDocument(dom\element $el) {
+
+    $window = $this->getWindow();
+    $first = $el->getFirst();
+
+    if ($first->getType() === dom\node::TEXT) {
+
+      $this->throwException(txt('Invalid children for document, one child element expected in %s, ', $el->asToken()));
+    }
+
+    $content = $this->parseElement($first->remove());
+
+    if ($content instanceof dom\node) {
+
+      $content = $window->create('template', array($window, $content));
+    }
+    else {
+
+      $content = $window->convertToDom($content);
+    }
+
+    $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom2/handler.php');
+    $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
+
+    return $this->getInterface()->runCall($call, $el->getChildren());
+  }
+
+  protected function reflectNS(dom\element $el) {
+
+    $aResult = array();
+    $window = $this->getWindow();
+
+    if (!$sPrefixes = $el->read()) {
+
+      $this->throwException(txt('You must specify comma separated prefixes in content of %s', $el->asToken()));
+    }
+
+    foreach (explode(',', $sPrefixes) as $sPrefix) {
+
+      $sPrefix = trim($sPrefix);
+
+      if ($sPrefix{0} == '*') {
+
+        if (!$sNamespace = $el->lookupNamespace(null)) {
+
+          $this->throwException(txt('No default namespace found in @element %s', $el->asToken()));
+        }
+
+        $aResult[substr($sPrefix, 1)] = $window->createString($sNamespace);
+
+      } else {
+
+        if (!$sNamespace = $el->lookupNamespace($sPrefix)) {
+
+          $this->throwException(txt('No namespace found with %s in @element %s', $sPrefix, $el->asToken()));
+        }
+
+        $aResult[$sPrefix] = $window->createString($sNamespace);
+      }
+    }
+
+    return $window->argToInstance($aResult);
   }
 }

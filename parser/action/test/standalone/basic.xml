@@ -36,4 +36,34 @@
         $controler->compareNodes($action->asDOM(), $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Multiple nodes">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/multi-node'));
+    </tst:prepare>
+    <tst:node>
+      <div><h1>Titre</h1><p><div>abc</div></p><p><div>Hello world</div><ul><li>item 1</li><li>item 2</li></ul></p></div>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Node as argument" disabled="true">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/node-arg'));
+    </tst:prepare>
+    <tst:node>
+
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node);
+    </tst:expected>
+  </tst:test>
 </tst:tests>

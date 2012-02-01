@@ -190,6 +190,10 @@ class Basic extends \Exception implements core\exception {
 
     if (\Controler::useMessages()) {
 
+      if (\Sylma::read('messages/print/visible')) {
+
+        print_r($this->getPath());
+      }
       $backtrace = \Controler::getBacktrace($this->getTrace());
       \Controler::addMessage(array($this->getPath(), $backtrace));
     }

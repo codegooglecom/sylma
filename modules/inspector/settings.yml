@@ -1,7 +1,7 @@
 classes:
   controler :
     file : Inspector.php
-    name : \Inspector
+    name : \sylma\modules\inspector\Module
   class:
     file : Class.php
     name : \InspectorClass

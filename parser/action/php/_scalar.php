@@ -2,7 +2,9 @@
 
 namespace sylma\parser\action\php;
 
-interface _scalar {
+require_once('linable.php');
+
+interface _scalar extends linable {
 
   function useFormat($sFormat);
 }

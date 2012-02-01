@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/tester" version="1.0">
-  
+
   <xsl:variable name="class-failed">sylma-test-failed</xsl:variable>
   <xsl:variable name="class-title">sylma-test-title</xsl:variable>
-  
+
   <xsl:template match="/test:tests">
     <div>
       <p><strong>Result : <xsl:call-template name="failed"/></strong></p>
       <xsl:apply-templates/>
     </div>
   </xsl:template>
-  
+
   <xsl:template name="failed">
     <xsl:variable name="failed" select="count(.//test:test[test:result = 'false'])"/>
     <em>
@@ -26,9 +26,10 @@
           <xsl:text> tests</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
+      <xsl:if test="@disabled > 0"> (<xsl:value-of select="@disabled"/> disabled)</xsl:if>
     </em>
   </xsl:template>
-  
+
   <xsl:template match="test:group">
     <xsl:param name="depth" select="3"/>
     <ul>
@@ -52,7 +53,7 @@
       <xsl:apply-templates select="test:test"/>
     </ul>
   </xsl:template>
-  
+
   <xsl:template match="test:test">
     <li>
       <xsl:attribute name="class">
@@ -71,7 +72,7 @@
       </xsl:if>
     </li>
   </xsl:template>
-  
+
   <xsl:template match="@expected"> @valid <xsl:value-of select="."/></xsl:template>
-  
+
 </xsl:stylesheet>

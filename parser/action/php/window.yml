@@ -14,8 +14,8 @@ classes :
     name : _ObjectVar
   simple-var :
     name : _ScalarVar
-  #template :
-    #name : Template
+  template :
+    name : Template
   assign :
     name : Assign
   insert :

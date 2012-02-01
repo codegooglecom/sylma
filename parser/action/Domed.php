@@ -8,7 +8,7 @@ require_once('parser/domed.php');
 
 class Domed extends Reflector implements parser\domed {
 
-  const PREFIX = 'le';
+  const PREFIX = 'self';
   const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
@@ -192,7 +192,7 @@ class Domed extends Reflector implements parser\domed {
 
       case dom\node::TEXT :
 
-        $mResult = $this->getWindow()->create('string', array($this->getWindow(), (string) $node));
+        $mResult = $this->getWindow()->createString((string) $node);
 
       break;
 
@@ -266,16 +266,15 @@ class Domed extends Reflector implements parser\domed {
       $mResult = $this->getControler()->create('document');
       $mResult->addElement($el->getName(), null, array(), $el->getNamespace());
 
-      $this->parseAttributes($el);
+      if ($aAttr = $this->parseAttributes($el)) $mResult->add($aAttr);
 
-      $mResult->add($this->parseChildren($el));
-      /*if ($el->hasChildren()) {
+      /*foreach ($el as $child) {
 
-        foreach ($el->getChildren() as $child) {
-
-          $mResult->add($this->parse($child));
-        }
+        if ($child->getType() === dom\node::ELEMENT) $mResult->add($this->parseElement ($el));
+        else $mResult->add($child);
       }*/
+
+      if ($aChildren = $this->parseChildren($el)) $mResult->add($aChildren);
     }
 
     return $mResult;
@@ -294,7 +293,7 @@ class Domed extends Reflector implements parser\domed {
 
       if ($child->getType() != dom\node::ELEMENT) {
 
-        $aResult[] = $this->parseNode($child);
+        $aResult[] = $child;
       }
       else if ($mResult = $this->parseElement($child)) {
 
@@ -326,16 +325,6 @@ class Domed extends Reflector implements parser\domed {
     return $this->getInterface()->runCall($call, $el->getChildren());
   }
 
-  protected function reflectCall(dom\element $el) {
-
-    $window = $this->getWindow();
-    $sMethod = $el->readAttribute('name');
-
-    $method = $this->getInterface()->loadMethod($sMethod);
-
-    return $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
-  }
-
   /**
    *
    * @param dom\element $el
@@ -360,6 +349,9 @@ class Domed extends Reflector implements parser\domed {
       case 'null' : $mResult = $this->reflectNull($el); break;
 
       case 'array' : $mResult = $this->reflectArray($el); break;
+
+      case 'get-variable' : $mResult = $this->reflectVariable($el); break;
+      case 'ns' : $mResult = $this->reflectNS($el); break;
       //case 'argument' :
       case 'test-argument' :
       case 'get-all-arguments' :
@@ -429,20 +421,14 @@ class Domed extends Reflector implements parser\domed {
     return null;
   }
 
-  protected function runCall(dom\element $el, php\basic\CallMethod $call) {
+  protected function setVariables(dom\element $el, $obj) {
 
-    if ($el->hasChildren()) {
+    if ($sName = $el->readAttribute('set-variable')) {
 
-      $var = $call->getVar();
-      $mResult = $this->parseChildrenObject($el, $var);
+      $this->aVariables[$sName] = $obj;
     }
-    else {
-
-      $mResult = $call;
-    }
-
-    return $mResult;
   }
+
   /**
    * Parse children into object context.
    * @param dom\element $el
@@ -473,6 +459,14 @@ class Domed extends Reflector implements parser\domed {
 
   protected function parseAttributes(dom\element $el) {
 
+    $aResult = array();
+
+    foreach ($el->getAttributes() as $attr) {
+
+      $aResult[] = $attr;
+    }
+
+    return $aResult;
   }
 
   public function asDOM() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <class xmlns="http://www.sylma.org/interface">
   <file>Inspector.php</file>
-  <name>Inspector</name>
+  <name>\sylma\modules\inspector\Module</name>
   <method return-default="true" path="get-class" name="getClass">
   	<argument name="class" format="php-string"/>
   	<argument name="file" format="php-string" required="false" allow-null="true"/>

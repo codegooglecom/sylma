@@ -40,9 +40,13 @@ abstract class Basic extends core\module\Domed implements test {
 
       $aTests = $this->loadDocument($doc, $file);
 
+      $iDisabled = $aTests['disabled'];
+      unset($aTests['disabled']);
+
       $aResult[] = array(
         'description' => $doc->readx('self:description', $this->getNS()),
         '#test' => $aTests,
+        '@disabled' => $iDisabled,
       );
     }
 
@@ -54,6 +58,7 @@ abstract class Basic extends core\module\Domed implements test {
   protected function loadDocument(dom\handler $doc, fs\file $file) {
 
     $aResult = array();
+    $iDisabled = 0;
 
     foreach ($doc->queryx('self:test') as $test) {
 
@@ -70,7 +75,13 @@ abstract class Basic extends core\module\Domed implements test {
 
         $aResult[] = $aTest;
       }
+      else {
+
+        $iDisabled++;
+      }
     }
+
+    $aResult['disabled'] = $iDisabled;
 
     return $aResult;
   }
@@ -134,6 +145,19 @@ abstract class Basic extends core\module\Domed implements test {
   public function getNamespace($sPrefix = null) {
 
     return parent::getNamespace($sPrefix);
+  }
+
+  public function loadDomElement(dom\node $node) {
+
+    if ($node instanceof dom\element) $result = $node;
+    else if ($node instanceof dom\document) $result = $node->getRoot();
+
+    return $result;
+  }
+
+  public function compareNodes(dom\node $node1, dom\node $node2) {
+
+    return $this->loadDomElement($node1)->asString() === $this->loadDomElement($node2)->asString();
   }
 
   public function parse() {

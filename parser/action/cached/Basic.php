@@ -19,7 +19,9 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     $this->setControler($controler);
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
-    $this->setArguments($args);
+
+    $this->loadDefaultArguments();
+    $this->setArguments(array('arguments' => $args));
   }
 
   /**
@@ -28,30 +30,13 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
    */
   abstract protected function runAction();
 
-  protected function useTemplate() {
-
-    return $this->bTemplate;
-  }
-
   /**
    *
    * @return array|mixed
    */
   protected function parseAction() {
 
-    $mResult = null;
-    $aArguments = $this->runAction();
-
-    if ($this->useTemplate()) {
-
-      $mResult = $this->loadTemplate($aArguments);
-    }
-    else {
-
-      $mResult = $aArguments;
-    }
-
-    return $mResult;
+    return $this->runAction();
   }
 
   protected function loadArgumentable(core\argumentable $val = null) {
@@ -63,9 +48,9 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $this->loadDomable($arg);
   }
 
-  protected function loadStringable(core\stringable $val) {
+  protected function loadStringable(core\stringable $val, $iMode = 0) {
 
-    return $val->asString();
+    return $val->asString($iMode);
   }
 
   protected function validateString($sVal) {
@@ -84,6 +69,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
       $formater = \Sylma::getControler('formater');
       $this->throwException(txt('Invalid argument type : object expected, %s given', $formater->asToken($val)));
     }
+  }
+
+  protected function getActionFile($sPath, array $aArguments) {
+
+    return $this->create('action', array($this->getFile($sPath), $aArguments));
   }
 
   public function asObject() {
@@ -112,7 +102,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $aResult;
   }
 
-  public function asString() {
+  public function asString($iMode = 0) {
 
     $mResult = $this->parseAction();
 

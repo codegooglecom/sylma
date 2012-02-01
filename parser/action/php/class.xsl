@@ -5,6 +5,7 @@
 
   <xsl:param name="namespace"/>
   <xsl:param name="class"/>
+  <xsl:param name="template"/>
 
   <xsl:template match="php:window">&lt;?php
 
@@ -15,7 +16,7 @@ require_once('parser\action\cached\Document.php');
 
 class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> {
 
-  protected $bTemplate = <xsl:value-of select="@use-template"/>;
+  <xsl:if test="@use-template = 'true'">protected $sTemplate = '<xsl:value-of select="$template"/>';</xsl:if>
 
   protected function runAction() {
 
@@ -29,8 +30,16 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
 
   </xsl:template>
 
+  <xsl:template match="*">
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
+
   <xsl:template match="php:*">
-    $this->throwException(t('Invalid template @element <xsl:value-of select="local-name()"/>'))
+    $this->throwException(t('Invalid template\'s @element <xsl:value-of select="local-name()"/>'))
+  </xsl:template>
+
+  <xsl:template match="php:template">
+    <xsl:value-of select="concat('$this->loadTemplate(', @key, ', $aArguments)')"/>
   </xsl:template>
 
   <xsl:template match="php:assign">
@@ -50,11 +59,15 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
     <xsl:apply-templates select="$variable"/> = <xsl:apply-templates select="$value"/>
   </xsl:template>
 
+  <xsl:template match="php:insert-call">
+
+  </xsl:template>
+
   <xsl:template match="php:insert">
-    <xsl:text>$aArguments[</xsl:text>
+    <xsl:text>  $aArguments[</xsl:text>
     <xsl:value-of select="@key"/>
     <xsl:text>] = </xsl:text>
-    <xsl:apply-templates/>;
+    <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="php:call">

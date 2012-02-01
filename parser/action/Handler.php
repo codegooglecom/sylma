@@ -130,40 +130,40 @@ class Handler extends core\module\Domed implements parser\action, core\stringabl
 
     $dir = $file->getParent();
     $tmpDir = $dir->addDirectory(parser\action::EXPORT_DIRECTORY);
+    $tpl = $tmpDir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
 
     $method = $this->reflectAction();
 
     if (self::DEBUG_SHOW) {
+      $tmp = $this->create('document', array($method));
       dspm($this->getFile()->asToken());
-      dspm((string) $method);
+      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
     }
 
-
-
+    // set new class and file
 
     $class = $tmpDir->getFile($sPath, fs\basic\Resource::DEBUG_EXIST);
 
     $template = $this->getTemplate('php/class.xsl');
     $aClass = $this->getClassName($this->getFile());
 
-    // set new class and file
-
     $template->setParameters(array(
       'namespace' => substr($aClass['namespace'], 1),
       'class' => $aClass['class'],
+      'template' => $tpl->getRealPath(),
     ));
 
     $sResult = $template->parseDocument($method, false);
     $class->saveText($sResult);
 
-    // always try template, only save if result
+    if ($method->getRoot()->testAttribute('use-template')) {
 
-    $tpl = $tmpDir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
-    $template = $this->getTemplate('php/template.xsl');
+      $template = $this->getTemplate('php/template.xsl');
 
-    if ($sResult = $template->parseDocument($method, false)) {
+      if ($sResult = $template->parseDocument($method, false)) {
 
-      $tpl->saveText(substr($sResult, 22));
+        $tpl->saveText(substr($sResult, 22));
+      }
     }
 
     return $class;
@@ -223,7 +223,7 @@ class Handler extends core\module\Domed implements parser\action, core\stringabl
     return $action->asArray();
   }
 
-  public function asString() {
+  public function asString($iMode = 0) {
 
     $action = $this->runAction();
     return $this->parseString($action);
