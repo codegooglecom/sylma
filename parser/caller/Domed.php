@@ -69,7 +69,7 @@ class Domed extends core\module\Argumented {
 
     $call = $method->reflectCall($obj->getControler(), $obj, $aArguments);
 
-    return $this->runCall($call, $args);
+    return $this->getControler()->getParent()->runCall($call, $args);
   }
 
   protected function parseNode(dom\node $node) {
@@ -143,38 +143,6 @@ class Domed extends core\module\Argumented {
     }
 
     return $aResult;
-  }
-
-  public function runCall(php\basic\CallMethod $call, dom\collection $children) {
-
-    if ($children->current()) {
-
-      $window = $call->getControler();
-
-      $var = $call->getVar();
-      $window->setScope($var);
-
-      $interface = $this->getControler()->loadObject($var);
-
-      $aResult = array();
-
-      while ($child = $children->current()) {
-
-        $children->next();
-        $aResult[] = $interface->parseCall($child, $var);
-      }
-
-      if (count($aResult) == 1) $mResult = $aResult[0];
-      else $mResult = $aResult;
-
-      $window->stopScope();
-    }
-    else {
-
-      $mResult = $call;
-    }
-
-    return $mResult;
   }
 
   public function getMethod($sName) {

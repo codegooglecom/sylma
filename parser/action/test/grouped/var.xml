@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Variables</tst:description>
+  <tst:test name="Create document variable">
+    <le:action>
+      <div>
+        <p>
+          <le:document le:set-variable="doc">
+            <h1>hello</h1>
+          </le:document>
+        </p>
+        <le:get-variable name="doc"/>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org"><p><h1 xmlns="http://www.sylma.org">hello</h1></p><h1 xmlns="http://www.sylma.org">hello</h1></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Create obj variable on short-call">
+    <le:action>
+      <le:settings>
+        <lm:directory le:set-variable="dir"/>
+        <le:return format="object"/>
+      </le:settings>
+      <le:get-variable name="dir"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\storage\fs\directory;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Create obj variable on self-call">
+    <le:action>
+      <le:settings>
+        <le:call name="get-directory" le:set-variable="dir"/>
+        <le:return format="object"/>
+      </le:settings>
+      <le:get-variable name="dir"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\storage\fs\directory;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Create obj variable on obj-call">
+    <le:action>
+      <le:settings>
+        <le:return format="array"/>
+      </le:settings>
+      <le:array>
+        <lm:directory>
+          <li:call name="get-file" le:set-variable="file">samples/path.txt</li:call>
+        </lm:directory>
+        <le:null/>
+        <le:get-variable name="file"/>
+      </le:array>
+    </le:action>
+    <tst:expected>
+      $aResult = $controler->getResult('array');
+
+      return
+        $aResult[0] instanceof \sylma\storage\fs\file &amp;&amp;
+        $aResult[1] === null &amp;&amp;
+        $aResult[2] instanceof \sylma\storage\fs\file;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Create string variable">
+    <le:action>
+      <le:settings>
+        <lm:file path="samples/simple.txt">
+          <li:call name="read" le:set-variable="content"/>
+        </lm:file>
+      </le:settings>
+      <le:get-variable name="content"/>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === '123';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

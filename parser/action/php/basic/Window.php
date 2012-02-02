@@ -3,7 +3,8 @@
 namespace sylma\parser\action\php\basic;
 use \sylma\parser\action, \sylma\core, \sylma\dom, \sylma\parser\action\php;
 
-require_once('core/module/Argumented.php');
+require_once('core/module/Filed.php');
+
 require_once(dirname(__dir__) . '/_window.php');
 require_once('core/controled.php');
 
@@ -35,7 +36,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   protected static $varCount = 0;
 
-  public function __construct(action\Domed $controler, core\argument $args, $sClass) {
+  public function __construct(action\compiler $controler, core\argument $args, $sClass) {
 
     $this->setControler($controler);
     $this->setArguments($args);
@@ -126,10 +127,11 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return $result;
   }
 
-  public function createInsert($mVal) {
+  public function createInsert($mVal, $bConvert = true) {
 
-    //if ($val instanceof dom\node) $result = $val;
-    $result = $this->create('insert', array($this, $this->convertToDOM($mVal)));
+    if ($bConvert) $mVal = $this->convertToDOM($mVal);
+
+    $result = $this->create('insert', array($this, $mVal));
 
     return $result;
   }
@@ -146,6 +148,24 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     }
 
     return $result;
+  }
+
+  public function createTemplate(dom\node $node) {
+
+    return $this->create('template', array($this, $node));
+  }
+
+  public function createVar($val, php\_instance $return) {
+
+    if ($return instanceof php\_object) $sAlias = 'object-var';
+    else $sAlias = 'simple-var';
+
+    $var = $this->create($sAlias, array($this, $return, $this->getVarName()));
+    $assign = $this->create('assign', array($this, $var, $val));
+
+    $this->add($assign);
+
+    return $var;
   }
 
   public function setInterface(php\basic\_Interface $interface) {
@@ -197,7 +217,18 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       if ($val instanceof php\_var) $instance = $val->getInstance();
       else $instance = $val;
 
-      if ($instance instanceof php\basic\instance\_String || $instance instanceof php\_scalar) {
+      if ($instance instanceof php\_scalar) {
+
+        if ($this->getControler()->useTemplate() && $instance instanceof php\basic\instance\_Array) {
+
+          $aContent = array();
+          foreach($instance as $sub) {
+
+            $aContent[] = $this->convertToString($sub);
+          }
+
+          $val = $this->createString($aContent);
+        }
 
         $result = $val;
       }
@@ -217,10 +248,23 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       if (!$interface->isInstance('\sylma\core\stringable')) {
 
-        $this->throwException(txt('Cannot convert object %s in string', $interface->getName()));
+        $this->throwException(txt('Cannot convert object %s to string', $interface->getName()));
       }
 
       $result = $this->createCall($this->getSelf(), 'loadStringable', 'php-string', array($val, $iMode));
+    }
+    else if ($val instanceof dom\node) {
+
+      $result = $this->argToInstance($val);
+    }
+    else if ($val instanceof php\basic\Template) {
+
+      $result = $val;
+    }
+    else {
+
+      $formater = $this->getControler('formater');
+      $this->throwException(txt('Cannot convert %s to string', $formater->asToken($val)));
     }
 
     return $result;
@@ -249,9 +293,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       if ($interface->isInstance('\sylma\dom\node')) {
 
-        require_once('dom2/handler.php');
-
-        $result = $this->convertToString($val, dom\handler::STRING_NOHEAD);
+        $result = $this->convertToString($val);
         //$result = $val;
       }
       else if ($interface->isInstance('\sylma\core\argumentable')) {
@@ -273,7 +315,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     }
     else if ($val instanceof php\_scalar || $val instanceof dom\node) {
 
-      $result = $val;
+      $result = $this->convertToString($val);
     }
     else {
 
@@ -324,7 +366,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       case 'string' :
 
         if (is_null($mVar)) $mVar = '';
-        $result = $this->create('string', array($this, $mVar));
+        $result = $this->createString($mVar);
 
       break;
 
@@ -366,11 +408,13 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       case 'object' :
 
-        if ($mVar instanceof php\_instance ||
+        if ($mVar instanceof dom\node) {
+
+          $arg = $this->createTemplate($mVar);
+        }
+        else if ($mVar instanceof php\_instance ||
             $mVar instanceof php\basic\Called ||
-            $mVar instanceof php\basic\Template ||
-            $mVar instanceof php\_var ||
-            $mVar instanceof dom\node) {
+            $mVar instanceof php\_var) {
 
           $arg = $mVar;
         }

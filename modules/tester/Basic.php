@@ -149,8 +149,13 @@ abstract class Basic extends core\module\Domed implements test {
 
   public function loadDomElement(dom\node $node) {
 
-    if ($node instanceof dom\element) $result = $node;
-    else if ($node instanceof dom\document) $result = $node->getRoot();
+    if ($node instanceof dom\document) $result = $node->getRoot();
+    else $result = $node;
+
+    if (!$result) {
+
+      $this->throwException(t('No result node'));
+    }
 
     return $result;
   }

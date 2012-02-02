@@ -3,9 +3,6 @@
   <tst:description>Basic</tst:description>
   <tst:test name="Return simple string">
     <le:action>
-      <le:settings>
-        <le:return format="php-string"/>
-      </le:settings>
       <le:string>abc</le:string>
     </le:action>
     <tst:expected>
@@ -17,6 +14,9 @@
   </tst:test>
   <tst:test name="Return array of strings imploded">
     <le:action>
+      <le:settings>
+        <le:return format="array"/>
+      </le:settings>
       <le:text>directory :</le:text>
       <lm:file path="samples/simple.txt">
         <li:call name="read"/>
@@ -136,94 +136,5 @@
         <le:null/>
       </le:boolean>
     </le:action>
-  </tst:test>
-  <tst:test name="Array">
-    <le:action>
-      <le:array>
-        <le:boolean le:key="a" value="true"/>
-        <le:text le:key="b">123</le:text>
-        <le:string>hello</le:string>
-        <le:null/>
-        <le:item>world</le:item>
-      </le:array>
-    </le:action>
-    <tst:expected>
-      $aResult = $controler->getResult('array');
-
-      return
-        $aResult === array(
-          'a' => true,
-          'b' => '123',
-          'hello',
-          null,
-          'world',
-        );
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Array exception 1" catch="\sylma\core\exception">
-    <le:action>
-      <le:array>
-        abc
-        <le:null/>
-      </le:array>
-    </le:action>
-  </tst:test>
-  <tst:test name="Create variable" disabled="true">
-    <le:action>
-      <div>
-        <p>
-          <le:document le:set-variable="doc">
-            <h1>hello</h1>
-          </le:document>
-        </p>
-        <le:get-variable name="doc"/>
-      </div>
-    </le:action>
-    <tst:node>
-      <div xmlns="http://www.sylma.org"><p><h1 xmlns="http://www.sylma.org">hello</h1></p><h1>hello</h1></div>
-    </tst:node>
-    <tst:expected>
-      $result = $controler->getResult('dom');
-      $node = $controler->getArgument('node');
-dspm($result->asString());
-      return
-        $controler->compareNodes($result, $node);
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Get one NS">
-    <le:action>
-      <le:ns le:ns="null">le</le:ns>
-    </le:action>
-    <tst:expected>
-      $aResult = $controler->getResult('array');
-
-      return
-        $aResult === array('le' => 'http://www.sylma.org/parser/action');
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Get null NS" disabled="true">
-    <le:action>
-      <le:ns>*hello</le:ns>
-    </le:action>
-    <tst:expected>
-      $aResult = $controler->getResult('array');
-
-      return
-        $aResult === array('hello' => 'http://www.sylma.org');
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Get multiple NS">
-    <le:action>
-      <le:ns le:ns="null" tst:ns="null">le,tst</le:ns>
-    </le:action>
-    <tst:expected>
-      $aResult = $controler->getResult('array');
-
-      return
-        $aResult === array(
-          'le' => 'http://www.sylma.org/parser/action',
-          'tst' => 'http://www.sylma.org/parser/action/test/grouped',
-        );
-    </tst:expected>
   </tst:test>
 </tst:tests>

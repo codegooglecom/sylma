@@ -30,10 +30,6 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="php:*">
-    <xsl:apply-templates/>
-  </xsl:template>
-
   <xsl:template match="php:insert-call">
     <xsl:processing-instruction name="php">
       <xsl:text>echo $aArguments[</xsl:text>
@@ -53,6 +49,10 @@
     <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
       <xsl:apply-templates select="node() | @*"/>
     </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="php:*">
+    <xsl:apply-templates select="*"/>
   </xsl:template>
 
   <xsl:template match="text()">

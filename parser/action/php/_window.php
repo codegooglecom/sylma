@@ -1,14 +1,14 @@
 <?php
 
 namespace sylma\parser\action\php;
-use \sylma\core, \sylma\parser\action, \sylma\parser\action\php;
+use \sylma\core, \sylma\parser\action, \sylma\parser\domed, \sylma\parser\action\php;
 
 require_once('scope.php');
 require_once('core/argumentable.php');
 
 interface _window extends scope, core\argumentable {
 
-  function __construct(action\Domed $controler, core\argument $args, $sClass);
+  function __construct(action\compiler $controler, core\argument $args, $sClass);
 
   function add($mVal);
 

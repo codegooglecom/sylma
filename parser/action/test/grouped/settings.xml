@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Settings</tst:description>
+  <tst:test name="Build object">
+    <le:action>
+      <le:settings>
+        <lm:directory path="samples"/>
+      </le:settings>
+      <le:string>abc</le:string>
+    </le:action>
+    <tst:prepare>
+
+    </tst:prepare>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'abc';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Require a string argument" disabled="true">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path"/>
+      </le:settings>
+      <le:get-argument name="path"/>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 123));
+    </tst:prepare>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === '123';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

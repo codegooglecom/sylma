@@ -80,7 +80,22 @@ class Grouped extends tester\Basic {
 
       try {
 
-        $action = $controler->buildAction($this->createDocument($node), array(), $dir, $file->getParent());
+        if ($sPrepare = $test->readx('self:prepare', array(), false)) {
+
+          if (eval('$closure = function($controler) { ' . $sPrepare . '; };') === null) {
+
+            $mResult = $this->evaluate($closure, $controler);
+          }
+        }
+
+        $aArguments = array();
+        
+        if ($args = $controler->getArgument('arguments')) {
+
+          $aArguments = $args->asArray();
+        }
+
+        $action = $controler->buildAction($this->createDocument($node), $aArguments, $dir, $file->getParent());
         $this->setArgument('action', $action);
 
         $bResult = parent::test($test->getx('self:expected'), $this, $doc, $file);

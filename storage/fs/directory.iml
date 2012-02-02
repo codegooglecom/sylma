@@ -3,6 +3,11 @@
   <namespace>\sylma\storage\fs</namespace>
   <name>directory</name>
   <method path="get-directory" name="getDirectory" return="directory">
-    <argument name="path" format="php-string" required="false"/>
+    <argument name="path" format="php-string"/>
+    <argument name="debug" format="php-boolean" required="false"/>
+  </method>
+  <method path="get-file" name="getFile" return="file">
+    <argument name="path" format="php-string"/>
+    <argument name="debug" format="php-boolean" required="false"/>
   </method>
 </class>

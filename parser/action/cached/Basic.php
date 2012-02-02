@@ -76,6 +76,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $this->create('action', array($this->getFile($sPath), $aArguments));
   }
 
+  public function getActionArgument() {
+
+    //return $this->aArgumentsAction
+  }
+
   public function asObject() {
 
     $aResult = $this->parseAction();
@@ -96,7 +101,8 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!is_array($aResult)) {
 
-      $this->throwException(t('No valid array result'));
+      $formater = $this->getControler('formater');
+      $this->throwException(txt('Invalid %s, array expected', $formater->asToken($aResult)));
     }
 
     return $aResult;

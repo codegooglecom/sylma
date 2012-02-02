@@ -143,4 +143,40 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Array of calls in a string">
+    <le:action>
+      <le:text>
+        <lm:file path="samples/simple.txt">
+          <li:call name="read"/>
+          <li:call name="read"/>
+        </lm:file>
+      </le:text>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === '123123';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Array of calls in a node">
+    <le:action>
+      <div>
+        <lm:file path="samples/simple.txt">
+          <li:call name="read"/>
+          <li:call name="read"/>
+        </lm:file>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">123123</div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
 </tst:tests>

@@ -8,7 +8,7 @@ classes :
   basic :
     name : Basic
   dom :
-    name : Domed
+    name : compiler\Reflector
   php : @sylma:import php/window.yml;
   document :
     file : /sylma/dom2/basic/handler/Rooted.php

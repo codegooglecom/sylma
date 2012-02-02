@@ -16,6 +16,8 @@ abstract class Called extends Controled implements php\linable, core\argumentabl
 
   protected $aArguments;
 
+  protected $var;
+
   public function getName() {
 
     return $this->sName;
@@ -64,18 +66,11 @@ abstract class Called extends Controled implements php\linable, core\argumentabl
 
   public function getVar() {
 
-    $window = $this->getControler();
+    if (!$this->var) {
 
-    $var = $this->getReturn();
+      $this->var = $this->getControler()->createVar($this, $this->getReturn());
+    }
 
-    if ($var instanceof instance\_Object) $sAlias = 'object-var';
-    else $sAlias = 'simple-var';
-
-    $var = $window->create($sAlias, array($window, $var, $window->getVarName()));
-    $assign = $window->create('assign', array($window, $var, $this));
-
-    $window->add($assign);
-
-    return $var;
+    return $this->var;
   }
 }

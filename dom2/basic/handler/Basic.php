@@ -262,7 +262,7 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
 
     if ($iMode & self::STRING_INDENT) {
 
-      $doc = new self($this->getRoot());
+      $doc = new static($this->getRoot());
       $doc->getRoot()->prepareHTML();
     }
     else {
@@ -270,8 +270,8 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
       $doc = $this;
     }
 
-    if ($iMode & self::STRING_NOHEAD) $sResult = $doc->elementAsString($doc->getRoot());
-    else $sResult = $doc->elementAsString();
+    if ($iMode & self::STRING_HEAD) $sResult = $doc->elementAsString();
+    else $sResult = $doc->elementAsString($doc->getRoot());
 
     return $sResult;
   }
@@ -295,7 +295,7 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
     }
 
     //$this->getRoot()->prepareHTML();
-    $file->saveText($this->asString());
+    $file->saveText($this->asString(self::STRING_HEAD));
   }
 
   public function dsp() {
@@ -309,7 +309,7 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
 
     try {
 
-      $sResult = $this->asString(self::STRING_NOHEAD);
+      $sResult = $this->asString();
     }
     catch (\Exception $e) {
 

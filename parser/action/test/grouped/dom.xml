@@ -94,9 +94,45 @@
     <tst:expected>
       $result = $controler->getResult('dom');
       $node = $controler->getArgument('node');
-dspf($result->asString());
+
       return
         $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Get one NS">
+    <le:action>
+      <le:ns le:ns="null">le</le:ns>
+    </le:action>
+    <tst:expected>
+      $aResult = $controler->getResult('array');
+
+      return
+        $aResult === array('le' => 'http://www.sylma.org/parser/action');
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Get null NS" disabled="true">
+    <le:action>
+      <le:ns>*hello</le:ns>
+    </le:action>
+    <tst:expected>
+      $aResult = $controler->getResult('array');
+
+      return
+        $aResult === array('hello' => 'http://www.sylma.org');
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Get multiple NS">
+    <le:action>
+      <le:ns le:ns="null" tst:ns="null">le,tst</le:ns>
+    </le:action>
+    <tst:expected>
+      $aResult = $controler->getResult('array');
+
+      return
+        $aResult === array(
+          'le' => 'http://www.sylma.org/parser/action',
+          'tst' => 'http://www.sylma.org/parser/action/test/grouped',
+        );
     </tst:expected>
   </tst:test>
 </tst:tests>
