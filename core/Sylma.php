@@ -40,6 +40,8 @@ class Sylma {
 
     require_once('old/Initializer.php');
 
+    //xdebug_start_code_coverage();
+
     try {
 
       $init = self::$aControlers['init'] = new Initializer();
@@ -60,6 +62,7 @@ class Sylma {
       throw $e;
     }
 
+    //var_dump(xdebug_get_code_coverage());
     //session_write_close();
   }
 

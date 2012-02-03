@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
-  <tst:description>Settings</tst:description>
+  <tst:description>Settings &amp; arguments</tst:description>
   <tst:test name="Build object">
     <le:action>
       <le:settings>
@@ -18,7 +18,7 @@
         $sResult === 'abc';
     </tst:expected>
   </tst:test>
-  <tst:test name="Require a string argument" disabled="true">
+  <tst:test name="Require a string argument">
     <le:action>
       <le:settings>
         <le:argument format="php-string" name="path"/>
@@ -26,13 +26,110 @@
       <le:get-argument name="path"/>
     </le:action>
     <tst:prepare>
-      $controler->setArgument('arguments', array('path' => 123));
+      $controler->setArgument('arguments', array('path' => 'abc'));
     </tst:prepare>
     <tst:expected>
       $sResult = $controler->getResult('txt');
 
       return
-        $sResult === '123';
+        $sResult === 'abc';
     </tst:expected>
+  </tst:test>
+  <tst:test name="Require a numeric argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-numeric" name="key"/>
+      </le:settings>
+      <le:get-argument name="key"/>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('key' => 123));
+    </tst:prepare>
+    <tst:expected>
+      $iResult = $controler->getResult('object');
+
+      return
+        $iResult === 123;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Validate string argument" disabled="true">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:validate>
+            <le:bool value="true"/>
+          </le:validate>
+          <le:validate required="true">
+            <le:null/>
+          </le:validate>
+          <le:validate return="true">
+            <lm:get-file>
+              <le:get-argument name="path"/>
+            </lm:get-file>
+          </le:validate>
+        </le:argument>
+      </le:settings>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
+    </tst:prepare>
+  </tst:test>
+  <tst:test name="Validate string argument with file creation">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:validate return="true">
+            <le:call name="get-file">
+              <le:get-argument name="path"/>
+            </le:call>
+          </le:validate>
+        </le:argument>
+      </le:settings>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
+    </tst:prepare>
+  </tst:test>
+  <tst:test name="Simple good validation">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:validate>
+            <le:bool value="true"/>
+          </le:validate>
+        </le:argument>
+      </le:settings>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
+    </tst:prepare>
+  </tst:test>
+  <tst:test name="Simple bad validation" catch="\sylma\core\exception">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:validate>
+            <le:bool value="false"/>
+          </le:validate>
+        </le:argument>
+      </le:settings>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
+    </tst:prepare>
+  </tst:test>
+  <tst:test name="Optional validation's return">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:validate required="false">
+            <le:bool value="false"/>
+          </le:validate>
+        </le:argument>
+      </le:settings>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
+    </tst:prepare>
   </tst:test>
 </tst:tests>

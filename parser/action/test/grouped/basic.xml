@@ -12,6 +12,17 @@
         $sResult === 'abc';
     </tst:expected>
   </tst:test>
+  <tst:test name="Return numeric">
+    <le:action>
+      <le:numeric>123</le:numeric>
+    </le:action>
+    <tst:expected>
+      $iResult = $controler->getResult('object');
+
+      return
+        $iResult === 123;
+    </tst:expected>
+  </tst:test>
   <tst:test name="Return array of strings imploded">
     <le:action>
       <le:settings>

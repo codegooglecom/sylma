@@ -36,7 +36,7 @@ class Controler extends core\module\Filed {
     return $this->create('action', array($path->getFile(), $aArguments));
   }
 
-  public function buildAction(dom\handler $doc, array $aArguments = array(), fs\editable\directory $dir = null, fs\directory $base = null) {
+  public function buildAction(dom\handler $doc, array $aArguments = array(), fs\editable\directory $dir = null, fs\directory $base = null, $sName = '') {
 
     $fs = $this->getControler(self::FS_EDITABLE);
 
@@ -48,7 +48,8 @@ class Controler extends core\module\Filed {
       $dir = $tmp->createDirectory();
     }
 
-    $file = $dir->createFile('eml', true);
+    if ($sName) $file = $dir->createFile($sName . '.eml');
+    else $file = $dir->createFile('eml', true);
 
     $doc->saveFile($file);
 

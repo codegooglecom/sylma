@@ -22,15 +22,15 @@ class Reflector extends Argumented {
 
       case 'call' : $mResult = $this->reflectCall($el); break;
 
+      // primitives
+
       case 'bool' :
       case 'boolean' : $mResult = $this->reflectBoolean($el); break;
-
       case 'string' :
-
       case 'text' : $mResult = $this->reflectString($el); break;
       case 'null' : $mResult = $this->reflectNull($el); break;
-
       case 'array' : $mResult = $this->reflectArray($el); break;
+      case 'numeric' : $mResult = $this->reflectNumeric($el); break;
 
       case 'get-variable' : $mResult = $this->reflectVariable($el); break;
       case 'ns' : $mResult = $this->reflectNS($el); break;
@@ -131,64 +131,6 @@ class Reflector extends Argumented {
     }
 
     return $aResult;
-  }
-
-  protected function reflectArgument(dom\element $el) {
-
-    $aResult = array();
-    $window = $this->getWindow();
-
-    $sName = $el->getAttribute('name');
-    $sFormat = $el->getAttribute('format');
-
-    $val = $window->stringToInstance($sFormat);
-
-    $call = $window->createCall($window->getSelf(), 'getArgument', $val, array($sName));
-    $bool = $window->stringToInstance('php-boolean');
-
-    if ($val instanceof php\_scalar) {
-
-      if ($val instanceof php\basic\instance\_String) {
-
-        $aResult[] = $window->createCall($window->getSelf(), 'validateString', $bool, array($call));
-      }
-      else if ($val instanceof php\basic\instance\_Numeric) {
-
-        $aResult[] = $window->createCall($window->getSelf(), 'validateNumeric', $bool, array($call));
-      }
-      else if ($val instanceof php\basic\instance\_Array) {
-
-        $aResult[] = $window->create('function', array($window, 'is_array', $bool, array($call)));
-      }
-    }
-    else if ($val instanceof php\_object) {
-
-      $interface = $val->getInterface();
-      $aResult[] = $window->createCall($window->getSelf(), 'validateObject', $bool, array($call, $interface->getName()));
-    }
-
-    if ($el->hasChildren()) {
-
-      if ($validate = $el->get('self:validate')) {
-
-
-      }
-    }
-
-    return $aResult;
-  }
-
-  protected function reflectGetArgument(dom\element $el) {
-
-    $window = $this->getWindow();
-    $sName = $el->getAttribute('name');
-
-    if (!$mVal = $this->getActionArgument($sName)) {
-
-      $this->throwException(txt('Unknown argument : %s', $sName));
-    }
-
-    return $window->createCall($window->getSelf(), 'getArgument', $window->loadInstance($mVal), array($sName));
   }
 
   protected function reflectSelfCall(dom\element $el) {
@@ -485,5 +427,17 @@ class Reflector extends Argumented {
     }
 
     return $window->argToInstance($aResult);
+  }
+
+  protected function reflectNumeric(dom\element $el) {
+
+    if ($el->countChildren() != 1) {
+
+      $this->throwException(txt('Too much children, one child expected in %s', $el->asToken()));
+    }
+
+    $content = $this->parseNode($el->getFirst());
+
+    return $this->getWindow()->create('numeric', array($this->getWindow(), $content));
   }
 }

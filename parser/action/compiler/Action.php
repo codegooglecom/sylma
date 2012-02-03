@@ -25,7 +25,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   private $bTemplate = false;
   private $bString = true;
   protected $aVariables = array();
-  
+
   /**
    * Sub parsers
    * @var array

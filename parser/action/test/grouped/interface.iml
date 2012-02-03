@@ -2,4 +2,7 @@
 <class xmlns="http://www.sylma.org/interface">
   <file>Grouped.php</file>
   <name>\sylma\parser\action\test\grouped\Grouped</name>
+  <method-construct>
+    <argument name="file" format="php-string" required="false"/>
+  </method-construct>
 </class>

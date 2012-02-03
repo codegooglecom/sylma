@@ -11,8 +11,9 @@ class Grouped extends tester\Basic {
   const FS_CONTROLER = 'fs/editable';
 
   protected $sTitle = 'Grouped';
+  protected $exportDirectory;
 
-  public function __construct(parser\action\Controler $controler = null) {
+  public function __construct($sFile = '') {
 
     \Sylma::getControler('dom');
 
@@ -24,9 +25,14 @@ class Grouped extends tester\Basic {
         'le' => parser\action::NS,
     ));
 
-    if (!$controler) $controler = \Sylma::getControler('action');
+    $controler = \Sylma::getControler('action');
 
+    if ($sFile) $this->setFiles(array($this->getFile($sFile)));
     $this->setControler($controler);
+
+    $this->exportDirectory = $this->getDirectory()->addDirectory('#tmp');
+
+    $this->setArguments(array());
     //$this->setFiles(array($this->getFile('basic.xml')));
   }
 
@@ -48,14 +54,39 @@ class Grouped extends tester\Basic {
     return $result;
   }
 
+  protected function prepareTest(dom\element $test) {
+
+    $mResult = null;
+
+    if ($sPrepare = $test->readx('self:prepare', array(), false)) {
+
+      if (eval('$closure = function($controler) { ' . $sPrepare . '; };') === null) {
+
+        $mResult = $this->evaluate($closure, $this);
+      }
+    }
+
+    return $mResult;
+  }
+
+  protected function loadArguments() {
+
+    $aResult = array();
+
+    if ($args = $this->getArgument('arguments')) {
+
+      $aResult = $args->asArray();
+    }
+
+    return $aResult;
+  }
   protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = null;
     $node = $test->getx('le:action');
 
-    $fs = $this->getControler('fs');
-
-    $dir = $this->createTempDirectory();
+    require_once('core/functions/Path.php');
+    $sName = core\functions\path\urlize($file->getName() . '-' . $test->readAttribute('name'));
 
     if ($sException = $test->readAttribute('catch', null, false)) {
 
@@ -63,8 +94,13 @@ class Grouped extends tester\Basic {
 
       try {
 
-        $action = $controler->buildAction($this->createDocument($node), array(), $dir, $file->getParent());
+        $this->prepareTest($test);
+        $aArguments = $this->loadArguments();
+
+        $action = $controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $file->getParent(), $sName);
         $action->asArray();
+
+        $bResult = false;
       }
       catch (core\exception $e) {
 
@@ -80,25 +116,21 @@ class Grouped extends tester\Basic {
 
       try {
 
-        if ($sPrepare = $test->readx('self:prepare', array(), false)) {
+        $this->prepareTest($test);
+        $aArguments = $this->loadArguments();
 
-          if (eval('$closure = function($controler) { ' . $sPrepare . '; };') === null) {
-
-            $mResult = $this->evaluate($closure, $controler);
-          }
-        }
-
-        $aArguments = array();
-        
-        if ($args = $controler->getArgument('arguments')) {
-
-          $aArguments = $args->asArray();
-        }
-
-        $action = $controler->buildAction($this->createDocument($node), $aArguments, $dir, $file->getParent());
+        $action = $controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $file->getParent(), $sName);
         $this->setArgument('action', $action);
 
-        $bResult = parent::test($test->getx('self:expected'), $this, $doc, $file);
+        if ($expected = $test->getx('self:expected', array(), false)) {
+
+          $bResult = parent::test($expected, $this, $doc, $file);
+        }
+        else {
+
+          $action->asArray();
+          $bResult = true;
+        }
       }
       catch (core\exception $e) {
 
@@ -118,5 +150,9 @@ class Grouped extends tester\Basic {
     return parent::getArgument($sPath, $mDefault, $bDebug);
   }
 
+  public function setArgument($sPath, $mValue) {
+
+    return parent::setArgument($sPath, $mValue);
+  }
 }
 

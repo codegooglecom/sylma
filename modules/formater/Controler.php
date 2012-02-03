@@ -55,7 +55,7 @@ class Controler extends core\module\Domed {
       $result = $this->loadArgument($arg);
     }
     else if ($val instanceof dom\domable) {
-      
+
       $result = $val->asDOM();
     }
 
@@ -118,19 +118,23 @@ class Controler extends core\module\Domed {
 
     if (is_string($mVal)) {
 
-      $sResult = '[string] ' . $this->limitString($mVal);
+      $sResult = '[string = ' . $this->limitString($mVal) . ']';
     }
     else if (is_object($mVal)) {
 
-      $sResult = '[object] ' . get_class($mVal);
+      $sResult = '[object, @class = ' . get_class($mVal) . ']';
     }
     else if (is_array($mVal)) {
 
-      $sResult = '[array] ' . '@length ' . count($mVal);
+      $sResult = '[array, ' . '@length ' . count($mVal) . ']';
     }
     else if (is_null($mVal)) {
 
       $sResult = '[null] ';
+    }
+    else if (is_numeric($mVal)) {
+
+      $sResult = '[numeric = ' . $mVal . ']';
     }
 
     return '@var ' . $sResult;

@@ -103,7 +103,7 @@ class Handler extends core\module\Domed implements parser\action, core\stringabl
     $aClass = $this->getClassName($this->getFile());
     $sClass = $aClass['namespace'] . '\\' . $aClass['class'];
 
-    $result = new $sClass($this->getBaseDirectory(), $this, $this->createArgument($this->aArguments));
+    $result = new $sClass($this->getBaseDirectory(), $this, $this->aArguments);
 
     return $result;
   }

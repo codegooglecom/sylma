@@ -7,6 +7,9 @@
   <xsl:param name="class"/>
   <xsl:param name="template"/>
 
+  <xsl:variable name="break">
+</xsl:variable>
+
   <xsl:template match="php:window">&lt;?php
 
 namespace <xsl:value-of select="$namespace"/>;
@@ -51,6 +54,17 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
 
   <xsl:template match="php:line">
     <xsl:apply-templates/>;
+  </xsl:template>
+
+  <xsl:template match="php:condition">
+    <xsl:text>if (</xsl:text>
+    <xsl:if test="@invert">!</xsl:if>
+    <xsl:apply-templates select="php:test/*"/>
+    <xsl:text>) {</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates select="php:content/*"/>
+    <xsl:value-of select="$break"/>
+    <xsl:text>}</xsl:text>
   </xsl:template>
 
   <xsl:template name="php:assign">
@@ -115,7 +129,7 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
         <xsl:value-of select="@value"/>
       </xsl:when>
       <xsl:otherwise>
-        (bool) <xsl:apply-templates/>
+        <xsl:text>(bool) </xsl:text><xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

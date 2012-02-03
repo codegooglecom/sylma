@@ -23,7 +23,11 @@ class _Boolean extends _Scalar implements php\_instance {
 
     $bValue = false;
 
-    if (is_string($mValue)) {
+    if (is_bool($mValue)) {
+
+      $this->bValue =  $mValue;
+    }
+    else if (is_string($mValue)) {
 
       if ($mValue == 'true') $this->bValue = true;
       else if ($mValue != 'false') {

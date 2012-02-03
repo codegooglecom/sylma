@@ -68,7 +68,7 @@ abstract class Called extends Controled implements php\linable, core\argumentabl
 
     if (!$this->var) {
 
-      $this->var = $this->getControler()->createVar($this, $this->getReturn());
+      $this->var = $this->getControler()->createVar($this);
     }
 
     return $this->var;

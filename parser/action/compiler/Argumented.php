@@ -1,13 +1,32 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
+use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs, \sylma\parser\action\php;
 
 require_once('Domed.php');
 
 abstract class Argumented extends Domed {
 
+  const ARGUMENT_METHOD = 'getActionArgument';
+
   protected $aActionArguments = array();
+
+  protected function setActionArgument($sName, php\_var $var) {
+
+    $this->aActionArguments[$sName] = $var;
+  }
+
+  protected function getActionArgument($sName) {
+
+    if (!array_key_exists($sName, $this->aActionArguments)) {
+
+      $this->throwException(txt('Argument %s does not exists', $sName));
+    }
+
+    $var = $this->aActionArguments[$sName];
+
+    return $var;
+  }
 
   /**
    *
@@ -21,65 +40,101 @@ abstract class Argumented extends Domed {
 
     $sName = $el->getAttribute('name');
     $sFormat = $el->getAttribute('format');
+    $bRequired = $el->testAttribute('required', true);
 
     $val = $window->stringToInstance($sFormat);
 
-    $call = $window->createCall($window->getSelf(), 'getArgument', $val, array($sName));
+    $call = $window->createCall($window->getSelf(), self::ARGUMENT_METHOD, $val, array($sName, $bRequired));
+
+    $call = $this->validateArgumentFormat($sName, $val);
+    $var = $call->getVar();
+
+    // argument is available, ie. for validation, direclty after format has been validated
+    
+    $this->setActionArgument($sName, $var);
+    //$aResult[] = $call;
+
+    if ($el->hasChildren()) {
+
+      if ($validate = $el->getx('self:validate')) {
+
+        if (!$bRequired) {
+
+          $if = $window->create('condition', array($window, $var));
+
+          $window->add($if);
+          $window->setScope($if);
+
+          $aResult[] = $this->reflectValidate($validate, $sName, $var);
+
+          $window->stopScope();
+        }
+        else {
+
+          $aResult[] = $this->reflectValidate($validate, $sName, $var);
+        }
+      }
+    }
+
+
+
+    return $aResult;
+  }
+
+  protected function validateArgumentFormat($sName, php\_instance $val) {
+
+    $window = $this->getWindow();
+
+    $call = $window->createCall($window->getSelf(), self::ARGUMENT_METHOD, $val, array($sName));
     $bool = $window->stringToInstance('php-boolean');
 
     if ($val instanceof php\_scalar) {
 
       if ($val instanceof php\basic\instance\_String) {
 
-        $aResult[] = $window->createCall($window->getSelf(), 'validateString', $bool, array($call));
+        $call = $window->createCall($window->getSelf(), 'validateString', $bool, array($call));
       }
       else if ($val instanceof php\basic\instance\_Numeric) {
 
-        $aResult[] = $window->createCall($window->getSelf(), 'validateNumeric', $bool, array($call));
+        $call = $window->createCall($window->getSelf(), 'validateNumeric', $bool, array($call));
       }
       else if ($val instanceof php\basic\instance\_Array) {
 
-        $aResult[] = $window->create('function', array($window, 'is_array', $bool, array($call)));
+        $call = $window->createCall($window->getSelf(), 'validateArray', $bool, array($call));
       }
     }
     else if ($val instanceof php\_object) {
 
       $interface = $val->getInterface();
-      $aResult[] = $window->createCall($window->getSelf(), 'validateObject', $bool, array($call, $interface->getName()));
+      $call = $window->createCall($window->getSelf(), 'validateObject', $bool, array($call, $interface->getName()));
     }
 
-    if ($el->hasChildren()) {
-
-      if ($validate = $el->get('self:validate')) {
-
-
-      }
-    }
-
-    return $aResult;
-  }
-
-  protected function getActionArgument($sName) {
-
-    if (!array_key_exists($sName, $this->aActionArguments)) {
-
-      $this->throwException(txt('Argument %s does not exists', $sName));
-    }
-
-    //return $this->
+    return $call;
   }
 
   protected function reflectGetArgument(dom\element $el) {
 
-    $window = $this->getWindow();
     $sName = $el->getAttribute('name');
 
-    if (!$mVal = $this->getActionArgument($sName)) {
-
-      $this->throwException(txt('Unknown argument : %s', $sName));
-    }
-
-    return $window->createCall($window->getSelf(), 'getActionArgument', $window->loadInstance($mVal), array($sName));
+    return $this->getActionArgument($sName);
   }
 
+  protected function reflectValidate(dom\element $el, $sArgument, php\_var $var) {
+
+    $window = $this->getWindow();
+
+    $bRequired = $el->testAttribute('required', true);
+    $bReturn = $el->testAttribute('return', false);
+
+    if ($el->countChildren() != 1) {
+
+      $this->throwException(txt('Children expected in %s', $el->asToken()));
+    }
+
+    $result = $this->parseNode($el->getFirst());
+    $validation = $window->createVar($result);
+
+    $call = $window->createCall($window->getSelf(), 'validateArgument', 'php-boolean', array($sArgument, $var, $validation, $bRequired, $bReturn));
+    return $window->create('assign', array($this->getWindow(), $var, $call));
+  }
 }

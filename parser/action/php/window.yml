@@ -30,3 +30,5 @@ classes :
     name : instance\_Boolean
   concat :
     name : _String
+  condition :
+    name : Condition

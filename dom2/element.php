@@ -19,6 +19,7 @@ interface element extends complex, namespaced {
   function getByName($sName, $sNamespace = null);
 
   function readAttribute($sName, $sNamespace = '');
+  function testAttribute($sAttribute, $mDefault = null, $sNamespace = '');
   function lookupNamespace($sPrefix);
 
   /**
@@ -28,4 +29,6 @@ interface element extends complex, namespaced {
    * @return XML_Element|XML_Text|XML_Attribute The object added to content
    */
   function insert($mValue, dom\node $next = null);
+
+
 }

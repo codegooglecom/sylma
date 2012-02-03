@@ -6,7 +6,7 @@
   </le:settings>
   <tst:group>
     <tst:description>Action</tst:description>
-    <le:action path="grouped"/>
+    <le:action path="grouped/interface"/>
     <le:action path="standalone"/>
   </tst:group>
 </le:action>

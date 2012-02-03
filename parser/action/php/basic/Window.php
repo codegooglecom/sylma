@@ -155,7 +155,24 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return $this->create('template', array($this, $node));
   }
 
-  public function createVar($val, php\_instance $return) {
+  public function createVar(php\linable $val) {
+
+    if ($val instanceof Called) {
+
+      $return = $val->getReturn();
+    }
+    else if ($val instanceof php\_var) {
+
+      $return = $val->getInstance();
+    }
+    else if ($val instanceof dom\node) {
+
+      $return = $this->getInterface('\sylma\dom\node');
+    }
+    else {
+
+      $return = $val;
+    }
 
     if ($return instanceof php\_object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
@@ -356,6 +373,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       break;
 
       case 'integer' :
+      case 'numeric' :
       case 'double' :
 
         if (is_null($mVar)) $mVar = 0;
@@ -402,39 +420,31 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   public function argToInstance($mVar) {
 
     $arg = null;
-    $sFormat = gettype($mVar);
 
-    switch ($sFormat) {
+    if (is_object($mVar)) {
 
-      case 'object' :
+      if ($mVar instanceof dom\node) {
 
-        if ($mVar instanceof dom\node) {
+        $arg = $this->createTemplate($mVar);
+      }
+      else if ($mVar instanceof php\_instance ||
+          $mVar instanceof php\basic\Called ||
+          $mVar instanceof php\_var) {
 
-          $arg = $this->createTemplate($mVar);
-        }
-        else if ($mVar instanceof php\_instance ||
-            $mVar instanceof php\basic\Called ||
-            $mVar instanceof php\_var) {
+        $arg = $mVar;
+      }
+      else {
 
-          $arg = $mVar;
-        }
-        else {
+        $arg = $this->loadInstance(get_class($mVar));
+      }
+    }
+    else if (is_null($mVar) || is_resource($mVar)) {
 
-          $arg = $this->loadInstance(get_class($mVar));
-        }
+      $arg = $this->create('null', array($this));
+    }
+    else {
 
-      break;
-
-      case 'resource' :
-      case 'NULL' :
-
-        $arg = $this->create('null', array($this));
-
-      break;
-
-      default :
-
-        $arg = $this->stringToScalar($sFormat, $mVar);
+      $arg = $this->stringToScalar(gettype($mVar), $mVar);
     }
 
     return $arg;

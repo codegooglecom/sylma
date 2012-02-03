@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\php;
-use \sylma\core, \sylma\parser\action, \sylma\parser\domed, \sylma\parser\action\php;
+use sylma\core, sylma\parser\action, sylma\parser\domed, sylma\parser\action\php, sylma\dom;
 
 require_once('scope.php');
 require_once('core/argumentable.php');
@@ -40,9 +40,19 @@ interface _window extends scope, core\argumentable {
   function loadInstance($sName, $sFile = '');
 
   /**
-   * @return php\Insert
+   * @return php\basic\Insert
    */
   function createInsert($mVal);
+
+  /**
+   * @return php\basic\Template
+   */
+  function createTemplate(dom\node $node);
+
+  /**
+   * @return php\_var
+   */
+  function createVar(php\linable $val);
 
   function setScope(php\scope $scope);
 

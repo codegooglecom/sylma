@@ -7,5 +7,5 @@ require_once('dom2/domable.php');
 
 interface cached extends dom\domable {
 
-  function __construct(fs\directory $dir, parser\action $controler, core\argument $args);
+  function __construct(fs\directory $dir, parser\action $controler, array $aArguments);
 }
