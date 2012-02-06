@@ -17,13 +17,13 @@ class _Function extends Called {
 
     $this->setReturn($return);
   }
-  
+
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
        'function' => array(
            '@name' => $this->getName(),
-           $this->getArguments(),
+           '#argument' => $this->getArguments(),
        )
     ));
   }

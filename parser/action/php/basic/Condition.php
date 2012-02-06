@@ -23,14 +23,17 @@ class Condition extends Controled implements core\argumentable, php\scope {
   public function addContent($mVal) {
 
     if (is_array($mVal)) $this->aContent = array_merge($this->aContent, $mVal);
-    else $this->aContent[] = $mVal;
+    else {
+
+      $this->aContent[] = $this->getControler()->create('line', array($this->getControler(), $mVal));
+    }
   }
 
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
        'condition' => array(
-          '@invert' => $this->bInvert,
+          '@invert' => ($this->bInvert ? 'true' : 'false'),
           'test' => $this->test,
           'content' => $this->aContent,
        )

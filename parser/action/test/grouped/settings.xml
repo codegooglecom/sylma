@@ -52,27 +52,69 @@
         $iResult === 123;
     </tst:expected>
   </tst:test>
-  <tst:test name="Validate string argument" disabled="true">
+  <tst:test name="Require object argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="\sylma\storage\fs\file" name="file"/>
+        <le:return format="object"/>
+      </le:settings>
+      <le:get-argument name="file"/>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('file' => $controler->getFile('samples/simple.txt')));
+    </tst:prepare>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\storage\fs\file &amp;&amp;
+        $result->getName() == 'simple.txt';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Call object argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="\sylma\storage\fs\directory" name="dir"/>
+        <le:return format="object"/>
+      </le:settings>
+      <le:get-argument name="dir">
+        <li:get-directory>sub</li:get-directory>
+      </le:get-argument>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('dir' => $controler->getDirectory('samples')));
+    </tst:prepare>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\storage\fs\directory &amp;&amp;
+        $result->getName() == 'sub';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Validate and replace string argument with object">
     <le:action>
       <le:settings>
         <le:argument format="php-string" name="path">
-          <le:validate>
-            <le:bool value="true"/>
-          </le:validate>
-          <le:validate required="true">
-            <le:null/>
-          </le:validate>
-          <le:validate return="true">
-            <lm:get-file>
+          <le:validate return="true" replace="true">
+            <le:call name="get-file">
               <le:get-argument name="path"/>
-            </lm:get-file>
+            </le:call>
           </le:validate>
         </le:argument>
       </le:settings>
+      <le:get-argument name="path"/>
     </le:action>
     <tst:prepare>
       $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
     </tst:prepare>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\storage\fs\file &amp;&amp;
+        $result->getName() == 'simple.txt';
+    </tst:expected>
   </tst:test>
   <tst:test name="Validate string argument with file creation">
     <le:action>
@@ -131,5 +173,100 @@
     <tst:prepare>
       $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
     </tst:prepare>
+  </tst:test>
+  <tst:test name="Required argument missing" catch="\sylma\core\exception">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:validate required="false">
+            <le:bool value="false"/>
+          </le:validate>
+        </le:argument>
+      </le:settings>
+    </le:action>
+  </tst:test>
+  <tst:test name="Validation with optional argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path" required="false">
+          <le:validate>
+            <le:bool value="false"/>
+          </le:validate>
+        </le:argument>
+      </le:settings>
+    </le:action>
+  </tst:test>
+  <tst:test name="Default argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path" required="false">
+          <le:default>simple.txt</le:default>
+        </le:argument>
+      </le:settings>
+      <le:get-argument name="path"/>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'simple.txt';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Default argument with validation">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:validate>
+            <le:bool value="false"/>
+          </le:validate>
+          <le:default>simple.txt</le:default>
+        </le:argument>
+      </le:settings>
+      <le:get-argument name="path"/>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
+    </tst:prepare>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'simple.txt';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Default sent but not returned argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path">
+          <le:default return="false">simple.txt</le:default>
+        </le:argument>
+      </le:settings>
+      <le:get-argument name="path"/>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'samples/simple.txt'));
+    </tst:prepare>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'samples/simple.txt';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Default not sent nether returned argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path" required="false">
+          <le:default return="false">simple.txt</le:default>
+        </le:argument>
+      </le:settings>
+      <le:get-argument name="path"/>
+    </le:action>
+    <tst:expected>
+      $aResult = $controler->getResult('array');
+
+      return
+        $aResult === array(null);
+    </tst:expected>
   </tst:test>
 </tst:tests>

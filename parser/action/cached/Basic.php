@@ -81,15 +81,21 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $mResult;
   }
 
-  protected function validateArgument($sName, $mVar, $mVal, $bRequired = true, $bReturn = false) {
+  protected function validateArgument($sName, $mVar, $mVal, $bRequired = true, $bReturn = false, $bDefault = false) {
+
+    $mResult = null;
 
     if ($bRequired && (is_null($mVal) || $mVal === false)) {
 
-      $this->throwException(txt('Validation failed for argument %s', $sName));
+      if ($bDefault) $mResult = null;
+      else $this->throwException(txt('Validation failed for argument %s', $sName));
     }
 
-    if ($bReturn) $mResult = $mVal;
-    else $mResult = $mVar;
+    if (!$bDefault) {
+
+      if ($bReturn) $mResult = $mVal;
+      else $mResult = $mVar;
+    }
 
     return $mResult;
   }
@@ -118,10 +124,10 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   protected function validateObject($val, $sInterface) {
 
-    if ($val instanceof $sInterface) {
+    if (!$val instanceof $sInterface) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : object expected, %s given', $formater->asToken($val)));
+      $this->throwException(txt('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
     }
 
     return $val;
@@ -146,15 +152,10 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asArray() {
 
-    $aResult = array_values($this->parseAction());
+    $aAction = array_values($this->parseAction());
 
-    if (count($aResult) == 1) $aResult = array_pop($aResult);
-
-    if (!is_array($aResult)) {
-
-      $formater = $this->getControler('formater');
-      $this->throwException(txt('Invalid %s, array expected', $formater->asToken($aResult)));
-    }
+    if (count($aAction) == 1 && is_array(current($aAction))) $aResult = current($aAction);
+    else $aResult = $aAction;
 
     return $aResult;
   }

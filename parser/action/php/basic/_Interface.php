@@ -18,7 +18,7 @@ class _Interface extends Controled {
     $this->sFile = $sFile;
   }
 
-  public function getName() {
+  public function getName($bRelative = false) {
 
     return $this->sName;
   }

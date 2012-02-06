@@ -16,6 +16,8 @@ classes :
     name : _ScalarVar
   template :
     name : Template
+  function :
+    name : _Function
   assign :
     name : Assign
   insert :

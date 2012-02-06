@@ -85,7 +85,11 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       $this->checkContent($mVal);
 
-      if (!$mVal instanceof dom\node) $mVal = $this->create('line', array($this, $mVal));
+      if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
+
+        $mVal = $this->create('line', array($this, $mVal));
+      }
+      
       $this->aContent[] = $mVal;
     }
   }
