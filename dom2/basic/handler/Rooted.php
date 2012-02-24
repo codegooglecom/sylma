@@ -71,4 +71,10 @@ class Rooted extends Documented {
     $root = $this->checkRoot();
     return $root->getFirst();
   }
+
+  public function getLast() {
+
+    $root = $this->checkRoot();
+    return $root->getLast();
+  }
 }

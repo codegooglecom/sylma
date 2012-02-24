@@ -10,6 +10,11 @@ interface element extends complex, namespaced {
 
   const NS = 'http://www.sylma.org/dom/element';
 
+  const COMPARE_SUCCESS = 0;
+  const COMPARE_BAD_ELEMENT = 1;
+  const COMPARE_BAD_ATTRIBUTE = 2;
+  const COMPARE_BAD_CHILD = 3;
+
   /**
    * @param string $sName The local name of the element
    * @param string $sUri The URI of the element
@@ -19,6 +24,16 @@ interface element extends complex, namespaced {
   function getByName($sName, $sNamespace = null);
 
   function readAttribute($sName, $sNamespace = '');
+
+  /**
+   * Alias of \DOMElement::getAttributeNode() and \DOMElement::getAttributeNodeNS()
+   * 
+   * @param string $sName The local name of the attribute
+   * @param string $sUri The URI of the element
+   *
+   * @return dom\attribute|null The corresponding attribute node
+   */
+  function loadAttribute($sName, $sNamespace = '');
   function testAttribute($sAttribute, $mDefault = null, $sNamespace = '');
   function lookupNamespace($sPrefix);
 

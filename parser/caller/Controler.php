@@ -6,7 +6,7 @@ use sylma\core, sylma\parser, sylma\dom, sylma\parser\action\php;
 require_once('core/module/Domed.php');
 require_once('parser/domed.php');
 
-class Controler extends core\module\Domed implements parser\domed {
+class Controler extends core\module\Domed implements parser\elemented {
 
   const NS = 'http://www.sylma.org/parser/caller';
 
@@ -48,7 +48,7 @@ class Controler extends core\module\Domed implements parser\domed {
     return $this->parent;
   }
 
-  public function setParent(parser\domed $parent) {
+  public function setParent(parser\elemented $parent) {
 
     $this->parent = $parent;
   }

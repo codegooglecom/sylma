@@ -60,7 +60,6 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
 
   <xsl:template match="php:condition">
     <xsl:text>if (</xsl:text>
-    <xsl:if test="@invert = 'true'">!</xsl:if>
     <xsl:apply-templates select="php:test/*"/>
     <xsl:text>) {</xsl:text>
     <xsl:value-of select="$break"/>
@@ -121,6 +120,16 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
       <xsl:apply-templates select="."/>
       <xsl:if test="following-sibling::php:argument">, </xsl:if>
     </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="php:code">
+    <xsl:value-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="php:test">
+    <xsl:apply-templates select="php:val1/*"/>
+    <xsl:value-of select="concat(' ', @operator, ' ')"/>
+    <xsl:apply-templates select="php:val2/*"/>
   </xsl:template>
 
   <xsl:template match="php:string">

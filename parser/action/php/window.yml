@@ -34,3 +34,5 @@ classes :
     name : _String
   condition :
     name : Condition
+  test :
+    name : Test

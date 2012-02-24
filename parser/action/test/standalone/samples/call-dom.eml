@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.sylma.org" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
   <le:action path="div"/>
 </le:action>

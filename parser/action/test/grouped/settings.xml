@@ -78,7 +78,7 @@
         <le:return format="object"/>
       </le:settings>
       <le:get-argument name="dir">
-        <li:get-directory>sub</li:get-directory>
+        <li:call name="get-directory">sub</li:call>
       </le:get-argument>
     </le:action>
     <tst:prepare>

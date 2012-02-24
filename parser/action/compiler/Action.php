@@ -12,7 +12,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   const FORMATER_ALIAS = 'formater';
 
   const CLASS_DEFAULT = '\sylma\parser\action\cached\Document';
-  const CLASS_PREFIX = 'element';
+  const CLASS_PREFIX = 'class';
 
   const WINDOW_ARGS = 'classes/php';
 
@@ -59,6 +59,9 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     $this->setInterface($caller->getInterface($sClass));
 
+    $security = $this->getControler()->create('parser/security');
+    $this->setParser($security, $security->getNS());
+
     $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
   }
 
@@ -84,7 +87,27 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
   protected function getParser($sUri) {
 
-    return array_key_exists($sUri, $this->aParsers) ? $this->aParsers[$sUri] : null;
+    $parser = null;
+
+    if (array_key_exists($sUri, $this->aParsers)) {
+
+      $parser = $this->aParsers[$sUri];
+      $parser->setParent($this);
+    }
+
+    return $parser;
+  }
+
+  protected function setParser(parser\domed $parser, array $aNS) {
+
+    $aResult = array();
+
+    foreach ($aNS as $sNamespace) {
+
+      $aResult[$sNamespace] = $parser;
+    }
+
+    $this->aParsers = array_merge($this->aParsers, $aResult);
   }
 
   protected function loadClass(dom\handler $doc) {
@@ -145,20 +168,18 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     return $this->bString;
   }
 
-  public function setParent(parser\domed $parent) {
+  public function setParent(parser\elemented $parent) {
 
     return null;
   }
 
-  public function runCall(php\basic\CallMethod $call, dom\collection $children) {
+  public function runVar(php\_var $var, dom\collection $children) {
 
     $mResult = null;
 
     if ($children->current()) {
 
       $window = $this->getWindow();
-
-      $var = $call->getVar();
       $window->setScope($var);
 
       $caller = $this->getControler('caller');
@@ -189,22 +210,27 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     }
     else {
 
-      $mResult = $call;
+      $mResult = $var;
     }
 
     return $mResult;
   }
 
-  protected function parseAttributes(dom\element $el) {
+  public function runCall(php\basic\CallMethod $call, dom\collection $children) {
 
-    $aResult = array();
+    $mResult = null;
 
-    foreach ($el->getAttributes() as $attr) {
+    if ($children->current()) {
 
-      $aResult[] = $attr;
+      $var = $call->getVar();
+      $mResult = $this->runVar($var, $children);
+    }
+    else {
+
+      $mResult = $call;
     }
 
-    return $aResult;
+    return $mResult;
   }
 
   protected function setVariable(dom\element $el, $obj) {
@@ -248,7 +274,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     //$tst = $arg->get('window')->query();
     //dspm((string) $tst[1]);
-
+    
     $result = $arg->asDOM();
 
     $sTemplate = $this->useTemplate() ? 'true' : 'false';

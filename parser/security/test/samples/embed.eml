@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.sylma.org" xmlns:ls="http://www.sylma.org/parser/security" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <div>
+    <h1 ls:owner="tester01" ls:group="groupe01" ls:mode="100">
+      <span>Hello <strong ls:owner="tester02" ls:group="groupe01" ls:mode="110">world</strong></span>
+    </h1>
+  </div>
+</le:action>
+

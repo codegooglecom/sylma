@@ -61,4 +61,6 @@ interface _window extends scope, core\argumentable {
    */
   function argToInstance($mVar);
   function stringToInstance($sFormat);
+
+  function getKey($sPrefix);
 }

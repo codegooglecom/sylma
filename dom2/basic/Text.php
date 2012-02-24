@@ -32,9 +32,18 @@ class Text extends \DOMText implements dom\text {
     return $this->getValue();
   }
 
+  public function compare(dom\node $element) {
+
+    if ($element->getType() == self::TEXT && $element->getValue() == $this->getValue()) return 0;
+
+    return self::COMPARE_BAD_ELEMENT;
+  }
+
   public function asToken() {
 
-    return '@text in ' . $this->getParent()->asToken();
+    $parent = $this->getParent();
+
+    return '@text in ' . ($parent ? $this->getParent()->asToken() : '[no parent]');
   }
 
   public function __toString() {

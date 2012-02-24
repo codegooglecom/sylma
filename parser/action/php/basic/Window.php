@@ -32,9 +32,9 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   // static reference to class
   private $sylma;
 
-  public $aScopes = array();
+  protected $aScopes = array();
 
-  protected static $varCount = 0;
+  protected $aKeys = array();
 
   public function __construct(action\compiler $controler, core\argument $args, $sClass) {
 
@@ -65,7 +65,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   public function checkContent($mVal) {
 
-    if (!is_string($mVal) && !$mVal instanceof core\argumentable) {
+    if (!is_string($mVal) && !$mVal instanceof core\argumentable) { // && !$mVal instanceof dom\node
 
       $formater = $this->getControler('formater');
       $this->throwException(txt('Cannot add %s in content', $formater->asToken($mVal)));
@@ -89,14 +89,23 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
         $mVal = $this->create('line', array($this, $mVal));
       }
-      
+
       $this->aContent[] = $mVal;
     }
   }
 
   public function addControler($sName) {
 
-    $this->aControlers[] = $sName;
+    if (!array_key_exists($sName, $this->aControlers)) {
+
+      $controler = $this->getControler($sName);
+      $return = $this->stringToInstance(get_class($controler));
+
+      $call = $this->createCall($this->getSelf(), 'getControler', $return, array($sName));
+      $this->aControlers[$sName] = $call->getVar();
+    }
+
+    return $this->aControlers[$sName];
   }
 
   public function getSelf() {
@@ -111,8 +120,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   public function getVarName() {
 
-    self::$varCount++;
-    return 'var' . self::$varCount;
+    return 'var' . $this->getKey('var');
   }
 
   public function createCall(php\_object $obj, $sMethod, $mReturn, array $aArguments = array()) {
@@ -131,11 +139,11 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return $result;
   }
 
-  public function createInsert($mVal, $bConvert = true) {
+  public function createInsert($mVal, $bConvert = true, $iKey = null, $bTemplate = true) {
 
     if ($bConvert) $mVal = $this->convertToDOM($mVal);
 
-    $result = $this->create('insert', array($this, $mVal));
+    $result = $this->create('insert', array($this, $mVal, $iKey, $bTemplate));
 
     return $result;
   }
@@ -454,6 +462,20 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return $arg;
   }
 
+  public function getKey($sPrefix) {
+
+    if (array_key_exists($sPrefix, $this->aKeys)) {
+
+      $this->aKeys[$sPrefix]++;
+    }
+    else {
+
+      $this->aKeys[$sPrefix] = 1;
+    }
+
+    return $this->aKeys[$sPrefix];
+  }
+
   /*public function validateFormat(php\_var $var, $sFormat) {
 
     $condition = $this->create('condition', array($this, $this->create('not', array($test))));
@@ -468,31 +490,18 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   public function asArgument() {
 
-    $aControlers = array();
-
-    foreach ($this->aControlers as $sControler) {
-
-      $sName = '$controler' . ucfirst(str_replace('/', '_', $sControler));
-
-      // $controlerXX_X = \Sylma::getControler('xx/x');
-
-      $var = $this->create('var', array($sName));
-      $call = $this->create('call-static', array($this->getSylma(), 'getControler', array($sControler)));
-
-      $aControlers[] = $this->create('assign', array($var, $call));
-    }
-
     $interface = $this->getControler()->getInterface();
 
     $result = $this->createArgument(array(
       'window' => array(
         '@extends' => $interface->getNamespace('php') . '\\' . $interface->getName(),
-        $aControlers,
       ),
     ), self::NS);
 
     $result->get('window')->mergeArray($this->aContent);
 
+    $tt = $result->get('window')->query();
+    
     return $result;
   }
 }

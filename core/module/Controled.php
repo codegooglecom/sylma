@@ -18,7 +18,13 @@ abstract class Controled extends Namespaced implements core\controled {
       $this->throwException(t('Cannot use controler as himself'));
     }
 
-    $this->controler = $controler;
+    if ($sName) $this->aControlers[$sName] = $controler;
+    else $this->controler = $controler;
+  }
+
+  public function getControlers() {
+
+    return $this->aControlers;
   }
 
   public function getControler($sName = '', $bDebug = true) {

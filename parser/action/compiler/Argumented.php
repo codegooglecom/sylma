@@ -124,7 +124,9 @@ abstract class Argumented extends Domed {
 
     $sName = $el->getAttribute('name');
 
-    return $this->getActionArgument($sName);
+    $arg = $this->getActionArgument($sName);
+
+    return $this->runVar($arg, $el->getChildren());
   }
 
   protected function reflectDefault(dom\element $el, php\_var $var) {

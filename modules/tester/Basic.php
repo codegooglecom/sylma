@@ -162,7 +162,9 @@ abstract class Basic extends core\module\Domed implements test {
 
   public function compareNodes(dom\node $node1, dom\node $node2) {
 
-    return $this->loadDomElement($node1)->asString() === $this->loadDomElement($node2)->asString();
+    $el = $this->loadDomElement($node1);
+
+    return $el->compare($this->loadDomElement($node2)) === $el::COMPARE_SUCCESS;
   }
 
   public function parse() {

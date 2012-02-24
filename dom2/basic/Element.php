@@ -9,6 +9,7 @@ class Element extends \DOMElement implements dom\element {
 
   const CONTROLER_ALIAS = 'dom';
 
+  protected $compareBadNode;
   // public function __construct()
 
   public function getDocument() {
@@ -221,6 +222,12 @@ class Element extends \DOMElement implements dom\element {
     return $bResult;
   }
 
+  public function loadAttribute($sName, $sUri = '') {
+
+    if ($sUri) return parent::getAttributeNodeNS($sUri, $sName);
+    else return parent::getAttributeNode($sName);
+  }
+
   // public function getById($sId)
   // public function setAttribute($sName, $sValue = '', $sUri = null)
   // public function setAttributes($mAttributes)
@@ -257,7 +264,6 @@ class Element extends \DOMElement implements dom\element {
   public function insertChild(\DOMNode $node, dom\node $referer = null, $bPrevious = false) {
 
     $result = null;
-
     if ($node === $referer) $referer = null;
 
     if ($node->ownerDocument && ($node->ownerDocument !== $this->getDocument())) {
@@ -275,6 +281,7 @@ class Element extends \DOMElement implements dom\element {
 
       if ($referer) $result = parent::insertBefore($node, $referer);
       else $result = parent::appendChild($node);
+
     }
 
     return $result;
@@ -326,6 +333,15 @@ class Element extends \DOMElement implements dom\element {
         $mResult = $this->insertChild($value, $next);
       }
     }
+    else if ($value instanceof dom\collection) {
+
+      $mResult = array();
+
+      foreach($value as $sub) {
+
+        $mResult[] = $this->insertChild($sub, $next);
+      }
+    }
     else if ($value instanceof dom\domable) {
 
       $node = $value->asDOM();
@@ -357,7 +373,10 @@ class Element extends \DOMElement implements dom\element {
 
     $mResult = array();
 
-    foreach ($aValue as $mSubValue) $mResult[] = $this->insert($mSubValue, $next);
+    foreach ($aValue as $mSubValue) {
+
+      $mResult[] = $this->insert($mSubValue, $next);
+    }
 
     if ($mResult && count($mResult) == 1) $mValue = array_pop($mResult);
     else $mValue = $mResult;
@@ -484,10 +503,11 @@ class Element extends \DOMElement implements dom\element {
 
     return true;
   }
-  // public function getLast() {
 
-    // return $this->lastChild;
-  // }
+  public function getLast() {
+
+    return $this->lastChild;
+  }
 
   /**
    * Remove the actual element
@@ -575,8 +595,90 @@ class Element extends \DOMElement implements dom\element {
   // public function merge($oElement, $bSelfPrior = false)
   // public function toArray($sAttribute = null, $iDepthAttribute = 0)
   // public function extractNS($sNamespace, $bKeep = false)
-  // private static function compareAttributes($el1, $el2)
-  // public function compare(NodeInterface $element, $aPath = array())
+  private static function compareAttributes($el1, $el2) {
+
+    if ($el2->getAttributes()->length > $el1->getAttributes()->length) {
+
+      $eltmp = $el1;
+      $el1 = $el2;
+      $el2 = $eltmp;
+    }
+
+    foreach ($el1->getAttributes() as $attribute) {
+
+      if (substr($attribute->getName(), 0, 6) == 'xmlns:') continue;
+
+      $compare = $el2->loadAttribute($attribute->getName(), $attribute->getNamespace());
+      if (!$compare || $compare->getValue() != $attribute->getValue()) {
+
+        return $attribute;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Compare two elements and their content, ignore xmlns attributes
+   * Not identical, but relevant to @method isEqualNode()
+   * WARNING : Actually it degrades current element for comparison (TODO)
+   *
+   * @param NodeInterface $element The element to compare with this one
+   * @param? array $aPath The previous compared element for backtrace debug
+   *
+   * @return integer @const self::COMPARE_SUCCESS, @const self::COMPARE_BAD_ELEMENT, @const self::COMPARE_BAD_CHILD, @const self::COMPARE_BAD_ATTRIBUTE
+   */
+  public function compare(dom\element $element, $aPath = array()) {
+
+    $aPath[] = $this->getName();
+
+    if ($element->getType() == self::TEXT ||
+      !($this->getName() == $element->getName()) ||
+      !($this->getNamespace() == $element->getNamespace())) {
+
+      $this->compareBadNode = $this;
+      return self::COMPARE_BAD_ELEMENT;
+    }
+
+    $attribute = self::compareAttributes($this, $element);
+
+    if ($attribute !== true) {
+
+      $this->compareBadNode = $attribute;
+      return self::COMPARE_BAD_ATTRIBUTE;
+    }
+
+    if ($this->getChildren()->length != $element->getChildren()->length) {
+
+      $this->compareBadNode = $this;
+      return self::COMPARE_BAD_CHILD;
+    }
+    else {
+
+      foreach ($element->getChildren() as $iKey => $child) {
+
+        if ($selfChild = $this->getChildren()->item($iKey)) {
+
+          $iResult = $selfChild->compare($child, $aPath);
+
+          if ($iResult !== self::COMPARE_SUCCESS) {
+
+            $this->compareBadNode = $selfChild->compareBadNode;
+            return self::COMPARE_BAD_CHILD;
+          }
+        }
+        else {
+
+          $this->compareBadNode = $this;
+          return self::COMPARE_BAD_CHILD;
+        }
+      }
+    }
+
+    return self::COMPARE_SUCCESS;
+  }
+
+
   // public function updateNamespaces($mFrom = null, $mTo = null, $mPrefix = '', $oParent = null)
 
   protected function getPath() {
@@ -587,8 +689,8 @@ class Element extends \DOMElement implements dom\element {
     //if (method_exists($this, 'getLineNo')) $sLine = $this->getLineNo();
 
     //if (!$sLine) $sLine = 'xx';
-    //$sResult .= $this->getNamespace() . ':' . $this->getName(true);
-    $sResult .= $this->getName(false);
+    $sResult .= $this->getNamespace() . ':' . $this->getName(true);
+    //$sResult .= $this->getName(false);
 
     // if @id or @name, display it
 

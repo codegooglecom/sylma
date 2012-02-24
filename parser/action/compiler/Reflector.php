@@ -366,7 +366,7 @@ class Reflector extends Argumented {
     $window = $this->getWindow();
     $first = $el->getFirst();
 
-    if ($first->getType() === dom\node::TEXT) {
+    if (!$first || $first->getType() === dom\node::TEXT) {
 
       $this->throwException(txt('Invalid children for document, one child element expected in %s, ', $el->asToken()));
     }

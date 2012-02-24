@@ -12,7 +12,8 @@ require_once('core/module/Argumented.php');
 class Insert extends core\module\Argumented implements core\argumentable, core\controled {
 
   protected $content;
-  protected static $iGlobalKey = 0;
+
+  protected $iKey;
 
   public function __construct(php\_window $controler, php\linable $mContent, $iKey = null, $bTemplate = true) {
 
@@ -20,7 +21,7 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
     $this->setNamespace($controler->getNamespace());
 
     $this->bTemplate = $bTemplate;
-    if (is_null($iKey)) $this->iKey = self::$iGlobalKey++;
+    if (is_null($iKey)) $this->iKey = $controler->getKey('insert');
     else $this->iKey = $iKey;
 
     if ($bTemplate) $controler->add(new self($controler, $mContent, $this->getKey(), false));
@@ -37,7 +38,7 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
     $this->content = $mContent;
   }
 
-  protected function getKey() {
+  public function getKey() {
 
     return $this->iKey;
   }

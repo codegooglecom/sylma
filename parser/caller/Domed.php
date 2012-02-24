@@ -7,6 +7,8 @@ require_once('core/module/Argumented.php');
 
 class Domed extends core\module\Argumented {
 
+  const CLASS_PREFIX = 'class';
+
   protected $file;
   protected $document;
   protected $aMethods = array();
@@ -24,7 +26,7 @@ class Domed extends core\module\Argumented {
 
     if ($sElement = $this->readArgument('element', false)) {
 
-      $this->setNamespace($sElement, 'element', false);
+      $this->setNamespace($sElement, self::CLASS_PREFIX, false);
     }
 
     $this->setNamespace($this->readArgument('namespace'), 'php', false);

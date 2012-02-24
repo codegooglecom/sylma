@@ -8,6 +8,7 @@ require_once('dom2/domable.php');
 
 class Domed extends Iterator implements dom\domable {
 
+  protected static $aPrefixes = array();
   /**
    * Build an @class Options's object with this argument's array
    *
@@ -72,6 +73,17 @@ class Domed extends Iterator implements dom\domable {
     return self::buildNode($parent, $aArray);
   }
 
+  protected static function buildPrefix($sNamespace) {
+
+    if (!array_key_exists($sNamespace, self::$aPrefixes)) {
+
+      $sPrefix = 'ns' . count(self::$aPrefixes);
+      self::$aPrefixes[$sNamespace] = $sPrefix;
+    }
+
+    return self::$aPrefixes[$sNamespace] . ':';
+  }
+
   private static function buildNode(dom\complex $parent, array $aArray, $sNamespace) {
 
     foreach ($aArray as $sKey => $mValue) {
@@ -95,7 +107,7 @@ class Domed extends Iterator implements dom\domable {
 
             foreach ($mValue as $mSubValue) {
 
-              $node = $parent->addElement(substr($sKey, 1), null, array(), $sNamespace);
+              $node = $parent->addElement(self::buildPrefix($sNamespace) . substr($sKey, 1), null, array(), $sNamespace);
 
               if (is_array($mSubValue)) self::buildNode($node, $mSubValue, $sNamespace);
               else $node->add($mSubValue);
@@ -105,12 +117,18 @@ class Domed extends Iterator implements dom\domable {
           }
           else {
 
-            $node = $parent->addElement($sKey, null, array(), $sNamespace);
+            $node = $parent->addElement(self::buildPrefix($sNamespace) . $sKey, null, array(), $sNamespace);
           }
         }
 
-        if (is_array($mValue)) self::buildNode($node, $mValue, $sNamespace);
-        else $node->add($mValue);
+        if (is_array($mValue)) {
+
+          self::buildNode($node, $mValue, $sNamespace);
+        }
+        else {
+
+          $node->add($mValue);
+        }
       }
     }
   }

@@ -63,7 +63,7 @@ interface complex extends node {
    * @return boolean TRUE if element contains other nodes
    */
   function hasChildren();
-  
+
   /**
    * Return the number of children of the current element
    * @return integer The children's count
@@ -74,6 +74,11 @@ interface complex extends node {
    * @return dom\node|null The first child node
    */
   function getFirst();
+
+  /**
+   * @return dom\node|null The last child node
+   */
+  function getLast();
 
   function addElement($sName, $mContent = '', array $aAttributes = array(), $sUri = null);
 }

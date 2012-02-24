@@ -62,6 +62,7 @@ class Basic extends core\module\Argumented implements core\user {
 
     $sResult = null;
 
+    //$file = $this->getFile();
     $this->setOptions(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
 
     if (!$sUser || !$sPassword) {
@@ -197,9 +198,8 @@ class Basic extends core\module\Argumented implements core\user {
     return $this->bProfil;
   }
 
+  /*
   public function loadProfile() {
-
-    if (!Controler::getDirectory()) \Sylma::throwException(txt('Directory is not yet ready'));
 
     $sProfil = $this->readArgument('profil');
     $dProfil = $this->getDocument($sProfil);
@@ -218,6 +218,7 @@ class Basic extends core\module\Argumented implements core\user {
     $this->loadGroups();
     $this->saveSession();
   }
+  */
 
   protected function loadGroups() {
 
@@ -296,51 +297,43 @@ class Basic extends core\module\Argumented implements core\user {
     return false;
   }
 
-  public function getMode($sOwner, $sGroup, $sMode, $oOrigin = null) {
+  public function getMode($sOwner, $sGroup, $sMode, $sSource = '[undefined]') {
 
-    //$this->throwException('zone en construction');
     $sMode = (string) $sMode;
-    if ($oOrigin === null) $oOrigin = new \XML_Element('null');
 
     // Validity control of the arguments
 
     if (!$sOwner) {
 
-      Controler::addMessage(xt('Sécurité : "owner" inexistant ! %s', $oOrigin), 'xml/warning');
-    }
-    else if (strlen($sMode) < 3 || !is_numeric($sMode)) {
-
-      Controler::addMessage(xt('Sécurité : "mode" invalide ! - %s', $oOrigin), 'xml/warning');
-    }
-    else if (!strlen($sGroup)) {
-
-      Controler::addMessage(xt('Sécurité : "group" inexistant ! %s', $oOrigin), 'xml/warning');
-    }
-    else {
-
-      // everything is ok
-
-      $iOwner = intval($sMode{0});
-      $iGroup = intval($sMode{1});
-      $iPublic = intval($sMode{2});
-
-      if ($iOwner > 7 || $iGroup > 7 || $iPublic > 7) {
-
-        // check validity of mode
-        Controler::addMessage(xt('Sécurité : Attribut "mode" invalide !', $oOrigin), 'xml/warning');
-      }
-      else {
-
-        // now everything is ok
-        $iMode = $iPublic;
-
-        if ($sOwner == $this->getName()) $iMode |= $iOwner;
-        if ($this->isMember($sGroup)) $iMode |= $iGroup;
-        return $iMode;
-      }
+      $this->throwException(txt('Owner not defined in %s', $sSource));
     }
 
-    return null;
+    if (strlen($sMode) < 3 || !is_numeric($sMode)) {
+
+      $this->throwException(txt('Invalid mode in %s', $sSource));
+    }
+
+    if (!strlen($sGroup)) {
+
+      $this->throwException(txt('Group not defined in %s', $sSource));
+    }
+
+    $iOwner = intval($sMode{0});
+    $iGroup = intval($sMode{1});
+    $iPublic = intval($sMode{2});
+
+    if ($iOwner > 7 || $iGroup > 7 || $iPublic > 7) {
+
+      $this->throwException(txt('Invalid mode in %s', $sSource));
+    }
+
+    // everything is ok
+    $iMode = $iPublic;
+
+    if ($sOwner == $this->getName()) $iMode |= $iOwner;
+    if ($this->isMember($sGroup)) $iMode |= $iGroup;
+
+    return $iMode;
   }
 
   public function asArgument() {

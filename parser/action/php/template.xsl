@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ls="http://www.sylma.org/security" xmlns:php="http://www.sylma.org/parser/action/compiler" version="1.0">
 
+  <xsl:import href="source.xsl"/>
+
   <xsl:template match="php:window">
     <xsl:variable name="tpl" select="//php:template"/>
     <xsl:choose>
@@ -38,21 +40,29 @@
     </xsl:processing-instruction>
   </xsl:template>
 
-  <xsl:template match="php:template">
-
-  </xsl:template>
-
-  <xsl:template match="php:argument">
+  <xsl:template match="php:template | php:argument">
   </xsl:template>
 
   <xsl:template match="*">
     <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
-      <xsl:apply-templates select="node() | @*"/>
+      <xsl:apply-templates select="@* | node()"/>
     </xsl:element>
   </xsl:template>
 
   <xsl:template match="php:*">
     <xsl:apply-templates select="*"/>
+  </xsl:template>
+
+  <xsl:template match="php:condition">
+    <xsl:if test="@argument">
+      <xsl:processing-instruction name="php">
+        <xsl:text>if ($aArguments[</xsl:text>
+        <xsl:value-of select="@argument"/>
+        <xsl:text>]) : </xsl:text>
+      </xsl:processing-instruction>
+      <xsl:apply-templates select="php:content/*"/>
+      <xsl:processing-instruction name="php">endif; </xsl:processing-instruction>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="text()">

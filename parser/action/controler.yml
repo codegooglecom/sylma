@@ -14,6 +14,10 @@ classes :
     file : /sylma/dom2/basic/handler/Rooted.php
     name : \sylma\dom\basic\handler\Rooted
   action :
-    name : Handler
+    name : handler\Action
   path :
     name : Path
+  parser :
+    classes :
+      security :
+        name : \sylma\parser\security\Domed

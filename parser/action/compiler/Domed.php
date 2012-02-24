@@ -1,11 +1,21 @@
 <?php
 
+/**
+* This file is part of the PHP framework Sylma : http://www.sylma.org
+*
+* @copyright 2012 Rodolphe Gerber [rodolphe.gerber@sylma.org]
+* @licence http://www.gnu.org/licenses/gpl.html General Public Licence version 3
+*/
+
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom;
+use sylma\core, sylma\dom, sylma\parser, sylma\parser\action\php;
 
 require_once('Action.php');
+require_once('parser/elemented.php');
 
-abstract class Domed extends Action {
+abstract class Domed extends Action implements parser\elemented {
+
+  protected $currentElement;
 
   protected function parseDocument(dom\document $doc) {
 
@@ -84,7 +94,7 @@ abstract class Domed extends Action {
     }
     else {
 
-      $mResult = $this->parseElementForeign($el);
+      $mResult = $this->parseElementForeign($el, $this->getControler()->create('document'));
     }
 
     return $mResult;
@@ -95,11 +105,11 @@ abstract class Domed extends Action {
    * @param dom\element $el
    * @return dom\node|array|null
    */
-  protected function parseElementForeign(dom\element $el) {
+  protected function parseElementForeign(dom\element $el, dom\complex $parent) {
 
     $mResult = null;
 
-    if ($el->getNamespace() == $this->getNamespace('element')) {
+    if ($el->getNamespace() == $this->getNamespace('class')) {
 
       $mResult = $this->reflectSelfCall($el);
     }
@@ -110,13 +120,32 @@ abstract class Domed extends Action {
     else {
 
       $this->useTemplate(true);
+if ($el->getName() == 'span') {
 
-      $mResult = $this->getControler()->create('document');
-      $mResult->addElement($el->getName(), null, array(), $el->getNamespace());
+  $test = true;
+}
+      $newElement = $parent->addElement($el->getName(), null, array(), $el->getNamespace());
 
-      if ($aAttr = $this->parseAttributes($el)) $mResult->add($aAttr);
+      if ($this->useForeignAttributes($el)) {
 
-      if ($aChildren = $this->parseChildren($el)) $mResult->add($aChildren);
+        $mResult = $this->parseAttributes($el, $newElement->getHandler());
+      }
+      else {
+
+        if ($el->getAttributes()->length) {
+
+          $newElement->add($el->getAttributes());
+        }
+
+        $mResult = $newElement->getHandler();
+      }
+
+      if ($aChildren = $this->parseChildren($el)) {
+
+        $newElement->add($aChildren);
+      }
+
+      //dspm($doc->asString());
     }
 
     return $mResult;
@@ -139,7 +168,7 @@ abstract class Domed extends Action {
       }
       else if ($mResult = $this->parseElement($child)) {
 
-        if (!$mResult instanceof dom\node) {
+        if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
 
           $mResult = $this->getWindow()->createInsert($mResult, $this->useString());
         }
@@ -149,5 +178,68 @@ abstract class Domed extends Action {
     }
 
     return $aResult;
+  }
+
+  protected function useForeignAttributes(dom\element $el) {
+
+    $bResult = false;
+
+    foreach ($el->getAttributes() as $attr) {
+
+      $sNamespace = $attr->getNamespace();
+
+      if ($sNamespace && $sNamespace != $this->getNamespace()) {
+
+        $bResult = true;
+        break;
+      }
+    }
+
+    return $bResult;
+  }
+
+  /**
+   *
+   * @param dom\element $el
+   * @return dom\node
+   */
+  protected function parseAttributes(dom\element $el, dom\handler $resultHandler) {
+
+    $aForeigns = array();
+    $result = $resultHandler;
+
+    foreach ($el->getAttributes() as $attr) {
+
+      $sNamespace = $attr->getNamespace();
+
+      if (!$sNamespace || $sNamespace == $this->getNamespace()) {
+
+        $resultHandler->add($attr);
+      }
+      else {
+
+        $aForeigns[$sNamespace] = true;
+      }
+    }
+
+    foreach ($aForeigns as $sNamespace => $bVal) {
+
+      if ($parser = $this->getParser($sNamespace)) {
+
+        if (!$parser instanceof parser\attributed) {
+
+          $this->throwException(txt('Cannot use parser %s with attributes', $sNamespace));
+        }
+
+        $result = $parser->parseAttributes($el, $result->getRoot(), $resultHandler);
+      }
+    }
+
+    return $result;
+  }
+
+  protected function parseAttribute(dom\attribute $attr) {
+
+    return $attr;
   }
 }

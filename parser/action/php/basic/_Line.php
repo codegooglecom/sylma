@@ -7,17 +7,17 @@ require_once('core/argumentable.php');
 require_once('Controled.php');
 
 class _Line extends Controled implements core\argumentable {
-  
+
   private $content;
-  
+
   public function __construct(php\_window $controler, $content) {
-    
+
     $this->setControler($controler);
     $this->content = $content;
   }
-  
+
   public function asArgument() {
-    
+
     return $this->getControler()->createArgument(array(
       'line' => $this->content,
     ));

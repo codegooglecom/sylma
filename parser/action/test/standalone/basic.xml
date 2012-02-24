@@ -26,7 +26,7 @@
       $controler->setArgument('action', $controler->getAction('samples/call-dom'));
     </tst:prepare>
     <tst:node>
-      <div>abc</div>
+      <div xmlns="http://www.sylma.org">abc</div>
     </tst:node>
     <tst:expected>
       $action = $controler->getArgument('action');
@@ -41,7 +41,7 @@
       $controler->setArgument('action', $controler->getAction('samples/multi-node'));
     </tst:prepare>
     <tst:node>
-      <div><h1>Titre</h1><p><div>abc</div></p><p><div>Hello world</div><ul><li>item 1</li><li>item 2</li></ul></p></div>
+      <div xmlns="http://www.sylma.org"><h1>Titre</h1><p><div xmlns="http://www.sylma.org">abc</div></p><p><div>Hello world</div><ul><li>item 1</li><li>item 2</li></ul></p></div>
     </tst:node>
     <tst:expected>
       $action = $controler->getArgument('action');

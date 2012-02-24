@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\xslt;
-use \sylma\dom, \sylma\parser;
+use sylma\core, sylma\dom, sylma\parser;
 
 require_once('dom2/basic/handler/Rooted.php');
 
@@ -70,6 +70,39 @@ class Handler extends dom\basic\handler\Rooted {
     return $this->processor;
   }
 
+  /**
+   *
+   * @param dom\element $el
+   * @param array $aPaths
+   * @return fs\file
+   */
+  protected function buildExternal(dom\element $el, array &$aPaths = array()) {
+
+    $result = null;
+    $sHref = $el->readAttribute('href');
+
+    if ($this->getFile()) {
+
+      $dir = $this->getFile()->getParent();
+      $fs = $dir->getControler();
+    }
+    else {
+
+      $dir = null;
+      $fs = $this->getControler('fs');
+    }
+
+    require_once('core/functions/Path.php');
+    $sPath = core\functions\path\toAbsolute($sHref, $dir);
+
+    if (!in_array($sPath, $aPaths)) {
+
+      $result = $fs->getFile($sPath, $dir);
+    }
+
+    return $result;
+  }
+
   public function includeElement(dom\element $el, dom\element $ext = null) {
 
     $sPrefixes = 'extension-element-prefixes';
@@ -127,7 +160,7 @@ class Handler extends dom\basic\handler\Rooted {
     }
   }
 
-  public function includeExternal(parser\xslt\Handler $template, dom\element $external = null, array $aMarks = array(), array &$aPaths = array(), $iLevel = 0) {
+  public function includeExternal(parser\xslt\Handler $template, dom\element $external = null, array &$aPaths = array(), $iLevel = 0) {
 
     if ($template->isEmpty()) {
 
@@ -165,14 +198,14 @@ class Handler extends dom\basic\handler\Rooted {
         //if ($this->getFile()) $aPaths[] = (string) $this->getFile();
         //$aMarks = $this->query('le:mark', array('le' => SYLMA_NS_EXECUTION)); // look for mark elements source
 
-        $aPaths = $aMarks = array();
+        $aPaths = array();
 
         foreach ($imports as $href) {
 
           if ($file = $this->buildExternal($href, $aPaths)) {
 
-            $template = new self((string) $file, \Sylma::MODE_EXECUTION);
-            $this->includeExternal($template, $href, $aMarks, $aPath, $iLevel);
+            $template = new self((string) $file, \Sylma::MODE_EXECUTE);
+            $this->includeExternal($template, $href, $aPaths, $iLevel);
           }
 
           $href->remove();
