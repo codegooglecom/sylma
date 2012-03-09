@@ -8,14 +8,13 @@ require_once('parser/domed.php');
 
 class Controler extends core\module\Domed implements parser\elemented {
 
-  const NS = 'http://www.sylma.org/parser/caller';
-
   protected $aInterfaces = array();
   protected $parent;
 
   public function __construct() {
 
-    $this->setNamespace(self::NS);
+    require_once('parser/caller.php');
+    $this->setNamespace(parser\caller::NS);
 
     $this->setDirectory(__FILE__);
     $this->setArguments('controler.yml');

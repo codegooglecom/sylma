@@ -287,14 +287,14 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
     \Sylma::throwException($sMessage, $mSender, $iOffset);
   }
 
-  public function saveFile(fs\editable\file $file) {
+  public function saveFile(fs\editable\file $file, $bFormat = false) {
 
     if ($this->isEmpty()) {
 
       $this->throwException(txt('You cannot save empty document in %s', $file->asToken()));
     }
 
-    //$this->getRoot()->prepareHTML();
+    if ($bFormat) $this->getRoot()->prepareHTML();
     $file->saveText($this->asString(self::STRING_HEAD));
   }
 

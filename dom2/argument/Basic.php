@@ -28,7 +28,7 @@ abstract class Basic extends core\module\Controled implements core\argument {
     $this->registerNamespaces($aNS);
 
     $this->setControler($this->getControler('dom'));
-    
+
     // first element define default namespace & prefix
 
     if (!$this->getPrefix()) {
@@ -165,10 +165,12 @@ abstract class Basic extends core\module\Controled implements core\argument {
 
     if (!$bElement || ($result->hasChildren() && !$result->isComplex())) {
 
-      $this->throwException(txt('Cannot use @path %s as complex element', $sPath));
+      if ($bDebug) $this->throwException(txt('Cannot use @path %s as complex element', $sPath));
     }
+    else {
 
-    $result = new Iterator($dom->create('handler', array($result)), $this->getNS());
+      $result = new Iterator($dom->create('handler', array($result)), $this->getNS());
+    }
 
     return $result;
   }

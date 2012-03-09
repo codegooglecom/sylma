@@ -1,11 +1,12 @@
 <?php
 
 namespace sylma\parser\caller;
-use sylma\core, sylma\storage\fs, sylma\dom, sylma\parser\action\php;
+use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\action\php;
 
 require_once('core/module/Argumented.php');
+require_once('parser/caller.php');
 
-class Domed extends core\module\Argumented {
+class Domed extends core\module\Argumented implements parser\caller {
 
   const CLASS_PREFIX = 'class';
 
@@ -33,12 +34,12 @@ class Domed extends core\module\Argumented {
     $this->setName($this->readArgument('name'));
   }
 
-  public function getFile() {
+  protected function getFile() {
 
     return $this->file;
   }
 
-  public function setFile(fs\file $file) {
+  protected function setFile(fs\file $file) {
 
     $this->file = $file;
   }
@@ -48,7 +49,7 @@ class Domed extends core\module\Argumented {
     return $this->sName;
   }
 
-  public function setName($sNamespace) {
+  protected function setName($sNamespace) {
 
     $this->sName = $sNamespace;
   }
@@ -59,7 +60,7 @@ class Domed extends core\module\Argumented {
 
     if (!$sMethod) {
 
-      $this->throwException(txt('No method defined for call in %s', $el->asToken()));
+      $this->throwException(txt('Invalid element, no method defined for call in %s', $el->asToken()));
     }
 
     return $this->loadCall($obj, $this->getMethod($sMethod), $el->getChildren());
@@ -67,11 +68,17 @@ class Domed extends core\module\Argumented {
 
   public function loadCall(php\basic\_ObjectVar $obj, Method $method, dom\collection $args) {
 
-    $aArguments = $this->parseArguments($args);
+    $aResult = array();
 
+    $aArguments = $this->parseArguments($args);
     $call = $method->reflectCall($obj->getControler(), $obj, $aArguments);
 
-    return $this->getControler()->getParent()->runCall($call, $args);
+    $aResult = array_merge($aResult, $this->getControler()->getParent()->runConditions($call, $args));
+    $aResult = array_merge($aResult, $this->getControler()->getParent()->runCalls($call, $args));
+
+    if (!$aResult) $aResult[] = $call;
+
+    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
   protected function parseNode(dom\node $node) {
@@ -116,7 +123,7 @@ class Domed extends core\module\Argumented {
     $aResult = array();
     $iKey = 0;
 
-    foreach ($children as $child) {
+    while ($child = $children->current()) {
 
       switch ($child->getType()) {
 
@@ -128,7 +135,15 @@ class Domed extends core\module\Argumented {
 
         case dom\node::ELEMENT :
 
-          if ($child->getNamespace() == $this->getNamespace() && $child->getName() == 'call') break;
+          // if not special call (with parent namespace), use as argument
+
+          if ($child->getNamespace() == $this->getControler()->getParent()->getNamespace()) {
+
+            if (in_array($child->getName(), array('call', 'if', 'if-not'))) {
+
+              break 2;
+            }
+          }
 
           $arg = $this->parseArgument($child, $iKey);
 
@@ -141,13 +156,14 @@ class Domed extends core\module\Argumented {
           $this->throwException(txt('Cannot use %s, valid argument expected', $child->asToken()));
       }
 
+      $children->next();
       $iKey++;
     }
 
     return $aResult;
   }
 
-  public function getMethod($sName) {
+  protected function getMethod($sName) {
 
     if (!array_key_exists($sName, $this->aMethods)) {
 
@@ -161,7 +177,13 @@ class Domed extends core\module\Argumented {
 
     $controler = $this->getControler();
 
-    $arg = $this->getArgument('#' . $sToken . ':'. $sMethod);
+    $arg = $this->getArgument('#' . $sToken . ':'. $sMethod, null, false);
+
+    if (!$arg) {
+
+      $this->throwException(txt('Cannot find method %s', $sMethod));
+    }
+
     $result = $controler->create('method', array($this, $arg));
 
     return $result;

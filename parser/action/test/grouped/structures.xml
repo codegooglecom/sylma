@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Structures</tst:description>
+  <tst:test name="On short-call">
+    <le:action>
+      <lm:file path="samples/path.txt">
+        <le:if>hello</le:if>
+      </lm:file>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="On ext-call">
+    <le:action>
+      <lm:file path="samples/path.txt">
+        <li:call name="get-parent">
+          <le:if>hello</le:if>
+        </li:call>
+      </lm:file>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="With adjacent call, text result">
+    <le:action>
+      <le:settings>
+        <le:return format="txt"/>
+      </le:settings>
+      <lm:file path="samples/path.txt">
+        <le:if>hello</le:if>
+        <li:call name="get-name"/>
+      </lm:file>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'hellopath.txt';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="With adjacent call, array result">
+    <le:action>
+      <le:settings>
+        <le:return format="array"/>
+      </le:settings>
+      <lm:file path="samples/path.txt">
+        <le:if>hello</le:if>
+        <li:call name="get-name"/>
+      </lm:file>
+    </le:action>
+    <tst:expected>
+      $aResult = $controler->getResult('array');
+
+      return
+        $aResult === array('hello', 'path.txt');
+    </tst:expected>
+  </tst:test>
+  <tst:test name="On argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" name="path"/>
+      </le:settings>
+      <le:get-argument name="path">
+        <le:if>
+          <le:array>
+            <le:get-argument name="path"/>
+            <le:text>def</le:text>
+          </le:array>
+        </le:if>
+      </le:get-argument>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array('path' => 'abc'));
+    </tst:prepare>
+    <tst:expected>
+      $aResult = $controler->getResult('array');
+
+      return
+        $aResult === array('abc', 'def');
+    </tst:expected>
+  </tst:test>
+  <tst:test name="On variable">
+    <le:action>
+      <le:settings>
+        <lm:file path="samples/path.txt" le:set-variable="var"/>
+      </le:settings>
+      <le:get-variable name="var">
+        <le:if>hello</le:if>
+      </le:get-variable>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'hello';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

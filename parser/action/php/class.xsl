@@ -138,6 +138,12 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
     <xsl:text>'</xsl:text>
   </xsl:template>
 
+  <xsl:template match="php:not">
+    <xsl:text>!(</xsl:text>
+    <xsl:apply-templates/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+
   <xsl:template match="php:numeric">
     <xsl:value-of select="."/>
   </xsl:template>

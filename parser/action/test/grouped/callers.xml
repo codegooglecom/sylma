@@ -3,6 +3,9 @@
   <tst:description>Callers</tst:description>
   <tst:test name="Load file with short-call">
     <le:action>
+      <le:settings>
+        <le:return format="dom"/>
+      </le:settings>
       <lm:file path="samples/simple.txt"/>
     </le:action>
     <tst:node>
@@ -18,7 +21,9 @@
   </tst:test>
   <tst:test name="Load file with short-call and multiple arguments" disabled="true">
     <le:action>
-      <le:bool value="true" le:set-variable="bool"/>
+      <le:settings>
+        <le:bool value="true" le:set-variable="bool"/>
+      </le:settings>
       <lm:directory path="samples" debug="[$bool]"/>
     </le:action>
     <tst:expected>
@@ -32,6 +37,9 @@
   </tst:test>
   <tst:test name="Load file with self-call">
     <le:action>
+      <le:settings>
+        <le:return format="dom"/>
+      </le:settings>
       <le:call name="get-file">samples/simple.txt</le:call>
     </le:action>
     <tst:node>
@@ -47,6 +55,9 @@
   </tst:test>
   <tst:test name="Load file with self-call and li:argument">
     <le:action>
+      <le:settings>
+        <le:return format="dom"/>
+      </le:settings>
       <le:call name="get-file">
         <li:argument>samples/simple.txt</li:argument>
       </le:call>
@@ -101,8 +112,11 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
-  <tst:test name="Load a directory with obj-call">
+  <tst:test name="Load a directory with ext-call">
     <le:action>
+      <le:settings>
+        <le:return format="dom"/>
+      </le:settings>
       <lm:directory>
         <li:call name="get-directory">
           <li:argument>samples</li:argument>
@@ -122,6 +136,9 @@
   </tst:test>
   <tst:test name="Load a directory with a two level depth obj/element-call">
     <le:action>
+      <le:settings>
+        <le:return format="dom"/>
+      </le:settings>
       <lm:directory>
         <li:call name="get-directory">
           <li:argument>

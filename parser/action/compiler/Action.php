@@ -23,7 +23,8 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   private $document;
 
   private $bTemplate = false;
-  private $bString = true;
+  private $bString = false;
+
   protected $aVariables = array();
 
   /**
@@ -80,7 +81,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     return $this->interface;
   }
 
-  public function setInterface(parser\caller\Domed $interface) {
+  public function setInterface(parser\caller $interface) {
 
     $this->interface = $interface;
   }
@@ -149,6 +150,10 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->return = $this->getWindow()->stringToInstance($sFormat);
   }
 
+  /**
+   *
+   * @return php\_instance
+   */
   protected function getReturn() {
 
     return $this->return;
@@ -156,7 +161,11 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
   public function useTemplate($bValue = null) {
 
-    if (!is_null($bValue)) $this->bTemplate = $bValue;
+    if (!is_null($bValue)) {
+
+      $this->bTemplate = $bValue;
+      $this->useString(true);
+    }
 
     return $this->bTemplate;
   }
@@ -173,9 +182,15 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     return null;
   }
 
-  public function runVar(php\_var $var, dom\collection $children) {
+  /**
+   *
+   * @param php\_var $var
+   * @param dom\collection $children
+   * @return array|\sylma\parser\action\php\_var
+   */
+  protected function runVar(php\_var $var, dom\collection $children) {
 
-    $mResult = null;
+    $aResult = array();
 
     if ($children->current()) {
 
@@ -185,12 +200,9 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
       $caller = $this->getControler('caller');
       $interface = $caller->loadObject($var);
 
-      $aResult = array();
-
       while ($child = $children->current()) {
 
         $children->next();
-
         $call = $interface->parseCall($child, $var);
 
         if ($sub = $this->setVariable($child, $call)) {
@@ -203,34 +215,90 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
         }
       }
 
-      if (count($aResult) == 1) $mResult = $aResult[0];
-      else $mResult = $aResult;
+//      if (count($aResult) == 1) $mResult = $aResult[0];
+//      else $mResult = $aResult;
 
       $window->stopScope();
     }
-    else {
 
-      $mResult = $var;
-    }
-
-    return $mResult;
+    return $aResult;
   }
 
-  public function runCall(php\basic\CallMethod $call, dom\collection $children) {
+  /**
+   *
+   * @param php\basic\CallMethod $call
+   * @param dom\collection $children
+   * @return array
+   */
+  public function runCalls(php\basic\CallMethod $call, dom\collection $children) {
 
-    $mResult = null;
+    $aResult = array();
 
     if ($children->current()) {
 
       $var = $call->getVar();
-      $mResult = $this->runVar($var, $children);
-    }
-    else {
-
-      $mResult = $call;
+      $aResult = $this->runVar($var, $children);
     }
 
-    return $mResult;
+    return $aResult;
+  }
+
+  /**
+   *
+   * @param php\basic\CallMethod $call
+   * @param dom\collection $children
+   * @return array
+   */
+  public function runConditions(php\basic\CallMethod $call, dom\collection $children) {
+
+    $aResult = array();
+
+    while ($child = $children->current()) {
+
+      if ($child->getNamespace() == $this->getNamespace()) {
+
+        // from here, condition can be builded
+
+        $sName = $child->getName();
+        $window = $this->getWindow();
+
+        if ($child->getChildren()->length != 1) {
+
+          $this->throwException(txt('Invalid children, one child expected in %s', $child->asToken()));
+        }
+
+        $content = $this->parse($child->getFirst());
+        $var = $window->createVar($content);
+
+        $window->add($window->create('assign', array($window, $var, $window->stringToInstance('php-null'))));
+        $assign = $window->create('assign', array($window, $var, $content));
+
+        if ($sName == 'if') {
+
+          $condition = $window->create('condition', array($window, $call->getVar(), $assign));
+        }
+        else if ($sName == 'if-not') {
+
+          $not = $window->createNot($call->getVar());
+          $condition = $window->create('condition', array($window, $not, $assign));
+        }
+        else {
+
+          $this->throwException(txt('Condition expected, invalid %s', $child->asToken()));
+        }
+
+        $window->add($condition);
+        $aResult[] = $var;
+      }
+      else {
+
+        break;
+      }
+
+      $children->next();
+    }
+
+    return $aResult;
   }
 
   protected function setVariable(dom\element $el, $obj) {
@@ -251,7 +319,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
       }
       else {
 
-        $result = $this->getWindow()->createVar($obj);
+        $result = $this->getWindow()->addVar($obj);
       }
     }
 
@@ -274,7 +342,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     //$tst = $arg->get('window')->query();
     //dspm((string) $tst[1]);
-    
+
     $result = $arg->asDOM();
 
     $sTemplate = $this->useTemplate() ? 'true' : 'false';

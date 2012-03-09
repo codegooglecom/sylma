@@ -38,7 +38,7 @@ abstract class Domed extends Action implements parser\elemented {
       $settings->remove();
     }
 
-    $aResult = $this->parseChildren($doc);
+    $aResult = $this->parseChildren($doc->getChildren());
 
     return $aResult;
   }
@@ -120,10 +120,7 @@ abstract class Domed extends Action implements parser\elemented {
     else {
 
       $this->useTemplate(true);
-if ($el->getName() == 'span') {
 
-  $test = true;
-}
       $newElement = $parent->addElement($el->getName(), null, array(), $el->getNamespace());
 
       if ($this->useForeignAttributes($el)) {
@@ -140,12 +137,10 @@ if ($el->getName() == 'span') {
         $mResult = $newElement->getHandler();
       }
 
-      if ($aChildren = $this->parseChildren($el)) {
+      if ($aChildren = $this->parseChildren($el->getChildren())) {
 
         $newElement->add($aChildren);
       }
-
-      //dspm($doc->asString());
     }
 
     return $mResult;
@@ -156,11 +151,11 @@ if ($el->getName() == 'span') {
    * @param dom\element $el
    * @return array
    */
-  protected function parseChildren(dom\complex $el) {
+  protected function parseChildren(dom\collection $children) {
 
     $aResult = array();
 
-    foreach ($el->getChildren() as $child) {
+    while ($child = $children->current()) {
 
       if ($child->getType() != $child::ELEMENT) {
 
@@ -170,11 +165,18 @@ if ($el->getName() == 'span') {
 
         if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
 
+          if (is_array($mResult)) {
+
+            $mResult = $this->getWindow()->argToInstance($mResult);
+          }
+
           $mResult = $this->getWindow()->createInsert($mResult, $this->useString());
         }
 
         $aResult[] = $mResult;
       }
+
+      $children->next();
     }
 
     return $aResult;

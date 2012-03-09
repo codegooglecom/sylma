@@ -5,4 +5,6 @@
   <method path="get-directory" name="getParent" return="directory"/>
   <method name="getPath" path="get-path" return="php-string"/>
   <method name="read" path="read" return="php-string"/>
+  <method name="getName" path="get-name" return="php-string"/>
+  <method name="getParent" path="get-parent" return="directory"/>
 </class>

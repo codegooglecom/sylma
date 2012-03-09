@@ -126,7 +126,14 @@ abstract class Argumented extends Domed {
 
     $arg = $this->getActionArgument($sName);
 
-    return $this->runVar($arg, $el->getChildren());
+    $aResult = array();
+
+    //$aResult = array_merge($aResult, $this->runConditions($arg, $el->getChildren()));
+    $aResult = array_merge($aResult, $this->runVar($arg, $el->getChildren()));
+
+    if (!$aResult) $aResult[] = $arg;
+
+    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
   protected function reflectDefault(dom\element $el, php\_var $var) {
@@ -146,7 +153,7 @@ abstract class Argumented extends Domed {
     $window->add($if);
     $window->setScope($if);
 
-    $varDefault = $window->createVar($this->parseNode($el->getFirst()));
+    $varDefault = $window->addVar($this->parseNode($el->getFirst()));
 
     if ($bReturn) {
 
@@ -170,7 +177,7 @@ abstract class Argumented extends Domed {
     }
 
     $result = $this->parseNode($el->getFirst());
-    $validation = $window->createVar($result);
+    $validation = $window->addVar($result);
 
     $call = $window->createCall($window->getSelf(), 'validateArgument', 'php-boolean', array($sArgument, $var, $validation, $bRequired, $bReturn, $bDefault));
     return $window->create('assign', array($this->getWindow(), $var, $call));

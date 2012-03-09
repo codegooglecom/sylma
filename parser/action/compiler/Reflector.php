@@ -148,7 +148,17 @@ class Reflector extends Argumented {
     $call = $method->reflectCall($window, $window->getSelf(), $aArguments);
 
     $this->setVariable($el, $call);
-    return $this->runCall($call, $el->getChildren());
+
+    $children = $el->getChildren();
+
+    $aResult = array();
+
+    $aResult = array_merge($aResult, $this->runConditions($call, $children));
+    $aResult = array_merge($aResult, $this->runCalls($call, $children));
+
+    if (!$aResult) $aResult[] = $call;
+
+    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
   protected function reflectBoolean(dom\element $el) {
@@ -377,7 +387,9 @@ class Reflector extends Argumented {
     $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
 
     $this->setVariable($el, $call);
-    return $this->runCall($call, $el->getChildren());
+    $aCalls = $this->runCalls($call, $el->getChildren());
+
+    return $aCalls ? $aCalls : $call;
   }
 
   protected function reflectVariable(dom\element $el) {

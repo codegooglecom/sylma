@@ -34,6 +34,8 @@ interface _window extends scope, core\argumentable {
    */
   function createCall(php\_object $obj, $sMethod, $mReturn, array $aArguments = array());
 
+  function createString($mContent);
+
   /**
    * @return _instance
    */
@@ -52,7 +54,7 @@ interface _window extends scope, core\argumentable {
   /**
    * @return php\_var
    */
-  function createVar(php\linable $val);
+  function addVar(php\linable $val);
 
   function setScope(php\scope $scope);
 

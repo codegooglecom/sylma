@@ -10,8 +10,12 @@ interface compiler extends parser\domed, dom\domable {
 
   function __construct(parser\action\Controler $controler, dom\handler $doc, fs\directory $dir);
   function getInterface();
-  function setInterface(parser\caller\Domed $interface);
+  function setInterface(parser\caller $interface);
   function useTemplate();
-  function runCall(php\basic\CallMethod $call, dom\collection $children);
+
+  /**
+   * @return array|php\basic\CallMethod|
+   */
+  function runCalls(php\basic\CallMethod $call, dom\collection $children);
 
 }

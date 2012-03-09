@@ -62,6 +62,11 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
+  public function addPath($sValue) {
+
+    $this->aPath[] = $sValue;
+  }
+  
   public function setPath(array $aPath) {
 
     $this->aPath = $aPath;

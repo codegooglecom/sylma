@@ -10,6 +10,11 @@ class Controler extends core\module\Filed {
 
   const FS_EDITABLE = 'fs/editable';
 
+  /**
+   * Format action builded with @method buildAction(), must be set to FALSE in production
+   */
+  const FORMAT_ACTION = true;
+
   public function __construct() {
 
     //$this->loadDefaultArguments();
@@ -51,7 +56,7 @@ class Controler extends core\module\Filed {
     if ($sName) $file = $dir->createFile($sName . '.eml');
     else $file = $dir->createFile('eml', true);
 
-    $doc->saveFile($file);
+    $doc->saveFile($file, self::FORMAT_ACTION);
 
     $result = $this->create('action', array($file, $aArguments, $base));
 

@@ -67,9 +67,16 @@ class Action extends Basic implements core\stringable {
     $parser = $this->getControler();
     $doc = $this->getFile()->getDocument();
 
-    $action = $parser->create('dom', array($parser, $doc, $this->getBaseDirectory()));
+    try {
 
-    $result = $action->asDOM();
+      $action = $parser->create('dom', array($parser, $doc, $this->getBaseDirectory()));
+      $result = $action->asDOM();
+    }
+    catch (core\exception $e) {
+
+      $e->addPath($this->getFile()->asToken());
+      throw $e;
+    }
 
     return $result;
   }
@@ -87,7 +94,7 @@ class Action extends Basic implements core\stringable {
     $tpl = $tmpDir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
 
     $method = $this->reflectAction();
-    
+
     if (self::DEBUG_SHOW) {
       $tmp = $this->create('document', array($method));
       dspm($this->getFile()->asToken());
@@ -96,7 +103,7 @@ class Action extends Basic implements core\stringable {
 
     // set new class and file
 
-    $class = $tmpDir->getFile($sPath, fs\basic\Resource::DEBUG_EXIST);
+    $classFile = $tmpDir->getFile($sPath, fs\basic\Resource::DEBUG_EXIST);
 
     $template = $this->getTemplate('../php/class.xsl');
     $aClass = $this->getClassName($this->getFile());
@@ -108,7 +115,7 @@ class Action extends Basic implements core\stringable {
     ));
 
     $sResult = $template->parseDocument($method, false);
-    $class->saveText($sResult);
+    $classFile->saveText($sResult);
 
     if ($method->getRoot()->testAttribute('use-template')) {
 
@@ -120,7 +127,7 @@ class Action extends Basic implements core\stringable {
       }
     }
 
-    return $class;
+    return $classFile;
   }
 
   protected function parseString(core\stringable $mVal) {

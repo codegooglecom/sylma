@@ -167,6 +167,15 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return $this->create('template', array($this, $node));
   }
 
+  public function addVar(php\linable $val) {
+
+    $var = $this->createVar($val);
+    $assign = $this->create('assign', array($this, $var, $val));
+    $this->add($assign);
+
+    return $var;
+  }
+
   public function createVar(php\linable $val) {
 
     if ($val instanceof Called) {
@@ -189,12 +198,14 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     if ($return instanceof php\_object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
 
-    $var = $this->create($sAlias, array($this, $return, $this->getVarName()));
-    $assign = $this->create('assign', array($this, $var, $val));
+    return $this->create($sAlias, array($this, $return, $this->getVarName()));
+  }
 
-    $this->add($assign);
+  public function createNot($mContent) {
 
-    return $var;
+    return $this->createArgument(array(
+      'not' => array($mContent),
+    ));
   }
 
   public function setInterface(php\basic\_Interface $interface) {
@@ -248,7 +259,10 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       if ($instance instanceof php\_scalar) {
 
-        if ($this->getControler()->useTemplate() && $instance instanceof php\basic\instance\_Array) {
+        $controler = $this->getControler();
+        $bString = $controler->useTemplate() || $controler->useString();
+
+        if ($bString && $instance instanceof php\basic\instance\_Array) {
 
           $aContent = array();
           foreach($instance as $sub) {
@@ -501,7 +515,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     $result->get('window')->mergeArray($this->aContent);
 
     $tt = $result->get('window')->query();
-    
+
     return $result;
   }
 }
