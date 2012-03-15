@@ -146,15 +146,15 @@ class Reflector extends Argumented {
     }
 
     $call = $method->reflectCall($window, $window->getSelf(), $aArguments);
-
-    $this->setVariable($el, $call);
+    $var = $call->getVar(false);
 
     $children = $el->getChildren();
-
     $aResult = array();
 
-    $aResult = array_merge($aResult, $this->runConditions($call, $children));
-    $aResult = array_merge($aResult, $this->runCalls($call, $children));
+    $this->setVariable($el, $var);
+
+    $aResult = array_merge($aResult, $this->runConditions($var, $children));
+    $aResult = array_merge($aResult, $this->runVar($var, $children));
 
     if (!$aResult) $aResult[] = $call;
 
@@ -366,7 +366,7 @@ class Reflector extends Argumented {
     $method = $this->getInterface()->loadMethod($sMethod);
 
     $result = $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
-    $this->setVariable($el, $result);
+    $this->setVariable($el, $result->getVar(false));
 
     return $result;
   }
@@ -386,8 +386,10 @@ class Reflector extends Argumented {
     $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom2/handler.php');
     $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
 
-    $this->setVariable($el, $call);
-    $aCalls = $this->runCalls($call, $el->getChildren());
+    $var = $call->getVar(false);
+
+    $this->setVariable($el, $var);
+    $aCalls = $this->runVar($var, $el->getChildren());
 
     return $aCalls ? $aCalls : $call;
   }
@@ -401,7 +403,14 @@ class Reflector extends Argumented {
       $this->throwException(txt('Unknown variable : %s', $sName));
     }
 
-    return $this->aVariables[$sName];
+    $var = $this->aVariables[$sName];
+
+    if ($var instanceof php\basic\Called) $var = $var->getVar(false);
+    $aResult = $this->runConditions($var, $el->getChildren());
+    
+    if (!$aResult) $aResult[] = $var;
+
+    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
   protected function reflectNS(dom\element $el) {

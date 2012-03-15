@@ -66,7 +66,7 @@ class Cookie extends core\module\Argumented {
     unset($_COOKIE[$sName]);
     setcookie($sName, '', 0, '/'); // , '/', '/sylma/modules/users/', time() - 42000
 
-    $this->dspm(xt('Cookie %s détruit', new HTML_Strong($sName)));
+    //$this->dspm(xt('Cookie %s détruit', new HTML_Strong($sName)));
   }
 
   public function validate() {

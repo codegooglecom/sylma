@@ -10,10 +10,10 @@
 namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser, sylma\parser\action\php;
 
-require_once('Action.php');
+require_once('Runner.php');
 require_once('parser/elemented.php');
 
-abstract class Domed extends Action implements parser\elemented {
+abstract class Domed extends Runner implements parser\elemented {
 
   protected $currentElement;
 

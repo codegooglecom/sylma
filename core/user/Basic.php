@@ -63,39 +63,33 @@ class Basic extends core\module\Argumented implements core\user {
     $sResult = null;
 
     //$file = $this->getFile();
-    $this->setOptions(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
+    //$this->setOptions(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
 
     if (!$sUser || !$sPassword) {
 
-      $this->dspm('Données d\'authentification incomplètes, nom d\'utilisateur ou mot de passe manquants !', 'warning');
+      $this->throwException(t('Cannot authenticate, bad datas !'));
     }
-    else {
 
-      $dUsers = $this->getControler()->getDocument($this->readSettings('users/@path'), \Sylma::MODE_EXECUTE);
+    $dUsers = $this->getControler()->getDocument($this->readArgument('users/path'), \Sylma::MODE_EXECUTE);
 
-      if (!$dUsers || $dUsers->isEmpty()) {
+    if (!$dUsers || $dUsers->isEmpty()) {
 
-        $this->dspm(t('Aucun utilisateur actif sur ce site'), 'action/warning');
-      }
-      else {
-
-        list($spUser, $spPassword) = \addQuote(array($sUser, sha1($sPassword)));
-
-        if (!$eUser = $dUsers->get("//user[@name = $spUser and @password = $spPassword]")) {
-
-          $this->dspm('Nom d\'utilisateur ou mot de passe incorrect !', 'warning');
-        }
-        else {
-
-          // Authentification successed !
-
-          $sResult = $this->setName($sUser);
-          $this->isValid(true);
-
-          dspm(xt('Authentification %s réussie !', new HTML_Strong($sUser)), 'success');
-        }
-      }
+      $this->throwException(t('No active user'));
     }
+
+    list($spUser, $spPassword) = \addQuote(array($sUser, sha1($sPassword)));
+
+    if (!$eUser = $dUsers->getx("//user[@name = $spUser and @password = $spPassword]")) {
+
+      $this->throwException(t('Bad authentication'));
+    }
+
+    // Authentification successed !
+
+    $sResult = $this->setName($sUser);
+    $this->isValid(true);
+
+    dspm(xt('Authentification %s réussie !', $sUser), 'success');
 
     return $sResult;
   }
@@ -113,7 +107,7 @@ class Basic extends core\module\Argumented implements core\user {
     $_SESSION = array();
     // setcookie(session_name(), '', time()-42000, '/');
 
-    return new Redirect('/');
+    return $this->getControler()->create('redirect', array('/'));
   }
 
   /**
@@ -127,7 +121,7 @@ class Basic extends core\module\Argumented implements core\user {
 
       // just authenticated via @method authenticate()
 
-      $this->loadProfile();
+      //$this->loadProfile();
       if ($this->getCookie()) $this->getCookie()->save($this->getName(), $bRemember);
     }
     else if (!$this->loadSession()) {

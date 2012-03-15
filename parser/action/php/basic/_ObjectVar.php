@@ -11,12 +11,13 @@ class _ObjectVar extends _Var implements php\_object {
 
   protected $object;
 
-  public function __construct(php\_window $controler, php\basic\instance\_Object $object, $sName) {
+  public function __construct(php\_window $controler, php\basic\instance\_Object $object, $sName, php\linable $content = null) {
 
     $this->setControler($controler);
 
     $this->setName($sName);
     $this->setInstance($object);
+    if ($content) $this->setContent($content);
   }
 
   public function addContent($mVar) {

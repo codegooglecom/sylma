@@ -96,7 +96,7 @@ abstract class Domed extends Filed {
 
     if ($file = $this->getFile($sPath)) {
 
-      $doc = $file->getDocument($iMode);
+      $doc = $file->getDocument(array(), $iMode);
     }
 
     return $doc;

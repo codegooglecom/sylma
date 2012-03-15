@@ -170,8 +170,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   public function addVar(php\linable $val) {
 
     $var = $this->createVar($val);
-    $assign = $this->create('assign', array($this, $var, $val));
-    $this->add($assign);
+    $var->insert();
 
     return $var;
   }
@@ -198,7 +197,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     if ($return instanceof php\_object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
 
-    return $this->create($sAlias, array($this, $return, $this->getVarName()));
+    return $this->create($sAlias, array($this, $return, $this->getVarName(), $val));
   }
 
   public function createNot($mContent) {

@@ -64,13 +64,23 @@ abstract class Called extends Controled implements php\linable, core\argumentabl
     return $aResult;
   }
 
-  public function getVar() {
+  /**
+   * Build an (optionnaly temporary) variable assigned with this call
+   * @param boolean $bInsert
+   * @return php\_var
+   */
+  public function getVar($bInsert = true) {
 
     if (!$this->var) {
 
-      $this->var = $this->getControler()->addVar($this);
+      if ($bInsert) $this->var = $result = $this->getControler()->addVar($this);
+      else $result = $this->getControler()->createVar($this);
+    }
+    else {
+
+      $result = $this->var;
     }
 
-    return $this->var;
+    return $result;
   }
 }

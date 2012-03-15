@@ -16,6 +16,6 @@ interface compiler extends parser\domed, dom\domable {
   /**
    * @return array|php\basic\CallMethod|
    */
-  function runCalls(php\basic\CallMethod $call, dom\collection $children);
+  function runVar(php\_var $call, dom\collection $children);
 
 }

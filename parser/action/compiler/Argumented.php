@@ -16,6 +16,11 @@ abstract class Argumented extends Domed {
     $this->aActionArguments[$sName] = $var;
   }
 
+  /**
+   *
+   * @param type $sName
+   * @return php\_var
+   */
   protected function getActionArgument($sName) {
 
     if (!array_key_exists($sName, $this->aActionArguments)) {
@@ -125,11 +130,13 @@ abstract class Argumented extends Domed {
     $sName = $el->getAttribute('name');
 
     $arg = $this->getActionArgument($sName);
+    $instance = $arg->getInstance();
 
     $aResult = array();
+    $children = $el->getChildren();
 
-    //$aResult = array_merge($aResult, $this->runConditions($arg, $el->getChildren()));
-    $aResult = array_merge($aResult, $this->runVar($arg, $el->getChildren()));
+    $aResult = array_merge($aResult, $this->runConditions($arg, $children));
+    if ($instance instanceof php\_object) $aResult = array_merge($aResult, $this->runVar($arg, $children));
 
     if (!$aResult) $aResult[] = $arg;
 

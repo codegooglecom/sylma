@@ -1,5 +1,7 @@
 <?php
 
+use sylma\core;
+
 /**
  * Contrôleur général du framework
  */
@@ -74,7 +76,7 @@ public static function addTest($sKey) {
     self::$oDirectory = new XML_Directory('', '', Sylma::get('directories/root/rights')->query());
     Sylma::setControler('storage/filesys', self::$oDirectory);
 
-    if (self::$user->needProfile()) self::$user->loadProfile();
+    //if (self::$user->needProfile()) self::$user->loadProfile();
 
     // Load general parameters - root.xml
     self::loadSettings();
@@ -1078,7 +1080,7 @@ public static function addTest($sKey) {
     return self::$user;
   }
 
-  public static function setUser(User $user) {
+  public static function setUser(core\user $user) {
 
     return self::$user = $user;
   }

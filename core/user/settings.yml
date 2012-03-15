@@ -1,6 +1,6 @@
 users :
   path : /config/users.xml
-groups : 
+groups :
   path : /config/groups.xml
 path: /users
 # Path to edit a user, name will be add as first indexed arg
@@ -23,7 +23,9 @@ session:
   lifetime: 28800
 classes :
   @sylma-classbase : \sylma\core\user
-  user : 
+  user :
     name : Basic
   cookie :
     name : Cookie
+  redirect :
+    \sylma\core\Redirect

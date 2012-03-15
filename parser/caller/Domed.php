@@ -71,10 +71,12 @@ class Domed extends core\module\Argumented implements parser\caller {
     $aResult = array();
 
     $aArguments = $this->parseArguments($args);
-    $call = $method->reflectCall($obj->getControler(), $obj, $aArguments);
 
-    $aResult = array_merge($aResult, $this->getControler()->getParent()->runConditions($call, $args));
-    $aResult = array_merge($aResult, $this->getControler()->getParent()->runCalls($call, $args));
+    $call = $method->reflectCall($obj->getControler(), $obj, $aArguments);
+    $var = $call->getVar(false);
+
+    $aResult = array_merge($aResult, $this->getControler()->getParent()->runConditions($var, $args));
+    $aResult = array_merge($aResult, $this->getControler()->getParent()->runVar($var, $args));
 
     if (!$aResult) $aResult[] = $call;
 
