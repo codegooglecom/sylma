@@ -772,7 +772,7 @@ class DBX_Module extends XDB_Module {
     $sHeaders = "From: $sFrom\r\n";
     
     //$sHeaders .= 'Mime-Version: 1.0'."\r\n";
-    if ($sType == 'html') $sHeaders .= 'Content-type: text/html; charset= utf-8\n';
+    if ($sType == 'html') $sHeaders .= "Content-type: text/html; charset= utf-8\n";
     else $sHeaders .= 'Content-type: text/plain; charset=utf-8'; // text
     
     mail($sTo, $sSubject, (string) $oView, $sHeaders);
