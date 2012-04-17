@@ -769,7 +769,7 @@ class DBX_Module extends XDB_Module {
       new HTML_A($sHref, t('Voir sur le site')),
       new HTML_Br);
     
-    $sHeaders = "From: $sFrom\r\n";
+    $sHeaders = "From: $sFrom\n";
     
     //$sHeaders .= 'Mime-Version: 1.0'."\r\n";
     if ($sType == 'html') $sHeaders .= "Content-type: text/html; charset= utf-8\n";
