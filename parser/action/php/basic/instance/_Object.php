@@ -8,7 +8,7 @@ require_once(dirname(dirname(__dir__)) . '/_object.php');
 require_once(dirname(dirname(__dir__)) . '/_instance.php');
 require_once('core/argumentable.php');
 
-class _Object extends php\basic\Controled implements php\_object, php\_instance, core\argumentable {
+class _Object extends php\basic\Controled implements php\_object, php\_instance {
 
   private $interfaceObject;
 
@@ -35,6 +35,6 @@ class _Object extends php\basic\Controled implements php\_object, php\_instance,
 
   public function asArgument() {
 
-    return $this->getControler()->createArgument(array('instance' => $this->getInterface()->getName()));
+    return $this->getControler()->createArgument(array('instance' => 'object'));
   }
 }

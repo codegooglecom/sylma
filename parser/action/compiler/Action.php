@@ -16,6 +16,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
   const WINDOW_ARGS = 'classes/php';
 
+  const CALLER_ALIAS = 'caller';
   /**
    * See @method setFile()
    * @var storage\fs
@@ -55,7 +56,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $sClass));
     $this->setWindow($window);
 
-    $caller = $this->getControler('caller');
+    $caller = $this->getControler(self::CALLER_ALIAS);
     $caller->setParent($this);
 
     $this->setInterface($caller->getInterface($sClass));

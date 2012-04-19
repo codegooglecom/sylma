@@ -19,6 +19,6 @@ abstract class _Scalar extends core\module\Argumented implements php\_scalar, co
 
   public function useFormat($sFormat) {
 
-    return $this->sFormat = $sFormat;
+    return $this->sFormat == $sFormat;
   }
 }

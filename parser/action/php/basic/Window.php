@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\php\basic;
-use \sylma\parser\action, \sylma\core, \sylma\dom, \sylma\parser\action\php;
+use sylma\parser\action, sylma\core, sylma\dom, sylma\parser\action\php;
 
 require_once('core/module/Filed.php');
 
@@ -447,7 +447,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     $arg = null;
 
     if (is_object($mVar)) {
-
+      
       if ($mVar instanceof dom\node) {
 
         $arg = $this->createTemplate($mVar);

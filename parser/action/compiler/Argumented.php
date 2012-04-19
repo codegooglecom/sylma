@@ -136,7 +136,11 @@ abstract class Argumented extends Domed {
     $children = $el->getChildren();
 
     $aResult = array_merge($aResult, $this->runConditions($arg, $children));
-    if ($instance instanceof php\_object) $aResult = array_merge($aResult, $this->runVar($arg, $children));
+
+    if ($instance instanceof php\_object) {
+
+      $aResult = array_merge($aResult, $this->runVar($arg, $children));
+    }
 
     if (!$aResult) $aResult[] = $arg;
 

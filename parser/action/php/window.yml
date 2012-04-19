@@ -31,7 +31,7 @@ classes :
   boolean :
     name : instance\_Boolean
   concat :
-    name : _String
+    name : Concat
   condition :
     name : Condition
   test :

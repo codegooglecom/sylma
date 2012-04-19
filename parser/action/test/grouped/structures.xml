@@ -14,6 +14,33 @@
         $sResult === 'hello';
     </tst:expected>
   </tst:test>
+  <tst:test name="On self-call">
+    <le:action>
+      <le:call name="get-directory">
+        <le:if>hello</le:if>
+      </le:call>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="On self-call with arguments">
+    <le:action>
+      <le:call name="get-file">
+        <le:text>samples/path.txt</le:text>
+        <le:if>hello</le:if>
+      </le:call>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'hello';
+    </tst:expected>
+  </tst:test>
   <tst:test name="On ext-call">
     <le:action>
       <lm:file path="samples/path.txt">
@@ -95,6 +122,21 @@
       <le:get-variable name="var">
         <le:if>hello</le:if>
       </le:get-variable>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === 'hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="On self-call inverted">
+    <le:action>
+      <le:call name="get-file">
+        <le:text>samples/nofile.txt</le:text>
+        <le:bool value="false"/>
+        <le:if-not>hello</le:if-not>
+      </le:call>
     </le:action>
     <tst:expected>
       $sResult = $controler->getResult('txt');

@@ -137,6 +137,7 @@ class Reflector extends Argumented {
 
     $window = $this->getWindow();
     $method = $this->getInterface()->loadMethod($el->getName(), 'element');
+
     $aArguments = array();
 
     foreach ($el->getAttributes() as $attr) {
@@ -305,6 +306,7 @@ class Reflector extends Argumented {
 
     $iKey = 0;
 
+    // load arguments
     foreach ($children as $child) {
 
       if ($child->getType() != dom\node::ELEMENT) {
@@ -365,8 +367,8 @@ class Reflector extends Argumented {
 
     $method = $this->getInterface()->loadMethod($sMethod);
 
-    $result = $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
-    $this->setVariable($el, $result->getVar(false));
+    $result = $this->runObject($el, $window->getSelf(), $method);
+    //$result = $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
 
     return $result;
   }
@@ -386,12 +388,9 @@ class Reflector extends Argumented {
     $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom2/handler.php');
     $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
 
-    $var = $call->getVar(false);
+    $mResult = $this->runObject($el, $call->getVar(false));
 
-    $this->setVariable($el, $var);
-    $aCalls = $this->runVar($var, $el->getChildren());
-
-    return $aCalls ? $aCalls : $call;
+    return $mResult;
   }
 
   protected function reflectVariable(dom\element $el) {
@@ -407,7 +406,7 @@ class Reflector extends Argumented {
 
     if ($var instanceof php\basic\Called) $var = $var->getVar(false);
     $aResult = $this->runConditions($var, $el->getChildren());
-    
+
     if (!$aResult) $aResult[] = $var;
 
     return count($aResult) == 1 ? reset($aResult) : $aResult;

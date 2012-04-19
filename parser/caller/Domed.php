@@ -54,7 +54,7 @@ class Domed extends core\module\Argumented implements parser\caller {
     $this->sName = $sNamespace;
   }
 
-  public function parseCall(dom\element $el, php\basic\_ObjectVar $obj) {
+  public function parseCall(dom\element $el, php\basic\_ObjectVar $var) {
 
     $sMethod = $el->getAttribute('name');
 
@@ -63,24 +63,16 @@ class Domed extends core\module\Argumented implements parser\caller {
       $this->throwException(txt('Invalid element, no method defined for call in %s', $el->asToken()));
     }
 
-    return $this->loadCall($obj, $this->getMethod($sMethod), $el->getChildren());
+    return $this->getControler()->getParent()->runObject($el, $var, $this->getMethod($sMethod));
   }
 
-  public function loadCall(php\basic\_ObjectVar $obj, Method $method, dom\collection $args) {
-
-    $aResult = array();
+  public function loadCall(php\basic\_ObjectVar $var, Method $method, dom\collection $args) {
 
     $aArguments = $this->parseArguments($args);
 
-    $call = $method->reflectCall($obj->getControler(), $obj, $aArguments);
-    $var = $call->getVar(false);
+    $call = $method->reflectCall($var->getControler(), $var, $aArguments);
 
-    $aResult = array_merge($aResult, $this->getControler()->getParent()->runConditions($var, $args));
-    $aResult = array_merge($aResult, $this->getControler()->getParent()->runVar($var, $args));
-
-    if (!$aResult) $aResult[] = $call;
-
-    return count($aResult) == 1 ? reset($aResult) : $aResult;
+    return $call;
   }
 
   protected function parseNode(dom\node $node) {

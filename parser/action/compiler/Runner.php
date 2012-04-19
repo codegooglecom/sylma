@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\parser\action\php;
+use sylma\core, sylma\dom, sylma\parser\action\php, sylma\parser;
 
 require_once('Action.php');
 
@@ -24,7 +24,7 @@ abstract class Runner extends Action {
       $window = $this->getWindow();
       $window->setScope($var);
 
-      $caller = $this->getControler('caller');
+      $caller = $this->getControler(self::CALLER_ALIAS);
       $interface = $caller->loadObject($var);
 
       while ($child = $children->current()) {
@@ -110,5 +110,37 @@ abstract class Runner extends Action {
     }
 
     return $aResult;
+  }
+
+  public function runObject(dom\element $el, php\basic\_ObjectVar $var, parser\caller\Method $method = null) {
+
+    $children = $el->getChildren();
+
+    if ($method) {
+
+      $interface = $this->getControler(self::CALLER_ALIAS)->loadObject($var);
+      $call = $interface->loadCall($var, $method, $children);
+      $resultVar = $call->getVar(false);
+    }
+    else {
+
+      $resultVar = $var;
+    }
+
+    $this->setVariable($el, $resultVar);
+
+    $aResult = array();
+
+    $aResult = array_merge($aResult, $this->runConditions($resultVar, $children));
+    $aResult = array_merge($aResult, $this->runVar($resultVar, $children));
+
+    // Child result returned by default, else parent result is returned
+    if (!$aResult) {
+
+      $aResult[] = $resultVar;
+      $resultVar->insert();
+    }
+
+    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 }

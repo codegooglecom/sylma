@@ -4,10 +4,10 @@ namespace sylma\parser\action\php\basic;
 use sylma\parser\action\php, sylma\core;
 
 require_once('instance/_Scalar.php');
-
 require_once('core/argumentable.php');
+require_once(dirname(__dir__) . '/_instance.php');
 
-class _String extends instance\_Scalar implements core\argumentable {
+class Concat extends instance\_Scalar implements php\_instance, core\argumentable {
 
   protected $sFormat = 'php-string';
 
