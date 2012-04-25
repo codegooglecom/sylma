@@ -40,7 +40,7 @@ class Controler extends core\module\Filed {
 
     return $this->create('action', array($path->getFile(), $aArguments));
   }
-
+  
   public function buildAction(dom\handler $doc, array $aArguments = array(), fs\editable\directory $dir = null, fs\directory $base = null, $sName = '') {
 
     $fs = $this->getControler(self::FS_EDITABLE);

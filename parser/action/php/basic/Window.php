@@ -32,7 +32,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   // static reference to class
   private $sylma;
 
-  protected $sContext = 'default';
+  protected $sContext = self::CONTEXT_DEFAULT;
 
   protected $aScopes = array();
 
@@ -51,7 +51,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
     $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom2/node.php');
     $this->setInterface($node->getInterface());
-
+    
     //$this->sylma = $this->create('class-static', array('\Sylma'));
   }
 

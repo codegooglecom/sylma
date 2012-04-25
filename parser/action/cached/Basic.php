@@ -4,19 +4,23 @@ namespace sylma\parser\action\cached;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
 require_once('core/module/Domed.php');
+require_once('core/stringable.php');
 
 require_once(dirname(__dir__) . '/cached.php');
-require_once('core/stringable.php');
 
 abstract class Basic extends core\module\Domed implements parser\action\cached, core\stringable {
 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
-
-  public function __construct(fs\directory $dir, parser\action $controler, array $aArguments = array()) {
+  
+  protected $aResults = null;
+  protected $bRunned = false;
+  
+  public function __construct(fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
 
     require_once('parser/action.php');
 
+    $this->aContexts = $aContexts;
     $this->setControler($controler);
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
@@ -36,13 +40,30 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
    */
   abstract protected function runAction();
 
+  protected function parseAction() {
+    
+    return $this->runAction();
+  }
+  
   /**
-   *
+   * Allow management of multiple calls on same action
    * @return array|mixed
    */
-  protected function parseAction() {
+  protected function loadAction() {
 
-    return $this->runAction();
+    $aResult = null;
+
+    if (!$this->bRunned) {
+    
+      $aResult = $this->aResults = $this->parseAction();
+      $this->bRunned = true;
+    }
+    else {
+      
+      $aResult = $this->aResults;
+    }
+
+    return $aResult;
   }
 
   protected function loadArgumentable(core\argumentable $val = null) {
@@ -127,6 +148,27 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $aVal;
   }
 
+  protected function loadActionContexts(parser\action\cached $action) {
+    
+    foreach ($this->aContexts as $sContext) {
+      
+      $this->aContexts[$sContext] += $action->getContext($sContext);
+    }
+  }
+  
+  public function getContext($sContext = self::CONTEXT_DEFAULT) {
+    
+    $aResult = array();
+    $aContexts = $this->loadAction();
+    
+    if (array_key_exists($sContext, $aContexts)) {
+      
+      $aResult = $aContexts[$sContext];
+    }
+    
+    return $aResult;
+  }
+
   protected function validateObject($val, $sInterface) {
 
     if (!$val instanceof $sInterface) {
@@ -145,7 +187,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asObject() {
 
-    $aResult = $this->parseAction();
+    $aResult = $this->getContext();
 
     if (!$aResult) {
 
@@ -157,7 +199,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asArray() {
 
-    $aAction = array_values($this->parseAction());
+    $aAction = array_values($this->getContext());
 
     if (count($aAction) == 1 && is_array(current($aAction))) $aResult = current($aAction);
     else $aResult = $aAction;
@@ -167,23 +209,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asString($iMode = 0) {
 
-    $mResult = $this->parseAction();
-
-    /*
-    if (is_object($mVal)) {
-
-      $sResult = (string) $mVal;
-    }
-    else if (is_string($mVal)) {
-
-      $sResult = $mVal;
-    }
-    else if (is_array($mVal)) {
-
-      $this->throwException(t('Cannot stringed array result'));
-    }
-
-    return $sResult;*/
+    $mResult = $this->getContext();
 
     return (string) implode('', $mResult);
   }

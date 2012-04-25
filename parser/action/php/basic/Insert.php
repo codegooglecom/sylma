@@ -15,7 +15,7 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
 
   protected $iKey;
 
-  protected $sContext;
+  protected $sContext = php\_window::CONTEXT_DEFAULT;
 
   public function __construct(php\_window $controler, php\linable $mContent, $iKey = null, $bTemplate = true) {
 

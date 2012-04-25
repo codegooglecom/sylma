@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\caller;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\action\php;
+use sylma\core, sylma\parser, sylma\dom, sylma\parser\action\php, sylma\storage\fs;
 
 require_once('core/module/Domed.php');
 require_once('parser/domed.php');
@@ -13,15 +13,13 @@ class Controler extends core\module\Domed implements parser\elemented {
 
   protected $parent;
 
-  public function __construct(parser\elemented $parent) {
+  public function __construct() {
 
     require_once('parser/caller.php');
     $this->setNamespace(parser\caller::NS);
 
     $this->setDirectory(__FILE__);
     $this->setArguments('controler.yml');
-
-    $this->setParent($parent);
   }
 
   public function getInterface($sPath, fs\directory $directory = null) {
@@ -34,7 +32,7 @@ class Controler extends core\module\Domed implements parser\elemented {
     if (!array_key_exists($sFile, $this->aFiles)) {
 
       $result = $this->create('interface', array($this, $file));
-      $sClass = $result->getClass();
+      $sClass = $result->getName();
 
       $this->aFiles[$sFile] = $sClass;
       $this->aInterfaces[$sClass] = $result;

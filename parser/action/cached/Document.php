@@ -33,6 +33,7 @@ abstract class Document extends Basic implements dom\domable {
       $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
 */
       $mResult = $this->loadTemplate(0, $aArguments);
+      $mResult = array(self::CONTEXT_DEFAULT => $mResult);
     }
     else {
 
@@ -68,7 +69,7 @@ abstract class Document extends Basic implements dom\domable {
 
   public function asDOM() {
 
-    $mAction = $this->parseAction();
+    $mAction = $this->getContext();
 
     if ($this->useTemplate()) {
 

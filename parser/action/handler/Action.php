@@ -12,7 +12,11 @@ class Action extends Basic implements core\stringable {
   protected $controler;
 
   protected $aArguments = array();
-
+  protected $aContexts = array();
+  
+  protected $action = null;
+  protected $bRunned = false;
+  
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
     $this->aArguments = $aArguments;
@@ -29,9 +33,14 @@ class Action extends Basic implements core\stringable {
     else $this->setBaseDirectory($file->getParent());
   }
 
-  protected function setArgumentsArray($aArguments) {
-
-    $this->aArguments =
+  protected function getContexts() {
+    
+    return $this->aContexts;
+  }
+  
+  protected function setContexts(array $aContexts) {
+    
+    $this->aContexts = $aContexts;
   }
 
   protected function getClassName(fs\file $file) {
@@ -47,7 +56,7 @@ class Action extends Basic implements core\stringable {
 
   protected function createAction($sClass) {
 
-    $result = new $sClass($this->getBaseDirectory(), $this, $this->aArguments);
+    $result = new $sClass($this->getBaseDirectory(), $this, $this->getContexts(), $this->aArguments);
 
     foreach ($this->getControlers() as $sName => $controler) {
 
@@ -55,6 +64,21 @@ class Action extends Basic implements core\stringable {
     }
 
     return $result;
+  }
+
+  /**
+   * Allow management of multiple calls on same action
+   * @return parser\action\cached
+   */
+  protected function runAction() {
+    
+    if (!$this->bRunned) {
+    
+      $this->action = parent::runAction();
+      $this->bRunned = true;
+    }
+    
+    return $this->action;
   }
 
   protected function runCache(fs\file $file) {
@@ -143,6 +167,12 @@ class Action extends Basic implements core\stringable {
   protected function parseObject(parser\action\cached $mVal) {
 
     return $mVal->asObject();
+  }
+
+  public function getContext($sContext) {
+    
+    $action = $this->runAction();
+    return $action->getContext($sContext);
   }
 
   public function asObject() {

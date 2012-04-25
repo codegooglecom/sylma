@@ -87,9 +87,9 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
   </xsl:template>
 
   <xsl:template match="php:insert">
-    <xsl:text>  $aArguments[</xsl:text>
+    <xsl:text>  $aArguments['</xsl:text>
     <xsl:value-of select="@context"/>
-    <xsl:text>][</xsl:text>
+    <xsl:text>'][</xsl:text>
     <xsl:value-of select="@key"/>
     <xsl:text>] = </xsl:text>
     <xsl:apply-templates/>

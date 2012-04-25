@@ -11,7 +11,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
-  const CLASS_FILE_DEFAULT = '/sylma/parser/action/cached/document';
+  const CLASS_FILE_DEFAULT = '/sylma/parser/action/cached/document.iml';
   const CLASS_PREFIX = 'class';
 
   const WINDOW_ARGS = 'classes/php';
@@ -51,10 +51,13 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->setNamespace($controler->getNamespace(), 'self');
     $this->setDirectory($dir);
 
-    $this->setControler($this->create(self::CALLER_ALIAS, array($this)), self::CALLER_ALIAS);
-    $this->setInterface($this->loadInterface($doc));
+    $caller = $this->getControler(self::CALLER_ALIAS);
+    $caller->setParent($this);
+    
+    $interface = $this->loadInterface($doc);
+    $this->setInterface($interface);
 
-    $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $sClass));
+    $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $interface->getName()));
     $this->setWindow($window);
 
     $security = $this->getControler()->create('parser/security');
@@ -117,6 +120,10 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     if (!$sInterface = $doc->getRoot()->readAttribute('interface', null, false)) {
 
       $sInterface = self::CLASS_FILE_DEFAULT;
+    }
+    else {
+      
+      $sInterface = $sInterface . '.iml';
     }
 
     $result = $caller->getInterface($sInterface, $this->getDirectory());
