@@ -3,7 +3,7 @@
 namespace sylma\parser;
 use sylma\dom, sylma\storage\fs;
 
-require_once('dom2\domable.php');
+require_once('dom\domable.php');
 
 interface action extends dom\domable {
 

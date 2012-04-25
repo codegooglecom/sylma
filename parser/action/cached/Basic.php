@@ -13,7 +13,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
 
-  public function __construct(fs\directory $dir, parser\action $controler, array $aArguments) {
+  public function __construct(fs\directory $dir, parser\action $controler, array $aArguments = array()) {
 
     require_once('parser/action.php');
 
@@ -22,6 +22,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     $this->setNamespace(parser\action::NS);
 
     $this->loadDefaultArguments();
+    $this->setArgumentsArray($aArguments);
+  }
+
+  public function setArgumentsArray(array $aArguments) {
+    
     $this->aActionArguments = $aArguments;
   }
 

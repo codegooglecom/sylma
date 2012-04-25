@@ -1,23 +1,109 @@
-classes :
-  sylma :
-    name : Sylma
-  initializer :
-    name : Initializer
-  exception :
-    name : SylmaException
-  controler :
-    name : Controler
-  redirect :
-    name : Redirect
-  messages :
-    name : Messages
-  message :
-    name : Message
-  user :
-    name : User
-  cookie :
-    name : Cookie
-  logger :
-    name : Logger
-  xsl :
-    name : XSL_Document
+debug :
+  enable : false
+namespaces :
+  html : http://www.w3.org/1999/xhtml
+initializer :
+  window :
+    html :
+      action : /sylma/modules/html/backend.eml
+  classes :
+    redirect :
+      name : \sylma\core\Redirect
+    path :
+      name : \sylma\parser\action\Path
+    action :
+      name : \sylma\parser\action\handler\Action
+
+session :
+  lifetime : 403200
+users:
+  root:
+    # E_ALL | E_STRICT | E_NOTICE = 32767
+    error-level: 6143
+    arguments: [ ]
+    groups: ['0']
+  # server user for cron jobs
+  server:
+    name: server
+    ip:
+    groups:
+      - famous
+      - server
+    arguments: [ ]
+  anonymouse:
+    name: anonymouse
+    groups: [famous]
+    arguments:
+      full-name: Anonymous
+  authenticated:
+    arguments: [ ]
+    groups: [users]
+maintenance:
+  enable: false
+  file: protected/sylma/modules/html/maintenance.html
+  login: protected/sylma/modules/users/maintenance-login.html
+  login-do: sylma/modules/users/interface/login_do.redirect
+db:
+  # Switch to TRUE to enable database
+  enable: false
+  # Will check for existence of collections and documents and build it if none
+  install: false
+  host: http://localhost:8080/exist/services/Query?wsdl
+  user: myuser
+  password: mypass
+  collection: /mycollection
+  namespace: http://www.example.com
+  default:
+    group: dba
+    # octal value
+    mode: '0770'
+  debug:
+    run: true
+    queries:
+      show: false
+      statut: db/notice
+    results:
+      show: false
+      statut: db/notice
+directories:
+  root:
+    path: protected
+    rights:
+      owner: root
+      group: 0
+      mode: 700
+      user-mode:
+dom:
+  debug:
+    # display all xpath queries in a formatted table containing paths grouped by count
+    show-queries: false
+  encoding:
+    check: false
+form:
+  redirect: .redirect
+messages:
+  print:
+    all: false
+    # Messages sent before Messages handler's creation. Only available in DEBUG mode
+    hidden: true
+  format:
+    enable: true
+  backtrace:
+    enable: false
+    count: 3
+  array:
+    line-break: false
+  xml:
+    # WARNING : with false can cause UTF-8 errors - TODO
+    enable: true
+  log:
+    enable: true
+    all: false
+    # Write to this file if DB is not active
+    file : /debug.log
+  rights:
+    enable: true
+
+
+
+

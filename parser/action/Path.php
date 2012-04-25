@@ -10,6 +10,8 @@ class Path extends core\module\Argumented {
   private $sPath = '';
   private $file = null;
 
+  protected $sExtension = '';
+
   const NS = 'http://www.sylma.org/parser/action/path';
   /**
    * @param string $sPath Path to look for an action
@@ -19,7 +21,7 @@ class Path extends core\module\Argumented {
    * @param $bDebug throw exceptions on error
    */
 
-  public function __construct($sPath, array $aArguments = array(), $bParse = true, $bArguments = true, $bDebug = true) {
+  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, $bArguments = true, $bDebug = true) {
 
     $this->setControler($this->getControler('action'));
 
@@ -123,7 +125,7 @@ class Path extends core\module\Argumented {
 
     if (!$bArguments && $bDebug) {
 
-      $controler->throwException(t('Directory %s not found in path %s', $sPath, $this->getPath()));
+      $this->throwException(sprintf('Directory %s not found in path %s', $sPath, $this->getPath()));
     }
 
     foreach ($exts->asArray() as $sExtension) {
@@ -168,7 +170,7 @@ class Path extends core\module\Argumented {
     return $mResult;
   }
 
-  protected function parseExtension($bRemove) {
+  public function parseExtension($bRemove) {
 
     $sPath = $this->getPath();
 
@@ -185,6 +187,11 @@ class Path extends core\module\Argumented {
     return $this->getExtension();
   }
 
+  public function getExtension() {
+
+    return $this->sExtension;
+  }
+  
   public function getFile() {
 
     return $this->file;

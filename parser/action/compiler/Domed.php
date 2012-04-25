@@ -38,7 +38,19 @@ abstract class Domed extends Runner implements parser\elemented {
       $settings->remove();
     }
 
-    $aResult = $this->parseChildren($doc->getChildren());
+    $contexts = $doc->queryx('self:context', array(), false);
+
+    foreach ($contexts as $context) {
+
+      $sName = $context->readAttribute('name');
+      $this->getWindow()->setContext($sName);
+
+      $aResult = array_merge($aResult, $this->parseChildren($context->getChildren()));
+
+      $context->remove();
+    }
+
+    $aResult = array_merge($aResult, $this->parseChildren($doc->getChildren()));
 
     return $aResult;
   }

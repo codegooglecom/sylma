@@ -9,18 +9,47 @@ require_once('parser/domed.php');
 class Controler extends core\module\Domed implements parser\elemented {
 
   protected $aInterfaces = array();
+  protected $aFiles = array();
+
   protected $parent;
 
-  public function __construct() {
+  public function __construct(parser\elemented $parent) {
 
     require_once('parser/caller.php');
     $this->setNamespace(parser\caller::NS);
 
     $this->setDirectory(__FILE__);
     $this->setArguments('controler.yml');
+
+    $this->setParent($parent);
   }
 
-  public function getInterface($sName, $sFile = '') {
+  public function getInterface($sPath, fs\directory $directory = null) {
+
+    $result = null;
+
+    $file = $this->getControler('fs')->getFile($sPath, $directory);
+    $sFile = (string) $file;
+
+    if (!array_key_exists($sFile, $this->aFiles)) {
+
+      $result = $this->create('interface', array($this, $file));
+      $sClass = $result->getClass();
+
+      $this->aFiles[$sFile] = $sClass;
+      $this->aInterfaces[$sClass] = $result;
+    }
+    else {
+
+      $result = $this->aInterfaces[$this->aFiles[$sFile]];
+    }
+
+    return $result;
+  }
+
+  public function getInterfaceFromClass($sName, $sFile = '') {
+
+    $result = null;
 
     if (!array_key_exists($sName, $this->aInterfaces)) {
 
@@ -33,13 +62,14 @@ class Controler extends core\module\Domed implements parser\elemented {
         $sDocument = str_replace('\\', '/', strtolower($sName)) . '.iml';
       }
 
-      require_once('core/functions/path.php');
-      $file = $this->getFile(core\functions\path\toAbsolute($sDocument));
+      $result = $this->getInterface($sDocument);
+    }
+    else {
 
-      $this->aInterfaces[$sName] = $this->create('interface', array($this, $file));
+      $result = $this->aInterfaces[$sName];
     }
 
-    return $this->aInterfaces[$sName];
+    return $result;
   }
 
   public function getParent() {
@@ -74,6 +104,6 @@ class Controler extends core\module\Domed implements parser\elemented {
 
     $interface = $obj->getInstance()->getInterface();
 
-    return $this->getInterface($interface->getName(), $interface->getFile());
+    return $this->getInterfaceFromClass($interface->getName(), $interface->getFile());
   }
 }

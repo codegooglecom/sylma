@@ -271,7 +271,7 @@ class Reflector extends Argumented {
 
     require_once('core/functions/Path.php');
     $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
-    $path = $this->getControler()->create('path', array($sPath));
+    $path = $this->getControler()->create('path', array($sPath, $this->getDirectory()));
 
     // create call
 

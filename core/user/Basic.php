@@ -244,7 +244,10 @@ class Basic extends core\module\Argumented implements core\user {
 
   protected function loadSession() {
 
-    if ($sSession = array_val($this->readArgument('session/name'), $_SESSION)) {
+    $sKey = $this->readArgument('session/name');
+    $sSession = array_key_exists($sKey, $_SESSION) ? $_SESSION[$sKey] : '';
+
+    if ($sSession) {
 
       $aSession = unserialize($sSession);
 

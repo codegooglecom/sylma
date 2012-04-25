@@ -71,7 +71,10 @@ class Cookie extends core\module\Argumented {
 
   public function validate() {
 
-    if ($sCookie = array_val($this->readArgument('name'), $_COOKIE)) {
+    $sKey = $this->readArgument('name');
+    $sCookie = array_key_exists($sKey, $_COOKIE) ? $_COOKIE[$sKey] : '';
+
+    if ($sCookie) {
 
       list($sID, $iExpiration, $sHmac) = explode('|', $sCookie);
 

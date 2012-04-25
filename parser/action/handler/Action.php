@@ -29,6 +29,11 @@ class Action extends Basic implements core\stringable {
     else $this->setBaseDirectory($file->getParent());
   }
 
+  protected function setArgumentsArray($aArguments) {
+
+    $this->aArguments =
+  }
+
   protected function getClassName(fs\file $file) {
 
     $sNamespace = str_replace('/', '\\', (string) $file->getParent());

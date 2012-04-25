@@ -1,15 +1,15 @@
 <?php
 
-use \sylma\core, \sylma\modules, \sylma\dom, \sylma\storage, \sylma\parser;
+use sylma\core, sylma\modules, sylma\dom, sylma\storage, sylma\parser;
 
 class Sylma {
 
   const NS = 'http://www.sylma.org';
 
-  const ROOT = SYLMA_ROOT; // ex: protected
-  const PATH = SYLMA_PROTECTED_PATH; // ex: /sylma
+  const ROOT = sylma\ROOT; // ex: protected
+  const PATH = sylma\PROTECTED_PATH; // ex: /sylma
 
-  const PATH_OPTIONS = '/system/sylma.yml';
+  const PATH_OPTIONS = '/core/sylma.yml';
 
   const MODE_EXECUTE = 1;
   const MODE_WRITE = 2;
@@ -24,7 +24,11 @@ class Sylma {
   private static $logger = null;
   protected static $aControlers;
 
-  public static $exception = '\sylma\core\exception\Basic';
+  public static $sExceptionFile = 'core/exception/Basic.php';
+  public static $sExceptionClass = '\sylma\core\exception\Basic';
+
+  public static $sInitializerFile = 'core/Initializer.php';
+  public static $sInitializerClass = '\sylma\core\Initializer';
 
   /**
    * Handle final result for @method render()
@@ -34,31 +38,35 @@ class Sylma {
 
   public static function init($sServer = '') {
 
-    require_once('core/exception/Basic.php');
+    require_once(self::$sExceptionFile);
     //xdebug_disable();
-    set_error_handler(self::$exception . "::loadError");
+    set_error_handler(self::$sExceptionClass . "::loadError");
 
-    require_once('old/Initializer.php');
+    require_once(self::$sInitializerFile);
 
     //xdebug_start_code_coverage();
 
     try {
 
-      $init = self::$aControlers['init'] = new Initializer();
+      $init = self::$aControlers['init'] = new self::$sInitializerClass;
 
       self::$settings = $init->loadSettings($sServer, self::ROOT . self::PATH . self::PATH_OPTIONS);
-      $init->load();
+      $init->run(self::$settings->get('initializer'));
 
       self::setControler('init', $init);
 
-      self::getControler('fs');
+      $init->run(self::get('initializer'));
+
+      //self::getControler('fs');
       //self::getControler('dom');
 
       self::$result = Controler::trickMe();
     }
     catch (core\exception $e) {
 
+      echo '<pre>';
       print_r($e->getTrace());
+      echo '</pre>';
       throw $e;
     }
 
@@ -74,7 +82,7 @@ class Sylma {
 
   public static function getControler($sName, $bLoad = true, $bDebug = true) {
 
-    $controler = array_val($sName, self::$aControlers);
+    $controler = array_key_exists($sName, self::$aControlers) ? self::$aControlers[$sName] : null;
 
     if (!$controler && $bLoad) {
 
@@ -114,7 +122,7 @@ class Sylma {
 
       case 'dom' :
 
-        require_once('dom2/Controler.php');
+        require_once('dom/Controler.php');
         $result = new dom\Controler;
 
       break;
@@ -156,10 +164,12 @@ class Sylma {
 
       break;
 
+/*
       case 'caller' :
 
         require_once('parser/caller/Controler.php');
         $result = new parser\caller\Controler;
+*/
 
       break;
 
@@ -251,7 +261,7 @@ class Sylma {
 
   public static function throwException($sMessage, array $aPath = array(), $iOffset = 1) {
 
-    $e = new Sylma::$exception($sMessage);
+    $e = new Sylma::$sExceptionClass($sMessage);
 
     $e->setPath($aPath);
     $e->load($iOffset);

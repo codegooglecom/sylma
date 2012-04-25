@@ -217,7 +217,7 @@ class Element extends \DOMElement implements dom\element {
     $bResult = false;
 
     if (is_string($mDefault)) $bResult = ($this->readAttribute($sAttribute, $sNamespace, false) == $mDefault);
-    $bResult = $this->getControler()->stringToBool(($this->readAttribute($sAttribute, $sNamespace, false)), $mDefault);
+    else $bResult = $this->getControler()->stringToBool(($this->readAttribute($sAttribute, $sNamespace, false)), $mDefault);
 
     return $bResult;
   }

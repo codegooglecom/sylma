@@ -9,11 +9,13 @@ class Controler extends core\module\Domed {
 
   protected $user;
 
+  const SETTINGS_FILE = 'settings.yml';
+
   public function __construct() {
 
     $this->setDirectory(__FILE__);
 
-    $this->setArguments(\Sylma::get('modules/users'));
+    $this->setArguments(self::SETTINGS_FILE);
     $this->getArguments()->merge(\Sylma::get('users'));
 
     $user = $this->create('user', array($this));
@@ -26,7 +28,7 @@ class Controler extends core\module\Domed {
 
     return $this->user;
   }
-  
+
   public function getDocument($sPath, $iMode = \Sylma::MODE_READ) {
 
     return parent::getDocument($sPath, $iMode);

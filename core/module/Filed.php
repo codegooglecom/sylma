@@ -12,7 +12,9 @@ abstract class Filed extends Argumented {
   const FS_CONTROLER = 'fs';
 
   protected $directory = null;
-  protected static $argumentClass = 'sylma\core\argument\Filed';
+
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  protected static $sArgumentFile = 'core/argument/Filed.php';
 
   protected function createArgument($mArguments, $sNamespace = '') {
 
@@ -128,7 +130,7 @@ abstract class Filed extends Argumented {
 
     if (!$result && $bDebug) {
 
-      $this->throwException(t('No base directory defined'));
+      $this->throwException('No base directory defined');
     }
 
     return $result;
@@ -143,11 +145,7 @@ abstract class Filed extends Argumented {
   protected function getFile($sPath, $bDebug = true) {
 
     $fs = $this->getControler(static::FS_CONTROLER);
-
-    if (!$directory = $this->getDirectory()) {
-
-      $this->throwException(t('No directory defined'), array(), 3);
-    }
+    $directory = $this->getDirectory();
 
     return $fs->getFile($sPath, $directory, $bDebug);
   }

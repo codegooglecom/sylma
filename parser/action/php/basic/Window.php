@@ -32,6 +32,8 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   // static reference to class
   private $sylma;
 
+  protected $sContext = 'default';
+
   protected $aScopes = array();
 
   protected $aKeys = array();
@@ -56,6 +58,16 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   public function createArgument($mArguments, $sNamespace = '') {
 
     return parent::createArgument($mArguments, $sNamespace);
+  }
+
+  public function setContext($sContext) {
+
+    $this->sContext = $sContext;
+  }
+
+  public function getContext() {
+
+    return $this->sContext;
   }
 
   public function add($mVal) {
@@ -447,7 +459,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     $arg = null;
 
     if (is_object($mVar)) {
-      
+
       if ($mVar instanceof dom\node) {
 
         $arg = $this->createTemplate($mVar);

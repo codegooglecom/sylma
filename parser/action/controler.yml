@@ -5,6 +5,8 @@ classes :
   @sylma-classbase : \sylma\parser\action
   window :
     name : php\basic\Window
+  caller :
+    name \sylma\parser\caller\Controler
   basic :
     name : Basic
   dom :

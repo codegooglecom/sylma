@@ -252,7 +252,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
           else if ($aPath && $bDebug) {
 
             $this->throwException(
-              txt('No array in @path %s. Cannot browse with @path %s',
+              sprintf('No array in @path %s. Cannot browse with @path %s',
               implode('/', $aParentPath), implode('/', $aParentPath + $aPath)),
               count($aPath) + 3);
           }
@@ -300,7 +300,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
       if ($bDebug) {
 
-        $this->throwException(txt('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
+        $this->throwException(sprintf('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
       }
 
       $sKey = '';

@@ -31,7 +31,7 @@ class Directory extends Resource implements fs\directory {
 
     $this->aRights = $this->aChildrenRights = $aRights;
 
-    $settings = $this->getControler()->create('security', array($this, $this->getControler()));
+    $settings = $this->getControler()->create('security', array($this));
     $this->setSettings($settings);
 
     if ($this->doExist()) {
@@ -274,9 +274,9 @@ class Directory extends Resource implements fs\directory {
     $result = null;
     $this->loadRights();
 
-    if (!$this->isSecured()) {
+    if (!$this->isSecured() && \Sylma::getControler('user', false, false)) {
 
-      $this->throwException(txt('Unauthorized access to @file %s', $this . '/' . $sName));
+      $this->throwException(sprintf('Unauthorized access to @file %s', $this . '/' . $sName));
     }
 
     if ($sName && is_string($sName)) {

@@ -11,7 +11,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
-  const CLASS_DEFAULT = '\sylma\parser\action\cached\Document';
+  const CLASS_FILE_DEFAULT = '/sylma/parser/action/cached/document';
   const CLASS_PREFIX = 'class';
 
   const WINDOW_ARGS = 'classes/php';
@@ -51,15 +51,11 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->setNamespace($controler->getNamespace(), 'self');
     $this->setDirectory($dir);
 
-    $sClass = $this->loadClass($doc);
+    $this->setControler($this->create(self::CALLER_ALIAS, array($this)), self::CALLER_ALIAS);
+    $this->setInterface($this->loadInterface($doc));
 
     $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $sClass));
     $this->setWindow($window);
-
-    $caller = $this->getControler(self::CALLER_ALIAS);
-    $caller->setParent($this);
-
-    $this->setInterface($caller->getInterface($sClass));
 
     $security = $this->getControler()->create('parser/security');
     $this->setParser($security, $security->getNS());
@@ -112,14 +108,20 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->aParsers = array_merge($this->aParsers, $aResult);
   }
 
-  protected function loadClass(dom\handler $doc) {
+  protected function loadInterface(dom\handler $doc) {
 
-    if (!$sResult = $doc->getRoot()->readAttribute('class', null, false)) {
+    $result = null;
 
-      $sResult = self::CLASS_DEFAULT;
+    $caller = $this->getControler(self::CALLER_ALIAS);
+
+    if (!$sInterface = $doc->getRoot()->readAttribute('interface', null, false)) {
+
+      $sInterface = self::CLASS_FILE_DEFAULT;
     }
 
-    return $sResult;
+    $result = $caller->getInterface($sInterface, $this->getDirectory());
+
+    return $result;
   }
 
   protected function setReturn(dom\element $el) {

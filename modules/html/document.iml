@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/parser/caller" abstract="true">
+  <namespace>\sylma\parser\action\cached</namespace>
+  <name>Document</name>
+  <extends>/sylma/parser/action/document</extends>
+  <element>http://www.sylma.org/modules/html/document</element>
+  <method path="add-js" name="addJS" return="php-boolean">
+    <argument name="path" format="php-string" required="false"/>
+    <argument name="use-file" format="php-boolean" required="false"/>
+  </method>
+  <method path="add-css" name="addCSS" return="php-boolean">
+    <argument name="path" format="php-string" required="false"/>
+    <argument name="use-file" format="php-boolean" required="false"/>
+  </method>
+</class>

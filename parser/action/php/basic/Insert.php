@@ -15,6 +15,8 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
 
   protected $iKey;
 
+  protected $sContext;
+
   public function __construct(php\_window $controler, php\linable $mContent, $iKey = null, $bTemplate = true) {
 
     $this->setControler($controler);
@@ -26,6 +28,18 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
 
     if ($bTemplate) $controler->add(new self($controler, $mContent, $this->getKey(), false));
     else $this->addContent($mContent);
+
+    $this->setContext($controler->getContext());
+  }
+
+  protected function getContext() {
+
+    return $this->sContext;
+  }
+
+  protected function setContext($sContext) {
+
+    $this->sContext = $sContext;
   }
 
   protected function addContent(php\linable $mContent) {
@@ -48,6 +62,7 @@ class Insert extends core\module\Argumented implements core\argumentable, core\c
     return $this->createArgument(array(
       ($this->bTemplate ? 'insert-call' : 'insert') => array(
         '@key' => $this->getKey(),
+        '@context' => $this->getContext(),
         $this->content,
       ),
     ));

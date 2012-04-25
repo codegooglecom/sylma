@@ -1,10 +1,10 @@
 <?php
 
 namespace sylma\dom;
-use \sylma\core;
+use sylma\core, sylma\core\functions\path;
 
 require_once('core/module/Filed.php');
-require_once('functions.php');
+require_once('core/functions/Path.php');
 
 class Controler extends core\module\Filed {
 
@@ -43,13 +43,14 @@ class Controler extends core\module\Filed {
     require_once('basic/Collection.php');
     return new basic\Collection($list);
   }
+
   public function getClasses(core\argument $settings = null) {
 
     $aClasses = array();
 
     if (!$this->aDefaultClasses || $settings) {
 
-      require_once('core/factory.php');
+      $factory = \Sylma::getControler('factory');
 
       $this->getArguments()->registerToken(core\factory::CLASSBASE_TOKEN);
       $this->getArguments()->registerToken(core\factory::DIRECTORY_TOKEN);
@@ -63,13 +64,13 @@ class Controler extends core\module\Filed {
 
           if ($sClassBase = $classes->getToken(core\factory::CLASSBASE_TOKEN)) {
 
-            $class->set('name', path_absolute($class->read('name'), $sClassBase, '\\'));
+            $class->set('name', path\toAbsolute($class->read('name'), $sClassBase, '\\'));
           }
 
           if (!class_exists($class->read('name'))) {
 
-            if ($sFile = $class->read('file', false)) $class->set('file', path_absolute($sFile, $class->getLastDirectory()));
-            \Controler::loadClass($class->read('name'), $class->read('file', false));
+            if ($sFile = $class->read('file', false)) $class->set('file', path\toAbsolute($sFile, $class->getLastDirectory()));
+            $factory->includeClass($class->read('name'), $class->read('file', false));
           }
 
           $aClasses[$sClass] = $class->read('name');

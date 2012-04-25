@@ -22,7 +22,6 @@ classes :
     name : basic\File
     classes :
       document :
-        file : /sylma/dom2/basic/handler/Rooted.php
         name : \sylma\dom\basic\handler\Rooted
       editable :
         name : basic\editable\File
@@ -35,7 +34,6 @@ classes :
     name : basic\security\Manager
     classes :
       document :
-        file : /sylma/dom2/basic/handler/Rooted.php
         name : \sylma\dom\basic\handler\Rooted
 system :
   rights : 0770
