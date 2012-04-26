@@ -49,7 +49,7 @@ class Standalone extends tester\Prepare {
 
   public function getAction($sPath, array $aArguments = array()) {
 
-    return parent::getAction($sPath, $aArguments);
+    return parent::readAction($sPath, $aArguments);
   }
 }
 

@@ -13,7 +13,6 @@ classes :
     name : compiler\Reflector
   php : @sylma:import php/window.yml;
   document :
-    file : /sylma/dom2/basic/handler/Rooted.php
     name : \sylma\dom\basic\handler\Rooted
   action :
     name : handler\Action
