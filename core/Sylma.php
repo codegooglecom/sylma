@@ -8,6 +8,7 @@ class Sylma {
 
   const ROOT = sylma\ROOT; // ex: protected
   const PATH = sylma\PROTECTED_PATH; // ex: /sylma
+  const PATH_SYSTEM = sylma\SYSTEM_PATH;
 
   const PATH_OPTIONS = '/core/sylma.yml';
 
@@ -55,18 +56,34 @@ class Sylma {
 
       self::setControler('init', $init);
 
-      $init->run(self::get('initializer'));
-
-      //self::getControler('fs');
-      //self::getControler('dom');
-
-      self::$result = Controler::trickMe();
+      self::$result = $init->run(self::get('initializer'));
     }
     catch (core\exception $e) {
 
-      echo '<pre>';
-      print_r($e->getTrace());
-      echo '</pre>';
+      if (self::read('debug/enable')) {
+
+        $aTraces = $e->getTrace();
+
+        $aPath = $e->save();
+
+        echo $e->getMessage() . '<br/>';
+        echo $aPath[0];
+
+        echo '<pre>';
+
+        foreach ($aTraces as $aTrace) {
+
+          $sFile = array_key_exists('file', $aTrace) ? $aTrace['file'] : '-unknown-';
+          $sLine = array_key_exists('line', $aTrace) ? $aTrace['line'] : '-unknown-';
+          $sClass = array_key_exists('line', $aTrace) ? $aTrace['class'] : '-unknown-';
+          $sFunction = array_key_exists('line', $aTrace) ? $aTrace['function'] : '-unknown-';
+
+          echo $sFile . ' [' . $sLine .']' . ' - ' . $sClass . '->' . $sFunction . '()<br/>';
+        }
+
+        echo '</pre>';
+      }
+
       throw $e;
     }
 
@@ -91,7 +108,7 @@ class Sylma {
 
     if (!$controler && $bLoad && $bDebug) {
 
-      self::throwException(txt('Controler %s is not defined', $sName));
+      self::throwException(sprintf('Controler %s is not defined', $sName));
     }
 
     return $controler;
@@ -164,12 +181,12 @@ class Sylma {
 
       break;
 
-/*
+
       case 'caller' :
 
         require_once('parser/caller/Controler.php');
         $result = new parser\caller\Controler;
-*/
+
 
       break;
 

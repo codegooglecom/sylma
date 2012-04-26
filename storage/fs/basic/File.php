@@ -129,7 +129,7 @@ class File extends Resource implements fs\file {
       $result->setFile($this);
       $result->registerNamespaces($aNS);
       $result->loadFile();
-      
+
     //}
 
     return $result;
@@ -163,6 +163,7 @@ class File extends Resource implements fs\file {
 
   public function checkRights($iMode) {
 
+    if (\Sylma::read('debug/enable')) return true;
     if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
 
     return false;

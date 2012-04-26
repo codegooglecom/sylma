@@ -12,6 +12,7 @@ define('PATH', $result[0]); // ex : protected/sylma
 set_include_path(get_include_path() . PATH_SEPARATOR . PATH);
 
 define(__NAMESPACE__ . '\PROTECTED_PATH', substr($result[0], strlen(ROOT))); // ex : /sylma
+define(__NAMESPACE__ . '\SYSTEM_PATH', $_SERVER['DOCUMENT_ROOT']); // ex : /sylma
 
 require('core/Sylma.php');
 

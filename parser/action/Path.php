@@ -59,7 +59,7 @@ class Path extends core\module\Argumented {
     return $aResult;
   }
 
-  protected function parsePath($bArguments = true, $bDebug = true) {
+  public function parsePath($bArguments = true, $bDebug = true) {
 
     $controler = $this->getControler();
 
@@ -191,7 +191,7 @@ class Path extends core\module\Argumented {
 
     return $this->sExtension;
   }
-  
+
   public function getFile() {
 
     return $this->file;
@@ -255,6 +255,11 @@ class Path extends core\module\Argumented {
     $mSender[] = '@path ' . $this->getPath();
 
     return $this->getControler()->throwException($sMessage, $mSender);
+  }
+
+  public function __toString() {
+
+    return $this->sPath;
   }
 }
 

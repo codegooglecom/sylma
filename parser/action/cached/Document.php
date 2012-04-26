@@ -4,7 +4,7 @@ namespace sylma\parser\action\cached;
 use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
 
 require_once('Basic.php');
-require_once('dom2/domable.php');
+require_once('dom/domable.php');
 
 abstract class Document extends Basic implements dom\domable {
 

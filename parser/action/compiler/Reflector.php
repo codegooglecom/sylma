@@ -89,7 +89,7 @@ class Reflector extends Argumented {
 
       default :
 
-        $this->throwException(txt('Unknown action element : %s', $el->asToken()));
+        $this->throwException(sprintf('Unknown action element : %s', $el->asToken()));
     }
 
     return $mResult;
@@ -115,7 +115,10 @@ class Reflector extends Argumented {
             $aResult[] = $this->reflectArgument($el);
 
           break;
-          case 'name' : $this->setName($el->read()); break;
+          case 'name' :
+
+            //$this->setName($el->read());
+          break;
 
           case 'return' : $this->setReturn($el); break;
 
@@ -385,7 +388,7 @@ class Reflector extends Argumented {
 
     $content = $this->parseElement($first->remove());
 
-    $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom2/handler.php');
+    $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom/handler.php');
     $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
 
     $mResult = $this->runObject($el, $call->getVar(false));
@@ -399,7 +402,7 @@ class Reflector extends Argumented {
 
     if (!array_key_exists($sName, $this->aVariables)) {
 
-      $this->throwException(txt('Unknown variable : %s', $sName));
+      $this->throwException(sprintf('Unknown variable : %s', $sName));
     }
 
     $var = $this->aVariables[$sName];

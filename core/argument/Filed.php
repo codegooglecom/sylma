@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\argument;
-use \sylma\core, sylma\storage\fs;
+use \sylma\core, sylma\storage\fs, sylma\core\functions\path;
 
 require_once('Iterator.php');
 require_once('core/functions/Path.php');
@@ -44,7 +44,7 @@ class Filed extends Iterator {
 
     if (is_string($mValue)) $aArray = $this->loadYAML($mValue, true);
     else if (is_array($mValue)) $aArray = $mValue;
-    else $this->throwException(txt('Can only accepts array or string as first argument - given : %s', gettype($mValue)));
+    else $this->throwException(sprintf('Can only accepts array or string as first argument - given : %s', gettype($mValue)));
 //if (count($aArray) == 1 && current($aArray) === null) dspf('error', 'error');
     parent::__construct($aArray, array(), $parent);
   }
@@ -56,7 +56,7 @@ class Filed extends Iterator {
       // file controler is ready
       if (!$file = $fs->getFile($sPath)) {
 
-        $this->throwException(txt('Cannot find file @file %s to merge settings', $sPath));
+        $this->throwException(sprintf('Cannot find file @file %s to merge settings', $sPath));
       }
 
       $this->merge(self::loadYAML($file->getRealPath(), false));
@@ -105,7 +105,7 @@ class Filed extends Iterator {
     }
     else if (!is_object($mResult) && !is_null($mResult)) {
 
-      if ($bDebug) $this->throwException(txt('%s is not an array', $sPath), 3);
+      if ($bDebug) $this->throwException(sprintf('%s is not an array', $sPath), 3);
       $mResult = null;
     }
 
@@ -131,14 +131,15 @@ class Filed extends Iterator {
 
         if ($file = $this->getFile()) {
 
-          $sPath = path_absolute($sPath, (string) $file->getParent());
+          require_once('core/functions/Path.php');
+          $sPath = path\toAbsolute($sPath, (string) $file->getParent());
         }
 
         $file = $fs->getFile($sPath);
 
         if (!$sContent = $file->read()) {
 
-          $this->throwException(txt('@file %s is empty', $file));
+          $this->throwException(sprintf('@file %s is empty', $file));
         }
 
         if ($bFirstLoad) $this->setFile($file);
@@ -215,12 +216,12 @@ class Filed extends Iterator {
 
     if (!file_exists($sPath)) {
 
-      $this->throwException(txt('Cannot find configuration file in @file %s', $sPath));
+      $this->throwException(sprintf('Cannot find configuration file in @file %s', $sPath));
     }
 
     if (!$sContent = file_get_contents($sPath)) {
 
-      $this->throwException(txt('@file %s is empty', $sPath));
+      $this->throwException(sprintf('@file %s is empty', $sPath));
     }
 
     return $this->parseYAML($sContent);
@@ -274,7 +275,7 @@ class Filed extends Iterator {
 
         if (!$sPath = $this->parseYAMLString($sArguments)) {
 
-          $this->throwException(txt('Cannot load parameter for %s in %s', $sName, $sArguments));
+          $this->throwException(sprintf('Cannot load parameter for %s in %s', $sName, $sArguments));
         }
 
         if (!$this->getControler()) $sPath = \Sylma::ROOT . $sPath;
@@ -293,7 +294,7 @@ class Filed extends Iterator {
 
       default :
 
-        $this->throwException(txt('Unkown YAML property call : %s', $sName));
+        $this->throwException(sprintf('Unkown YAML property call : %s', $sName));
     }
 
     return $mResult;

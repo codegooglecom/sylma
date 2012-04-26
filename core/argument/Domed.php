@@ -20,7 +20,7 @@ class Domed extends Filed implements dom\domable {
    */
   public function getOptions(dom\document $schema = null, $sPath = '') {
 
-    require_once('dom2\Argument.php');
+    require_once('dom\Argument.php');
 
     $doc = $this->getDocument();
     self::getElement($doc, $sPath);

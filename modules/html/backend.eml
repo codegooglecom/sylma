@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" interface="document">
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml">
   <le:settings>
     <le:name>Sylma Backend</le:name>
-    <le:text set-variable="title">No title</le:text>
-    <le:argument name="action" format="\sylma\dom\document"/>
+    <le:argument name="content" format="\sylma\parser\action"/>
   </le:settings>
   <html>
     <head>
       <title>
-        <le:get-variable name="title"/>
       </title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/reset.css"/>
@@ -30,7 +28,7 @@
             </ul>
           </div>
           <div id="content">
-            <le:get-argument name="action"/>
+            <le:get-argument name="content"/>
           </div>
         </div>
         <div id="footer"><a href="http://www.sylma.org">Sylma</a> XML Framework</div>

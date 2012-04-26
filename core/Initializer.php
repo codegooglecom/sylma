@@ -1,12 +1,14 @@
 <?php
 
 namespace sylma\core;
+use sylma\parser, sylma\core;
 
 require_once('module/Filed.php');
 
 class Initializer extends module\Filed {
 
   const NS = 'http://www.sylma.org/core/initializer';
+  const EXTENSION_DEFAULT = 'html';
 
   /**
    * 2. Load global settings
@@ -47,9 +49,9 @@ class Initializer extends module\Filed {
     if ($sMaintenance = $this->loadMaintenance()) return $sMaintenance;
 
     $fs = \Sylma::getControler('fs');
-    $fs->getDirectory()->getSettings()->loadDocument();
 
     $this->setDirectory($fs->getDirectory());
+    $this->getDirectory()->getSettings()->loadDocument();
 
     $path = $this->create('path', array($this->loadGET()));
 
@@ -62,46 +64,84 @@ class Initializer extends module\Filed {
 
 
     // Parse of the request_uri, creation of the window - $_GET
-    $window = $this->loadWindow($sExtension);
+
 
     // Reload last alternatives mime-type results - $_SESSION['results']
     //self::loadResults();
 
-    if ($file = $this->loadFile($path, $sExtension)) {
+    if ($file = $this->getFile((string) $path, false)) {
 
       // A file
-      $window->loadAction($file);
+      $sResult = $this->loadFile($file);
     }
-    else if (in_array($path->getExtension(), $aExecutableExtensions)) {
+    else if (!$path->getExtension()) {
 
-      // An action
-      $path->parsePath();
+      $window = $this->loadWindow($sExtension);
+      $sResult = $this->loadAction($path, $window);
+    }
+    else {
 
-      if ($result) {
+      $this->throwException('No valid window defined');
+    }
 
-        // Pre-recorded result
-        $window->loadAction($result); // TODO : make XML_Action
-      }
-      else {
+    return $sResult;
+  }
 
-        // Get then send the action
-        $action = $this->create('action', array($path));
-        $action->run();
+  protected function loadAction(parser\action\path $path, parser\action $window) {
 
-        if ($action->doRedirect()) self::doHTTPRedirect($oResult);
+    $path->parsePath();
 
-        if ($settings->read('action')) {
+    $action = $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
+    //echo get_class($window); exit;
+    $window->setArgument('content', $action);
 
-          $window->setArgument('window-action', $action);
+    //if ($action->doRedirect()) self::doHTTPRedirect($oResult);
 
-        } else {
+    return $window->asString();
+  }
 
-          $window->loadAction($action);
-        }
-      }
+  protected function loadFile(fs\file $file) {
+
+    switch ($file->getExtension()) {
+
+      case 'jpg' :
+      case 'jpeg' :
+      case 'png' :
+      case 'gif' :
+      default :
+
+        $window = $this->create('window', array($this, $file));
+
+      break;
     }
 
     return $window;
+  }
+
+  protected function getMime($sExtension) {
+
+    switch (strtolower($sExtension)) {
+
+      case 'jpg' : $sExtension = 'jpeg';
+      case 'jpeg' :
+      case 'png' :
+      case 'gif' : return 'image/'.$sExtension;
+
+      case 'js' : return 'application/javascript';
+      case 'css' : return 'text/css';
+      case 'xml' :
+      case 'xsl' : return 'text/xml';
+
+      case 'html' : return 'text/html';
+      case 'xhtml' : return 'application/xhtml+xml';
+
+      default : return 'plain/text';
+    }
+  }
+
+  public function setContentType($sExtension) {
+
+    header('Content-type: '.$this->getMime($sExtension));
   }
 
   protected function loadMaintenance() {
@@ -134,17 +174,23 @@ class Initializer extends module\Filed {
 
   protected function loadWindow($sExtension) {
 
-    $settings = $this->getArgument('window/' . strtolower($sExtension), false);
+    $sExtension = strtolower($sExtension);
+    if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
+
+    $settings = $this->getArgument('window/' . $sExtension, false);
 
     if (!$settings) {
 
-      $settings = $this->getArgument('window/html');
+      $this->throwException(sprintf('No window associated with extension "%s"', $sExtension));
     }
 
-    $sPath = $settings->read('path');
+    $sAlias = $sExtension;
+    $sPath = $settings->read('action');
+
+    $window = $this->create($sAlias, array($this->getFile($sPath)));
 
     // Creation of the window
-    return $this->create('action', array($this->getFile($sPath)));
+    return $window;
   }
 
   protected function loadGET() {

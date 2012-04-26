@@ -3,12 +3,12 @@
 namespace sylma\parser\action\php\basic;
 use sylma\parser\action, sylma\core, sylma\dom, sylma\parser\action\php;
 
-require_once('core/module/Filed.php');
+require_once('core/module/Domed.php');
 
 require_once(dirname(__dir__) . '/_window.php');
 require_once('core/controled.php');
 
-class Window extends core\module\Filed implements php\_window, core\controled {
+class Window extends core\module\Domed implements php\_window, core\controled {
 
   const NS = 'http://www.sylma.org/parser/action/compiler';
 
@@ -49,9 +49,9 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     $this->self = $this->create('object-var', array($this, $self, 'this'));
     $this->setScope($this);
 
-    $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom2/node.php');
+    $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom/node.php');
     $this->setInterface($node->getInterface());
-    
+
     //$this->sylma = $this->create('class-static', array('\Sylma'));
   }
 
@@ -241,7 +241,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       $this->throwException(t('Cannot get scope, no scope defined'));
     }
 
-    return array_last($this->aScopes);
+    return $this->aScopes[count($this->aScopes) - 1];
   }
 
   public function setScope(php\scope $scope) {

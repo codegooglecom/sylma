@@ -107,7 +107,7 @@ class Basic extends \Exception implements core\exception {
 
         $sDirectory = $fs->getDirectory()->getSystemPath();
 
-        $aResult[] = new \HTML_A('netbeans://' . $sDirectory . $sFile, $sFile);
+        $aResult[] = '<a href="netbeans://' . $sDirectory . $sFile.'">' . $sFile . '</a>';
         $aResult[] = substr($sValue, $iFile + $iLength);
       }
       else {
@@ -200,15 +200,7 @@ class Basic extends \Exception implements core\exception {
 
   public function save() {
 
-    if (\Controler::useMessages()) {
-
-      if (\Sylma::read('messages/print/visible')) {
-
-        print_r($this->getPath());
-      }
-      $backtrace = \Controler::getBacktrace($this->getTrace());
-      \Controler::addMessage(array($this->getPath(), $backtrace));
-    }
+    return $this->getPath();
   }
 
   /**

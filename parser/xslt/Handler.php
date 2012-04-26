@@ -3,7 +3,7 @@
 namespace sylma\parser\xslt;
 use sylma\core, sylma\dom, sylma\parser;
 
-require_once('dom2/basic/handler/Rooted.php');
+require_once('dom/basic/handler/Rooted.php');
 
 class Handler extends dom\basic\handler\Rooted {
 

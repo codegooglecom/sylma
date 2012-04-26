@@ -447,6 +447,7 @@ class Directory extends Resource implements fs\directory {
 
     $this->loadRights();
 
+    if (\Sylma::read('debug/enable')) return true;
     if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
 
     return false;
@@ -454,7 +455,7 @@ class Directory extends Resource implements fs\directory {
 
   public function getSystemPath() {
 
-    return \Controler::getSystemPath().'/'.$this->getRealPath();
+    return \Sylma::PATH_SYSTEM . '/' . $this->getRealPath();
   }
 
   public function getRealPath() {

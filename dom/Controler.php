@@ -6,7 +6,7 @@ use sylma\core, sylma\core\functions\path;
 require_once('core/module/Filed.php');
 require_once('core/functions/Path.php');
 
-class Controler extends core\module\Filed {
+class Controler extends core\module\Domed {
 
   const NS = 'http://www.sylma.org/dom';
   const SETTINGS = 'settings.yml';
@@ -107,5 +107,10 @@ class Controler extends core\module\Filed {
     if (strtolower($sValue) == 'true') return true;
     else if (strtolower($sValue) == 'false') return false;
     else return $bDefaut;
+  }
+
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
   }
 }

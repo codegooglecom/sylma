@@ -53,7 +53,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     $caller = $this->getControler(self::CALLER_ALIAS);
     $caller->setParent($this);
-    
+
     $interface = $this->loadInterface($doc);
     $this->setInterface($interface);
 
@@ -122,7 +122,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
       $sInterface = self::CLASS_FILE_DEFAULT;
     }
     else {
-      
+
       $sInterface = $sInterface . '.iml';
     }
 

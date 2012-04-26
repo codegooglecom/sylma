@@ -3,16 +3,21 @@ debug :
 namespaces :
   html : http://www.w3.org/1999/xhtml
 initializer :
+  executables : [eml, iml]
   window :
     html :
       action : /sylma/modules/html/backend.eml
   classes :
+    html :
+      name : \sylma\modules\html\Document
     redirect :
       name : \sylma\core\Redirect
     path :
       name : \sylma\parser\action\Path
     action :
       name : \sylma\parser\action\handler\Action
+    window :
+      name : \sylma\core\window\Basic
 
 session :
   lifetime : 403200

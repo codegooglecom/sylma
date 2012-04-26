@@ -396,22 +396,22 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         if ($obj === $val) {
 
           $formater = \Sylma::getControler('formater');
-          \Sylma::throwException(txt('Recursion when normalizing with object : %s', $formater->asToken($val)));
+          \Sylma::throwException(sprintf('Recursion when normalizing with object : %s', $formater->asToken($val)));
         }
       }
     }
 
     if ($val instanceof core\argumentable) {
 
-      $mResult = self::normalizeArgument($val->asArgument());
+      $mResult = static::normalizeArgument($val->asArgument());
     }
     else if ($val instanceof core\argument) {
 
-      $mResult = self::normalizeArgument($val);
+      $mResult = static::normalizeArgument($val);
     }
     else {
 
-      \Sylma::throwException(txt('Cannot normalize object @class %s', get_class($val)));
+      \Sylma::throwException(sprintf('Cannot normalize object @class %s', get_class($val)));
     }
 
     if (self::DEBUG_NORMALIZE_RECURSION) self::$aNormalizedObjects[] = $val;
