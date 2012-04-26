@@ -12,10 +12,10 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
-  
+
   protected $aResults = null;
   protected $bRunned = false;
-  
+
   public function __construct(fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
 
     require_once('parser/action.php');
@@ -30,7 +30,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   }
 
   public function setArgumentsArray(array $aArguments) {
-    
+
     $this->aActionArguments = $aArguments;
   }
 
@@ -41,29 +41,29 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   abstract protected function runAction();
 
   protected function parseAction() {
-    
+
     return $this->runAction();
   }
-  
+
   /**
    * Allow management of multiple calls on same action
    * @return array|mixed
    */
   protected function loadAction() {
 
-    $aResult = null;
+    $aResults = null;
 
     if (!$this->bRunned) {
-    
-      $aResult = $this->aResults = $this->parseAction();
+
+      $aResults = $this->aResults = $this->parseAction();
       $this->bRunned = true;
     }
     else {
-      
-      $aResult = $this->aResults;
+
+      $aResults = $this->aResults;
     }
 
-    return $aResult;
+    return $aResults;
   }
 
   protected function loadArgumentable(core\argumentable $val = null) {
@@ -149,23 +149,23 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   }
 
   protected function loadActionContexts(parser\action\cached $action) {
-    
+
     foreach ($this->aContexts as $sContext) {
-      
+
       $this->aContexts[$sContext] += $action->getContext($sContext);
     }
   }
-  
+
   public function getContext($sContext = self::CONTEXT_DEFAULT) {
-    
+
     $aResult = array();
     $aContexts = $this->loadAction();
-    
+
     if (array_key_exists($sContext, $aContexts)) {
-      
+
       $aResult = $aContexts[$sContext];
     }
-    
+
     return $aResult;
   }
 

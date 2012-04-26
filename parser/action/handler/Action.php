@@ -33,7 +33,7 @@ class Action extends Basic implements core\stringable {
     else $this->setBaseDirectory($file->getParent());
   }
 
-  protected function setArgument($sKey, $mValue) {
+  public function setArgument($sKey, $mValue) {
 
     $this->aArguments[$sKey] = $mValue;
   }

@@ -56,7 +56,9 @@
   <xsl:template match="php:condition">
     <xsl:if test="@argument">
       <xsl:processing-instruction name="php">
-        <xsl:text>if ($aArguments[</xsl:text>
+        <xsl:text>if ($aArguments['</xsl:text>
+        <xsl:value-of select="@context"/>
+        <xsl:text>'][</xsl:text>
         <xsl:value-of select="@argument"/>
         <xsl:text>]) : </xsl:text>
       </xsl:processing-instruction>
