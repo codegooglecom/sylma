@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/standalone" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Contexts</tst:description>
+  <tst:test name="one context">
+    <tst:prepare>
+      $action = $controler->getAction('samples/context01');
+      $action->setContexts(array('css'));
+      
+      $controler->setArgument('action', $action);
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">world</div>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node) &amp;&amp;
+        $action->getContext('css') === array(1 => 'hello');
+    </tst:expected>
+  </tst:test>
+  <tst:test name="two contexts">
+    <tst:prepare>
+      $action = $controler->getAction('samples/context02');
+      $action->setContexts(array('css', 'js'));
+      
+      $controler->setArgument('action', $action);
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">world</div>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node) &amp;&amp;
+        $action->getContext('css') === array(1 => 'hello') &amp;&amp;
+        $action->getContext('js') === array(2 => 'bonsoir');
+    </tst:expected>
+  </tst:test>
+  <tst:test name="using short call">
+    <tst:prepare>
+      $action = $controler->getAction('samples/context03');
+      $action->setContexts(array('css'));
+      
+      $controler->setArgument('action', $action);
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">world</div>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node) &amp;&amp;
+        $action->getContext('css') === array(1 => $controler->getDirectory() . '/samples/read.txt');
+    </tst:expected>
+  </tst:test>
+</tst:tests>

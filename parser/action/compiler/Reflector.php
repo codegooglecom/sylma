@@ -264,6 +264,9 @@ class Reflector extends Argumented {
     return $window->createString($sValue);
   }
 
+  /**
+   * @return php\_var
+   */
   protected function reflectAction(dom\element $el) {
 
     $result = null;
@@ -293,7 +296,10 @@ class Reflector extends Argumented {
       $sReturn = $return->readAttribute('format', null, false);
     }
 
+    $window = $this->getWindow();
+
     $result = $this->reflectActionReturn($callAction, $sReturn, $sFormat);
+    $window->add($window->createCall($window->getSelf(), 'loadActionContexts', 'php-boolean', array($callAction->getVar())));
 
     return $result;
   }
@@ -336,22 +342,27 @@ class Reflector extends Argumented {
       case 'txt' :
 
         $var = $call->getVar();
-        $result = $this->getWindow()->createCall($var, 'asString', 'php-string');
-
+        $return = $this->getWindow()->createCall($var, 'asString', 'php-string');
+        
+        $result = $return->getVar();
+        
       break;
 
       case 'dom' :
 
         $var = $call->getVar();
-        $result = $this->getWindow()->createCall($var, 'asDOM', 'php-string');
+        $return = $this->getWindow()->createCall($var, 'asDOM', 'php-string');
 
+        $result = $return->getVar();
+        
       break;
 
       case 'object' :
 
-        //$this->throwException('todo, format return');
+        $var = $call->getVar();
+        $return = $this->getWindow()->createCall($var, 'asObject', 'php-string');
 
-        $result = $call;
+        $result = $return->getVar();
 
       break;
 

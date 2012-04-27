@@ -43,7 +43,7 @@ class Action extends Basic implements core\stringable {
     return $this->aContexts;
   }
 
-  protected function setContexts(array $aContexts) {
+  public function setContexts(array $aContexts) {
 
     $this->aContexts = $aContexts;
   }
@@ -148,8 +148,9 @@ class Action extends Basic implements core\stringable {
 
     if (self::DEBUG_SHOW) {
       $tmp = $this->create('document', array($method));
-      //dspm($this->getFile()->asToken());
-      echo '<pre>' . $tmp->asString(true) . '</pre>';
+      dspm($this->getFile()->asToken());
+      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
+      //echo '<pre>' . $tmp->asString(true) . '</pre>';
     }
 
     // set new class and file

@@ -85,7 +85,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!is_string($sVal)) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : string expected, %s given', $formater->asToken($sVal)));
+      $this->throwException(sprintf('Invalid argument type : string expected, %s given', $formater->asToken($sVal)));
     }
 
     return $sVal;
@@ -97,7 +97,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!array_key_exists($sName, $this->aActionArguments)) {
 
-      if ($bRequired) $this->throwException(txt('Unknow argument : %s', $sName));
+      if ($bRequired) $this->throwException(sprintf('Unknow argument : %s', $sName));
     }
     else {
 
@@ -114,7 +114,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if ($bRequired && (is_null($mVal) || $mVal === false)) {
 
       if ($bDefault) $mResult = null;
-      else $this->throwException(txt('Validation failed for argument %s', $sName));
+      else $this->throwException(sprintf('Validation failed for argument %s', $sName));
     }
 
     if (!$bDefault) {
@@ -131,7 +131,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!is_numeric($iVal)) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : numeric expected, %s given', $formater->asToken($iVal)));
+      $this->throwException(sprintf('Invalid argument type : numeric expected, %s given', $formater->asToken($iVal)));
     }
 
     return $iVal + 0;
@@ -142,13 +142,23 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!is_array($aVal)) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : array expected, %s given', $formater->asToken($aVal)));
+      $this->throwException(sprintf('Invalid argument type : array expected, %s given', $formater->asToken($aVal)));
     }
 
     return $aVal;
   }
 
-  protected function loadActionContexts(parser\action\cached $action) {
+  protected function getContexts() {
+
+    return $this->aContexts;
+  }
+
+  public function setContexts(array $aContexts) {
+
+    $this->aContexts = $aContexts;
+  }
+
+  protected function loadActionContexts(parser\action $action) {
 
     foreach ($this->aContexts as $sContext) {
 
@@ -174,15 +184,18 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!$val instanceof $sInterface) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
+      $this->throwException(sprintf('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
     }
 
     return $val;
   }
-
+  
   protected function getActionFile($sPath, array $aArguments) {
 
-    return $this->create('action', array($this->getFile($sPath), $aArguments));
+    $action = $this->create('action', array($this->getFile($sPath), $aArguments));
+    $action->setContexts($this->getContexts());
+    
+    return $action;
   }
 
   public function asObject() {
@@ -191,7 +204,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!$aResult) {
 
-      $this->throwException(txt('No valid object result'));
+      $this->throwException(sprintf('No valid object result'));
     }
 
     return array_pop($aResult);

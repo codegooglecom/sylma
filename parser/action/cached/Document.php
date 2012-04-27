@@ -22,7 +22,7 @@ abstract class Document extends Basic implements dom\domable {
 
   protected function parseAction() {
 
-    $mResult = null;
+    $aResult = null;
     $aArguments = parent::parseAction();
 
     if ($this->useTemplate()) {
@@ -32,15 +32,16 @@ abstract class Document extends Basic implements dom\domable {
 
       $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
 */
-      $mResult = $this->loadTemplate(0, $aArguments);
-      $mResult = array(self::CONTEXT_DEFAULT => array($mResult));
+      $aResult = $aArguments;
+      $aResult[self::CONTEXT_DEFAULT] = array($this->loadTemplate(0, $aArguments));
+      //dspf($aResult);
     }
     else {
 
-      $mResult = $aArguments;
+      $aResult = $aArguments;
     }
 
-    return $mResult;
+    return $aResult;
   }
 
   protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {

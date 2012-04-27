@@ -50,6 +50,8 @@ abstract class Domed extends Runner implements parser\elemented {
       $context->remove();
     }
 
+    $this->getWindow()->setContext(php\_window::CONTEXT_DEFAULT);
+    
     $aResults[php\_window::CONTEXT_DEFAULT] = $this->parseChildren($doc->getChildren());
 
     return $aResults;
@@ -182,7 +184,9 @@ abstract class Domed extends Runner implements parser\elemented {
             $mResult = $this->getWindow()->argToInstance($mResult);
           }
 
-          $mResult = $this->getWindow()->createInsert($mResult, $this->useString());
+          $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
+          
+          $mResult = $this->getWindow()->createInsert($mResult, $this->useString(), null, $bTemplate);
         }
 
         $aResult[] = $mResult;
