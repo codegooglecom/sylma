@@ -60,7 +60,7 @@ class Domed extends core\module\Argumented implements parser\caller {
 
     if (!$sMethod) {
 
-      $this->throwException(txt('Invalid element, no method defined for call in %s', $el->asToken()));
+      $this->throwException(sprintf('Invalid element, no method defined for call in %s', $el->asToken()));
     }
 
     return $this->getControler()->getParent()->runObject($el, $var, $this->getMethod($sMethod));
@@ -91,7 +91,7 @@ class Domed extends core\module\Argumented implements parser\caller {
 
       if ($el->getName() != 'argument') {
 
-        $this->throwException(txt('Invalid %s, argument expected', $el->asToken()));
+        $this->throwException(sprintf('Invalid %s, argument expected', $el->asToken()));
       }
 
       if ($el->countChildren() > 1) {
@@ -147,7 +147,7 @@ class Domed extends core\module\Argumented implements parser\caller {
 
         default :
 
-          $this->throwException(txt('Cannot use %s, valid argument expected', $child->asToken()));
+          $this->throwException(sprintf('Cannot use %s, valid argument expected', $child->asToken()));
       }
 
       $children->next();
@@ -175,7 +175,7 @@ class Domed extends core\module\Argumented implements parser\caller {
 
     if (!$arg) {
 
-      $this->throwException(txt('Cannot find method %s', $sMethod));
+      $this->throwException(sprintf('Cannot find method %s', $sMethod));
     }
 
     $result = $controler->create('method', array($this, $arg));

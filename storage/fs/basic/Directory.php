@@ -288,7 +288,7 @@ class Directory extends Resource implements fs\directory {
 
         if (!$file) {
 
-          $this->throwException(txt('File lost : %s', (string) $this . '/' . $sName));
+          $this->throwException(sprintf('File lost : %s', (string) $this . '/' . $sName));
         }
 
         if (!$file->isSecured()) {
@@ -365,7 +365,7 @@ class Directory extends Resource implements fs\directory {
 
     if (!$result && ($iDebug & self::DEBUG_LOG)) {
 
-      $this->throwException(txt('@directory %s does not exists', $sName));
+      $this->throwException(sprintf('@directory %s does not exists', $sName));
     }
 
     return $result;
@@ -418,7 +418,7 @@ class Directory extends Resource implements fs\directory {
 
         if (!$dir && $iDebug & self::DEBUG_LOG) {
 
-          $this->throwException(txt('Directory %s does not exists', $sName));
+          $this->throwException(sprintf('Directory %s does not exists', $sName));
         }
 
         $result = $dir->getDistantFile($aPath, $iDebug);

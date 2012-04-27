@@ -32,7 +32,7 @@ abstract class Namespaced extends Exceptionable {
 
       if (!array_key_exists($sPrefix, $this->aNamespaces)) {
 
-        $this->throwException(txt('Unknown prefix : %s', $sPrefix));
+        $this->throwException(sprintf('Unknown prefix : %s', $sPrefix));
       }
 
       $sResult = $this->aNamespaces[$sPrefix];

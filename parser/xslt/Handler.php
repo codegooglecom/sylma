@@ -25,7 +25,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if (!$bResult) {
 
-      $this->throwException(txt('Cannot delete parameter %s', $sName));
+      $this->throwException(sprintf('Cannot delete parameter %s', $sName));
     }
 
     return $bResult;
@@ -42,7 +42,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if (!$bResult) {
 
-      $this->throwException(txt('Cannot create parameter %s', $sName));
+      $this->throwException(sprintf('Cannot create parameter %s', $sName));
     }
 
     return $bResult;
@@ -54,7 +54,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if (!$mResult) {
 
-      $this->throwException(txt('Cannot retrieve parameter %s', $sName));
+      $this->throwException(sprintf('Cannot retrieve parameter %s', $sName));
     }
 
     return $mResult;
@@ -109,7 +109,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if ($this->isEmpty()) {
 
-      $this->throwException(txt('Cannot import document in empty template'));
+      $this->throwException(sprintf('Cannot import document in empty template'));
     }
 
     if ($sResult = $el->getAttribute($sPrefixes)) {
@@ -150,7 +150,7 @@ class Handler extends dom\basic\handler\Rooted {
 
           default :
 
-            $this->throwException(txt('Cannot import document in empty template with %s', $ext->asToken()));
+            $this->throwException(sprintf('Cannot import document in empty template with %s', $ext->asToken()));
         }
       }
       else {

@@ -205,12 +205,12 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       if ($sSubPath !== '..') $aResult[] = $sSubPath;
       else {
 
-        if (!$aResult) \Sylma::throwException(txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
+        if (!$aResult) \Sylma::throwException(sprintf('Cannot use .. when current level is root in @path /%s', $sSubPath));
         else array_pop($aResult);
       }
     }
 
-    if ($sPath && !$aPath) $this->throwException(txt('Cannot parse path %s', $sPath));
+    if ($sPath && !$aPath) $this->throwException(sprintf('Cannot parse path %s', $sPath));
 
     return $aResult;
   }
@@ -329,7 +329,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     if (is_object($mResult) || is_array($mResult)) {
 
-      $this->throwException(txt('%s is not a string', $sPath), 2);
+      $this->throwException(sprintf('%s is not a string', $sPath), 2);
     }
 
     return $mResult;

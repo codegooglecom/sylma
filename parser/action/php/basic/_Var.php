@@ -44,7 +44,7 @@ abstract class _Var extends Controled implements php\_var {
 
     if (!$content && !$this->getContent()) {
 
-      $window->throwException(txt('Variable "%s" cannot be inserted, no content defined', $this->getName()));
+      $window->throwException(sprintf('Variable "%s" cannot be inserted, no content defined', $this->getName()));
     }
 
     if (!$this->bInserted) {
@@ -77,7 +77,7 @@ abstract class _Var extends Controled implements php\_var {
 
     if (!$this->bInserted && $this->getContent()) {
 
-      $this->getControler()->throwException(txt('Variable "%s" has not been inserted', $this->getName()));
+      $this->getControler()->throwException(sprintf('Variable "%s" has not been inserted', $this->getName()));
     }
 
     return $this->getControler()->createArgument(array(

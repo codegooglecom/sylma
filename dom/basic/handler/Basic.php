@@ -289,7 +289,7 @@ abstract class Basic extends core\module\Controled implements dom\handler {
 
     if ($this->isEmpty()) {
 
-      $this->throwException(txt('You cannot save empty document in %s', $file->asToken()));
+      $this->throwException(sprintf('You cannot save empty document in %s', $file->asToken()));
     }
 
     if ($bFormat) $this->getRoot()->prepareHTML();

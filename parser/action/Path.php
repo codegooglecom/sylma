@@ -87,11 +87,11 @@ class Path extends core\module\Argumented {
 
           if ($dir->checkRights(MODE_EXECUTION)) {
 
-            $controler->throwException(txt('No index file in %s', $dir->asToken()));
+            $controler->throwException(sprintf('No index file in %s', $dir->asToken()));
 
           } else {
 
-            $controler->throwExecution(txt('No execution rights on %s', $dir->asToken()));
+            $controler->throwExecution(sprintf('No execution rights on %s', $dir->asToken()));
           }
         }
       }
@@ -220,7 +220,7 @@ class Path extends core\module\Argumented {
 
     if ($sPath{0} != '/') {
 
-      $this->throwException(txt('Invalid path : %s', $sPath));
+      $this->throwException(sprintf('Invalid path : %s', $sPath));
     }
 
     $this->sPath = $sPath;

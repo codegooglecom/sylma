@@ -17,7 +17,7 @@ class Tokened extends Iterator {
       
       if (!$iToken = strpos($sName, ':')) {
         
-        $this->throwException(txt('Invalid token : %s', $sName));
+        $this->throwException(sprintf('Invalid token : %s', $sName));
       }
       
       $sToken = substr($sName, 1, $iToken - 1);
@@ -48,7 +48,7 @@ class Tokened extends Iterator {
     
     if (!array_key_exists($sName, $this->aTokens)) {
       
-      $this->throwException(txt('Unkown token : %s', $sName));
+      $this->throwException(sprintf('Unkown token : %s', $sName));
     }
     
     return $this->aTokens[$sName];

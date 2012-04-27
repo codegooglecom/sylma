@@ -201,7 +201,7 @@ class Basic extends core\module\Argumented implements core\user {
     if (!$dProfil || $dProfil->isEmpty()) {
 
       $this->log($this->readArgument('path') . '/' . $this->getName());
-      $this->log(txt('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
+      $this->log(sprintf('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
     }
     else {
 
@@ -302,17 +302,17 @@ class Basic extends core\module\Argumented implements core\user {
 
     if (!$sOwner) {
 
-      $this->throwException(txt('Owner not defined in %s', $sSource));
+      $this->throwException(sprintf('Owner not defined in %s', $sSource));
     }
 
     if (strlen($sMode) < 3 || !is_numeric($sMode)) {
 
-      $this->throwException(txt('Invalid mode in %s', $sSource));
+      $this->throwException(sprintf('Invalid mode in %s', $sSource));
     }
 
     if (!strlen($sGroup)) {
 
-      $this->throwException(txt('Group not defined in %s', $sSource));
+      $this->throwException(sprintf('Group not defined in %s', $sSource));
     }
 
     $iOwner = intval($sMode{0});
@@ -321,7 +321,7 @@ class Basic extends core\module\Argumented implements core\user {
 
     if ($iOwner > 7 || $iGroup > 7 || $iPublic > 7) {
 
-      $this->throwException(txt('Invalid mode in %s', $sSource));
+      $this->throwException(sprintf('Invalid mode in %s', $sSource));
     }
 
     // everything is ok

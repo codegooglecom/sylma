@@ -62,7 +62,7 @@ abstract class Container extends Basic {
     if (!is_string($sContent)) {
 
       $formater = $this->getControler('formater');
-      $this->throwException(txt('Cannot insert %s as document content, string expected', $formater->asToken($sContent)));
+      $this->throwException(sprintf('Cannot insert %s as document content, string expected', $formater->asToken($sContent)));
     }
     
     $this->sContent = $sContent;

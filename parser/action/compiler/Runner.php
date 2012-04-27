@@ -72,7 +72,7 @@ abstract class Runner extends Action {
 
         if ($child->getChildren()->length != 1) {
 
-          $this->throwException(txt('Invalid children, one child expected in %s', $child->asToken()));
+          $this->throwException(sprintf('Invalid children, one child expected in %s', $child->asToken()));
         }
 
         $content = $this->parse($child->getFirst());
@@ -95,7 +95,7 @@ abstract class Runner extends Action {
         }
         else {
 
-          $this->throwException(txt('Condition expected, invalid %s', $child->asToken()));
+          $this->throwException(sprintf('Condition expected, invalid %s', $child->asToken()));
         }
 
         $window->add($condition);

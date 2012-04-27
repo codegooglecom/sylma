@@ -18,7 +18,7 @@ class Domed extends Reflector implements parser\attributed {
     if (!is_object($result)) {
 
       $formater = $this->getControler('formater');
-      $this->throwException(txt('Bad type for result : %s', $formater->asToken($result)));
+      $this->throwException(sprintf('Bad type for result : %s', $formater->asToken($result)));
     }
 
     if ($result instanceof php\basic\Condition) {

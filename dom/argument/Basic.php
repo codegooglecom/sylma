@@ -165,7 +165,7 @@ abstract class Basic extends core\module\Controled implements core\argument {
 
     if (!$bElement || ($result->hasChildren() && !$result->isComplex())) {
 
-      if ($bDebug) $this->throwException(txt('Cannot use @path %s as complex element', $sPath));
+      if ($bDebug) $this->throwException(sprintf('Cannot use @path %s as complex element', $sPath));
     }
     else {
 

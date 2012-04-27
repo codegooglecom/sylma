@@ -25,7 +25,7 @@ class Method extends core\module\Argumented {
 
       if ($sArgument != 'argument' || $arg->getNamespace() != $this->getControler()->getNamespace()) {
 
-        $this->throwException(txt('Invalid %s, argument expected', $arg->asToken()));
+        $this->throwException(sprintf('Invalid %s, argument expected', $arg->asToken()));
       }
 
       $sName = $arg->read('@name');
@@ -95,7 +95,7 @@ class Method extends core\module\Argumented {
 
     if (!$bResult) {
 
-      $this->throwException(txt('Argument %s has bad format, %s expected', get_class($obj), $sFormat));
+      $this->throwException(sprintf('Argument %s has bad format, %s expected', get_class($obj), $sFormat));
     }
   }
 

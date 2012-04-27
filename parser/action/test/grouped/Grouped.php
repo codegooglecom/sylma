@@ -48,7 +48,7 @@ class Grouped extends tester\Basic {
       case 'array' : $result = $action->asArray(); break;
       default :
 
-        $this->throwException(txt('Unknown action type : %s', $sType));
+        $this->throwException(sprintf('Unknown action type : %s', $sType));
     }
 
     return $result;

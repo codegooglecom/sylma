@@ -39,7 +39,7 @@ class Domed extends Iterator implements dom\domable {
 
     if (count($this->aArray) > 1) {
 
-      $this->throwException(txt('Cannot build document with more than one root value with @namespace %s', $sNamespace));
+      $this->throwException(sprintf('Cannot build document with more than one root value with @namespace %s', $sNamespace));
     }
 
     $this->normalize();
@@ -49,7 +49,7 @@ class Domed extends Iterator implements dom\domable {
     if (!$result || $result->isEmpty()) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException (txt('No result or invalid result when exporting @namespace %s', $sNamespace));
+      $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
     }
 
     return $result;

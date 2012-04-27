@@ -161,7 +161,7 @@ class Initializer extends module\Filed {
 
 	    if (!ini_get('display_errors')) {
 
-	      \Sylma::log(self::NS, txt('php.ini : display_errors is Off. Fatal error will not be shown.'));
+	      \Sylma::log(self::NS, sprintf('php.ini : display_errors is Off. Fatal error will not be shown.'));
 	    }
     }
     else {

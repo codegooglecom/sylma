@@ -153,7 +153,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
       default :
 
-        $this->throwException(txt('Unknown return format in %s', $el->asToken()));
+        $this->throwException(sprintf('Unknown return format in %s', $el->asToken()));
 
     }
 

@@ -93,7 +93,7 @@ class Element extends \DOMElement implements dom\element {
 
     if (!$sResult && $bDebug) {
 
-      $this->throwException(txt('No result for read expression : %s', $sQuery));
+      $this->throwException(sprintf('No result for read expression : %s', $sQuery));
     }
 
     return $sResult;
@@ -115,7 +115,7 @@ class Element extends \DOMElement implements dom\element {
 
       if ($bDebug && !$domlist->length) {
 
-        $this->throwException(txt('No result for get/query expression : %s', $sQuery));
+        $this->throwException(sprintf('No result for get/query expression : %s', $sQuery));
       }
 
       if ($bConvert) $result->addList($domlist);
@@ -206,7 +206,7 @@ class Element extends \DOMElement implements dom\element {
 
     if (!$sResult && $bDebug) {
 
-      $this->throwException(txt('No result for @attribute %s:%s', $sNamespace, $sName));
+      $this->throwException(sprintf('No result for @attribute %s:%s', $sNamespace, $sName));
     }
 
     return $sResult;

@@ -158,7 +158,7 @@ abstract class Resource implements fs\resource {
         
         if ($bGroup && !$user->isMember($sGroup)) {
           
-          $this->throwException(txt('You have no rights on group %s or it doesn\'t exist', $sGroup));
+          $this->throwException(sprintf('You have no rights on group %s or it doesn\'t exist', $sGroup));
         }
         
         $iMode = $user->getMode($sOwner, $sGroup, $sMode);

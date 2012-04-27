@@ -103,7 +103,7 @@ class Reflector extends Argumented {
 
       if ($el->getType() === $el::TEXT) {
 
-        $this->throwException((txt('Invalid %s, element expected', $el->asToken())));
+        $this->throwException((sprintf('Invalid %s, element expected', $el->asToken())));
       }
 
       if ($el->getNamespace() == $this->getNamespace()) {
@@ -175,7 +175,7 @@ class Reflector extends Argumented {
 
         if ($sUse != 'or') {
 
-          $this->throwException(txt('Unknown boolean use defined, "and" or "or" expected in %s', $el->asToken()));
+          $this->throwException(sprintf('Unknown boolean use defined, "and" or "or" expected in %s', $el->asToken()));
         }
 
         $bAnd = false;
@@ -183,7 +183,7 @@ class Reflector extends Argumented {
 
       if ($el->countChildren() != 1) {
 
-        $this->throwException(txt('One children or attribute value expected in %s', $el->asToken()));
+        $this->throwException(sprintf('One children or attribute value expected in %s', $el->asToken()));
       }
 
       $mValue = $this->parse($el->getFirst());
@@ -201,7 +201,7 @@ class Reflector extends Argumented {
 
       if ($child->getType() != dom\node::ELEMENT) {
 
-        $this->throwException(txt('Invalid node type in array : %s', $el->asToken()));
+        $this->throwException(sprintf('Invalid node type in array : %s', $el->asToken()));
       }
 
       if (!$mKey = $child->readAttribute('key', $this->getNamespace(), false)) {
@@ -320,7 +320,7 @@ class Reflector extends Argumented {
 
       if ($child->getType() != dom\node::ELEMENT) {
 
-        $this->throwException(txt('Invalid %s, element expected', $child->asToken()));
+        $this->throwException(sprintf('Invalid %s, element expected', $child->asToken()));
       }
 
       $sKey = $child->readAttribute('name', $this->getNamespace(), false);
@@ -368,7 +368,7 @@ class Reflector extends Argumented {
 
       default :
 
-        $this->throwException(txt('Unknown return type for external action : %s', $sReturn));
+        $this->throwException(sprintf('Unknown return type for external action : %s', $sReturn));
     }
 
     return $result;
@@ -394,7 +394,7 @@ class Reflector extends Argumented {
 
     if (!$first || $first->getType() === dom\node::TEXT) {
 
-      $this->throwException(txt('Invalid children for document, one child element expected in %s, ', $el->asToken()));
+      $this->throwException(sprintf('Invalid children for document, one child element expected in %s, ', $el->asToken()));
     }
 
     $content = $this->parseElement($first->remove());
@@ -433,7 +433,7 @@ class Reflector extends Argumented {
 
     if (!$sPrefixes = $el->read()) {
 
-      $this->throwException(txt('You must specify comma separated prefixes in content of %s', $el->asToken()));
+      $this->throwException(sprintf('You must specify comma separated prefixes in content of %s', $el->asToken()));
     }
 
     foreach (explode(',', $sPrefixes) as $sPrefix) {
@@ -444,7 +444,7 @@ class Reflector extends Argumented {
 
         if (!$sNamespace = $el->lookupNamespace(null)) {
 
-          $this->throwException(txt('No default namespace found in @element %s', $el->asToken()));
+          $this->throwException(sprintf('No default namespace found in @element %s', $el->asToken()));
         }
 
         $aResult[substr($sPrefix, 1)] = $window->createString($sNamespace);
@@ -453,7 +453,7 @@ class Reflector extends Argumented {
 
         if (!$sNamespace = $el->lookupNamespace($sPrefix)) {
 
-          $this->throwException(txt('No namespace found with %s in @element %s', $sPrefix, $el->asToken()));
+          $this->throwException(sprintf('No namespace found with %s in @element %s', $sPrefix, $el->asToken()));
         }
 
         $aResult[$sPrefix] = $window->createString($sNamespace);
@@ -467,7 +467,7 @@ class Reflector extends Argumented {
 
     if ($el->countChildren() != 1) {
 
-      $this->throwException(txt('Too much children, one child expected in %s', $el->asToken()));
+      $this->throwException(sprintf('Too much children, one child expected in %s', $el->asToken()));
     }
 
     $content = $this->parseNode($el->getFirst());

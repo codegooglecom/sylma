@@ -89,7 +89,7 @@ class Controler extends core\module\Domed implements parser\elemented {
 
     if ($node->getType() != dom\node::ELEMENT || $node->getName() != 'call' || $node->getNamespace() != $this->getNamespace()) {
 
-      $this->throwException(txt('Invalid %s, call expected', $node->asToken()));
+      $this->throwException(sprintf('Invalid %s, call expected', $node->asToken()));
     }
 
     $window = $this->getParent()->getWindow();

@@ -36,7 +36,7 @@ abstract class Basic extends core\module\Domed implements test {
       $doc = $file->getDocument();
       $doc->registerNamespaces($this->getNS());
 
-      if (!$doc || $doc->isEmpty()) $this->throwException(txt('@file %s cannot be load'));
+      if (!$doc || $doc->isEmpty()) $this->throwException(sprintf('@file %s cannot be load'));
 
       $aTests = $this->loadDocument($doc, $file);
 

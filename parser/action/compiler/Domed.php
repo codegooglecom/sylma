@@ -81,7 +81,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
       default :
 
-        $this->throwException(txt('Unknown node type : %s', $node->getType()));
+        $this->throwException(sprintf('Unknown node type : %s', $node->getType()));
     }
 
     return $mResult;
@@ -246,7 +246,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
         if (!$parser instanceof parser\attributed) {
 
-          $this->throwException(txt('Cannot use parser %s with attributes', $sNamespace));
+          $this->throwException(sprintf('Cannot use parser %s with attributes', $sNamespace));
         }
 
         $result = $parser->parseAttributes($el, $result->getRoot(), $resultHandler);

@@ -288,7 +288,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
       }
       else {
 
-        $this->throwException(txt('Cannot convert scalar value %s to string', get_class($instance)));
+        $this->throwException(sprintf('Cannot convert scalar value %s to string', get_class($instance)));
       }
     }
     else if ($val instanceof php\basic\Called) {
@@ -302,7 +302,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
       if (!$interface->isInstance('\sylma\core\stringable')) {
 
-        $this->throwException(txt('Cannot convert object %s to string', $interface->getName()));
+        $this->throwException(sprintf('Cannot convert object %s to string', $interface->getName()));
       }
 
       $result = $this->createCall($this->getSelf(), 'loadStringable', 'php-string', array($val, $iMode));
@@ -318,7 +318,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     else {
 
       $formater = $this->getControler('formater');
-      $this->throwException(txt('Cannot convert %s to string', $formater->asToken($val)));
+      $this->throwException(sprintf('Cannot convert %s to string', $formater->asToken($val)));
     }
 
     return $result;
@@ -364,7 +364,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
       }
       else {
 
-        $this->throwException(txt('Cannot add @class %s', $interface->getName()));
+        $this->throwException(sprintf('Cannot add @class %s', $interface->getName()));
       }
     }
     else if ($val instanceof php\_scalar || $val instanceof dom\node) {
@@ -374,7 +374,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     else {
 
       $frm = \Sylma::getControler('formater');
-      $this->throwException(txt('Cannot insert %s', $frm->asToken($val)));
+      $this->throwException(sprintf('Cannot insert %s', $frm->asToken($val)));
     }
 
     return $result;
@@ -440,7 +440,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
       default :
 
-        $this->throwException(txt('Unkown scalar type as argument : %s', $sFormat));
+        $this->throwException(sprintf('Unkown scalar type as argument : %s', $sFormat));
     }
 
     return $result;

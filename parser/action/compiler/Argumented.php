@@ -25,7 +25,7 @@ abstract class Argumented extends Domed {
 
     if (!array_key_exists($sName, $this->aActionArguments)) {
 
-      $this->throwException(txt('Argument %s does not exists', $sName));
+      $this->throwException(sprintf('Argument %s does not exists', $sName));
     }
 
     $var = $this->aActionArguments[$sName];
@@ -153,7 +153,7 @@ abstract class Argumented extends Domed {
 
     if ($el->countChildren() != 1) {
 
-      $this->throwException(txt('One child expected in %s', $el->asToken()));
+      $this->throwException(sprintf('One child expected in %s', $el->asToken()));
     }
 
     $bReturn = $el->testAttribute('return', true);
@@ -184,7 +184,7 @@ abstract class Argumented extends Domed {
 
     if ($el->countChildren() != 1) {
 
-      $this->throwException(txt('One child expected in %s', $el->asToken()));
+      $this->throwException(sprintf('One child expected in %s', $el->asToken()));
     }
 
     $result = $this->parseNode($el->getFirst());

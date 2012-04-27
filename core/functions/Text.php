@@ -5,7 +5,7 @@ function t($s) {
   return $s;
 }
 
-function txt() {
+function sprintf() {
   
   $sResult = '';
   
