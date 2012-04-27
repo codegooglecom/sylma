@@ -84,7 +84,7 @@ class Document extends parser\action\handler\Action {
 
     $cleaned = $cleaner->parseDocument($doc);
     // $this->loadContexts();
-    $sResult = $sProlog . "\n" . $cleaned->asString(dom\handler::STRING_INDENT | dom\handler::STRING_HEAD);
+    $sResult = $sProlog . "\n" . $cleaned->asString(dom\handler::STRING_INDENT); // | dom\handler::STRING_HEAD
 
     return $sResult;
   }
