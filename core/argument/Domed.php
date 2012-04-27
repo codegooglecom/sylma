@@ -1,12 +1,12 @@
 <?php
 
 namespace sylma\core\argument;
-use \sylma\core, \sylma\dom;
+use sylma\core, sylma\dom;
 
-require_once('Filed.php');
+require_once('Iterator.php');
 require_once('dom/domable.php');
 
-class Domed extends Filed implements dom\domable {
+class Domed extends Iterator implements dom\domable {
 
   protected static $aPrefixes = array();
   /**
@@ -134,7 +134,7 @@ class Domed extends Filed implements dom\domable {
   }
 
   protected static function normalizeObject($val) {
-
+//echo '-- ' .get_class($val).'<br/>';
     if ($val instanceof dom\node) {
 
       $mResult = $val;

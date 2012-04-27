@@ -232,6 +232,8 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     $arg = $window->asArgument();
 
+    //$formater = \Sylma::getControler('formater');
+    //echo $formater->asHTML($arg);
     //$tst = $arg->get('window')->query();
     //dspm((string) $tst[1]);
 

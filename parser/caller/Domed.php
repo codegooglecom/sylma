@@ -53,7 +53,7 @@ class Domed extends core\module\Argumented implements parser\caller {
 
     $this->sName = $sNamespace;
   }
-  
+
   public function parseCall(dom\element $el, php\basic\_ObjectVar $var) {
 
     $sMethod = $el->getAttribute('name');
@@ -106,7 +106,7 @@ class Domed extends core\module\Argumented implements parser\caller {
       $mResult = $this->parseNode($el);
     }
 
-    return $this->createArgument(array(
+    return $this->getControler()->createArgument(array(
       'name' => $mKey,
       'value' => $mResult,
     ));

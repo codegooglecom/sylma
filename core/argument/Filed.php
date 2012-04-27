@@ -3,12 +3,12 @@
 namespace sylma\core\argument;
 use \sylma\core, sylma\storage\fs, sylma\core\functions\path;
 
-require_once('Iterator.php');
+require_once('Domed.php');
 require_once('core/functions/Path.php');
 
 require_once('spyc.php');
 
-class Filed extends Iterator {
+class Filed extends Domed {
 
   /**
    * Special calls use this prefix use in YAML files

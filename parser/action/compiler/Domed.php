@@ -16,10 +16,10 @@ require_once('parser/elemented.php');
 abstract class Domed extends Runner implements parser\elemented {
 
   protected $currentElement;
-  
+
   protected function parseDocument(dom\document $doc) {
 
-    $aResult = array();
+    $aResults = array();
 
     if ($doc->isEmpty()) {
 
@@ -45,14 +45,14 @@ abstract class Domed extends Runner implements parser\elemented {
       $sName = $context->readAttribute('name');
       $this->getWindow()->setContext($sName);
 
-      $aResult[$sName] = array_merge($aResult, $this->parseChildren($context->getChildren()));
+      $aResults[$sName] = $this->parseChildren($context->getChildren());
 
       $context->remove();
     }
 
-    $aResult[php\_window::CONTEXT_DEFAULT] = array_merge($aResult, $this->parseChildren($doc->getChildren()));
+    $aResults[php\_window::CONTEXT_DEFAULT] = $this->parseChildren($doc->getChildren());
 
-    return $aResult;
+    return $aResults;
   }
 
   protected function parseNode(dom\node $node) {

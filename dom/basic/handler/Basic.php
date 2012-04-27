@@ -5,13 +5,13 @@ use \sylma\dom, \sylma\storage\fs, \sylma\core;
 
 require_once('core/module/Controled.php');
 require_once(dirname(dirname(__dir__)) . '/handler.php');
-require_once('core/argumentable.php');
+//require_once('core/argumentable.php');
 
 /**
  * Existenz of this class mainly due to https://bugs.php.net/bug.php?id=28473
  * Allow too extension of document methods with others arguments
  */
-abstract class Basic extends core\module\Controled implements dom\handler, core\argumentable {
+abstract class Basic extends core\module\Controled implements dom\handler {
 
   /**
    * See @method setFile()
@@ -30,8 +30,6 @@ abstract class Basic extends core\module\Controled implements dom\handler, core\
    * See @method setMode() for details
    */
   private $iMode = null;
-
-  private $bFragment;
 
   public function __construct($mContent = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
 

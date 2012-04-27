@@ -50,12 +50,9 @@ class Sylma {
     try {
 
       $init = self::$aControlers['init'] = new self::$sInitializerClass;
-
-      self::$settings = $init->loadSettings($sServer, self::ROOT . self::PATH . self::PATH_OPTIONS);
-      $init->run(self::$settings->get('initializer'));
-
       self::setControler('init', $init);
 
+      self::$settings = $init->loadSettings($sServer, self::ROOT . self::PATH . self::PATH_OPTIONS);
       self::$result = $init->run(self::get('initializer'));
     }
     catch (core\exception $e) {

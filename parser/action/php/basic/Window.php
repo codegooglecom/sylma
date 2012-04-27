@@ -77,10 +77,10 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
   public function checkContent($mVal) {
 
-    if (!is_string($mVal) && !$mVal instanceof core\argumentable) { // && !$mVal instanceof dom\node
+    if (!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node) {
 
       $formater = $this->getControler('formater');
-      $this->throwException(txt('Cannot add %s in content', $formater->asToken($mVal)));
+      $this->throwException(sprintf('Cannot add %s in content', $formater->asToken($mVal)));
     }
   }
 
@@ -524,9 +524,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     ), self::NS);
 
     $result->get('window')->mergeArray($this->aContent);
-
-    $tt = $result->get('window')->query();
-
+    
     return $result;
   }
 }

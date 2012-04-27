@@ -15,7 +15,7 @@ abstract class _Var extends Controled implements php\_var {
   protected $bInserted = false;
   protected $content;
 
-  public function __construct($controler, php\_instance $instance, $sName, php\linable $content) {
+  public function __construct(php\_window $controler, php\_instance $instance, $sName, php\linable $content) {
 
     $this->setName($sName);
     $this->setControler($controler);

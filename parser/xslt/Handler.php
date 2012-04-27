@@ -222,7 +222,7 @@ class Handler extends dom\basic\handler\Rooted {
 
       foreach ($aErrors as $error) {
 
-        $this->throwException(txt($error->message));
+        $this->throwException($error->message);
       }
     }
   }
@@ -248,6 +248,9 @@ class Handler extends dom\basic\handler\Rooted {
 
     $this->getProcessor()->importStylesheet($this->getDocument());
 
+    $this->retrieveErrors();
+    libxml_clear_errors();
+
     if ($bXML) {
 
       $mResult = $this->getProcessor()->transformToDoc($doc->getDocument());
@@ -258,7 +261,7 @@ class Handler extends dom\basic\handler\Rooted {
       }
       else {
 
-        $this->throwException(t('No result on parsing'));
+        $this->throwException('No result on parsing');
       }
     }
     else {

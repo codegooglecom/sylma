@@ -386,7 +386,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   }
 
   protected static function normalizeObject($val) {
-
+//echo '- ' .get_class($val).'<br/>';
     $mResult = null;
 
     if (self::DEBUG_NORMALIZE_RECURSION) {
@@ -488,7 +488,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      $this->throwException(txt('Cannot render an array as a string'));
+      $this->throwException(sprintf('Cannot render an array as a string'));
     }
 
     return $sResult;

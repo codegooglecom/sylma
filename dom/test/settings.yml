@@ -1,6 +1,5 @@
 class-alias : basic
 classes :
   handler :
-    file : /sylma/dom2/basic/handler/Rooted.php
     name : \sylma\dom\basic\handler\Rooted
 

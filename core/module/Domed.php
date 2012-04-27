@@ -13,8 +13,8 @@ abstract class Domed extends Filed {
 
   private $options = null;  // contextual settings
 
-  protected static $sArgumentClass = 'sylma\core\argument\Domed';
-  protected static $sArgumentFile = 'core/argument/Domed.php';
+  //protected static $sArgumentClass = 'sylma\core\argument\Domed';
+  //protected static $sArgumentFile = 'core/argument/Domed.php';
 
   const ARGUMENTS = 'domed.yml';
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\parser;
+use sylma\core, sylma\parser, sylma\dom;
 
 require_once('parser/action/handler/Action.php');
 require_once('core/window.php');
@@ -44,12 +44,11 @@ class Document extends parser\action\handler\Action {
     $sResult = '';
 
     $sCharset = 'utf-8';
-    $sMime = 'text/html';
+    $sMime = 'application/xhtml+xml';
 
     if($sMime == "application/xhtml+xml") {
 
-      $sProlog = '<?xml version="1.0" encoding="' . $sCharset . '" ?>' . "\n" .
-      '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+      $sProlog = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
     }
     else {
 
@@ -65,6 +64,7 @@ class Document extends parser\action\handler\Action {
 
     } catch(Exception $e) {
 
+      /*
       $sResult = (string) 'Problème lors du chargement du site. Nous nous excusons pour ce désagrément. <a href="/">Cliquez-ici</a> pour revenir à la page d\'accueil';
 
       if (\Sylma::read('debug/enable')) {
@@ -72,12 +72,19 @@ class Document extends parser\action\handler\Action {
         echo('<table>' . $e->xdebug_message . '</table>');
         //echo '<div style="background-color: #ddd; padding: 10px; border: 1px solid black;">' . $e->getTrace() . '</div>';
       }
+      */
 
-      exit;
+      throw $e;
     }
 
+    require_once('dom/handler.php');
+
+    $this->setDirectory(__FILE__);
+    $cleaner = $this->getTemplate('cleaner.xsl');
+
+    $cleaned = $cleaner->parseDocument($doc);
     // $this->loadContexts();
-    $sProlog . "\n" . $doc->asString();
+    $sResult = $sProlog . "\n" . $cleaned->asString(dom\handler::STRING_INDENT | dom\handler::STRING_HEAD);
 
     return $sResult;
   }

@@ -50,7 +50,7 @@ class Action extends Basic implements core\stringable {
 
   protected function getClassName(fs\file $file) {
 
-    $sNamespace = str_replace('/', '\\', (string) $file->getParent());
+    $sNamespace = '\sylma' . str_replace('/', '\\', (string) $file->getParent());
     $sClass = 'sylma' . ucfirst(strtolower($file->getSimpleName()));
 
     return array(
@@ -148,8 +148,8 @@ class Action extends Basic implements core\stringable {
 
     if (self::DEBUG_SHOW) {
       $tmp = $this->create('document', array($method));
-      dspm($this->getFile()->asToken());
-      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
+      //dspm($this->getFile()->asToken());
+      echo '<pre>' . $tmp->asString(true) . '</pre>';
     }
 
     // set new class and file

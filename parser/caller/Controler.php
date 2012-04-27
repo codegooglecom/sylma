@@ -45,6 +45,11 @@ class Controler extends core\module\Domed implements parser\elemented {
     return $result;
   }
 
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
+  }
+
   public function getInterfaceFromClass($sName, $sFile = '') {
 
     $result = null;
