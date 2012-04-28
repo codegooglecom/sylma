@@ -186,7 +186,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
           $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
           
-          $mResult = $this->getWindow()->createInsert($mResult, $this->useString(), null, $bTemplate);
+          $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate);
         }
 
         $aResult[] = $mResult;

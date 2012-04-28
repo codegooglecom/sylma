@@ -151,9 +151,16 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     return $result;
   }
 
-  public function createInsert($mVal, $bConvert = true, $iKey = null, $bTemplate = true) {
+  public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true) {
 
-    if ($bConvert) $mVal = $this->convertToDOM($mVal);
+    if ($sFormat) {
+      
+      switch ($sFormat) {
+        
+        case 'dom' : $mVal = $this->convertToDOM($mVal); break;
+        case 'txt' : $mVal = $this->convertToString($mVal); break;
+      }
+    }
 
     $result = $this->create('insert', array($this, $mVal, $iKey, $bTemplate));
 

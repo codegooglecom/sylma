@@ -281,7 +281,7 @@
     </tst:prepare>
     <tst:expected>
       $iResult = $controler->getResult('object');
-dspf($iResult);
+
       return
         $iResult === 123;
     </tst:expected>

@@ -129,11 +129,17 @@ class Domed extends core\module\Argumented implements parser\caller {
 
         case dom\node::ELEMENT :
 
-          // if not special call (with parent namespace), use as argument
+          if ($child->getNamespace() == $this->getNamespace()) {
+            
+            if (in_array($child->getName(), array('call'))) {
 
-          if ($child->getNamespace() == $this->getControler()->getParent()->getNamespace()) {
+              break 2;
+            }
+          }
+          else if ($child->getNamespace() == $this->getControler()->getParent()->getNamespace()) {
 
-            if (in_array($child->getName(), array('call', 'if', 'if-not'))) {
+            // if not special call (with parent namespace), use as argument
+            if (in_array($child->getName(), array('if', 'if-not'))) {
 
               break 2;
             }

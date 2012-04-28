@@ -66,10 +66,10 @@ class Condition extends Controled implements core\argumentable, php\scope, php\s
 
     if ($this->useTemplate()) {
       
-      $insert = $window->createInsert($window->argToInstance(true), false, null, false);
+      $insert = $window->createInsert($window->argToInstance(true), '', null, false);
       $sArgument = $insert->getKey();
       $this->addContent($insert);
-      $window->add($window->createInsert($window->argToInstance(false), false, $insert->getKey(), false));
+      $window->add($window->createInsert($window->argToInstance(false), '', $insert->getKey(), false));
     }
 
     return $this->getControler()->createArgument(array(
