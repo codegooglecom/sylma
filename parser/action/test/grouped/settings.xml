@@ -269,4 +269,21 @@
         $aResult === array(null);
     </tst:expected>
   </tst:test>
+  <tst:test name="Require an indexed argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-numeric"/>
+      </le:settings>
+      <le:get-argument index="0"/>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array(123));
+    </tst:prepare>
+    <tst:expected>
+      $iResult = $controler->getResult('object');
+dspf($iResult);
+      return
+        $iResult === 123;
+    </tst:expected>
+  </tst:test>
 </tst:tests>
