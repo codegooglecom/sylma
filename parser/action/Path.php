@@ -73,39 +73,43 @@ class Path extends core\module\Argumented {
     $dir = $controler->getDirectory('/');
 
     $aPath = $this->getPath(true);
-//echo 'path : ';
+
     do {
-//echo '-loop-';
-      $sSubPath = array_shift($aPath);
+
+      $sub = null;
+      $sSubPath = $aPath ? $aPath[0] : '';
 
       if ($sSubPath) {
 
         if (!$sub = $dir->getDirectory($sSubPath, false)) {
 
           $file = $this->findAction($dir, $sSubPath, $bArguments, $bDebug);
-
-        } else {
+        }
+        else {
 
           $dir = $sub;
+          array_shift($aPath);
         }
       }
 
-      if (!$file && !$aPath) {
+      if (!$sub) {
 
-        if (!$file = $this->findAction($dir, 'index', $bArguments, $bDebug)) {
+        if (!$file) {
 
-          if ($dir->checkRights(\Sylma::MODE_EXECUTE)) {
+          $file = $this->findAction($dir, 'index', $bArguments, $bDebug);
+
+          if (!$file) {
 
             $this->throwException(sprintf('No index file in %s', $dir->asToken()));
-
-          } else {
-
-            $this->throwExecution(sprintf('No execution rights on %s', $dir->asToken()));
           }
+        }
+        else {
+
+          array_shift($aPath);
         }
       }
 
-    } while (!$file && $aPath);
+    } while (!$file && $sub);
 
     $aPath = $this->loadIndexed($aPath);
 

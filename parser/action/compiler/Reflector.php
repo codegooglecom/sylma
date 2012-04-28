@@ -43,6 +43,9 @@ class Reflector extends Argumented {
 
       break;
 
+      case 'document' : $mResult = $this->reflectDocument($el); break;
+      //case 'template' : $mResult = $this->reflectTemplate($el); break;
+
       // case 'get-settings' :
       case 'switch' :
       case 'function' :
@@ -55,16 +58,16 @@ class Reflector extends Argumented {
       //case 'special' :
       //case 'controler' :
 
-        $sName = $el->getAttribute('name');
-        $mResult = $window->setControler($sName);
+        //$sName = $el->getAttribute('name');
+        //$mResult = $window->setControler($sName);
 
-      break;
+      //break;
 
-      case 'redirect' :
+      //case 'redirect' :
 
-        $mResult = $window->createCall($window->getSelf(), 'getRedirect', 'core\redirect');
+        //$mResult = $window->createCall($window->getSelf(), 'getRedirect', 'core\redirect');
 
-      break;
+      //break;
 
   // <object name="window" call="Controler::getWindow()"/>
   // <object name="redirect" call="$oRedirect"/>
@@ -77,15 +80,6 @@ class Reflector extends Argumented {
   // <object name="parent-directory" call="$oAction-&gt;getPath()-&gt;getDirectory()-&gt;getParent()" return="true"/>
   // <object name="parent" call="$oAction-&gt;getParent()"/>
   // <object name="database" call="Controler::getDatabase()"/>
-      case 'document' :
-
-        //if ($el->hasChildren())
-
-        $mResult = $this->reflectDocument($el);
-
-      break;
-
-      case 'template' :
 
       default :
 
@@ -343,9 +337,9 @@ class Reflector extends Argumented {
 
         $var = $call->getVar();
         $return = $this->getWindow()->createCall($var, 'asString', 'php-string');
-        
+
         $result = $return->getVar();
-        
+
       break;
 
       case 'dom' :
@@ -354,7 +348,7 @@ class Reflector extends Argumented {
         $return = $this->getWindow()->createCall($var, 'asDOM', 'php-string');
 
         $result = $return->getVar();
-        
+
       break;
 
       case 'object' :

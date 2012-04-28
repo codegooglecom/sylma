@@ -63,7 +63,7 @@ abstract class Runner extends Action {
 
     while ($child = $children->current()) {
 
-      if ($child->getNamespace() == $this->getNamespace()) {
+      if ($child->getNamespace() == $this->getNamespace() && in_array($child->getName(), array('if', 'if-not'))) {
 
         // from here, condition can be builded
 
@@ -88,14 +88,10 @@ abstract class Runner extends Action {
 
           $condition = $window->create('condition', array($window, $call, $assign));
         }
-        else if ($sName == 'if-not') {
+        else { // if ($sName == 'if-not') {
 
           $not = $window->createNot($call);
           $condition = $window->create('condition', array($window, $not, $assign));
-        }
-        else {
-
-          $this->throwException(sprintf('Condition expected, invalid %s', $child->asToken()));
         }
 
         $window->add($condition);
