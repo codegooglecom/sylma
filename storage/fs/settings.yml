@@ -1,7 +1,7 @@
 rights:
   owner: root
   group: 0
-  mode: 700
+  mode: 711
   user-mode:
 browse :
   excluded : [.svn]

@@ -68,6 +68,8 @@ class Sylma {
 
         echo '<pre>';
 
+        print_r($aPath);
+
         foreach ($aTraces as $aTrace) {
 
           $sFile = array_key_exists('file', $aTrace) ? $aTrace['file'] : '-unknown-';

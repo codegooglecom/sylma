@@ -20,8 +20,9 @@ class Document extends parser\action\handler\Action {
     }// else dspm(xt('Impossible d\'ajouter le fichier script %s', new HTML_Strong($sHref)), 'warning');
   }
 
-  protected function addCSS($sHref = '') {
+  protected function addCSS($aCSS) {
 
+    //foreach ($aCSS as $)
     if (($oHead = $this->getHead()) && !$oHead->get("ns:link[@href='$sHref']")) {
 
       $oHead->add(new HTML_Style($sHref));
@@ -44,7 +45,8 @@ class Document extends parser\action\handler\Action {
     $sResult = '';
 
     $sCharset = 'utf-8';
-    $sMime = 'application/xhtml+xml';
+    //$sMime = 'application/xhtml+xml';
+    $sMime = 'text/html';
 
     if($sMime == "application/xhtml+xml") {
 
@@ -76,6 +78,8 @@ class Document extends parser\action\handler\Action {
 
       throw $e;
     }
+
+    //$this->addCSS($this->getContext('css'));
 
     require_once('dom/handler.php');
 

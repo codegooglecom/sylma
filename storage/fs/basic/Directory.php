@@ -307,6 +307,7 @@ class Directory extends Resource implements fs\directory {
 
           $this->secureFile($file);
           $result = $file;
+
         }
         else {
 
@@ -338,7 +339,7 @@ class Directory extends Resource implements fs\directory {
 
     if (!$sName) {
 
-      $this->throwException(t('Cannot get a directory without name'));
+      $this->throwException('Cannot get a directory without name');
     }
 
     if ($sName == '.') {
@@ -447,7 +448,7 @@ class Directory extends Resource implements fs\directory {
 
     $this->loadRights();
 
-    if (\Sylma::read('debug/enable')) return true;
+    if (\Sylma::read('debug/rights')) return true;
     if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
 
     return false;

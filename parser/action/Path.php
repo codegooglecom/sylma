@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action;
-use sylma\core, sylma\storage\fs;
+use sylma\core, sylma\storage\fs, sylma\core\functions;
 
 require_once('core/module/Argumented.php');
 
@@ -24,6 +24,12 @@ class Path extends core\module\Argumented {
   public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, $bArguments = true, $bDebug = true) {
 
     $this->setControler($this->getControler('action'));
+
+    if ($directory) {
+
+      require_once('core/functions/Path.php');
+      $sPath = functions\path\toAbsolute($sPath, $directory);
+    }
 
     $this->setPath($sPath);
     $this->setNamespace(self::NS);
@@ -67,36 +73,37 @@ class Path extends core\module\Argumented {
     $dir = $controler->getDirectory('/');
 
     $aPath = $this->getPath(true);
-
+//echo 'path : ';
     do {
+//echo '-loop-';
+      $sSubPath = array_shift($aPath);
 
-      $sSubPath = $aPath ? $aPath[0] : '.';
+      if ($sSubPath) {
 
-      if (!$sub = $dir->getDirectory($sSubPath, false)) {
+        if (!$sub = $dir->getDirectory($sSubPath, false)) {
 
-        $file = $this->findAction($dir, $sSubPath, $bArguments, $bDebug);
+          $file = $this->findAction($dir, $sSubPath, $bArguments, $bDebug);
 
-      } else {
+        } else {
 
-        $dir = $sub;
-      }
-
-      if (!$file && (!$aPath || !$sub)) {
-
-        if (!$file = $this->findAction($dir, 'index', $bArguments, $bDebug)) {
-
-          if ($dir->checkRights(MODE_EXECUTION)) {
-
-            $controler->throwException(sprintf('No index file in %s', $dir->asToken()));
-
-          } else {
-
-            $controler->throwExecution(sprintf('No execution rights on %s', $dir->asToken()));
-          }
+          $dir = $sub;
         }
       }
 
-      array_shift($aPath);
+      if (!$file && !$aPath) {
+
+        if (!$file = $this->findAction($dir, 'index', $bArguments, $bDebug)) {
+
+          if ($dir->checkRights(\Sylma::MODE_EXECUTE)) {
+
+            $this->throwException(sprintf('No index file in %s', $dir->asToken()));
+
+          } else {
+
+            $this->throwExecution(sprintf('No execution rights on %s', $dir->asToken()));
+          }
+        }
+      }
 
     } while (!$file && $aPath);
 

@@ -19,11 +19,6 @@ abstract class Basic extends core\module\Controled implements dom\handler {
    */
   private $file;
 
-  /**
-   * Namespaces linked to this document also used by nodes
-   */
-  protected $aNamespaces = array();
-
   protected $aClasses = array();
 
   /**
@@ -145,14 +140,17 @@ abstract class Basic extends core\module\Controled implements dom\handler {
 
   public function loadFile() {
 
-    $bResult = false;
+    $sContent = '';
 
     if (!$this->getFile()) {
 
       $this->throwException(t('No file associated'));
     }
 
-    return $this->loadText($this->getFile()->read());
+    if ($this->getMode() == \Sylma::MODE_READ) $sContent = $this->getFile()->read();
+    else if ($this->getMode() == \Sylma::MODE_EXECUTE) $sContent = $this->getFile()->execute();
+
+    return $this->loadText($sContent);
   }
 
   public function loadText($sContent) {

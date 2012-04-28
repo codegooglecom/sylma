@@ -75,6 +75,14 @@ abstract class Resource implements fs\resource {
     return $this->parent;
   }
 
+  protected function loadUserMode(array $aRights) {
+
+    $sMode = (string) $aRights['mode'];
+    $iUserMode = $sMode{2};
+
+    return $iUserMode;
+  }
+
   protected function getUserMode() {
 
     // if (!array_key_exists('user-mode', $this->aRights)) \Controler::addMessage($this, 'success');
@@ -111,24 +119,30 @@ abstract class Resource implements fs\resource {
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),
-        'user-mode' => $this->getUserMode());
+      );
+    }
 
-      $user = \Sylma::getControler('user', false);
+    $user = \Sylma::getControler('user', false);
 
-      if ($user) {
+    if ($user) {
 
-        $aRights['user-mode'] = $user->getMode(
-          $aRights['owner'],
-          $aRights['group'],
-          $aRights['mode']
-        );
-      }
+      $aRights['user-mode'] = $user->getMode(
+        $aRights['owner'],
+        $aRights['group'],
+        $aRights['mode']
+      );
+
+      $this->isSecured(true);
+    }
+    else {
+
+      $aRights['user-mode'] = $this->loadUserMode($aRights);
     }
 
     //if (!$aRights['user-mode']) dspm((string) $this, 'error');
 
     $this->aRights = $aRights;
-    $this->isSecured(true);
+
 
     return $aRights;
   }

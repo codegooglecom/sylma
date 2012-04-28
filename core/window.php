@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core;
-use sylma\core;
+use sylma\core, sylma\storage\fs;
 
 require_once('core/stringable.php');
 

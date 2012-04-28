@@ -48,8 +48,6 @@ class Element extends \DOMElement implements dom\element {
 
   public function mergeNamespaces(array $aNamespaces) {
 
-    $aResult = array();
-
     $handler = $this->getHandler();
 
     return $handler->mergeNamespaces($aNamespaces);

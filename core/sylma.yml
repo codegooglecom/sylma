@@ -3,7 +3,7 @@ debug :
 namespaces :
   html : http://www.w3.org/1999/xhtml
 initializer :
-  executables : [eml, iml]
+  executables : [eml]
   window :
     html :
       action : /sylma/modules/html/backend.eml
@@ -70,14 +70,6 @@ db:
     results:
       show: false
       statut: db/notice
-directories:
-  root:
-    path: protected
-    rights:
-      owner: root
-      group: 0
-      mode: 700
-      user-mode:
 dom:
   debug:
     # display all xpath queries in a formatted table containing paths grouped by count

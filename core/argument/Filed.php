@@ -137,7 +137,7 @@ class Filed extends Domed {
 
         $file = $fs->getFile($sPath);
 
-        if (!$sContent = $file->read()) {
+        if (!$sContent = $file->execute()) {
 
           $this->throwException(sprintf('@file %s is empty', $file));
         }

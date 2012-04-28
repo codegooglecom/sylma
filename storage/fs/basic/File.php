@@ -28,10 +28,6 @@ class File extends Resource implements fs\file {
    */
   private $iChanged = null;
 
-  private $oSettings = null;
-
-  private $bFileSecured = false;
-
   public function __construct($sName, fs\directory $parent, array $aRights, $iDebug) {
 
     $this->sFullPath = (string) $parent . '/' . $sName;
@@ -163,7 +159,7 @@ class File extends Resource implements fs\file {
 
   public function checkRights($iMode) {
 
-    if (\Sylma::read('debug/enable')) return true;
+    if (\Sylma::read('debug/rights')) return true;
     if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
 
     return false;
@@ -179,9 +175,29 @@ class File extends Resource implements fs\file {
     return file($this->getRealPath(), FILE_SKIP_EMPTY_LINES);
   }
 
-  public function read() {
+  protected function readExecute() {
 
     return file_get_contents($this->getRealPath());
+  }
+
+  public function read() {
+
+    if (!$this->checkRights(\Sylma::MODE_READ)) {
+
+      $this->throwException(sprintf('No read access to file %s', (string) $this));
+    }
+
+    return $this->readExecute();
+  }
+
+  public function execute() {
+
+    if (!$this->checkRights(\Sylma::MODE_EXECUTE)) {
+
+      $this->throwException(sprintf('No execute access to file %s', (string) $this));
+    }
+
+    return $this->readExecute();
   }
 
   public function asToken() {

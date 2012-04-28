@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core;
-use sylma\parser, sylma\core;
+use sylma\parser, sylma\core, sylma\storage\fs;
 
 require_once('module/Filed.php');
 
@@ -40,7 +40,7 @@ class Initializer extends module\Filed {
 
     // if (\Sylma::read('db/enable')) $this->loadXDB();
 
-    $iStartTime = microtime(true);
+    //$iStartTime = microtime(true);
 
     $user = \Sylma::getControler('user');
     $user->load();
@@ -53,11 +53,9 @@ class Initializer extends module\Filed {
     $this->setDirectory($fs->getDirectory());
     $this->getDirectory()->getSettings()->loadDocument();
 
-    $path = $this->create('path', array($this->loadGET()));
+    $path = $this->create('path', array($this->loadGET(), null, array(), false));
 
     // The extension specify the window type
-
-    $sExtension = $path->parseExtension(true);
 
     // Load Redirect session var, if present means it has been redirected - $_SESSION['redirect'], $_POST in 'document'
     //$this->loadRedirect();
@@ -75,6 +73,8 @@ class Initializer extends module\Filed {
       $sResult = $this->loadFile($file);
     }
     else if (!$path->getExtension()) {
+
+      $sExtension = $path->parseExtension(true);
 
       $window = $this->loadWindow($sExtension);
       $sResult = $this->loadAction($path, $window);
@@ -94,6 +94,7 @@ class Initializer extends module\Filed {
     $action = $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
     //echo get_class($window); exit;
     $window->setArgument('content', $action);
+    $window->setArgument('current', (string) $path);
 
     //if ($action->doRedirect()) self::doHTTPRedirect($oResult);
 
@@ -115,7 +116,7 @@ class Initializer extends module\Filed {
       break;
     }
 
-    return $window;
+    return $window->asString();
   }
 
   protected function getMime($sExtension) {
@@ -199,7 +200,7 @@ class Initializer extends module\Filed {
 
     if (array_key_exists('q', $_GET) && $_GET['q']) {
 
-      $sResult = $_GET['q'];
+      $sResult = '/' . $_GET['q'];
       //unset($aGET['q']);
 
     } else $sResult = '/';

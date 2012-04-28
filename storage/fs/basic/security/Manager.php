@@ -13,15 +13,12 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
   /**
    * Used only for exception reports
    */
-  const NS = 'http://www.sylma.org/storage/fs/basic/security';
   const PREFIX = 'fs';
 
   const USER_CONTROLER = 'user';
 
   private $document;
   private $directory;
-
-  private $controler;
 
   protected $bReady = false;
 
@@ -30,7 +27,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
     $this->directory = $directory;
     //$sPath = $directory->getFullPath() . '/' . self::FILENAME;
 
-    $this->setNamespace($this->getControler()->getNamespace(), self::PREFIX);
+    $this->setNamespace(self::NS, self::PREFIX);
     $this->loadDocument();
   }
 
@@ -103,8 +100,8 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
     $el = null;
     $spName = $this->escape($sName);
 
-    if ($this->getDocument()) $el = $this->getDocument()->getx(self::PREFIX . ":file[@name=$spName]", $this->getNS(), false);
-
+    if ($this->getDocument()) $el = $this->getDocument()->getx(self::PREFIX . ":file[@name=$spName]", array(), false);
+    
     return $this->extractRights($el);
   }
 

@@ -15,7 +15,7 @@ abstract class Basic extends core\module\Domed implements parser\action {
 
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_UPDATE = true; // default : false
+  const DEBUG_UPDATE = false; // default : false
   const DEBUG_RUN = true; // default : true
   const DEBUG_SHOW = false; // default : false
 
@@ -83,7 +83,10 @@ abstract class Basic extends core\module\Domed implements parser\action {
     $file = $this->getFile();
     $sName = $file->getName() . '.php';
 
-    $tmpDir = $this->getDirectory((string) $file->getParent())->addDirectory(parser\action::EXPORT_DIRECTORY);
+    $sDirectory = (string) $file->getParent();
+    $sDirectory = $sDirectory ? $sDirectory : '/';
+
+    $tmpDir = $this->getDirectory($sDirectory)->addDirectory(parser\action::EXPORT_DIRECTORY);
 
     if ($tmpDir) {
 

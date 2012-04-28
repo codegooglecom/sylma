@@ -12,7 +12,7 @@ class Handler extends dom\basic\handler\Rooted {
 
   private $processor = null;
 
-  public function __construct($mChildren = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
+  public function __construct($mChildren = '', $iMode = \Sylma::MODE_EXECUTE, array $aNamespaces = array()) {
 
     $this->setProcessor(new \XSLTProcessor);
 
