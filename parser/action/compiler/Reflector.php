@@ -415,9 +415,10 @@ class Reflector extends Argumented {
     if ($var instanceof php\basic\Called) $var = $var->getVar(false);
 
     $aResult = array();
-
-    $aResult = array_merge($aResult, $this->runConditions($var, $el->getChildren()));
-    $aResult = array_merge($aResult, $this->runVar($var, $el->getChildren()));
+    $children = $el->getChildren();
+    
+    $aResult = array_merge($aResult, $this->runConditions($var, $children));
+    $aResult = array_merge($aResult, $this->runVar($var, $children));
 
     if (!$aResult) $aResult[] = $var;
 

@@ -151,13 +151,14 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     return $result;
   }
 
-  public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true) {
+  public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true, $bRoot = false) {
 
     if ($sFormat) {
       
       switch ($sFormat) {
 
-        case 'dom' : $mVal = $this->convertToDOM($mVal); break;
+        case 'dom' :$mVal = $this->convertToDOM($mVal, !$bRoot); break;
+        
         case 'txt' : $mVal = $this->convertToString($mVal); break;
       }
     }
@@ -331,7 +332,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     return $result;
   }
 
-  public function convertToDOM($val) {
+  public function convertToDOM($val, $bTemplate = false) {
 
     if (is_array($val)) {
 
@@ -354,8 +355,8 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
       if ($interface->isInstance('\sylma\dom\node')) {
 
-        //$result = $this->convertToString($val);
-        $result = $val;
+        if ($bTemplate) $result = $this->convertToString($val);
+        else $result = $val;
       }
       else if ($interface->isInstance('\sylma\core\argumentable')) {
 
