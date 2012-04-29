@@ -175,21 +175,35 @@ abstract class Domed extends Runner implements parser\elemented {
 
         $aResult[] = $child;
       }
-      else if ($mResult = $this->parseElement($child)) {
+      else {
 
-        if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
+        try {
 
-          if (is_array($mResult)) {
+          $mResult = $this->parseElement($child);
 
-            $mResult = $this->getWindow()->argToInstance($mResult);
+          if ($mResult) {
+
+            if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
+
+              if (is_array($mResult)) {
+
+                $mResult = $this->getWindow()->argToInstance($mResult);
+              }
+
+              $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
+
+              $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
+            }
+
+            $aResult[] = $mResult;
           }
 
-          $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
-
-          $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
         }
+        catch (core\exception $e) {
 
-        $aResult[] = $mResult;
+          $e->addPath($child->asToken());
+          throw $e;
+        }
       }
 
       $children->next();

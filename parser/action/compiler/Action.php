@@ -208,20 +208,28 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     if ($sName = $el->readAttribute('set-variable', $this->getNamespace(), false)) {
 
-      $this->aVariables[$sName] = $obj;
+      if (array_key_exists($sName, $this->aVariables)) {
 
-      if ($obj instanceof php\_var) {
-
-        $result = $obj;
-        $obj->insert();
-      }
-      else if ($obj instanceof php\basic\Called) {
-
-        $result = $obj->getVar();
+        $result = $this->aVariables[$sName];
+        $result->insert($obj);
       }
       else {
 
-        $result = $this->getWindow()->addVar($obj);
+        if ($obj instanceof php\_var) {
+
+          $result = $obj;
+          $obj->insert();
+        }
+        else if ($obj instanceof php\basic\Called) {
+
+          $result = $obj->getVar();
+        }
+        else {
+
+          $result = $this->getWindow()->addVar($obj);
+        }
+
+        $this->aVariables[$sName] = $result;
       }
     }
 

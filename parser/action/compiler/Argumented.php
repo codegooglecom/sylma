@@ -77,7 +77,7 @@ abstract class Argumented extends Domed {
       $window->setScope($if);
     }
 
-    $assign = $window->create('assign', array($window, $var, $callFormat, $callFormat->getReturn()));
+    $assign = $window->create('assign', array($window, $var, $callFormat));
     $window->add($assign);
     //$var = $callFormat->getVar();
     // argument is available direclty after format has been checked, ie. for validation
@@ -175,7 +175,8 @@ abstract class Argumented extends Domed {
     $window->add($if);
     $window->setScope($if);
 
-    $varDefault = $window->addVar($this->parseNode($el->getFirst()));
+    $mResult = $this->parseNode($el->getFirst());
+    $varDefault = $window->addVar($mResult);
 
     if ($bReturn) {
 
@@ -200,6 +201,11 @@ abstract class Argumented extends Domed {
 
     $result = $this->parseNode($el->getFirst());
     $validation = $window->addVar($result);
+
+    if ($bReturn) {
+
+      $this->setActionArgument($sArgument, $result);
+    }
 
     $call = $window->createCall($window->getSelf(), 'validateArgument', 'php-boolean', array($sArgument, $var, $validation, $bRequired, $bReturn, $bDefault));
     return $window->create('assign', array($this->getWindow(), $var, $call));

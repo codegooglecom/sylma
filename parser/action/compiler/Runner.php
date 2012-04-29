@@ -61,7 +61,7 @@ abstract class Runner extends Action {
 
     $aResult = array();
 
-    while ($child = $children->current()) {
+    while (($child = $children->current()) && $child->getType() == dom\node::ELEMENT) {
 
       if ($child->getNamespace() == $this->getNamespace() && in_array($child->getName(), array('if', 'if-not'))) {
 

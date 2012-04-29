@@ -89,8 +89,11 @@ class Method extends core\module\Argumented {
     }
     else {
 
-      $interface = $obj->getInterface();
-      $bResult = $interface->isInstance($sFormat);
+      if ($obj instanceof php\_object) {
+
+        $interface = $obj->getInterface();
+        $bResult = $interface->isInstance($sFormat);
+      }
     }
 
     if (!$bResult) {

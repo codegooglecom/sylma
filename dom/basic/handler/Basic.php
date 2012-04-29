@@ -155,7 +155,14 @@ abstract class Basic extends core\module\Controled implements dom\handler {
 
   public function loadText($sContent) {
 
-    $bResult = $this->document->loadXML($sContent);
+    try {
+
+      $bResult = $this->document->loadXML($sContent);
+    }
+    catch (core\exception $e) {
+
+      $this->throwException($e->getMessage());
+    }
 
     return $bResult;
   }

@@ -77,7 +77,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
   public function checkContent($mVal) {
 
-    if (!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node) {
+    if ((!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node)) {
 
       $formater = $this->getControler('formater');
       $this->throwException(sprintf('Cannot add %s in content', $formater->asToken($mVal)));
@@ -97,12 +97,19 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
       $this->checkContent($mVal);
 
-      if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
+      if ($mVal instanceof php\_var) {
 
-        $mVal = $this->create('line', array($this, $mVal));
+        $mVal->insert();
       }
+      else {
 
-      $this->aContent[] = $mVal;
+        if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
+
+          $mVal = $this->create('line', array($this, $mVal));
+        }
+
+        $this->aContent[] = $mVal;
+      }
     }
   }
 
@@ -154,11 +161,10 @@ class Window extends core\module\Domed implements php\_window, core\controled {
   public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true, $bRoot = false) {
 
     if ($sFormat) {
-      
+
       switch ($sFormat) {
 
         case 'dom' :$mVal = $this->convertToDOM($mVal, !$bRoot); break;
-        
         case 'txt' : $mVal = $this->convertToString($mVal); break;
       }
     }
@@ -189,10 +195,23 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
   public function addVar(php\linable $val) {
 
-    $var = $this->createVar($val);
-    $var->insert();
+    $result = $val;
 
-    return $var;
+    if ($val instanceof php\_var) {
+
+      $result->insert();
+    }
+    else if ($val instanceof php\basic\Called) {
+
+      $result = $val->getVar();
+    }
+    else {
+
+      $result = $this->createVar($val);
+      $result->insert();
+    }
+
+    return $result;
   }
 
   public function createVar(php\linable $val) {

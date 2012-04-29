@@ -47,7 +47,7 @@ abstract class _Var extends Controled implements php\_var {
       $window->throwException(sprintf('Variable "%s" cannot be inserted, no content defined', $this->getName()));
     }
 
-    if (!$this->bInserted) {
+    if (!$this->bInserted || $content) {
 
       if (!$content) $content = $this->getContent();
 
@@ -68,7 +68,7 @@ abstract class _Var extends Controled implements php\_var {
     $this->sName = $sName;
   }
 
-  protected function getName() {
+  public function getName() {
 
     return $this->sName;
   }
