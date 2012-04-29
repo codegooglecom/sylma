@@ -415,14 +415,16 @@ class Directory extends Resource implements fs\directory {
 
         $sName = array_shift($aPath);
 
-        $dir = $this->getDirectory($sName);
+        $dir = $this->getDirectory($sName, $iDebug);
 
-        if (!$dir && $iDebug & self::DEBUG_LOG) {
+        if ($dir) {
+
+          $result = $dir->getDistantFile($aPath, $iDebug);
+        }
+        else if ($iDebug & self::DEBUG_LOG) {
 
           $this->throwException(sprintf('Directory %s does not exists', $sName));
         }
-
-        $result = $dir->getDistantFile($aPath, $iDebug);
       }
     }
 

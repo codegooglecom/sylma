@@ -64,7 +64,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $security = $this->getControler()->create('parser/security');
     $this->setParser($security, $security->getNS());
 
-    $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
+    $this->setNamespace($this->getInterface()->getNamespace(), self::CLASS_PREFIX, false);
   }
 
   protected function setDocument(dom\handler $doc) {
@@ -161,9 +161,9 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->sFormat = $sFormat;
     $this->return = $this->getWindow()->stringToInstance($sFormat);
   }
-  
+
   protected function getFormat() {
-    
+
     return $this->sFormat;
   }
 

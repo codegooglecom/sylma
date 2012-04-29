@@ -156,7 +156,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     if ($sFormat) {
       
       switch ($sFormat) {
-        
+
         case 'dom' : $mVal = $this->convertToDOM($mVal); break;
         case 'txt' : $mVal = $this->convertToString($mVal); break;
       }
@@ -354,8 +354,8 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
       if ($interface->isInstance('\sylma\dom\node')) {
 
-        $result = $this->convertToString($val);
-        //$result = $val;
+        //$result = $this->convertToString($val);
+        $result = $val;
       }
       else if ($interface->isInstance('\sylma\core\argumentable')) {
 
@@ -374,9 +374,13 @@ class Window extends core\module\Domed implements php\_window, core\controled {
         $this->throwException(sprintf('Cannot add @class %s', $interface->getName()));
       }
     }
-    else if ($val instanceof php\_scalar || $val instanceof dom\node) {
+    else if ($val instanceof php\_scalar) {
 
       $result = $this->convertToString($val);
+    }
+    else if ($val instanceof dom\node) {
+
+      $result = $var;
     }
     else {
 
@@ -531,7 +535,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     ), self::NS);
 
     $result->get('window')->mergeArray($this->aContent);
-    
+
     return $result;
   }
 }

@@ -90,7 +90,7 @@ class Method extends core\module\Argumented {
     else {
 
       $interface = $obj->getInterface();
-      $bResult = $interface->instanceOf($sFormat);
+      $bResult = $interface->isInstance($sFormat);
     }
 
     if (!$bResult) {

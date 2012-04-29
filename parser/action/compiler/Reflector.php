@@ -32,7 +32,7 @@ class Reflector extends Argumented {
       case 'array' : $mResult = $this->reflectArray($el); break;
       case 'numeric' : $mResult = $this->reflectNumeric($el); break;
 
-      case 'get-variable' : $mResult = $this->reflectVariable($el); break;
+      case 'get-variable' : $mResult = $this->reflectGetVariable($el); break;
       case 'ns' : $mResult = $this->reflectNS($el); break;
       //case 'argument' :
       case 'test-argument' :
@@ -401,7 +401,7 @@ class Reflector extends Argumented {
     return $mResult;
   }
 
-  protected function reflectVariable(dom\element $el) {
+  protected function reflectGetVariable(dom\element $el) {
 
     $sName = $el->readAttribute('name');
 
@@ -413,7 +413,11 @@ class Reflector extends Argumented {
     $var = $this->aVariables[$sName];
 
     if ($var instanceof php\basic\Called) $var = $var->getVar(false);
-    $aResult = $this->runConditions($var, $el->getChildren());
+
+    $aResult = array();
+
+    $aResult = array_merge($aResult, $this->runConditions($var, $el->getChildren()));
+    $aResult = array_merge($aResult, $this->runVar($var, $el->getChildren()));
 
     if (!$aResult) $aResult[] = $var;
 

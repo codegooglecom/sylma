@@ -148,9 +148,9 @@ class Action extends Basic implements core\stringable {
 
     if (self::DEBUG_SHOW) {
       $tmp = $this->create('document', array($method));
-      dspm($this->getFile()->asToken());
-      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
-      //echo '<pre>' . $tmp->asString(true) . '</pre>';
+//      dspm($this->getFile()->asToken());
+//      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
+      echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
     }
 
     // set new class and file

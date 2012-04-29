@@ -15,7 +15,7 @@ abstract class Basic extends core\module\Domed implements parser\action {
 
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_UPDATE = false; // default : false
+  const DEBUG_UPDATE = true; // default : false
   const DEBUG_RUN = true; // default : true
   const DEBUG_SHOW = false; // default : false
 
@@ -101,7 +101,7 @@ abstract class Basic extends core\module\Domed implements parser\action {
     if (self::DEBUG_RUN) $result = $this->runCache($tmpFile);
     else {
 
-      $this->throwException(t('No result, DEBUG_RUN set to TRUE'));
+      $this->throwException('No result, DEBUG_RUN set to TRUE');
     }
 
     return $result;

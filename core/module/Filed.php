@@ -145,9 +145,8 @@ abstract class Filed extends Argumented {
   protected function getFile($sPath, $bDebug = true) {
 
     $fs = $this->getControler(static::FS_CONTROLER);
-    $directory = $this->getDirectory();
 
-    return $fs->getFile($sPath, $directory, $bDebug);
+    return $fs->getFile($sPath, $this->getDirectory(), $bDebug);
   }
 
   protected function createTempDirectory($sName = '') {

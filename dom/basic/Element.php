@@ -202,7 +202,7 @@ class Element extends \DOMElement implements dom\element {
     if ($sNamespace) $sResult = $this->getAttributeNS($sNamespace, $sName);
     else $sResult = $this->getAttribute($sName);
 
-    if (!$sResult && $bDebug) {
+    if ($sResult === '' && $bDebug) {
 
       $this->throwException(sprintf('No result for @attribute %s:%s', $sNamespace, $sName));
     }

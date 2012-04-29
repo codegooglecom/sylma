@@ -16,6 +16,11 @@ interface node extends core\tokenable, core\stringable {
   const COMMENT = \XML_COMMENT_NODE;
   const FRAGMENT = \XML_DOCUMENT_FRAG_NODE;
 
+  const COMPARE_SUCCESS = 0;
+  const COMPARE_BAD_ELEMENT = 1;
+  const COMPARE_BAD_ATTRIBUTE = 2;
+  const COMPARE_BAD_CHILD = 3;
+
   /**
    * @return dom\document The parent document
    */
@@ -24,3 +29,4 @@ interface node extends core\tokenable, core\stringable {
   function getParent();
   function __toString();
 }
+

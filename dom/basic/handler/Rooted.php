@@ -14,7 +14,7 @@ class Rooted extends Documented {
 
     if (!$root = $this->getRoot()) {
 
-      $this->throwException(t('No root element defined'));
+      $this->throwException('No root element defined');
     }
 
     return $root;

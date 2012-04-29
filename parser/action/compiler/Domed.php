@@ -51,7 +51,7 @@ abstract class Domed extends Runner implements parser\elemented {
     }
 
     $this->getWindow()->setContext(php\_window::CONTEXT_DEFAULT);
-    
+
     $aResults[php\_window::CONTEXT_DEFAULT] = $this->parseChildren($doc->getChildren());
 
     return $aResults;
@@ -185,7 +185,7 @@ abstract class Domed extends Runner implements parser\elemented {
           }
 
           $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
-          
+          //echo $this->getFormat(). ' - ' . $child->asToken() . ' / ';
           $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate);
         }
 
