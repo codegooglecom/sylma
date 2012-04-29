@@ -123,7 +123,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
     $mResult = null;
 
-    if ($el->getNamespace() == $this->getNamespace('class')) {
+    if ($this->getInterface()->useElement() && $el->getNamespace() == $this->getNamespace('class')) {
 
       $mResult = $this->reflectSelfCall($el);
     }

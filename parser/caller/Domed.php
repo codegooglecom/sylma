@@ -15,6 +15,7 @@ class Domed extends core\module\Argumented implements parser\caller {
   protected $aMethods = array();
 
   protected $sName;
+  protected $bElement = false;
 
   public function __construct(Controler $controler, fs\file $file) {
 
@@ -27,6 +28,7 @@ class Domed extends core\module\Argumented implements parser\caller {
 
     if ($sElement = $this->readArgument('element', false)) {
 
+      $this->useElement(true);
       $this->setNamespace($sElement, self::CLASS_PREFIX, false);
     }
 
@@ -34,7 +36,13 @@ class Domed extends core\module\Argumented implements parser\caller {
     $this->setName($this->readArgument('name'));
   }
 
-  protected function getFile() {
+  public function useElement($bValue = null) {
+
+    if (!is_null($bValue)) $this->bElement = $bValue;
+    return $this->bElement;
+  }
+
+  public function getFile() {
 
     return $this->file;
   }
@@ -130,7 +138,7 @@ class Domed extends core\module\Argumented implements parser\caller {
         case dom\node::ELEMENT :
 
           if ($child->getNamespace() == $this->getNamespace()) {
-            
+
             if (in_array($child->getName(), array('call'))) {
 
               break 2;

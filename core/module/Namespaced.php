@@ -14,7 +14,7 @@ abstract class Namespaced extends Exceptionable {
 
     if (!$sUri) {
 
-      \Sylma::throwException(t('Cannot use empty string as dom namespace'));
+      \Sylma::throwException('Cannot use empty string as dom namespace');
     }
 
     $this->aNamespaces[$sPrefix] = $sUri;

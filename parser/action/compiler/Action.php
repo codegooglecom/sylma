@@ -64,7 +64,10 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $security = $this->getControler()->create('parser/security');
     $this->setParser($security, $security->getNS());
 
-    $this->setNamespace($this->getInterface()->getNamespace(), self::CLASS_PREFIX, false);
+    if ($this->getInterface()->useElement()) {
+
+      $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
+    }
   }
 
   protected function setDocument(dom\handler $doc) {

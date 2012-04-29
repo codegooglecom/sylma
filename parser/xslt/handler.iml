@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security">
-  <namespace>\sylma\parser\action\cached</namespace>
-  <name>Document</name>
+  <namespace>\sylma\parser\xslt</namespace>
+  <name>Handler</name>
   <method path="set-parameter" name="setParameter" return="php-boolean">
     <argument name="name" format="php-string"/>
     <argument name="value" format="php-string"/>
