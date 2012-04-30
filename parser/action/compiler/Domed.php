@@ -45,14 +45,17 @@ abstract class Domed extends Runner implements parser\elemented {
       $sName = $context->readAttribute('name');
       $this->getWindow()->setContext($sName);
 
-      $aResults[$sName] = $this->parseChildren($context->getChildren());
+      $aResults[$sName] = $this->parseChildren($context->getChildren(), true, true);
 
-      $context->remove();
+      //$context->remove();
     }
 
     $this->getWindow()->setContext(php\_window::CONTEXT_DEFAULT);
 
-    $aResults[php\_window::CONTEXT_DEFAULT] = $this->parseChildren($doc->getChildren(), true);
+    $children = $doc->getChildren();
+    $children->setIndex(count($aResults));
+
+    $aResults[php\_window::CONTEXT_DEFAULT] = $this->parseChildren($children, true);
 
     return $aResults;
   }
@@ -165,45 +168,62 @@ abstract class Domed extends Runner implements parser\elemented {
    * @param dom\element $el
    * @return array
    */
-  protected function parseChildren(dom\collection $children, $bRoot = false) {
+  protected function parseChildren(dom\collection $children, $bRoot = false, $bContext = false) {
 
     $aResult = array();
 
     while ($child = $children->current()) {
 
-      if ($child->getType() != $child::ELEMENT) {
+      switch ($child->getType()) {
 
-        $aResult[] = $child;
-      }
-      else {
+        case $child::ELEMENT :
 
-        try {
+          try {
 
-          $mResult = $this->parseElement($child);
+            $mResult = $this->parseElement($child);
 
-          if ($mResult) {
+            if ($mResult) {
 
-            if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
+              if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
 
-              if (is_array($mResult)) {
+                if (is_array($mResult)) {
 
-                $mResult = $this->getWindow()->argToInstance($mResult);
+                  $mResult = $this->getWindow()->argToInstance($mResult);
+                }
+
+                $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
+
+                $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
               }
 
-              $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
-
-              $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
+              $aResult[] = $mResult;
             }
 
-            $aResult[] = $mResult;
+          }
+          catch (core\exception $e) {
+
+            $e->addPath($child->asToken());
+            throw $e;
           }
 
-        }
-        catch (core\exception $e) {
+        break;
 
-          $e->addPath($child->asToken());
-          throw $e;
-        }
+        case $child::TEXT :
+
+          if ($bContext) {
+
+            $mResult = $this->getWindow()->createInsert($this->getWindow()->argToInstance($child->getValue()), 'txt');
+          }
+          else {
+
+            $aResult[] = $child;
+          }
+
+        break;
+
+        default :
+
+          $aResult[] = $child;
       }
 
       $children->next();

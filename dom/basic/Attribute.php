@@ -48,6 +48,11 @@ class Attribute extends \DOMAttr implements dom\attribute {
     return $this->value;
   }
 
+  public function setValue($mValue) {
+
+    $this->value = (string) $mValue;
+  }
+
   public function asString($iMode = 0) {
 
     return $this->getName(true).'="'.dom\xmlize($this->value).'"';

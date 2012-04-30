@@ -76,6 +76,11 @@ class Collection implements \Iterator, dom\collection {
     foreach ($list as $node) $this->addNode($node);
   }
 
+  public function setIndex($iIndex) {
+
+    $this->iIndex = $iIndex;
+  }
+  
   public function store() {
 
     $this->aStore[] = $this->iIndex;

@@ -95,7 +95,7 @@ class Initializer extends module\Filed {
     //echo get_class($window); exit;
 
     $sPath = (string) $path;
-    $sPath = $sPath ? substr($sPath, 1) : $sPath;
+    $sPath = strlen($sPath) > 1 ? substr($sPath, 1) : $sPath;
 
     $window->setArgument('content', $action);
     $window->setArgument('current', $sPath);
@@ -108,6 +108,10 @@ class Initializer extends module\Filed {
   protected function loadFile(fs\file $file) {
 
     switch ($file->getExtension()) {
+
+      case 'php' :
+
+        $this->throwException('Cannot read php files');
 
       case 'jpg' :
       case 'jpeg' :
