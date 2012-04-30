@@ -53,7 +53,7 @@ class Method extends core\module\Argumented {
     }
     else {
 
-      require_once('core/functions/path.php');
+      require_once('core/functions/Path.php');
 
       $sResult = core\functions\path\toAbsolute($sReturn, $this->getControler()->getNamespace('php'), '\\');
     }
