@@ -139,8 +139,7 @@ class Reflector extends Argumented {
 
     foreach ($el->getAttributes() as $attr) {
 
-      if ($attr->getNamespace()) continue; // skip @le:*
-      $aArguments[$attr->getName()] = $this->parseString($attr->getValue());
+      if (!$attr->getNamespace()) $aArguments[$attr->getName()] = $window->createString($attr->getValue());
     }
 
     $call = $method->reflectCall($window, $window->getSelf(), $aArguments);
@@ -238,24 +237,53 @@ class Reflector extends Argumented {
 
     $window = $this->getWindow();
 
-    preg_match_all('/\[\$([\w-]+)\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE);
-
-    if ($aResults && $aResults[0]) {
+    preg_match_all('/\[sylma:(?P<typ>[\w-]+)(?:::(?P<val>[\w-]+))?\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+    //dspf($aResults);
+    
+    if ($aResults) {
 
       $iSeek = 0;
 
-      foreach ($aResults[1] as $aResult) {
+      foreach ($aResults as $aResult) {
 
-        $iVarLength = strlen($aResult[0]) + 3;
-        $sVarValue = (string) $window->getVariable($aResult[0]);
-
-        $sValue = substr($sValue, 0, $aResult[1] + $iSeek - 2) . $sVarValue . substr($sValue, $aResult[1] + $iSeek - 2 + $iVarLength);
+        $iVarLength = strlen($aResult[0][0]);
+        
+        switch ($aResult['typ'][0]) {
+          
+          case 'call' :
+            
+            $aArguments = array();
+            
+            $method = $this->getInterface()->loadMethod($aResult['val'][0]);
+            $arg = $method->reflectCall($window, $window->getSelf(), $aArguments);
+            
+          break;
+          
+          case 'arg' :
+            
+            $arg = $this->getActionArgument($aResult['val'][0]);
+            
+          break;
+          
+          default :
+          
+            $this->throwException(sprintf('unknown attribute call : %s', $aResult['typ']));
+          
+        }
+        
+        $insert = $window->createInsert($arg);
+        $sVarValue = $insert->asString();
+        
+        $sStart = substr($sValue, 0, $aResult[0][1] + $iSeek);
+        $sEnd = substr($sValue, $aResult[0][1] + $iSeek + $iVarLength);
+        
+        $sValue = $sStart . $sVarValue . $sEnd;
 
         $iSeek += strlen($sVarValue) - $iVarLength;
       }
     }
-
-    return $window->createString($sValue);
+    //dspf($sValue);
+    return $sValue;
   }
 
   /**

@@ -176,6 +176,7 @@ class Action extends Basic implements core\stringable {
 
       if ($sResult = $template->parseDocument($method, false)) {
 
+        $sResult = $this->parseAttributes($sResult);
         $tpl->saveText(substr($sResult, 22));
       }
     }
@@ -183,6 +184,13 @@ class Action extends Basic implements core\stringable {
     return $classFile;
   }
 
+  protected function parseAttributes($sContent) {
+    
+    $sContent = preg_replace('/\[sylma:insert:(\d+)\]/', '<?php echo $aArguments[\'default\'][$1]; ?>', $sContent);
+    
+    return $sContent;
+  }
+  
   protected function parseString(core\stringable $mVal) {
 
     return $mVal->asString();

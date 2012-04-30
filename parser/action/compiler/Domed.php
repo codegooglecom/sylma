@@ -143,9 +143,9 @@ abstract class Domed extends Runner implements parser\elemented {
       }
       else {
 
-        if ($el->getAttributes()->length) {
+        foreach ($el->getAttributes() as $attr) {
 
-          $newElement->add($el->getAttributes());
+          $newElement->add($this->parseAttribute($attr));
         }
 
         $mResult = $newElement->getHandler();
@@ -246,7 +246,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
       if (!$sNamespace || $sNamespace == $this->getNamespace()) {
 
-        $resultHandler->add($attr);
+        $resultHandler->add($this->parseAttribute($attr));
       }
       else {
 
@@ -272,6 +272,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
   protected function parseAttribute(dom\attribute $attr) {
 
+    $attr->setValue($this->parseString($attr->getValue()));
     return $attr;
   }
 }

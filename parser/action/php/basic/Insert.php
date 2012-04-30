@@ -66,4 +66,9 @@ class Insert extends Controled implements core\argumentable {
       ),
     ));
   }
+  
+  public function asString() {
+    
+    return '[sylma:insert:' . $this->getKey() . ']';
+  }
 }

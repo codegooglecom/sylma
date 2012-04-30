@@ -96,12 +96,13 @@
     <le:action>
       <le:settings>
         <le:argument format="php-string" name="path">
-          <le:validate return="true" replace="true">
+          <le:validate return="true">
             <le:call name="get-file">
               <le:get-argument name="path"/>
             </le:call>
           </le:validate>
         </le:argument>
+        <le:return format="object"/>
       </le:settings>
       <le:get-argument name="path"/>
     </le:action>
