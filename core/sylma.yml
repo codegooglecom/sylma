@@ -19,7 +19,8 @@ initializer :
       name : \sylma\parser\action\handler\Action
     window :
       name : \sylma\core\window\Basic
-
+action:
+  update: true
 session :
   lifetime : 403200
 users:

@@ -17,7 +17,7 @@
 namespace <xsl:value-of select="$namespace"/>;
 use sylma\parser;
 
-require_once('parser\action\cached\Document.php');
+require_once('parser/action/cached/Document.php');
 
 class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> {
 

@@ -15,7 +15,6 @@ abstract class Basic extends core\module\Domed implements parser\action {
 
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_UPDATE = false; // default : false
   const DEBUG_RUN = true; // default : true
   const DEBUG_SHOW = false; // default : false
 
@@ -93,7 +92,7 @@ abstract class Basic extends core\module\Domed implements parser\action {
       $tmpFile = $tmpDir->getFile($sName, 0);
     }
 
-    if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || self::DEBUG_UPDATE) {
+    if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || \Sylma::read('action/update')) {
 
       $tmpFile = $this->buildAction();
     }
