@@ -15,7 +15,7 @@ abstract class Basic extends core\module\Domed implements parser\action {
 
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_UPDATE = true; // default : false
+  const DEBUG_UPDATE = false; // default : false
   const DEBUG_RUN = true; // default : true
   const DEBUG_SHOW = false; // default : false
 

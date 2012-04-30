@@ -211,6 +211,12 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
       if (array_key_exists($sName, $this->aVariables)) {
 
         $result = $this->aVariables[$sName];
+
+        if ($obj instanceof php\_var) {
+
+          $obj->insert();
+        }
+
         $result->insert($obj);
       }
       else {

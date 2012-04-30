@@ -220,9 +220,18 @@ class Handler extends dom\basic\handler\Rooted {
 
     if ($aErrors) { // TODO, nice view
 
-      foreach ($aErrors as $error) {
+      try {
 
-        $this->throwException($error->message);
+        $this->throwException('XSLT errors');
+      }
+      catch (core\exception $e) {
+
+        foreach ($aErrors as $error) {
+
+          $e->addPath($error->message);
+        }
+
+        throw $e;
       }
     }
   }

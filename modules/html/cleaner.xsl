@@ -14,18 +14,18 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="html:title">
+  <xsl:template match="html:link | html:meta | html:br | html:img">
     <xsl:element name="{local-name()}" namespace="{namespace-uri}">
-      <xsl:apply-templates select="@* | * | text()"/>
-      <xsl:if test="not(normalize-space(.))">
-        <xsl:text> </xsl:text>
-      </xsl:if>
+      <xsl:apply-templates select="@*"/>
     </xsl:element>
   </xsl:template>
 
   <xsl:template match="html:*">
     <xsl:element name="{local-name()}" namespace="{namespace-uri}">
       <xsl:apply-templates select="@* | * | text()"/>
+      <xsl:if test="not(normalize-space(.))">
+        <xsl:text> </xsl:text>
+      </xsl:if>
     </xsl:element>
   </xsl:template>
 
