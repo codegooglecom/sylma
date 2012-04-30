@@ -1,5 +1,6 @@
 debug :
   enable : false
+  rights: false
 namespaces :
   html : http://www.w3.org/1999/xhtml
 initializer :
@@ -94,7 +95,7 @@ messages:
     # WARNING : with false can cause UTF-8 errors - TODO
     enable: true
   log:
-    enable: true
+    enable: false
     all: false
     # Write to this file if DB is not active
     file : /debug.log
