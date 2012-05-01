@@ -47,10 +47,10 @@ class Sylma {
 
     //xdebug_start_code_coverage();
 
-    try {
+    $init = self::$aControlers['init'] = new self::$sInitializerClass;
+    self::setControler('init', $init);
 
-      $init = self::$aControlers['init'] = new self::$sInitializerClass;
-      self::setControler('init', $init);
+    try {
 
       self::$settings = $init->loadSettings($sServer, self::ROOT . self::PATH . self::PATH_OPTIONS);
       self::$result = $init->run(self::get('initializer'));
@@ -81,9 +81,14 @@ class Sylma {
         }
 
         echo '</pre>';
-      }
 
-      throw $e;
+        throw $e;
+      }
+      else {
+
+        header('HTTP/1.0 404 Not Found');
+        self::$result = $init->getError();
+      }
     }
 
     //var_dump(xdebug_get_code_coverage());

@@ -97,9 +97,31 @@ class Initializer extends module\Filed {
     $window->setArgument('content', $action);
     $window->setArgument('current', $path);
 
+    try {
+
+      $sResult = $window->asString();
+    }
+    catch (core\exception $e) {
+
+      header('HTTP/1.0 404 Not Found');
+
+      $window = $this->loadWindow('');
+      $action = $this->create('action', array($this->getFile($this->readArgument('error/action'))));
+
+      $window->setArgument('content', $action);
+      $window->setArgument('current', $path);
+
+      $sResult = $window->asString();
+    }
+
     //if ($action->doRedirect()) self::doHTTPRedirect($oResult);
 
-    return $window->asString();
+    return $sResult;
+  }
+
+  public function getError() {
+
+    return $this->getFile($this->readArgument('error/html'))->execute();
   }
 
   protected function loadFile(fs\file $file) {

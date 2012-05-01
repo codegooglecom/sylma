@@ -5,6 +5,9 @@ namespaces :
   html : http://www.w3.org/1999/xhtml
 initializer :
   executables : [eml]
+  error :
+    action : error.eml
+    html : error.html
   window :
     html :
       action : /sylma/modules/html/backend.eml

@@ -116,7 +116,7 @@ class Action extends Basic implements core\stringable {
   protected function reflectAction() {
 
     $parser = $this->getControler();
-    $doc = $this->getFile()->getDocument();
+    $doc = $this->getFile()->getDocument(array(), \Sylma::MODE_EXECUTE);
 
     try {
 
