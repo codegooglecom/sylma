@@ -93,7 +93,7 @@ abstract class Domed extends Filed {
    *
    * @return dom\document|null The loaded document, or null if not found/valid
    */
-  protected function getDocument($sPath, $iMode = \Sylma::MODE_READ) {
+  protected function getDocument($sPath, $iMode = \Sylma::MODE_EXECUTE) {
 
     $doc = null;
 

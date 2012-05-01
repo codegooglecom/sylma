@@ -108,7 +108,7 @@ class File extends Resource implements fs\file {
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
    */
-  public function getFreeDocument(array $aNS = array()) {
+  public function getFreeDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
     $result = null;
 
@@ -120,10 +120,11 @@ class File extends Resource implements fs\file {
     $dom = $this->getControler('dom');
     //if ($dom = \Sylma::getControler(self::DOM_CONTROLER, false, false)) {
 
-      $result = $this->getControler()->create('file/document');
+      $result = $this->getControler()->create('file/document', array(null, $iMode));
 
       $result->setFile($this);
       $result->registerNamespaces($aNS);
+
       $result->loadFile();
 
     //}
@@ -131,9 +132,9 @@ class File extends Resource implements fs\file {
     return $result;
   }
 
-  public function getDocument(array $aNS = array()) {
+  public function getDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
-    return $this->getFreeDocument($aNS);
+    return $this->getFreeDocument($aNS, $iMode);
   }
 
   public function getArgument() {
