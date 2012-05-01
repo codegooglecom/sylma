@@ -92,13 +92,10 @@ class Initializer extends module\Filed {
     $path->parsePath();
 
     $action = $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
-    //echo get_class($window); exit;
-
-    $sPath = (string) $path;
-    $sPath = strlen($sPath) > 1 ? substr($sPath, 1) : $sPath;
+    $action->setContexts($window->getContexts());
 
     $window->setArgument('content', $action);
-    $window->setArgument('current', $sPath);
+    $window->setArgument('current', $path);
 
     //if ($action->doRedirect()) self::doHTTPRedirect($oResult);
 

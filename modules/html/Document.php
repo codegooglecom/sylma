@@ -1,14 +1,22 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\parser, sylma\dom;
+use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
 require_once('parser/action/handler/Action.php');
 require_once('core/window.php');
 
 class Document extends parser\action\handler\Action {
 
-  private $oHead = null;
+  private $head = null;
+  protected $result = null;
+
+  public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
+
+    $this->setContexts(array('css', 'js', 'title'));
+
+    parent::__construct($file, $aArguments, $base);
+  }
 
   protected function addJS($sHref, $mContent = null) {
 
@@ -20,21 +28,33 @@ class Document extends parser\action\handler\Action {
     }// else dspm(xt('Impossible d\'ajouter le fichier script %s', new HTML_Strong($sHref)), 'warning');
   }
 
-  protected function addCSS($aCSS) {
+  protected function addCSS($aContext) {
 
-    //foreach ($aCSS as $)
-    if (($oHead = $this->getHead()) && !$oHead->get("ns:link[@href='$sHref']")) {
+    if ($aContext && ($head = $this->getHead())) {
 
-      $oHead->add(new HTML_Style($sHref));
+      foreach ($aContext as $sLink) {
 
-    }// else dspm(xt('Impossible d\'ajouter la feuille de style %s', new HTML_Strong($sHref)), 'warning');
+        $head->addElement('link', null, array(
+          'rel' => 'stylesheet',
+          'type' => 'text/css',
+          'media' => 'all',
+          'href' => $sLink,
+        ));
+      }
+    }
   }
 
   protected function getHead() {
 
-    if (!$this->oHead) $this->oHead = new XML_Element('head', null, null, SYLMA_NS_XHTML);
+    if (!$this->head) {
 
-    return $this->oHead;
+      if ($this->result) {
+
+        $this->head = $this->result->getx('html:head', array('html' => \Sylma::read('namespaces/html')));
+      }
+    }
+
+    return $this->head;
   }
 
   public function asString() {
@@ -79,7 +99,10 @@ class Document extends parser\action\handler\Action {
       throw $e;
     }
 
-    //$this->addCSS($this->getContext('css'));
+    //$this->setContexts();
+    $this->result = $doc;
+
+    $this->addCSS($this->aArguments['content']->getContext('css'));
 
     require_once('dom/handler.php');
 

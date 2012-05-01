@@ -20,7 +20,7 @@ initializer :
     window :
       name : \sylma\core\window\Basic
 action:
-  update: true
+  update: false
 session :
   lifetime : 403200
 users:

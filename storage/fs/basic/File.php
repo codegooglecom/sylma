@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic;
-use \sylma\storage\fs;
+use sylma\storage\fs, sylma\core\functions;
 
 require_once('Resource.php');
 require_once('storage/fs/file.php');
@@ -211,6 +211,8 @@ class File extends Resource implements fs\file {
 
     if ($iSize < 1) $iSize = 1;
 
+    require_once('core/functions/Global.php');
+
     return $this->getControler()->createArgument(array(
       'file' => array(
         'full-path' => $this->getFullPath(),
@@ -220,9 +222,9 @@ class File extends Resource implements fs\file {
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),
-        'read' => booltostr($this->checkRights(MODE_READ)),
-        'write' => booltostr($this->checkRights(MODE_WRITE)),
-        'execution' => booltostr($this->checkRights(MODE_EXECUTION)),
+        'read' => functions\booltostr($this->checkRights(\Sylma::MODE_READ)),
+        'write' => functions\booltostr($this->checkRights(\Sylma::MODE_WRITE)),
+        'execution' => functions\booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
         'size' => $iSize,
         'extension' => $this->getExtension(),
       ),

@@ -38,7 +38,7 @@ class Action extends Basic implements core\stringable {
     $this->aArguments[$sKey] = $mValue;
   }
 
-  protected function getContexts() {
+  public function getContexts() {
 
     return $this->aContexts;
   }
@@ -185,12 +185,12 @@ class Action extends Basic implements core\stringable {
   }
 
   protected function parseAttributes($sContent) {
-    
+
     $sContent = preg_replace('/\[sylma:insert:(\d+)\]/', '<?php echo $aArguments[\'default\'][$1]; ?>', $sContent);
-    
+
     return $sContent;
   }
-  
+
   protected function parseString(core\stringable $mVal) {
 
     return $mVal->asString();

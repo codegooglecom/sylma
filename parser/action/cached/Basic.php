@@ -13,14 +13,14 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
 
-  protected $aResults = null;
+  protected $aResults = array(self::CONTEXT_DEFAULT => array());
   protected $bRunned = false;
 
   public function __construct(fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
 
     require_once('parser/action.php');
 
-    $this->aContexts = $aContexts;
+    $this->setContexts($aContexts);
     $this->setControler($controler);
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
@@ -51,19 +51,18 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
    */
   protected function loadAction() {
 
-    $aResults = null;
-
     if (!$this->bRunned) {
 
-      $aResults = $this->aResults = $this->parseAction();
+      $aAction = $this->parseAction();
+
+      foreach ($this->aResults as $sContext => $aResult) {
+
+        if (array_key_exists($sContext, $aAction)) $this->aResults[$sContext] += $aAction[$sContext];
+      }
       $this->bRunned = true;
     }
-    else {
 
-      $aResults = $this->aResults;
-    }
-
-    return $aResults;
+    return $this->aResults;
   }
 
   protected function loadArgumentable(core\argumentable $val = null) {
@@ -155,6 +154,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function setContexts(array $aContexts) {
 
+    foreach ($aContexts as $sContext) {
+
+      $this->aResults[$sContext] = array();
+    }
+
     $this->aContexts = $aContexts;
   }
 
@@ -162,7 +166,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     foreach ($this->aContexts as $sContext) {
 
-      $this->aContexts[$sContext] += $action->getContext($sContext);
+      $this->aResults[$sContext] += $action->getContext($sContext);
     }
   }
 
@@ -189,12 +193,12 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     return $val;
   }
-  
+
   protected function getActionFile($sPath, array $aArguments) {
 
     $action = $this->create('action', array($this->getFile($sPath), $aArguments));
     $action->setContexts($this->getContexts());
-    
+
     return $action;
   }
 
