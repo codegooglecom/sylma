@@ -4,24 +4,33 @@ namespace sylma\parser\action\cached;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
 require_once('core/module/Domed.php');
+require_once('core/stringable.php');
 
 require_once(dirname(__dir__) . '/cached.php');
-require_once('core/stringable.php');
 
 abstract class Basic extends core\module\Domed implements parser\action\cached, core\stringable {
 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
 
-  public function __construct(fs\directory $dir, parser\action $controler, array $aArguments) {
+  protected $aResults = array(self::CONTEXT_DEFAULT => array());
+  protected $bRunned = false;
+
+  public function __construct(fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
 
     require_once('parser/action.php');
 
+    $this->setContexts($aContexts);
     $this->setControler($controler);
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
 
     $this->loadDefaultArguments();
+    $this->setArgumentsArray($aArguments);
+  }
+
+  public function setArgumentsArray(array $aArguments) {
+
     $this->aActionArguments = $aArguments;
   }
 
@@ -31,13 +40,29 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
    */
   abstract protected function runAction();
 
-  /**
-   *
-   * @return array|mixed
-   */
   protected function parseAction() {
 
     return $this->runAction();
+  }
+
+  /**
+   * Allow management of multiple calls on same action
+   * @return array|mixed
+   */
+  protected function loadAction() {
+
+    if (!$this->bRunned) {
+
+      $aAction = $this->parseAction();
+
+      foreach ($this->aResults as $sContext => $aResult) {
+
+        if (array_key_exists($sContext, $aAction)) $this->aResults[$sContext] += $aAction[$sContext];
+      }
+      $this->bRunned = true;
+    }
+
+    return $this->aResults;
   }
 
   protected function loadArgumentable(core\argumentable $val = null) {
@@ -59,7 +84,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!is_string($sVal)) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : string expected, %s given', $formater->asToken($sVal)));
+      $this->throwException(sprintf('Invalid argument type : string expected, %s given', $formater->asToken($sVal)));
     }
 
     return $sVal;
@@ -71,7 +96,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!array_key_exists($sName, $this->aActionArguments)) {
 
-      if ($bRequired) $this->throwException(txt('Unknow argument : %s', $sName));
+      if ($bRequired) $this->throwException(sprintf('Unknow argument : %s', $sName));
     }
     else {
 
@@ -88,7 +113,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if ($bRequired && (is_null($mVal) || $mVal === false)) {
 
       if ($bDefault) $mResult = null;
-      else $this->throwException(txt('Validation failed for argument %s', $sName));
+      else $this->throwException(sprintf('Validation failed for argument %s', $sName));
     }
 
     if (!$bDefault) {
@@ -105,7 +130,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!is_numeric($iVal)) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : numeric expected, %s given', $formater->asToken($iVal)));
+      $this->throwException(sprintf('Invalid argument type : numeric expected, %s given', $formater->asToken($iVal)));
     }
 
     return $iVal + 0;
@@ -116,10 +141,46 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!is_array($aVal)) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : array expected, %s given', $formater->asToken($aVal)));
+      $this->throwException(sprintf('Invalid argument type : array expected, %s given', $formater->asToken($aVal)));
     }
 
     return $aVal;
+  }
+
+  protected function getContexts() {
+
+    return $this->aContexts;
+  }
+
+  public function setContexts(array $aContexts) {
+
+    foreach ($aContexts as $sContext) {
+
+      $this->aResults[$sContext] = array();
+    }
+
+    $this->aContexts = $aContexts;
+  }
+
+  protected function loadActionContexts(parser\action $action) {
+
+    foreach ($this->aContexts as $sContext) {
+
+      $this->aResults[$sContext] += $action->getContext($sContext);
+    }
+  }
+
+  public function getContext($sContext = self::CONTEXT_DEFAULT) {
+
+    $aResult = array();
+    $aContexts = $this->loadAction();
+
+    if (array_key_exists($sContext, $aContexts)) {
+
+      $aResult = $aContexts[$sContext];
+    }
+
+    return $aResult;
   }
 
   protected function validateObject($val, $sInterface) {
@@ -127,7 +188,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (!$val instanceof $sInterface) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
+      $this->throwException(sprintf('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
     }
 
     return $val;
@@ -135,16 +196,19 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   protected function getActionFile($sPath, array $aArguments) {
 
-    return $this->create('action', array($this->getFile($sPath), $aArguments));
+    $action = $this->create('action', array($this->getFile($sPath), $aArguments));
+    $action->setContexts($this->getContexts());
+
+    return $action;
   }
 
   public function asObject() {
 
-    $aResult = $this->parseAction();
+    $aResult = $this->getContext();
 
     if (!$aResult) {
 
-      $this->throwException(txt('No valid object result'));
+      $this->throwException(sprintf('No valid object result'));
     }
 
     return array_pop($aResult);
@@ -152,7 +216,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asArray() {
 
-    $aAction = array_values($this->parseAction());
+    $aAction = array_values($this->getContext());
 
     if (count($aAction) == 1 && is_array(current($aAction))) $aResult = current($aAction);
     else $aResult = $aAction;
@@ -162,23 +226,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asString($iMode = 0) {
 
-    $mResult = $this->parseAction();
-
-    /*
-    if (is_object($mVal)) {
-
-      $sResult = (string) $mVal;
-    }
-    else if (is_string($mVal)) {
-
-      $sResult = $mVal;
-    }
-    else if (is_array($mVal)) {
-
-      $this->throwException(t('Cannot stringed array result'));
-    }
-
-    return $sResult;*/
+    $mResult = $this->getContext();
 
     return (string) implode('', $mResult);
   }

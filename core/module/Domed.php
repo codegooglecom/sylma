@@ -13,6 +13,9 @@ abstract class Domed extends Filed {
 
   private $options = null;  // contextual settings
 
+  //protected static $sArgumentClass = 'sylma\core\argument\Domed';
+  //protected static $sArgumentFile = 'core/argument/Domed.php';
+
   const ARGUMENTS = 'domed.yml';
 
   const DOM_CONTROLER = 'dom';
@@ -56,7 +59,7 @@ abstract class Domed extends Filed {
     return $dom->create(self::DOM_DOCUMENT_ALIAS, array($mContent));
   }
 
-  protected function getAction($sPath, array $aArguments = array()) {
+  protected function readAction($sPath, array $aArguments = array()) {
 
     $controler = $this->getControler('action');
 
@@ -90,7 +93,7 @@ abstract class Domed extends Filed {
    *
    * @return dom\document|null The loaded document, or null if not found/valid
    */
-  protected function getDocument($sPath, $iMode = \Sylma::MODE_READ) {
+  protected function getDocument($sPath, $iMode = \Sylma::MODE_EXECUTE) {
 
     $doc = null;
 

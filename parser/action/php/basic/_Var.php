@@ -15,7 +15,7 @@ abstract class _Var extends Controled implements php\_var {
   protected $bInserted = false;
   protected $content;
 
-  public function __construct($controler, php\_instance $instance, $sName, php\linable $content) {
+  public function __construct(php\_window $controler, php\_instance $instance, $sName, php\linable $content) {
 
     $this->setName($sName);
     $this->setControler($controler);
@@ -44,10 +44,10 @@ abstract class _Var extends Controled implements php\_var {
 
     if (!$content && !$this->getContent()) {
 
-      $window->throwException(txt('Variable "%s" cannot be inserted, no content defined', $this->getName()));
+      $window->throwException(sprintf('Variable "%s" cannot be inserted, no content defined', $this->getName()));
     }
 
-    if (!$this->bInserted) {
+    if (!$this->bInserted || $content) {
 
       if (!$content) $content = $this->getContent();
 
@@ -68,7 +68,7 @@ abstract class _Var extends Controled implements php\_var {
     $this->sName = $sName;
   }
 
-  protected function getName() {
+  public function getName() {
 
     return $this->sName;
   }
@@ -77,7 +77,7 @@ abstract class _Var extends Controled implements php\_var {
 
     if (!$this->bInserted && $this->getContent()) {
 
-      $this->getControler()->throwException(txt('Variable "%s" has not been inserted', $this->getName()));
+      $this->getControler()->throwException(sprintf('Variable "%s" has not been inserted', $this->getName()));
     }
 
     return $this->getControler()->createArgument(array(

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution">
-  <le:settings>
-    <le:name>Utilisateurs</le:name>
-  </le:settings>
-  <le:action path="interface/list"/>
-</le:action>

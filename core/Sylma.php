@@ -1,15 +1,16 @@
 <?php
 
-use \sylma\core, \sylma\modules, \sylma\dom, \sylma\storage, \sylma\parser;
+use sylma\core, sylma\modules, sylma\dom, sylma\storage, sylma\parser;
 
 class Sylma {
 
   const NS = 'http://www.sylma.org';
 
-  const ROOT = SYLMA_ROOT; // ex: protected
-  const PATH = SYLMA_PROTECTED_PATH; // ex: /sylma
+  const ROOT = sylma\ROOT; // ex: protected
+  const PATH = sylma\PROTECTED_PATH; // ex: /sylma
+  const PATH_SYSTEM = sylma\SYSTEM_PATH;
 
-  const PATH_OPTIONS = '/system/sylma.yml';
+  const PATH_OPTIONS = '/core/sylma.yml';
 
   const MODE_EXECUTE = 1;
   const MODE_WRITE = 2;
@@ -24,7 +25,11 @@ class Sylma {
   private static $logger = null;
   protected static $aControlers;
 
-  public static $exception = '\sylma\core\exception\Basic';
+  public static $sExceptionFile = 'core/exception/Basic.php';
+  public static $sExceptionClass = '\sylma\core\exception\Basic';
+
+  public static $sInitializerFile = 'core/Initializer.php';
+  public static $sInitializerClass = '\sylma\core\Initializer';
 
   /**
    * Handle final result for @method render()
@@ -34,32 +39,56 @@ class Sylma {
 
   public static function init($sServer = '') {
 
-    require_once('core/exception/Basic.php');
+    require_once(self::$sExceptionFile);
     //xdebug_disable();
-    set_error_handler(self::$exception . "::loadError");
+    set_error_handler(self::$sExceptionClass . "::loadError");
 
-    require_once('old/Initializer.php');
+    require_once(self::$sInitializerFile);
 
     //xdebug_start_code_coverage();
 
+    $init = self::$aControlers['init'] = new self::$sInitializerClass;
+    self::setControler('init', $init);
+
     try {
 
-      $init = self::$aControlers['init'] = new Initializer();
-
       self::$settings = $init->loadSettings($sServer, self::ROOT . self::PATH . self::PATH_OPTIONS);
-      $init->load();
-
-      self::setControler('init', $init);
-
-      self::getControler('fs');
-      //self::getControler('dom');
-
-      self::$result = Controler::trickMe();
+      self::$result = $init->run(self::get('initializer'));
     }
     catch (core\exception $e) {
 
-      print_r($e->getTrace());
-      throw $e;
+      if (self::read('debug/enable')) {
+
+        $aTraces = $e->getTrace();
+
+        $aPath = $e->save();
+
+        echo $e->getMessage() . '<br/>';
+        echo $aPath[0];
+
+        echo '<pre>';
+
+        print_r($aPath);
+
+        foreach ($aTraces as $aTrace) {
+
+          $sFile = array_key_exists('file', $aTrace) ? $aTrace['file'] : '-unknown-';
+          $sLine = array_key_exists('line', $aTrace) ? $aTrace['line'] : '-unknown-';
+          $sClass = array_key_exists('line', $aTrace) ? $aTrace['class'] : '-unknown-';
+          $sFunction = array_key_exists('line', $aTrace) ? $aTrace['function'] : '-unknown-';
+
+          echo $sFile . ' [' . $sLine .']' . ' - ' . $sClass . '->' . $sFunction . '()<br/>';
+        }
+
+        echo '</pre>';
+
+        throw $e;
+      }
+      else {
+
+        header('HTTP/1.0 404 Not Found');
+        self::$result = $init->getError();
+      }
     }
 
     //var_dump(xdebug_get_code_coverage());
@@ -74,7 +103,7 @@ class Sylma {
 
   public static function getControler($sName, $bLoad = true, $bDebug = true) {
 
-    $controler = array_val($sName, self::$aControlers);
+    $controler = array_key_exists($sName, self::$aControlers) ? self::$aControlers[$sName] : null;
 
     if (!$controler && $bLoad) {
 
@@ -83,7 +112,7 @@ class Sylma {
 
     if (!$controler && $bLoad && $bDebug) {
 
-      self::throwException(txt('Controler %s is not defined', $sName));
+      self::throwException(sprintf('Controler %s is not defined', $sName));
     }
 
     return $controler;
@@ -114,7 +143,7 @@ class Sylma {
 
       case 'dom' :
 
-        require_once('dom2/Controler.php');
+        require_once('dom/Controler.php');
         $result = new dom\Controler;
 
       break;
@@ -156,10 +185,12 @@ class Sylma {
 
       break;
 
+
       case 'caller' :
 
         require_once('parser/caller/Controler.php');
         $result = new parser\caller\Controler;
+
 
       break;
 
@@ -251,7 +282,7 @@ class Sylma {
 
   public static function throwException($sMessage, array $aPath = array(), $iOffset = 1) {
 
-    $e = new Sylma::$exception($sMessage);
+    $e = new Sylma::$sExceptionClass($sMessage);
 
     $e->setPath($aPath);
     $e->load($iOffset);

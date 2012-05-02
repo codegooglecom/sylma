@@ -27,6 +27,11 @@ class Standalone extends tester\Prepare {
     $this->setControler($controler);
   }
 
+  public function getDirectory($sPath = '', $bDebug = true) {
+    
+    return parent::getDirectory($sPath, $bDebug);
+  }
+  
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {
 
     return parent::getArgument($sPath, $mDefault, $bDebug);
@@ -49,7 +54,7 @@ class Standalone extends tester\Prepare {
 
   public function getAction($sPath, array $aArguments = array()) {
 
-    return parent::getAction($sPath, $aArguments);
+    return parent::readAction($sPath, $aArguments);
   }
 }
 

@@ -4,7 +4,7 @@ namespace sylma\parser\action;
 use sylma\parser, sylma\dom, sylma\storage\fs, sylma\parser\action\php;
 
 require_once('parser/domed.php');
-require_once('dom2/domable.php');
+require_once('dom/domable.php');
 
 interface compiler extends parser\domed, dom\domable {
 

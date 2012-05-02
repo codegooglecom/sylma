@@ -32,7 +32,7 @@ class Reflector extends Argumented {
       case 'array' : $mResult = $this->reflectArray($el); break;
       case 'numeric' : $mResult = $this->reflectNumeric($el); break;
 
-      case 'get-variable' : $mResult = $this->reflectVariable($el); break;
+      case 'get-variable' : $mResult = $this->reflectGetVariable($el); break;
       case 'ns' : $mResult = $this->reflectNS($el); break;
       //case 'argument' :
       case 'test-argument' :
@@ -42,6 +42,9 @@ class Reflector extends Argumented {
         $mResult = $this->reflectGetArgument($el);
 
       break;
+
+      case 'document' : $mResult = $this->reflectDocument($el); break;
+      //case 'template' : $mResult = $this->reflectTemplate($el); break;
 
       // case 'get-settings' :
       case 'switch' :
@@ -55,16 +58,16 @@ class Reflector extends Argumented {
       //case 'special' :
       //case 'controler' :
 
-        $sName = $el->getAttribute('name');
-        $mResult = $window->setControler($sName);
+        //$sName = $el->getAttribute('name');
+        //$mResult = $window->setControler($sName);
 
-      break;
+      //break;
 
-      case 'redirect' :
+      //case 'redirect' :
 
-        $mResult = $window->createCall($window->getSelf(), 'getRedirect', 'core\redirect');
+        //$mResult = $window->createCall($window->getSelf(), 'getRedirect', 'core\redirect');
 
-      break;
+      //break;
 
   // <object name="window" call="Controler::getWindow()"/>
   // <object name="redirect" call="$oRedirect"/>
@@ -77,19 +80,10 @@ class Reflector extends Argumented {
   // <object name="parent-directory" call="$oAction-&gt;getPath()-&gt;getDirectory()-&gt;getParent()" return="true"/>
   // <object name="parent" call="$oAction-&gt;getParent()"/>
   // <object name="database" call="Controler::getDatabase()"/>
-      case 'document' :
-
-        //if ($el->hasChildren())
-
-        $mResult = $this->reflectDocument($el);
-
-      break;
-
-      case 'template' :
 
       default :
 
-        $this->throwException(txt('Unknown action element : %s', $el->asToken()));
+        $this->throwException(sprintf('Unknown action element : %s', $el->asToken()));
     }
 
     return $mResult;
@@ -103,7 +97,7 @@ class Reflector extends Argumented {
 
       if ($el->getType() === $el::TEXT) {
 
-        $this->throwException((txt('Invalid %s, element expected', $el->asToken())));
+        $this->throwException((sprintf('Invalid %s, element expected', $el->asToken())));
       }
 
       if ($el->getNamespace() == $this->getNamespace()) {
@@ -115,7 +109,10 @@ class Reflector extends Argumented {
             $aResult[] = $this->reflectArgument($el);
 
           break;
-          case 'name' : $this->setName($el->read()); break;
+          case 'name' :
+
+            //$this->setName($el->read());
+          break;
 
           case 'return' : $this->setReturn($el); break;
 
@@ -142,8 +139,7 @@ class Reflector extends Argumented {
 
     foreach ($el->getAttributes() as $attr) {
 
-      if ($attr->getNamespace()) continue; // skip @le:*
-      $aArguments[$attr->getName()] = $this->parseString($attr->getValue());
+      if (!$attr->getNamespace()) $aArguments[$attr->getName()] = $window->createString($attr->getValue());
     }
 
     $call = $method->reflectCall($window, $window->getSelf(), $aArguments);
@@ -172,7 +168,7 @@ class Reflector extends Argumented {
 
         if ($sUse != 'or') {
 
-          $this->throwException(txt('Unknown boolean use defined, "and" or "or" expected in %s', $el->asToken()));
+          $this->throwException(sprintf('Unknown boolean use defined, "and" or "or" expected in %s', $el->asToken()));
         }
 
         $bAnd = false;
@@ -180,7 +176,7 @@ class Reflector extends Argumented {
 
       if ($el->countChildren() != 1) {
 
-        $this->throwException(txt('One children or attribute value expected in %s', $el->asToken()));
+        $this->throwException(sprintf('One children or attribute value expected in %s', $el->asToken()));
       }
 
       $mValue = $this->parse($el->getFirst());
@@ -198,7 +194,7 @@ class Reflector extends Argumented {
 
       if ($child->getType() != dom\node::ELEMENT) {
 
-        $this->throwException(txt('Invalid node type in array : %s', $el->asToken()));
+        $this->throwException(sprintf('Invalid node type in array : %s', $el->asToken()));
       }
 
       if (!$mKey = $child->readAttribute('key', $this->getNamespace(), false)) {
@@ -241,26 +237,58 @@ class Reflector extends Argumented {
 
     $window = $this->getWindow();
 
-    preg_match_all('/\[\$([\w-]+)\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE);
-
-    if ($aResults && $aResults[0]) {
+    preg_match_all('/\[sylma:(?P<typ>[\w-]+)(?:::(?P<val>[\w-]+))?\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+    //dspf($aResults);
+    
+    if ($aResults) {
 
       $iSeek = 0;
 
-      foreach ($aResults[1] as $aResult) {
+      foreach ($aResults as $aResult) {
 
-        $iVarLength = strlen($aResult[0]) + 3;
-        $sVarValue = (string) $window->getVariable($aResult[0]);
-
-        $sValue = substr($sValue, 0, $aResult[1] + $iSeek - 2) . $sVarValue . substr($sValue, $aResult[1] + $iSeek - 2 + $iVarLength);
+        $iVarLength = strlen($aResult[0][0]);
+        
+        switch ($aResult['typ'][0]) {
+          
+          case 'call' :
+            
+            $aArguments = array();
+            
+            $method = $this->getInterface()->loadMethod($aResult['val'][0]);
+            $arg = $method->reflectCall($window, $window->getSelf(), $aArguments);
+            
+          break;
+          
+          case 'arg' :
+            
+            $arg = $this->getActionArgument($aResult['val'][0]);
+            
+          break;
+          
+          default :
+          
+            $this->throwException(sprintf('unknown attribute call : %s', $aResult['typ']));
+          
+        }
+        
+        $insert = $window->createInsert($arg);
+        $sVarValue = $insert->asString();
+        
+        $sStart = substr($sValue, 0, $aResult[0][1] + $iSeek);
+        $sEnd = substr($sValue, $aResult[0][1] + $iSeek + $iVarLength);
+        
+        $sValue = $sStart . $sVarValue . $sEnd;
 
         $iSeek += strlen($sVarValue) - $iVarLength;
       }
     }
-
-    return $window->createString($sValue);
+    //dspf($sValue);
+    return $sValue;
   }
 
+  /**
+   * @return php\_var
+   */
   protected function reflectAction(dom\element $el) {
 
     $result = null;
@@ -271,7 +299,7 @@ class Reflector extends Argumented {
 
     require_once('core/functions/Path.php');
     $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
-    $path = $this->getControler()->create('path', array($sPath));
+    $path = $this->getControler()->create('path', array($sPath, $this->getDirectory()));
 
     // create call
 
@@ -290,7 +318,10 @@ class Reflector extends Argumented {
       $sReturn = $return->readAttribute('format', null, false);
     }
 
+    $window = $this->getWindow();
+
     $result = $this->reflectActionReturn($callAction, $sReturn, $sFormat);
+    $window->add($window->createCall($window->getSelf(), 'loadActionContexts', 'php-boolean', array($callAction->getVar())));
 
     return $result;
   }
@@ -311,7 +342,7 @@ class Reflector extends Argumented {
 
       if ($child->getType() != dom\node::ELEMENT) {
 
-        $this->throwException(txt('Invalid %s, element expected', $child->asToken()));
+        $this->throwException(sprintf('Invalid %s, element expected', $child->asToken()));
       }
 
       $sKey = $child->readAttribute('name', $this->getNamespace(), false);
@@ -333,28 +364,33 @@ class Reflector extends Argumented {
       case 'txt' :
 
         $var = $call->getVar();
-        $result = $this->getWindow()->createCall($var, 'asString', 'php-string');
+        $return = $this->getWindow()->createCall($var, 'asString', 'php-string');
+
+        $result = $return->getVar();
 
       break;
 
       case 'dom' :
 
         $var = $call->getVar();
-        $result = $this->getWindow()->createCall($var, 'asDOM', 'php-string');
+        $return = $this->getWindow()->createCall($var, 'asDOM', 'php-string');
+
+        $result = $return->getVar();
 
       break;
 
       case 'object' :
 
-        //$this->throwException('todo, format return');
+        $var = $call->getVar();
+        $return = $this->getWindow()->createCall($var, 'asObject', 'php-string');
 
-        $result = $call;
+        $result = $return->getVar();
 
       break;
 
       default :
 
-        $this->throwException(txt('Unknown return type for external action : %s', $sReturn));
+        $this->throwException(sprintf('Unknown return type for external action : %s', $sReturn));
     }
 
     return $result;
@@ -380,12 +416,12 @@ class Reflector extends Argumented {
 
     if (!$first || $first->getType() === dom\node::TEXT) {
 
-      $this->throwException(txt('Invalid children for document, one child element expected in %s, ', $el->asToken()));
+      $this->throwException(sprintf('Invalid children for document, one child element expected in %s, ', $el->asToken()));
     }
 
     $content = $this->parseElement($first->remove());
 
-    $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom2/handler.php');
+    $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom/handler.php');
     $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
 
     $mResult = $this->runObject($el, $call->getVar(false));
@@ -393,19 +429,24 @@ class Reflector extends Argumented {
     return $mResult;
   }
 
-  protected function reflectVariable(dom\element $el) {
+  protected function reflectGetVariable(dom\element $el) {
 
     $sName = $el->readAttribute('name');
 
     if (!array_key_exists($sName, $this->aVariables)) {
 
-      $this->throwException(txt('Unknown variable : %s', $sName));
+      $this->throwException(sprintf('Unknown variable : %s', $sName));
     }
 
     $var = $this->aVariables[$sName];
 
-    if ($var instanceof php\basic\Called) $var = $var->getVar(false);
-    $aResult = $this->runConditions($var, $el->getChildren());
+    //if ($var instanceof php\basic\Called) $var = $var->getVar(false);
+
+    $aResult = array();
+    $children = $el->getChildren();
+
+    $aResult = array_merge($aResult, $this->runConditions($var, $children));
+    $aResult = array_merge($aResult, $this->runVar($var, $children));
 
     if (!$aResult) $aResult[] = $var;
 
@@ -419,7 +460,7 @@ class Reflector extends Argumented {
 
     if (!$sPrefixes = $el->read()) {
 
-      $this->throwException(txt('You must specify comma separated prefixes in content of %s', $el->asToken()));
+      $this->throwException(sprintf('You must specify comma separated prefixes in content of %s', $el->asToken()));
     }
 
     foreach (explode(',', $sPrefixes) as $sPrefix) {
@@ -430,7 +471,7 @@ class Reflector extends Argumented {
 
         if (!$sNamespace = $el->lookupNamespace(null)) {
 
-          $this->throwException(txt('No default namespace found in @element %s', $el->asToken()));
+          $this->throwException(sprintf('No default namespace found in @element %s', $el->asToken()));
         }
 
         $aResult[substr($sPrefix, 1)] = $window->createString($sNamespace);
@@ -439,7 +480,7 @@ class Reflector extends Argumented {
 
         if (!$sNamespace = $el->lookupNamespace($sPrefix)) {
 
-          $this->throwException(txt('No namespace found with %s in @element %s', $sPrefix, $el->asToken()));
+          $this->throwException(sprintf('No namespace found with %s in @element %s', $sPrefix, $el->asToken()));
         }
 
         $aResult[$sPrefix] = $window->createString($sNamespace);
@@ -453,7 +494,7 @@ class Reflector extends Argumented {
 
     if ($el->countChildren() != 1) {
 
-      $this->throwException(txt('Too much children, one child expected in %s', $el->asToken()));
+      $this->throwException(sprintf('Too much children, one child expected in %s', $el->asToken()));
     }
 
     $content = $this->parseNode($el->getFirst());

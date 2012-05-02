@@ -1,4 +1,0 @@
-namespace: http://www.sylma.org/modules/menus
-classes:
-  document:
-    name : XML_Document

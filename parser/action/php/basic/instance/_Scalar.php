@@ -7,8 +7,9 @@ require_once('core/module/Argumented.php');
 
 require_once(dirname(dirname(__dir__)) . '/_scalar.php');
 require_once('core/argumentable.php');
+require_once(dirname(__dir__) . '/Controled.php');
 
-abstract class _Scalar extends core\module\Argumented implements php\_scalar, core\argumentable {
+abstract class _Scalar extends php\basic\Controled implements php\_scalar, core\argumentable {
 
   protected $sFormat;
 

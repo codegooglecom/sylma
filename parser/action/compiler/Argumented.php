@@ -10,29 +10,34 @@ abstract class Argumented extends Domed {
   const ARGUMENT_METHOD = 'getActionArgument';
 
   protected $aActionArguments = array();
+  protected $iArgument = 0;
 
-  protected function setActionArgument($sName, php\_var $var) {
+  protected function setActionArgument($mKey, php\_var $var) {
 
-    $this->aActionArguments[$sName] = $var;
+    $this->aActionArguments[$mKey] = $var;
   }
 
   /**
    *
-   * @param type $sName
+   * @param string|integer $mKey
    * @return php\_var
    */
-  protected function getActionArgument($sName) {
+  protected function getActionArgument($mKey) {
 
-    if (!array_key_exists($sName, $this->aActionArguments)) {
+    if (!array_key_exists($mKey, $this->aActionArguments)) {
 
-      $this->throwException(txt('Argument %s does not exists', $sName));
+      $this->throwException(sprintf('Argument %s does not exists', $mKey));
     }
 
-    $var = $this->aActionArguments[$sName];
+    $var = $this->aActionArguments[$mKey];
 
     return $var;
   }
 
+  protected function getArgumentIndex() {
+
+    return $this->iArgument++;
+  }
   /**
    *
    * @param dom\element $el
@@ -43,8 +48,11 @@ abstract class Argumented extends Domed {
     $aResult = array();
     $window = $this->getWindow();
 
-    $sName = $el->getAttribute('name');
-    $sFormat = $el->getAttribute('format');
+    $mKey = $el->readAttribute('name', null, false);
+
+    if (!$mKey) $mKey = $this->getArgumentIndex();
+
+    $sFormat = $el->readAttribute('format');
     $bRequired = $el->testAttribute('required', true);
     $validate = $default = null;
 
@@ -56,7 +64,7 @@ abstract class Argumented extends Domed {
 
     $val = $window->stringToInstance($sFormat);
 
-    $callArgument = $window->createCall($window->getSelf(), self::ARGUMENT_METHOD, $val, array($sName, $bRequired));
+    $callArgument = $window->createCall($window->getSelf(), self::ARGUMENT_METHOD, $val, array($mKey, $bRequired));
     $var = $callArgument->getVar();
 
     $callFormat = $this->validateArgumentFormat($val, $callArgument);
@@ -69,16 +77,16 @@ abstract class Argumented extends Domed {
       $window->setScope($if);
     }
 
-    $assign = $window->create('assign', array($window, $var, $callFormat, $callFormat->getReturn()));
+    $assign = $window->create('assign', array($window, $var, $callFormat));
     $window->add($assign);
     //$var = $callFormat->getVar();
     // argument is available direclty after format has been checked, ie. for validation
 
-    $this->setActionArgument($sName, $var);
+    $this->setActionArgument($mKey, $var);
 
     if ($validate) {
 
-      $callValidate = $this->reflectValidate($validate, $sName, $var, (bool) $default);
+      $callValidate = $this->reflectValidate($validate, $mKey, $var, (bool) $default);
       $window->add($callValidate);
     }
 
@@ -127,9 +135,12 @@ abstract class Argumented extends Domed {
 
   protected function reflectGetArgument(dom\element $el) {
 
-    $sName = $el->getAttribute('name');
+    if (!$mKey = $el->readAttribute('name', null, false)) {
 
-    $arg = $this->getActionArgument($sName);
+      $mKey = (integer) $el->readAttribute('index');
+    }
+
+    $arg = $this->getActionArgument($mKey);
     $instance = $arg->getInstance();
 
     $aResult = array();
@@ -153,7 +164,7 @@ abstract class Argumented extends Domed {
 
     if ($el->countChildren() != 1) {
 
-      $this->throwException(txt('One child expected in %s', $el->asToken()));
+      $this->throwException(sprintf('One child expected in %s', $el->asToken()));
     }
 
     $bReturn = $el->testAttribute('return', true);
@@ -164,7 +175,8 @@ abstract class Argumented extends Domed {
     $window->add($if);
     $window->setScope($if);
 
-    $varDefault = $window->addVar($this->parseNode($el->getFirst()));
+    $mResult = $this->parseNode($el->getFirst());
+    $varDefault = $window->addVar($mResult);
 
     if ($bReturn) {
 
@@ -184,13 +196,19 @@ abstract class Argumented extends Domed {
 
     if ($el->countChildren() != 1) {
 
-      $this->throwException(txt('One child expected in %s', $el->asToken()));
+      $this->throwException(sprintf('One child expected in %s', $el->asToken()));
     }
 
     $result = $this->parseNode($el->getFirst());
     $validation = $window->addVar($result);
 
+    if ($bReturn) {
+
+      $this->setActionArgument($sArgument, $result);
+    }
+
     $call = $window->createCall($window->getSelf(), 'validateArgument', 'php-boolean', array($sArgument, $var, $validation, $bRequired, $bReturn, $bDefault));
     return $window->create('assign', array($this->getWindow(), $var, $call));
   }
 }
+

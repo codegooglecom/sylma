@@ -205,12 +205,12 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       if ($sSubPath !== '..') $aResult[] = $sSubPath;
       else {
 
-        if (!$aResult) \Sylma::throwException(txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
+        if (!$aResult) \Sylma::throwException(sprintf('Cannot use .. when current level is root in @path /%s', $sSubPath));
         else array_pop($aResult);
       }
     }
 
-    if ($sPath && !$aPath) $this->throwException(txt('Cannot parse path %s', $sPath));
+    if ($sPath && !$aPath) $this->throwException(sprintf('Cannot parse path %s', $sPath));
 
     return $aResult;
   }
@@ -252,7 +252,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
           else if ($aPath && $bDebug) {
 
             $this->throwException(
-              txt('No array in @path %s. Cannot browse with @path %s',
+              sprintf('No array in @path %s. Cannot browse with @path %s',
               implode('/', $aParentPath), implode('/', $aParentPath + $aPath)),
               count($aPath) + 3);
           }
@@ -300,7 +300,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
       if ($bDebug) {
 
-        $this->throwException(txt('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
+        $this->throwException(sprintf('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
       }
 
       $sKey = '';
@@ -329,7 +329,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     if (is_object($mResult) || is_array($mResult)) {
 
-      $this->throwException(txt('%s is not a string', $sPath), 2);
+      $this->throwException(sprintf('%s is not a string', $sPath), 2);
     }
 
     return $mResult;
@@ -386,7 +386,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   }
 
   protected static function normalizeObject($val) {
-
+//echo '- ' .get_class($val).'<br/>';
     $mResult = null;
 
     if (self::DEBUG_NORMALIZE_RECURSION) {
@@ -396,22 +396,22 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         if ($obj === $val) {
 
           $formater = \Sylma::getControler('formater');
-          \Sylma::throwException(txt('Recursion when normalizing with object : %s', $formater->asToken($val)));
+          \Sylma::throwException(sprintf('Recursion when normalizing with object : %s', $formater->asToken($val)));
         }
       }
     }
 
     if ($val instanceof core\argumentable) {
 
-      $mResult = self::normalizeArgument($val->asArgument());
+      $mResult = static::normalizeArgument($val->asArgument());
     }
     else if ($val instanceof core\argument) {
 
-      $mResult = self::normalizeArgument($val);
+      $mResult = static::normalizeArgument($val);
     }
     else {
 
-      \Sylma::throwException(txt('Cannot normalize object @class %s', get_class($val)));
+      \Sylma::throwException(sprintf('Cannot normalize object @class %s', get_class($val)));
     }
 
     if (self::DEBUG_NORMALIZE_RECURSION) self::$aNormalizedObjects[] = $val;
@@ -488,7 +488,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      $this->throwException(txt('Cannot render an array as a string'));
+      $this->throwException(sprintf('Cannot render an array as a string'));
     }
 
     return $sResult;

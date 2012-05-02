@@ -61,9 +61,9 @@ abstract class Runner extends Action {
 
     $aResult = array();
 
-    while ($child = $children->current()) {
+    while (($child = $children->current()) && $child->getType() == dom\node::ELEMENT) {
 
-      if ($child->getNamespace() == $this->getNamespace()) {
+      if ($child->getNamespace() == $this->getNamespace() && in_array($child->getName(), array('if', 'if-not'))) {
 
         // from here, condition can be builded
 
@@ -72,7 +72,7 @@ abstract class Runner extends Action {
 
         if ($child->getChildren()->length != 1) {
 
-          $this->throwException(txt('Invalid children, one child expected in %s', $child->asToken()));
+          $this->throwException(sprintf('Invalid children, one child expected in %s', $child->asToken()));
         }
 
         $content = $this->parse($child->getFirst());
@@ -88,14 +88,10 @@ abstract class Runner extends Action {
 
           $condition = $window->create('condition', array($window, $call, $assign));
         }
-        else if ($sName == 'if-not') {
+        else { // if ($sName == 'if-not') {
 
           $not = $window->createNot($call);
           $condition = $window->create('condition', array($window, $not, $assign));
-        }
-        else {
-
-          $this->throwException(txt('Condition expected, invalid %s', $child->asToken()));
         }
 
         $window->add($condition);

@@ -31,7 +31,7 @@ class Directory extends Resource implements fs\directory {
 
     $this->aRights = $this->aChildrenRights = $aRights;
 
-    $settings = $this->getControler()->create('security', array($this, $this->getControler()));
+    $settings = $this->getControler()->create('security', array($this));
     $this->setSettings($settings);
 
     if ($this->doExist()) {
@@ -274,9 +274,9 @@ class Directory extends Resource implements fs\directory {
     $result = null;
     $this->loadRights();
 
-    if (!$this->isSecured()) {
+    if (!$this->isSecured() && \Sylma::getControler('user', false, false)) {
 
-      $this->throwException(txt('Unauthorized access to @file %s', $this . '/' . $sName));
+      $this->throwException(sprintf('Unauthorized access to @file %s', $this . '/' . $sName));
     }
 
     if ($sName && is_string($sName)) {
@@ -288,7 +288,7 @@ class Directory extends Resource implements fs\directory {
 
         if (!$file) {
 
-          $this->throwException(txt('File lost : %s', (string) $this . '/' . $sName));
+          $this->throwException(sprintf('File lost : %s', (string) $this . '/' . $sName));
         }
 
         if (!$file->isSecured()) {
@@ -307,6 +307,7 @@ class Directory extends Resource implements fs\directory {
 
           $this->secureFile($file);
           $result = $file;
+
         }
         else {
 
@@ -338,7 +339,7 @@ class Directory extends Resource implements fs\directory {
 
     if (!$sName) {
 
-      $this->throwException(t('Cannot get a directory without name'));
+      $this->throwException('Cannot get a directory without name');
     }
 
     if ($sName == '.') {
@@ -365,7 +366,7 @@ class Directory extends Resource implements fs\directory {
 
     if (!$result && ($iDebug & self::DEBUG_LOG)) {
 
-      $this->throwException(txt('@directory %s does not exists', $sName));
+      $this->throwException(sprintf('@directory %s does not exists', $sName));
     }
 
     return $result;
@@ -414,14 +415,16 @@ class Directory extends Resource implements fs\directory {
 
         $sName = array_shift($aPath);
 
-        $dir = $this->getDirectory($sName);
+        $dir = $this->getDirectory($sName, $iDebug);
 
-        if (!$dir && $iDebug & self::DEBUG_LOG) {
+        if ($dir) {
 
-          $this->throwException(txt('Directory %s does not exists', $sName));
+          $result = $dir->getDistantFile($aPath, $iDebug);
         }
+        else if ($iDebug & self::DEBUG_LOG) {
 
-        $result = $dir->getDistantFile($aPath, $iDebug);
+          $this->throwException(sprintf('Directory %s does not exists', $sName));
+        }
       }
     }
 
@@ -447,6 +450,7 @@ class Directory extends Resource implements fs\directory {
 
     $this->loadRights();
 
+    if (\Sylma::read('debug/rights')) return true;
     if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
 
     return false;
@@ -454,7 +458,7 @@ class Directory extends Resource implements fs\directory {
 
   public function getSystemPath() {
 
-    return \Controler::getSystemPath().'/'.$this->getRealPath();
+    return \Sylma::PATH_SYSTEM . '/' . $this->getRealPath();
   }
 
   public function getRealPath() {

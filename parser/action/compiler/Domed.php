@@ -19,7 +19,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
   protected function parseDocument(dom\document $doc) {
 
-    $aResult = array();
+    $aResults = array();
 
     if ($doc->isEmpty()) {
 
@@ -38,9 +38,26 @@ abstract class Domed extends Runner implements parser\elemented {
       $settings->remove();
     }
 
-    $aResult = $this->parseChildren($doc->getChildren());
+    $contexts = $doc->queryx('self:context', array(), false);
 
-    return $aResult;
+    foreach ($contexts as $context) {
+
+      $sName = $context->readAttribute('name');
+      $this->getWindow()->setContext($sName);
+
+      $aResults[$sName] = $this->parseChildren($context->getChildren(), true, true);
+
+      //$context->remove();
+    }
+
+    $this->getWindow()->setContext(php\_window::CONTEXT_DEFAULT);
+
+    $children = $doc->getChildren();
+    $children->setIndex(count($aResults));
+
+    $aResults[php\_window::CONTEXT_DEFAULT] = $this->parseChildren($children, true);
+
+    return $aResults;
   }
 
   protected function parseNode(dom\node $node) {
@@ -67,7 +84,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
       default :
 
-        $this->throwException(txt('Unknown node type : %s', $node->getType()));
+        $this->throwException(sprintf('Unknown node type : %s', $node->getType()));
     }
 
     return $mResult;
@@ -109,7 +126,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
     $mResult = null;
 
-    if ($el->getNamespace() == $this->getNamespace('class')) {
+    if ($this->getInterface()->useElement() && $el->getNamespace() == $this->getNamespace('class')) {
 
       $mResult = $this->reflectSelfCall($el);
     }
@@ -129,9 +146,9 @@ abstract class Domed extends Runner implements parser\elemented {
       }
       else {
 
-        if ($el->getAttributes()->length) {
+        foreach ($el->getAttributes() as $attr) {
 
-          $newElement->add($el->getAttributes());
+          $newElement->add($this->parseAttribute($attr));
         }
 
         $mResult = $newElement->getHandler();
@@ -151,29 +168,62 @@ abstract class Domed extends Runner implements parser\elemented {
    * @param dom\element $el
    * @return array
    */
-  protected function parseChildren(dom\collection $children) {
+  protected function parseChildren(dom\collection $children, $bRoot = false, $bContext = false) {
 
     $aResult = array();
 
     while ($child = $children->current()) {
 
-      if ($child->getType() != $child::ELEMENT) {
+      switch ($child->getType()) {
 
-        $aResult[] = $child;
-      }
-      else if ($mResult = $this->parseElement($child)) {
+        case $child::ELEMENT :
 
-        if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
+          try {
 
-          if (is_array($mResult)) {
+            $mResult = $this->parseElement($child);
 
-            $mResult = $this->getWindow()->argToInstance($mResult);
+            if ($mResult) {
+
+              if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
+
+                if (is_array($mResult)) {
+
+                  $mResult = $this->getWindow()->argToInstance($mResult);
+                }
+
+                $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
+
+                $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
+              }
+
+              $aResult[] = $mResult;
+            }
+
+          }
+          catch (core\exception $e) {
+
+            $e->addPath($child->asToken());
+            throw $e;
           }
 
-          $mResult = $this->getWindow()->createInsert($mResult, $this->useString());
-        }
+        break;
 
-        $aResult[] = $mResult;
+        case $child::TEXT :
+
+          if ($bContext) {
+
+            $mResult = $this->getWindow()->createInsert($this->getWindow()->argToInstance($child->getValue()), 'txt');
+          }
+          else {
+
+            $aResult[] = $child;
+          }
+
+        break;
+
+        default :
+
+          $aResult[] = $child;
       }
 
       $children->next();
@@ -216,7 +266,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
       if (!$sNamespace || $sNamespace == $this->getNamespace()) {
 
-        $resultHandler->add($attr);
+        $resultHandler->add($this->parseAttribute($attr));
       }
       else {
 
@@ -230,7 +280,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
         if (!$parser instanceof parser\attributed) {
 
-          $this->throwException(txt('Cannot use parser %s with attributes', $sNamespace));
+          $this->throwException(sprintf('Cannot use parser %s with attributes', $sNamespace));
         }
 
         $result = $parser->parseAttributes($el, $result->getRoot(), $resultHandler);
@@ -242,6 +292,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
   protected function parseAttribute(dom\attribute $attr) {
 
+    $attr->setValue($this->parseString($attr->getValue()));
     return $attr;
   }
 }

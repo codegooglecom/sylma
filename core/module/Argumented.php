@@ -1,9 +1,8 @@
 <?php
 
 namespace sylma\core\module;
-use \sylma\core;
+use sylma\core;
 
-require_once('core/argument/Domed.php');
 require_once('Controled.php');
 //require_once('core/factory.php');
 
@@ -19,7 +18,8 @@ abstract class Argumented extends Controled {
   private $reflector;
   private $aClasses = array();
 
-  protected static $argumentClass = 'sylma\core\argument\Domed';
+  protected static $sArgumentClass = '\sylma\core\argument\Iterator';
+  protected static $sArgumentFile = 'core/argument/Iterator.php';
 
   /**
    * Argument object linked to this module, contains various parameters for the module
@@ -39,7 +39,7 @@ abstract class Argumented extends Controled {
 
       if (!$this->getArguments()) {
 
-        $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
+        $this->throwException(sprintf('Cannot build object @class %s. No settings defined', $sName));
       }
 
       $factory->setSettings($this->getArguments());
@@ -55,11 +55,13 @@ abstract class Argumented extends Controled {
 
   protected function createArgument($mArguments, $sNamespace = '') {
 
+    require_once(static::$sArgumentFile);
+
     if ($sNamespace) $aNS = array($sNamespace);
     else if ($this->getNamespace()) $aNS = array($this->getNamespace());
     else $aNS = array();
 
-    return new static::$argumentClass($mArguments, $aNS);
+    return new static::$sArgumentClass($mArguments, $aNS);
   }
 
   protected function setArguments($mArguments = null, $bMerge = true) {
@@ -72,6 +74,11 @@ abstract class Argumented extends Controled {
         else $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
       }
       else if (is_object($mArguments)) {
+
+        if (!$mArguments instanceof core\argument) {
+
+          $this->throwException('Illegal argument sent');
+        }
 
         if ($this->getArguments() && $bMerge) {
 

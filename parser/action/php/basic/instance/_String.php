@@ -19,7 +19,7 @@ class _String extends _Scalar implements php\_instance {
 
   public function asArgument() {
 
-    return $this->createArgument(array(
+    return $this->getControler()->createArgument(array(
       'string' => $this->sValue,
     ));
   }

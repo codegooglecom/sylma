@@ -62,19 +62,19 @@ class Condition extends Controled implements core\argumentable, php\scope, php\s
   public function asArgument() {
 
     $sArgument = null;
+    $window = $this->getControler();
 
     if ($this->useTemplate()) {
-
-      $window = $this->getControler();
-
-      $insert = $window->createInsert($window->argToInstance(true), false, null, false);
+      
+      $insert = $window->createInsert($window->argToInstance(true), '', null, false);
       $sArgument = $insert->getKey();
       $this->addContent($insert);
-      $window->add($window->createInsert($window->argToInstance(false), false, $insert->getKey(), false));
+      $window->add($window->createInsert($window->argToInstance(false), '', $insert->getKey(), false));
     }
 
     return $this->getControler()->createArgument(array(
        'condition' => array(
+          '@context' => $window->getContext(),
           '@argument' => $sArgument,
           'test' => $this->test,
           'content' => $this->aContent,

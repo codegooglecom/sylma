@@ -5,13 +5,14 @@ classes :
   @sylma-classbase : \sylma\parser\action
   window :
     name : php\basic\Window
+  caller :
+    name \sylma\parser\caller\Controler
   basic :
     name : Basic
   dom :
     name : compiler\Reflector
   php : @sylma:import php/window.yml;
   document :
-    file : /sylma/dom2/basic/handler/Rooted.php
     name : \sylma\dom\basic\handler\Rooted
   action :
     name : handler\Action

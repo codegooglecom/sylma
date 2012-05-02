@@ -8,6 +8,8 @@ require_once('core/argumentable.php');
 
 interface _window extends scope, core\argumentable {
 
+  const CONTEXT_DEFAULT = 'default';
+  
   function __construct(action\compiler $controler, core\argument $args, $sClass);
 
   function add($mVal);

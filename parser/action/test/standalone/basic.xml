@@ -66,4 +66,22 @@
         $controler->compareNodes($action->asDOM(), $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Action as argument" disabled="true">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/backend'));
+      $controler->setArgument('content', $controler->getAction('samples/div'));
+    </tst:prepare>
+    <tst:node>
+      
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $action->setArgument('content', $controler->getArgument('content'));
+      //dspf($action);
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node);
+    </tst:expected>
+  </tst:test>
 </tst:tests>

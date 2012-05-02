@@ -19,7 +19,7 @@ class _Numeric extends _Scalar implements php\_instance {
 
   public function asArgument() {
 
-    return $this->createArgument(array(
+    return $this->getControler()->createArgument(array(
       'numeric' => $this->mValue,
     ));
   }

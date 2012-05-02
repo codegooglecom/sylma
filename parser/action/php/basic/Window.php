@@ -3,12 +3,12 @@
 namespace sylma\parser\action\php\basic;
 use sylma\parser\action, sylma\core, sylma\dom, sylma\parser\action\php;
 
-require_once('core/module/Filed.php');
+require_once('core/module/Domed.php');
 
 require_once(dirname(__dir__) . '/_window.php');
 require_once('core/controled.php');
 
-class Window extends core\module\Filed implements php\_window, core\controled {
+class Window extends core\module\Domed implements php\_window, core\controled {
 
   const NS = 'http://www.sylma.org/parser/action/compiler';
 
@@ -32,6 +32,8 @@ class Window extends core\module\Filed implements php\_window, core\controled {
   // static reference to class
   private $sylma;
 
+  protected $sContext = self::CONTEXT_DEFAULT;
+
   protected $aScopes = array();
 
   protected $aKeys = array();
@@ -47,7 +49,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     $this->self = $this->create('object-var', array($this, $self, 'this'));
     $this->setScope($this);
 
-    $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom2/node.php');
+    $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom/node.php');
     $this->setInterface($node->getInterface());
 
     //$this->sylma = $this->create('class-static', array('\Sylma'));
@@ -58,6 +60,16 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
+  public function setContext($sContext) {
+
+    $this->sContext = $sContext;
+  }
+
+  public function getContext() {
+
+    return $this->sContext;
+  }
+
   public function add($mVal) {
 
     $this->getScope()->addContent($mVal);
@@ -65,10 +77,10 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   public function checkContent($mVal) {
 
-    if (!is_string($mVal) && !$mVal instanceof core\argumentable) { // && !$mVal instanceof dom\node
+    if ((!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node)) {
 
       $formater = $this->getControler('formater');
-      $this->throwException(txt('Cannot add %s in content', $formater->asToken($mVal)));
+      $this->throwException(sprintf('Cannot add %s in content', $formater->asToken($mVal)));
     }
   }
 
@@ -85,12 +97,19 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       $this->checkContent($mVal);
 
-      if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
+      if ($mVal instanceof php\_var) {
 
-        $mVal = $this->create('line', array($this, $mVal));
+        $mVal->insert();
       }
+      else {
 
-      $this->aContent[] = $mVal;
+        if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
+
+          $mVal = $this->create('line', array($this, $mVal));
+        }
+
+        $this->aContent[] = $mVal;
+      }
     }
   }
 
@@ -139,9 +158,16 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     return $result;
   }
 
-  public function createInsert($mVal, $bConvert = true, $iKey = null, $bTemplate = true) {
+  public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true, $bRoot = false) {
 
-    if ($bConvert) $mVal = $this->convertToDOM($mVal);
+    if ($sFormat) {
+
+      switch ($sFormat) {
+
+        case 'dom' :$mVal = $this->convertToDOM($mVal, !$bRoot); break;
+        case 'txt' : $mVal = $this->convertToString($mVal); break;
+      }
+    }
 
     $result = $this->create('insert', array($this, $mVal, $iKey, $bTemplate));
 
@@ -169,10 +195,23 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
   public function addVar(php\linable $val) {
 
-    $var = $this->createVar($val);
-    $var->insert();
+    $result = $val;
 
-    return $var;
+    if ($val instanceof php\_var) {
+
+      $result->insert();
+    }
+    else if ($val instanceof php\basic\Called) {
+
+      $result = $val->getVar();
+    }
+    else {
+
+      $result = $this->createVar($val);
+      $result->insert();
+    }
+
+    return $result;
   }
 
   public function createVar(php\linable $val) {
@@ -229,7 +268,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       $this->throwException(t('Cannot get scope, no scope defined'));
     }
 
-    return array_last($this->aScopes);
+    return $this->aScopes[count($this->aScopes) - 1];
   }
 
   public function setScope(php\scope $scope) {
@@ -276,7 +315,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       }
       else {
 
-        $this->throwException(txt('Cannot convert scalar value %s to string', get_class($instance)));
+        $this->throwException(sprintf('Cannot convert scalar value %s to string', get_class($instance)));
       }
     }
     else if ($val instanceof php\basic\Called) {
@@ -290,7 +329,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       if (!$interface->isInstance('\sylma\core\stringable')) {
 
-        $this->throwException(txt('Cannot convert object %s to string', $interface->getName()));
+        $this->throwException(sprintf('Cannot convert object %s to string', $interface->getName()));
       }
 
       $result = $this->createCall($this->getSelf(), 'loadStringable', 'php-string', array($val, $iMode));
@@ -306,13 +345,13 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     else {
 
       $formater = $this->getControler('formater');
-      $this->throwException(txt('Cannot convert %s to string', $formater->asToken($val)));
+      $this->throwException(sprintf('Cannot convert %s to string', $formater->asToken($val)));
     }
 
     return $result;
   }
 
-  public function convertToDOM($val) {
+  public function convertToDOM($val, $bTemplate = false) {
 
     if (is_array($val)) {
 
@@ -335,8 +374,8 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       if ($interface->isInstance('\sylma\dom\node')) {
 
-        $result = $this->convertToString($val);
-        //$result = $val;
+        if ($bTemplate) $result = $this->convertToString($val);
+        else $result = $val;
       }
       else if ($interface->isInstance('\sylma\core\argumentable')) {
 
@@ -352,17 +391,21 @@ class Window extends core\module\Filed implements php\_window, core\controled {
       }
       else {
 
-        $this->throwException(txt('Cannot add @class %s', $interface->getName()));
+        $this->throwException(sprintf('Cannot add @class %s', $interface->getName()));
       }
     }
-    else if ($val instanceof php\_scalar || $val instanceof dom\node) {
+    else if ($val instanceof php\_scalar) {
 
       $result = $this->convertToString($val);
+    }
+    else if ($val instanceof dom\node) {
+
+      $result = $var;
     }
     else {
 
       $frm = \Sylma::getControler('formater');
-      $this->throwException(txt('Cannot insert %s', $frm->asToken($val)));
+      $this->throwException(sprintf('Cannot insert %s', $frm->asToken($val)));
     }
 
     return $result;
@@ -428,7 +471,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
 
       default :
 
-        $this->throwException(txt('Unkown scalar type as argument : %s', $sFormat));
+        $this->throwException(sprintf('Unkown scalar type as argument : %s', $sFormat));
     }
 
     return $result;
@@ -447,7 +490,7 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     $arg = null;
 
     if (is_object($mVar)) {
-      
+
       if ($mVar instanceof dom\node) {
 
         $arg = $this->createTemplate($mVar);
@@ -512,8 +555,6 @@ class Window extends core\module\Filed implements php\_window, core\controled {
     ), self::NS);
 
     $result->get('window')->mergeArray($this->aContent);
-
-    $tt = $result->get('window')->query();
 
     return $result;
   }

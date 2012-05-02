@@ -91,4 +91,20 @@
         $sResult === '123';
     </tst:expected>
   </tst:test>
+  <tst:test name="Call self-call variable">
+    <le:action>
+      <le:settings>
+        <le:call name="get-file" le:set-variable="file">samples/simple.txt</le:call>
+      </le:settings>
+      <le:get-variable name="file">
+        <li:call name="read"/>
+      </le:get-variable>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === '123';
+    </tst:expected>
+  </tst:test>
 </tst:tests>

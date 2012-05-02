@@ -1,0 +1,5 @@
+class-alias : basic
+classes :
+  handler :
+    name : \sylma\dom\basic\handler\Rooted
+

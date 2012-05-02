@@ -53,7 +53,7 @@ class Basic extends \Exception implements core\exception {
 
       $this->aCall = array(
         'type' => array_key_exists('class', $aCaller) ? 'method' : 'function',
-        'value' => array_val('class', $aCaller) . array_val('type', $aCaller) . array_val('function', $aCaller));
+        'value' => self::loadKey('class', $aCaller) . self::loadKey('type', $aCaller) . self::loadKey('function', $aCaller));
 
       if (array_key_exists('line', $aCall)) $this->line = $aCall['line'];
       if (array_key_exists('file', $aCall)) $this->file = $aCall['file'];
@@ -62,11 +62,16 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
+  protected static function loadKey($sKey, $aArray) {
+
+    return array_key_exists($sKey, $aArray) ? $aArray[$sKey] : null;
+  }
+
   public function addPath($sValue) {
 
     $this->aPath[] = $sValue;
   }
-  
+
   public function setPath(array $aPath) {
 
     $this->aPath = $aPath;
@@ -102,7 +107,7 @@ class Basic extends \Exception implements core\exception {
 
         $sDirectory = $fs->getDirectory()->getSystemPath();
 
-        $aResult[] = new \HTML_A('netbeans://' . $sDirectory . $sFile, $sFile);
+        $aResult[] = '<a href="netbeans://' . $sDirectory . $sFile.'">' . $sFile . '</a>';
         $aResult[] = substr($sValue, $iFile + $iLength);
       }
       else {
@@ -120,9 +125,10 @@ class Basic extends \Exception implements core\exception {
 
   protected function getPath() {
 
-    $sCall = array_val('value', $this->aCall, 'unknown');
+    $sCall = self::loadKey('value', $this->aCall, 'unknown');
 
-    $link = new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()');
+    //$link = new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()');
+    $link = '<a href="netbeans://' . $this->getFile() . ':' . $this->getLine() . '">' . $sCall . '()' . '</a>';
     $message = $this->parseString($this->getMessage());
     $path = $this->parsePath();
 
@@ -133,7 +139,7 @@ class Basic extends \Exception implements core\exception {
 
     if ($iNo & \Sylma::read('users/root/error-level')) {
 
-      $exception = new \Sylma::$exception($sMessage);
+      $exception = new \Sylma::$sExceptionClass($sMessage);
       $exception->importError($iNo, $sMessage, $sFile, $iLine);
 
       if (self::throwError()) throw $exception;
@@ -163,7 +169,8 @@ class Basic extends \Exception implements core\exception {
   public function importError($iNo, $sMessage, $sFile, $iLine) {
 
     $this->code = $iNo;
-    $this->message = checkEncoding($sMessage);
+    //$this->message = checkEncoding($sMessage);
+    $this->message = $sMessage;
 
     // for error : line def, file def, class/method 1
 
@@ -193,15 +200,7 @@ class Basic extends \Exception implements core\exception {
 
   public function save() {
 
-    if (\Controler::useMessages()) {
-
-      if (\Sylma::read('messages/print/visible')) {
-
-        print_r($this->getPath());
-      }
-      $backtrace = \Controler::getBacktrace($this->getTrace());
-      \Controler::addMessage(array($this->getPath(), $backtrace));
-    }
+    return $this->getPath();
   }
 
   /**

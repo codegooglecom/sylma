@@ -27,7 +27,7 @@ class _Interface extends Controled {
 
     if (!preg_match('/^[\w_\\\]*$/', $sInterface)) {
 
-      $this->getControler()->throwException(txt('Invalid class name : %s', $sInterface));
+      $this->getControler()->throwException(sprintf('Invalid class name : %s', $sInterface));
     }
 
     $this->sName = $sInterface;
@@ -62,7 +62,7 @@ class _Interface extends Controled {
 
     if (!$reflection = $this->getReflection()) {
 
-      $this->getControler()->throwException(txt('No reflector implemented, cannot find @class %s', $this->getName()));
+      $this->getControler()->throwException(sprintf('No reflector implemented, cannot find @class %s', $this->getName()));
     }
 
     return $reflection->implementsInterface($sInterface);

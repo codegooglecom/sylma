@@ -20,8 +20,7 @@
   <method path="get-controler" name="getControler" element="controler" return="\sylma\core\factory">
     <argument name="alias" format="php-string" required="false"/>
   </method>
-  <method path="get-action" name="getAction" return="\sylma\dom\handler">
+  <method path="get-action" name="readAction" return="\sylma\parser\action">
     <argument name="path" format="php-string"/>
-    <argument name="arguments" format="php-array" required="false"/>
   </method>
 </class>

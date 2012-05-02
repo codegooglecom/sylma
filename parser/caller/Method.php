@@ -25,7 +25,7 @@ class Method extends core\module\Argumented {
 
       if ($sArgument != 'argument' || $arg->getNamespace() != $this->getControler()->getNamespace()) {
 
-        $this->throwException(txt('Invalid %s, argument expected', $arg->asToken()));
+        $this->throwException(sprintf('Invalid %s, argument expected', $arg->asToken()));
       }
 
       $sName = $arg->read('@name');
@@ -53,7 +53,7 @@ class Method extends core\module\Argumented {
     }
     else {
 
-      require_once('core/functions/path.php');
+      require_once('core/functions/Path.php');
 
       $sResult = core\functions\path\toAbsolute($sReturn, $this->getControler()->getNamespace('php'), '\\');
     }
@@ -89,13 +89,16 @@ class Method extends core\module\Argumented {
     }
     else {
 
-      $interface = $obj->getInterface();
-      $bResult = $interface->instanceOf($sFormat);
+      if ($obj instanceof php\_object) {
+
+        $interface = $obj->getInterface();
+        $bResult = $interface->isInstance($sFormat);
+      }
     }
 
     if (!$bResult) {
 
-      $this->throwException(txt('Argument %s has bad format, %s expected', get_class($obj), $sFormat));
+      $this->throwException(sprintf('Argument %s has bad format, %s expected', get_class($obj), $sFormat));
     }
   }
 

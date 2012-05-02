@@ -80,7 +80,7 @@ class Module extends tester\Prepare {
 
     if (!array_key_exists($sName, $this->aUsers)) {
 
-      $this->throwException(txt('Unknown test user : %s', $sName));
+      $this->throwException(sprintf('Unknown test user : %s', $sName));
     }
 
     $user = $this->getControler('user')->getControler();
@@ -91,7 +91,7 @@ class Module extends tester\Prepare {
 
   public function getAction($sPath, array $aArguments = array()) {
 
-    return parent::getAction($sPath, $aArguments);
+    return parent::readAction($sPath, $aArguments);
   }
 }
 

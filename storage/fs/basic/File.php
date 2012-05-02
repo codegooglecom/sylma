@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic;
-use \sylma\storage\fs;
+use sylma\storage\fs, sylma\core\functions;
 
 require_once('Resource.php');
 require_once('storage/fs/file.php');
@@ -28,10 +28,6 @@ class File extends Resource implements fs\file {
    */
   private $iChanged = null;
 
-  private $oSettings = null;
-
-  private $bFileSecured = false;
-
   public function __construct($sName, fs\directory $parent, array $aRights, $iDebug) {
 
     $this->sFullPath = (string) $parent . '/' . $sName;
@@ -49,7 +45,7 @@ class File extends Resource implements fs\file {
     }
     else if ($iDebug & self::DEBUG_LOG) {
 
-      $this->throwException(txt('@file %s does not exist', $this->getRealPath()), array(), 16); // todo too depth !
+      $this->throwException(sprintf('@file %s does not exist', $this->getRealPath()), array(), 16); // todo too depth !
     }
   }
 
@@ -112,7 +108,7 @@ class File extends Resource implements fs\file {
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
    */
-  public function getFreeDocument(array $aNS = array()) {
+  public function getFreeDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
     $result = null;
 
@@ -124,20 +120,21 @@ class File extends Resource implements fs\file {
     $dom = $this->getControler('dom');
     //if ($dom = \Sylma::getControler(self::DOM_CONTROLER, false, false)) {
 
-      $result = $this->getControler()->create('file/document');
+      $result = $this->getControler()->create('file/document', array(null, $iMode));
 
       $result->setFile($this);
       $result->registerNamespaces($aNS);
+
       $result->loadFile();
-      
+
     //}
 
     return $result;
   }
 
-  public function getDocument(array $aNS = array()) {
+  public function getDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
-    return $this->getFreeDocument($aNS);
+    return $this->getFreeDocument($aNS, $iMode);
   }
 
   public function getArgument() {
@@ -163,6 +160,7 @@ class File extends Resource implements fs\file {
 
   public function checkRights($iMode) {
 
+    if (\Sylma::read('debug/rights')) return true;
     if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
 
     return false;
@@ -178,9 +176,29 @@ class File extends Resource implements fs\file {
     return file($this->getRealPath(), FILE_SKIP_EMPTY_LINES);
   }
 
-  public function read() {
+  protected function readExecute() {
 
     return file_get_contents($this->getRealPath());
+  }
+
+  public function read() {
+
+    if (!$this->checkRights(\Sylma::MODE_READ)) {
+
+      $this->throwException(sprintf('No read access to file %s', (string) $this));
+    }
+
+    return $this->readExecute();
+  }
+
+  public function execute() {
+
+    if (!$this->checkRights(\Sylma::MODE_EXECUTE)) {
+
+      $this->throwException(sprintf('No execute access to file %s', (string) $this));
+    }
+
+    return $this->readExecute();
   }
 
   public function asToken() {
@@ -194,6 +212,8 @@ class File extends Resource implements fs\file {
 
     if ($iSize < 1) $iSize = 1;
 
+    require_once('core/functions/Global.php');
+
     return $this->getControler()->createArgument(array(
       'file' => array(
         'full-path' => $this->getFullPath(),
@@ -203,9 +223,9 @@ class File extends Resource implements fs\file {
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),
-        'read' => booltostr($this->checkRights(MODE_READ)),
-        'write' => booltostr($this->checkRights(MODE_WRITE)),
-        'execution' => booltostr($this->checkRights(MODE_EXECUTION)),
+        'read' => functions\booltostr($this->checkRights(\Sylma::MODE_READ)),
+        'write' => functions\booltostr($this->checkRights(\Sylma::MODE_WRITE)),
+        'execution' => functions\booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
         'size' => $iSize,
         'extension' => $this->getExtension(),
       ),

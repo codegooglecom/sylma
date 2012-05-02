@@ -32,7 +32,7 @@ class _Boolean extends _Scalar implements php\_instance {
       if ($mValue == 'true') $this->bValue = true;
       else if ($mValue != 'false') {
 
-        $this->throwException(txt('Unknown value for boolean conversion : %s', $mValue));
+        $this->getControler()->throwException(sprintf('Unknown value for boolean conversion : %s', $mValue));
       }
     }
     else if (is_numeric($mValue)) {

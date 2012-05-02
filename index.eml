@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:ls="http://www.sylma.org/security" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml">
-  <le:settings>
-    <le:name>Sylma</le:name>
-  </le:settings>
-  <h2>Welcome</h2>
-  <p>You will find here access to the main tools to update and customize Sylma.</p>
-  <le:action path="tools"/>
-</le:action>

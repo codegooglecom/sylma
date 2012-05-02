@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/interface">
-  <file>XML.php</file>
-  <name>XML_NodeList</name>
-  <method path="view" name="view" return-default="true"/>
-  <method return-default="true" path="get-item" name="item">
-    <argument name="index" format="php-integer"/>
-  </method>
-</class>

@@ -4,9 +4,9 @@ namespace sylma\parser\action;
 use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
 require_once('parser/action.php');
-require_once('core/module/Filed.php');
+require_once('core/module/Domed.php');
 
-class Controler extends core\module\Filed {
+class Controler extends core\module\Domed {
 
   const FS_EDITABLE = 'fs/editable';
 

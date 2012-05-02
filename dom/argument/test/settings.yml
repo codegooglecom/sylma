@@ -1,0 +1,9 @@
+class-alias : basic
+classes :
+  @sylma-classbase : \sylma\dom\argument
+  controler :
+    name : test\Controler
+    file : /sylma/dom/argument/test/Controler.php
+  basic :
+    name : Filed
+    file : /sylma/dom/argument/Filed.php

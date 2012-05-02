@@ -10,4 +10,3 @@ classes :
         name : \sylma\dom\basic\Handler
   document :
     name : \sylma\dom\basic\handler\Rooted
-    file : /sylma/dom2/basic/handler/Rooted.php

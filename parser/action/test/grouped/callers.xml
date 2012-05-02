@@ -134,6 +134,27 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Read a file with ext-call encapsed">
+    <le:action>
+      <le:settings>
+        <le:return format="txt"/>
+      </le:settings>
+      <lm:directory>
+        <li:call name="get-directory">
+          <li:argument>samples</li:argument>
+          <li:call name="get-file">
+            <le:string>path.txt</le:string>
+          </li:call>
+        </li:call>
+      </lm:directory>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === $controler->getDirectory() . '/samples/path.txt';
+    </tst:expected>
+  </tst:test>
   <tst:test name="Load a directory with a two level depth obj/element-call">
     <le:action>
       <le:settings>
