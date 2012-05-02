@@ -105,6 +105,11 @@ class Initializer extends module\Filed {
 
       header('HTTP/1.0 404 Not Found');
 
+      if (\Sylma::read('debug/enable')) {
+
+        throw $e;
+      }
+      
       $window = $this->loadWindow('');
       $action = $this->create('action', array($this->getFile($this->readArgument('error/action'))));
 
