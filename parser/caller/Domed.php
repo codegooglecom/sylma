@@ -4,9 +4,8 @@ namespace sylma\parser\caller;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\action\php;
 
 require_once('core/module/Argumented.php');
-require_once('parser/caller.php');
 
-class Domed extends core\module\Argumented implements parser\caller {
+class Domed extends core\module\Argumented {
 
   const CLASS_PREFIX = 'class';
 
@@ -52,9 +51,12 @@ class Domed extends core\module\Argumented implements parser\caller {
     $this->file = $file;
   }
 
-  public function getName() {
+  public function getName($bFull = true) {
 
-    return $this->sName;
+    if ($bFull) $sResult = $this->getNamespace('php') . '\\' . $this->sName;
+    else $sResult = $this->sName;
+
+    return $sResult;
   }
 
   protected function setName($sNamespace) {
@@ -63,6 +65,11 @@ class Domed extends core\module\Argumented implements parser\caller {
   }
 
   public function parseCall(dom\element $el, php\basic\_ObjectVar $var) {
+
+    if (!($el->getName() == 'call') || !($el->getNamespace() == $this->getNamespace())) {
+
+      $this->throwException(sprintf('Bad call name : %s', $el->asToken()));
+    }
 
     $sMethod = $el->getAttribute('name');
 
@@ -154,7 +161,8 @@ class Domed extends core\module\Argumented implements parser\caller {
           }
 
           $arg = $this->parseArgument($child, $iKey);
-
+          $child->remove();
+          
           $aResult[$arg->read('name')] = $arg->get('value', false);
 
         break;

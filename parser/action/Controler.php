@@ -43,10 +43,10 @@ class Controler extends core\module\Domed {
 
   public function buildAction(dom\handler $doc, array $aArguments = array(), fs\editable\directory $dir = null, fs\directory $base = null, $sName = '') {
 
-    $fs = $this->getControler(self::FS_EDITABLE);
-
     if (!$dir) {
 
+      $fs = $this->getControler(self::FS_EDITABLE);
+      
       $user = $this->getControler('user');
       $tmp = $fs->getDirectory((string) $user->getDirectory('#tmp'));
 

@@ -18,6 +18,11 @@ class _Object extends php\basic\Controled implements php\_object, php\_instance 
     $this->setInterface($interface);
   }
 
+  public function getInstance() {
+
+    return $this;
+  }
+  
   public function getInterface() {
 
     return $this->interfaceObject;

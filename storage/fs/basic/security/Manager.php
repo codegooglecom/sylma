@@ -9,38 +9,35 @@ require_once('storage/fs/security/manager.php');
 class Manager extends core\module\Namespaced implements fs\security\manager {
 
   const FILENAME = 'directory.sml';
-
-  /**
-   * Used only for exception reports
-   */
   const PREFIX = 'fs';
 
   const USER_CONTROLER = 'user';
 
   private $document;
-  private $directory;
+  private $parent;
 
-  protected $bReady = false;
+  public function __construct(fs\directory $dir) {
 
-  public function __construct(fs\directory $directory) {
-
-    $this->directory = $directory;
+    $this->setParent($dir);
     //$sPath = $directory->getFullPath() . '/' . self::FILENAME;
 
     $this->setNamespace(self::NS, self::PREFIX);
     $this->loadDocument();
   }
 
-  public function isReady($bValue = null) {
+  protected function getParent() {
 
-    if (!is_null($bValue)) $this->bReady = $bValue;
+    return $this->parent;
+  }
 
-    return $this->bReady;
+  protected function setParent($dir) {
+
+    $this->parent = $dir;
   }
 
   protected function getControler() {
 
-    return $this->directory->getControler();
+    return $this->parent->getControler();
   }
 
   protected function getDocument() {
@@ -50,34 +47,15 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
 
   public function loadDocument() {
 
-    if (\Sylma::getControler(self::USER_CONTROLER, false, false)) {
+    require_once(dirname(dirname(__dir__)) . '/resource.php');
 
-      require_once(dirname(dirname(__dir__)) . '/resource.php');
+    if ($file = $this->getParent()->getFreeFile(self::FILENAME, fs\resource::DEBUG_NOT)) {
 
-      if ($file = $this->directory->getFreeFile(self::FILENAME, fs\resource::DEBUG_NOT)) {
-
-        if ($this->document = $file->getFreeDocument()) {
-
-          $this->document->registerNamespaces($this->getNS());
-          $this->isReady(true);
-        }
-      }
-      else {
-
-        $this->isReady(true);
-      }
+      $this->document = $file->getFreeDocument($this->getNS());
     }
-
-  }
-
-  public function getParent() {
-
-    return $this->oDirectory;
   }
 
   public function getDirectory() {
-
-//    if (!$this->isReady()) $this->loadDocument();
 
     $el = null;
     if ($this->getDocument()) $el = $this->getDocument()->getx('self', array(), false);
@@ -95,13 +73,12 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
 
   public function getFile($sName) {
 
-//    if (!$this->isReady()) $this->loadDocument();
 
     $el = null;
     $spName = $this->escape($sName);
 
     if ($this->getDocument()) $el = $this->getDocument()->getx(self::PREFIX . ":file[@name=$spName]", array(), false);
-    
+
     return $this->extractRights($el);
   }
 
@@ -115,6 +92,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
   protected function extractRights(dom\element $el = null) {
 
     $aResult = array();
+//$bTest=false;if ($el && $el->readAttribute('name', false, false) == 'file.txt') $bTest = true;
 
     if ($el && ($el = $el->getByName('security', self::NS))) {
 
@@ -135,7 +113,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
         );
       }
     }
-
+ //if ($bTest) print_r($aResult);
     return $aResult;
   }
 }

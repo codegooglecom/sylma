@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/tester">
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:li="http://www.sylma.org/parser/caller" xmlns:test="http://www.sylma.org/modules/tester">
   <le:settings>
-    <le:name>Tests</le:name>
     <le:document le:set-variable="doc">
       <test:tests>
-        <le:action path="../../core/argument/test/interface"/>
-        <le:action path="../../core/factory/test/interface"/>
-        <le:action path="../../storage/fs/test/group"/>
-        <le:action path="../../parser/action/test/group"/>
-        <le:action path="../../parser/security/test/interface"/>
-        <le:action path="../../core/module/test/interface"/>
-        <le:action path="../../dom2/test/interface"/>
-        <le:action path="../../dom2/argument/test/interface"/>
+        <le:interface path="/#sylma/core/argument/test/interface"/>
+        <le:interface path="/#sylma/core/factory/test/interface"/>
+        <le:action path="/#sylma/storage/fs/test/group"/>
+        <le:action path="/#sylma/parser/action/test/group"/>
+        <le:interface path="/#sylma/parser/security/test/interface"/>
+        <le:interface path="/#sylma/core/module/test/interface"/>
+        <le:interface path="/#sylma/dom/test/interface"/>
+        <le:interface path="/#sylma/dom/argument/test/interface"/>
       </test:tests>
     </le:document>
   </le:settings>
-  <le:window>
-    <li:add-css le:format="string">
-      <le:directory/>
-      <le:argument>/index.css</le:argument>
-    </li:add-css>
-  </le:window>
+  <le:context name="title">Tests</le:context>
+  <le:context name="css">
+    <lm:file path="index.css"/>
+  </le:context>
   <div class="sylma-tests">
-    <le:get-variable name="doc" return="false">
-      <li:parse>
-        <le:template path="index.xsl"/>
-      </li:parse>
-    </le:get-variable>
+    <lm:template path="index.xsl">
+      <li:call name="parse">
+        <le:get-variable name="doc"/>
+      </li:call>
+    </lm:template>
   </div>
 </le:action>

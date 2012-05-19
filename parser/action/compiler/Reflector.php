@@ -5,6 +5,8 @@ use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action, \sylma\par
 
 require_once('Argumented.php');
 
+require_once('core/functions/Path.php');
+
 class Reflector extends Argumented {
 
   /**
@@ -47,10 +49,11 @@ class Reflector extends Argumented {
       //case 'template' : $mResult = $this->reflectTemplate($el); break;
 
       // case 'get-settings' :
+      case 'interface' : $mResult = $this->reflectInterface($el); break;
+
       case 'switch' :
       case 'function' :
-      case 'interface' :
-      break;
+
       case 'xquery' :
       //case 'recall' :
       case 'namespace' :
@@ -239,7 +242,7 @@ class Reflector extends Argumented {
 
     preg_match_all('/\[sylma:(?P<typ>[\w-]+)(?:::(?P<val>[\w-]+))?\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
     //dspf($aResults);
-    
+
     if ($aResults) {
 
       $iSeek = 0;
@@ -247,36 +250,36 @@ class Reflector extends Argumented {
       foreach ($aResults as $aResult) {
 
         $iVarLength = strlen($aResult[0][0]);
-        
+
         switch ($aResult['typ'][0]) {
-          
+
           case 'call' :
-            
+
             $aArguments = array();
-            
+
             $method = $this->getInterface()->loadMethod($aResult['val'][0]);
             $arg = $method->reflectCall($window, $window->getSelf(), $aArguments);
-            
+
           break;
-          
+
           case 'arg' :
-            
+
             $arg = $this->getActionArgument($aResult['val'][0]);
-            
+
           break;
-          
+
           default :
-          
+
             $this->throwException(sprintf('unknown attribute call : %s', $aResult['typ']));
-          
+
         }
-        
+
         $insert = $window->createInsert($arg);
         $sVarValue = $insert->asString();
-        
+
         $sStart = substr($sValue, 0, $aResult[0][1] + $iSeek);
         $sEnd = substr($sValue, $aResult[0][1] + $iSeek + $iVarLength);
-        
+
         $sValue = $sStart . $sVarValue . $sEnd;
 
         $iSeek += strlen($sVarValue) - $iVarLength;
@@ -297,7 +300,6 @@ class Reflector extends Argumented {
 
     $sPath = $el->readAttribute('path');
 
-    require_once('core/functions/Path.php');
     $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
     $path = $this->getControler()->create('path', array($sPath, $this->getDirectory()));
 
@@ -381,8 +383,11 @@ class Reflector extends Argumented {
 
       case 'object' :
 
+        //if (!$sClass = $el->readAttribute('interface', null, false)) $sClass = 'php-string'; // todo, default class ?
+        $sClass = 'php-string';
+
         $var = $call->getVar();
-        $return = $this->getWindow()->createCall($var, 'asObject', 'php-string');
+        $return = $this->getWindow()->createCall($var, 'asObject', $sClass);
 
         $result = $return->getVar();
 
@@ -500,5 +505,22 @@ class Reflector extends Argumented {
     $content = $this->parseNode($el->getFirst());
 
     return $this->getWindow()->create('numeric', array($this->getWindow(), $content));
+  }
+
+  protected function reflectInterface(dom\element $el) {
+
+    $caller = $this->getControler(self::CALLER_ALIAS);
+
+    $sPath = $el->readAttribute('path');
+
+    $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
+    $path = $this->getControler()->create('path', array($sPath, $this->getDirectory()));
+
+    $interface = $caller->getInterface((string) $path->getFile());
+    $instance = $interface->getInstance($this->getWindow(), $el->getChildren());
+
+    $var = $this->getWindow()->addVar($instance);
+
+    return $this->runObject($el, $var);
   }
 }

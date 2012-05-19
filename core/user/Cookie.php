@@ -41,11 +41,11 @@ class Cookie extends core\module\Argumented {
 
     if (!setcookie($this->readArgument('name'), $sCookie, $iExpiration, '/') ) {
 
-      dspm(t('Impossible de créer le cookie, les paramètres de votre navigateur ne l\'autorise peut-être pas.'), 'error');
+      //dspm(t('Impossible de créer le cookie, les paramètres de votre navigateur ne l\'autorise peut-être pas.'), 'error');
     }
     else {
 
-      dspm(t('Cookie enregistré.'), 'success');
+      //dspm(t('Cookie enregistré.'), 'success');
     }
   }
 

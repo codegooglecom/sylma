@@ -12,12 +12,7 @@ class Rooted extends Documented {
 
   protected function checkRoot() {
 
-    if (!$root = $this->getRoot()) {
-
-      $this->throwException('No root element defined');
-    }
-
-    return $root;
+    return $this->getRoot();
   }
 
   public function getx($sQuery, array $aNS = array(), $bDebug = true) {

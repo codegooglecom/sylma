@@ -193,6 +193,16 @@ class Window extends core\module\Domed implements php\_window, core\controled {
     return $this->create('template', array($this, $node));
   }
 
+  public function createFunction($sName, php\_instance $return, array $aArguments = array()) {
+
+    return $this->create('function', array($this, $sName, $return, $aArguments));
+  }
+
+  public function createInstanciate(php\_instance $instance, array $aArguments = array()) {
+
+    return $this->create('instanciate', array($this, $instance, $aArguments));
+  }
+
   public function addVar(php\linable $val) {
 
     $result = $val;
@@ -369,6 +379,11 @@ class Window extends core\module\Domed implements php\_window, core\controled {
       $result = $this->convertToDOM($val->getVar());
     }
     else if ($val instanceof php\_object) {
+
+      if ($val instanceof php\_instance) {
+
+        $this->throwException('Cannot insert object instance');
+      }
 
       $interface = $val->getInstance()->getInterface();
 
@@ -550,7 +565,7 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
     $result = $this->createArgument(array(
       'window' => array(
-        '@extends' => $interface->getNamespace('php') . '\\' . $interface->getName(),
+        '@extends' => $interface->getName(),
       ),
     ), self::NS);
 

@@ -3,4 +3,4 @@ classes :
   method :
     name : Method
   interface :
-    name : Domed
+    name : Instanciable

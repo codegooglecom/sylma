@@ -8,6 +8,7 @@ require_once('core/functions/Path.php');
 
 class Basic extends \Exception implements core\exception {
 
+  const NS_MESSAGE = 'http://www.sylma.org/core/message';
   /**
    * Number of exceptions created during the script
    * @var integer
@@ -200,7 +201,51 @@ class Basic extends \Exception implements core\exception {
 
   public function save() {
 
-    return $this->getPath();
+    $init = \Sylma::getControler('init', false, false);
+    $window = \Sylma::getControler('window', false, false);
+
+    if ($init && $window && 0) {
+
+      $this->getPath();
+      $message = $init->createArgument(array(
+        'message' => array(
+          'title' => $this->getMessage(),
+          '#content' => $this->getPath(),
+        )
+      ), self::NS_MESSAGE);
+
+      $window->addContext('messages', $message);
+    }
+    else {
+
+      if (\Sylma::read('debug/enable')) {
+
+        $aTraces = $this->getTrace();
+
+        $aPath = $this->getPath();
+
+        echo $this->getMessage() . '<br/>';
+        echo $aPath[0];
+
+        echo '<pre>';
+
+        print_r($aPath);
+        //print_r($aTraces);
+
+        if (\Sylma::read('debug/backtrace')) {
+
+          $formater = \Sylma::getControler('formater');
+
+          foreach ($aTraces as $aTrace) {
+
+            echo $formater->errorAsHTML($aTrace);
+          }
+        }
+
+        echo '</pre>';
+
+      }
+    }
   }
 
   /**

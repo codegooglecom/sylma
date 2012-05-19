@@ -120,7 +120,7 @@ abstract class Argumented extends Controled {
 
     $mResult = $mDefault;
 
-    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
+    if (!$this->getArguments()) $this->throwException('No arguments has been defined');
 
     $mResult = $this->getArguments()->read($sPath, $bDebug);
     if ($mResult === null && $mDefault !== null) $mResult = $mDefault;

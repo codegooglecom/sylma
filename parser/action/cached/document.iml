@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security">
+<class xmlns="http://www.sylma.org/parser/caller">
   <namespace>\sylma\parser\action\cached</namespace>
   <name>Document</name>
   <element>http://www.sylma.org/parser/action/basic</element>

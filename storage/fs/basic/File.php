@@ -108,7 +108,7 @@ class File extends Resource implements fs\file {
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
    */
-  public function getFreeDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
+  public function getFreeDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ, $bSecured = false) {
 
     $result = null;
 
@@ -117,24 +117,21 @@ class File extends Resource implements fs\file {
       \Sylma::throwException(t('File controler is not ready'), array(), 0);
     }
 
-    $dom = $this->getControler('dom');
-    //if ($dom = \Sylma::getControler(self::DOM_CONTROLER, false, false)) {
+    $this->getControler('dom');
 
-      $result = $this->getControler()->create('file/document', array(null, $iMode));
+    $result = $this->getControler()->create('file/document', array(null, $iMode));
 
-      $result->setFile($this);
-      $result->registerNamespaces($aNS);
+    $result->setFile($this);
+    $result->registerNamespaces($aNS);
 
-      $result->loadFile();
-
-    //}
+    $result->loadFile($bSecured);
 
     return $result;
   }
 
   public function getDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
-    return $this->getFreeDocument($aNS, $iMode);
+    return $this->getFreeDocument($aNS, $iMode, true);
   }
 
   public function getArgument() {
@@ -158,14 +155,6 @@ class File extends Resource implements fs\file {
     return $result;
   }
 
-  public function checkRights($iMode) {
-
-    if (\Sylma::read('debug/rights')) return true;
-    if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
-
-    return false;
-  }
-
   public function getSettings($bRecursive = false) {
 
     return $this->getParent()->getSettings($bRecursive);
@@ -176,7 +165,7 @@ class File extends Resource implements fs\file {
     return file($this->getRealPath(), FILE_SKIP_EMPTY_LINES);
   }
 
-  protected function readExecute() {
+  public function freeRead() {
 
     return file_get_contents($this->getRealPath());
   }
@@ -188,7 +177,7 @@ class File extends Resource implements fs\file {
       $this->throwException(sprintf('No read access to file %s', (string) $this));
     }
 
-    return $this->readExecute();
+    return $this->freeRead();
   }
 
   public function execute() {
@@ -198,7 +187,7 @@ class File extends Resource implements fs\file {
       $this->throwException(sprintf('No execute access to file %s', (string) $this));
     }
 
-    return $this->readExecute();
+    return $this->freeRead();
   }
 
   public function asToken() {

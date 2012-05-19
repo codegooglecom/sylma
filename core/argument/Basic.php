@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\argument;
-use \sylma\core;
+use sylma\core;
 
 require_once('core/argument.php');
 require_once('core/argumentable.php');
@@ -23,6 +23,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   protected $aArray = array();
   private $parent;
   protected static $aNormalizedObjects = array();
+  protected static $sCurrentPath;
 
   public function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
 
@@ -431,8 +432,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   public static function normalizeArray(array $aArray) {
 
     $aResult = array();
+    $sCurrentPath = self::$sCurrentPath;
 
     foreach ($aArray as $sKey => $mVal) {
+
+      self::$sCurrentPath = $sCurrentPath . '/' . $sKey;
 
       if (is_object($mVal)) {
 
@@ -454,12 +458,23 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       if ($mResult !== null) $aResult[$sKey] = $mResult;
     }
 
+    self::$sCurrentPath = $sCurrentPath;
+
     return $aResult;
   }
 
   public function normalize($bKeepXML = false) {
 
-    $this->aArray = static::normalizeArray($this->aArray);
+    self::$sCurrentPath = '';
+
+    try {
+      $this->aArray = static::normalizeArray($this->aArray);
+    }
+    catch (core\exception $e) {
+
+      $e->addPath('@last-path ' . self::$sCurrentPath);
+      throw $e;
+    }
   }
 
   protected function throwException($sMessage, $iOffset = 1) {

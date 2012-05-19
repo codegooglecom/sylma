@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic;
-use \sylma\core, \sylma\dom, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
 require_once('Resource.php');
 require_once('storage/fs/directory.php');
@@ -15,7 +15,6 @@ class Directory extends Resource implements fs\directory {
 
   public $aDirectories = array();
   private $aFiles = array();
-  private $aFreeFiles = array();
   private $settings = null;
 
   private $aChildrenRights = null;
@@ -28,19 +27,12 @@ class Directory extends Resource implements fs\directory {
     $this->sName = $sName;
 
     $this->bExist = is_dir($this->getRealPath());
-
+//echo $this->getRealPath() . '<br/>';
     $this->aRights = $this->aChildrenRights = $aRights;
-
-    $settings = $this->getControler()->create('security', array($this));
-    $this->setSettings($settings);
 
     if ($this->doExist()) {
 
-      $this->loadRights(); //if ($parent)
-    }
-    else if ($sName) {
-
-      $this->isSecured(true);
+      $this->loadRights();
     }
   }
 
@@ -61,7 +53,7 @@ class Directory extends Resource implements fs\directory {
    */
   public function getSettings($bRecursive = false) {
 
-    if ($bRecursive && !$this->settings) {
+    if ($bRecursive) {
 
       if ($this->getParent()) return $this->getParent()->getSettings(true);
       else $this->throwException(t('No security file in parent directory'));
@@ -72,7 +64,10 @@ class Directory extends Resource implements fs\directory {
 
   private function loadRights() {
 
-    if (!$this->isSecured() && $this->getSettings()->isReady()) {
+    if ($this->getControler()->mustSecure()) {
+
+      $settings = $this->getControler()->createSettings($this);
+      $this->setSettings($settings);
 
       // self rights
       $aRights = $this->setRights($this->getSettings()->getDirectory());
@@ -272,12 +267,6 @@ class Directory extends Resource implements fs\directory {
   public function getFile($sName, $iDebug = self::DEBUG_LOG) {
 
     $result = null;
-    $this->loadRights();
-
-    if (!$this->isSecured() && \Sylma::getControler('user', false, false)) {
-
-      $this->throwException(sprintf('Unauthorized access to @file %s', $this . '/' . $sName));
-    }
 
     if ($sName && is_string($sName)) {
 
@@ -291,11 +280,6 @@ class Directory extends Resource implements fs\directory {
           $this->throwException(sprintf('File lost : %s', (string) $this . '/' . $sName));
         }
 
-        if (!$file->isSecured()) {
-
-          $this->secureFile($file);
-        }
-
         $result = $file;
       }
       else {
@@ -307,7 +291,6 @@ class Directory extends Resource implements fs\directory {
 
           $this->secureFile($file);
           $result = $file;
-
         }
         else {
 
@@ -323,19 +306,21 @@ class Directory extends Resource implements fs\directory {
 
     //dspf($file);
 
-    if (!$aRights = $this->getSettings()->getFile($file->getName())) $aRights = $this->getChildrenRights();
+    if ($this->getControler()->mustSecure()) {
 
-    $file->setRights($aRights);
-    $file->isSecured(true);
+      if (!$aRights = $this->getSettings()->getFile($file->getName())) $aRights = $this->getChildrenRights();
+
+      $file->setRights($aRights);
+    }
+    else {
+
+      $file->setRights($this->getChildrenRights());
+    }
   }
 
   public function getDirectory($sName, $iDebug = self::DEBUG_LOG) {
 
     $result = null;
-
-    // Mainly for config files and related directories rights for wich security rights
-    // has not yet been loaded in @method __construct() cause of missing @controler user
-    $this->loadRights();
 
     if (!$sName) {
 
@@ -362,6 +347,7 @@ class Directory extends Resource implements fs\directory {
         // not yet builded, build it
         $result = $this->loadDirectory($sName, $iDebug);
       }
+
     }
 
     if (!$result && ($iDebug & self::DEBUG_LOG)) {
@@ -433,37 +419,35 @@ class Directory extends Resource implements fs\directory {
 
   public function getDistantDirectory($mPath, $iDebug = self::DEBUG_LOG) {
 
+    $result = null;
     if (is_string($mPath)) $mPath = explode('/', $mPath);
 
     if ($mPath) {
 
       $sName = array_shift($mPath);
 
-      if ($oSubDirectory = $this->getDirectory($sName, $iDebug)) return $oSubDirectory->getDistantDirectory($mPath, $iDebug);
+      if ($sub = $this->getDirectory($sName, $iDebug)) {
 
-    } else return $this;
+        $result = $sub->getDistantDirectory($mPath, $iDebug);
+      }
+    } else {
 
-    return null;
-  }
+      $result = $this;
+    }
 
-  public function checkRights($iMode) {
-
-    $this->loadRights();
-
-    if (\Sylma::read('debug/rights')) return true;
-    if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
-
-    return false;
+    return $result;
   }
 
   public function getSystemPath() {
 
-    return \Sylma::PATH_SYSTEM . '/' . $this->getRealPath();
+    return $this->getControler()->getSystemPath() . '/' . $this->getRealPath();
   }
 
   public function getRealPath() {
 
-    return ($this->getParent() ? $this->getParent()->getRealPath() . '/' . $this->getName() : \Sylma::ROOT . $this->getName());
+    return $this->getParent() ?
+           $this->getParent()->getRealPath() . '/' . $this->getName() :
+           $this->getControler()->getPath() . $this->getName();
   }
 
   public function asToken() {
@@ -484,15 +468,17 @@ class Directory extends Resource implements fs\directory {
       $sPath = $this->getFullPath();
     }
 
+    require_once('core/functions/Global.php');
+
     return $this->getControler()->createArgument(array(
       'directory' => array(
         'full-path' => $sPath,
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),
-        'read' => booltostr($this->checkRights(\Sylma::MODE_READ)),
-        'write' => booltostr($this->checkRights(\Sylma::MODE_WRITE)),
-        'execution' => booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
+        'read' => functions\booltostr($this->checkRights(\Sylma::MODE_READ)),
+        'write' => functions\booltostr($this->checkRights(\Sylma::MODE_WRITE)),
+        'execution' => functions\booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
         'name' => $sName,
       ),
     ), self::NS);

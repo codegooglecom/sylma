@@ -94,6 +94,16 @@ class Controler extends core\module\Domed {
     //else if ()
   }
 
+  public function errorAsHTML(array $aError) {
+
+    $sFile = array_key_exists('file', $aError) ? $aError['file'] : '-unknown-';
+    $sLine = array_key_exists('line', $aError) ? $aError['line'] : '-unknown-';
+    $sClass = array_key_exists('line', $aError) ? $aError['class'] : '-unknown-';
+    $sFunction = array_key_exists('line', $aError) ? $aError['function'] : '-unknown-';
+
+    return "<a href=\"netbeans://$sFile:$sLine\">$sFile [$sLine] - $sClass->$sFunction()</a><br/>";
+  }
+
   public function asHTML($mVal) {
 
     $result = null;

@@ -58,7 +58,14 @@ abstract class Called extends Controled implements php\linable, core\argumentabl
 
     foreach ($aArguments as $mVar) {
 
-      $aResult[] = $window->argToInstance($mVar);
+      $arg = $window->argToInstance($mVar);
+
+      if ($arg instanceof php\basic\instance\_Object) {
+
+        $this->getControler()->throwException('Cannot add object instance here');
+      }
+
+      $aResult[] = $arg;
     }
 
     return $aResult;

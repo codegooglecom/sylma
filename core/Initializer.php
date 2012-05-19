@@ -10,6 +10,9 @@ class Initializer extends module\Filed {
   const NS = 'http://www.sylma.org/core/initializer';
   const EXTENSION_DEFAULT = 'html';
 
+  //protected static $sArgumentClass = 'sylma\core\argument\Iterator';
+  //protected static $sArgumentFile = 'core/argument/Iterator.php';
+
   /**
    * 2. Load global settings
    *
@@ -28,6 +31,11 @@ class Initializer extends module\Filed {
     return $settings;
   }
 
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
+  }
+
   public function run($settings) {
 
     $this->setArguments($settings);
@@ -42,24 +50,31 @@ class Initializer extends module\Filed {
 
     //$iStartTime = microtime(true);
 
+    require_once('storage/fs/Controler.php');
+
+    // load directory without security
+    $fs = new fs\Controler(\Sylma::ROOT, false, false, false);
+    $fs->loadDirectory();
+    \Sylma::setControler('fs', $fs);
+
+    // load user
     $user = \Sylma::getControler('user');
     $user->load();
+
+    // load directory with security
+    $fs = new fs\Controler(\Sylma::ROOT, false, true, true);
+    $fs->loadDirectory();
+    \Sylma::setControler('fs', $fs);
 
     // Check for maintenance mode
     if ($sMaintenance = $this->loadMaintenance()) return $sMaintenance;
 
-    $fs = \Sylma::getControler('fs');
-
     $this->setDirectory($fs->getDirectory());
-    $this->getDirectory()->getSettings()->loadDocument();
+    //$this->getDirectory()->getSettings()->loadDocument();
 
     $path = $this->create('path', array($this->loadGET(), null, array(), false));
 
     // The extension specify the window type
-
-    // Load Redirect session var, if present means it has been redirected - $_SESSION['redirect'], $_POST in 'document'
-    //$this->loadRedirect();
-
 
     // Parse of the request_uri, creation of the window - $_GET
 
@@ -67,31 +82,57 @@ class Initializer extends module\Filed {
     // Reload last alternatives mime-type results - $_SESSION['results']
     //self::loadResults();
 
+    $sResult = '';
+
     if ($file = $this->getFile((string) $path, false)) {
 
       // A file
       $sResult = $this->loadFile($file);
     }
-    else if (!$path->getExtension()) {
+    else {
 
       $sExtension = $path->parseExtension(true);
 
-      $window = $this->loadWindow($sExtension);
-      $sResult = $this->loadAction($path, $window);
-    }
-    else {
+      if ($path->getExtension() == $this->readArgument('redirect/extension')) {
 
-      $this->throwException('No valid window defined');
+        // Redirect
+        $action = $this->loadAction($path);
+        $redirect = $action->asObject();
+
+        if (!$redirect instanceof core\redirect) {
+
+          $this->throwException('Cannot redirect at that adress');
+        }
+
+        $this->runRedirect($redirect);
+      }
+      else if (!$path->getExtension()) {
+
+        // Normal action
+        $window = $this->loadWindow($sExtension);
+        \Sylma::setControler('window', $window);
+
+        $sResult = $this->loadWindowAction($path, $window);
+      }
+      else {
+
+        $this->throwException('No valid window defined');
+      }
     }
 
     return $sResult;
   }
 
-  protected function loadAction(parser\action\path $path, parser\action $window) {
+  protected function loadAction(parser\action\path $path) {
 
     $path->parsePath();
 
-    $action = $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
+    return $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
+  }
+
+  protected function loadWindowAction(parser\action\path $path, parser\action $window) {
+
+    $action = $this->loadAction($path);
     $action->setContexts($window->getContexts());
 
     $window->setArgument('content', $action);
@@ -109,7 +150,7 @@ class Initializer extends module\Filed {
 
         throw $e;
       }
-      
+
       $window = $this->loadWindow('');
       $action = $this->create('action', array($this->getFile($this->readArgument('error/action'))));
 
@@ -210,12 +251,7 @@ class Initializer extends module\Filed {
     $sExtension = strtolower($sExtension);
     if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
 
-    $settings = $this->getArgument('window/' . $sExtension, false);
-
-    if (!$settings) {
-
-      $this->throwException(sprintf('No window associated with extension "%s"', $sExtension));
-    }
+    $settings = $this->getArgument('window/' . $sExtension, null, true);
 
     $sAlias = $sExtension;
     $sPath = $settings->read('action');
@@ -242,10 +278,14 @@ class Initializer extends module\Filed {
 
   protected function loadPOST() {
 
-
+    return $_POST;
   }
 
-  protected function loadRedirect() {
+  /**
+   * Load Redirect session var, if present means it has been redirected - $_SESSION['redirect'], $_POST in 'post'
+   * @return core\redirect
+   */
+  public function loadRedirect() {
 
     $redirect = $this->create('redirect');
 
@@ -253,29 +293,34 @@ class Initializer extends module\Filed {
 
     if (array_key_exists('redirect', $_SESSION)) {
 
-      $session = unserialize($_SESSION['redirect']);
+      $redirect = unserialize($_SESSION['redirect']);
       unset($_SESSION['redirect']);
 
       // Récupération des messages du Redirect et suppression
 
-      if ($session instanceof self::$sRedirect) {
+      if (!$redirect instanceof core\redirect) {
 
-        // get messages
-        $redirect = $session;
-      }
-      else {
-
-        \Sylma::log(t('Session Redirect perdu !'), 'warning');
+        $this->throwException('Cannot get back the redirect');
       }
 
     } else {
 
-      $redirect->setArgument('post', $this->loadPost());
+      if ($aPost = $this->loadPost()) $redirect->setArgument('post', $aPost);
     }
 
-    self::$oRedirect = $oRedirect;
+    return $redirect;
+  }
 
-    return $oRedirect;
+  protected function runRedirect(core\redirect $redirect) {
+
+    $_SESSION['redirect'] = serialize($redirect);
+
+    if (!$sPath = (string) $redirect) {
+
+      $this->throwException('Bad redirection');
+    }
+
+    header("Location: $sPath");
   }
 
   protected function loadResults() {

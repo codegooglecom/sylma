@@ -1,12 +1,14 @@
 <?php
 
 namespace sylma\modules\tester;
-use \sylma\core, \sylma\dom, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-require_once('modules/tester/test.php');
+//require_once('modules/tester/test.php');
 require_once('core/module/Domed.php');
 
-abstract class Basic extends core\module\Domed implements test {
+require_once('core/argumentable.php');
+
+abstract class Basic extends core\module\Domed implements core\argumentable {
 
   const NS = 'http://www.sylma.org/modules/tester';
   protected $sTitle;
@@ -60,6 +62,8 @@ abstract class Basic extends core\module\Domed implements test {
     $aResult = array();
     $iDisabled = 0;
 
+    require_once('core/functions/Global.php');
+
     foreach ($doc->queryx('self:test') as $test) {
 
       if (!$test->testAttribute('disabled', false)) {
@@ -68,7 +72,7 @@ abstract class Basic extends core\module\Domed implements test {
 
         $aTest = array(
           '@name' => $test->getAttribute('name'),
-          'result' => booltostr($bResult),
+          'result' => functions\booltostr($bResult),
         );
 
         if (!$bResult) $aTest['message'] = ''; // ? TODO suspicious..
@@ -164,19 +168,24 @@ abstract class Basic extends core\module\Domed implements test {
 
     $el = $this->loadDomElement($node1);
 
-    return $el->compare($this->loadDomElement($node2)) === $el::COMPARE_SUCCESS;
+    if ($el->compare($this->loadDomElement($node2)) !== $el::COMPARE_SUCCESS) {
+
+      $this->throwException(sprintf('DOMs not equals with : %s', $el->compareBadNode->asToken()));
+    }
+
+    return true;
   }
 
-  public function parse() {
+  public function asArgument() {
 
     $result = $this->createArgument(array(
       'group' => array(
-        'description' => t($this->sTitle),
+        'description' => $this->sTitle,
         '#group' => $this->load(),
       ),
     ), self::NS);
 
-    return $result->asDOM();
+    return $result;
   }
 
   protected function onFinish() {

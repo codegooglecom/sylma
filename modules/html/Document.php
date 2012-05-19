@@ -14,6 +14,9 @@ class Document extends parser\action\handler\Action {
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
     $this->setContexts(array('css', 'js', 'title'));
+    $this->setNamespaces(array(
+      'html' => \Sylma::read('namespaces/html'),
+    ));
 
     parent::__construct($file, $aArguments, $base);
   }
@@ -32,13 +35,13 @@ class Document extends parser\action\handler\Action {
 
     if ($aContext && ($head = $this->getHead())) {
 
-      foreach ($aContext as $sLink) {
+      foreach ($aContext as $file) {
 
         $head->addElement('link', null, array(
           'rel' => 'stylesheet',
           'type' => 'text/css',
           'media' => 'all',
-          'href' => $sLink,
+          'href' => (string) $file,
         ));
       }
     }
@@ -50,59 +53,51 @@ class Document extends parser\action\handler\Action {
 
       if ($this->result) {
 
-        $this->head = $this->result->getx('html:head', array('html' => \Sylma::read('namespaces/html')));
+        $this->head = $this->result->getx('html:head');
       }
     }
 
     return $this->head;
   }
 
-  public function asString() {
-
-    // @copyright following code to keystonewebsites.com - http://keystonewebsites.com/articles/mime_type.php
-    // @updated by Rodolphe Gerber
+  protected function loadHeaders($sMime) {
 
     $sResult = '';
-
     $sCharset = 'utf-8';
-    //$sMime = 'application/xhtml+xml';
-    $sMime = 'text/html';
 
     if($sMime == "application/xhtml+xml") {
 
-      $sProlog = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+      $sResult = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
     }
     else {
 
-      $sProlog = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
+      $sResult = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
     }
 
     header("Content-Type: $sMime;charset=$sCharset");
     header("Vary: Accept");
 
-    try {
+    return $sResult;
+  }
 
-      $doc = parent::asDOM();
-
-    } catch(Exception $e) {
-
-      /*
-      $sResult = (string) 'Problème lors du chargement du site. Nous nous excusons pour ce désagrément. <a href="/">Cliquez-ici</a> pour revenir à la page d\'accueil';
-
-      if (\Sylma::read('debug/enable')) {
-
-        echo('<table>' . $e->xdebug_message . '</table>');
-        //echo '<div style="background-color: #ddd; padding: 10px; border: 1px solid black;">' . $e->getTrace() . '</div>';
-      }
-      */
-
-      throw $e;
-    }
-
-    //$this->setContexts();
-    $this->result = $doc;
+  protected function loadContexts() {
 
     $this->addCSS($this->aArguments['content']->getContext('css'));
+  }
+
+  protected function loadSystemInfos(dom\handler $doc) {
+
+    $body = $doc->getx('//html:body');
+
+    $aContent = array(
+      'user : ' . $this->getControler('user')->getName(),
+    );
+
+    $system = $body->addElement('div', $content, array('id' => 'sylma-system'));
+    $system->addElement('div', $aContent);
+  }
+
+  protected function cleanResult(dom\handler $doc) {
 
     require_once('dom/handler.php');
 
@@ -110,10 +105,23 @@ class Document extends parser\action\handler\Action {
     $cleaner = $this->getTemplate('cleaner.xsl');
 
     $cleaned = $cleaner->parseDocument($doc);
-    // $this->loadContexts();
-    $sResult = $sProlog . "\n" . $cleaned->asString(dom\handler::STRING_INDENT); // | dom\handler::STRING_HEAD
 
-    return $sResult;
+    return $cleaned->asString(dom\handler::STRING_INDENT); // | dom\handler::STRING_HEAD
+  }
+
+  public function asString() {
+
+    $sProlog = $this->loadHeaders('text/html'); // 'application/xhtml+xml'
+
+    $doc = parent::asDOM();
+    $this->result = $doc;
+
+    $doc->registerNamespaces($this->getNS());
+
+    $this->loadSystemInfos($doc);
+    $this->loadContexts();
+
+    return $sProlog . "\n" . $this->cleanResult($doc);;
   }
 }
 

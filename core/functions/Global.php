@@ -34,20 +34,6 @@ function nonull_val() {
 }
 
 /**
- * 'Quote' une chaîne, ou plusieurs dans un tableau
- */
-function addQuote($mValue) {
-
-  if (is_array($mValue)) {
-
-    foreach ($mValue as &$mSubValue) $mSubValue = addQuote($mSubValue);
-    return $mValue;
-
-  } else if ($sResult = (string) $mValue) return "'".addslashes($sResult)."'";
-  else return null;
-}
-
-/**
  * Formate le nombre donnée en argument au format prix (p.ex : 1'999.95)
  */
 function formatPrice($fNumber) {

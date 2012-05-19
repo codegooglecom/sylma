@@ -134,15 +134,15 @@ class Action extends Basic implements core\stringable {
 
   protected function buildAction() {
 
-    $file =  $this->getFile((string) $this->getFile());
-    $fs = $file->getControler();
+    $file =  $this->getFile();
 
-    $sPath = $file->getName() . '.php';
+    $sClass = $file->getName() . '.php';
     $sTemplate = $file->getName() . '.tpl.php';
 
-    $dir = $file->getParent();
-    $tmpDir = $dir->addDirectory(parser\action::EXPORT_DIRECTORY);
-    $tpl = $tmpDir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
+    $fs = $this->getControler('fs/cache');
+    $dir = $fs->getDirectory()->addDirectory((string) $file->getParent());
+
+    $tpl = $dir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
 
     $method = $this->reflectAction();
 
@@ -156,7 +156,7 @@ class Action extends Basic implements core\stringable {
 
     // set new class and file
 
-    $classFile = $tmpDir->getFile($sPath, fs\basic\Resource::DEBUG_EXIST);
+    $classFile = $dir->getFile($sClass, fs\basic\Resource::DEBUG_EXIST);
 
     $template = $this->getTemplate('../php/class.xsl');
     $aClass = $this->getClassName($this->getFile());

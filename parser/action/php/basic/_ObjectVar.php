@@ -11,7 +11,7 @@ class _ObjectVar extends _Var implements php\_object {
 
   protected $object;
 
-  public function __construct(php\_window $controler, php\basic\instance\_Object $object, $sName, php\linable $content = null) {
+  public function __construct(php\_window $controler, php\_object $object, $sName, php\linable $content = null) {
 
     $this->setControler($controler);
 
@@ -20,6 +20,11 @@ class _ObjectVar extends _Var implements php\_object {
     if ($content) $this->setContent($content);
   }
 
+  public function getInterface() {
+
+    return $this->getInstance()->getInterface();
+  }
+  
   public function addContent($mVar) {
 
     return $this->getControler()->addContent($mVar);

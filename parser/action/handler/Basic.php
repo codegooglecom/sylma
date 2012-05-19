@@ -82,10 +82,11 @@ abstract class Basic extends core\module\Domed implements parser\action {
     $file = $this->getFile();
     $sName = $file->getName() . '.php';
 
-    $sDirectory = (string) $file->getParent();
-    $sDirectory = $sDirectory ? $sDirectory : '/';
+    //$sDirectory = (string) $file->getParent();
+    //$sDirectory = $sDirectory ? $sDirectory : '/';
 
-    $tmpDir = $this->getDirectory($sDirectory)->addDirectory(parser\action::EXPORT_DIRECTORY);
+    $fs = $this->getControler('fs/cache');
+    $tmpDir = $fs->getDirectory()->addDirectory((string) $file->getParent());
 
     if ($tmpDir) {
 

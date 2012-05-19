@@ -1,6 +1,7 @@
 debug :
   enable : false
   rights: false
+  backtrace : false
 namespaces :
   html : http://www.w3.org/1999/xhtml
 initializer :
@@ -11,6 +12,8 @@ initializer :
   window :
     html :
       action : /sylma/modules/html/backend.eml
+  redirect :
+    extension : redirect
   classes :
     html :
       name : \sylma\modules\html\Document

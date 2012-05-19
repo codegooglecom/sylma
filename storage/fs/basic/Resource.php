@@ -24,8 +24,6 @@ abstract class Resource implements fs\resource {
 
   protected $bExist = false;
 
-  private $bSecured = false;
-
   public function getControler($sName = '') {
 
     if ($sName) {
@@ -95,13 +93,7 @@ abstract class Resource implements fs\resource {
    * @param bool|null $bSecured if given, the parameter will change to this value
    * @return boolean TRUE if resource has been secured, FALSE elsewhere
    */
-  protected function isSecured($bSecured = null) {
-
-    if ($bSecured === null) return $this->bSecured;
-    else $this->bSecured = $bSecured;
-  }
-
-  protected function getRights() {
+  public function getRights() {
 
     return $this->aRights;
   }
@@ -122,29 +114,25 @@ abstract class Resource implements fs\resource {
       );
     }
 
-    $user = \Sylma::getControler('user', false);
+    $user = \Sylma::getControler('user');
 
-    if ($user) {
-
-      $aRights['user-mode'] = $user->getMode(
-        $aRights['owner'],
-        $aRights['group'],
-        $aRights['mode']
-      );
-
-      $this->isSecured(true);
-    }
-    else {
-
-      $aRights['user-mode'] = $this->loadUserMode($aRights);
-    }
-
-    //if (!$aRights['user-mode']) dspm((string) $this, 'error');
+    $aRights['user-mode'] = $user->getMode(
+      $aRights['owner'],
+      $aRights['group'],
+      $aRights['mode']
+    );
 
     $this->aRights = $aRights;
 
-
     return $aRights;
+  }
+
+  public function checkRights($iMode) {
+
+    if (!$this->getControler()->mustSecure() || \Sylma::read('debug/rights')) return true;
+    if ($iMode & $this->getUserMode()) return true;
+
+    return false;
   }
 
   /**
@@ -161,7 +149,6 @@ abstract class Resource implements fs\resource {
       if ($bOwner || $bGroup || $bMode) {
 
         $user = \Sylma::getControler('user');
-        $bResult = true;
 
         // Check validity
 

@@ -14,13 +14,30 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
    * @param type $sName
    * @return fs\directory
    */
-  public function addDirectory($sName) {
+  public function addDirectory($mPath) {
 
     $result = null;
 
-    if (!$result = $this->getDirectory($sName, self::DEBUG_NOT)) {
+    if (is_string($mPath) && $mPath) {
 
-      $result = $this->createDirectory($sName);
+      if ($mPath{0} == '/') $mPath = substr($mPath, 1);
+      $mPath = explode('/', $mPath);
+    }
+
+    if ($mPath) {
+
+      $sName = array_shift($mPath);
+
+      if (!$sub = $this->getDirectory($sName, self::DEBUG_NOT)) {
+
+        $sub = $this->createDirectory($sName, $iDebug);
+      }
+
+      $result = $sub->addDirectory($mPath);
+    }
+    else {
+
+      $result = $this;
     }
 
     return $result;
@@ -67,7 +84,7 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
       $this->throwException('You have no rights to create this directory');
     }
 
-    if (!$bResult = mkdir($this->getRealPath(), 0777)) { //$this->getControler()->readArgument('system/rights')
+    if (!$bResult = mkdir($this->getRealPath(), 0711)) { //$this->getControler()->readArgument('system/rights')
 
       $this->throwException(sprintf('Cannot create directory called %s', $sName));
     }
@@ -114,9 +131,8 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
         $this->throwException(t('Cannot delete root directory !'));
       }
 
-      $controler = $this->getControler();
-      $user = $controler->getControler('user');
-      $tmp = $controler->getDirectory((string) $user->getDirectory('#tmp'));
+      $fs = $this->getControler('fs/cache');
+      $tmp = $fs->getDirectory('#trash');
 
       $sName = 'trashed-' . uniqid() . '-' . $this->getName();
 

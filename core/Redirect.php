@@ -1,10 +1,13 @@
 <?php
 
 namespace sylma\core;
+use sylma\core;
 
-class Redirect {
+require_once('core/module/Argumented.php');
 
-  private $oPath = null; // URL cible
+class Redirect extends core\module\Argumented {
+
+  private $sPath = null; // URL cible
   private $oSource = null; // URL de provenance
   private $sExtension = 'html';
 
@@ -27,12 +30,12 @@ class Redirect {
 
   public function getPath() {
 
-    return $this->oPath;
+    return $this->sPath;
   }
 
-  public function setPath($oPath) {
+  public function setPath($sPath) {
 
-    $this->oPath = $oPath;
+    $this->sPath = $sPath;
   }
 
   public function getSource() {
@@ -55,6 +58,16 @@ class Redirect {
     return $this->sExtension;
   }
 
+  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+
+    return parent::getArgument($sPath, $mDefault, $bDebug);
+  }
+
+  public function setArgument($sPath, $mValue) {
+
+    return parent::setArgument($sPath, $mValue);
+  }
+
   public function setExtension($sExtension) {
 
     $this->sExtension = $sExtension;
@@ -73,7 +86,7 @@ class Redirect {
 
   public function __toString() {
 
-    return (string) $this->oPath;
+    return (string) $this->sPath;
   }
 }
 

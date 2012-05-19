@@ -28,9 +28,8 @@ abstract class Domed extends Runner implements parser\elemented {
 
     $doc->registerNamespaces($this->getNS());
 
+    $this->setFormat('dom');
     $settings = $doc->getx('self:settings', array(), false);
-
-    // arguments
 
     if ($settings) {
 
@@ -38,6 +37,9 @@ abstract class Domed extends Runner implements parser\elemented {
       $settings->remove();
     }
 
+    $sFormat = $this->getFormat();
+
+    $this->setFormat('object');
     $contexts = $doc->queryx('self:context', array(), false);
 
     foreach ($contexts as $context) {
@@ -50,6 +52,7 @@ abstract class Domed extends Runner implements parser\elemented {
       //$context->remove();
     }
 
+    $this->setFormat($sFormat);
     $this->getWindow()->setContext(php\_window::CONTEXT_DEFAULT);
 
     $children = $doc->getChildren();

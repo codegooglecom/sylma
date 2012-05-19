@@ -3,12 +3,12 @@
 namespace sylma\parser\action\php\basic;
 use \sylma\core, \sylma\parser\action\php;
 
+require_once('Called.php');
 require_once('core/argumentable.php');
-require_once('Controled.php');
 
 class _Function extends Called {
 
-  public function __construct(php\_window $controler, $sName, php\_Instance $return, array $aArguments = array()) {
+  public function __construct(php\_window $controler, $sName, php\_instance $return, array $aArguments = array()) {
 
     $this->setControler($controler);
 

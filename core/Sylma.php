@@ -7,10 +7,10 @@ class Sylma {
   const NS = 'http://www.sylma.org';
 
   const ROOT = sylma\ROOT; // ex: protected
-  const PATH = sylma\PROTECTED_PATH; // ex: /sylma
-  const PATH_SYSTEM = sylma\SYSTEM_PATH;
-
+  const PATH = sylma\SYLMA_PATH; // ex: /sylma
+  const PATH_SYSTEM = sylma\SYSTEM_PATH;  // ex : /var/www/mysite or C:/xampp/htdocs/mysite
   const PATH_OPTIONS = '/core/sylma.yml';
+  const PATH_CACHE = 'cache';
 
   const MODE_EXECUTE = 1;
   const MODE_WRITE = 2;
@@ -57,34 +57,9 @@ class Sylma {
     }
     catch (core\exception $e) {
 
-      if (self::read('debug/enable')) {
-
-        $aTraces = $e->getTrace();
-
-        $aPath = $e->save();
-
-        echo $e->getMessage() . '<br/>';
-        echo $aPath[0];
-
-        echo '<pre>';
-
-        print_r($aPath);
-
-        foreach ($aTraces as $aTrace) {
-
-          $sFile = array_key_exists('file', $aTrace) ? $aTrace['file'] : '-unknown-';
-          $sLine = array_key_exists('line', $aTrace) ? $aTrace['line'] : '-unknown-';
-          $sClass = array_key_exists('line', $aTrace) ? $aTrace['class'] : '-unknown-';
-          $sFunction = array_key_exists('line', $aTrace) ? $aTrace['function'] : '-unknown-';
-
-          echo $sFile . ' [' . $sLine .']' . ' - ' . $sClass . '->' . $sFunction . '()<br/>';
-        }
-
-        echo '</pre>';
-
-        throw $e;
-      }
-      else {
+      $e->save();
+      
+      if (!self::read('debug/enable')) {
 
         header('HTTP/1.0 404 Not Found');
         self::$result = $init->getError();
@@ -124,6 +99,7 @@ class Sylma {
 
     switch ($sName) {
 
+      /*
       case 'fs' :
 
         require_once('storage/fs/Controler.php');
@@ -131,13 +107,23 @@ class Sylma {
         $result->loadDirectory();
 
       break;
+      */
 
       case 'fs/editable' :
 
         require_once('storage/fs/Controler.php');
 
-        $result = new storage\fs\Controler('', true);
+        $result = new storage\fs\Controler(self::ROOT, true);
         $result->loadDirectory();
+
+      break;
+
+      case 'fs/cache' :
+
+        require_once('storage/fs/Controler.php');
+
+        $result = new storage\fs\Controler(self::PATH_CACHE, true, true, false);
+        $result->loadDirectory('');
 
       break;
 

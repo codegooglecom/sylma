@@ -18,15 +18,25 @@ class Controler extends core\module\Domed {
     $this->setArguments(self::SETTINGS_FILE);
     $this->getArguments()->merge(\Sylma::get('users'));
 
-    $user = $this->create('user', array($this));
+    $user = $this->createUser();
     $user->load();
 
-    $this->user = $user;
+    $this->setUser($user);
+  }
+
+  public function createUser() {
+
+    return $this->create('user', array($this));
   }
 
   public function getUser() {
 
     return $this->user;
+  }
+
+  protected function setUser(core\user $user) {
+
+    $this->user = $user;
   }
 
   public function getDocument($sPath, $iMode = \Sylma::MODE_READ) {

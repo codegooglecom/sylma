@@ -58,6 +58,14 @@ class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> 
     <xsl:apply-templates/>;
   </xsl:template>
 
+  <xsl:template match="php:instanciate">
+    <xsl:text>new </xsl:text>
+    <xsl:value-of select="@class"/>
+    <xsl:text>(</xsl:text>
+    <xsl:call-template name="arguments"/>
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+  
   <xsl:template match="php:condition">
     <xsl:text>if (</xsl:text>
     <xsl:apply-templates select="php:test/*"/>

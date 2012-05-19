@@ -90,10 +90,8 @@ abstract class Filed extends Argumented {
       $this->directory = $mDirectory;
     }
 
-    if (!$this->getDirectory()) {
-
-      $this->throwException(sprintf('Cannot use %s as a directory', $mDirectory));
-    }
+    // check if directory is accessible
+    $this->getDirectory();
   }
 
   protected function loadControler($sName) {

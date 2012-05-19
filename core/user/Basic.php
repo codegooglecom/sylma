@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\user;
-use \sylma\core, sylma\storage\fs;
+use \sylma\core, sylma\storage\fs, sylma\core\functions;
 
 require_once('core/module/Argumented.php');
 require_once(dirname(__dir__) . '/user.php');
@@ -70,26 +70,27 @@ class Basic extends core\module\Argumented implements core\user {
       $this->throwException(t('Cannot authenticate, bad datas !'));
     }
 
-    $dUsers = $this->getControler()->getDocument($this->readArgument('users/path'), \Sylma::MODE_EXECUTE);
+    $fs = $this->getControler('fs');
+    $users = $fs->getFreeFile($this->readArgument('users/path'));
+    $users = $users->getDocument($this->getNS());
 
-    if (!$dUsers || $dUsers->isEmpty()) {
+    if ($users->isEmpty()) {
 
       $this->throwException(t('No active user'));
     }
 
-    list($spUser, $spPassword) = \addQuote(array($sUser, sha1($sPassword)));
+    require_once('core/functions/Text.php');
+    list($spUser, $spPassword) = functions\text\addQuote(array($sUser, sha1($sPassword)));
 
-    if (!$eUser = $dUsers->getx("//user[@name = $spUser and @password = $spPassword]")) {
+    if (!$eUser = $users->getx("//user[@name = $spUser and @password = $spPassword]")) {
 
-      $this->throwException(t('Bad authentication'));
+      $this->throwException('Bad authentication');
     }
 
-    // Authentification successed !
+    // Authentication successed !
 
     $sResult = $this->setName($sUser);
     $this->isValid(true);
-
-    dspm(xt('Authentification %s réussie !', $sUser), 'success');
 
     return $sResult;
   }

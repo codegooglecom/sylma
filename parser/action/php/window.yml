@@ -18,6 +18,8 @@ classes :
     name : Template
   function :
     name : _Function
+  instanciate :
+    name : Instanciate
   assign :
     name : Assign
   insert :

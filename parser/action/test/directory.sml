@@ -4,7 +4,7 @@
     <security>
       <owner>root</owner>
       <group>0</group>
-      <mode>750</mode>
+      <mode>700</mode>
     </security>
   </propagate>
 </directory>

@@ -34,7 +34,7 @@ class Text extends \DOMText implements dom\text {
 
   public function compare(dom\node $element) {
 
-    if ($element->getType() == self::TEXT && $element->getValue() == $this->getValue()) return 0;
+    if ($element->getType() == self::TEXT && $element->getValue() == $this->getValue()) return self::COMPARE_SUCCESS;
 
     return self::COMPARE_BAD_ELEMENT;
   }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:li="http://www.sylma.org/parser/caller">
+  <le:context name="title">Connexion</le:context>
+  <le:context name="css">
+    <lm:file path="login.css"/>
+  </le:context>
+  <form id="sylma-user-login" action="[sylma:call::get-directory]/login-do.redirect" method="post">
+    <div class="field clearfix">
+      <label for="field-name">Nom d'utilisateur : </label>
+      <input type="text" id="field-name" name="name"/>
+    </div>
+    <div class="field clearfix">
+      <label for="field-password">Mot de passe : </label>
+      <input type="password" name="password" id="field-password"/>
+    </div>
+    <div class="field-actions">
+      <input type="submit" value="Connexion"/>
+    </div>
+  </form>
+</le:action>

@@ -88,7 +88,8 @@ abstract class Document extends Basic implements dom\domable {
       if ($iAction > 1 || !($mAction instanceof dom\handler)) {
 
         $mResult = $this->getControler()->create('document');
-        $mResult->add($mAction);
+        
+        if ($mAction) $mResult->add($mAction);
       }
       else {
 

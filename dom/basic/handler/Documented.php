@@ -150,7 +150,7 @@ abstract class Documented extends Container {
     $result = null;
     $el = $this->createElement($sName, $mContent, $aAttributes, $sNamespace);
 
-    if (!$this->getRoot()) {
+    if (!$this->getRoot(false)) {
 
       $result = $this->setRoot($el);
     }
@@ -197,11 +197,17 @@ abstract class Documented extends Container {
     return $container->setRoot($el);
   }
 
-  public function getRoot() {
+  public function getRoot($bDebug = true) {
 
-    $container = $this->getContainer();
     $this->loadContent();
 
-    return $this->getContainer()->getRoot();
+    $result = $this->getContainer()->getRoot();
+
+    if ($bDebug && !$result) {
+
+      $this->throwException('No root element defined');
+    }
+
+    return $result;
   }
 }

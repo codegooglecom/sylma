@@ -9,7 +9,7 @@ class Element extends \DOMElement implements dom\element {
 
   const CONTROLER_ALIAS = 'dom';
 
-  protected $compareBadNode;
+  public $compareBadNode;
   // public function __construct()
 
   public function getDocument() {
@@ -619,9 +619,8 @@ class Element extends \DOMElement implements dom\element {
   /**
    * Compare two elements and their content, ignore xmlns attributes
    * Not identical, but relevant to @method isEqualNode()
-   * WARNING : Actually it degrades current element for comparison (TODO)
    *
-   * @param NodeInterface $element The element to compare with this one
+   * @param dom\element $element The element to compare with this one
    * @param? array $aPath The previous compared element for backtrace debug
    *
    * @return integer @const self::COMPARE_SUCCESS, @const self::COMPARE_BAD_ELEMENT, @const self::COMPARE_BAD_CHILD, @const self::COMPARE_BAD_ATTRIBUTE
@@ -629,6 +628,8 @@ class Element extends \DOMElement implements dom\element {
   public function compare(dom\element $element, $aPath = array()) {
 
     $aPath[] = $this->getName();
+
+    $this->compareBadNode = $this;
 
     if ($element->getType() == self::TEXT ||
       !($this->getName() == $element->getName()) ||
@@ -661,7 +662,8 @@ class Element extends \DOMElement implements dom\element {
 
           if ($iResult !== self::COMPARE_SUCCESS) {
 
-            $this->compareBadNode = $selfChild->compareBadNode;
+            if ($selfChild->getType() == self::ELEMENT) $this->compareBadNode = $selfChild->compareBadNode;
+
             return self::COMPARE_BAD_CHILD;
           }
         }

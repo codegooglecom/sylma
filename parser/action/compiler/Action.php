@@ -41,7 +41,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   protected $interface;
 
   protected $return;
-  protected $sFormat = 'dom';
+  protected $sFormat = 'object';
 
   // controler : getNamespace, create, getArgument
 
@@ -161,8 +161,13 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     }
 
-    $this->sFormat = $sFormat;
+    $this->setFormat($sFormat);
     $this->return = $this->getWindow()->stringToInstance($sFormat);
+  }
+
+  protected function setFormat($sFormat) {
+
+    $this->sFormat = $sFormat;
   }
 
   protected function getFormat() {

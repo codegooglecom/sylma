@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/interface">
-  <file>Module.php</file>
-  <name>\sylma\parser\security\test\Module</name>
+<class xmlns="http://www.sylma.org/parser/caller">
+  <namespace>\sylma\parser\security\test</namespace>
+  <name>Module</name>
 </class>

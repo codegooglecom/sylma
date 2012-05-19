@@ -14,7 +14,7 @@
     <tst:expected>
       $result = $controler->getResult('dom');
       $node = $controler->getArgument('node');
-
+//echo $result->asString();
       return
         $controler->compareNodes($result, $node);
     </tst:expected>

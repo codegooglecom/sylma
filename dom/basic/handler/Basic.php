@@ -138,7 +138,7 @@ abstract class Basic extends core\module\Controled implements dom\handler {
     return $this->file;
   }
 
-  public function loadFile() {
+  public function loadFile($bSecured = true) {
 
     $sContent = '';
 
@@ -147,8 +147,15 @@ abstract class Basic extends core\module\Controled implements dom\handler {
       $this->throwException(t('No file associated'));
     }
 
-    if ($this->getMode() == \Sylma::MODE_READ) $sContent = $this->getFile()->read();
-    else if ($this->getMode() == \Sylma::MODE_EXECUTE) $sContent = $this->getFile()->execute();
+    if ($bSecured) {
+
+      if ($this->getMode() == \Sylma::MODE_READ) $sContent = $this->getFile()->read();
+      else if ($this->getMode() == \Sylma::MODE_EXECUTE) $sContent = $this->getFile()->execute();
+    }
+    else {
+
+      $sContent = $this->getFile()->freeRead();
+    }
 
     return $this->loadText($sContent);
   }

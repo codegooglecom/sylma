@@ -169,7 +169,7 @@ abstract class Argumented extends Domed {
 
     $bReturn = $el->testAttribute('return', true);
 
-    $isnull = $window->create('function', array($window, '\is_null', $window->stringToInstance('php-boolean'), array($var)));
+    $isnull = $window->createFunction('\is_null', $window->stringToInstance('php-boolean'), array($var));
     $if = $window->create('condition', array($window, $isnull));
 
     $window->add($if);
