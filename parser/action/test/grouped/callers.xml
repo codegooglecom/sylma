@@ -217,4 +217,46 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Interface construction with fixed relative path" disabled="true">
+    <le:action>
+      <le:settings>
+        <le:return format="object"/>
+      </le:settings>
+      <le:interface path="samples/sample1"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\parser\action\test\samples\Sample1;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Interface construction with fixed absolute path">
+    <le:action>
+      <le:settings>
+        <le:return format="object"/>
+      </le:settings>
+      <le:interface path="samples/sample1b"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\parser\action\test\samples\Sample1;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Interface construction with guessed path">
+    <le:action>
+      <le:settings>
+        <le:return format="object"/>
+      </le:settings>
+      <le:interface path="samples/sample2"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\parser\action\test\grouped\samples\Sample2;
+    </tst:expected>
+  </tst:test>
 </tst:tests>

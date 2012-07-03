@@ -10,7 +10,7 @@ interface elemented extends domed {
   /**
    *
    * @param dom\element $el
-   * @return type core\argumentable|array|null
+   * @return core\argumentable|array|null
    */
   function parse(dom\node $source);
 }

@@ -7,8 +7,8 @@
     </tst:prepare>
     <tst:expected>
       $controler = $controler->getControler('fs/test');
-      if (!$file = $controler->getFile('/sample1/sub1/file.txt')) return false;
-      //print_r($file->getRights());
+      if (!$file = $controler->getFile('/sample1/sub1/noright.txt')) return false;
+
       return
         !$file->checkRights(\Sylma::MODE_EXECUTE) &amp;&amp;
         $file->checkRights(\Sylma::MODE_READ)

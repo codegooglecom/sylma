@@ -22,7 +22,6 @@ class Sylma {
    * @var core\argument
    */
   private static $settings = null;
-  private static $logger = null;
   protected static $aControlers;
 
   public static $sExceptionFile = 'core/exception/Basic.php';
@@ -58,7 +57,7 @@ class Sylma {
     catch (core\exception $e) {
 
       $e->save();
-      
+
       if (!self::read('debug/enable')) {
 
         header('HTTP/1.0 404 Not Found');
@@ -229,16 +228,18 @@ class Sylma {
     $aMessage = array($sPath, ' @message ', $mMessage);
     $sMessage = implode('', $aMessage);
     //print_r(debug_backtrace());
-    if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
+    //if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
 
-      if (self::read('messages/print/visible')) echo $sMessage."<br/>\n";
-      Controler::addMessage($aMessage, $sStatut); // temp
-    }
-    else if (self::read('messages/print/hidden')) {
+      //if (self::read('messages/print/visible')) echo $sMessage."<br/>\n";
+      //Controler::addMessage($aMessage, $sStatut); // temp
+    //}
+
+    if (self::read('debug/enable')) {
 
       echo $sMessage . "<br/>\n";
     }
 
+    /*
     if (class_exists('Logger')) {
 
       // database is open log into
@@ -256,6 +257,7 @@ class Sylma {
         fclose($fp);
       }
     }
+    */
   }
 
   public static function loadException(Exception $e) {

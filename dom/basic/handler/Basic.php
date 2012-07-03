@@ -323,6 +323,7 @@ abstract class Basic extends core\module\Controled implements dom\handler {
     }
     catch (\Exception $e) {
 
+      //throw $e;
       \Sylma::log($this->asToken(), $e->getMessage());
     }
 

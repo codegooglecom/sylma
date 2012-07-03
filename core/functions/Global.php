@@ -34,39 +34,6 @@ function nonull_val() {
 }
 
 /**
- * Formate le nombre donnée en argument au format prix (p.ex : 1'999.95)
- */
-function formatPrice($fNumber) {
-
-  if (is_numeric($fNumber)) return 'CHF '.number_format($fNumber, 2, '.', "'");
-  else return '';
-}
-
-function formatMemory($size) {
-
-  $aUnit = array('b','Kb','Mb','Gb','Tb','Pb');
-  return round($size / pow(1024, ($iResult = floor(log($size,1024)))), 2).' '.$aUnit[$iResult];
-}
-
-function stringResume($mValue, $iLength = 50, $bXML = false) {
-
-  $sValue = (string) $mValue;
-
-  if (strlen($sValue) > $iLength) $sValue = substr($sValue, 0, $iLength).'...';
-
-  if ($bXML) {
-
-    $iLastSQuote = strrpos($sValue, '&');
-    $iLastEQuote = strrpos($sValue, ';');
-
-    if (($iLastSQuote) && ($iLastEQuote < $iLastSQuote)) $sValue = substr($sValue, 0, $iLastSQuote).'...';
-  }
-
-  return $sValue;
-}
-
-
-/**
  * Un-Conversion in UTF-8 of the characters : & " < >
  */
 function unxmlize($sString) {
@@ -109,11 +76,6 @@ function inter_color($fValue) {
   $iColor = 255 - intval(255 * $fValue);
 
   return "rgb($iColor, $iColor, 213)";
-}
-
-function float_format($mValue, $iDec = 2, $iPoint = '.', $iThousand = '\'') {
-
-  return (is_float($mValue) ? number_format($mValue, $iDec, $iPoint, $iThousand) : $mValue);
 }
 
 /* Display function */

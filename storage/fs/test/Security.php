@@ -13,16 +13,16 @@ class Security extends tester\Prepare {
 
   protected $aUsers = array(
     'tester01' => array(
-      'group01',
-      'group00',
+      'test01',
+      'test00',
     ),
     'tester02' => array(
-      'group02',
-      'group00',
+      'test02',
+      'test00',
     ),
     'tester03' => array(
-      'group03',
-      'group00',
+      'test03',
+      'test00',
     ),
   );
 

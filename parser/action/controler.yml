@@ -22,3 +22,5 @@ classes :
     classes :
       security :
         name : \sylma\parser\security\Domed
+      js :
+        name : \sylma\parser\security\Domed

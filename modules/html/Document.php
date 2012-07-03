@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
+use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
 require_once('parser/action/handler/Action.php');
 require_once('core/window.php');
@@ -89,12 +89,19 @@ class Document extends parser\action\handler\Action {
 
     $body = $doc->getx('//html:body');
 
-    $aContent = array(
-      'user : ' . $this->getControler('user')->getName(),
-    );
+    require_once('core/functions/Numeric.php');
 
-    $system = $body->addElement('div', $content, array('id' => 'sylma-system'));
-    $system->addElement('div', $aContent);
+    $content = $this->createArgument(array(
+      'ul' => array(
+        '#li' => array(
+          'user : ' . $this->getControler('user')->getName(),
+          'time : ' . functions\numeric\formatFloat($this->getControler('init')->getElapsedTime()),
+        ),
+      ),
+    ), $this->getNamespace('html'));
+
+    $system = $body->addElement('div', null, array('id' => 'sylma-system'));
+    $system->addElement('div', $content);
   }
 
   protected function cleanResult(dom\handler $doc) {

@@ -10,6 +10,7 @@ class Initializer extends module\Filed {
   const NS = 'http://www.sylma.org/core/initializer';
   const EXTENSION_DEFAULT = 'html';
 
+  protected $iStartTime = 0;
   //protected static $sArgumentClass = 'sylma\core\argument\Iterator';
   //protected static $sArgumentFile = 'core/argument/Iterator.php';
 
@@ -36,6 +37,21 @@ class Initializer extends module\Filed {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
+  protected function getStartTime() {
+
+    return $this->iStartTime;
+  }
+
+  protected function setStartTime($iTime) {
+
+    $this->iStartTime = $iTime;
+  }
+
+  public function getElapsedTime() {
+
+    return microtime(true)- $this->getStartTime();
+  }
+
   public function run($settings) {
 
     $this->setArguments($settings);
@@ -48,7 +64,7 @@ class Initializer extends module\Filed {
 
     // if (\Sylma::read('db/enable')) $this->loadXDB();
 
-    //$iStartTime = microtime(true);
+    $this->setStartTime(microtime(true));
 
     require_once('storage/fs/Controler.php');
 

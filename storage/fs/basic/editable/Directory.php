@@ -30,7 +30,7 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
 
       if (!$sub = $this->getDirectory($sName, self::DEBUG_NOT)) {
 
-        $sub = $this->createDirectory($sName, $iDebug);
+        $sub = $this->createDirectory($sName);
       }
 
       $result = $sub->addDirectory($mPath);

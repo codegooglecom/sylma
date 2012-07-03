@@ -72,7 +72,7 @@ class Basic extends core\module\Argumented implements core\user {
 
     $fs = $this->getControler('fs');
     $users = $fs->getFreeFile($this->readArgument('users/path'));
-    $users = $users->getDocument($this->getNS());
+    $users = $users->getFreeDocument($this->getNS());
 
     if ($users->isEmpty()) {
 

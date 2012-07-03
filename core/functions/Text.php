@@ -30,3 +30,20 @@ function addQuote($mValue) {
   else return null;
 }
 
+function stringResume($mValue, $iLength = 50, $bXML = false) {
+
+  $sValue = (string) $mValue;
+
+  if (strlen($sValue) > $iLength) $sValue = substr($sValue, 0, $iLength).'...';
+
+  if ($bXML) {
+
+    $iLastSQuote = strrpos($sValue, '&');
+    $iLastEQuote = strrpos($sValue, ';');
+
+    if (($iLastSQuote) && ($iLastEQuote < $iLastSQuote)) $sValue = substr($sValue, 0, $iLastSQuote).'...';
+  }
+
+  return $sValue;
+}
+

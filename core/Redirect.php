@@ -75,13 +75,13 @@ class Redirect extends core\module\Argumented {
 
   public function __sleep() {
 
-    foreach ($this->aDocuments as $sKey => $oDocument) $this->aDocuments[$sKey] = (string) $oDocument;
+    //foreach ($this->aDocuments as $sKey => $oDocument) $this->aDocuments[$sKey] = (string) $oDocument;
     return array_keys(get_object_vars($this)); // TODO Ref or not ?
   }
 
   public function __wakeup() {
 
-    foreach ($this->aDocuments as $sKey => $sDocument) $this->aDocuments[$sKey] = new XML_Document($sDocument);
+    //foreach ($this->aDocuments as $sKey => $sDocument) $this->aDocuments[$sKey] = new XML_Document($sDocument);
   }
 
   public function __toString() {

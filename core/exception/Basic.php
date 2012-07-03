@@ -36,7 +36,7 @@ class Basic extends \Exception implements core\exception {
     return self::$iCount;
   }
 
-  public function load($iOffset = 1, $aTrace = array()) {
+  public function load($iOffset = 1, array $aTrace = array()) {
 
     // for exceptions : line 1, file 2, class/method 2
 
@@ -63,7 +63,7 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
-  protected static function loadKey($sKey, $aArray) {
+  protected static function loadKey($sKey, array $aArray) {
 
     return array_key_exists($sKey, $aArray) ? $aArray[$sKey] : null;
   }

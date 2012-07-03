@@ -133,8 +133,7 @@ h2 {
   height: 5px;
   padding: 8px;
   border: 1px solid gray;
-  text-align: center;
-  -moz-border-radius: 2px;
+  border-radius: 2px;
   -webkit-border-radius: 2px;
   background-color: #eee;
   z-index: 10;
@@ -150,3 +149,7 @@ h2 {
 
 #sylma-system > * { display: none; }
 #sylma-system:hover > * { display: block; }
+
+#sylma-system li {
+  list-style-type: none;
+}
