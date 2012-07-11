@@ -352,7 +352,7 @@ class Directory extends Resource implements fs\directory {
 
     if (!$result && ($iDebug & self::DEBUG_LOG)) {
 
-      $this->throwException(sprintf('@directory %s does not exists', $sName));
+      $this->throwException(sprintf('@directory %s does not exists in %s', $sName, $this->getRealPath()));
     }
 
     return $result;

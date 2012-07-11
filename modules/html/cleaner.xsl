@@ -39,4 +39,8 @@
     </xsl:attribute>
   </xsl:template>
 
+  <xsl:template match="*" mode="disable">
+    <p>Elément interdit : <xsl:value-of select="concat(namespace-uri(.), ' - ', name())"/></p>
+  </xsl:template>
+
 </xsl:stylesheet>

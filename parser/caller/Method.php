@@ -98,7 +98,7 @@ class Method extends core\module\Argumented {
 
     if (!$bResult) {
 
-      $this->throwException(sprintf('Argument %s has bad format, %s expected', get_class($obj), $sFormat));
+      $this->throwException(sprintf('Bad argument : %s, %s expected', $obj->getInterface()->getName(), $sFormat));
     }
   }
 

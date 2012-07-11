@@ -21,14 +21,26 @@ class Document extends parser\action\handler\Action {
     parent::__construct($file, $aArguments, $base);
   }
 
-  protected function addJS($sHref, $mContent = null) {
+  protected function addJS($aContext) {
 
-    if ($oHead = $this->getHead()) {
+    if ($aContext && ($head = $this->getHead())) {
 
-      if ($mContent) ($oHead->addElement('script', array('src' => $sLink), ''));
-      else if (!$oHead->get("self:script[@src='$sHref']")) $oHead->add(new HTML_Script($sHref));
+      foreach ($aContext as $mContext) {
 
-    }// else dspm(xt('Impossible d\'ajouter le fichier script %s', new HTML_Strong($sHref)), 'warning');
+        $script = $head->addElement('script', null, array(
+          'type' => 'text/javascript',
+        ));
+
+        if ($mContext instanceof fs\file) {
+
+          $script->setAttribute('src', (string) $mContext);
+        }
+        else {
+
+          $script->add($mContext);
+        }
+      }
+    }
   }
 
   protected function addCSS($aContext) {
@@ -83,6 +95,7 @@ class Document extends parser\action\handler\Action {
   protected function loadContexts() {
 
     $this->addCSS($this->aArguments['content']->getContext('css'));
+    $this->addJS($this->aArguments['content']->getContext('js'));
   }
 
   protected function loadSystemInfos(dom\handler $doc) {
@@ -128,7 +141,7 @@ class Document extends parser\action\handler\Action {
     $this->loadSystemInfos($doc);
     $this->loadContexts();
 
-    return $sProlog . "\n" . $this->cleanResult($doc);;
+    return $sProlog . "\n" . $this->cleanResult($doc);
   }
 }
 

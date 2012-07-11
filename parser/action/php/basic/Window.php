@@ -389,8 +389,9 @@ class Window extends core\module\Domed implements php\_window, core\controled {
 
       if ($interface->isInstance('\sylma\dom\node')) {
 
-        if ($bTemplate) $result = $this->convertToString($val);
-        else $result = $val;
+        //if ($bTemplate) $result = $this->convertToString($val);
+        //else $result = $val;
+        $result = $val;
       }
       else if ($interface->isInstance('\sylma\core\argumentable')) {
 

@@ -82,7 +82,7 @@ class Basic extends core\module\Argumented implements core\user {
     require_once('core/functions/Text.php');
     list($spUser, $spPassword) = functions\text\addQuote(array($sUser, sha1($sPassword)));
 
-    if (!$eUser = $users->getx("//user[@name = $spUser and @password = $spPassword]")) {
+    if (!$eUser = $users->getx("//user[@name = $spUser and @password = $spPassword]", array(), false)) {
 
       $this->throwException('Bad authentication');
     }

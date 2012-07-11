@@ -8,9 +8,6 @@ browse :
 tokens :
   sylma :
     path : sylma
-  cache :
-    path : .sylma-cache
-    propagate : true
   tmp :
     path : .sylma-tmp
     propagate : true

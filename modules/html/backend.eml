@@ -10,6 +10,7 @@
       </title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/backend.css"/>
+      <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/infos.css"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/clearfix.css"/>
     </head>
     <body>
