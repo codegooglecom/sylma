@@ -4,7 +4,6 @@ namespace sylma\modules\html;
 use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
 require_once('parser/action/handler/Action.php');
-require_once('core/window.php');
 
 class Document extends parser\action\handler\Action {
 
@@ -86,8 +85,10 @@ class Document extends parser\action\handler\Action {
       $sResult = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
     }
 
-    header("Content-Type: $sMime;charset=$sCharset");
-    header("Vary: Accept");
+    $this->getControler('init')->setHeaderContent($sMime, $sCharset);
+    $this->getControler('init')->setHeaderCache(3600);
+
+    //header("Vary: Accept");
 
     return $sResult;
   }

@@ -14,7 +14,9 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="html:link | html:meta | html:br | html:img">
+  <!-- Empty elements that can be display as simple tag !-->
+
+  <xsl:template match="html:link | html:meta | html:br | html:img | html:input | html:hr">
     <xsl:element name="{local-name()}" namespace="{namespace-uri}">
       <xsl:apply-templates select="@*"/>
     </xsl:element>

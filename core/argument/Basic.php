@@ -106,11 +106,15 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       }
     }
 
-    if ($mTarget !== null && !is_string($mValue)) {
+    if ($mTarget !== null && (is_object($mValue) || is_array($mValue))) {
 
       return $this->get($sPath);
     }
-    else return null;
+    else {
+
+      return null;
+    }
+
   }
 
   public function add($sPath = '', $mValue = null) {

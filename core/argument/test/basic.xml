@@ -21,6 +21,17 @@
       return $arg->read('abc') === '123'
     </tst:expected>
   </tst:test>
+  <tst:test name="A basic set on existing simple key">
+    <tst:prepare>
+      $arg = $controler->createArgument(array('abc' => 123));
+      $arg->set('abc', 456);
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->read('abc') === 456
+    </tst:expected>
+  </tst:test>
   <tst:test name="A set() of array">
     <tst:prepare>
       $arg = $controler->createArgument();
@@ -190,7 +201,7 @@
       foreach ($arg as $sKey => $sub) {
         $aResult[$sKey] = $sub;
       }
-      
+
       return $aResult == array(
         'abc' => '123',
         'def' => 456,

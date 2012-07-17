@@ -102,6 +102,7 @@ class Controler extends core\module\Domed implements parser\elemented {
 
     return parent::getFile($sPath, $bDebug);
   }
+  
   /**
    * Find interface corresponding to object given as argument
    * @param php\_object $obj

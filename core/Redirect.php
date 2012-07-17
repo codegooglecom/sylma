@@ -60,6 +60,7 @@ class Redirect extends core\module\Argumented {
 
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {
 
+    if (!$this->getArguments()) return false;
     return parent::getArgument($sPath, $mDefault, $bDebug);
   }
 

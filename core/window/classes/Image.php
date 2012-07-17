@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\core\window;
+namespace sylma\core\window\classes;
 
 require_once('Basic.php');
 

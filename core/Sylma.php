@@ -285,6 +285,8 @@ class Sylma {
 
   public static function render() {
 
+    if (self::read('render/gzip')) ob_start('ob_gzhandler');
+
     return self::$result;
   }
 }

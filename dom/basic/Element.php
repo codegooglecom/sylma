@@ -550,14 +550,15 @@ class Element extends \DOMElement implements dom\element {
     return $this->firstChild;
   }
 
-  // public function getNext() {
+  public function getNext() {
 
-    // return $this->nextSibling;
-  // }
-  // public function getPrevious() {
+    return $this->nextSibling;
+  }
 
-    // return $this->previousSibling;
-  // }
+  public function getPrevious() {
+
+    return $this->previousSibling;
+  }
 
   public function lookupNamespace($sPrefix) {
 
@@ -709,14 +710,21 @@ class Element extends \DOMElement implements dom\element {
 
   public function prepareHTML($iLevel = 0) {
 
-    if (!$this->isRoot()) $this->getParent()->insert("\n".str_repeat('  ', $iLevel), $this);
+    $iMaxLength = 20;
+
+    $iPrevious = $this->getPrevious() ? $this->getPrevious()->getType() : '';
+    $iNext = $this->getNext() ? $this->getNext()->getType() : '';
+
+    if (!$this->isRoot() && $iPrevious != self::TEXT && $iNext != self::TEXT) {
+
+      $this->getParent()->insert("\n".str_repeat('  ', $iLevel), $this);
+    }
 
     foreach ($this->getChildren() as $child) {
 
       if ($child instanceof dom\element) {
 
         $child->prepareHTML($iLevel + 1);
-
       }
       else if ($child instanceof dom\cdata || $child instanceof dom\comment) {
 
@@ -724,9 +732,9 @@ class Element extends \DOMElement implements dom\element {
       }
     }
 
-    if ($this->hasChildren()) {
+    if ($this->hasChildren() && $this->isComplex()) {
 
-      if ($this->getChildren()->length > 1) $this->add("\n".str_repeat('  ', $iLevel)); // || strlen($this->getFirst()) > 80
+      if (strlen($this->asString()) > $iMaxLength) $this->add("\n".str_repeat('  ', $iLevel));
     }
   }
 

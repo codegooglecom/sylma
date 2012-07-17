@@ -103,7 +103,7 @@ class Initializer extends module\Filed {
     if ($file = $this->getFile((string) $path, false)) {
 
       // A file
-      $sResult = $this->loadFile($file);
+      $sResult = $this->createWindowFile($file);
     }
     else {
 
@@ -122,10 +122,18 @@ class Initializer extends module\Filed {
 
         $this->runRedirect($redirect);
       }
-      else if (!$path->getExtension()) {
+      else if (in_array($path->getExtension(), $this->getArgument('executables')->asArray())) {
 
         // Normal action
-        $window = $this->loadWindow($sExtension);
+        $window = $this->create($sExtension, array($this));
+        \Sylma::setControler('window', $window);
+
+        $sResult = $this->loadWindowObject($path, $window);
+      }
+      else if (!$path->getExtension()) {
+
+        // HTML action
+        $window = $this->createWindowAction($sExtension);
         \Sylma::setControler('window', $window);
 
         $sResult = $this->loadWindowAction($path, $window);
@@ -144,6 +152,27 @@ class Initializer extends module\Filed {
     $path->parsePath();
 
     return $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
+  }
+
+  /**
+   * Window action is a action that load an action as argument
+   * @param string $sExtension
+   * @return parser\action
+   */
+  protected function createWindowAction($sExtension) {
+
+    $sExtension = strtolower($sExtension);
+    if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
+
+    $settings = $this->getArgument('window/' . $sExtension, null, true);
+
+    $sAlias = $sExtension;
+    $sPath = $settings->read('action');
+
+    $window = $this->create($sAlias, array($this->getFile($sPath)));
+
+    // Creation of the window
+    return $window;
   }
 
   protected function loadWindowAction(parser\action\path $path, parser\action $window) {
@@ -181,12 +210,9 @@ class Initializer extends module\Filed {
     return $sResult;
   }
 
-  public function getError() {
+  protected function createWindowFile(fs\file $file) {
 
-    return $this->getFile($this->readArgument('error/html'))->execute();
-  }
-
-  protected function loadFile(fs\file $file) {
+    $sResult = '';
 
     switch ($file->getExtension()) {
 
@@ -200,15 +226,36 @@ class Initializer extends module\Filed {
       case 'gif' :
       default :
 
-        $window = $this->create('window', array($this, $file));
+        $window = $this->create('window', array($this));
+        $sResult = $this->loadWindowFile($file, $window);
 
       break;
     }
 
+    return $sResult;
+  }
+
+  protected function loadWindowFile(fs\file $file, core\window\file $window) {
+
+    $window->setFile($file);
     return $window->asString();
   }
 
-  protected function getMime($sExtension) {
+  protected function loadWindowObject(parser\action\path $path, core\window\action $window) {
+
+    $action = $this->loadAction($path);
+
+    $window->setAction($action, $path->getExtension());
+
+    return $window->asString();
+  }
+
+  public function getError() {
+
+    return $this->getFile($this->readArgument('error/html'))->execute();
+  }
+
+  public function getMime($sExtension) {
 
     switch (strtolower($sExtension)) {
 
@@ -229,9 +276,20 @@ class Initializer extends module\Filed {
     }
   }
 
-  public function setContentType($sExtension) {
+  public function setHeaderCache($iTime) {
 
-    header('Content-type: '.$this->getMime($sExtension));
+    header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + $iTime));
+    header('Cache-Control: public');
+    header_remove('Pragma');
+  }
+
+  public function setHeaderContent($sMime, $sCharset = '') {
+
+    $sType = "Content-Type: $sMime;";
+    if ($sCharset) $sType .= "charset=$sCharset";
+
+    header($sType);
+    //header("Vary: Accept");
   }
 
   protected function loadMaintenance() {
@@ -260,22 +318,6 @@ class Initializer extends module\Filed {
     }
 
     libxml_use_internal_errors(false);
-  }
-
-  protected function loadWindow($sExtension) {
-
-    $sExtension = strtolower($sExtension);
-    if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
-
-    $settings = $this->getArgument('window/' . $sExtension, null, true);
-
-    $sAlias = $sExtension;
-    $sPath = $settings->read('action');
-
-    $window = $this->create($sAlias, array($this->getFile($sPath)));
-
-    // Creation of the window
-    return $window;
   }
 
   protected function loadGET() {

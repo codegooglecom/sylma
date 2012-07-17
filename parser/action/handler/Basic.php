@@ -45,7 +45,7 @@ abstract class Basic extends core\module\Domed implements parser\action {
    * @param boolean $bDebug
    * @return fs\file|null
    */
-  protected function getFile($sPath = '', $bDebug = true) {
+  public function getFile($sPath = '', $bDebug = true) {
 
     if ($sPath) {
 

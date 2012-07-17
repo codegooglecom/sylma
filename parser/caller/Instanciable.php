@@ -18,7 +18,7 @@ class Instanciable extends Domed implements parser\caller {
     $window->add($require);
 
     $instance = $window->loadInstance($this->getName(), (string) $file);
-    
+
     return $window->createInstanciate($instance, $aArguments);
   }
 
@@ -29,6 +29,6 @@ class Instanciable extends Domed implements parser\caller {
       $sFile = str_replace('\\', '/', $this->getName()) . '.php';
     }
 
-    return $this->getControler()->getFile($sFile);
+    return $this->getControler('fs')->getFile($sFile, $this->getFile()->getParent());
   }
 }

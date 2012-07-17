@@ -4,8 +4,10 @@ debug :
   backtrace : false
 namespaces :
   html : http://www.w3.org/1999/xhtml
+render :
+  gzip : true
 initializer :
-  executables : [eml]
+  executables : [json]
   error :
     action : error.eml
     html : error.html
@@ -24,7 +26,9 @@ initializer :
     action :
       name : \sylma\parser\action\handler\Action
     window :
-      name : \sylma\core\window\Basic
+      name : \sylma\core\window\classes\File
+    json :
+      name : \sylma\core\window\classes\Context
 action:
   update: false
 session :

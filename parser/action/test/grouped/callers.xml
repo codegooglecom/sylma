@@ -217,7 +217,7 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
-  <tst:test name="Interface construction with fixed relative path" disabled="true">
+  <tst:test name="Interface construction with fixed relative path">
     <le:action>
       <le:settings>
         <le:return format="object"/>
