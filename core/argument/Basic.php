@@ -61,17 +61,29 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
       $aPath = $this->parsePath($sPath);
 
-      $mTarget =& $this->locateValue($aPath, false, true);
+      if (!is_null($mValue)) {
 
-      if ($mTarget === null) {
+        $mTarget =& $this->locateValue($aPath, false, true);
 
-        $mTarget =& $this->aArray;
+        if (is_null($mTarget)) $mTarget =& $this->aArray;
+
+        foreach ($aPath as $sKey) {
+
+          $mTarget[$sKey] = array();
+          $mTarget =& $mTarget[$sKey];
+        }
       }
+      else {
 
-      foreach ($aPath as $sKey) {
+        $sLast = array_pop($aPath);
 
-        $mTarget[$sKey] = array();
-        $mTarget =& $mTarget[$sKey];
+        if ($aPath) $mTarget =& $this->locateValue($aPath, false, true);
+        else $mTarget =& $this->aArray;
+
+        if (is_array($mTarget)) {
+
+          unset($mTarget[$sLast]);
+        }
       }
     }
     else {
@@ -96,17 +108,13 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      if ($mValue !== null) {
+      if (!is_null($mValue)) {
 
         $mTarget = $mValue;
       }
-      else {
-
-        $mTarget = null;
-      }
     }
 
-    if ($mTarget !== null && (is_object($mValue) || is_array($mValue))) {
+    if ((is_object($mValue) || is_array($mValue)) && $mTarget !== null) {
 
       return $this->get($sPath);
     }
@@ -171,17 +179,8 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      try {
-
-        $aPath = self::parsePath($sPath);
-        $mResult =& $this->locateValue($aPath, $bDebug);
-      }
-      catch (core\exception $e) {
-
-        throw $e;
-        //$mResult = null;
-        //return $mResult;
-      }
+      $aPath = self::parsePath($sPath);
+      $mResult =& $this->locateValue($aPath, $bDebug);
     }
 
     return $mResult;
@@ -295,7 +294,6 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
    */
   protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
 
-    $mResult = null;
     $sKey = array_shift($aPath);
     array_push($aParentPath, $sKey);
 
@@ -507,7 +505,8 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      $this->throwException(sprintf('Cannot render an array as a string'));
+      $sResult = '[error] Cannot render an array as a string';
+      //$this->throwException(sprintf('Cannot render an array as a string'));
     }
 
     return $sResult;

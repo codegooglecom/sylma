@@ -226,12 +226,16 @@ class Element extends \DOMElement implements dom\element {
     else return parent::getAttributeNode($sName);
   }
 
+  public function shift() {
+
+    return $this->insert(func_get_args(), $this->getFirst());
+  }
+
   // public function getById($sId)
   // public function setAttribute($sName, $sValue = '', $sUri = null)
   // public function setAttributes($mAttributes)
   // public function getAttributes()
   // public function getAttribute($sName, $sUri = '')
-  // public function shift()
   // public function insert($mValue, $oNext = null)
 
   // *private function insertText($sValue, $oNext = null)

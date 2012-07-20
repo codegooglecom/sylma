@@ -92,24 +92,24 @@ class Filed extends Domed {
 
   public function get($sPath = '', $bDebug = true) {
 
-    $mResult =& $this->getValue($sPath, $bDebug);
+    $rResult =& $this->getValue($sPath, $bDebug);
 
-    if (is_array($mResult)) {
+    if (is_array($rResult)) {
 
-      $mResult = new self($mResult, $this->getNS(), $this);
+      $rResult = new self($rResult, $this->getNS(), $this);
 
       // copy tokens
-      $mResult->aTokens = $this->aTokens;
-      $mResult->aResultTokens = $this->aResultTokens;
-      if ($this->getFile()) $mResult->setFile($this->getFile());
+      $rResult->aTokens = $this->aTokens;
+      $rResult->aResultTokens = $this->aResultTokens;
+      if ($this->getFile()) $rResult->setFile($this->getFile());
     }
-    else if (!is_object($mResult) && !is_null($mResult)) {
+    else if (!is_object($rResult) && !is_null($rResult)) {
 
       if ($bDebug) $this->throwException(sprintf('%s is not an array', $sPath), 3);
-      $mResult = null;
+      return null;
     }
 
-    return $mResult;
+    return $rResult;
   }
 
   /**

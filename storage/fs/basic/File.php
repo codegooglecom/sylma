@@ -45,7 +45,7 @@ class File extends Resource implements fs\file {
     }
     else if ($iDebug & self::DEBUG_LOG) {
 
-      $this->throwException(sprintf('@file %s does not exist', $this->getRealPath()), array(), 16); // todo too depth !
+      $this->throwException(sprintf('@file %s does not exist', $this->getRealPath()));
     }
   }
 

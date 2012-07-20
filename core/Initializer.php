@@ -269,8 +269,10 @@ class Initializer extends module\Filed {
       case 'xml' :
       case 'xsl' : return 'text/xml';
 
+      case 'htm' :
       case 'html' : return 'text/html';
       case 'xhtml' : return 'application/xhtml+xml';
+      case 'json' : return 'application/json';
 
       default : return 'plain/text';
     }
@@ -283,7 +285,7 @@ class Initializer extends module\Filed {
     header_remove('Pragma');
   }
 
-  public function setHeaderContent($sMime, $sCharset = '') {
+  public function setHeaderContent($sMime, $sCharset = 'utf-8') {
 
     $sType = "Content-Type: $sMime;";
     if ($sCharset) $sType .= "charset=$sCharset";

@@ -199,6 +199,16 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
+  public function errorAsHTML(array $aError) {
+
+    $sFile = array_key_exists('file', $aError) ? $aError['file'] : '-unknown-';
+    $sLine = array_key_exists('line', $aError) ? $aError['line'] : '-unknown-';
+    $sClass = array_key_exists('class', $aError) ? $aError['class'] : '-unknown-';
+    $sFunction = array_key_exists('function', $aError) ? $aError['function'] : '-unknown-';
+
+    return "<a href=\"netbeans://$sFile:$sLine\">$sFile [$sLine] - $sClass->$sFunction()</a><br/>";
+  }
+
   public function save() {
 
     $init = \Sylma::getControler('init', false, false);
@@ -234,11 +244,9 @@ class Basic extends \Exception implements core\exception {
 
         if (\Sylma::read('debug/backtrace')) {
 
-          $formater = \Sylma::getControler('formater');
-
           foreach ($aTraces as $aTrace) {
 
-            echo $formater->errorAsHTML($aTrace);
+            echo $this->errorAsHTML($aTrace);
           }
         }
 

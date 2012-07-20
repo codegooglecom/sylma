@@ -63,6 +63,10 @@ class Sylma {
         header('HTTP/1.0 404 Not Found');
         self::$result = $init->getError();
       }
+      else {
+
+        self::get('render')->set('gzip', false);
+      }
     }
 
     //var_dump(xdebug_get_code_coverage());

@@ -34,14 +34,9 @@ class Context extends core\module\Controled implements core\window\action {
 
   protected function setHeader($sContext) {
 
-    $sType = 'text';
+    $init = $this->getControler('init');
 
-    switch ($sContext) {
-
-      case 'json' : $sType = 'application/json';
-    }
-
-    header("Content-type: $sType");
+    $init->setHeaderContent($init->getMime($sContext));
   }
 
   public function asString() {

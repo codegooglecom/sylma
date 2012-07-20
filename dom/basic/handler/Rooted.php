@@ -10,66 +10,57 @@ require_once('Documented.php');
  */
 class Rooted extends Documented {
 
-  protected function checkRoot() {
-
-    return $this->getRoot();
-  }
-
   public function getx($sQuery, array $aNS = array(), $bDebug = true) {
 
-    $root = $this->checkRoot();
-    $result = $root->getx($sQuery, $aNS, $bDebug);
+    $result = $this->getRoot()->getx($sQuery, $aNS, $bDebug);
 
     return $result;
   }
 
   public function readx($sQuery = '', array $aNS = array(), $bDebug = true) {
 
-    $root = $this->checkRoot();
-    $sResult = $root->readx($sQuery, $aNS, $bDebug);
+    $sResult = $this->getRoot()->readx($sQuery, $aNS, $bDebug);
 
     return $sResult;
   }
 
   public function queryx($sQuery = '', array $aNS = array(), $bDebug = true, $bConvert = true) {
 
-    $root = $this->checkRoot();
-    return $root->queryx($sQuery, $aNS, $bDebug, $bConvert);
+    return $this->getRoot()->queryx($sQuery, $aNS, $bDebug, $bConvert);
   }
 
   public function add() {
 
-    $root = $this->checkRoot();
-    return $root->add(func_get_args());
+    return $this->getRoot()->add(func_get_args());
+  }
+
+  public function shift() {
+
+    return $this->getRoot()->shift(func_get_args());
   }
 
   public function getChildren() {
 
-    $root = $this->checkRoot();
-    return $root->getChildren(func_get_args());
+    return $this->getRoot()->getChildren(func_get_args());
   }
 
   public function hasChildren() {
 
-    $root = $this->checkRoot();
-    return $root->hasChildren();
+    return $this->getRoot()->hasChildren();
   }
 
   public function countChildren() {
 
-    $root = $this->checkRoot();
-    return $root->countChildren();
+    return $this->getRoot()->countChildren();
   }
 
   public function getFirst() {
 
-    $root = $this->checkRoot();
-    return $root->getFirst();
+    return $this->getRoot()->getFirst();
   }
 
   public function getLast() {
 
-    $root = $this->checkRoot();
-    return $root->getLast();
+    return $this->getRoot()->getLast();
   }
 }
