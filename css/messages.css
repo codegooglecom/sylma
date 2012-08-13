@@ -1,5 +1,5 @@
 .messages ul {
-  -moz-border-radius : 8px 8px 8px 8px;
+  border-radius : 8px 8px 8px 8px;
   opacity: 0.9;
   border-width: 1px;
   border-style: solid;

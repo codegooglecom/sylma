@@ -2,7 +2,7 @@
 
 .sylma-popup {
   -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
+  border-radius: 10px;
   -webkit-box-shadow: 0 0 10px #CCCCCC;
   -moz-box-shadow: 0 0 10px #CCCCCC;
   background-color: #DFEEFF;

@@ -46,7 +46,7 @@ a img {
   width: 96px;
   height:50px;
   margin-bottom:4px;
-  -moz-border-radius: 5px;
+  border-radius: 5px;
   text-decoration: none;
 }
 
@@ -85,7 +85,7 @@ a img {
   height: 12px;
   margin: 2px;
   border: 1px solid gray;
-  -moz-border-radius: 2px;
+  border-radius: 2px;
   cursor: pointer;
   background-color: white;
 }
@@ -112,7 +112,7 @@ a img {
   visibility: hidden;
   opacity: 0.01;
   color: black; cursor: default;
-  -moz-border-radius: 5px;
+  border-radius: 5px;
   background-color: #FFE9AF;
   -moz-box-shadow: 0 4px 7px rgba(0, 0, 0, 0.2);
 }
@@ -135,7 +135,7 @@ a img {
   opacity: 0.01;
   color: black;
   cursor: default;
-  -moz-border-radius: 5px;
+  border-radius: 5px;
   background-color: #FFE9AF;
   -moz-box-shadow: 0 4px 7px rgba(0, 0, 0, 0.2);
   z-index: 10;
@@ -159,7 +159,7 @@ a img {
   height: 14px;
   font-size: 10px;
   border: 1px solid gray;
-  -moz-border-radius: 2px;
+  border-radius: 2px;
   background-color: #FFF2CF;
 }
 
@@ -219,7 +219,7 @@ a img {
   padding: 5px;
   margin-right: 1em;
   border: 1px solid gray;
-  -moz-border-radius: 5px;
+  border-radius: 5px;
   background-color: #eee;
   text-decoration: none;
   cursor: pointer;

@@ -50,6 +50,6 @@ define('MODE_EXECUTION', 1);
 define('SYLMA_MAX_INCLUDE_DEPTH', 10);
 
 $aActionExtensions = array('', '.iml', '.eml', '.dml');
-$aExecutableExtensions = array('', 'eml', 'htm', 'html', 'xml', 'txt', 'popup', 'action', 'rss', 'sylma', 'redirect', 'print');
+$aExecutableExtensions = array('', 'eml', 'htm', 'html', 'xml', 'txt', 'popup', 'action', 'rss', 'sylma', 'redirect', 'print', 'xls');
 
 
