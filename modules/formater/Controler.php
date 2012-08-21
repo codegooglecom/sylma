@@ -36,6 +36,19 @@ class Controler extends core\module\Domed {
     ));
   }
 
+  /**
+   * 
+   * @param \sylma\dom\node $val
+   * @return array
+   */
+  protected function loadObjectElement($val, $mContent) {
+    
+    return array('object' => array(
+      '@class' => get_class($val),
+      $mContent,
+    ));
+  }
+  
   protected function loadObject($val) {
 
     $result = null;
@@ -45,9 +58,9 @@ class Controler extends core\module\Domed {
       $aResult = $val->query();
       $result = $this->loadArray($aResult);
     }
-    else if ($val instanceof dom\handler) {
+    else if ($val instanceof dom\node) {
 
-      $result = $val;
+      $result = $val->asString();
     }
     else if ($val instanceof core\argumentable) {
 
@@ -59,7 +72,7 @@ class Controler extends core\module\Domed {
       $result = $val->asDOM();
     }
 
-    return $result;
+    return $this->loadObjectElement($val, $result);
   }
 
   protected function loadArgument(core\argument $arg) {
@@ -77,6 +90,13 @@ class Controler extends core\module\Domed {
     return array('numeric' => $iVal);
   }
 
+  protected function loadBoolean($bVar) {
+    
+    $content = $bVar ? '[TRUE]' : '[FALSE]';
+    
+    return array('boolean' => $content);
+  }
+  
   protected function loadVar($mVar) {
 
     $aResult = array();
@@ -85,6 +105,8 @@ class Controler extends core\module\Domed {
     else if (is_object($mVar)) $aResult = $this->loadObject ($mVar);
     else if (is_string($mVar)) $aResult = $this->loadString($mVar);
     else if (is_numeric($mVar)) $aResult = $this->loadNumeric($mVar);
+    else if (is_bool($mVar)) $aResult = $this->loadBoolean($mVar);
+    else if (is_null($mVar)) $aResult = $aResult = array('null' => array());
     else {
 
       $aResult = array('unknown' => array('@type' => gettype($mVar)));

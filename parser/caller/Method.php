@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\caller;
-use sylma\core, sylma\parser\action\php, sylma\parser;
+use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
 
 require_once('core/module/Argumented.php');
 
@@ -82,14 +82,14 @@ class Method extends core\module\Argumented {
 
     if (substr($sFormat, 0, 4) == 'php-') {
 
-      if ($obj instanceof php\_scalar) {
+      if ($obj instanceof common\_scalar) {
 
         $bResult = $obj->useFormat($sFormat);
       }
     }
     else {
 
-      if ($obj instanceof php\_object) {
+      if ($obj instanceof common\_object) {
 
         $interface = $obj->getInterface();
         $bResult = $interface->isInstance($sFormat);
@@ -127,7 +127,7 @@ class Method extends core\module\Argumented {
     return true;
   }
 
-  public function reflectCall(php\_window $window, php\basic\_ObjectVar $var, array $aArguments = array()) {
+  public function reflectCall(common\_window $window, php\basic\_ObjectVar $var, array $aArguments = array()) {
 
     $this->validateArguments($aArguments);
 

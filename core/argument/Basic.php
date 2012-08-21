@@ -57,15 +57,41 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
   public function set($sPath = '', $mValue = null, $bIndex = false) {
 
-    if ($sPath) {
+    $mResult = null;
+    
+    if ($sPath !== '') {
 
       $aPath = $this->parsePath($sPath);
+      $bRoot = false;
 
-      if (!is_null($mValue)) {
+      if (is_null($mValue)) {
+
+        $sLast = array_pop($aPath);
+
+        if ($aPath) {
+          
+          $mTarget =& $this->locateValue($aPath, false, true);
+        }
+        else {
+          
+          $mTarget =& $this->aArray;
+          $bRoot = true;
+        }
+
+        if (is_array($mTarget)) {
+
+          unset($mTarget[$sLast]);
+        }
+      }
+      else {
 
         $mTarget =& $this->locateValue($aPath, false, true);
 
-        if (is_null($mTarget)) $mTarget =& $this->aArray;
+        if (is_null($mTarget)) {
+          
+          $mTarget =& $this->aArray;
+          //$bRoot = true;
+        }
 
         foreach ($aPath as $sKey) {
 
@@ -73,25 +99,14 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
           $mTarget =& $mTarget[$sKey];
         }
       }
-      else {
-
-        $sLast = array_pop($aPath);
-
-        if ($aPath) $mTarget =& $this->locateValue($aPath, false, true);
-        else $mTarget =& $this->aArray;
-
-        if (is_array($mTarget)) {
-
-          unset($mTarget[$sLast]);
-        }
-      }
     }
     else {
 
-      $mTarget =& $this->aArray;
+      //$mTarget =& $this->aArray;
+      $bRoot = true;
     }
-
-    if ($bIndex) {
+    
+    if ($bIndex) { // todo : check for usage
 
       if (is_array($mTarget)) {
 
@@ -99,7 +114,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       }
       else if ($mTarget instanceof core\argument) {
 
-        $mTarget->add('', $mValue);
+        $mTarget->add($mValue);
       }
       else {
 
@@ -108,26 +123,39 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      if (!is_null($mValue)) {
-
+      if ($bRoot) {
+        //echo \Sylma::show($mValue);
+        if (is_null($mValue)) $this->aArray = array();
+        else if ($mValue instanceof core\argument) $this->aArray = $mValue->query();
+        else if (!is_array($mValue)) $this->aArray = array($mValue);
+        else $this->aArray = $mValue;
+        //echo \Sylma::show($this->aArray);
+      }
+      else {
+        
         $mTarget = $mValue;
       }
     }
 
-    if ((is_object($mValue) || is_array($mValue)) && $mTarget !== null) {
+    if ($mValue) {
+      
+      if ($sPath === '') {
 
-      return $this->get($sPath);
+        $mResult =& reset($this->aArray);
+        //$mResult =& end($this->aArray);//reset($this->aArray);
+      }
+      else if (is_object($mValue) || is_array($mValue)) {
+
+        $mResult = $this->get($sPath);
+      }
     }
-    else {
 
-      return null;
-    }
-
+    return $mResult;
   }
 
-  public function add($sPath = '', $mValue = null) {
+  public function add($mValue) {
 
-    return $this->set($sPath, $mValue, true);
+    return $this->aArray[] = $mValue;
   }
 
   public function query($sPath = '', $bDebug = true) {

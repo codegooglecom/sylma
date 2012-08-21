@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs, \sylma\parser\action\php;
+use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php;
 
 require_once('Domed.php');
 
@@ -12,7 +12,7 @@ abstract class Argumented extends Domed {
   protected $aActionArguments = array();
   protected $iArgument = 0;
 
-  protected function setActionArgument($mKey, php\_var $var) {
+  protected function setActionArgument($mKey, common\_var $var) {
 
     $this->aActionArguments[$mKey] = $var;
   }
@@ -20,7 +20,7 @@ abstract class Argumented extends Domed {
   /**
    *
    * @param string|integer $mKey
-   * @return php\_var
+   * @return common\_var
    */
   protected function getActionArgument($mKey) {
 
@@ -71,7 +71,7 @@ abstract class Argumented extends Domed {
 
     if (!$bRequired) {
 
-      $if = $window->create('condition', array($window, $callArgument));
+      $if = $window->createCondition($callArgument);
 
       $window->add($if);
       $window->setScope($if);
@@ -109,7 +109,7 @@ abstract class Argumented extends Domed {
 
     $bool = $window->stringToInstance('php-boolean');
 
-    if ($val instanceof php\_scalar) {
+    if ($val instanceof common\_scalar) {
 
       if ($val instanceof php\basic\instance\_String) {
 
@@ -124,7 +124,7 @@ abstract class Argumented extends Domed {
         $call = $window->createCall($window->getSelf(), 'validateArray', $bool, array($call));
       }
     }
-    else if ($val instanceof php\_object) {
+    else if ($val instanceof common\_object) {
 
       $interface = $val->getInterface();
       $call = $window->createCall($window->getSelf(), 'validateObject', $bool, array($call, $interface->getName()));
@@ -148,7 +148,7 @@ abstract class Argumented extends Domed {
 
     $aResult = array_merge($aResult, $this->runConditions($arg, $children));
 
-    if ($instance instanceof php\_object) {
+    if ($instance instanceof common\_object) {
 
       $aResult = array_merge($aResult, $this->runVar($arg, $children));
     }
@@ -158,7 +158,7 @@ abstract class Argumented extends Domed {
     return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
-  protected function reflectDefault(dom\element $el, php\_var $var) {
+  protected function reflectDefault(dom\element $el, common\_var $var) {
 
     $window = $this->getWindow();
 
@@ -170,7 +170,7 @@ abstract class Argumented extends Domed {
     $bReturn = $el->testAttribute('return', true);
 
     $isnull = $window->createFunction('\is_null', $window->stringToInstance('php-boolean'), array($var));
-    $if = $window->create('condition', array($window, $isnull));
+    $if = $window->createCondition($isnull);
 
     $window->add($if);
     $window->setScope($if);
@@ -187,7 +187,7 @@ abstract class Argumented extends Domed {
     $window->stopScope();
   }
 
-  protected function reflectValidate(dom\element $el, $sArgument, php\_var $var, $bDefault = false) {
+  protected function reflectValidate(dom\element $el, $sArgument, common\_var $var, $bDefault = false) {
 
     $window = $this->getWindow();
 

@@ -3,10 +3,9 @@
 namespace sylma\modules\tester;
 use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-//require_once('modules/tester/test.php');
 require_once('core/module/Domed.php');
-
 require_once('core/argumentable.php');
+//require_once('modules/tester/test.php');
 
 abstract class Basic extends core\module\Domed implements core\argumentable {
 
@@ -16,6 +15,11 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
 
   protected function getFiles() {
 
+    if (!$this->aFiles) {
+
+      $this->aFiles = $this->getDirectory()->getFiles(array('xml'), null, 0);
+    }
+
     return $this->aFiles;
   }
 
@@ -24,37 +28,54 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     $this->aFiles = $aFiles;
   }
 
-  public function load() {
+  public function loadAll() {
 
     $aResult = array();
 
-    if (!$aFiles = $this->getFiles()) {
+    foreach ($this->getFiles() as $file) {
 
-      $aFiles = $this->getDirectory()->getFiles(array('xml'), null, 0);
-    }
-
-    foreach ($aFiles as $file) {
-
-      $doc = $file->getDocument();
-      $doc->registerNamespaces($this->getNS());
-
-      if (!$doc || $doc->isEmpty()) $this->throwException(sprintf('@file %s cannot be load'));
-
-      $aTests = $this->loadDocument($doc, $file);
-
-      $iDisabled = $aTests['disabled'];
-      unset($aTests['disabled']);
-
-      $aResult[] = array(
-        'description' => $doc->readx('self:description', $this->getNS()),
-        '#test' => $aTests,
-        '@disabled' => $iDisabled,
-      );
+      $aResult[] = $this->loadFile($file);
     }
 
     $this->onFinish();
 
     return $aResult;
+  }
+/*
+  public function loadNext() {
+
+    if ($params = $this->getSession()) {
+
+    }
+    else {
+
+      $aFiles = $this->getFiles();
+
+      $param = $this->createArgument(array(
+        'file' => array_shift($aFiles),
+      ))
+
+      $this->setSession($params);
+    }
+  }
+*/
+  protected function loadFile(fs\file $file) {
+
+    $doc = $file->getDocument();
+    $doc->registerNamespaces($this->getNS());
+
+    if ($doc->isEmpty()) $this->throwException(sprintf('@file %s cannot be load'));
+
+    $aTests = $this->loadDocument($doc, $file);
+
+    $iDisabled = $aTests['disabled'];
+    unset($aTests['disabled']);
+
+    return array(
+      'description' => $doc->readx('self:description', $this->getNS()),
+      '#test' => $aTests,
+      '@disabled' => $iDisabled,
+    );
   }
 
   protected function loadDocument(dom\handler $doc, fs\file $file) {
@@ -67,17 +88,8 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     foreach ($doc->queryx('self:test') as $test) {
 
       if (!$test->testAttribute('disabled', false)) {
-        //dspf($test->readAttribute('disabled'));
-        $bResult = $this->test($test, $this->getControler(), $doc, $file);
 
-        $aTest = array(
-          '@name' => $test->getAttribute('name'),
-          'result' => functions\booltostr($bResult),
-        );
-
-        if (!$bResult) $aTest['message'] = ''; // ? TODO suspicious..
-
-        $aResult[] = $aTest;
+        $aResult[] = $this->loadElement($test, $doc, $file);
       }
       else {
 
@@ -86,6 +98,20 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     }
 
     $aResult['disabled'] = $iDisabled;
+
+    return $aResult;
+  }
+
+  protected function loadElement(dom\element $el, dom\handler $doc, fs\file $file) {
+
+    $bResult = $this->test($el, $el->read(), $this->getControler(), $doc, $file);
+
+    $aResult = array(
+      '@name' => $el->getAttribute('name'),
+      'result' => functions\booltostr($bResult),
+    );
+
+    if (!$bResult) $aResult['message'] = ''; // ? TODO suspicious..
 
     return $aResult;
   }
@@ -103,26 +129,26 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
    * @param fs\file $file
    * @return boolean
    */
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = false;
-
+    
     try {
 
-      if (eval('$closure = function($controler) { ' . $test->read() . '; };') === null) {
+      if (eval('$closure = function($controler) { ' . $sContent . '; };') === null) {
 
         $bResult = $this->evaluate($closure, $controler);
       }
     }
     catch (core\exception $e) {
 
-      $bResult = $this->catchException($test, $e);
+      $bResult = $this->catchException($test, $e, $file);
     }
 
     return $bResult;
   }
 
-  protected function catchException(dom\element $test, core\exception $e) {
+  protected function catchException(dom\element $test, core\exception $e, fs\file $file) {
 
     $bResult = false;
 
@@ -134,6 +160,9 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     }
     else {
 
+      $e->addPath($file->asToken());
+      $e->addPath($test->readAttribute('name'));
+      //$e->addPath($test->asString());
       $e->save();
     }
 
@@ -158,7 +187,7 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
 
     if (!$result) {
 
-      $this->throwException(t('No result node'));
+      $this->throwException('No result node');
     }
 
     return $result;
@@ -181,7 +210,7 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     $result = $this->createArgument(array(
       'group' => array(
         'description' => $this->sTitle,
-        '#group' => $this->load(),
+        '#group' => $this->loadAll(),
       ),
     ), self::NS);
 

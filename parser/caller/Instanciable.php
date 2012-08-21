@@ -1,14 +1,14 @@
 <?php
 
 namespace sylma\parser\caller;
-use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\action\php;
+use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php;
 
 require_once('Domed.php');
 require_once('parser/caller.php');
 
 class Instanciable extends Domed implements parser\caller {
 
-  public function getInstance(php\_window $window, dom\collection $children) {
+  public function getInstance(common\_window $window, dom\collection $children) {
 
     $aArguments = $this->parseArguments($children);
 

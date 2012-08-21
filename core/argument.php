@@ -9,7 +9,7 @@ interface argument extends \Iterator {
   function read($sPath = '', $bDebug = true);
   //function query($sPath = '', $bDebug = true);
   function set($sPath = '', $mValue = null);
-  //function add($sPath = '', $mValue = null);
+  function add($mValue);
   function setParent(core\argument $parent);
   function getParent();
 

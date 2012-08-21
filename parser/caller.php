@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser;
-use sylma\dom, sylma\storage\fs, sylma\parser, sylma\parser\action\php;
+use sylma\dom, sylma\storage\fs, sylma\parser, sylma\parser\languages\php;
 
 interface caller {
 

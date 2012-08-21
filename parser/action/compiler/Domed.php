@@ -8,7 +8,7 @@
 */
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\parser, sylma\parser\action\php;
+use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\common, sylma\parser\languages\php;
 
 require_once('Runner.php');
 require_once('parser/elemented.php');
@@ -44,21 +44,17 @@ abstract class Domed extends Runner implements parser\elemented {
 
     foreach ($contexts as $context) {
 
-      $sName = $context->readAttribute('name');
-      $this->getWindow()->setContext($sName);
-
-      $aResults[$sName] = $this->parseChildren($context->getChildren(), true, true);
-
-      //$context->remove();
+      $this->reflectContext($context);
+      $context->remove();
     }
 
     $this->setFormat($sFormat);
-    $this->getWindow()->setContext(php\_window::CONTEXT_DEFAULT);
+    $this->getWindow()->setContext(common\_window::CONTEXT_DEFAULT);
 
     $children = $doc->getChildren();
     $children->setIndex(count($aResults));
 
-    $aResults[php\_window::CONTEXT_DEFAULT] = $this->parseChildren($children, true);
+    $aResults[common\_window::CONTEXT_DEFAULT] = $this->parseChildren($children, true);
 
     return $aResults;
   }
@@ -187,14 +183,14 @@ abstract class Domed extends Runner implements parser\elemented {
 
             if ($mResult) {
 
-              if (!$mResult instanceof dom\node && !$mResult instanceof php\structure) {
+              if (!$mResult instanceof dom\node && !$mResult instanceof common\structure) {
 
                 if (is_array($mResult)) {
 
                   $mResult = $this->getWindow()->argToInstance($mResult);
                 }
 
-                $bTemplate = $this->getWindow()->getContext() == php\_window::CONTEXT_DEFAULT;
+                $bTemplate = $this->getWindow()->getContext() == common\_window::CONTEXT_DEFAULT;
 
                 $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
               }
@@ -298,4 +294,58 @@ abstract class Domed extends Runner implements parser\elemented {
     $attr->setValue($this->parseString($attr->getValue()));
     return $attr;
   }
+
+  protected function parseString($sValue) {
+
+    $window = $this->getWindow();
+
+    preg_match_all('/\[sylma:(?P<typ>[\w-]+)(?:::(?P<val>[\w-]+))?\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+    //dspf($aResults);
+
+    if ($aResults) {
+
+      $iSeek = 0;
+
+      foreach ($aResults as $aResult) {
+
+        $iVarLength = strlen($aResult[0][0]);
+
+        switch ($aResult['typ'][0]) {
+
+          case 'call' :
+
+            $aArguments = array();
+
+            $method = $this->getInterface()->loadMethod($aResult['val'][0]);
+            $arg = $method->reflectCall($window, $window->getSelf(), $aArguments);
+
+          break;
+
+          case 'arg' :
+
+            $arg = $this->getActionArgument($aResult['val'][0]);
+
+          break;
+
+          default :
+
+            $this->throwException(sprintf('unknown attribute call : %s', $aResult['typ']));
+
+        }
+
+        $insert = $window->createInsert($arg);
+        $sVarValue = $insert->asString();
+
+        $sStart = substr($sValue, 0, $aResult[0][1] + $iSeek);
+        $sEnd = substr($sValue, $aResult[0][1] + $iSeek + $iVarLength);
+
+        $sValue = $sStart . $sVarValue . $sEnd;
+
+        $iSeek += strlen($sVarValue) - $iVarLength;
+      }
+    }
+    //dspf($sValue);
+    return $sValue;
+  }
+
 }

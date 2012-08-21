@@ -72,4 +72,9 @@ class Controler extends core\module\Domed {
 
     return parent::getDirectory($sPath, $bDebug);
   }
+  
+  public function createContext() {
+      
+    return $this->create('context');
+  }
 }

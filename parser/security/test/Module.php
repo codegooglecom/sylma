@@ -53,14 +53,14 @@ class Module extends tester\Prepare {
     return parent::setArgument($sPath, $mValue);
   }
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     if ($node = $test->getx('self:node', array(), false)) {
 
       $this->setArgument('node', $node->getFirst());
     }
 
-    return parent::test($test, $controler, $doc, $file);
+    return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
   public function onPrepared($mResult) {

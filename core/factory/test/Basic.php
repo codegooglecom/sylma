@@ -44,11 +44,11 @@ class Basic extends tester\Basic {
     return $this->factory;
   }
   
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
     
     $controler = $this;
     
-    return parent::test($test, $controler, $doc, $file);
+    return parent::test($test, $sContent, $controler, $doc, $file);
   }
 }
 

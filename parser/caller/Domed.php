@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\caller;
-use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\action\php;
+use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\languages\php;
 
 require_once('core/module/Argumented.php');
 

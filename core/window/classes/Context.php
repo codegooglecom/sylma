@@ -43,9 +43,8 @@ class Context extends core\module\Controled implements core\window\action {
 
     $this->setHeader($this->getContext());
 
-    $this->getAction()->setContexts(array($this->getContext()));
     $result = $this->getAction()->getContext($this->getContext());
 
-    return array_pop($result);
+    return $result->asString();
   }
 }

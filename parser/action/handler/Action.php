@@ -17,6 +17,9 @@ class Action extends Basic implements core\stringable {
   protected $action = null;
   protected $bRunned = false;
 
+  const PHP_TEMPLATE = '/#sylma/parser/languages/php/class.xsl';
+  const DOM_TEMPLATE = '/#sylma/parser/languages/php/template.xsl';
+
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
     $this->aArguments = $aArguments;
@@ -80,6 +83,7 @@ class Action extends Basic implements core\stringable {
     if (!$this->isRunned()) {
 
       $this->setAction(parent::runAction());
+      $this->getAction()->loadAction();
       $this->isRunned(true);
     }
 
@@ -158,7 +162,7 @@ class Action extends Basic implements core\stringable {
 
     $classFile = $dir->getFile($sClass, fs\basic\Resource::DEBUG_EXIST);
 
-    $template = $this->getTemplate('../php/class.xsl');
+    $template = $this->getTemplate(self::PHP_TEMPLATE);
     $aClass = $this->getClassName($this->getFile());
 
     $template->setParameters(array(
@@ -172,7 +176,7 @@ class Action extends Basic implements core\stringable {
 
     if ($method->getRoot()->testAttribute('use-template')) {
 
-      $template = $this->getTemplate('../php/template.xsl');
+      $template = $this->getTemplate(self::DOM_TEMPLATE);
 
       if ($sResult = $template->parseDocument($method, false)) {
 
@@ -186,7 +190,7 @@ class Action extends Basic implements core\stringable {
 
   protected function parseAttributes($sContent) {
 
-    $sContent = preg_replace('/\[sylma:insert:(\d+)\]/', '<?php echo $aArguments[\'default\'][$1]; ?>', $sContent);
+    $sContent = preg_replace('/\[sylma:insert:(\d+)\]/', '<?php echo $aArguments[$1]; ?>', $sContent);
 
     return $sContent;
   }

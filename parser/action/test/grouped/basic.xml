@@ -106,7 +106,7 @@
         $sResult === 'directory :123';
     </tst:expected>
   </tst:test>
-  <tst:test name="Null">
+  <tst:test name="Null" disabled="true">
     <le:action>
       <le:null/>
     </le:action>
@@ -132,7 +132,7 @@
     </le:action>
     <tst:expected>
       $aResult = $controler->getResult('array');
-
+      
       return
         $aResult === array(
           true, false, true, false, false, true

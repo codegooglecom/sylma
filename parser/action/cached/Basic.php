@@ -13,12 +13,17 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
 
-  protected $aResults = array(self::CONTEXT_DEFAULT => array());
+  protected $aResults = array();
   protected $bRunned = false;
 
   public function __construct(fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
 
     require_once('parser/action.php');
+
+    if (!array_key_exists(self::CONTEXT_DEFAULT, $aContexts)) {
+
+      $aContexts[self::CONTEXT_DEFAULT] = $controler->getControler()->createContext();
+    }
 
     $this->setContexts($aContexts);
     $this->setControler($controler);
@@ -49,20 +54,19 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
    * Allow management of multiple calls on same action
    * @return array|mixed
    */
-  protected function loadAction() {
+  public function loadAction() {
 
     if (!$this->bRunned) {
 
-      $aAction = $this->parseAction();
-
-      foreach ($this->aResults as $sContext => $aResult) {
-
-        if (array_key_exists($sContext, $aAction)) $this->aResults[$sContext] += $aAction[$sContext];
-      }
+      $aResult = $this->parseAction();
+      $this->aResults[self::CONTEXT_DEFAULT]->set('', $aResult);
       $this->bRunned = true;
+      
+      //echo $this->show($this->aResults['default']->getArguments());
+      //echo $this->show($aResult);
     }
-
-    return $this->aResults;
+    
+    //return $this->aResults;
   }
 
   protected function loadArgumentable(core\argumentable $val = null) {
@@ -149,38 +153,29 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   protected function getContexts() {
 
-    return $this->aContexts;
+    return $this->aResults;
   }
 
   public function setContexts(array $aContexts) {
 
-    foreach ($aContexts as $sContext) {
-
-      $this->aResults[$sContext] = array();
-    }
-
-    $this->aContexts = $aContexts;
+    $this->aResults = $aContexts;
   }
 
-  protected function loadActionContexts(parser\action $action) {
-
-    foreach ($this->aContexts as $sContext) {
-
-      $this->aResults[$sContext] += $action->getContext($sContext);
-    }
-  }
-
+  /**
+   *
+   * @param type $sContext
+   * @return array|parser\context
+   */
   public function getContext($sContext = self::CONTEXT_DEFAULT) {
 
-    $aResult = array();
-    $aContexts = $this->loadAction();
+    $mResult = null;
 
-    if (array_key_exists($sContext, $aContexts)) {
+    if (array_key_exists($sContext, $this->aResults)) {
 
-      $aResult = $aContexts[$sContext];
+      $mResult = $this->aResults[$sContext];
     }
 
-    return $aResult;
+    return $mResult;
   }
 
   protected function validateObject($val, $sInterface) {
@@ -204,31 +199,17 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function asObject() {
 
-    $aResult = $this->getContext();
-
-    if (!$aResult) {
-
-      $this->throwException(sprintf('No valid object result'));
-    }
-
-    return array_pop($aResult);
+    return $this->getContext()->asObject();
   }
 
   public function asArray() {
-
-    $aAction = array_values($this->getContext());
-
-    if (count($aAction) == 1 && is_array(current($aAction))) $aResult = current($aAction);
-    else $aResult = $aAction;
-
-    return $aResult;
+    
+    return $this->getContext()->asArray();
   }
 
   public function asString($iMode = 0) {
 
-    $mResult = $this->getContext();
-
-    return (string) implode('', $mResult);
+    return $this->getContext()->asString();
   }
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {

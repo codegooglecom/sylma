@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action, \sylma\parser\action\php;
+use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action, \sylma\parser\languages\common, sylma\parser\languages\php;
 
 require_once('Argumented.php');
 
@@ -236,61 +236,8 @@ class Reflector extends Argumented {
     return $this->getWindow()->createString($aResult);
   }
 
-  protected function parseString($sValue) {
-
-    $window = $this->getWindow();
-
-    preg_match_all('/\[sylma:(?P<typ>[\w-]+)(?:::(?P<val>[\w-]+))?\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-    //dspf($aResults);
-
-    if ($aResults) {
-
-      $iSeek = 0;
-
-      foreach ($aResults as $aResult) {
-
-        $iVarLength = strlen($aResult[0][0]);
-
-        switch ($aResult['typ'][0]) {
-
-          case 'call' :
-
-            $aArguments = array();
-
-            $method = $this->getInterface()->loadMethod($aResult['val'][0]);
-            $arg = $method->reflectCall($window, $window->getSelf(), $aArguments);
-
-          break;
-
-          case 'arg' :
-
-            $arg = $this->getActionArgument($aResult['val'][0]);
-
-          break;
-
-          default :
-
-            $this->throwException(sprintf('unknown attribute call : %s', $aResult['typ']));
-
-        }
-
-        $insert = $window->createInsert($arg);
-        $sVarValue = $insert->asString();
-
-        $sStart = substr($sValue, 0, $aResult[0][1] + $iSeek);
-        $sEnd = substr($sValue, $aResult[0][1] + $iSeek + $iVarLength);
-
-        $sValue = $sStart . $sVarValue . $sEnd;
-
-        $iSeek += strlen($sVarValue) - $iVarLength;
-      }
-    }
-    //dspf($sValue);
-    return $sValue;
-  }
-
   /**
-   * @return php\_var
+   * @return common\_var
    */
   protected function reflectAction(dom\element $el) {
 
@@ -323,7 +270,7 @@ class Reflector extends Argumented {
     $window = $this->getWindow();
 
     $result = $this->reflectActionReturn($callAction, $sReturn, $sFormat);
-    $window->add($window->createCall($window->getSelf(), 'loadActionContexts', 'php-boolean', array($callAction->getVar())));
+    //$window->add($window->createCall($window->getSelf(), 'loadActionContexts', 'php-boolean', array($callAction->getVar())));
 
     return $result;
   }
@@ -522,5 +469,21 @@ class Reflector extends Argumented {
     $var = $this->getWindow()->addVar($instance);
 
     return $this->runObject($el, $var);
+  }
+  
+  protected function reflectContext(dom\element $el) {
+    
+    $window = $this->getWindow();
+    $sName = $el->readAttribute('name');
+    
+    $this->getWindow()->setContext($sName);
+    
+    $call = $window->createCall($window->getSelf(), 'getContext', $window->stringToInstance('php-string'), array($sName));
+    $if = $window->createCondition($call, $this->parseChildren($el->getChildren(), true, true));
+    
+    $window->add($if);
+    //$window->setContext($sName);
+    
+    //$window->add();
   }
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser;
-use \sylma\core, sylma\parser\action\php;
+use \sylma\core, sylma\parser\languages\common;
 
 require_once('core/module/Filed.php');
 
@@ -13,7 +13,7 @@ abstract class Reflector extends core\module\Filed {
    */
   private $window;
 
-  public function setWindow(php\_window $window) {
+  public function setWindow(common\_window $window) {
 
     $this->window = $window;
   }

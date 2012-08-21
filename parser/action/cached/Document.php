@@ -22,7 +22,7 @@ abstract class Document extends Basic implements dom\domable {
 
   protected function parseAction() {
 
-    $aResult = null;
+    $aResult = array();
     $aArguments = parent::parseAction();
 
     if ($this->useTemplate()) {
@@ -32,15 +32,15 @@ abstract class Document extends Basic implements dom\domable {
 
       $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
 */
-      $aResult = $aArguments;
-      $aResult[self::CONTEXT_DEFAULT] = array($this->loadTemplate(0, $aArguments));
+      
+      $aResult = $this->loadTemplate(0, $aArguments);
       //dspf($aResult);
     }
     else {
 
       $aResult = $aArguments;
     }
-
+    
     return $aResult;
   }
 
@@ -70,33 +70,6 @@ abstract class Document extends Basic implements dom\domable {
 
   public function asDOM() {
 
-    $mAction = $this->getContext();
-
-    if ($this->useTemplate()) {
-
-      $mResult = array_pop($mAction);
-    }
-    else {
-
-      $iAction = count($mAction);
-
-      if ($iAction == 1) {
-
-        $mAction = array_pop($mAction);
-      }
-
-      if ($iAction > 1 || !($mAction instanceof dom\handler)) {
-
-        $mResult = $this->getControler()->create('document');
-
-        if ($mAction) $mResult->add($mAction);
-      }
-      else {
-
-        $mResult = $mAction;
-      }
-    }
-
-    return $mResult;
+    return $this->getContext()->asDOM();
   }
 }

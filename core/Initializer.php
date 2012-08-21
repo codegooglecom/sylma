@@ -171,7 +171,6 @@ class Initializer extends module\Filed {
 
     $window = $this->create($sAlias, array($this->getFile($sPath)));
 
-    // Creation of the window
     return $window;
   }
 

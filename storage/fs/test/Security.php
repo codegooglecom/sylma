@@ -72,11 +72,11 @@ class Security extends tester\Prepare {
     $this->getControler('fs/test')->setControler($this->getUser(), 'user');
   }
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     $this->setControler($this->createControler((string) $this->getDirectory()), 'fs/test');
 
-    $result = parent::test($test, $this, $doc, $file);
+    $result = parent::test($test, $sContent, $this, $doc, $file);
 
     return $result;
   }

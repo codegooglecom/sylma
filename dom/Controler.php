@@ -44,6 +44,11 @@ class Controler extends core\module\Domed {
     return new basic\Collection($list);
   }
 
+  public function createDocument($mContent = '') {
+    
+    return parent::createDocument($mContent);
+  }
+  
   public function getClasses(core\argument $settings = null) {
 
     $aClasses = array();

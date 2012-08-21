@@ -83,7 +83,7 @@ class Grouped extends tester\Basic {
     return $aResult;
   }
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = null;
     $node = $test->getx('le:action');
@@ -127,7 +127,7 @@ class Grouped extends tester\Basic {
 
         if ($expected = $test->getx('self:expected', array(), false)) {
 
-          $bResult = parent::test($expected, $this, $doc, $file);
+          $bResult = parent::test($test, $expected->read(), $this, $doc, $file);
         }
         else {
 

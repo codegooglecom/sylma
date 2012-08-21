@@ -4,9 +4,6 @@ namespace sylma\core\module;
 use sylma\core;
 
 require_once('Controled.php');
-//require_once('core/factory.php');
-
-//require_once('core/Reflector.php');
 
 abstract class Argumented extends Controled {
 
@@ -138,6 +135,11 @@ abstract class Argumented extends Controled {
     return $this->getArguments()->set($sPath, $mValue);
   }
 
+  protected function show($mVar) {
+    
+    return $this->getControler('formater')->asHTML($mVar);
+  }
+  
   /**
    * Log a message
    * @param mixed|DOMNode|string|array $mMessage The message to send, will be parsed or stringed

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action\php, \sylma\parser;
+use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php, \sylma\parser;
 
 require_once(dirname(dirname(__dir__)) . '/Reflector.php');
 require_once(dirname(__dir__) . '/compiler.php');
@@ -35,7 +35,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   private $aParsers = array();
 
   /**
-   * Interface of new cached class. See @method php\_window::getSelf()
+   * Interface of new cached class. See @method common\_window::getSelf()
    * @var parser\caller\Domed
    */
   protected $interface;
@@ -177,7 +177,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
   /**
    *
-   * @return php\_instance
+   * @return common\_instance
    */
   protected function getReturn() {
 
@@ -217,7 +217,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
         $result = $this->aVariables[$sName];
 
-        if ($obj instanceof php\_var) {
+        if ($obj instanceof common\_var) {
 
           $obj->insert();
         }
@@ -226,7 +226,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
       }
       else {
 
-        if ($obj instanceof php\_var) {
+        if ($obj instanceof common\_var) {
 
           $result = $obj;
           $obj->insert();

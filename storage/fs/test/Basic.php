@@ -34,9 +34,9 @@ class Basic extends tester\Basic {
     return $result;
   }
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
-    $result = parent::test($test, $controler, $doc, $file);
+    $result = parent::test($test, $sContent, $controler, $doc, $file);
 
     $sPath = $this->getControler()->getDirectory()->getName();
 

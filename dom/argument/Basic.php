@@ -206,6 +206,11 @@ abstract class Basic extends core\module\Controled implements core\argument {
 
     return $mResult;
   }
+  
+  public function add($mValue) {
+    
+    return $this->getDocument()->add($mValue);
+  }
 
   public function normalize() {
 

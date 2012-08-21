@@ -5,6 +5,8 @@ use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
 require_once('parser/action/handler/Action.php');
 
+require_once('parser/context/Basic.php');
+
 class Document extends parser\action\handler\Action {
 
   private $head = null;
@@ -12,7 +14,12 @@ class Document extends parser\action\handler\Action {
 
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
-    $this->setContexts(array('css', 'js', 'title'));
+    $this->setContexts(array(
+      'css' => new parser\context\Basic,
+      'js' => new parser\context\Basic,
+      'title' =>  new parser\context\Basic,
+    ));
+
     $this->setNamespaces(array(
       'html' => \Sylma::read('namespaces/html'),
     ));
@@ -20,11 +27,11 @@ class Document extends parser\action\handler\Action {
     parent::__construct($file, $aArguments, $base);
   }
 
-  protected function addJS($aContext) {
+  protected function addJS(parser\context $context) {
 
-    if ($aContext && ($head = $this->getHead())) {
+    if ($head = $this->getHead()) {
 
-      foreach ($aContext as $mContext) {
+      foreach ($context->asArray() as $mContext) {
 
         $script = $head->addElement('script', null, array(
           'type' => 'text/javascript',
@@ -42,11 +49,11 @@ class Document extends parser\action\handler\Action {
     }
   }
 
-  protected function addCSS($aContext) {
+  protected function addCSS(parser\context $context) {
 
-    if ($aContext && ($head = $this->getHead())) {
+    if ($head = $this->getHead()) {
 
-      foreach ($aContext as $file) {
+      foreach ($context->asArray() as $file) {
 
         $head->addElement('link', null, array(
           'rel' => 'stylesheet',
@@ -135,6 +142,7 @@ class Document extends parser\action\handler\Action {
     $sProlog = $this->loadHeaders('text/html'); // 'application/xhtml+xml'
 
     $doc = parent::asDOM();
+
     $this->result = $doc;
 
     $doc->registerNamespaces($this->getNS());

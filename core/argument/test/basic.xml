@@ -32,6 +32,28 @@
       return $arg->read('abc') === 456
     </tst:expected>
   </tst:test>
+  <tst:test name="A set() with null path" disabled="true">
+    <tst:prepare>
+      $arg = $controler->createArgument(array('abc' => 123));
+      $arg->set(456);
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->read(1) === 456
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A null query" disabled="true">
+    <tst:prepare>
+      $arg = $controler->createArgument(array('abc' => 123));
+      $arg->set(null);
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->query() === array(null)
+    </tst:expected>
+  </tst:test>
   <tst:test name="A set() of array">
     <tst:prepare>
       $arg = $controler->createArgument();

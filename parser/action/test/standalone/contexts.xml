@@ -4,7 +4,7 @@
   <tst:test name="one context">
     <tst:prepare>
       $action = $controler->getAction('samples/context01');
-      $action->setContexts(array('css'));
+      $action->setContexts(array('css' => new \sylma\parser\context\Basic));
       
       $controler->setArgument('action', $action);
     </tst:prepare>
@@ -14,16 +14,16 @@
     <tst:expected>
       $action = $controler->getArgument('action');
       $node = $controler->getArgument('node');
-
+      
       return
         $controler->compareNodes($action->asDOM(), $node) &amp;&amp;
-        $action->getContext('css') === array(1 => 'hello');
+        $action->getContext('css')->asArray() === array('hello');
     </tst:expected>
   </tst:test>
   <tst:test name="two contexts">
     <tst:prepare>
       $action = $controler->getAction('samples/context02');
-      $action->setContexts(array('css', 'js'));
+      $action->setContexts(array('css' =>  new \sylma\parser\context\Basic, 'js' => new \sylma\parser\context\Basic));
       
       $controler->setArgument('action', $action);
     </tst:prepare>
@@ -33,17 +33,18 @@
     <tst:expected>
       $action = $controler->getArgument('action');
       $node = $controler->getArgument('node');
-
+//echo \Sylma::show($action->getContext('css')->asArray());
+//echo \Sylma::show($action->getContext('js')->asArray());
       return
         $controler->compareNodes($action->asDOM(), $node) &amp;&amp;
-        $action->getContext('css') === array(1 => 'hello') &amp;&amp;
-        $action->getContext('js') === array(2 => 'bonsoir');
+        $action->getContext('css')->asArray() === array('hello') &amp;&amp;
+        $action->getContext('js')->asArray() === array('bonsoir');
     </tst:expected>
   </tst:test>
   <tst:test name="using short call">
     <tst:prepare>
       $action = $controler->getAction('samples/context03');
-      $action->setContexts(array('css'));
+      $action->setContexts(array('css' =>  new \sylma\parser\context\Basic));
       
       $controler->setArgument('action', $action);
     </tst:prepare>
@@ -56,7 +57,7 @@
 
       return
         $controler->compareNodes($action->asDOM(), $node) &amp;&amp;
-        $action->getContext('css') === array(1 => $controler->getDirectory() . '/samples/read.txt');
+        $action->getContext('css')->asArray() === array($controler->getDirectory() . '/samples/read.txt');
     </tst:expected>
   </tst:test>
 </tst:tests>

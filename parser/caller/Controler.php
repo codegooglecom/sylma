@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\caller;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\action\php, sylma\storage\fs;
+use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
 
 require_once('core/module/Domed.php');
 require_once('parser/domed.php');
@@ -102,13 +102,13 @@ class Controler extends core\module\Domed implements parser\elemented {
 
     return parent::getFile($sPath, $bDebug);
   }
-  
+
   /**
    * Find interface corresponding to object given as argument
-   * @param php\_object $obj
+   * @param common\_object $obj
    * @return parser\caller
    */
-  public function loadObject(php\_object $obj) {
+  public function loadObject(common\_object $obj) {
 
     $interface = $obj->getInstance()->getInterface();
 

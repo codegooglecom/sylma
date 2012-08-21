@@ -3,11 +3,12 @@
 namespace sylma\core\module;
 use \sylma\core, \sylma\storage\fs;
 
+require_once('Sessioned.php');
+
 require_once('core/argument/Filed.php');
 require_once('core/functions/Path.php');
-require_once('Argumented.php');
 
-abstract class Filed extends Argumented {
+abstract class Filed extends Sessioned {
 
   const FS_CONTROLER = 'fs';
 

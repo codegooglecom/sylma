@@ -11,7 +11,7 @@ interface action extends dom\domable {
   const FILE_DEFAULT_MODE = \Sylma::MODE_READ;
 
   //const EXPORT_DIRECTORY = '#cache';
-
+  // TODO, unuseful constructor interface
   function __construct(fs\file $file, array $aArguments = array());
 }
 

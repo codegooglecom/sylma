@@ -264,6 +264,11 @@ class Sylma {
     */
   }
 
+  public static function show($mVal) {
+    
+    return self::getControler('formater')->asHTML($mVal);
+  }
+  
   public static function loadException(Exception $e) {
 
     $newException = new Sylma::$exception;
@@ -289,7 +294,7 @@ class Sylma {
 
   public static function render() {
 
-    if (self::read('render/gzip')) ob_start('ob_gzhandler');
+    if (!self::read('debug/enable') && self::read('render/gzip')) ob_start('ob_gzhandler');
 
     return self::$result;
   }

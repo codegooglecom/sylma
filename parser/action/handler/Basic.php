@@ -98,7 +98,10 @@ abstract class Basic extends core\module\Domed implements parser\action {
       $tmpFile = $this->buildAction();
     }
 
-    if (self::DEBUG_RUN) $result = $this->runCache($tmpFile);
+    if (self::DEBUG_RUN) {
+      
+      $result = $this->runCache($tmpFile);
+    }
     else {
 
       $this->throwException('No result, DEBUG_RUN set to TRUE');

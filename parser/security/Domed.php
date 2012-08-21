@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\security;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\action\php;
+use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
 
 require_once('parser/attributed.php');
 require_once('Reflector.php');
