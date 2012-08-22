@@ -24,7 +24,7 @@ abstract class Document extends Basic implements dom\domable {
 
     $aResult = array();
     $aArguments = parent::parseAction();
-
+    
     if ($this->useTemplate()) {
 /*
       $controler = $this->getControler();
@@ -34,10 +34,9 @@ abstract class Document extends Basic implements dom\domable {
 */
       
       $aResult = $this->loadTemplate(0, $aArguments);
-      //dspf($aResult);
     }
     else {
-
+      
       $aResult = $aArguments;
     }
     

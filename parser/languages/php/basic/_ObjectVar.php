@@ -27,7 +27,7 @@ class _ObjectVar extends _Var implements common\_object {
   
   public function addContent($mVar) {
 
-    return $this->getControler()->addContent($mVar);
+    return $this->getControler()->add($mVar);
   }
 
   public function asArgument() {

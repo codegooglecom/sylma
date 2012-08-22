@@ -80,6 +80,7 @@ abstract class Argumented extends Domed {
     $assign = $window->create('assign', array($window, $var, $callFormat));
     $window->add($assign);
     //$var = $callFormat->getVar();
+    
     // argument is available direclty after format has been checked, ie. for validation
 
     $this->setActionArgument($mKey, $var);
@@ -113,21 +114,21 @@ abstract class Argumented extends Domed {
 
       if ($val instanceof php\basic\instance\_String) {
 
-        $call = $window->createCall($window->getSelf(), 'validateString', $bool, array($call));
+        $call = $window->createCall($window->getSelf(), 'validateString', $window->stringToInstance('php-string'), array($call));
       }
       else if ($val instanceof php\basic\instance\_Numeric) {
 
-        $call = $window->createCall($window->getSelf(), 'validateNumeric', $bool, array($call));
+        $call = $window->createCall($window->getSelf(), 'validateNumeric', $window->stringToInstance('php-numeric'), array($call));
       }
       else if ($val instanceof php\basic\instance\_Array) {
 
-        $call = $window->createCall($window->getSelf(), 'validateArray', $bool, array($call));
+        $call = $window->createCall($window->getSelf(), 'validateArray', $window->stringToInstance('php-array'), array($call));
       }
     }
     else if ($val instanceof common\_object) {
 
       $interface = $val->getInterface();
-      $call = $window->createCall($window->getSelf(), 'validateObject', $bool, array($call, $interface->getName()));
+      $call = $window->createCall($window->getSelf(), 'validateObject', $val, array($call, $interface->getName()));
     }
 
     return $call;

@@ -30,7 +30,7 @@ class Document extends parser\action\handler\Action {
   protected function addJS(parser\context $context) {
 
     if ($head = $this->getHead()) {
-
+      
       foreach ($context->asArray() as $mContext) {
 
         $script = $head->addElement('script', null, array(

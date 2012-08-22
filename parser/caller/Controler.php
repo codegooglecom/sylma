@@ -93,9 +93,9 @@ class Controler extends core\module\Domed implements parser\elemented {
     }
 
     $window = $this->getParent()->getWindow();
-    $interface = $this->loadObject($window->getScope());
+    $interface = $this->loadObject($window->getObject());
 
-    return $interface->parseCall($node, $window->getScope());
+    return $interface->parseCall($node, $window->getObject());
   }
 
   public function getFile($sPath, $bDebug = true) {

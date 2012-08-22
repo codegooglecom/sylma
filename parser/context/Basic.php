@@ -38,13 +38,12 @@ class Basic extends core\module\Argumented implements parser\context {
     
     $aArguments = $this->getArguments()->query();
     
-    if (count($aArguments) !== 1) {
+    if (count($aArguments) > 1) {
       
-      //echo $this->show($aArguments);
-      $this->throwException('Multiple or no values when object expected');
+      $this->throwException('Multiple values when object expected');
     }
     
-    $result = array_pop($aArguments);
+    $result = reset($aArguments);
     /*
     if (!is_object($result)) {
       

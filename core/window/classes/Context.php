@@ -20,6 +20,11 @@ class Context extends core\module\Controled implements core\window\action {
 
     $this->action = $action;
     $this->sContext = $sContext;
+    
+    $parser = $this->getControler('action');
+    $this->getAction()->setContexts(array(
+      $sContext => $parser->createContext(),
+    ));
   }
 
   protected function getContext() {
@@ -41,10 +46,14 @@ class Context extends core\module\Controled implements core\window\action {
 
   public function asString() {
 
+    $sResult = '';
     $this->setHeader($this->getContext());
 
-    $result = $this->getAction()->getContext($this->getContext());
+    if ($result = $this->getAction()->getContext($this->getContext())) {
+      
+      $sResult = $result->asString();
+    }
 
-    return $result->asString();
+    return $sResult;
   }
 }

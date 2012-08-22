@@ -44,7 +44,7 @@ abstract class Container extends Basic {
     //$result = $this->parseNamespaces($this->getContent());
 
     if ($sResult = $this->getContent()) {
-
+      
       $this->setContent();
       parent::loadText($sResult);
     }

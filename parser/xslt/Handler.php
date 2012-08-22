@@ -243,7 +243,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if ($doc->isEmpty()) {
 
-      $doc->throwException(t('Cannot parse empty document'));
+      $doc->throwException('Cannot parse empty document');
     }
 
     if ($this->isEmpty()) {

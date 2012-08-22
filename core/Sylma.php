@@ -266,7 +266,9 @@ class Sylma {
 
   public static function show($mVal) {
     
-    return self::getControler('formater')->asHTML($mVal);
+    $node = self::getControler('formater')->asHTML($mVal);
+    //echo $node;
+    return $node;
   }
   
   public static function loadException(Exception $e) {

@@ -63,7 +63,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
       $this->bRunned = true;
       
       //echo $this->show($this->aResults['default']->getArguments());
-      //echo $this->show($aResult);
+      //echo $this->show($this->runAction());
     }
     
     //return $this->aResults;

@@ -312,21 +312,4 @@ abstract class Basic extends core\module\Controled implements dom\handler {
 
     dspm($this->asString());
   }
-
-  public function __toString() {
-
-    $sResult = '';
-
-    try {
-
-      $sResult = $this->asString();
-    }
-    catch (\Exception $e) {
-
-      //throw $e;
-      \Sylma::log($this->asToken(), $e->getMessage());
-    }
-
-    return $sResult;
-  }
 }

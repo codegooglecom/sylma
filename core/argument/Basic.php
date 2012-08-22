@@ -58,22 +58,22 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   public function set($sPath = '', $mValue = null, $bIndex = false) {
 
     $mResult = null;
+    $bRoot = false;
     
     if ($sPath !== '') {
 
       $aPath = $this->parsePath($sPath);
-      $bRoot = false;
 
       if (is_null($mValue)) {
 
         $sLast = array_pop($aPath);
 
         if ($aPath) {
-          
+
           $mTarget =& $this->locateValue($aPath, false, true);
         }
         else {
-          
+
           $mTarget =& $this->aArray;
           $bRoot = true;
         }
@@ -92,7 +92,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
           $mTarget =& $this->aArray;
           //$bRoot = true;
         }
-
+        
         foreach ($aPath as $sKey) {
 
           $mTarget[$sKey] = array();
@@ -124,29 +124,36 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     else {
 
       if ($bRoot) {
-        //echo \Sylma::show($mValue);
+        
         if (is_null($mValue)) $this->aArray = array();
         else if ($mValue instanceof core\argument) $this->aArray = $mValue->query();
         else if (!is_array($mValue)) $this->aArray = array($mValue);
         else $this->aArray = $mValue;
-        //echo \Sylma::show($this->aArray);
+        
       }
       else {
         
         $mTarget = $mValue;
       }
     }
-
+    
+//echo \Sylma::show(count($this->aArray));
     if ($mValue) {
-      
+
       if ($sPath === '') {
 
         $mResult =& reset($this->aArray);
         //$mResult =& end($this->aArray);//reset($this->aArray);
       }
       else if (is_object($mValue) || is_array($mValue)) {
-
+//echo \Sylma::show($mValue);
+//
         $mResult = $this->get($sPath);
+        
+      }
+      else {
+        
+        $mResult = $this->read($sPath);
       }
     }
 
@@ -290,20 +297,25 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
           }
         }
       }
-      else if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug)) {
-
-        $mCurrent =& $mCurrent[$sKey];
-
-        // run hypotheticals parse on strings
-        if ($mCurrent && is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
-
-        // if last, save result
-        if (!$aPath) $mResult =& $mCurrent;
-      }
       else {
 
-        if ($bReturn) $mResult =& $mCurrent;
-        break;
+        $sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug);
+
+        if (!is_null($sKey)) {
+          
+          $mCurrent =& $mCurrent[$sKey];
+
+          // run hypotheticals parse on strings
+          if ($mCurrent && is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
+
+          // if last, save result
+          if (!$aPath) $mResult =& $mCurrent;
+        }
+        else {
+
+          if ($bReturn) $mResult =& $mCurrent;
+          break;
+        }
       }
     }
 
@@ -334,7 +346,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         $this->throwException(sprintf('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
       }
 
-      $sKey = '';
+      $sKey = null;
     }
 
     return $sKey;

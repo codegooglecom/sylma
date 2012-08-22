@@ -32,9 +32,7 @@
 
   <xsl:template match="php:insert-call">
     <xsl:processing-instruction name="php">
-      <xsl:text>if (array_key_exists(</xsl:text>
-      <xsl:value-of select="@key"/>
-      <xsl:text>, $aArguments)) echo $aArguments[</xsl:text>
+      <xsl:text>echo $aArguments[</xsl:text>
       <xsl:value-of select="@key"/>
       <xsl:text>]; </xsl:text>
     </xsl:processing-instruction>

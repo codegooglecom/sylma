@@ -22,7 +22,7 @@ abstract class Runner extends Action {
       $var->insert();
 
       $window = $this->getWindow();
-      $window->setScope($var);
+      $window->setObject($var);
 
       $caller = $this->getControler(self::CALLER_ALIAS);
       $interface = $caller->loadObject($var);
@@ -45,7 +45,7 @@ abstract class Runner extends Action {
 //      if (count($aResult) == 1) $mResult = $aResult[0];
 //      else $mResult = $aResult;
 
-      $window->stopScope();
+      $window->stopObject();
     }
 
     return $aResult;

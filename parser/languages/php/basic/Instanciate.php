@@ -33,7 +33,7 @@ class Instanciate extends Controled implements common\_object, common\_instance,
 
   public function addContent($mVar) {
 
-    return $this->getControler()->addContent($mVar);
+    return $this->getControler()->add($mVar);
   }
 
   public function asArgument() {

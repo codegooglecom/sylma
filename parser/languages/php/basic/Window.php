@@ -32,7 +32,13 @@ class Window extends core\module\Domed implements common\_window, core\controled
 
   protected $sContext = self::CONTEXT_DEFAULT;
 
+  /**
+   * Stack of scopes added (ie: control structure, if, when, etc..)
+   * @var array
+   */
   protected $aScopes = array();
+  
+  protected $aObjects = array();
 
   protected $aKeys = array();
 
@@ -278,7 +284,7 @@ class Window extends core\module\Domed implements common\_window, core\controled
 
     if (!$this->aScopes) {
 
-      $this->throwException(t('Cannot get scope, no scope defined'));
+      $this->throwException('Cannot get scope, no scope defined');
     }
 
     return $this->aScopes[count($this->aScopes) - 1];
@@ -299,6 +305,31 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return array_pop($this->aScopes);
   }
 
+  public function getObject() {
+
+    if (!$this->aObjects) {
+
+      $this->throwException(t('Cannot get object, no object defined'));
+    }
+
+    return $this->aObjects[count($this->aObjects) - 1];
+  }
+  
+  public function setObject(common\_object $obj) {
+    
+    $this->aObjects[] = $obj;
+  }
+  
+  public function stopObject() {
+
+    if (!$this->aObjects) {
+
+      $this->throwException(t('Cannot stop object scope, no object defined'));
+    }
+
+    return array_pop($this->aObjects);
+  }
+  
   public function convertToString($val, $iMode = 0) {
 
     $result = null;

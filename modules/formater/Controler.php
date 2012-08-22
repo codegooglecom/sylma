@@ -53,10 +53,22 @@ class Controler extends core\module\Domed {
 
     $result = null;
 
-    if ($val instanceof core\argument\Basic) {
+    if ($val instanceof core\argument) {
 
       $aResult = $val->query();
       $result = $this->loadArray($aResult);
+    }
+    else if ($val instanceof dom\handler) {
+      
+      if ($val->getRoot(false)) {
+        
+        $result = $val->asString();
+      }
+      else {
+        
+        $result = '[EMPTY]';
+      }
+      
     }
     else if ($val instanceof dom\node) {
 

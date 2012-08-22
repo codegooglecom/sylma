@@ -479,7 +479,13 @@ class Reflector extends Argumented {
     $this->getWindow()->setContext($sName);
     
     $call = $window->createCall($window->getSelf(), 'getContext', $window->stringToInstance('php-string'), array($sName));
-    $if = $window->createCondition($call, $this->parseChildren($el->getChildren(), true, true));
+    $if = $window->createCondition($call);
+    
+    $window->setScope($if);
+    
+    $if->addContent($this->parseChildren($el->getChildren(), true, true));
+    
+    $window->stopScope();
     
     $window->add($if);
     //$window->setContext($sName);

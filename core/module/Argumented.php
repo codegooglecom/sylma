@@ -137,7 +137,7 @@ abstract class Argumented extends Controled {
 
   protected function show($mVar) {
     
-    return $this->getControler('formater')->asHTML($mVar);
+    return \Sylma::show($mVar);
   }
   
   /**

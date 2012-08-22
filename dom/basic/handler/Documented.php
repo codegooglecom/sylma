@@ -141,8 +141,7 @@ abstract class Documented extends Container {
 
   public function isEmpty() {
 
-    $this->loadContent();
-    return $this->getDocument()->isEmpty();
+    return !$this->getContent() && !$this->getRoot(false, false);
   }
 
   public function addElement($sName, $mContent = '', array $aAttributes = null, $sNamespace = null) {
@@ -197,9 +196,14 @@ abstract class Documented extends Container {
     return $container->setRoot($el);
   }
 
-  public function getRoot($bDebug = true) {
+  /**
+   * Load text content when exists then return root element
+   * @param bool $bDebug If set to FALSE, no exception will be thrown if document is empty
+   * @return dom\element
+   */
+  public function getRoot($bDebug = true, $bLoad = true) {
 
-    $this->loadContent();
+    if ($bLoad) $this->loadContent();
 
     $result = $this->getContainer()->getRoot();
 
@@ -210,4 +214,17 @@ abstract class Documented extends Container {
 
     return $result;
   }
+
+  public function __toString() {
+
+    $sResult = '';
+    
+    if (!$this->isEmpty()) {
+      
+      $sResult = $this->asString();
+    }
+    
+    return $sResult;
+  }
+
 }
