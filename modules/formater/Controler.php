@@ -37,18 +37,18 @@ class Controler extends core\module\Domed {
   }
 
   /**
-   * 
+   *
    * @param \sylma\dom\node $val
    * @return array
    */
   protected function loadObjectElement($val, $mContent) {
-    
+
     return array('object' => array(
       '@class' => get_class($val),
       $mContent,
     ));
   }
-  
+
   protected function loadObject($val) {
 
     $result = null;
@@ -103,12 +103,12 @@ class Controler extends core\module\Domed {
   }
 
   protected function loadBoolean($bVar) {
-    
+
     $content = $bVar ? '[TRUE]' : '[FALSE]';
-    
+
     return array('boolean' => $content);
   }
-  
+
   protected function loadVar($mVar) {
 
     $aResult = array();
@@ -179,6 +179,10 @@ class Controler extends core\module\Domed {
     else if (is_numeric($mVal)) {
 
       $sResult = '[numeric = ' . $mVal . ']';
+    }
+    else {
+
+      $sResult = '[' . gettype($mVal) . ']';
     }
 
     return '@var ' . $sResult;

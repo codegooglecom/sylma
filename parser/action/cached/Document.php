@@ -6,7 +6,7 @@ use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
 require_once('Basic.php');
 require_once('dom/domable.php');
 
-abstract class Document extends Basic implements dom\domable {
+class Document extends Basic implements dom\domable {
 
   protected $sTemplate = '';
 
@@ -20,10 +20,10 @@ abstract class Document extends Basic implements dom\domable {
     return $doc;
   }
 
-  protected function parseAction() {
+  protected function runAction(fs\file $file) {
 
     $aResult = array();
-    $aArguments = parent::parseAction();
+    $aArguments = parent::runAction($file);
     
     if ($this->useTemplate()) {
 /*
@@ -32,14 +32,14 @@ abstract class Document extends Basic implements dom\domable {
 
       $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
 */
-      
+
       $aResult = $this->loadTemplate(0, $aArguments);
     }
     else {
       
       $aResult = $aArguments;
     }
-    
+
     return $aResult;
   }
 
@@ -53,6 +53,11 @@ abstract class Document extends Basic implements dom\domable {
     ob_end_clean();
 
     return $sResult;
+  }
+
+  protected function setTemplate($sTemplate) {
+
+    $this->sTemplate = $sTemplate;
   }
 
   protected function useTemplate() {

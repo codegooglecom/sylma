@@ -16,7 +16,17 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   protected $aResults = array();
   protected $bRunned = false;
 
-  public function __construct(fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
+  protected $file = null;
+
+  /**
+   *
+   * @param \sylma\storage\fs\file $file The php file containing instructions
+   * @param \sylma\storage\fs\directory $dir
+   * @param \sylma\parser\action $controler
+   * @param array $aContexts
+   * @param \sylma\core\argument $arguments
+   */
+  public function __construct(fs\file $file, fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
 
     require_once('parser/action.php');
 
@@ -27,27 +37,58 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     $this->setContexts($aContexts);
     $this->setControler($controler);
+    $this->setFile($file);
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
 
     $this->loadDefaultArguments();
-    $this->setArgumentsArray($aArguments);
+    $this->setActionArguments($aArguments);
   }
 
-  public function setArgumentsArray(array $aArguments) {
+  public function setActionArguments(array $aArguments) {
 
     $this->aActionArguments = $aArguments;
+  }
+
+  protected function getActionArgument($sName, $bRequired = true) {
+
+    $mResult = null;
+
+    if (!array_key_exists($sName, $this->aActionArguments)) {
+
+      if ($bRequired) $this->throwException(sprintf('Unknow argument : %s', $sName));
+    }
+    else {
+
+      $mResult = $this->aActionArguments[$sName];
+    }
+
+    return $mResult;
   }
 
   /**
    *
    * @return array
    */
-  abstract protected function runAction();
+  protected function runAction(fs\file $file) {
 
-  protected function parseAction() {
+    $aArguments = array();
 
-    return $this->runAction();
+    include($file->getRealPath());
+
+    return $aArguments;
+  }
+
+  protected function setFile(fs\file $file) {
+
+    $this->file = $file;
+  }
+
+  protected function getFile($sPath = '', $bDebug = true) {
+
+    $result = $sPath ? parent::getFile($sPath, $bDebug) : $this->file;
+
+    return $result;
   }
 
   /**
@@ -58,14 +99,14 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!$this->bRunned) {
 
-      $aResult = $this->parseAction();
+      $aResult = $this->runAction($this->getFile());
       $this->aResults[self::CONTEXT_DEFAULT]->set('', $aResult);
       $this->bRunned = true;
-      
+
       //echo $this->show($this->aResults['default']->getArguments());
       //echo $this->show($this->runAction());
     }
-    
+
     //return $this->aResults;
   }
 
@@ -92,22 +133,6 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     }
 
     return $sVal;
-  }
-
-  protected function getActionArgument($sName, $bRequired = true) {
-
-    $mResult = null;
-
-    if (!array_key_exists($sName, $this->aActionArguments)) {
-
-      if ($bRequired) $this->throwException(sprintf('Unknow argument : %s', $sName));
-    }
-    else {
-
-      $mResult = $this->aActionArguments[$sName];
-    }
-
-    return $mResult;
   }
 
   protected function validateArgument($sName, $mVar, $mVal, $bRequired = true, $bReturn = false, $bDefault = false) {
@@ -203,7 +228,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   }
 
   public function asArray() {
-    
+
     return $this->getContext()->asArray();
   }
 
@@ -214,9 +239,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
-    $file = $this->getControler()->getFile();
-
-    $mSender[] = $file->asToken();
+    $mSender[] = $this->getFile()->asToken();
 
     return parent::throwException($sMessage, $mSender, $iOffset);
   }

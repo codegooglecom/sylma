@@ -14,24 +14,10 @@
 
   <xsl:template match="php:window">&lt;?php
 
-namespace <xsl:value-of select="$namespace"/>;
-use sylma\parser;
-
-require_once('parser/action/cached/Document.php');
-
-class <xsl:value-of select="$class"/> extends <xsl:value-of select="@extends"/> {
-
-  <xsl:if test="@use-template = 'true'">protected $sTemplate = '<xsl:value-of select="$template"/>';</xsl:if>
-
-  protected function runAction() {
-
-    $aArguments = array();
+    <xsl:if test="@use-template = 'true'">$this->setTemplate('<xsl:value-of select="$template"/>');
+</xsl:if>
 
     <xsl:apply-templates select="*"/>
-
-    return $aArguments;
-  }
-}
 
   </xsl:template>
 

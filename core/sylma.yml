@@ -24,7 +24,7 @@ initializer :
     path :
       name : \sylma\parser\action\Path
     action :
-      name : \sylma\parser\action\handler\Action
+      name : \sylma\parser\action\handler\Basic
     window :
       name : \sylma\core\window\classes\File
     json :

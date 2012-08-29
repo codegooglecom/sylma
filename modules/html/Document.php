@@ -3,11 +3,11 @@
 namespace sylma\modules\html;
 use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-require_once('parser/action/handler/Action.php');
+require_once('parser/action/handler/Basic.php');
 
 require_once('parser/context/Basic.php');
 
-class Document extends parser\action\handler\Action {
+class Document extends parser\action\handler\Basic {
 
   private $head = null;
   protected $result = null;
@@ -102,8 +102,8 @@ class Document extends parser\action\handler\Action {
 
   protected function loadContexts() {
 
-    $this->addCSS($this->aArguments['content']->getContext('css'));
-    $this->addJS($this->aArguments['content']->getContext('js'));
+    $this->addCSS($this->getContext('css'));
+    $this->addJS($this->getContext('js'));
   }
 
   protected function loadSystemInfos(dom\handler $doc) {
@@ -127,14 +127,9 @@ class Document extends parser\action\handler\Action {
 
   protected function cleanResult(dom\handler $doc) {
 
-    require_once('dom/handler.php');
+    $cleaner = new Cleaner;
 
-    $this->setDirectory(__FILE__);
-    $cleaner = $this->getTemplate('cleaner.xsl');
-
-    $cleaned = $cleaner->parseDocument($doc);
-
-    return $cleaned->asString(dom\handler::STRING_INDENT); // | dom\handler::STRING_HEAD
+    return $cleaner->clean($doc);
   }
 
   public function asString() {
@@ -154,3 +149,24 @@ class Document extends parser\action\handler\Action {
   }
 }
 
+require_once('core/module/Domed.php');
+
+class Cleaner extends core\module\Domed {
+
+  public function __construct() {
+
+    $this->setDirectory(__FILE__);
+    $this->loadDefaultArguments();
+  }
+
+  public function clean(dom\handler $doc) {
+
+    require_once('dom/handler.php');
+
+    $cleaner = $this->getTemplate('cleaner.xsl');
+
+    $cleaned = $cleaner->parseDocument($doc);
+
+    return $cleaned->asString(dom\handler::STRING_INDENT); // | dom\handler::STRING_HEAD
+  }
+}

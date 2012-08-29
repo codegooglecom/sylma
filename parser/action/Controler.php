@@ -6,7 +6,9 @@ use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 require_once('parser/action.php');
 require_once('core/module/Domed.php');
 
-class Controler extends core\module\Domed {
+require_once('core/factory.php');
+
+class Controler extends core\module\Domed implements core\factory {
 
   const FS_EDITABLE = 'fs/editable';
 
@@ -46,7 +48,7 @@ class Controler extends core\module\Domed {
     if (!$dir) {
 
       $fs = $this->getControler(self::FS_EDITABLE);
-      
+
       $user = $this->getControler('user');
       $tmp = $fs->getDirectory((string) $user->getDirectory('#tmp'));
 
@@ -72,9 +74,25 @@ class Controler extends core\module\Domed {
 
     return parent::getDirectory($sPath, $bDebug);
   }
-  
+
+  public function readArgument($sPath, $mDefault = null, $bDebug = false) {
+
+    return parent::readArgument($sPath, $mDefault, $bDebug);
+  }
+
+  public function createAction(fs\file $file, array $aArguments = array(), array $aContexts = array(), $dir = null) {
+
+    $dir = $dir ? $file->getParent() : $dir;
+
+    $result = $this->create('action', array($file, $aArguments, $dir));
+    $result->setContexts($aContexts);
+
+    return $result;
+  }
+
   public function createContext() {
-      
+
     return $this->create('context');
   }
+
 }
