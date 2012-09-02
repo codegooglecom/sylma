@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\caller;
-use sylma\core, sylma\parser\action\php, sylma\parser;
+use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
 
 require_once('core/module/Argumented.php');
 
@@ -25,7 +25,7 @@ class Method extends core\module\Argumented {
 
       if ($sArgument != 'argument' || $arg->getNamespace() != $this->getControler()->getNamespace()) {
 
-        $this->throwException(txt('Invalid %s, argument expected', $arg->asToken()));
+        $this->throwException(sprintf('Invalid %s, argument expected', $arg->asToken()));
       }
 
       $sName = $arg->read('@name');
@@ -53,7 +53,7 @@ class Method extends core\module\Argumented {
     }
     else {
 
-      require_once('core/functions/path.php');
+      require_once('core/functions/Path.php');
 
       $sResult = core\functions\path\toAbsolute($sReturn, $this->getControler()->getNamespace('php'), '\\');
     }
@@ -82,20 +82,23 @@ class Method extends core\module\Argumented {
 
     if (substr($sFormat, 0, 4) == 'php-') {
 
-      if ($obj instanceof php\_scalar) {
+      if ($obj instanceof common\_scalar) {
 
         $bResult = $obj->useFormat($sFormat);
       }
     }
     else {
 
-      $interface = $obj->getInterface();
-      $bResult = $interface->instanceOf($sFormat);
+      if ($obj instanceof common\_object) {
+
+        $interface = $obj->getInterface();
+        $bResult = $interface->isInstance($sFormat);
+      }
     }
 
     if (!$bResult) {
 
-      $this->throwException(txt('Argument %s has bad format, %s expected', get_class($obj), $sFormat));
+      $this->throwException(sprintf('Bad argument : %s, %s expected', $this->show($obj), $sFormat));
     }
   }
 
@@ -124,7 +127,7 @@ class Method extends core\module\Argumented {
     return true;
   }
 
-  public function reflectCall(php\_window $window, php\basic\_ObjectVar $var, array $aArguments = array()) {
+  public function reflectCall(common\_window $window, php\basic\_ObjectVar $var, array $aArguments = array()) {
 
     $this->validateArguments($aArguments);
 

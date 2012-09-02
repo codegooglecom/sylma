@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/interface" xmlns:ls="http://www.sylma.org/security">
-  <file>Admin.php</file>
-  <name>TreeMenusAdmin</name>
-  <method-construct>
-    <argument name="from" format="php-string"/>
-    <argument name="to" format="php-string" required="false"/>
-  </method-construct>
-</class>

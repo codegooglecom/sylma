@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\argument;
-use \sylma\core;
+use sylma\core;
 
 require_once('core/argument.php');
 require_once('core/argumentable.php');
@@ -13,7 +13,7 @@ require_once('core/module/Namespaced.php');
  *
  * @author rodolphe.gerber (at) gmail.com
  */
-abstract class Basic extends core\module\Namespaced implements core\argument {
+abstract class Basic extends core\module\Namespaced {
 
   const MESSAGES_STATUT = \Sylma::LOG_STATUT_DEFAULT;
   const DEBUG_NORMALIZE_RECURSION = false;
@@ -23,6 +23,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   protected $aArray = array();
   private $parent;
   protected static $aNormalizedObjects = array();
+  protected static $sCurrentPath;
 
   public function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
 
@@ -56,29 +57,56 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
   public function set($sPath = '', $mValue = null, $bIndex = false) {
 
-    if ($sPath) {
+    $mResult = null;
+    $bRoot = false;
+
+    if ($sPath !== '') {
 
       $aPath = $this->parsePath($sPath);
 
-      $mTarget =& $this->locateValue($aPath, false, true);
+      if (is_null($mValue)) {
 
-      if ($mTarget === null) {
+        $sLast = array_pop($aPath);
 
-        $mTarget =& $this->aArray;
+        if ($aPath) {
+
+          $mTarget =& $this->locateValue($aPath, false, true);
+        }
+        else {
+
+          $mTarget =& $this->aArray;
+          $bRoot = true;
+        }
+
+        if (is_array($mTarget)) {
+
+          unset($mTarget[$sLast]);
+        }
       }
+      else {
 
-      foreach ($aPath as $sKey) {
+        $mTarget =& $this->locateValue($aPath, false, true);
 
-        $mTarget[$sKey] = array();
-        $mTarget =& $mTarget[$sKey];
+        if (is_null($mTarget)) {
+
+          $mTarget =& $this->aArray;
+          //$bRoot = true;
+        }
+
+        foreach ($aPath as $sKey) {
+
+          $mTarget[$sKey] = array();
+          $mTarget =& $mTarget[$sKey];
+        }
       }
     }
     else {
 
-      $mTarget =& $this->aArray;
+      //$mTarget =& $this->aArray;
+      $bRoot = true;
     }
 
-    if ($bIndex) {
+    if ($bIndex) { // todo : check for usage
 
       if (is_array($mTarget)) {
 
@@ -86,7 +114,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       }
       else if ($mTarget instanceof core\argument) {
 
-        $mTarget->add('', $mValue);
+        $mTarget->add($mValue);
       }
       else {
 
@@ -95,26 +123,46 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      if ($mValue !== null) {
+      if ($bRoot) {
 
-        $mTarget = $mValue;
+        if (is_null($mValue)) $this->aArray = array();
+        else if ($mValue instanceof core\argument) $this->aArray = $mValue->query();
+        else if (!is_array($mValue)) $this->aArray = array($mValue);
+        else $this->aArray = $mValue;
+
       }
       else {
 
-        $mTarget = null;
+        $mTarget = $mValue;
       }
     }
 
-    if ($mTarget !== null && !is_string($mValue)) {
+//echo \Sylma::show(count($this->aArray));
+    if ($mValue) {
 
-      return $this->get($sPath);
+      if ($sPath === '') {
+
+        $mResult =& reset($this->aArray);
+        //$mResult =& end($this->aArray);//reset($this->aArray);
+      }
+      else if (is_object($mValue) || is_array($mValue)) {
+//echo \Sylma::show($mValue);
+//
+        $mResult = $this->get($sPath);
+
+      }
+      else {
+
+        $mResult = $this->read($sPath);
+      }
     }
-    else return null;
+
+    return $mResult;
   }
 
-  public function add($sPath = '', $mValue = null) {
+  public function add($mValue) {
 
-    return $this->set($sPath, $mValue, true);
+    return $this->aArray[] = $mValue;
   }
 
   public function query($sPath = '', $bDebug = true) {
@@ -166,17 +214,8 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      try {
-
-        $aPath = self::parsePath($sPath);
-        $mResult =& $this->locateValue($aPath, $bDebug);
-      }
-      catch (core\exception $e) {
-
-        throw $e;
-        //$mResult = null;
-        //return $mResult;
-      }
+      $aPath = self::parsePath($sPath);
+      $mResult =& $this->locateValue($aPath, $bDebug);
     }
 
     return $mResult;
@@ -205,12 +244,12 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       if ($sSubPath !== '..') $aResult[] = $sSubPath;
       else {
 
-        if (!$aResult) \Sylma::throwException(txt('Cannot use .. when current level is root in @path /%s', $sSubPath));
+        if (!$aResult) \Sylma::throwException(sprintf('Cannot use .. when current level is root in @path /%s', $sSubPath));
         else array_pop($aResult);
       }
     }
 
-    if ($sPath && !$aPath) $this->throwException(txt('Cannot parse path %s', $sPath));
+    if ($sPath && !$aPath) $this->throwException(sprintf('Cannot parse path %s', $sPath));
 
     return $aResult;
   }
@@ -252,26 +291,31 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
           else if ($aPath && $bDebug) {
 
             $this->throwException(
-              txt('No array in @path %s. Cannot browse with @path %s',
+              sprintf('No array in @path %s. Cannot browse with @path %s',
               implode('/', $aParentPath), implode('/', $aParentPath + $aPath)),
               count($aPath) + 3);
           }
         }
       }
-      else if ($sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug)) {
-
-        $mCurrent =& $mCurrent[$sKey];
-
-        // run hypotheticals parse on strings
-        if ($mCurrent && is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
-
-        // if last, save result
-        if (!$aPath) $mResult =& $mCurrent;
-      }
       else {
 
-        if ($bReturn) $mResult =& $mCurrent;
-        break;
+        $sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug);
+
+        if (!is_null($sKey)) {
+
+          $mCurrent =& $mCurrent[$sKey];
+
+          // run hypotheticals parse on strings
+          if ($mCurrent && is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
+
+          // if last, save result
+          if (!$aPath) $mResult =& $mCurrent;
+        }
+        else {
+
+          if ($bReturn) $mResult =& $mCurrent;
+          break;
+        }
       }
     }
 
@@ -290,7 +334,6 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
    */
   protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
 
-    $mResult = null;
     $sKey = array_shift($aPath);
     array_push($aParentPath, $sKey);
 
@@ -300,10 +343,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
       if ($bDebug) {
 
-        $this->throwException(txt('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
+        $this->throwException(sprintf('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
       }
 
-      $sKey = '';
+      $sKey = null;
     }
 
     return $sKey;
@@ -329,7 +372,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     if (is_object($mResult) || is_array($mResult)) {
 
-      $this->throwException(txt('%s is not a string', $sPath), 2);
+      $this->throwException(sprintf('%s is not a string', $sPath), 2);
     }
 
     return $mResult;
@@ -386,7 +429,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   }
 
   protected static function normalizeObject($val) {
-
+//echo '- ' .get_class($val).'<br/>';
     $mResult = null;
 
     if (self::DEBUG_NORMALIZE_RECURSION) {
@@ -396,22 +439,22 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         if ($obj === $val) {
 
           $formater = \Sylma::getControler('formater');
-          \Sylma::throwException(txt('Recursion when normalizing with object : %s', $formater->asToken($val)));
+          \Sylma::throwException(sprintf('Recursion when normalizing with object : %s', $formater->asToken($val)));
         }
       }
     }
 
     if ($val instanceof core\argumentable) {
 
-      $mResult = self::normalizeArgument($val->asArgument());
+      $mResult = static::normalizeArgument($val->asArgument());
     }
     else if ($val instanceof core\argument) {
 
-      $mResult = self::normalizeArgument($val);
+      $mResult = static::normalizeArgument($val);
     }
     else {
 
-      \Sylma::throwException(txt('Cannot normalize object @class %s', get_class($val)));
+      \Sylma::throwException(sprintf('Cannot normalize object @class %s', get_class($val)));
     }
 
     if (self::DEBUG_NORMALIZE_RECURSION) self::$aNormalizedObjects[] = $val;
@@ -431,8 +474,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
   public static function normalizeArray(array $aArray) {
 
     $aResult = array();
+    $sCurrentPath = self::$sCurrentPath;
 
     foreach ($aArray as $sKey => $mVal) {
+
+      self::$sCurrentPath = $sCurrentPath . '/' . $sKey;
 
       if (is_object($mVal)) {
 
@@ -443,23 +489,38 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       else if (is_array($mVal)) {
 
         $mResult = static::normalizeArray($mVal);
-
         //if (!$mResult) $mResult = null; // transform empty array to null
       }
       else {
 
-        $mResult = $mVal;
+        $mResult = static::normalizeUnknown($mVal);
       }
 
       if ($mResult !== null) $aResult[$sKey] = $mResult;
     }
 
+    self::$sCurrentPath = $sCurrentPath;
+
     return $aResult;
+  }
+
+  protected static function normalizeUnknown($mVar) {
+
+    return $mVar;
   }
 
   public function normalize($bKeepXML = false) {
 
-    $this->aArray = static::normalizeArray($this->aArray);
+    self::$sCurrentPath = '';
+
+    try {
+      $this->aArray = static::normalizeArray($this->aArray);
+    }
+    catch (core\exception $e) {
+
+      $e->addPath('@last-path ' . self::$sCurrentPath);
+      throw $e;
+    }
   }
 
   protected function throwException($sMessage, $iOffset = 1) {
@@ -488,7 +549,8 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      $this->throwException(txt('Cannot render an array as a string'));
+      $sResult = '[error] Cannot render an array as a string';
+      //$this->throwException(sprintf('Cannot render an array as a string'));
     }
 
     return $sResult;

@@ -5,7 +5,7 @@ use \sylma\core;
 
 require_once('Basic.php');
 
-class Iterator extends Basic {
+class Iterator extends Basic implements core\argument {
 
   public function rewind() {
 

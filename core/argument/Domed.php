@@ -1,10 +1,10 @@
 <?php
 
 namespace sylma\core\argument;
-use \sylma\core, \sylma\dom;
+use sylma\core, sylma\dom;
 
 require_once('Iterator.php');
-require_once('dom2/domable.php');
+require_once('dom/domable.php');
 
 class Domed extends Iterator implements dom\domable {
 
@@ -20,7 +20,7 @@ class Domed extends Iterator implements dom\domable {
    */
   public function getOptions(dom\document $schema = null, $sPath = '') {
 
-    require_once('dom2\Argument.php');
+    require_once('dom\Argument.php');
 
     $doc = $this->getDocument();
     self::getElement($doc, $sPath);
@@ -39,7 +39,7 @@ class Domed extends Iterator implements dom\domable {
 
     if (count($this->aArray) > 1) {
 
-      $this->throwException(txt('Cannot build document with more than one root value with @namespace %s', $sNamespace));
+      $this->throwException(sprintf('Cannot build document with more than one root value with @namespace %s', $sNamespace));
     }
 
     $this->normalize();
@@ -49,7 +49,7 @@ class Domed extends Iterator implements dom\domable {
     if (!$result || $result->isEmpty()) {
 
       $formater = \Sylma::getControler('formater');
-      $this->throwException (txt('No result or invalid result when exporting @namespace %s', $sNamespace));
+      $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
     }
 
     return $result;
@@ -134,7 +134,7 @@ class Domed extends Iterator implements dom\domable {
   }
 
   protected static function normalizeObject($val) {
-
+//echo '-- ' .get_class($val).'<br/>';
     if ($val instanceof dom\node) {
 
       $mResult = $val;

@@ -38,7 +38,7 @@
     <tst:prepare>
       $controler->set('arg', $controler->createArgument(array(
         'ghi' => 789,
-        'jkl' => '@sylma:import ' . $controler->getDirectory() . '/simple.yml;',
+        'jkl' => '§sylma:import ' . $controler->getDirectory() . '/simple.yml;',
       )));
     </tst:prepare>
     <tst:expected>
@@ -49,11 +49,20 @@
         $arg->read('jkl/def') === '456'
       </tst:expected>
   </tst:test>
+  <tst:test name="Encapsed parent relatives imports" disabled="true">
+    <tst:prepare>$controler->set('arg', $controler->createArgument('import-relative-a.yml'));</tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return
+        $arg->read('mno/jkl/abc') === 123 &amp;&amp;
+        $arg->read('mno/jkl/def') === '456'
+      </tst:expected>
+  </tst:test>
   <tst:test name="Self reference">
     <tst:prepare>
       $controler->set('arg', $controler->createArgument(array(
         'abc' => 123,
-        'def' => '@sylma:self ../abc;',
+        'def' => '§sylma:self ../abc;',
       )));
     </tst:prepare>
     <tst:expected>
@@ -66,12 +75,12 @@
     <tst:prepare>
       $sDirectory = (string) $controler->getDirectory();
       $arg1 = $controler->createArgument(array(
-        'abc' => "@sylma:import $sDirectory/simple.yml;",
+        'abc' => "§sylma:import $sDirectory/simple.yml;",
       ));
       $arg2 = $controler->createArgument(array(
-        'abc' => "@sylma:import $sDirectory/simple2.yml;",
+        'abc' => "§sylma:import $sDirectory/simple2.yml;",
       ));
-      
+
       $arg1->merge($arg2);
       $controler->set('arg', $arg1);
     </tst:prepare>
@@ -86,10 +95,10 @@
     <tst:prepare>
       $sDirectory = (string) $controler->getDirectory();
       $arg1 = $controler->createArgument(array(
-        'abc' => "@sylma:import $sDirectory/simple.yml;",
+        'abc' => "§sylma:import $sDirectory/simple.yml;",
       ));
       $arg2 = $controler->createArgument(array(
-        'abc' => "@sylma:import $sDirectory/simple2.yml;",
+        'abc' => "§sylma:import $sDirectory/simple2.yml;",
       ));
       $arg1->get('abc'); // will resolve token
       $arg1->merge($arg2);
@@ -107,7 +116,7 @@
       $controler->set('arg', $controler->createArgument(array(
         'directory' => (string) $controler->getDirectory(),
         'jkl' => 789,
-        'mno' => '@sylma:import @sylma:self /directory; + /simple.yml;',
+        'mno' => '§sylma:import §sylma:self /directory; + /simple.yml;',
       )));
     </tst:prepare>
     <tst:expected>
@@ -124,12 +133,12 @@
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
-      $sToken = '@sylma-classbase';
-      
+      $sToken = '§sylma-classbase';
+
       $arg->registerToken($sToken);
       $sName = $arg->read('classes/file/name');
       $sClass = $arg->getToken($sToken);
-      
+
       return
         $sName == 'basic\File' &amp;&amp;
         $sClass == '\sylma\storage\fs'
@@ -141,14 +150,14 @@
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
-      $sToken = '@sylma-classbase';
-      
+      $sToken = '§sylma-classbase';
+
       $arg->set('classes/file/name', 'test');
-      
+
       $arg->registerToken($sToken);
       $sName = $arg->read('classes/file/name');
       $sClass = $arg->getToken($sToken);
-      
+
       return
         $sName == 'test' &amp;&amp;
         $sClass == '\sylma\storage\fs'

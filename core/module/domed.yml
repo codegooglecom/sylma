@@ -1,6 +1,6 @@
 classes :
   action :
-    name : \sylma\parser\action\handler\Action
+    name : \sylma\parser\action\handler\Basic
   template :
     name : \sylma\parser\xslt\Handler
   options :
@@ -10,4 +10,3 @@ classes :
         name : \sylma\dom\basic\Handler
   document :
     name : \sylma\dom\basic\handler\Rooted
-    file : /sylma/dom2/basic/handler/Rooted.php

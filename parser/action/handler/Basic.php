@@ -3,105 +3,138 @@
 namespace sylma\parser\action\handler;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 
-require_once('core/module/Domed.php');
-require_once('parser/action.php');
+\Sylma::load('../../Handler.php', __DIR__);
+
+\Sylma::load('/parser/action.php');
+\Sylma::load('/core/stringable.php');
 
 /**
  * "Controller free" class.
  */
-abstract class Basic extends core\module\Domed implements parser\action {
+class Basic extends parser\Handler implements parser\action, core\stringable {
 
   const CONTROLER_ALIAS = 'action';
 
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  protected static $sArgumentFile = 'core/argument/Filed.php';
+
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_UPDATE = true; // default : false
-  const DEBUG_RUN = true; // default : true
-  const DEBUG_SHOW = false; // default : false
-
-  protected $file;
   protected $controler;
 
-  protected $baseDirectory = null;
+  protected $aArguments = array();
+  protected $aContexts = array();
 
-  protected function getBaseDirectory() {
+  protected $action = null;
+  protected $bRunned = false;
 
-    return $this->baseDirectory;
+  public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
+
+    $this->setArguments($aArguments);
+
+    $this->setControler(\Sylma::getControler(self::CONTROLER_ALIAS));
+    //$this->setDirectory(__file__);
+
+    $this->setNamespace($this->getControler()->getNamespace());
+
+    parent::__construct($file, $base);
   }
 
-  protected function setBaseDirectory(fs\directory $baseDirectory) {
+  protected function getAction() {
 
-    $this->baseDirectory = $baseDirectory;
+    return $this->action;
   }
 
-  protected function setFile(fs\file $file) {
+  protected function setAction(parser\action\cached $action) {
 
-    $this->file = $file;
+    $this->action = $action;
+  }
+
+  public function getContexts() {
+
+    return $this->aContexts;
+  }
+
+  public function setContexts(array $aContexts) {
+
+    $this->aContexts = $aContexts;
+  }
+
+  public function setArgument($sPath, $mValue) {
+
+    return parent::setArgument($sPath, $mValue);
   }
 
   /**
-   * Allow get of object's file or object's directory's files
-   *
-   * @param string $sPath
-   * @param boolean $bDebug
-   * @return fs\file|null
+   * Allow management of multiple calls on same action
+   * @return parser\action\cached
    */
-  protected function getFile($sPath = '', $bDebug = true) {
-
-    if ($sPath) {
-
-      $result = parent::getFile($sPath, $bDebug);
-    }
-    else {
-
-      $result = $this->file;
-    }
-
-    return $result;
-  }
-
-  protected function cleanPath($sPath) {
-
-    return str_replace(array('-', '_', '.'), array(), $sPath);
-  }
-
-  protected function reflectAction() {
-
-    $parser = $this->getControler();
-    $doc = $this->getFile()->getDocument();
-
-    $action = $parser->create('dom', array($parser, $doc, $this->getBaseDirectory()));
-
-    $result = $action->asDOM();
-
-    return $result;
-  }
-
   protected function runAction() {
 
-    $result = null;
-    $file = $this->getFile();
-    $sName = $file->getName() . '.php';
+    if (!$this->isRunned()) {
 
-    $tmpDir = $this->getDirectory((string) $file->getParent())->addDirectory(parser\action::EXPORT_DIRECTORY);
-
-    if ($tmpDir) {
-
-      $tmpFile = $tmpDir->getFile($sName, 0);
+      $this->setAction($this->load());
+      $this->getAction()->loadAction();
+      $this->isRunned(true);
     }
 
-    if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || self::DEBUG_UPDATE) {
+    return $this->getAction();
+  }
 
-      $tmpFile = $this->buildAction();
-    }
+  protected function isRunned($mValue = null) {
 
-    if (self::DEBUG_RUN) $result = $this->runCache($tmpFile);
-    else {
+    if (!is_null($mValue)) $this->bRunned = $mValue;
 
-      $this->throwException(t('No result, DEBUG_RUN set to TRUE'));
+    return $this->bRunned;
+  }
+
+  protected function createCached(fs\file $file, fs\directory $dir, $controler, array $aContexts, array $aArguments) {
+  }
+
+  protected function loadCache(fs\file $file) {
+
+    $result = $this->getControler()->create('cached', array($file, $this->getBaseDirectory(), $this, $this->getContexts(), $this->getArguments()->query()));
+
+    foreach ($this->getControlers() as $sName => $controler) {
+
+      $result->setControler($controler, $sName);
     }
 
     return $result;
+  }
+
+  protected function parseString(core\stringable $mVal) {
+
+    return $mVal->asString();
+  }
+
+  protected function parseObject(parser\action\cached $mVal) {
+
+    return $mVal->asObject();
+  }
+
+  public function getContext($sContext) {
+
+    $action = $this->runAction();
+    return $action->getContext($sContext);
+  }
+
+  public function asObject() {
+
+    $action = $this->runAction();
+    return $this->parseObject($action);
+  }
+
+  public function asArray() {
+
+    $action = $this->runAction();
+    return $action->asArray();
+  }
+
+  public function asString($iMode = 0) {
+
+    $action = $this->runAction();
+    return $this->parseString($action);
   }
 
   protected function parseDOM(dom\domable $val) {

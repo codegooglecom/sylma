@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/storage/fs/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+  <tst:description>Basic manipulation methods</tst:description>
+  <tst:test name="Read tester01">
+    <tst:prepare>
+      $controler->setUser('tester01');
+    </tst:prepare>
+    <tst:expected>
+      $controler = $controler->getControler('fs/test');
+      if (!$file = $controler->getFile('/sample1/sub1/noright.txt')) return false;
+
+      return
+        !$file->checkRights(\Sylma::MODE_EXECUTE) &amp;&amp;
+        $file->checkRights(\Sylma::MODE_READ)
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

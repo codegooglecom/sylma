@@ -27,7 +27,7 @@ interface file extends fs\resource {
 
   /**
    * Get file name without extension
-   * ex : /sylma/index.eml => index
+   * ex : /sylma/index.eml will output index
    */
   function getSimpleName();
 }

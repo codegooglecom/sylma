@@ -1,5 +1,5 @@
 classes :
-  @sylma-classbase : \sylma\storage\fs
+  §sylma-classbase : \sylma\storage\fs
   file :
     name : basic\File
     

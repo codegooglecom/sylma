@@ -3,7 +3,7 @@
 namespace sylma\parser\xslt;
 use sylma\core, sylma\dom, sylma\parser;
 
-require_once('dom2/basic/handler/Rooted.php');
+require_once('dom/basic/handler/Rooted.php');
 
 class Handler extends dom\basic\handler\Rooted {
 
@@ -12,7 +12,7 @@ class Handler extends dom\basic\handler\Rooted {
 
   private $processor = null;
 
-  public function __construct($mChildren = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
+  public function __construct($mChildren = '', $iMode = \Sylma::MODE_EXECUTE, array $aNamespaces = array()) {
 
     $this->setProcessor(new \XSLTProcessor);
 
@@ -25,7 +25,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if (!$bResult) {
 
-      $this->throwException(txt('Cannot delete parameter %s', $sName));
+      $this->throwException(sprintf('Cannot delete parameter %s', $sName));
     }
 
     return $bResult;
@@ -42,7 +42,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if (!$bResult) {
 
-      $this->throwException(txt('Cannot create parameter %s', $sName));
+      $this->throwException(sprintf('Cannot create parameter %s', $sName));
     }
 
     return $bResult;
@@ -54,7 +54,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if (!$mResult) {
 
-      $this->throwException(txt('Cannot retrieve parameter %s', $sName));
+      $this->throwException(sprintf('Cannot retrieve parameter %s', $sName));
     }
 
     return $mResult;
@@ -109,7 +109,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if ($this->isEmpty()) {
 
-      $this->throwException(txt('Cannot import document in empty template'));
+      $this->throwException(sprintf('Cannot import in empty template'));
     }
 
     if ($sResult = $el->getAttribute($sPrefixes)) {
@@ -141,30 +141,32 @@ class Handler extends dom\basic\handler\Rooted {
 
       $this->setAttribute($sPrefixes, implode(' ', array_merge($aResult, $aTarget)));
 
-      if ($ext) {
+    }
 
-        switch ($ext->getName(true)) {
+    if ($ext) {
 
-          case 'include' : $ext->replace($el->getChildren()); break;
-          case 'import' : $this->add($el->getChildren()); break;
+      switch ($ext->getName(true)) {
 
-          default :
+        case 'include' : $ext->replace($el->getChildren()); break;
+        case 'import' : $this->add($el->getChildren()); break;
 
-            $this->throwException(txt('Cannot import document in empty template with %s', $ext->asToken()));
-        }
-      }
-      else {
+        default :
 
-        $this->shift($el->getChildren());
+          $this->throwException(sprintf('Cannot import document in empty template with %s', $ext->asToken()));
       }
     }
+    else {
+
+      $this->shift($el->getChildren());
+    }
+
   }
 
   public function includeExternal(parser\xslt\Handler $template, dom\element $external = null, array &$aPaths = array(), $iLevel = 0) {
 
     if ($template->isEmpty()) {
 
-      $this->throwException(t('Cannot import document in empty template'));
+      $this->throwException(t('Cannot import empty template'));
     }
 
     $template->includeExternals($aPaths, $iLevel + 1);
@@ -190,7 +192,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     } else {
 
-      $imports = $dom->create('collection', array($this->getRoot()->queryByName('include', self::NS)));
+      $imports = $this->getRoot()->queryByName('include', self::NS);
       $imports->addCollection($this->getRoot()->queryByName('import', self::NS));
 
       if ($imports->length) {
@@ -220,9 +222,18 @@ class Handler extends dom\basic\handler\Rooted {
 
     if ($aErrors) { // TODO, nice view
 
-      foreach ($aErrors as $error) {
+      try {
 
-        $this->throwException(txt($error->message));
+        $this->throwException('XSLT errors');
+      }
+      catch (core\exception $e) {
+
+        foreach ($aErrors as $error) {
+
+          $e->addPath($error->message);
+        }
+
+        throw $e;
       }
     }
   }
@@ -234,7 +245,7 @@ class Handler extends dom\basic\handler\Rooted {
 
     if ($doc->isEmpty()) {
 
-      $doc->throwException(t('Cannot parse empty document'));
+      $doc->throwException('Cannot parse empty document');
     }
 
     if ($this->isEmpty()) {
@@ -248,6 +259,9 @@ class Handler extends dom\basic\handler\Rooted {
 
     $this->getProcessor()->importStylesheet($this->getDocument());
 
+    $this->retrieveErrors();
+    libxml_clear_errors();
+
     if ($bXML) {
 
       $mResult = $this->getProcessor()->transformToDoc($doc->getDocument());
@@ -258,7 +272,7 @@ class Handler extends dom\basic\handler\Rooted {
       }
       else {
 
-        $this->throwException(t('No result on parsing'));
+        $this->throwException('No result on parsing');
       }
     }
     else {

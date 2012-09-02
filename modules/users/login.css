@@ -1,4 +1,4 @@
-#sylma-user-login { 
+#sylma-user-login {
   width: 65%;
   padding-top: 15%;
 }
@@ -19,4 +19,11 @@
 
 #sylma-user-lock.sylma-https {
   background-image: url(lock.png)
+}
+
+#sylma-user-login .field input,
+#sylma-user-login label {
+  display: block;
+  width: 48%;
+  float: left;
 }

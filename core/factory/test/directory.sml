@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<directory xmlns="http://www.sylma.org/directory" xmlns:ls="http://www.sylma.org/security">
+<directory xmlns="http://www.sylma.org/storage/fs/security">
   <propagate>
-    <ls:security>
-      <ls:owner>root</ls:owner>
-      <ls:group>0</ls:group>
-      <ls:mode>750</ls:mode>
-    </ls:security>
+    <security>
+      <owner>root</owner>
+      <group>0</group>
+      <mode>750</mode>
+    </security>
   </propagate>
 </directory>

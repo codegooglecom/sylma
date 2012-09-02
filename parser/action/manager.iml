@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security" xmlns:lf="http://www.sylma.org/core/factory/parser">
+  <name>Manager</name>
+  <lf:settings>manager.xml</lf:settings>
+  <method path="get-file" name="getFile" return="\sylma\storage\fs\file"/>
+</class>

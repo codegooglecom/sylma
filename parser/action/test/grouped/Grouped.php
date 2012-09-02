@@ -30,7 +30,8 @@ class Grouped extends tester\Basic {
     if ($sFile) $this->setFiles(array($this->getFile($sFile)));
     $this->setControler($controler);
 
-    $this->exportDirectory = $this->getDirectory()->addDirectory('#tmp');
+    $cache = \Sylma::getControler('fs/cache');
+    $this->exportDirectory = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
 
     $this->setArguments(array());
     //$this->setFiles(array($this->getFile('basic.xml')));
@@ -48,7 +49,7 @@ class Grouped extends tester\Basic {
       case 'array' : $result = $action->asArray(); break;
       default :
 
-        $this->throwException(txt('Unknown action type : %s', $sType));
+        $this->throwException(sprintf('Unknown action type : %s', $sType));
     }
 
     return $result;
@@ -81,7 +82,8 @@ class Grouped extends tester\Basic {
 
     return $aResult;
   }
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = null;
     $node = $test->getx('le:action');
@@ -98,7 +100,7 @@ class Grouped extends tester\Basic {
         $this->prepareTest($test);
         $aArguments = $this->loadArguments();
 
-        $action = $controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $file->getParent(), $sName);
+        $action = $controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $this->getDirectory(), $sName);
         $action->asArray();
 
         $bResult = false;
@@ -125,7 +127,7 @@ class Grouped extends tester\Basic {
 
         if ($expected = $test->getx('self:expected', array(), false)) {
 
-          $bResult = parent::test($expected, $this, $doc, $file);
+          $bResult = parent::test($test, $expected->read(), $this, $doc, $file);
         }
         else {
 

@@ -1,0 +1,26 @@
+<arg:argument xmlns:arg="http://www.sylma.org/core/argument" xmlns="http://www.sylma.org/parser/action/manager" cls="http://www.sylma.org/core/factory">
+  <debug>
+    <show arg:type="boolean">0</show>
+    <run arg:type="boolean">1</run>
+    <update arg:type="boolean">0</update>
+  </debug>
+  <extensions arg:type="token">eml iml</extensions>
+  <cls:classes>
+    <cls:base>\sylma\parser</cls:base>
+    <cls:class alias="window" name="languages\php\basic\Window"/>
+    <cls:class alias="caller" name="caller\Controler"/>
+    <cls:class alias="compiler" name="action\compiler\Main">
+      <cls:classes>
+        <cls:class alias="dom" name="action\compiler\Reflector"/>
+      </cls:classes>
+    </cls:class>
+    <cls:class alias="php">
+      <arg:import>../languages/php/window.xml</arg:import>
+    </cls:class>
+    <arg:item name="parser">
+      <cls:classes>
+        <cls:class alias="security" name="\sylma\parser\security\Domed"/>
+      </cls:classes>
+    </arg:item>
+  </cls:classes>
+</arg:argument>
