@@ -3,15 +3,15 @@
 namespace sylma\parser\action\handler;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 
-require_once('core/module/Argumented.php');
+\Sylma::load('../../Handler.php', __DIR__);
 
-require_once('parser/action.php');
-require_once('core/stringable.php');
+\Sylma::load('/parser/action.php');
+\Sylma::load('/core/stringable.php');
 
 /**
  * "Controller free" class.
  */
-class Basic extends core\module\Argumented implements parser\action, core\stringable {
+class Basic extends parser\Handler implements parser\action, core\stringable {
 
   const CONTROLER_ALIAS = 'action';
 
@@ -20,10 +20,7 @@ class Basic extends core\module\Argumented implements parser\action, core\string
 
   const FS_CONTROLER = 'fs/editable';
 
-  protected $file;
   protected $controler;
-
-  protected $baseDirectory = null;
 
   protected $aArguments = array();
   protected $aContexts = array();
@@ -40,30 +37,7 @@ class Basic extends core\module\Argumented implements parser\action, core\string
 
     $this->setNamespace($this->getControler()->getNamespace());
 
-    $this->setFile($file);
-
-    if ($base) $this->setBaseDirectory($base);
-    else $this->setBaseDirectory($file->getParent());
-  }
-
-  protected function getBaseDirectory() {
-
-    return $this->baseDirectory;
-  }
-
-  protected function setBaseDirectory(fs\directory $baseDirectory) {
-
-    $this->baseDirectory = $baseDirectory;
-  }
-
-  protected function setFile(fs\file $file) {
-
-    $this->file = $file;
-  }
-
-  protected function getFile() {
-
-    return $this->file;
+    parent::__construct($file, $base);
   }
 
   protected function getAction() {
@@ -99,7 +73,7 @@ class Basic extends core\module\Argumented implements parser\action, core\string
 
     if (!$this->isRunned()) {
 
-      $this->setAction($this->loadAction($this->getFile()));
+      $this->setAction($this->load());
       $this->getAction()->loadAction();
       $this->isRunned(true);
     }
@@ -114,49 +88,18 @@ class Basic extends core\module\Argumented implements parser\action, core\string
     return $this->bRunned;
   }
 
-  protected function loadAction(fs\file $file) {
-
-    $result = null;
-    $sName = $file->getName() . '.php';
-
-    //$sDirectory = (string) $file->getParent();
-    //$sDirectory = $sDirectory ? $sDirectory : '/';
-
-    $fs = $this->getControler('fs/cache');
-    $tmpDir = $fs->getDirectory()->addDirectory((string) $file->getParent());
-
-    if ($tmpDir) {
-
-      $tmpFile = $tmpDir->getFile($sName, 0);
-    }
-
-    if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || \Sylma::read('action/update')) {
-
-      $compiler = $this->getControler()->create('compiler', array($this->getControler()));
-      $tmpFile = $compiler->build($file, $this->getBaseDirectory());
-    }
-
-    if ($this->getControler()->readArgument('debug/run')) {
-
-      $result = $this->createCached($tmpFile, $this->getBaseDirectory(), $this, $this->getContexts(), $this->getArguments()->query());
-    }
-    else {
-
-      $this->throwException('No result, DEBUG_RUN set to TRUE');
-    }
-
-    return $result;
+  protected function createCached(fs\file $file, fs\directory $dir, $controler, array $aContexts, array $aArguments) {
   }
 
-  protected function createCached(fs\file $file, fs\directory $dir, $controler, array $aContexts, array $aArguments) {
+  protected function loadCache(fs\file $file) {
 
-    $result = $this->getControler()->create('cached', array($file, $dir, $controler, $aContexts, $aArguments));
+    $result = $this->getControler()->create('cached', array($file, $this->getBaseDirectory(), $this, $this->getContexts(), $this->getArguments()->query()));
 
     foreach ($this->getControlers() as $sName => $controler) {
 
       $result->setControler($controler, $sName);
     }
-    
+
     return $result;
   }
 

@@ -22,7 +22,9 @@ class Sylma {
    * @var core\argument
    */
   private static $settings = null;
+
   protected static $aControlers;
+  protected static $aFiles = array();
 
   public static $sExceptionFile = 'core/exception/Basic.php';
   public static $sExceptionClass = '\sylma\core\exception\Basic';
@@ -170,10 +172,16 @@ class Sylma {
       case 'action' :
 
         require_once('parser/action/Controler.php');
-        $result = new parser\action\Controler;
+        $result = new parser\action\Controler();
 
       break;
 
+      case 'argument' :
+
+        self::load('/core/argument/Manager.php');
+        $result = new core\argument\Manager;
+        
+      break;
 
       case 'caller' :
 
@@ -265,12 +273,12 @@ class Sylma {
   }
 
   public static function show($mVal) {
-    
+
     $node = self::getControler('formater')->asHTML($mVal);
     //echo $node;
     return $node;
   }
-  
+
   public static function loadException(Exception $e) {
 
     $newException = new Sylma::$exception;
@@ -292,6 +300,39 @@ class Sylma {
   public static function isWindows() {
 
     return PHP_OS == 'WINNT';
+  }
+
+  public static function load($sFile, $sDirectory = '') {
+
+    $bRoot = $sFile{0} == '/';
+
+    if (!$sDirectory || $bRoot) {
+
+      if ($bRoot) $sFile = substr($sFile, 1);
+      $sPath = $sFile;
+    }
+    else {
+
+      $aFile = explode('/', $sFile);
+      $aDirectory = explode('/', $sDirectory);
+
+      foreach ($aFile as $sName) {
+
+        if ($sName == '..') {
+
+          array_pop($aDirectory);
+          array_shift($aFile);
+        }
+        else {
+
+          $aDirectory[] = $sName;
+        }
+      }
+
+      $sPath = implode('/', $aDirectory);
+    }
+
+    if (!array_key_exists($sPath, self::$aFiles)) require_once($sPath);
   }
 
   public static function render() {

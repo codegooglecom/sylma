@@ -13,7 +13,7 @@ class Basic extends core\module\Argumented implements parser\context {
 
     $this->setArguments(array());
   }
-
+/*
   public function add($mValue) {
 
     if (is_array($mValue)) {
@@ -28,7 +28,7 @@ class Basic extends core\module\Argumented implements parser\context {
       $this->getArguments()->add($mValue);
     }
   }
-
+*/
   public function set($sPath, $mValue) {
 
     return $this->setArgument($sPath, $mValue);

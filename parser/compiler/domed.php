@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\parser;
+namespace sylma\parser\compiler;
 use \sylma\core, \sylma\storage\fs, \sylma\dom;
 
 require_once('core/controled.php');

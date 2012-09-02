@@ -11,9 +11,9 @@ namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\common, sylma\parser\languages\php;
 
 require_once('Runner.php');
-require_once('parser/elemented.php');
+require_once('parser/compiler/elemented.php');
 
-abstract class Domed extends Runner implements parser\elemented {
+abstract class Domed extends Runner implements parser\compiler\elemented {
 
   protected $currentElement;
 
@@ -277,7 +277,7 @@ abstract class Domed extends Runner implements parser\elemented {
 
       if ($parser = $this->getParser($sNamespace)) {
 
-        if (!$parser instanceof parser\attributed) {
+        if (!$parser instanceof parser\compiler\attributed) {
 
           $this->throwException(sprintf('Cannot use parser %s with attributes', $sNamespace));
         }

@@ -20,7 +20,7 @@ session:
   name: sylma-user
   lifetime: 28800
 classes :
-  @sylma-classbase : \sylma\core\user
+  §sylma-classbase : \sylma\core\user
   user :
     name : Basic
   cookie :

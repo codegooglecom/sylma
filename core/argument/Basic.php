@@ -13,7 +13,7 @@ require_once('core/module/Namespaced.php');
  *
  * @author rodolphe.gerber (at) gmail.com
  */
-abstract class Basic extends core\module\Namespaced implements core\argument {
+abstract class Basic extends core\module\Namespaced {
 
   const MESSAGES_STATUT = \Sylma::LOG_STATUT_DEFAULT;
   const DEBUG_NORMALIZE_RECURSION = false;
@@ -59,7 +59,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     $mResult = null;
     $bRoot = false;
-    
+
     if ($sPath !== '') {
 
       $aPath = $this->parsePath($sPath);
@@ -88,11 +88,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         $mTarget =& $this->locateValue($aPath, false, true);
 
         if (is_null($mTarget)) {
-          
+
           $mTarget =& $this->aArray;
           //$bRoot = true;
         }
-        
+
         foreach ($aPath as $sKey) {
 
           $mTarget[$sKey] = array();
@@ -105,7 +105,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       //$mTarget =& $this->aArray;
       $bRoot = true;
     }
-    
+
     if ($bIndex) { // todo : check for usage
 
       if (is_array($mTarget)) {
@@ -124,19 +124,19 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     else {
 
       if ($bRoot) {
-        
+
         if (is_null($mValue)) $this->aArray = array();
         else if ($mValue instanceof core\argument) $this->aArray = $mValue->query();
         else if (!is_array($mValue)) $this->aArray = array($mValue);
         else $this->aArray = $mValue;
-        
+
       }
       else {
-        
+
         $mTarget = $mValue;
       }
     }
-    
+
 //echo \Sylma::show(count($this->aArray));
     if ($mValue) {
 
@@ -149,10 +149,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 //echo \Sylma::show($mValue);
 //
         $mResult = $this->get($sPath);
-        
+
       }
       else {
-        
+
         $mResult = $this->read($sPath);
       }
     }
@@ -302,7 +302,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         $sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug);
 
         if (!is_null($sKey)) {
-          
+
           $mCurrent =& $mCurrent[$sKey];
 
           // run hypotheticals parse on strings
@@ -489,12 +489,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       else if (is_array($mVal)) {
 
         $mResult = static::normalizeArray($mVal);
-
         //if (!$mResult) $mResult = null; // transform empty array to null
       }
       else {
 
-        $mResult = $mVal;
+        $mResult = static::normalizeUnknown($mVal);
       }
 
       if ($mResult !== null) $aResult[$sKey] = $mResult;
@@ -503,6 +502,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     self::$sCurrentPath = $sCurrentPath;
 
     return $aResult;
+  }
+
+  protected static function normalizeUnknown($mVar) {
+
+    return $mVar;
   }
 
   public function normalize($bKeepXML = false) {

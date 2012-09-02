@@ -1,5 +1,5 @@
 classes :
-  @sylma-classbase : \sylma\dom
+  §sylma-classbase : \sylma\dom
   handler :
     file : basic/handler/Rooted.php
     name : basic\handler\Rooted

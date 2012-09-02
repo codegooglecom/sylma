@@ -13,8 +13,8 @@ class Filed extends Domed {
   /**
    * Special calls use this prefix use in YAML files
    */
-  const VARIABLE_PREFIX = '@sylma:';
-  const DIRECTORY_TOKEN = '@sylma-directory';
+  const VARIABLE_PREFIX = '§sylma:';
+  const DIRECTORY_TOKEN = '§sylma-directory';
 
   /**
    * See @method getControler()
@@ -236,7 +236,7 @@ class Filed extends Domed {
   protected function parseYAMLProperties($sValue, array $aPath) {
 
     // TODO : strange bug, with @ as first char of value. See /system/sylma.yml/actions
-    if (ord($sValue{0}) === 0) $sValue{0} = '@';
+    if (ord($sValue{0}) === 0) $sValue{0} = '§';
 
     $mResult = $sValue;
     $iStart = strrpos($sValue, self::VARIABLE_PREFIX);
@@ -303,7 +303,6 @@ class Filed extends Domed {
   protected function parseYAMLString($sArguments) {
 
     $aArguments = explode('+', $sArguments);
-    $sResult = '';
 
     return implode('', array_map('trim', $aArguments));
   }

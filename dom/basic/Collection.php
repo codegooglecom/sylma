@@ -80,7 +80,7 @@ class Collection implements \Iterator, dom\collection {
 
     $this->iIndex = $iIndex;
   }
-  
+
   public function store() {
 
     $this->aStore[] = $this->iIndex;

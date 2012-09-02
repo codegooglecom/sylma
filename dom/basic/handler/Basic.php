@@ -98,7 +98,7 @@ abstract class Basic extends core\module\Controled implements dom\handler {
     }
     else {
 
-      $bResult = (bool) $this->set($this->createElement($sValue, '', null, '', $this));
+      $bResult = (bool) $this->set($this->createElement($sValue, '', array(), '', $this));
     }
 
     return $bResult;

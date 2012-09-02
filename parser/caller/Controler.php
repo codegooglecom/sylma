@@ -3,10 +3,10 @@
 namespace sylma\parser\caller;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
 
-require_once('core/module/Domed.php');
-require_once('parser/domed.php');
+\Sylma::load('/core/module/Domed.php');
+\Sylma::load('/parser/compiler/elemented.php');
 
-class Controler extends core\module\Domed implements parser\elemented {
+class Controler extends core\module\Domed implements parser\compiler\elemented {
 
   protected $aInterfaces = array();
   protected $aFiles = array();
@@ -80,7 +80,7 @@ class Controler extends core\module\Domed implements parser\elemented {
     return $this->parent;
   }
 
-  public function setParent(parser\elemented $parent) {
+  public function setParent(parser\compiler\elemented $parent) {
 
     $this->parent = $parent;
   }

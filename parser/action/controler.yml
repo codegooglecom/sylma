@@ -5,7 +5,7 @@ extensions :
   - eml
   - iml
 classes :
-  @sylma-classbase : \sylma\parser\action
+  §sylma-classbase : \sylma\parser\action
   window :
     name : \sylma\parser\languages\php\basic\Window
   caller :
@@ -17,7 +17,7 @@ classes :
     classes :
       dom :
         name : compiler\Reflector
-  php : @sylma:import ../languages/php/window.yml;
+  php : §sylma:import ../languages/php/window.yml;
   document :
     name : \sylma\dom\basic\handler\Rooted
   action :

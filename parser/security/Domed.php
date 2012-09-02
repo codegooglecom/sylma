@@ -3,10 +3,10 @@
 namespace sylma\parser\security;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
 
-require_once('parser/attributed.php');
-require_once('Reflector.php');
+\Sylma::load('/parser/compiler/attributed.php');
+\Sylma::load('Reflector.php', __DIR__);
 
-class Domed extends Reflector implements parser\attributed {
+class Domed extends Reflector implements parser\compiler\attributed {
 
   const NS = 'http://www.sylma.org/parser/security';
 

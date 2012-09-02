@@ -1,46 +1,40 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
+use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\languages\common;
 
-require_once('core/module/Domed.php');
+\Sylma::load('/parser/compiler/Basic.php');
+\Sylma::load('/parser/compiler.php');
 
-class Main extends core\module\Domed {
+class Main extends parser\compiler\Basic implements parser\compiler {
 
-  const PHP_TEMPLATE = '/#sylma/parser/languages/php/class.xsl';
-  const DOM_TEMPLATE = '/#sylma/parser/languages/php/template.xsl';
+  const PHP_TEMPLATE = 'php.xsl';
+  const DOM_TEMPLATE = 'template.xsl';
+
+  const WINDOW_ARGS = 'classes/php';
 
   public function __construct(core\factory $controler) {
 
     $this->setControler($controler);
-
-    $this->setDirectory(__FILE__);
-    $this->loadDefaultArguments();
   }
 
   public function build(fs\file $file, fs\directory $base) {
 
-    $sClass = $file->getName() . '.php';
-    $sTemplate = $file->getName() . '.tpl.php';
+    $this->setDirectory(__FILE__);
+    $this->loadDefaultArguments();
 
-    $fs = $this->getControler('fs/cache');
-    $dir = $fs->getDirectory()->addDirectory((string) $file->getParent());
-
-    $tpl = $dir->getFile($sTemplate, fs\resource::DEBUG_EXIST);
-
-    $method = $this->reflectAction($file, $base);
+    $window = $this->runReflector($file, $base);
 
     if ($this->getControler()->readArgument('debug/show')) {
-      $tmp = $this->create('document', array($method));
+
+      $tmp = $this->create('document', array($window));
 //      dspm($this->getFile()->asToken());
 //      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
       echo '<pre>' . $this->getFile()->asToken() . '</pre>';
       echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
     }
 
-    // set new class and file
-
-    $script = $dir->getFile($sClass, fs\resource::DEBUG_EXIST);
+    $tpl = $this->getCachedFile($file, '.tpl.php');
 
     $template = $this->getTemplate(self::PHP_TEMPLATE);
 
@@ -48,31 +42,59 @@ class Main extends core\module\Domed {
       'template' => $tpl->getRealPath(),
     ));
 
-    $sResult = $template->parseDocument($method, false);
-    $script->saveText($sResult);
+    $script = $this->getCachedFile($file);
 
-    if ($method->getRoot()->testAttribute('use-template')) {
+    $sContent = $template->parseDocument($window, false);
+    $script->saveText($sContent);
+
+    if ($window->getRoot()->testAttribute('use-template')) {
 
       $template = $this->getTemplate(self::DOM_TEMPLATE);
 
-      if ($sResult = $template->parseDocument($method, false)) {
+      if ($sContent = $template->parseDocument($window, false)) {
 
-        $sResult = $this->parseAttributes($sResult);
-        $tpl->saveText(substr($sResult, 22));
+        $sContent = $this->parseAttributes($sContent);
+        $tpl->saveText(substr($sContent, 22));
       }
     }
 
     return $script;
   }
 
-  protected function reflectAction(fs\file $file, fs\directory $base) {
+  public function buildInto(fs\file $file, fs\directory $base, common\_window $window) {
 
-    $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
+    $reflector = $this->createReflector($file, $base);
+    $reflector->setWindow($window);
 
     try {
 
-      $action = $this->getControler()->create('compiler/dom', array($this->getControler(), $doc, $base));
-      $result = $action->asDOM();
+      $reflector->build($window);
+    }
+    catch (core\exception $e) {
+
+      $e->addPath($file->asToken());
+      throw $e;
+    }
+  }
+
+  /**
+   *
+   * @param \sylma\storage\fs\file $file
+   * @param \sylma\storage\fs\directory $base
+   * @return dom\handler
+   * @throws \sylma\parser\action\compiler\exception
+   */
+  protected function runReflector(fs\file $file, fs\directory $base) {
+
+    $factory = $this->getControler();
+    $reflector = $this->createReflector($file, $base);
+
+    $window = $factory->create('window', array($reflector, $factory->getArgument(self::WINDOW_ARGS), $reflector->getInterface()->getName()));
+    $reflector->setWindow($window);
+
+    try {
+
+      $result = $reflector->asDOM();
     }
     catch (core\exception $e) {
 
@@ -89,6 +111,5 @@ class Main extends core\module\Domed {
 
     return $sContent;
   }
-
 
 }

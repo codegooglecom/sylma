@@ -3,36 +3,23 @@
 namespace sylma\parser\action\compiler;
 use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php, \sylma\parser;
 
-require_once(dirname(dirname(__dir__)) . '/Reflector.php');
-require_once(dirname(__dir__) . '/compiler.php');
+\Sylma::load('/parser/Reflector.php');
+\Sylma::load('../compiler.php', __DIR__);
 
 abstract class Action extends parser\Reflector implements parser\action\compiler {
 
-  const CONTROLER = 'parser/action';
+  //const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
   const CLASS_FILE_DEFAULT = '/sylma/parser/action/cached/document.iml';
   const CLASS_PREFIX = 'class';
 
-  const WINDOW_ARGS = 'classes/php';
-
   const CALLER_ALIAS = 'caller';
-  /**
-   * See @method setFile()
-   * @var storage\fs
-   */
-  private $document;
 
   private $bTemplate = false;
   private $bString = false;
 
   protected $aVariables = array();
-
-  /**
-   * Sub parsers
-   * @var array
-   */
-  private $aParsers = array();
 
   /**
    * Interface of new cached class. See @method common\_window::getSelf()
@@ -58,9 +45,6 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $interface = $this->loadInterface($doc);
     $this->setInterface($interface);
 
-    $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $interface->getName()));
-    $this->setWindow($window);
-
     $security = $this->getControler()->create('parser/security');
     $this->setParser($security, $security->getNS());
 
@@ -68,16 +52,6 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
       $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
     }
-  }
-
-  protected function setDocument(dom\handler $doc) {
-
-    $this->document = $doc;
-  }
-
-  protected function getDocument() {
-
-    return $this->document;
   }
 
   public function getInterface() {
@@ -88,31 +62,6 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   public function setInterface(parser\caller $interface) {
 
     $this->interface = $interface;
-  }
-
-  protected function getParser($sUri) {
-
-    $parser = null;
-
-    if (array_key_exists($sUri, $this->aParsers)) {
-
-      $parser = $this->aParsers[$sUri];
-      $parser->setParent($this);
-    }
-
-    return $parser;
-  }
-
-  protected function setParser(parser\domed $parser, array $aNS) {
-
-    $aResult = array();
-
-    foreach ($aNS as $sNamespace) {
-
-      $aResult[$sNamespace] = $parser;
-    }
-
-    $this->aParsers = array_merge($this->aParsers, $aResult);
   }
 
   protected function loadInterface(dom\handler $doc) {
@@ -202,7 +151,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     return $this->bString;
   }
 
-  public function setParent(parser\elemented $parent) {
+  public function setParent(parser\compiler\elemented $parent) {
 
     return null;
   }
@@ -247,15 +196,20 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     return $result;
   }
 
-  public function asDOM() {
+  public function build(common\_window $window) {
 
-    $doc = $this->getDocument();
-    $window = $this->getWindow();
-
-    if ($aResult = $this->parseDocument($doc)) {
+    if ($aResult = $this->parseDocument($this->getDocument())) {
 
       $window->add($aResult);
     }
+
+    return $window;
+  }
+
+  public function asDOM() {
+
+    $window = $this->getWindow();
+    $this->build($window);
     //dspf($aResult[1]->asArgument());
     //dspf($aResult);
 

@@ -14,7 +14,7 @@ tokens :
   trash :
     path : trash
 classes :
-  @sylma-classbase : \sylma\storage\fs
+  §sylma-classbase : \sylma\storage\fs
   controler :
     name : Controler
   file :

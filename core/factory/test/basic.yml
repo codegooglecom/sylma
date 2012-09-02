@@ -1,5 +1,5 @@
 classes :
-  @sylma-classbase : \sylma\core\factory\test
+  §sylma-classbase : \sylma\core\factory\test
   absolute :
     name : \sylma\core\factory\test\sample\Simple
   relative :

@@ -16,7 +16,7 @@ abstract class Reflector extends core\module\Filed {
     $this->setNamespace(self::NS);
   }
 
-  public function setParent(parser\elemented $parent) {
+  public function setParent(parser\compiler\elemented $parent) {
 
     $this->parent = $parent;
   }
