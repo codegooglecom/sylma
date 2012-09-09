@@ -17,7 +17,7 @@
   </xsl:template>
 
   <xsl:template match="php:*">
-    $this->throwException(t('Invalid template\'s @element <xsl:value-of select="local-name()"/>'))
+    $this->throwException(sprintf('Invalid template\'s %s', '@element <xsl:value-of select="local-name()"/>'))
   </xsl:template>
 
   <xsl:template match="php:assign">
@@ -55,6 +55,20 @@
     <xsl:text>(</xsl:text>
     <xsl:call-template name="arguments"/>
     <xsl:text>)</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="php:closure">
+    <xsl:text>function(</xsl:text>
+    <xsl:call-template name="arguments"/>
+    <xsl:text>) {</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates/>
+    <xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="php:return">
+    <xsl:text>return </xsl:text>
+    <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template name="php:assign">
@@ -153,9 +167,16 @@
   </xsl:template>
 
   <xsl:template match="php:item">
-    <xsl:apply-templates select="php:key/*"/>
+    <xsl:apply-templates select="@key"/>
     <xsl:text> => </xsl:text>
-    <xsl:apply-templates select="php:value/*"/>
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="@key">
+    <xsl:choose>
+      <xsl:when test="number(@key)"><xsl:value-of select="."/></xsl:when>
+      <xsl:otherwise>'<xsl:value-of select="."/>'</xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>

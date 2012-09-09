@@ -3,10 +3,10 @@
 namespace sylma\parser\action\compiler;
 use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php, \sylma\parser;
 
-\Sylma::load('/parser/Reflector.php');
-\Sylma::load('../compiler.php', __DIR__);
+\Sylma::load('/parser/reflector/basic/Documented.php');
+\Sylma::load('../reflector.php', __DIR__);
 
-abstract class Action extends parser\Reflector implements parser\action\compiler {
+abstract class Action extends parser\reflector\basic\Documented implements parser\action\reflector {
 
   //const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
@@ -151,7 +151,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     return $this->bString;
   }
 
-  public function setParent(parser\compiler\elemented $parent) {
+  public function setParent(parser\reflector\documented $parent) {
 
     return null;
   }

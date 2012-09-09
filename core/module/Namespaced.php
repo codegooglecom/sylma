@@ -110,7 +110,7 @@ abstract class Namespaced extends Exceptionable {
     $sNamespace = $this->getNamespace();
 
     $mSender = (array) $mSender;
-    $mSender[] = '@namespace ' . $sNamespace;
+    $mSender[] = '@class ' . get_class($this);
 
     \Sylma::throwException($sMessage, $mSender, $iOffset);
   }

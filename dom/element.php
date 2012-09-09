@@ -18,7 +18,7 @@ interface element extends complex, namespaced {
    */
   function getByName($sName, $sNamespace = null);
 
-  function readAttribute($sName, $sNamespace = '');
+  function readAttribute($sName, $sNamespace = '', $bDebug = true);
 
   /**
    * Alias of \DOMElement::getAttributeNode() and \DOMElement::getAttributeNodeNS()
@@ -40,6 +40,9 @@ interface element extends complex, namespaced {
    */
   function insert($mValue, dom\node $next = null);
 
+  function isComplex();
+  function isElement($sName, $sNamespace = null);
 
+  function read();
 }
 

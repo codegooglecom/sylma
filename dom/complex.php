@@ -16,7 +16,7 @@ interface complex extends node {
    * @param string $sQuery Query to evaluate
    * @param array $aNS Prefixes as keys and related namespaces
    *
-   * @return dom\collection The result of the evaluated expression
+   * @return \sylma\dom\collection The result of the evaluated expression
    */
   function queryx($sQuery = '', array $aNS = array(), $bDebug = true, $bConvert = true);
 

@@ -1,22 +1,22 @@
 debug :
   show : false
   run : true
+  update : true
 extensions :
   - eml
   - iml
 classes :
   §sylma-classbase : \sylma\parser\action
   window :
-    name : \sylma\parser\languages\php\basic\Window
+    name : Window
   caller :
     name \sylma\parser\caller\Controler
   cached :
     name : cached\Document
   compiler :
     name : compiler\Main
-    classes :
-      dom :
-        name : compiler\Reflector
+  reflector :
+    name : compiler\Reflector
   php : §sylma:import ../languages/php/window.yml;
   document :
     name : \sylma\dom\basic\handler\Rooted

@@ -1,24 +1,24 @@
 <?php
 
-namespace sylma\core\argument\cached;
+namespace sylma\core\argument\parser;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
 \Sylma::load('/parser/Handler.php');
 
-\Sylma::load('/core/argument');
+\Sylma::load('/core/argument.php');
 
 class Handler extends parser\Handler implements core\argument {
 
-  public function __construct(fs\file $file, core\argument $parent) {
+  public function __construct(fs\file $file, core\argument $parent = NULL) {
 
     $this->setControler(\Sylma::getControler('argument'));
 
     $this->setFile($file);
-    $this->setParent($parent);
+    if ($parent) $this->setParent($parent);
 
     $this->setArguments($this->load());
   }
-  
+
   public function current() {
 
     return $this->getArguments()->current();
@@ -47,6 +47,11 @@ class Handler extends parser\Handler implements core\argument {
   public function add($mValue) {
 
     return $this->getArguments()->add($mValue);
+  }
+
+  public function query() {
+    
+    return $this->getArguments()->query();
   }
 
   public function get($sPath = '', $bDebug = true) {

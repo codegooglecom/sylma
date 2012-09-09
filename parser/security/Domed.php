@@ -3,10 +3,10 @@
 namespace sylma\parser\security;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
 
-\Sylma::load('/parser/compiler/attributed.php');
+\Sylma::load('/parser/reflector/attributed.php');
 \Sylma::load('Reflector.php', __DIR__);
 
-class Domed extends Reflector implements parser\compiler\attributed {
+class Domed extends Reflector implements parser\reflector\attributed {
 
   const NS = 'http://www.sylma.org/parser/security';
 
@@ -17,8 +17,7 @@ class Domed extends Reflector implements parser\compiler\attributed {
 
     if (!is_object($result)) {
 
-      $formater = $this->getControler('formater');
-      $this->throwException(sprintf('Bad type for result : %s', $formater->asToken($result)));
+      $this->throwException(sprintf('Bad type for result : %s', $this->show($result)));
     }
 
     if ($result instanceof php\basic\Condition) {
@@ -39,7 +38,7 @@ class Domed extends Reflector implements parser\compiler\attributed {
     return $result;
   }
 
-  public function parseElement(dom\node $el) {
+  protected function parseElement(dom\node $el) {
 
     $sOwner = $el->readAttribute('owner', $this->getNamespace());
     $sGroup = $el->readAttribute('group', $this->getNamespace());

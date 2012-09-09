@@ -14,7 +14,7 @@ class Reflector extends Argumented {
    * @param dom\element $el
    * @return core\argumentable|array|null
    */
-  protected function parseElementAction(dom\element $el) {
+  protected function parseElementSelf(dom\element $el) {
 
     $mResult = null;
 
@@ -470,26 +470,26 @@ class Reflector extends Argumented {
 
     return $this->runObject($el, $var);
   }
-  
+
   protected function reflectContext(dom\element $el) {
-    
+
     $window = $this->getWindow();
     $sName = $el->readAttribute('name');
-    
+
     $this->getWindow()->setContext($sName);
-    
+
     $call = $window->createCall($window->getSelf(), 'getContext', $window->stringToInstance('php-string'), array($sName));
     $if = $window->createCondition($call);
-    
+
     $window->setScope($if);
-    
+
     $if->addContent($this->parseChildren($el->getChildren(), true, true));
-    
+
     $window->stopScope();
-    
+
     $window->add($if);
     //$window->setContext($sName);
-    
+
     //$window->add();
   }
 }

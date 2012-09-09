@@ -1,11 +1,9 @@
 <?php
 
-namespace sylma\parser;
+namespace sylma\parser\compiler;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\languages\common;
 
-require_once('core/module/Domed.php');
-
-interface compiler {
+interface documented {
 
   function getCache(fs\file $file);
   function build(fs\file $file, fs\directory $dir);

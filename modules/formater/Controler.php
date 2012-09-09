@@ -59,16 +59,16 @@ class Controler extends core\module\Domed {
       $result = $this->loadArray($aResult);
     }
     else if ($val instanceof dom\handler) {
-      
+
       if ($val->getRoot(false)) {
-        
+
         $result = $val->asString();
       }
       else {
-        
+
         $result = '[EMPTY]';
       }
-      
+
     }
     else if ($val instanceof dom\node) {
 
@@ -166,7 +166,14 @@ class Controler extends core\module\Domed {
     }
     else if (is_object($mVal)) {
 
-      $sResult = '[object, @class = ' . get_class($mVal) . ']';
+      if ($mVal instanceof core\tokenable) {
+
+        $sResult = $mVal->asToken();
+      }
+      else {
+
+        $sResult = '[object, @class = ' . get_class($mVal) . ']';
+      }
     }
     else if (is_array($mVal)) {
 

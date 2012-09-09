@@ -66,7 +66,7 @@ class Domed extends core\module\Argumented {
 
   public function parseCall(dom\element $el, php\basic\_ObjectVar $var) {
 
-    if (!($el->getName() == 'call') || !($el->getNamespace() == $this->getNamespace())) {
+    if (!$el->isElement('call', $this->getNamespace())) {
 
       $this->throwException(sprintf('Bad call name : %s', $el->asToken()));
     }
@@ -162,7 +162,7 @@ class Domed extends core\module\Argumented {
 
           $arg = $this->parseArgument($child, $iKey);
           $child->remove();
-          
+
           $aResult[$arg->read('name')] = $arg->get('value', false);
 
         break;

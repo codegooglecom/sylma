@@ -16,6 +16,16 @@ class _Array extends _Scalar implements common\_instance, \Iterator {
     $this->aValues = $aValues;
   }
 
+  public function set($sKey, $mValue) {
+
+    $this->aValues[$sKey] = $mValue;
+  }
+
+  public function setContent(array $aValues) {
+
+    $this->aValues = $aValues;
+  }
+
   public function rewind() {
 
     reset($this->aValues);
@@ -51,8 +61,8 @@ class _Array extends _Scalar implements common\_instance, \Iterator {
     foreach ($this->aValues as $mKey => $mVal) {
 
       $aContent[] = array(
-        'key' => $window->argToInstance($mKey),
-        'value' => $mVal,
+        '@key' => $mKey,
+        $window->argToInstance($mVal),
       );
     }
 

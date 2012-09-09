@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use \sylma\core;
+use \sylma\core, sylma\parser\languages\common;
 
 require_once('core/argumentable.php');
 require_once('Controled.php');
@@ -12,7 +12,7 @@ class Test extends Controled implements core\argumentable {
   protected $val2;
   protected $op;
 
-  public function __construct(Window $controler, $val1, $val2, $op) {
+  public function __construct(common\_window $controler, $val1, $val2, $op) {
 
     $this->setControler($controler);
 

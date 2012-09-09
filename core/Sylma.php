@@ -180,7 +180,7 @@ class Sylma {
 
         self::load('/core/argument/Manager.php');
         $result = new core\argument\Manager;
-        
+
       break;
 
       case 'caller' :
@@ -272,11 +272,14 @@ class Sylma {
     */
   }
 
-  public static function show($mVal) {
+  public static function show($mVal, $bToken = true) {
 
-    $node = self::getControler('formater')->asHTML($mVal);
-    //echo $node;
-    return $node;
+    $formater = self::getControler('formater');
+
+    $result = $bToken ? $formater->asToken($mVal) : $formater->asHTML($mVal);
+
+    //echo '<pre>' . $result . '</pre>';
+    return $result;
   }
 
   public static function loadException(Exception $e) {

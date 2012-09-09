@@ -29,8 +29,6 @@ initializer :
       name : \sylma\core\window\classes\File
     json :
       name : \sylma\core\window\classes\Context
-action:
-  update: false
 session :
   lifetime : 403200
 users:

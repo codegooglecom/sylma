@@ -4,9 +4,9 @@ namespace sylma\parser\caller;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
 
 \Sylma::load('/core/module/Domed.php');
-\Sylma::load('/parser/compiler/elemented.php');
+\Sylma::load('/parser/reflector/elemented.php');
 
-class Controler extends core\module\Domed implements parser\compiler\elemented {
+class Controler extends core\module\Domed implements parser\reflector\elemented {
 
   protected $aInterfaces = array();
   protected $aFiles = array();
@@ -80,22 +80,22 @@ class Controler extends core\module\Domed implements parser\compiler\elemented {
     return $this->parent;
   }
 
-  public function setParent(parser\compiler\elemented $parent) {
+  public function setParent(parser\reflector\documented $parent) {
 
     $this->parent = $parent;
   }
 
-  public function parse(dom\node $node) {
+  public function parseRoot(dom\element $el) {
 
-    if ($node->getType() != dom\node::ELEMENT || $node->getName() != 'call' || $node->getNamespace() != $this->getNamespace()) {
+    if (!$el->isElement('call', $this->getNamespace())) {
 
-      $this->throwException(sprintf('Invalid %s, call expected', $node->asToken()));
+      $this->throwException(sprintf('Invalid %s, call expected', $el->asToken()));
     }
 
     $window = $this->getParent()->getWindow();
     $interface = $this->loadObject($window->getObject());
 
-    return $interface->parseCall($node, $window->getObject());
+    return $interface->parseCall($el, $window->getObject());
   }
 
   public function getFile($sPath, $bDebug = true) {

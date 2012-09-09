@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\common;
-use sylma\core, sylma\parser\action, sylma\parser\domed, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom;
+use sylma\core, sylma\parser, sylma\parser\domed, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom;
 
 require_once('scope.php');
 require_once('core/argumentable.php');
@@ -11,7 +11,7 @@ interface _window extends scope, core\argumentable {
   const CONTEXT_DEFAULT = 'default';
   const NS = 'http://www.sylma.org/parser/languages/php';
 
-  function __construct(action\compiler $controler, core\argument $args, $sClass);
+  function __construct($controler, core\argument $args, $sClass);
 
   function add($mVal);
 
@@ -20,7 +20,7 @@ interface _window extends scope, core\argumentable {
   /**
    * @return basic\ObjectVar
    */
-  function getSelf();
+  //function getSelf();
 
   /**
    * @return ?
@@ -47,12 +47,14 @@ interface _window extends scope, core\argumentable {
   /**
    * @return php\basic\Insert
    */
-  function createInsert($mVal);
+  //function createInsert($mVal);
 
   /**
    * @return php\basic\Template
    */
-  function createTemplate(dom\node $node);
+  //function createTemplate(dom\node $node);
+
+  function createFunction($sName, common\_instance $return = null, array $aArguments = array());
 
   /**
    * @return common\_var
@@ -60,6 +62,8 @@ interface _window extends scope, core\argumentable {
   function addVar(common\linable $val);
 
   function setScope(common\scope $scope);
+
+  function stopScope();
 
   /**
    * @return _instance

@@ -1,48 +1,49 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use sylma\parser\action, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
+use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
 
-require_once('core/module/Domed.php');
+\Sylma::load('/core/module/Domed.php');
 
-require_once('parser/languages/common/_window.php');
-require_once('core/controled.php');
+\Sylma::load('/parser/languages/common/_window.php');
+\Sylma::load('/core/controled.php');
 
 class Window extends core\module\Domed implements common\_window, core\controled {
+
+  protected static $sArgumentClass = '\sylma\parser\Argument';
+  protected static $sArgumentFile = 'parser/Argument.php';
 
   // Keyed by alias. ex : storage/fs
   protected $aControlers = array();
 
   // Keyed by namespace. ex : http://www.sylma.org/parser/action
-  private $aParsers = array();
+  protected $aParsers = array();
 
   // Keyed by file path. ex : #sylma/action/index.xsl
-  private $aDependencies = array();
+  protected $aDependencies = array();
 
   protected $aInterfaces = array();
 
   // Indexed
-  private $aContent = array();
+  protected $aContent = array();
 
   // $this reference object
-  private $self;
+  protected $self;
 
   // static reference to class
-  private $sylma;
-
-  protected $sContext = self::CONTEXT_DEFAULT;
+  protected $sylma;
 
   /**
    * Stack of scopes added (ie: control structure, if, when, etc..)
    * @var array
    */
   protected $aScopes = array();
-  
+
   protected $aObjects = array();
 
   protected $aKeys = array();
 
-  public function __construct(action\compiler $controler, core\argument $args, $sClass) {
+  public function __construct($controler, core\argument $args, $sClass) {
 
     $this->setControler($controler);
     $this->setArguments($args);
@@ -64,16 +65,6 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return parent::createArgument($mArguments, $sNamespace);
   }
 
-  public function setContext($sContext) {
-
-    $this->sContext = $sContext;
-  }
-
-  public function getContext() {
-
-    return $this->sContext;
-  }
-
   public function add($mVal) {
 
     $this->getScope()->addContent($mVal);
@@ -81,11 +72,7 @@ class Window extends core\module\Domed implements common\_window, core\controled
 
   public function checkContent($mVal) {
 
-    if ((!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node)) {
-
-      $formater = $this->getControler('formater');
-      $this->throwException(sprintf('Cannot add %s in content', $formater->asToken($mVal)));
-    }
+    //return true;
   }
 
   public function addContent($mVal) {
@@ -131,11 +118,6 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return $this->aControlers[$sName];
   }
 
-  public function getSelf() {
-
-    return $this->self;
-  }
-
   public function getSylma() {
 
     return $this->sylma;
@@ -162,22 +144,6 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return $result;
   }
 
-  public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true, $bRoot = false) {
-
-    if ($sFormat) {
-
-      switch ($sFormat) {
-
-        case 'dom' :$mVal = $this->convertToDOM($mVal, !$bRoot); break;
-        case 'txt' : $mVal = $this->convertToString($mVal); break;
-      }
-    }
-
-    $result = $this->create('insert', array($this, $mVal, $iKey, $bTemplate));
-
-    return $result;
-  }
-
   public function createString($mContent) {
 
     if (is_string($mContent)) {
@@ -192,12 +158,7 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return $result;
   }
 
-  public function createTemplate(dom\node $node) {
-
-    return $this->create('template', array($this, $node));
-  }
-
-  public function createFunction($sName, common\_instance $return, array $aArguments = array()) {
+  public function createFunction($sName, common\_instance $return = null, array $aArguments = array()) {
 
     return $this->create('function', array($this, $sName, $return, $aArguments));
   }
@@ -208,10 +169,10 @@ class Window extends core\module\Domed implements common\_window, core\controled
   }
 
   public function createCondition($test, $content = null) {
-    
+
     return $this->create('condition', array($this, $test, $content));
   }
-  
+
   public function addVar(common\linable $val) {
 
     $result = $val;
@@ -235,7 +196,7 @@ class Window extends core\module\Domed implements common\_window, core\controled
 
   public function createVar(common\linable $val) {
 
-    if ($val instanceof Called) {
+    if ($val instanceof php\basic\Called) {
 
       $return = $val->getReturn();
     }
@@ -314,12 +275,12 @@ class Window extends core\module\Domed implements common\_window, core\controled
 
     return $this->aObjects[count($this->aObjects) - 1];
   }
-  
+
   public function setObject(common\_object $obj) {
-    
+
     $this->aObjects[] = $obj;
   }
-  
+
   public function stopObject() {
 
     if (!$this->aObjects) {
@@ -328,138 +289,6 @@ class Window extends core\module\Domed implements common\_window, core\controled
     }
 
     return array_pop($this->aObjects);
-  }
-  
-  public function convertToString($val, $iMode = 0) {
-
-    $result = null;
-
-    if ($val instanceof common\_scalar) {
-
-      if ($val instanceof common\_var) $instance = $val->getInstance();
-      else $instance = $val;
-
-      if ($instance instanceof common\_scalar) {
-
-        $controler = $this->getControler();
-        $bString = $controler->useTemplate() || $controler->useString();
-
-        if ($bString && $instance instanceof php\basic\instance\_Array) {
-
-          $aContent = array();
-          foreach($instance as $sub) {
-
-            $aContent[] = $this->convertToString($sub);
-          }
-
-          $val = $this->createString($aContent);
-        }
-
-        $result = $val;
-      }
-      else {
-
-        $this->throwException(sprintf('Cannot convert scalar value %s to string', get_class($instance)));
-      }
-    }
-    else if ($val instanceof php\basic\Called) {
-
-      $val = $val->getVar();
-      $result = $this->convertToString($val);
-    }
-    else if ($val instanceof common\_object) {
-
-      $interface = $val->getInstance()->getInterface();
-
-      if (!$interface->isInstance('\sylma\core\stringable')) {
-
-        $this->throwException(sprintf('Cannot convert object %s to string', $interface->getName()));
-      }
-
-      $result = $this->createCall($this->getSelf(), 'loadStringable', 'php-string', array($val, $iMode));
-    }
-    else if ($val instanceof dom\node) {
-
-      $result = $this->argToInstance($val);
-    }
-    else if ($val instanceof php\basic\Template) {
-
-      $result = $val;
-    }
-    else {
-
-      $formater = $this->getControler('formater');
-      $this->throwException(sprintf('Cannot convert %s to string', $formater->asToken($val)));
-    }
-
-    return $result;
-  }
-
-  public function convertToDOM($val, $bTemplate = false) {
-
-    if (is_array($val)) {
-
-      // concat
-
-      foreach ($val as $mSub) {
-
-        $aResult[] = $this->convertToDOM($mSub, $bTemplate);
-      }
-
-      $result = $this->createString($aResult);
-    }
-    else if ($val instanceof CallMethod) {
-
-      $result = $this->convertToDOM($val->getVar(), $bTemplate);
-    }
-    else if ($val instanceof common\_object) {
-
-      if ($val instanceof common\_instance) {
-
-        $this->throwException('Cannot insert object instance');
-      }
-
-      $interface = $val->getInstance()->getInterface();
-
-      if ($interface->isInstance('\sylma\dom\node')) {
-
-        //if ($bTemplate) $result = $this->convertToString($val);
-        //else $result = $val;
-        $result = $bTemplate ? $this->convertToString($val) : $val;
-        //$result = $val;
-      }
-      else if ($interface->isInstance('\sylma\core\argumentable')) {
-
-        $call = $this->createCall($this->getSelf(), 'loadArgumentable', '\sylma\dom\node', array($val));
-
-        $result = $call;
-      }
-      else if ($interface->isInstance('\sylma\dom\domable')) {
-
-        $call = $this->createCall($this->getSelf(), 'loadDomable', '\sylma\dom\node', array($val));
-
-        $result = $call;
-      }
-      else {
-
-        $this->throwException(sprintf('Cannot add @class %s', $interface->getName()));
-      }
-    }
-    else if ($val instanceof common\_scalar) {
-
-      $result = $this->convertToString($val);
-    }
-    else if ($val instanceof dom\node) {
-
-      $result = $bTemplate ? $this->convertToString($val) : $val;
-    }
-    else {
-
-      $frm = \Sylma::getControler('formater');
-      $this->throwException(sprintf('Cannot insert %s', $frm->asToken($val)));
-    }
-
-    return $result;
   }
 
   public function stringToInstance($sFormat) {
@@ -548,6 +377,7 @@ class Window extends core\module\Domed implements common\_window, core\controled
       }
       else if ($mVar instanceof common\_instance ||
           $mVar instanceof php\basic\Called ||
+          $mVar instanceof php\basic\_Closure ||
           $mVar instanceof common\_var) {
 
         $arg = $mVar;
@@ -598,16 +428,10 @@ class Window extends core\module\Domed implements common\_window, core\controled
 
   public function asArgument() {
 
-    $interface = $this->getControler()->getInterface();
-
-    $result = $this->createArgument(array(
-      'window' => array(
-        '@extends' => $interface->getName(),
-      ),
-    ), self::NS);
-
+    $result = $this->createArgument(array('window' => array()), self::NS);
     $result->get('window')->mergeArray($this->aContent);
 
     return $result;
   }
+
 }

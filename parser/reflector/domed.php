@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\parser\compiler;
+namespace sylma\parser\reflector;
 use \sylma\core, \sylma\storage\fs, \sylma\dom;
 
-require_once('core/controled.php');
+\Sylma::load('/core/controled.php');
 
 interface domed extends core\controled {
 
@@ -12,6 +12,6 @@ interface domed extends core\controled {
    * @param dom\element $el
    * @return type core\argumentable|array|null
    */
-  function setParent(elemented $parent);
+  function setParent(documented $parent);
 }
 

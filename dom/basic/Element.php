@@ -564,7 +564,7 @@ class Element extends \DOMElement implements dom\element {
     return $this->previousSibling;
   }
 
-  public function lookupNamespace($sPrefix) {
+  public function lookupNamespace($sPrefix = null) {
 
     return $this->lookupNamespaceURI($sPrefix);
   }

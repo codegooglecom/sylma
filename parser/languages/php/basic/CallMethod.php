@@ -10,7 +10,7 @@ class CallMethod extends Called  {
 
   private $called;
 
-  public function __construct(Window $controler, common\_object $called, $sMethod, common\_instance $return, array $aArguments = array()) {
+  public function __construct(common\_window $controler, common\_object $called, $sMethod, common\_instance $return, array $aArguments = array()) {
 
     $this->called = $called;
     $this->setName($sMethod);

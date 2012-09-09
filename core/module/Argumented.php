@@ -135,11 +135,11 @@ abstract class Argumented extends Controled {
     return $this->getArguments()->set($sPath, $mValue);
   }
 
-  protected function show($mVar) {
-    
-    return \Sylma::show($mVar);
+  protected function show($mVar, $bToken = true) {
+
+    return \Sylma::show($mVar, $bToken);
   }
-  
+
   /**
    * Log a message
    * @param mixed|DOMNode|string|array $mMessage The message to send, will be parsed or stringed

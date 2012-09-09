@@ -1,11 +1,11 @@
 <?php
 
-namespace sylma\core\argument;
+namespace sylma\core\argument\parser;
 use sylma\core, sylma\storage\fs;
 
-\Sylma::load('Iterator.php', __DIR__);
+\Sylma::load('../Iterator.php', __DIR__);
 
-class Cached extends Iterator {
+class Cached extends core\argument\Iterator {
 
   public function __construct(fs\file $file, core\argument $parent = null) {
 
@@ -17,15 +17,15 @@ class Cached extends Iterator {
     return include($file->getRealPath());
   }
 
-  public function normalizeUnknown($mVar) {
+  public function parseValue($mValue, array $aParentPath = array()) {
 
-    if (is_callable($mVar)) {
+    if (is_callable($mValue)) {
 
-      $mResult = $mVar();
+      $mResult = $mValue();
     }
     else {
 
-      $mResult = parent::normalizeUnknown($mVar);
+      $mResult = parent::parseValue($mValue, $aParentPath);
     }
 
     return $mResult;

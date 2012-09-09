@@ -183,17 +183,32 @@ abstract class Basic extends core\module\Namespaced {
 
     $mResult =& $this->getValue($sPath, $bDebug);
 
+    return $this->parseGet($mResult, $sPath, $bDebug);
+  }
+
+  protected function parseGet(&$mResult, $sPath, $bDebug) {
+
     if (is_array($mResult)) {
 
       if ($sPath) $mResult = new static($mResult, $this->getNS(), $this);
       else return $this;
     }
-    else if (is_string($mResult)) {
+    else if (is_scalar($mResult)) {
 
+      if ($bDebug) $this->throwException(sprintf('%s is not an array', $sPath), 3);
       return null;
+    }
+    else {
+
+      $mResult = $this->parseGetUnknown($mResult);
     }
 
     return $mResult;
+  }
+
+  protected function parseGetUnknown($mValue) {
+
+    return $mValue;
   }
 
   /**
@@ -356,14 +371,14 @@ abstract class Basic extends core\module\Namespaced {
    * This methods does nothing as is.
    * It allows extended class to update value when loading, usefull with @class XArguments and YAML files
    *
-   * @param string $sValue The value to edit
+   * @param string $mValue The value to edit
    * @param? array $aParentPath The path to the value
    *
    * @return string The same value as @param $sValue
    */
-  protected function parseValue($sValue, array $aParentPath = array()) {
+  protected function parseValue($mValue, array $aParentPath = array()) {
 
-    return $sValue;
+    return $mValue;
   }
 
   public function read($sPath = '', $bDebug = true) {

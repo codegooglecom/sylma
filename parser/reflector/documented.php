@@ -1,11 +1,9 @@
 <?php
 
-namespace sylma\parser\compiler;
+namespace sylma\parser\reflector;
 use \sylma\core, \sylma\storage\fs, \sylma\dom;
 
-require_once('domed.php');
-
-interface elemented extends domed {
+interface documented {
 
   /**
    *
@@ -13,5 +11,6 @@ interface elemented extends domed {
    * @return core\argumentable|array|null
    */
   function parse(dom\node $source);
+  function getNamespace($sPrefix = '');
 }
 

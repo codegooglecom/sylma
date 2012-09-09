@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\parser\compiler;
+namespace sylma\parser\reflector;
 use \sylma\core, \sylma\storage\fs, \sylma\dom;
 
-require_once('domed.php');
+\Sylma::load('domed.php', __DIR__);
 
 interface attributed extends domed {
 

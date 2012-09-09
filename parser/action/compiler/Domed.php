@@ -11,9 +11,9 @@ namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\common, sylma\parser\languages\php;
 
 require_once('Runner.php');
-require_once('parser/compiler/elemented.php');
+require_once('parser/reflector/documented.php');
 
-abstract class Domed extends Runner implements parser\compiler\elemented {
+abstract class Domed extends Runner implements parser\reflector\documented {
 
   protected $currentElement;
 
@@ -59,79 +59,23 @@ abstract class Domed extends Runner implements parser\compiler\elemented {
     return $aResults;
   }
 
-  protected function parseNode(dom\node $node) {
-
-    $mResult = null;
-
-    switch ($node->getType()) {
-
-      case $node::ELEMENT :
-
-        $mResult = $this->parseElement($node);
-
-      break;
-
-      case $node::TEXT :
-
-        $mResult = $this->getWindow()->createString((string) $node);
-
-      break;
-
-      case $node::COMMENT :
-
-      break;
-
-      default :
-
-        $this->throwException(sprintf('Unknown node type : %s', $node->getType()));
-    }
-
-    return $mResult;
-  }
-
-  public function parse(dom\node $node) {
-
-    return $this->parseNode($node);
-  }
-
-  /**
-   *
-   * @param dom\element $el
-   * @return type core\argumentable|array|null
-   */
-  protected function parseElement(dom\element $el) {
-
-    $sNamespace = $el->getNamespace();
-    $mResult = null;
-
-    if ($sNamespace == $this->getNamespace()) {
-
-      $mResult = $this->parseElementAction($el);
-    }
-    else {
-
-      $mResult = $this->parseElementForeign($el, $this->getControler()->create('document'));
-    }
-
-    return $mResult;
-  }
-
   /**
    *
    * @param dom\element $el
    * @return dom\node|array|null
    */
-  protected function parseElementForeign(dom\element $el, dom\complex $parent) {
+  protected function parseElementForeign(dom\element $el) {
 
     $mResult = null;
+    $parent = $this->getControler()->create('document');
 
     if ($this->getInterface()->useElement() && $el->getNamespace() == $this->getNamespace('class')) {
 
       $mResult = $this->reflectSelfCall($el);
     }
-    else if ($parser = $this->getParser($el->getNamespace())) {
+    else if ($parser = $this->loadParser($el->getNamespace(), 'element')) {
 
-      $mResult = $parser->parse($el);
+      $mResult = $parser->parseRoot($el);
     }
     else {
 
@@ -229,64 +173,6 @@ abstract class Domed extends Runner implements parser\compiler\elemented {
     }
 
     return $aResult;
-  }
-
-  protected function useForeignAttributes(dom\element $el) {
-
-    $bResult = false;
-
-    foreach ($el->getAttributes() as $attr) {
-
-      $sNamespace = $attr->getNamespace();
-
-      if ($sNamespace && $sNamespace != $this->getNamespace()) {
-
-        $bResult = true;
-        break;
-      }
-    }
-
-    return $bResult;
-  }
-
-  /**
-   *
-   * @param dom\element $el
-   * @return dom\node
-   */
-  protected function parseAttributes(dom\element $el, dom\handler $resultHandler) {
-
-    $aForeigns = array();
-    $result = $resultHandler;
-
-    foreach ($el->getAttributes() as $attr) {
-
-      $sNamespace = $attr->getNamespace();
-
-      if (!$sNamespace || $sNamespace == $this->getNamespace()) {
-
-        $resultHandler->add($this->parseAttribute($attr));
-      }
-      else {
-
-        $aForeigns[$sNamespace] = true;
-      }
-    }
-
-    foreach ($aForeigns as $sNamespace => $bVal) {
-
-      if ($parser = $this->getParser($sNamespace)) {
-
-        if (!$parser instanceof parser\compiler\attributed) {
-
-          $this->throwException(sprintf('Cannot use parser %s with attributes', $sNamespace));
-        }
-
-        $result = $parser->parseAttributes($el, $result->getRoot(), $resultHandler);
-      }
-    }
-
-    return $result;
   }
 
   protected function parseAttribute(dom\attribute $attr) {

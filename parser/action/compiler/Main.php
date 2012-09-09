@@ -4,9 +4,9 @@ namespace sylma\parser\action\compiler;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\languages\common;
 
 \Sylma::load('/parser/compiler/Basic.php');
-\Sylma::load('/parser/compiler.php');
+\Sylma::load('/parser/compiler/documented.php');
 
-class Main extends parser\compiler\Basic implements parser\compiler {
+class Main extends parser\compiler\Basic implements parser\compiler\documented {
 
   const PHP_TEMPLATE = 'php.xsl';
   const DOM_TEMPLATE = 'template.xsl';
