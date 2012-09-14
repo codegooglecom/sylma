@@ -59,7 +59,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     $mResult = null;
     $bRoot = false;
-    
+
     if ($sPath !== '') {
 
       $aPath = $this->parsePath($sPath);
@@ -75,7 +75,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         else {
 
           $mTarget =& $this->aArray;
-          $bRoot = true;
+          //$bRoot = true;
         }
 
         if (is_array($mTarget)) {
@@ -88,11 +88,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         $mTarget =& $this->locateValue($aPath, false, true);
 
         if (is_null($mTarget)) {
-          
+
           $mTarget =& $this->aArray;
           //$bRoot = true;
         }
-        
+
         foreach ($aPath as $sKey) {
 
           $mTarget[$sKey] = array();
@@ -105,7 +105,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       //$mTarget =& $this->aArray;
       $bRoot = true;
     }
-    
+
     if ($bIndex) { // todo : check for usage
 
       if (is_array($mTarget)) {
@@ -124,19 +124,19 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     else {
 
       if ($bRoot) {
-        
+
         if (is_null($mValue)) $this->aArray = array();
         else if ($mValue instanceof core\argument) $this->aArray = $mValue->query();
         else if (!is_array($mValue)) $this->aArray = array($mValue);
         else $this->aArray = $mValue;
-        
+
       }
-      else {
-        
+      else if (!is_null($mValue)) {
+
         $mTarget = $mValue;
       }
     }
-    
+
 //echo \Sylma::show(count($this->aArray));
     if ($mValue) {
 
@@ -149,10 +149,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 //echo \Sylma::show($mValue);
 //
         $mResult = $this->get($sPath);
-        
+
       }
       else {
-        
+
         $mResult = $this->read($sPath);
       }
     }
@@ -302,7 +302,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
         $sKey = $this->extractValue($mCurrent, $aPath, $aParentPath, $bDebug);
 
         if (!is_null($sKey)) {
-          
+
           $mCurrent =& $mCurrent[$sKey];
 
           // run hypotheticals parse on strings

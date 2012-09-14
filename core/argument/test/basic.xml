@@ -67,6 +67,27 @@
         $arg->read('abc/ghi') === '456'
     </tst:expected>
   </tst:test>
+  <tst:test name="A set() to NULL">
+    <tst:prepare>
+      $arg = $controler->createArgument(array(
+        'abc' =>  123,
+        'def' => array(
+          'ghi' => 456,
+          'lmn' => 789,
+        ),
+      ));
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $arg->set('def');
+      echo \Sylma::show($arg->query());
+      return
+        $arg->query() === array(
+          'abc' => 123,
+        )
+    </tst:expected>
+  </tst:test>
   <tst:test name="A set() of array with stepped get">
     <tst:prepare>
       $arg = $controler->createArgument();
