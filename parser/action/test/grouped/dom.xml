@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
   <tst:description>DOM</tst:description>
+  <tst:test name="Simple HTML">
+    <le:action>
+      <div>Hello world</div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">Hello world</div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
   <tst:test name="Build a document">
     <le:action>
       <div>

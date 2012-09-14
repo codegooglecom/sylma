@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action;
-use sylma\core, sylma\storage\fs;
+use sylma\core, sylma\storage\fs, sylma\core\functions;
 
 require_once('core/module/Argumented.php');
 
@@ -9,6 +9,8 @@ class Path extends core\module\Argumented {
 
   private $sPath = '';
   private $file = null;
+
+  protected $sExtension = '';
 
   const NS = 'http://www.sylma.org/parser/action/path';
   /**
@@ -19,9 +21,15 @@ class Path extends core\module\Argumented {
    * @param $bDebug throw exceptions on error
    */
 
-  public function __construct($sPath, array $aArguments = array(), $bParse = true, $bArguments = true, $bDebug = true) {
+  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, $bArguments = true, $bDebug = true) {
 
     $this->setControler($this->getControler('action'));
+
+    if ($directory) {
+
+      require_once('core/functions/Path.php');
+      $sPath = functions\path\toAbsolute($sPath, $directory);
+    }
 
     $this->setPath($sPath);
     $this->setNamespace(self::NS);
@@ -57,7 +65,7 @@ class Path extends core\module\Argumented {
     return $aResult;
   }
 
-  protected function parsePath($bArguments = true, $bDebug = true) {
+  public function parsePath($bArguments = true, $bDebug = true) {
 
     $controler = $this->getControler();
 
@@ -68,35 +76,40 @@ class Path extends core\module\Argumented {
 
     do {
 
-      $sSubPath = $aPath ? $aPath[0] : '.';
+      $sub = null;
+      $sSubPath = $aPath ? $aPath[0] : '';
 
-      if (!$sub = $dir->getDirectory($sSubPath, false)) {
+      if ($sSubPath) {
 
-        $file = $this->findAction($dir, $sSubPath, $bArguments, $bDebug);
+        if (!$sub = $dir->getDirectory($sSubPath, false)) {
 
-      } else {
+          $file = $this->findAction($dir, $sSubPath, $bArguments, $bDebug);
+        }
+        else {
 
-        $dir = $sub;
-      }
-
-      if (!$file && (!$aPath || !$sub)) {
-
-        if (!$file = $this->findAction($dir, 'index', $bArguments, $bDebug)) {
-
-          if ($dir->checkRights(MODE_EXECUTION)) {
-
-            $controler->throwException(txt('No index file in %s', $dir->asToken()));
-
-          } else {
-
-            $controler->throwExecution(txt('No execution rights on %s', $dir->asToken()));
-          }
+          $dir = $sub;
+          array_shift($aPath);
         }
       }
 
-      array_shift($aPath);
+      if (!$sub) {
 
-    } while (!$file && $aPath);
+        if (!$file) {
+
+          $file = $this->findAction($dir, 'index', $bArguments, $bDebug);
+
+          if (!$file) {
+
+            $this->throwException(sprintf('No index file in %s', $dir->asToken()));
+          }
+        }
+        else {
+
+          array_shift($aPath);
+        }
+      }
+
+    } while (!$file && $sub);
 
     $aPath = $this->loadIndexed($aPath);
 
@@ -123,7 +136,7 @@ class Path extends core\module\Argumented {
 
     if (!$bArguments && $bDebug) {
 
-      $controler->throwException(t('Directory %s not found in path %s', $sPath, $this->getPath()));
+      $this->throwException(sprintf('Directory %s not found in path %s', $sPath, $this->getPath()));
     }
 
     foreach ($exts->asArray() as $sExtension) {
@@ -168,7 +181,7 @@ class Path extends core\module\Argumented {
     return $mResult;
   }
 
-  protected function parseExtension($bRemove) {
+  public function parseExtension($bRemove) {
 
     $sPath = $this->getPath();
 
@@ -183,6 +196,11 @@ class Path extends core\module\Argumented {
     }
 
     return $this->getExtension();
+  }
+
+  public function getExtension() {
+
+    return $this->sExtension;
   }
 
   public function getFile() {
@@ -213,7 +231,7 @@ class Path extends core\module\Argumented {
 
     if ($sPath{0} != '/') {
 
-      $this->throwException(txt('Invalid path : %s', $sPath));
+      $this->throwException(sprintf('Invalid path : %s', $sPath));
     }
 
     $this->sPath = $sPath;
@@ -248,6 +266,11 @@ class Path extends core\module\Argumented {
     $mSender[] = '@path ' . $this->getPath();
 
     return $this->getControler()->throwException($sMessage, $mSender);
+  }
+
+  public function __toString() {
+
+    return $this->sPath;
   }
 }
 

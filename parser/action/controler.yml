@@ -4,14 +4,15 @@ extensions :
 classes :
   @sylma-classbase : \sylma\parser\action
   window :
-    name : php\basic\Window
+    name : \sylma\parser\languages\php\basic\Window
+  caller :
+    name \sylma\parser\caller\Controler
   basic :
     name : Basic
   dom :
     name : compiler\Reflector
-  php : @sylma:import php/window.yml;
+  php : @sylma:import ../languages/php/window.yml;
   document :
-    file : /sylma/dom2/basic/handler/Rooted.php
     name : \sylma\dom\basic\handler\Rooted
   action :
     name : handler\Action
@@ -21,3 +22,7 @@ classes :
     classes :
       security :
         name : \sylma\parser\security\Domed
+      js :
+        name : \sylma\parser\js\binder\Domed
+  context :
+    name : \sylma\parser\context\Basic

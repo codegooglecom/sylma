@@ -3,16 +3,19 @@
 namespace sylma\core\module;
 use \sylma\core, \sylma\storage\fs;
 
+require_once('Sessioned.php');
+
 require_once('core/argument/Filed.php');
 require_once('core/functions/Path.php');
-require_once('Argumented.php');
 
-abstract class Filed extends Argumented {
+abstract class Filed extends Sessioned {
 
   const FS_CONTROLER = 'fs';
 
   protected $directory = null;
-  protected static $argumentClass = 'sylma\core\argument\Filed';
+
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  protected static $sArgumentFile = 'core/argument/Filed.php';
 
   protected function createArgument($mArguments, $sNamespace = '') {
 
@@ -88,10 +91,8 @@ abstract class Filed extends Argumented {
       $this->directory = $mDirectory;
     }
 
-    if (!$this->getDirectory()) {
-
-      $this->throwException(txt('Cannot use %s as a directory', $mDirectory));
-    }
+    // check if directory is accessible
+    $this->getDirectory();
   }
 
   protected function loadControler($sName) {
@@ -128,7 +129,7 @@ abstract class Filed extends Argumented {
 
     if (!$result && $bDebug) {
 
-      $this->throwException(t('No base directory defined'));
+      $this->throwException('No base directory defined');
     }
 
     return $result;
@@ -144,12 +145,7 @@ abstract class Filed extends Argumented {
 
     $fs = $this->getControler(static::FS_CONTROLER);
 
-    if (!$directory = $this->getDirectory()) {
-
-      $this->throwException(t('No directory defined'), array(), 3);
-    }
-
-    return $fs->getFile($sPath, $directory, $bDebug);
+    return $fs->getFile($sPath, $this->getDirectory(), $bDebug);
   }
 
   protected function createTempDirectory($sName = '') {

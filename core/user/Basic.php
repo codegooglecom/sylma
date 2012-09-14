@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\user;
-use \sylma\core, sylma\storage\fs;
+use \sylma\core, sylma\storage\fs, sylma\core\functions;
 
 require_once('core/module/Argumented.php');
 require_once(dirname(__dir__) . '/user.php');
@@ -70,26 +70,27 @@ class Basic extends core\module\Argumented implements core\user {
       $this->throwException(t('Cannot authenticate, bad datas !'));
     }
 
-    $dUsers = $this->getControler()->getDocument($this->readArgument('users/path'), \Sylma::MODE_EXECUTE);
+    $fs = $this->getControler('fs');
+    $users = $fs->getFreeFile($this->readArgument('users/path'));
+    $users = $users->getFreeDocument($this->getNS());
 
-    if (!$dUsers || $dUsers->isEmpty()) {
+    if ($users->isEmpty()) {
 
       $this->throwException(t('No active user'));
     }
 
-    list($spUser, $spPassword) = \addQuote(array($sUser, sha1($sPassword)));
+    require_once('core/functions/Text.php');
+    list($spUser, $spPassword) = functions\text\addQuote(array($sUser, sha1($sPassword)));
 
-    if (!$eUser = $dUsers->getx("//user[@name = $spUser and @password = $spPassword]")) {
+    if (!$eUser = $users->getx("//user[@name = $spUser and @password = $spPassword]", array(), false)) {
 
-      $this->throwException(t('Bad authentication'));
+      $this->throwException('Bad authentication');
     }
 
-    // Authentification successed !
+    // Authentication successed !
 
     $sResult = $this->setName($sUser);
     $this->isValid(true);
-
-    dspm(xt('Authentification %s réussie !', $sUser), 'success');
 
     return $sResult;
   }
@@ -201,7 +202,7 @@ class Basic extends core\module\Argumented implements core\user {
     if (!$dProfil || $dProfil->isEmpty()) {
 
       $this->log($this->readArgument('path') . '/' . $this->getName());
-      $this->log(txt('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
+      $this->log(sprintf('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
     }
     else {
 
@@ -244,7 +245,10 @@ class Basic extends core\module\Argumented implements core\user {
 
   protected function loadSession() {
 
-    if ($sSession = array_val($this->readArgument('session/name'), $_SESSION)) {
+    $sKey = $this->readArgument('session/name');
+    $sSession = array_key_exists($sKey, $_SESSION) ? $_SESSION[$sKey] : '';
+
+    if ($sSession) {
 
       $aSession = unserialize($sSession);
 
@@ -299,17 +303,17 @@ class Basic extends core\module\Argumented implements core\user {
 
     if (!$sOwner) {
 
-      $this->throwException(txt('Owner not defined in %s', $sSource));
+      $this->throwException(sprintf('Owner not defined in %s', $sSource));
     }
 
     if (strlen($sMode) < 3 || !is_numeric($sMode)) {
 
-      $this->throwException(txt('Invalid mode in %s', $sSource));
+      $this->throwException(sprintf('Invalid mode in %s', $sSource));
     }
 
     if (!strlen($sGroup)) {
 
-      $this->throwException(txt('Group not defined in %s', $sSource));
+      $this->throwException(sprintf('Group not defined in %s', $sSource));
     }
 
     $iOwner = intval($sMode{0});
@@ -318,7 +322,7 @@ class Basic extends core\module\Argumented implements core\user {
 
     if ($iOwner > 7 || $iGroup > 7 || $iPublic > 7) {
 
-      $this->throwException(txt('Invalid mode in %s', $sSource));
+      $this->throwException(sprintf('Invalid mode in %s', $sSource));
     }
 
     // everything is ok

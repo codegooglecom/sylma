@@ -1,8 +1,0 @@
-classes :
-  file :
-    name : XML_File
-  directory :
-    name : XML_Directory
-  security :
-    name : XML_SFile
-  

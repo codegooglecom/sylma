@@ -1,7 +1,5 @@
 users :
-  path : /config/users.xml
-groups :
-  path : /config/groups.xml
+  path : /users/users.xml
 path: /users
 # Path to edit a user, name will be add as first indexed arg
 edit: /sylma/modules/users/edit

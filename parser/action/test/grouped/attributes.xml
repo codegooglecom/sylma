@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <tst:description>Attributes</tst:description>
+  <tst:test name="Simple short-call">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" required="false">
+          <le:default>world</le:default>
+        </le:argument>
+      </le:settings>
+      <img src="[sylma:call::get-directory]" alt="bonsoir"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $root = $result->getRoot();
+      
+      return
+        $root->readAttribute('src') == (string) $controler->getDirectory();
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Short call and get arg">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-string" required="false">
+          <le:default>world</le:default>
+        </le:argument>
+      </le:settings>
+      <img src="[sylma:call::get-directory]/hello/[sylma:arg::0]" alt="bonsoir"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $root = $result->getRoot();
+      
+      return
+        $root->readAttribute('src') == (string) $controler->getDirectory() . '/hello/world';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

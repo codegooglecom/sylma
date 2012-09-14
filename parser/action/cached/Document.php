@@ -4,7 +4,7 @@ namespace sylma\parser\action\cached;
 use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
 
 require_once('Basic.php');
-require_once('dom2/domable.php');
+require_once('dom/domable.php');
 
 abstract class Document extends Basic implements dom\domable {
 
@@ -22,9 +22,9 @@ abstract class Document extends Basic implements dom\domable {
 
   protected function parseAction() {
 
-    $mResult = null;
+    $aResult = array();
     $aArguments = parent::parseAction();
-
+    
     if ($this->useTemplate()) {
 /*
       $controler = $this->getControler();
@@ -32,14 +32,15 @@ abstract class Document extends Basic implements dom\domable {
 
       $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
 */
-      $mResult = $this->loadTemplate(0, $aArguments);
+      
+      $aResult = $this->loadTemplate(0, $aArguments);
     }
     else {
-
-      $mResult = $aArguments;
+      
+      $aResult = $aArguments;
     }
-
-    return $mResult;
+    
+    return $aResult;
   }
 
   protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {
@@ -68,32 +69,6 @@ abstract class Document extends Basic implements dom\domable {
 
   public function asDOM() {
 
-    $mAction = $this->parseAction();
-
-    if ($this->useTemplate()) {
-
-      $mResult = $mAction;
-    }
-    else {
-
-      $iAction = count($mAction);
-
-      if ($iAction == 1) {
-
-        $mAction = array_pop($mAction);
-      }
-
-      if ($iAction > 1 || !($mAction instanceof dom\handler)) {
-
-        $mResult = $this->getControler()->create('document');
-        $mResult->add($mAction);
-      }
-      else {
-
-        $mResult = $mAction;
-      }
-    }
-
-    return $mResult;
+    return $this->getContext()->asDOM();
   }
 }

@@ -1,10 +1,10 @@
 <?php
 
 namespace sylma\parser\action;
-use sylma\parser, sylma\dom, sylma\storage\fs, sylma\parser\action\php;
+use sylma\parser, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php;
 
 require_once('parser/domed.php');
-require_once('dom2/domable.php');
+require_once('dom/domable.php');
 
 interface compiler extends parser\domed, dom\domable {
 
@@ -16,6 +16,6 @@ interface compiler extends parser\domed, dom\domable {
   /**
    * @return array|php\basic\CallMethod|
    */
-  function runVar(php\_var $call, dom\collection $children);
+  function runVar(common\_var $call, dom\collection $children);
 
 }

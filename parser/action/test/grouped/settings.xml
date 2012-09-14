@@ -96,12 +96,13 @@
     <le:action>
       <le:settings>
         <le:argument format="php-string" name="path">
-          <le:validate return="true" replace="true">
+          <le:validate return="true">
             <le:call name="get-file">
               <le:get-argument name="path"/>
             </le:call>
           </le:validate>
         </le:argument>
+        <le:return format="object"/>
       </le:settings>
       <le:get-argument name="path"/>
     </le:action>
@@ -267,6 +268,23 @@
 
       return
         $aResult === array(null);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Require an indexed argument">
+    <le:action>
+      <le:settings>
+        <le:argument format="php-numeric"/>
+      </le:settings>
+      <le:get-argument index="0"/>
+    </le:action>
+    <tst:prepare>
+      $controler->setArgument('arguments', array(123));
+    </tst:prepare>
+    <tst:expected>
+      $iResult = $controler->getResult('object');
+
+      return
+        $iResult === 123;
     </tst:expected>
   </tst:test>
 </tst:tests>

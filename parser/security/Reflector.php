@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\security;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\action\php;
+use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
 
 require_once('core/module/Filed.php');
 
@@ -43,6 +43,6 @@ abstract class Reflector extends core\module\Filed {
 
     $window = $this->getParent()->getWindow();
 
-    return $window->create('condition', array($window, $this->reflectTest($aRights), $result));
+    return $window->createCondition($this->reflectTest($aRights), $result);
   }
 }

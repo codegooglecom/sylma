@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action\php, \sylma\parser;
+use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php, \sylma\parser;
 
 require_once(dirname(dirname(__dir__)) . '/Reflector.php');
 require_once(dirname(__dir__) . '/compiler.php');
@@ -11,7 +11,7 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
-  const CLASS_DEFAULT = '\sylma\parser\action\cached\Document';
+  const CLASS_FILE_DEFAULT = '/sylma/parser/action/cached/document.iml';
   const CLASS_PREFIX = 'class';
 
   const WINDOW_ARGS = 'classes/php';
@@ -35,12 +35,13 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   private $aParsers = array();
 
   /**
-   * Interface of new cached class. See @method php\_window::getSelf()
+   * Interface of new cached class. See @method common\_window::getSelf()
    * @var parser\caller\Domed
    */
   protected $interface;
 
   protected $return;
+  protected $sFormat = 'object';
 
   // controler : getNamespace, create, getArgument
 
@@ -51,20 +52,22 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->setNamespace($controler->getNamespace(), 'self');
     $this->setDirectory($dir);
 
-    $sClass = $this->loadClass($doc);
-
-    $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $sClass));
-    $this->setWindow($window);
-
     $caller = $this->getControler(self::CALLER_ALIAS);
     $caller->setParent($this);
 
-    $this->setInterface($caller->getInterface($sClass));
+    $interface = $this->loadInterface($doc);
+    $this->setInterface($interface);
+
+    $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $interface->getName()));
+    $this->setWindow($window);
 
     $security = $this->getControler()->create('parser/security');
     $this->setParser($security, $security->getNS());
 
-    $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
+    if ($this->getInterface()->useElement()) {
+
+      $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
+    }
   }
 
   protected function setDocument(dom\handler $doc) {
@@ -112,14 +115,24 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->aParsers = array_merge($this->aParsers, $aResult);
   }
 
-  protected function loadClass(dom\handler $doc) {
+  protected function loadInterface(dom\handler $doc) {
 
-    if (!$sResult = $doc->getRoot()->readAttribute('class', null, false)) {
+    $result = null;
 
-      $sResult = self::CLASS_DEFAULT;
+    $caller = $this->getControler(self::CALLER_ALIAS);
+
+    if (!$sInterface = $doc->getRoot()->readAttribute('interface', null, false)) {
+
+      $sInterface = self::CLASS_FILE_DEFAULT;
+    }
+    else {
+
+      $sInterface = $sInterface . '.iml';
     }
 
-    return $sResult;
+    $result = $caller->getInterface($sInterface, $this->getDirectory());
+
+    return $result;
   }
 
   protected function setReturn(dom\element $el) {
@@ -144,16 +157,27 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
       default :
 
-        $this->throwException(txt('Unknown return format in %s', $el->asToken()));
+        $this->throwException(sprintf('Unknown return format in %s', $el->asToken()));
 
     }
 
+    $this->setFormat($sFormat);
     $this->return = $this->getWindow()->stringToInstance($sFormat);
+  }
+
+  protected function setFormat($sFormat) {
+
+    $this->sFormat = $sFormat;
+  }
+
+  protected function getFormat() {
+
+    return $this->sFormat;
   }
 
   /**
    *
-   * @return php\_instance
+   * @return common\_instance
    */
   protected function getReturn() {
 
@@ -189,20 +213,34 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     if ($sName = $el->readAttribute('set-variable', $this->getNamespace(), false)) {
 
-      $this->aVariables[$sName] = $obj;
+      if (array_key_exists($sName, $this->aVariables)) {
 
-      if ($obj instanceof php\_var) {
+        $result = $this->aVariables[$sName];
 
-        $result = $obj;
-        $obj->insert();
-      }
-      else if ($obj instanceof php\basic\Called) {
+        if ($obj instanceof common\_var) {
 
-        $result = $obj->getVar();
+          $obj->insert();
+        }
+
+        $result->insert($obj);
       }
       else {
 
-        $result = $this->getWindow()->addVar($obj);
+        if ($obj instanceof common\_var) {
+
+          $result = $obj;
+          $obj->insert();
+        }
+        else if ($obj instanceof php\basic\Called) {
+
+          $result = $obj->getVar();
+        }
+        else {
+
+          $result = $this->getWindow()->addVar($obj);
+        }
+
+        $this->aVariables[$sName] = $result;
       }
     }
 
@@ -223,6 +261,8 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     $arg = $window->asArgument();
 
+    //$formater = \Sylma::getControler('formater');
+    //echo $formater->asHTML($arg);
     //$tst = $arg->get('window')->query();
     //dspm((string) $tst[1]);
 

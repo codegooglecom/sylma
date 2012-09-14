@@ -5,8 +5,9 @@ use \sylma\core;
 
 require_once('core/tokenable.php');
 require_once('core/argumentable.php');
+require_once('core/stringable.php');
 
-interface resource extends core\argumentable, core\tokenable {
+interface resource extends core\argumentable, core\tokenable, core\stringable {
   
   const DEBUG_NOT = 0;
   /**

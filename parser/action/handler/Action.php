@@ -12,6 +12,13 @@ class Action extends Basic implements core\stringable {
   protected $controler;
 
   protected $aArguments = array();
+  protected $aContexts = array();
+
+  protected $action = null;
+  protected $bRunned = false;
+
+  const PHP_TEMPLATE = '/#sylma/parser/languages/php/class.xsl';
+  const DOM_TEMPLATE = '/#sylma/parser/languages/php/template.xsl';
 
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
@@ -29,9 +36,24 @@ class Action extends Basic implements core\stringable {
     else $this->setBaseDirectory($file->getParent());
   }
 
+  public function setArgument($sKey, $mValue) {
+
+    $this->aArguments[$sKey] = $mValue;
+  }
+
+  public function getContexts() {
+
+    return $this->aContexts;
+  }
+
+  public function setContexts(array $aContexts) {
+
+    $this->aContexts = $aContexts;
+  }
+
   protected function getClassName(fs\file $file) {
 
-    $sNamespace = str_replace('/', '\\', (string) $file->getParent());
+    $sNamespace = '\sylma' . str_replace('/', '\\', (string) $file->getParent());
     $sClass = 'sylma' . ucfirst(strtolower($file->getSimpleName()));
 
     return array(
@@ -42,7 +64,7 @@ class Action extends Basic implements core\stringable {
 
   protected function createAction($sClass) {
 
-    $result = new $sClass($this->getBaseDirectory(), $this, $this->aArguments);
+    $result = new $sClass($this->getBaseDirectory(), $this, $this->getContexts(), $this->aArguments);
 
     foreach ($this->getControlers() as $sName => $controler) {
 
@@ -50,6 +72,39 @@ class Action extends Basic implements core\stringable {
     }
 
     return $result;
+  }
+
+  /**
+   * Allow management of multiple calls on same action
+   * @return parser\action\cached
+   */
+  protected function runAction() {
+
+    if (!$this->isRunned()) {
+
+      $this->setAction(parent::runAction());
+      $this->getAction()->loadAction();
+      $this->isRunned(true);
+    }
+
+    return $this->getAction();
+  }
+
+  protected function isRunned($mValue = null) {
+
+    if (!is_null($mValue)) $this->bRunned = $mValue;
+
+    return $this->bRunned;
+  }
+
+  protected function getAction() {
+
+    return $this->action;
+  }
+
+  protected function setAction(parser\action\cached $action) {
+
+    $this->action = $action;
   }
 
   protected function runCache(fs\file $file) {
@@ -65,7 +120,7 @@ class Action extends Basic implements core\stringable {
   protected function reflectAction() {
 
     $parser = $this->getControler();
-    $doc = $this->getFile()->getDocument();
+    $doc = $this->getFile()->getDocument(array(), \Sylma::MODE_EXECUTE);
 
     try {
 
@@ -83,29 +138,31 @@ class Action extends Basic implements core\stringable {
 
   protected function buildAction() {
 
-    $file =  $this->getFile((string) $this->getFile());
-    $fs = $file->getControler();
+    $file =  $this->getFile();
 
-    $sPath = $file->getName() . '.php';
+    $sClass = $file->getName() . '.php';
     $sTemplate = $file->getName() . '.tpl.php';
 
-    $dir = $file->getParent();
-    $tmpDir = $dir->addDirectory(parser\action::EXPORT_DIRECTORY);
-    $tpl = $tmpDir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
+    $fs = $this->getControler('fs/cache');
+    $dir = $fs->getDirectory()->addDirectory((string) $file->getParent());
+
+    $tpl = $dir->getFile($sTemplate, fs\basic\Resource::DEBUG_EXIST);
 
     $method = $this->reflectAction();
 
     if (self::DEBUG_SHOW) {
       $tmp = $this->create('document', array($method));
-      dspm($this->getFile()->asToken());
-      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
+//      dspm($this->getFile()->asToken());
+//      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
+      echo '<pre>' . $this->getFile()->asToken() . '</pre>';
+      echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
     }
 
     // set new class and file
 
-    $classFile = $tmpDir->getFile($sPath, fs\basic\Resource::DEBUG_EXIST);
+    $classFile = $dir->getFile($sClass, fs\basic\Resource::DEBUG_EXIST);
 
-    $template = $this->getTemplate('../php/class.xsl');
+    $template = $this->getTemplate(self::PHP_TEMPLATE);
     $aClass = $this->getClassName($this->getFile());
 
     $template->setParameters(array(
@@ -119,15 +176,23 @@ class Action extends Basic implements core\stringable {
 
     if ($method->getRoot()->testAttribute('use-template')) {
 
-      $template = $this->getTemplate('../php/template.xsl');
+      $template = $this->getTemplate(self::DOM_TEMPLATE);
 
       if ($sResult = $template->parseDocument($method, false)) {
 
+        $sResult = $this->parseAttributes($sResult);
         $tpl->saveText(substr($sResult, 22));
       }
     }
 
     return $classFile;
+  }
+
+  protected function parseAttributes($sContent) {
+
+    $sContent = preg_replace('/\[sylma:insert:(\d+)\]/', '<?php echo $aArguments[$1]; ?>', $sContent);
+
+    return $sContent;
   }
 
   protected function parseString(core\stringable $mVal) {
@@ -138,6 +203,12 @@ class Action extends Basic implements core\stringable {
   protected function parseObject(parser\action\cached $mVal) {
 
     return $mVal->asObject();
+  }
+
+  public function getContext($sContext) {
+
+    $action = $this->runAction();
+    return $action->getContext($sContext);
   }
 
   public function asObject() {

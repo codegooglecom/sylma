@@ -56,6 +56,20 @@
         $sResult === 'directory :123';
     </tst:expected>
   </tst:test>
+  <tst:test name="Return string from object">
+    <le:action>
+      <le:settings>
+        <le:return format="txt"/>
+      </le:settings>
+      <lm:file path="samples/simple.txt"/>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === $controler->getDirectory() . '/samples/simple.txt';
+    </tst:expected>
+  </tst:test>
   <tst:test name="Embedded strings">
     <le:action>
       <le:string>
@@ -92,7 +106,7 @@
         $sResult === 'directory :123';
     </tst:expected>
   </tst:test>
-  <tst:test name="Null">
+  <tst:test name="Null" disabled="true">
     <le:action>
       <le:null/>
     </le:action>
@@ -118,7 +132,7 @@
     </le:action>
     <tst:expected>
       $aResult = $controler->getResult('array');
-
+      
       return
         $aResult === array(
           true, false, true, false, false, true

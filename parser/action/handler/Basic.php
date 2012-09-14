@@ -15,7 +15,6 @@ abstract class Basic extends core\module\Domed implements parser\action {
 
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_UPDATE = true; // default : false
   const DEBUG_RUN = true; // default : true
   const DEBUG_SHOW = false; // default : false
 
@@ -46,7 +45,7 @@ abstract class Basic extends core\module\Domed implements parser\action {
    * @param boolean $bDebug
    * @return fs\file|null
    */
-  protected function getFile($sPath = '', $bDebug = true) {
+  public function getFile($sPath = '', $bDebug = true) {
 
     if ($sPath) {
 
@@ -83,22 +82,29 @@ abstract class Basic extends core\module\Domed implements parser\action {
     $file = $this->getFile();
     $sName = $file->getName() . '.php';
 
-    $tmpDir = $this->getDirectory((string) $file->getParent())->addDirectory(parser\action::EXPORT_DIRECTORY);
+    //$sDirectory = (string) $file->getParent();
+    //$sDirectory = $sDirectory ? $sDirectory : '/';
+
+    $fs = $this->getControler('fs/cache');
+    $tmpDir = $fs->getDirectory()->addDirectory((string) $file->getParent());
 
     if ($tmpDir) {
 
       $tmpFile = $tmpDir->getFile($sName, 0);
     }
 
-    if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || self::DEBUG_UPDATE) {
+    if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || \Sylma::read('action/update')) {
 
       $tmpFile = $this->buildAction();
     }
 
-    if (self::DEBUG_RUN) $result = $this->runCache($tmpFile);
+    if (self::DEBUG_RUN) {
+      
+      $result = $this->runCache($tmpFile);
+    }
     else {
 
-      $this->throwException(t('No result, DEBUG_RUN set to TRUE'));
+      $this->throwException('No result, DEBUG_RUN set to TRUE');
     }
 
     return $result;
