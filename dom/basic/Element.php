@@ -464,16 +464,22 @@ class Element extends \DOMElement implements dom\element {
     return $this->insert(func_get_args());
   }
 
-  public function addElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null) {
+  public function createElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null) {
 
     $handler = $this->getHandler();
 
     if (!$sNamespace) $sNamespace = $this->getNamespace();
-    //echo $sName.'<br/>';
-    $el = $handler->createElement($sName, $mContent, $aAttributes, $sNamespace);
-    $el = $this->insertChild($el);
 
-    return $el;
+    $result = $handler->createElement($sName, $mContent, $aAttributes, $sNamespace);
+
+    return $result;
+  }
+
+  public function addElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null) {
+
+    $result = $this->insertChild($this->createElement($sName, $mContent, $aAttributes, $sNamespace));
+
+    return $result;
   }
   // *public function isFirst()
   // *public function isLast()

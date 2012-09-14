@@ -10,6 +10,8 @@ require_once('parser/context/Basic.php');
 class Document extends parser\action\handler\Action {
 
   private $head = null;
+  private $body = null;
+
   protected $result = null;
 
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
@@ -17,6 +19,7 @@ class Document extends parser\action\handler\Action {
     $this->setContexts(array(
       'css' => new parser\context\Basic,
       'js' => new parser\context\Basic,
+      'js/body' => new parser\context\Basic,
       'title' =>  new parser\context\Basic,
     ));
 
@@ -29,21 +32,24 @@ class Document extends parser\action\handler\Action {
 
   protected function addJS(parser\context $context) {
 
-    if ($head = $this->getHead()) {
-      
-      foreach ($context->asArray() as $mContext) {
+    foreach ($context->asArray() as $mContext) {
 
-        $script = $head->addElement('script', null, array(
-          'type' => 'text/javascript',
-        ));
+      if ($mContext instanceof fs\file) {
 
-        if ($mContext instanceof fs\file) {
+        if ($this->getHead()) {
 
-          $script->setAttribute('src', (string) $mContext);
+          $this->getHead()->addElement('script', null, array(
+            'type' => 'text/javascript',
+            'src' => (string) $mContext,
+          ));
         }
-        else {
+      }
+      else {
 
-          $script->add($mContext);
+        if ($this->getBody()) {
+
+          $node = $this->getBody()->createElement('script', (string) $mContext);
+          $this->getBody()->shift($node);
         }
       }
     }
@@ -76,6 +82,19 @@ class Document extends parser\action\handler\Action {
     }
 
     return $this->head;
+  }
+
+  protected function getBody() {
+
+    if (!$this->body) {
+
+      if ($this->result) {
+
+        $this->body = $this->result->getx('html:body');
+      }
+    }
+
+    return $this->body;
   }
 
   protected function loadHeaders($sMime) {
@@ -147,7 +166,7 @@ class Document extends parser\action\handler\Action {
 
     $doc->registerNamespaces($this->getNS());
 
-    $this->loadSystemInfos($doc);
+    if ($this->getControler('user')->isPrivate()) $this->loadSystemInfos($doc);
     $this->loadContexts();
 
     return $sProlog . "\n" . $this->cleanResult($doc);

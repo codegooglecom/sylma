@@ -47,6 +47,10 @@
     </xsl:element>
   </xsl:template>
 
+  <xsl:template match="comment()">
+    <xsl:copy/>
+  </xsl:template>
+  
   <xsl:template match="php:*">
     <xsl:apply-templates select="*"/>
   </xsl:template>

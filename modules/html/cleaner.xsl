@@ -24,7 +24,7 @@
 
   <xsl:template match="html:*">
     <xsl:element name="{local-name()}" namespace="{namespace-uri}">
-      <xsl:apply-templates select="@* | * | text()"/>
+      <xsl:apply-templates select="@* | * | text() | comment()"/>
       <xsl:if test="not(normalize-space(.))">
         <xsl:text> </xsl:text>
       </xsl:if>
@@ -39,6 +39,10 @@
     <xsl:attribute name="{local-name()}">
       <xsl:value-of select="."/>
     </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template match="comment()">
+    <xsl:copy/>
   </xsl:template>
 
   <xsl:template match="*" mode="disable">
