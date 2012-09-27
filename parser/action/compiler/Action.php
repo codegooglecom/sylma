@@ -45,9 +45,6 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
     $interface = $this->loadInterface($doc);
     $this->setInterface($interface);
 
-    $security = $this->getControler()->create('parser/security');
-    $this->setParser($security, $security->getNS());
-
     if ($this->getInterface()->useElement()) {
 
       $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);

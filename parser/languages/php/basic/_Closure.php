@@ -6,7 +6,7 @@ use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 \Sylma::load('Controled.php', __DIR__);
 \Sylma::load('/core/argumentable.php');
 
-class _Closure extends Controled implements common\scope, core\argumentable {
+class _Closure extends common\basic\Controled implements common\scope, core\argumentable {
 
   protected $aArguments = array();
   protected $return;

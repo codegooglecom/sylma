@@ -132,7 +132,7 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
   protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = false;
-    
+
     try {
 
       if (eval('$closure = function($controler) { ' . $sContent . '; };') === null) {
@@ -199,7 +199,8 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
 
     if ($el->compare($this->loadDomElement($node2)) !== $el::COMPARE_SUCCESS) {
 
-      $this->throwException(sprintf('DOMs not equals with : %s', $el->compareBadNode->asToken()));
+      //$this->throwException(sprintf('Node %s not equals with node %s', $el->asToken(), $node2->asToken()));
+      $this->throwException(sprintf('Node %s not equals with node %s', $this->show($el, false), $this->show($node2, false)));
     }
 
     return true;

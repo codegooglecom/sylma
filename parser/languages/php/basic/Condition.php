@@ -6,9 +6,9 @@ use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma
 require_once('core/argumentable.php');
 require_once('parser/languages/common/scope.php');
 require_once('parser/languages/common/structure.php');
-require_once('Controled.php');
+\Sylma::load('/parser/languages/common/basic/Controled.php');
 
-class Condition extends Controled implements core\argumentable, common\scope, common\structure {
+class Condition extends common\basic\Controled implements core\argumentable, common\scope, common\structure {
 
   protected $aContent = array();
   protected $test;

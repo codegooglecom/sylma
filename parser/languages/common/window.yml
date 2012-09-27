@@ -1,0 +1,18 @@
+classes :
+  §sylma-classbase : \sylma\parser\languages\common\basic
+  object :
+    name : _Object
+  call :
+    name : _Call
+  var :
+    name : Variable
+  function :
+    name : _Function
+  instanciate :
+    name : Instanciate
+  assign :
+    name : Assign
+  instruction :
+    name : Instruction
+  concat :
+    name : Concat

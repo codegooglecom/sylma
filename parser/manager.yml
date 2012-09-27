@@ -1,0 +1,24 @@
+namespaces :
+  'http://www.sylma.org/parser/security' : security
+  #http://www.sylma.org/parser/action : action
+  'http://www.sylma.org/parser/js/binder' : js/binder/compiler
+  'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
+  'http://www.sylma.org/parser/js/template' : js/template
+  'http://www.sylma.org/core/factory' : factory
+classes :
+  security :
+    name : \sylma\parser\security\Domed
+  js :
+    classes :
+      binder :
+        classes :
+          compiler :
+            name : \sylma\parser\js\binder\Reflector
+          cached :
+            name : \sylma\parser\js\binder\Cached
+          object :
+            name : \sylma\parser\js\binder\_Object
+      template :
+        name : \sylma\parser\js\template\Handler
+  factory :
+    name : \sylma\core\factory\parser\Reflector

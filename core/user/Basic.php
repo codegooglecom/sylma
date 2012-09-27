@@ -9,6 +9,7 @@ require_once(dirname(__dir__) . '/user.php');
 class Basic extends core\module\Argumented implements core\user {
 
   const NS = 'http://www.sylma.org/core/user';
+  const PUBLIC_ALIAS = 'anonymouse';
 
   private $sUser = '';
   private $bValid = false;
@@ -18,6 +19,7 @@ class Basic extends core\module\Argumented implements core\user {
    * Used by @method needProfile()
    */
   private $bProfil = false;
+  private $bPrivate = false;
 
   private $aGroups = array();
   private $cookie;
@@ -123,6 +125,7 @@ class Basic extends core\module\Argumented implements core\user {
       // just authenticated via @method authenticate()
 
       //$this->loadProfile();
+      $this->setPrivate();
       if ($this->getCookie()) $this->getCookie()->save($this->getName(), $bRemember);
     }
     else if (!$this->loadSession()) {
@@ -134,6 +137,8 @@ class Basic extends core\module\Argumented implements core\user {
         // has cookie
 
         $this->setName($sUser);
+        $this->setPrivate();
+
         $this->bProfil = true;
       }
       else {
@@ -145,7 +150,7 @@ class Basic extends core\module\Argumented implements core\user {
         $server = $controler->getArgument('server');
 
         if ($_SERVER['REMOTE_ADDR'] == $server->read('ip')) $options = $server;
-        else $options = $controler->getArgument('anonymouse');
+        else $options = $controler->getArgument(self::PUBLIC_ALIAS);
 
         $this->setName($options->read('name'));
         $this->aGroups = $options->query('groups');
@@ -332,6 +337,21 @@ class Basic extends core\module\Argumented implements core\user {
     if ($this->isMember($sGroup)) $iMode |= $iGroup;
 
     return $iMode;
+  }
+
+  protected function setPrivate($bValue = true) {
+
+    $this->bPrivate = $bValue;
+  }
+
+  public function isPublic() {
+
+    return !$this->isPrivate();
+  }
+
+  public function isPrivate() {
+
+    return $this->bPrivate;
   }
 
   public function asArgument() {

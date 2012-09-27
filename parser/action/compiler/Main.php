@@ -30,7 +30,7 @@ class Main extends parser\compiler\Basic implements parser\compiler\documented {
       $tmp = $this->create('document', array($window));
 //      dspm($this->getFile()->asToken());
 //      dspm(new \HTML_Tag('pre', $tmp->asString(true)));
-      echo '<pre>' . $this->getFile()->asToken() . '</pre>';
+      echo '<pre>' . $file->asToken() . '</pre>';
       echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
     }
 

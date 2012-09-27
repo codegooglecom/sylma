@@ -3,9 +3,9 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-require_once('Controled.php');
+\Sylma::load('/parser/languages/common/basic/Controled.php');
 
-class _Interface extends Controled {
+class _Interface extends common\basic\Controled {
 
   protected $sName = '';
   protected $reflection;

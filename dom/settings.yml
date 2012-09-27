@@ -1,32 +1,25 @@
 classes :
   §sylma-classbase : \sylma\dom
   handler :
-    file : basic/handler/Rooted.php
     name : basic\handler\Rooted
   document :
-    file : basic/Document.php
     name : basic\Document
   element :
-    file : basic/Element.php
     name : basic\Element
   attribute :
-    file : basic/Attribute.php
     name : basic\Attribute
   collection :
-    file : basic/Collection.php
     name : basic\Collection
   fragment :
-    file : basic/Fragment.php
     name : basic\Fragment
   text :
-    file : basic/Text.php
     name : basic\Text
+  comment :
+    name : basic\Comment
   argument :
-    file : argument/Tokened.php
     name : argument\Tokened
     classes :
       filed :
-        file : argument/Filed.php
         name : argument\Filed
 
 stats :

@@ -17,6 +17,7 @@ abstract class Basic extends core\module\Namespaced {
 
   const MESSAGES_STATUT = \Sylma::LOG_STATUT_DEFAULT;
   const DEBUG_NORMALIZE_RECURSION = false;
+  
   /**
    * The default main array
    */
@@ -75,7 +76,7 @@ abstract class Basic extends core\module\Namespaced {
         else {
 
           $mTarget =& $this->aArray;
-          $bRoot = true;
+          //$bRoot = true;
         }
 
         if (is_array($mTarget)) {
@@ -131,7 +132,7 @@ abstract class Basic extends core\module\Namespaced {
         else $this->aArray = $mValue;
 
       }
-      else {
+      else if (!is_null($mValue)) {
 
         $mTarget = $mValue;
       }

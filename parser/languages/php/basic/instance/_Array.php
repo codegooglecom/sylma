@@ -53,21 +53,26 @@ class _Array extends _Scalar implements common\_instance, \Iterator {
     return $sKey !== NULL && $sKey !== FALSE;
   }
 
-  public function asArgument() {
+  protected function loadValues() {
 
     $window = $this->getControler();
-    $aContent = array();
+    $aResult = array();
 
     foreach ($this->aValues as $mKey => $mVal) {
 
-      $aContent[] = array(
+      $aResult[] = array(
         '@key' => $mKey,
         $window->argToInstance($mVal),
       );
     }
 
+    return $aResult;
+  }
+
+  public function asArgument() {
+
     return $this->getControler()->createArgument(array(
-      'array' => array('#item' =>  $aContent),
+      'array' => array('#item' =>  $this->loadValues()),
     ));
   }
 }

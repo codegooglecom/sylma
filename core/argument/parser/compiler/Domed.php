@@ -45,9 +45,9 @@ class Domed extends Reflector implements parser\reflector\documented {
 
     $array = $this->getWindow()->create('array', array($this->getWindow()));
 
-    $aResult = $this->parseChildren($doc->getChildren());
+    $mResult = $this->parseChildren($doc->getChildren());
     //echo $this->show($aResult, false);
-    $array->setContent($aResult);
+    $array->setContent((array) $mResult);
 
     $this->getWindow()->add($array);
 

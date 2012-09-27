@@ -4,9 +4,9 @@ namespace sylma\parser\languages\php\basic;
 use \sylma\core, sylma\parser\languages\common;
 
 require_once('core/argumentable.php');
-require_once('Controled.php');
+\Sylma::load('/parser/languages/common/basic/Controled.php');
 
-class Test extends Controled implements core\argumentable {
+class Test extends common\basic\Controled implements core\argumentable {
 
   protected $val1;
   protected $val2;

@@ -23,7 +23,7 @@ abstract class Handler extends core\module\Argumented {
     return $this->baseDirectory;
   }
 
-  protected function setBaseDirectory(fs\directory $baseDirectory) {
+  public function setBaseDirectory(fs\directory $baseDirectory) {
 
     $this->baseDirectory = $baseDirectory;
   }
@@ -73,5 +73,4 @@ abstract class Handler extends core\module\Argumented {
 
     return $file;
   }
-
 }

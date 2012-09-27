@@ -80,7 +80,7 @@ abstract class Argumented extends Domed {
     $assign = $window->create('assign', array($window, $var, $callFormat));
     $window->add($assign);
     //$var = $callFormat->getVar();
-    
+
     // argument is available direclty after format has been checked, ie. for validation
 
     $this->setActionArgument($mKey, $var);
@@ -170,7 +170,7 @@ abstract class Argumented extends Domed {
 
     $bReturn = $el->testAttribute('return', true);
 
-    $isnull = $window->createFunction('\is_null', $window->stringToInstance('php-boolean'), array($var));
+    $isnull = $window->callFunction('\is_null', $window->stringToInstance('php-boolean'), array($var));
     $if = $window->createCondition($isnull);
 
     $window->add($if);

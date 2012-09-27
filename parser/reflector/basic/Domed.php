@@ -59,7 +59,10 @@ abstract class Domed extends Child {
     return $mResult;
   }
 
-  abstract protected function parseElementSelf(dom\element $el);
+  protected function parseElementSelf(dom\element $el) {
+
+    return $el;
+  }
 
   protected function parseElementForeign(dom\element $el) {
 
@@ -129,39 +132,6 @@ abstract class Domed extends Child {
   protected function parseChildrenText(dom\text $node) {
 
     $this->throwException('Text node not allowed here', array($node->asToken()));
-  }
-
-  /**
-   *
-   * @param dom\element $el
-   * @return dom\node
-   */
-  protected function parseAttributes(dom\element $el, dom\handler $resultHandler) {
-
-    $aForeigns = array();
-    $result = $resultHandler;
-
-    foreach ($el->getAttributes() as $attr) {
-
-      $sNamespace = $attr->getNamespace();
-
-      if (!$sNamespace || $sNamespace == $this->getNamespace()) {
-
-        $resultHandler->add($this->parseAttribute($attr));
-      }
-      else {
-
-        $aForeigns[$sNamespace] = true;
-      }
-    }
-
-    foreach ($aForeigns as $sNamespace => $bVal) {
-
-      $parser = $this->loadParser($sNamespace, 'attribute');
-      $result = $parser->parseAttributes($el, $result->getRoot(), $resultHandler);
-    }
-
-    return $result;
   }
 
   protected function parseAttribute(dom\attribute $attr) {

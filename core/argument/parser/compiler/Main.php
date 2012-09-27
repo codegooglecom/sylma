@@ -53,12 +53,9 @@ class Main extends parser\compiler\Basic implements parser\compiler\documented {
 
       $reflector = $factory->create('reflector', array($factory, $doc, $base));
 
-      $factoryParser = $factory->create('factory');
-      $reflector->setParser($factoryParser, array($factoryParser->getNamespace()));
-
       $window = $factory->create('window', array($reflector, $factory->getArgument(self::WINDOW_ARGS), $factory->readArgument('classes\cached')));
       $reflector->setWindow($window);
-      
+
       $result = $reflector->asDOM();
     }
     catch (core\exception $e) {

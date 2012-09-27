@@ -1,9 +1,11 @@
 debug :
   run : true
   update : true
-  show : true
+  show : false
 classes :
   §sylma-classbase : \sylma\core\argument
+  handler :
+    name : parser\Handler
   compiler :
     name : parser\compiler\Main
   reflector :
@@ -13,6 +15,4 @@ classes :
   cached :
     name : parser\Cached
   php : §sylma:import /#sylma/parser/languages/php/window.yml;
-  factory :
-    name : \sylma\core\factory\parser\Reflector
 

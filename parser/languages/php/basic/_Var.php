@@ -5,9 +5,9 @@ use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
 require_once('parser/languages/common/_var.php');
 
-require_once('Controled.php');
+\Sylma::load('/parser/languages/common/basic/Controled.php');
 
-abstract class _Var extends Controled implements common\_var {
+abstract class _Var extends common\basic\Controled implements common\_var {
 
   private $sName = '';
   protected $instance;

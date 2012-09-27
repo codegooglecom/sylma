@@ -14,7 +14,7 @@ class Instanciable extends Domed implements parser\caller {
 
     $file = $this->getClassFile();
 
-    $require = $window->createFunction('require_once', $window->argToInstance('php-bool'), array($file->getRealPath()));
+    $require = $window->callFunction('require_once', $window->argToInstance('php-bool'), array($file->getRealPath()));
     $window->add($require);
 
     $instance = $window->loadInstance($this->getName(), (string) $file);

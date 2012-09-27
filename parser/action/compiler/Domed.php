@@ -67,7 +67,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
   protected function parseElementForeign(dom\element $el) {
 
     $mResult = null;
-    $parent = $this->getControler()->create('document');
+    //$parent = $this->getControler()->create('document');
 
     if ($this->getInterface()->useElement() && $el->getNamespace() == $this->getNamespace('class')) {
 
@@ -81,11 +81,11 @@ abstract class Domed extends Runner implements parser\reflector\documented {
 
       $this->useTemplate(true);
 
-      $newElement = $parent->addElement($el->getName(), null, array(), $el->getNamespace());
+      $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
 
       if ($this->useForeignAttributes($el)) {
 
-        $mResult = $this->parseAttributes($el, $newElement->getHandler());
+        $mResult = $this->parseAttributesForeign($el, $newElement);
       }
       else {
 
@@ -94,7 +94,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
           $newElement->add($this->parseAttribute($attr));
         }
 
-        $mResult = $newElement->getHandler();
+        $mResult = $newElement;
       }
 
       if ($aChildren = $this->parseChildren($el->getChildren())) {

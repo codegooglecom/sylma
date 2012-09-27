@@ -10,7 +10,6 @@ class Domed extends Reflector implements parser\reflector\attributed {
 
   const NS = 'http://www.sylma.org/parser/security';
 
-  protected $parent;
   protected $element;
 
   public function parseAttributes(dom\node $el, dom\element $resultElement, $result) {

@@ -43,6 +43,11 @@ interface element extends complex, namespaced {
   function isComplex();
   function isElement($sName, $sNamespace = null);
 
+  /**
+   * @return dom\handler
+   */
+  function getHandler();
+
   function read();
 }
 

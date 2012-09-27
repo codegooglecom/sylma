@@ -138,7 +138,7 @@ class Reflector extends core\module\Namespaced implements core\factory {
 
     $sMain = \Sylma::ROOT;
 
-    if (!class_exists($sClass)) {
+    if (!class_exists($sClass, false)) {
 
       if (!$sFile) {
 
@@ -156,7 +156,7 @@ class Reflector extends core\module\Namespaced implements core\factory {
       }
     }
 
-    if (!interface_exists($sClass) && !class_exists($sClass)) {
+    if (!interface_exists($sClass) && !class_exists($sClass, false)) {
 
       \Sylma::throwException(sprintf('@class %s has not been loaded !', $sClass));
     }

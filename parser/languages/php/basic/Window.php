@@ -3,12 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
 
-\Sylma::load('/core/module/Domed.php');
-
-\Sylma::load('/parser/languages/common/_window.php');
-\Sylma::load('/core/controled.php');
-
-class Window extends core\module\Domed implements common\_window, core\controled {
+class Window extends common\basic\Window implements php\window, core\controled {
 
   protected static $sArgumentClass = '\sylma\parser\Argument';
   protected static $sArgumentFile = 'parser/Argument.php';
@@ -24,24 +19,11 @@ class Window extends core\module\Domed implements common\_window, core\controled
 
   protected $aInterfaces = array();
 
-  // Indexed
-  protected $aContent = array();
-
   // $this reference object
   protected $self;
 
   // static reference to class
   protected $sylma;
-
-  /**
-   * Stack of scopes added (ie: control structure, if, when, etc..)
-   * @var array
-   */
-  protected $aScopes = array();
-
-  protected $aObjects = array();
-
-  protected $aKeys = array();
 
   public function __construct($controler, core\argument $args, $sClass) {
 
@@ -60,48 +42,14 @@ class Window extends core\module\Domed implements common\_window, core\controled
     //$this->sylma = $this->create('class-static', array('\Sylma'));
   }
 
-  public function createArgument($mArguments, $sNamespace = '') {
+  protected function addContentUnknown($mVal) {
 
-    return parent::createArgument($mArguments, $sNamespace);
-  }
+    if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
 
-  public function add($mVal) {
-
-    $this->getScope()->addContent($mVal);
-  }
-
-  public function checkContent($mVal) {
-
-    //return true;
-  }
-
-  public function addContent($mVal) {
-
-    if (is_array($mVal)) {
-
-      foreach ($mVal as $mChild) {
-
-        $this->addContent($mChild);
-      }
+      $mVal = $this->create('line', array($this, $mVal));
     }
-    else {
 
-      $this->checkContent($mVal);
-
-      if ($mVal instanceof common\_var) {
-
-        $mVal->insert();
-      }
-      else {
-
-        if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
-
-          $mVal = $this->create('line', array($this, $mVal));
-        }
-
-        $this->aContent[] = $mVal;
-      }
-    }
+    return parent::addContentUnknown($mVal);
   }
 
   public function addControler($sName) {
@@ -123,12 +71,7 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return $this->sylma;
   }
 
-  public function getVarName() {
-
-    return 'var' . $this->getKey('var');
-  }
-
-  public function createCall(common\_object $obj, $sMethod, $mReturn, array $aArguments = array()) {
+  public function createCall($obj, $sMethod, $mReturn, array $aArguments = array()) {
 
     if (is_string($mReturn)) {
 
@@ -158,7 +101,7 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return $result;
   }
 
-  public function createFunction($sName, common\_instance $return = null, array $aArguments = array()) {
+  public function callFunction($sName, common\_instance $return = null, array $aArguments = array()) {
 
     return $this->create('function', array($this, $sName, $return, $aArguments));
   }
@@ -239,31 +182,6 @@ class Window extends core\module\Domed implements common\_window, core\controled
     }
 
     return $this->aInterfaces[$sName];
-  }
-
-  public function getScope() {
-
-    if (!$this->aScopes) {
-
-      $this->throwException('Cannot get scope, no scope defined');
-    }
-
-    return $this->aScopes[count($this->aScopes) - 1];
-  }
-
-  public function setScope(common\scope $scope) {
-
-    $this->aScopes[] = $scope;
-  }
-
-  public function stopScope() {
-
-    if (!$this->aScopes) {
-
-      $this->throwException(t('Cannot stop scope, no scope defined'));
-    }
-
-    return array_pop($this->aScopes);
   }
 
   public function getObject() {
@@ -399,39 +317,10 @@ class Window extends core\module\Domed implements common\_window, core\controled
     return $arg;
   }
 
-  public function getKey($sPrefix) {
-
-    if (array_key_exists($sPrefix, $this->aKeys)) {
-
-      $this->aKeys[$sPrefix]++;
-      //if ($sPrefix == 'insert-default' && $this->aKeys['insert-default'] == 2) $this->throwException ('yep');
-    }
-    else {
-
-      $this->aKeys[$sPrefix] = 0;
-    }
-
-    return $this->aKeys[$sPrefix];
-  }
-
   /*public function validateFormat(common\_var $var, $sFormat) {
 
     $condition = $this->create('condition', array($this, $this->create('not', array($test))));
     $text = $this->create('function', array($this, 't', array('Bad argument format')));
     $condition->addContent($this->createCall($this->getSelf(), 'throwException', null, array($text)));
   }*/
-
-  public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
-
-    return parent::throwException($sMessage, $mSender, $iOffset);
-  }
-
-  public function asArgument() {
-
-    $result = $this->createArgument(array('window' => array()), self::NS);
-    $result->get('window')->mergeArray($this->aContent);
-
-    return $result;
-  }
-
 }

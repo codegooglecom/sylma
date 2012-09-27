@@ -3,12 +3,12 @@
 namespace sylma\parser\languages\php\basic\instance;
 use \sylma\parser\languages\common, \sylma\parser\languages\php, sylma\core;
 
-require_once(dirname(__dir__) . '/Controled.php');
+\Sylma::load('../../../common/basic/Controled.php', __DIR__);
 require_once('parser/languages/common/_object.php');
 require_once('parser/languages/common/_instance.php');
 require_once('core/argumentable.php');
 
-class _Object extends php\basic\Controled implements common\_object, common\_instance {
+class _Object extends common\basic\Controled implements common\_object, common\_instance {
 
   private $interfaceObject;
 
@@ -22,7 +22,7 @@ class _Object extends php\basic\Controled implements common\_object, common\_ins
 
     return $this;
   }
-  
+
   public function getInterface() {
 
     return $this->interfaceObject;

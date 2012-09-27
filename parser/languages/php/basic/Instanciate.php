@@ -3,13 +3,13 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\parser\languages\common, sylma\parser\languages\php, sylma\core;
 
-require_once('Controled.php');
+\Sylma::load('/parser/languages/common/basic/Controled.php');
 
 require_once('parser/languages/common/_object.php');
 require_once('parser/languages/common/linable.php');
 require_once('core/argumentable.php');
 
-class Instanciate extends Controled implements common\_object, common\_instance, common\linable, core\argumentable {
+class Instanciate extends common\basic\Controled implements common\_object, common\_instance, common\linable, core\argumentable {
 
   protected $instance;
 

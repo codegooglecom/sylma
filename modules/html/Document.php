@@ -30,7 +30,7 @@ class Document extends parser\action\handler\Basic {
   protected function addJS(parser\context $context) {
 
     if ($head = $this->getHead()) {
-      
+
       foreach ($context->asArray() as $mContext) {
 
         $script = $head->addElement('script', null, array(
@@ -142,7 +142,7 @@ class Document extends parser\action\handler\Basic {
 
     $doc->registerNamespaces($this->getNS());
 
-    $this->loadSystemInfos($doc);
+    if ($this->getControler('user')->isPrivate()) $this->loadSystemInfos($doc);
     $this->loadContexts();
 
     return $sProlog . "\n" . $this->cleanResult($doc);

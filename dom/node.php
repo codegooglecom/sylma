@@ -25,6 +25,7 @@ interface node extends core\tokenable, core\stringable {
    * @return dom\document The parent document
    */
   function getDocument();
+  //function getHandler();
   function getType();
   function getParent();
   function __toString();

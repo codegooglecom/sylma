@@ -26,6 +26,7 @@ class Basic extends parser\Handler implements parser\action, core\stringable {
   protected $aContexts = array();
 
   protected $action = null;
+  protected $parentParser;
   protected $bRunned = false;
 
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
@@ -58,6 +59,25 @@ class Basic extends parser\Handler implements parser\action, core\stringable {
   public function setContexts(array $aContexts) {
 
     $this->aContexts = $aContexts;
+  }
+
+  public function setParentParser(parser\action\cached $parent) {
+
+    $this->parentParser = $parent;
+  }
+
+  public function getParentParser($bRoot = false) {
+
+    if ($bRoot) {
+
+      $result = $this->parentParser ? $this->parentParser->getParentParser($bRoot) : $this->getAction();
+    }
+    else {
+
+      $result = $this->parentParser;
+    }
+
+    return $result;
   }
 
   public function setArgument($sPath, $mValue) {

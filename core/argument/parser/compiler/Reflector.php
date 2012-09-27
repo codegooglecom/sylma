@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\argument\parser\compiler;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
+use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
 
 \Sylma::load('/parser/reflector/basic/Documented.php');
 
@@ -109,10 +109,10 @@ abstract class Reflector extends parser\reflector\basic\Documented {
   protected function mergeArguments(php\basic\_Closure $closure, common\_instance $arg) {
 
     $return = $closure->getReturn();
+    $window = $this->getWindow();
 
-    $merge = $this->getWindow()->createCall($return, 'merge', $window->stringToInstance('\sylma\core\argument'), array($arg->getVar()));
+    $merge = $this->getWindow()->createCall($return, 'merge', $window->stringToInstance('\sylma\core\argument'), array($window->createVar($arg)));
     $closure->addContent($merge);
-
   }
 
   protected function parseElementArgument(dom\element $el) {
@@ -144,7 +144,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
     $window = $this->getWindow();
 
-    $result = $window->createFunction('include', $window->stringToInstance('\sylma\core\argument'), array($el->read()));
+    $result = $window->callFunction('include', $window->stringToInstance('\sylma\core\argument'), array($el->read()));
 
     return $result;
   }

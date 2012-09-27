@@ -22,21 +22,21 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
    *
    * @param \sylma\storage\fs\file $file The php file containing instructions
    * @param \sylma\storage\fs\directory $dir
-   * @param \sylma\parser\action $controler
+   * @param \sylma\parser\action $handler
    * @param array $aContexts
    * @param \sylma\core\argument $arguments
    */
-  public function __construct(fs\file $file, fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array()) {
+  public function __construct(fs\file $file, fs\directory $dir, parser\action $handler, array $aContexts, array $aArguments = array()) {
 
     require_once('parser/action.php');
 
     if (!array_key_exists(self::CONTEXT_DEFAULT, $aContexts)) {
 
-      $aContexts[self::CONTEXT_DEFAULT] = $controler->getControler()->createContext();
+      $aContexts[self::CONTEXT_DEFAULT] = $handler->getControler()->createContext();
     }
 
     $this->setContexts($aContexts);
-    $this->setControler($controler);
+    $this->setControler($handler);
     $this->setFile($file);
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
@@ -68,7 +68,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   /**
    *
-   * @return array
+   * @return array|mixed
    */
   protected function runAction(fs\file $file) {
 
@@ -99,8 +99,8 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!$this->bRunned) {
 
-      $aResult = $this->runAction($this->getFile());
-      $this->aResults[self::CONTEXT_DEFAULT]->set('', $aResult);
+      $mResult = $this->runAction($this->getFile());
+      $this->aResults[self::CONTEXT_DEFAULT]->set('', $mResult);
       $this->bRunned = true;
 
       //echo $this->show($this->aResults['default']->getArguments());
@@ -181,6 +181,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $this->aResults;
   }
 
+  public function getParentParser($bRoot = false) {
+
+    return $this->getControler()->getParentParser($bRoot);
+  }
+
   public function setContexts(array $aContexts) {
 
     $this->aResults = $aContexts;
@@ -189,7 +194,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   /**
    *
    * @param type $sContext
-   * @return array|parser\context
+   * @return parser\context
    */
   public function getContext($sContext = self::CONTEXT_DEFAULT) {
 
@@ -218,6 +223,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     $action = $this->create('action', array($this->getFile($sPath), $aArguments));
     $action->setContexts($this->getContexts());
+    $action->setParentParser($this);
 
     return $action;
   }

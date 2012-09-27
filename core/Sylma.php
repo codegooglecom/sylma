@@ -44,6 +44,8 @@ class Sylma {
     //xdebug_disable();
     set_error_handler(self::$sExceptionClass . "::loadError");
 
+    spl_autoload_register('\Sylma::autoload');
+
     require_once(self::$sInitializerFile);
 
     //xdebug_start_code_coverage();
@@ -73,6 +75,12 @@ class Sylma {
 
     //var_dump(xdebug_get_code_coverage());
     //session_write_close();
+  }
+
+  public static function autoload($sClass) {
+
+    // convert '_' to '/'
+    \Sylma::load(str_replace('\\', '/', $sClass . '.php'));
   }
 
   public static function setControler($sName, $controler) {
@@ -188,6 +196,13 @@ class Sylma {
         require_once('parser/caller/Controler.php');
         $result = new parser\caller\Controler;
 
+
+      break;
+
+      case 'parser' :
+
+        self::load('/parser/Manager.php');
+        $result = new parser\Manager;
 
       break;
 

@@ -19,6 +19,7 @@ class Controler extends core\module\Domed {
     'fragment' => 'DOMDocumentFragment',
     'text' => 'DOMText',
     'attribute' => 'DOMAttr',
+    'comment' => 'DOMComment',
     //'collection' => 'DOMNodeList', // See https://bugs.php.net/bug.php?id=48352
   );
 
@@ -45,10 +46,10 @@ class Controler extends core\module\Domed {
   }
 
   public function createDocument($mContent = '') {
-    
+
     return parent::createDocument($mContent);
   }
-  
+
   public function getClasses(core\argument $settings = null) {
 
     $aClasses = array();
@@ -72,7 +73,7 @@ class Controler extends core\module\Domed {
             $class->set('name', path\toAbsolute($class->read('name'), $sClassBase, '\\'));
           }
 
-          if (!class_exists($class->read('name'))) {
+          if (!class_exists($class->read('name'), false)) {
 
             if ($sFile = $class->read('file', false)) $class->set('file', path\toAbsolute($sFile, $class->getLastDirectory()));
             $factory->includeClass($class->read('name'), $class->read('file', false));

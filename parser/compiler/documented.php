@@ -7,5 +7,5 @@ interface documented {
 
   function getCache(fs\file $file);
   function build(fs\file $file, fs\directory $dir);
-  function buildInto(fs\file $file, fs\directory $base, common\_window $window);
+  //function buildInto(fs\file $file, fs\directory $base, common\_window $window);
 }

@@ -3,10 +3,10 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php;
 
-require_once('Controled.php');
+\Sylma::load('/parser/languages/common/basic/Controled.php');
 require_once('core/argumentable.php');
 
-class Template extends Controled implements core\argumentable {
+class Template extends common\basic\Controled implements core\argumentable {
 
   private $content = '';
   protected static $iKey = 0;

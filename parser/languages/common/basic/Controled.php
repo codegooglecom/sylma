@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\parser\languages\php\basic;
+namespace sylma\parser\languages\common\basic;
 use sylma\parser\languages\common;
 
 class Controled {

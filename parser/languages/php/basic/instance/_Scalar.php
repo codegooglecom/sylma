@@ -7,9 +7,9 @@ require_once('core/module/Argumented.php');
 
 require_once('parser/languages/common/_scalar.php');
 require_once('core/argumentable.php');
-require_once(dirname(__dir__) . '/Controled.php');
+\Sylma::load('../../../common/basic/Controled.php', __DIR__);
 
-abstract class _Scalar extends php\basic\Controled implements common\_scalar, core\argumentable {
+abstract class _Scalar extends common\basic\Controled implements common\_scalar, core\argumentable {
 
   protected $sFormat;
 

@@ -10,14 +10,26 @@ class CallMethod extends Called  {
 
   private $called;
 
-  public function __construct(common\_window $controler, common\_object $called, $sMethod, common\_instance $return, array $aArguments = array()) {
+  public function __construct(common\_window $controler, $called, $sMethod, common\_instance $return, array $aArguments = array()) {
 
-    $this->called = $called;
+    $this->setCalled($called);
     $this->setName($sMethod);
     $this->setControler($controler);
     $this->setReturn($return);
 //dspf($aArguments, 'error');
     $this->setArguments($this->parseArguments($aArguments));
+  }
+
+  protected function setCalled($called) {
+
+    if ($called instanceof self || $called instanceof common\_object) {
+
+      $this->called = $called;
+    }
+    else {
+
+      $this->throwException(sprintf('Cannot call object of type %s', $this->show($called)));
+    }
   }
 
   public function asArgument() {

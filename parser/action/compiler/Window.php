@@ -1,9 +1,7 @@
 <?php
 
-namespace sylma\parser\action;
+namespace sylma\parser\action\compiler;
 use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
-
-\Sylma::load('/parser/languages/php/basic/Window.php');
 
 class Window extends php\basic\Window {
 
@@ -201,7 +199,14 @@ class Window extends php\basic\Window {
     return $result;
   }
 
-  public function checkContent($mVal) {
+  protected function addContentUnknown($mVal) {
+
+    $this->checkContent($mVal);
+
+    return parent::addContentUnknown($mVal);
+  }
+
+  protected function checkContent($mVal) {
 
     if ((!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node)) {
 
