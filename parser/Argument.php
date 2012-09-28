@@ -7,7 +7,7 @@ use sylma\core, sylma\parser\languages\php;
 
 class Argument extends core\argument\Domed {
 
-  protected static function normalizeObject($val) {
+  protected static function normalizeObject($val, $bEmpty = false) {
 
     if ($val instanceof php\basic\instance\_Object) {
 
@@ -15,7 +15,7 @@ class Argument extends core\argument\Domed {
     }
     else {
 
-      $mResult = parent::normalizeObject($val);
+      $mResult = parent::normalizeObject($val, $bEmpty);
     }
 
     return $mResult;

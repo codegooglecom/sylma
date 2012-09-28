@@ -12,8 +12,10 @@
       <xsl:text>Array[</xsl:text>
       <xsl:value-of select="count(frm:item)"/>
       <xsl:text>](</xsl:text>
+      <br/>
       <xsl:for-each select="frm:item">
         <xsl:apply-templates select="."/>
+        <br/>
         <xsl:if test="position() != last()">, </xsl:if>
       </xsl:for-each>
       <xsl:text>)</xsl:text>

@@ -22,7 +22,7 @@ class Manager extends core\module\Domed {
     $this->aNamespaces = $namespaces->query();
   }
 
-  public function getParser($sNamespace, parser\reflector\domed $parent, $bDebug = true) {
+  public function getParser($sNamespace, $parent, $bDebug = true) {
 
     $result = null;
 

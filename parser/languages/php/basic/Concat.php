@@ -36,7 +36,7 @@ class Concat extends instance\_Scalar implements common\_instance, core\argument
 
     if (!$this->aValues) {
 
-      $this->getControler()->throwException(t('No value defined for string'));
+      $this->getControler()->throwException('No value defined for string');
     }
 
     if (count($this->aValues) === 1) {

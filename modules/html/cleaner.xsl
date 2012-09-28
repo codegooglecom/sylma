@@ -5,6 +5,10 @@
     <xsl:apply-templates/>
   </xsl:template>
 
+  <xsl:template match="*">
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
+
   <xsl:template match="html:html">
     <xsl:element name="{local-name()}" namespace="{namespace-uri}">
       <xsl:attribute name="xmlns">

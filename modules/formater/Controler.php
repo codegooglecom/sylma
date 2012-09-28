@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\formater;
-use \sylma\core, \sylma\dom;
+use \sylma\core, \sylma\dom, sylma\parser;
 
 require_once('core/module/Domed.php');
 
@@ -16,13 +16,13 @@ class Controler extends core\module\Domed {
     $this->loadDefaultArguments();
   }
 
-  protected function loadArray(array $aVal) {
+  protected function loadArray(array $aVal, $bDeep = true) {
 
     $aItems = array();
 
     foreach ($aVal as $mKey => $mVal) {
 
-      $mVal = $this->loadVar($mVal);
+      if($bDeep) $mVal = $this->loadVar($mVal);
       $mKey = $this->loadVar($mKey);
 
       $aItems[] = array(
@@ -74,6 +74,10 @@ class Controler extends core\module\Domed {
 
       $result = $val->asString();
     }
+    else if ($val instanceof dom\collection) {
+
+      $result = $this->loadDOMCollection($val);
+    }
     else if ($val instanceof core\argumentable) {
 
       $arg = $val->asArgument();
@@ -81,10 +85,31 @@ class Controler extends core\module\Domed {
     }
     else if ($val instanceof dom\domable) {
 
-      $result = $val->asDOM();
+      if ($val instanceof parser\action\cached ||
+        $val instanceof parser\action) {
+
+        $result = '[Action]';
+      }
+      else {
+
+        $result = $val->asDOM();
+      }
+
     }
 
     return $this->loadObjectElement($val, $result);
+  }
+
+  protected function loadDOMCollection(dom\collection $collection) {
+
+    $aResult = array();
+
+    foreach ($collection as $node) {
+
+      $aResult[] = $this->loadObject($node);
+    }
+
+    return $this->loadArray($aResult, false);
   }
 
   protected function loadArgument(core\argument $arg) {

@@ -5,7 +5,7 @@ namespace sylma\dom;
 interface domable {
 
   /**
-   * Return DOM objects
+   * @return dom\handler|dom\collection
    */
   function asDOM();
 }

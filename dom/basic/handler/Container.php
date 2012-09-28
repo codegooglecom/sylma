@@ -21,6 +21,11 @@ abstract class Container extends Basic {
    */
   private $document;
 
+  public function createFragment() {
+
+    return $this->getDocument()->createDocumentFragment();
+  }
+
   protected function setFragment(dom\fragment $fragment) {
 
     $this->fragment = $fragment;
@@ -44,7 +49,7 @@ abstract class Container extends Basic {
     //$result = $this->parseNamespaces($this->getContent());
 
     if ($sResult = $this->getContent()) {
-      
+
       $this->setContent();
       parent::loadText($sResult);
     }
@@ -64,7 +69,7 @@ abstract class Container extends Basic {
       $formater = $this->getControler('formater');
       $this->throwException(sprintf('Cannot insert %s as document content, string expected', $formater->asToken($sContent)));
     }
-    
+
     $this->sContent = $sContent;
   }
 

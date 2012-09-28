@@ -1,36 +1,80 @@
 /* Document JS */
 
-sylma = {
-  binder : {},
-  ui : function() {
+sylma = {};
 
-    this.Object = new Class({
+sylma.binder = {
+  classes : {},
+  objects : {}
+};
 
-      Implements : Options,
-      options : {
+sylma.ui = {};
 
-      },
+(function() {
 
-      initialize : function(options) {
+  this.Base = new Class({
 
-        if (options.properties) this.initObjects(options.properties);
-        if (options.objects) this.initObjects(options.objects);
-        if (options.events) this.initEvents(options.events);
-      },
+    Implements : Options,
+    options : {
 
+    },
 
+    initialize : function(options) {
 
-      initObjects : function(objects) {
+      options = this.loadOptions(options)
 
-      },
+      if (options.properties) this.initObjects(options.properties);
+      if (options.objects) this.initObjects(options.objects);
+      if (options.events) this.initEvents(options.events);
+    },
 
-      initEvents : function(events) {
+    loadOptions : function(options) {
 
-      },
+      return Object.merge(options, sylma.binder.classes[options.binder]);
+    },
 
-      initProperties : function(properties) {
+    initObjects : function(objects) {
 
+    },
+
+    initEvents : function(events) {
+
+      for (var e in events) {
+
+        this.initEvent(events[e]);
       }
-    });
-  }
-}
+    },
+
+    initEvent : function(event) {
+
+      var nodes = event.target ? this.getNode().getElements('.' + event.target) : this.getNode();
+      nodes.addEvent(event.name, event.callback);
+    },
+
+    initProperties : function(properties) {
+
+      this.initPropertiesBasic(properties.basic);
+      delete(properties.basic);
+
+      for (var prop in properties) {
+
+        this[prop] = properties[prop]
+      }
+    },
+
+    initPropertiesBasic : function(options) {
+
+      if (!options.id) throw 'No node associated';
+
+      this.node = document.id(options.id);
+    },
+
+    /**
+     * @return Element
+     */
+    getNode : function() {
+
+      return this.node;
+    }
+  });
+
+}).call(sylma.ui);

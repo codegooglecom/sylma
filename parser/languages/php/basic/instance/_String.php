@@ -20,7 +20,7 @@ class _String extends _Scalar implements common\_instance {
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
-      'string' => $this->sValue,
+      'string' => str_replace('\'', '\\\'', $this->sValue),
     ));
   }
 }

@@ -7,7 +7,7 @@ require_once('core/module/Argumented.php');
 require_once(dirname(__dir__) . '/context.php');
 //require_once('core/argumentable.php');
 
-class Basic extends core\module\Argumented implements parser\context {
+class Basic extends core\module\Domed implements parser\context {
 
   protected $parent;
 

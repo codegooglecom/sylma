@@ -296,6 +296,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
       else if ($mVar instanceof common\_instance ||
           $mVar instanceof php\basic\Called ||
           $mVar instanceof php\basic\_Closure ||
+          $mVar instanceof php\basic\Insert ||
           $mVar instanceof common\_var) {
 
         $arg = $mVar;

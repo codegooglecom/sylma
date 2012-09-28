@@ -370,7 +370,7 @@ class Element extends \DOMElement implements dom\element {
 
     if (!$aValue) {
 
-      $this->throwException(t('Cannot insert empty array'));
+      $this->throwException('Cannot insert empty array');
     }
 
     $mResult = array();

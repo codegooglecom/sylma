@@ -35,9 +35,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
       $aContexts[self::CONTEXT_DEFAULT] = $handler->getControler()->createContext();
     }
 
+    $this->setFile($file);
+
     $this->setContexts($aContexts);
     $this->setControler($handler);
-    $this->setFile($file);
+
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
 
@@ -203,6 +205,10 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     if (array_key_exists($sContext, $this->aResults)) {
 
       $mResult = $this->aResults[$sContext];
+    }
+    else {
+
+      //$this->throwException(sprintf('Context %s does not exists', $sContext));
     }
 
     return $mResult;

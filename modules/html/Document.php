@@ -3,10 +3,6 @@
 namespace sylma\modules\html;
 use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-require_once('parser/action/handler/Basic.php');
-
-require_once('parser/context/Basic.php');
-
 class Document extends parser\action\handler\Basic {
 
   private $head = null;
@@ -15,9 +11,10 @@ class Document extends parser\action\handler\Basic {
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
     $this->setContexts(array(
-      'css' => new parser\context\Basic,
-      'js' => new parser\context\Basic,
-      'title' =>  new parser\context\Basic,
+      'css' => new context\CSS,
+      'js' => new context\JS,
+      'js/load' => new parser\js\context\Load,
+      //'title' =>  new parser\context\Basic,
     ));
 
     $this->setNamespaces(array(
@@ -27,42 +24,9 @@ class Document extends parser\action\handler\Basic {
     parent::__construct($file, $aArguments, $base);
   }
 
-  protected function addJS(parser\context $context) {
+  protected function addHeadContent($context) {
 
-    if ($head = $this->getHead()) {
-
-      foreach ($context->asArray() as $mContext) {
-
-        $script = $head->addElement('script', null, array(
-          'type' => 'text/javascript',
-        ));
-
-        if ($mContext instanceof fs\file) {
-
-          $script->setAttribute('src', (string) $mContext);
-        }
-        else {
-
-          $script->add($mContext);
-        }
-      }
-    }
-  }
-
-  protected function addCSS(parser\context $context) {
-
-    if ($head = $this->getHead()) {
-
-      foreach ($context->asArray() as $file) {
-
-        $head->addElement('link', null, array(
-          'rel' => 'stylesheet',
-          'type' => 'text/css',
-          'media' => 'all',
-          'href' => (string) $file,
-        ));
-      }
-    }
+    if ($head = $this->getHead()) $head->add($context);
   }
 
   protected function getHead() {
@@ -102,8 +66,18 @@ class Document extends parser\action\handler\Basic {
 
   protected function loadContexts() {
 
-    $this->addCSS($this->getContext('css'));
-    $this->addJS($this->getContext('js'));
+    $action = $this->getAction();
+
+    foreach ($this->getContexts() as $sName => $context) {
+
+      if ($sName !== parser\action\cached::CONTEXT_DEFAULT) {
+
+        if ($context instanceof dom\domable) $content = $context;
+        else $content = $context->asArray();
+
+        if ($content) $this->addHeadContent($content);
+      }
+    }
   }
 
   protected function loadSystemInfos(dom\handler $doc) {
@@ -129,6 +103,20 @@ class Document extends parser\action\handler\Basic {
 
     $cleaner = new Cleaner;
 
+    if (\Sylma::read('debug/enable')) {
+
+      $sHTML = \Sylma::read('namespaces/html');
+      $sJSBinder = 'http://www.sylma.org/parser/js/binder/cached';
+
+      $els = $doc->queryx("//*[namespace-uri() != '$sHTML' and namespace-uri() != '$sJSBinder']", array(), false);
+
+      if ($els->length) {
+
+        $this->dsp($els);
+        $this->throwException('Foreign element\'s namespace in HTML output');
+      }
+    }
+
     return $cleaner->clean($doc);
   }
 
@@ -143,6 +131,7 @@ class Document extends parser\action\handler\Basic {
     $doc->registerNamespaces($this->getNS());
 
     if ($this->getControler('user')->isPrivate()) $this->loadSystemInfos($doc);
+
     $this->loadContexts();
 
     return $sProlog . "\n" . $this->cleanResult($doc);

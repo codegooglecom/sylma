@@ -21,10 +21,11 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
   const PARENT_RETURN = '\sylma\parser\action\cached';
   const PARSER_METHOD = 'loadParser';
 
-  const CACHED_NS = 'http://www.sylma.org/parser/js/binder/cached';
+  const CACHED_NS = Cached::NS;
 
   protected $window;
   protected $sPath = '';
+  protected $object;
 
   public function __construct(parser\reflector\domed $parent) {
 
@@ -36,6 +37,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     $this->addParser($parent->getWindow());
 
+    $this->setParent($parent);
     $this->initWindow();
   }
 
@@ -79,8 +81,15 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
  */
 
     $window = $this->getParent()->getWindow();
-    $window->getContext('js')->add($this->getFile('mootools.js'));
-    $window->getContext('js')->add("sylma.binder.classes = {
+    //echo $this->show($window->getContexts(), false);
+
+    $window->startContext('js');
+
+    $window->insert($window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array((string) $this->getFile('../mootools.js'))));
+    $window->insert($window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array((string) $this->getFile('../sylma.js'))));
+    //, $this->getFile('../sylma.js'));
+
+    $window->insert("sylma.binder.classes = {
       test1 : {
         properties : {
           value : 'hello'
@@ -89,12 +98,14 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
           clic : {
             callback : function() {
               $(this).retrieve('sylma-object').test();
-            },
-            target : '.test1-1234'
+            }
+            //target : '.test1-1234'
           }
         }
       }
     }");
+
+    $window->stopContext();
   }
 
   protected function getWindow() {
@@ -113,7 +124,8 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     switch ($el->getName()) {
 
-      case 'event' : $result = $this->reflectEvent($el); break;
+      //case 'event' : $result = $this->reflectEvent($el); break;
+      case 'event' :
       case 'property' :
 
       break;
@@ -126,7 +138,6 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
   public function parseAttributes(dom\node $el, dom\element $resultElement, $result) {
 
-    $this->addParser();
     $result = $this->buildElement($el, $resultElement);
 
     return $result;
@@ -142,13 +153,11 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $sClass = $el->readx('@self:class', $this->getNS());
     $sName = $el->readx('@self:name', $this->getNS(), false);
 
-    if (!$sName) $sName = uniqid('sylma-');
-
     $aAttributes = array(
       'class' => $sClass,
+      'name' => $sName,
+      'template' => 'test1'//uniqid('sylma'),
     );
-
-
 
     $result = $resultElement->createElement('object', $resultElement, $aAttributes, $this->getNamespace('cached'));
 

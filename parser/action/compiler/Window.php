@@ -5,7 +5,7 @@ use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parse
 
 class Window extends php\basic\Window {
 
-  protected $sContext = self::CONTEXT_DEFAULT;
+  protected $sContext = '';
 
   public function __construct($controler, core\argument $args, $sClass) {
 
@@ -17,14 +17,69 @@ class Window extends php\basic\Window {
     return $this->self;
   }
 
-  public function setContext($sContext) {
+  public function startContext($sName) {
 
-    $this->sContext = $sContext;
+    if ($this->getContext()) {
+
+      $this->throwException(sprintf('Cannot start context [%s] when previous context [%s] has not been stopped', $sName, $this->getContext()));
+    }
+    
+    $this->setContext($sName);
+
+    $call = $this->createCall($this->getSelf(), 'getContext', $this->stringToInstance('php-string'), array($sName));
+    $if = $this->createCondition($call);
+
+    $this->setScope($if);
+    $this->addContent($if);
+  }
+
+  public function stopContext() {
+
+    $this->stopScope();
+    $this->setContext();
+  }
+
+  protected function setContext($sName = '') {
+
+    $this->sContext = $sName;
   }
 
   public function getContext() {
 
     return $this->sContext;
+  }
+
+  protected function toInstance($mValue) {
+
+    $mResult = null;
+
+    if (is_array($mValue)) {
+
+      if (count($mValue) == 1) {
+
+        $mResult = $this->toInstance(current($mValue));
+      }
+      else {
+
+        $mResult = array();
+
+        foreach ($mValue as $sKey => $mSub) {
+
+          $mResult[$sKey] = $this->toInstance($mSub);
+        }
+      }
+    }
+    else {
+
+      $mResult = $this->argToInstance($mValue);
+    }
+
+    return $mResult;
+  }
+
+  public function insert($mValue) {
+
+    return $this->add($this->createInsert($this->toInstance($mValue)));
   }
 
   public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true, $bRoot = false) {
@@ -38,7 +93,9 @@ class Window extends php\basic\Window {
       }
     }
 
-    $result = $this->create('insert', array($this, $mVal, $iKey, $bTemplate));
+    if (!$sContext = $this->getContext()) $sContext = self::CONTEXT_DEFAULT;
+
+    $result = $this->create('insert', array($this, $mVal, $sContext, $iKey, $bTemplate));
 
     return $result;
   }

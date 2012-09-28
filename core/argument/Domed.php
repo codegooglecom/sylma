@@ -37,20 +37,28 @@ class Domed extends Iterator implements dom\domable {
       $this->throwException(t('No namespace defined for export as dom document'));
     }
 
-    if (count($this->aArray) > 1) {
-
-      $this->throwException(sprintf('Cannot build document with more than one root value with @namespace %s', $sNamespace));
-    }
+    $bChildren = false;
 
     $this->normalize();
 
-    $result = self::buildDocument($this->aArray, $sNamespace);
+    if (count($this->aArray) > 1) {
+
+      $bChildren = true;
+      $aValues = array('root' => $this->aArray);
+    }
+    else {
+
+      $aValues = $this->aArray;
+    }
+
+    $result = self::buildDocument($aValues, $sNamespace);
 
     if (!$result || $result->isEmpty()) {
 
-      $formater = \Sylma::getControler('formater');
       $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
     }
+
+    if ($bChildren) $result = $result->getChildren();
 
     return $result;
   }
@@ -133,15 +141,16 @@ class Domed extends Iterator implements dom\domable {
     }
   }
 
-  protected static function normalizeObject($val) {
-//echo '-- ' .get_class($val).'<br/>';
-    if ($val instanceof dom\node) {
+  protected static function normalizeObject($val, $bEmpty = false) {
+
+    if ($val instanceof dom\node ||
+        $val instanceof dom\collection) {
 
       $mResult = $val;
     }
     else {
 
-      $mResult = parent::normalizeObject($val);
+      $mResult = parent::normalizeObject($val, $bEmpty);
     }
 
     return $mResult;

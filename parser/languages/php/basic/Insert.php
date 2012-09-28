@@ -17,18 +17,17 @@ class Insert extends common\basic\Controled implements core\argumentable {
 
   protected $sContext = common\_window::CONTEXT_DEFAULT;
 
-  public function __construct(common\_window $controler, common\linable $mContent, $iKey = null, $bTemplate = true) {
+  public function __construct(common\_window $controler, common\linable $mContent, $sContext, $iKey = null, $bTemplate = true) {
 
     $this->setControler($controler);
 
     $this->bTemplate = $bTemplate;
-    $sContext = $controler->getContext();
+    //$sContext = $controler->getContext();
 
-        
     if (!is_null($iKey)) $this->iKey = $iKey;
     else $this->iKey = $this->getControler()->getKey('insert-' . $sContext);
 
-    if ($bTemplate) $controler->add(new self($controler, $mContent, $this->getKey(), false));
+    if ($bTemplate) $controler->add(new self($controler, $mContent, $sContext, $this->getKey(), false));
     else $this->addContent($mContent);
 
     $this->setContext($sContext);
@@ -70,9 +69,9 @@ class Insert extends common\basic\Controled implements core\argumentable {
       ),
     ));
   }
-  
+
   public function asString() {
-    
+
     return '[sylma:insert:' . $this->getKey() . ']';
   }
 }

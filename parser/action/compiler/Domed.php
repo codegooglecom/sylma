@@ -49,7 +49,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
     }
 
     $this->setFormat($sFormat);
-    $this->getWindow()->setContext(common\_window::CONTEXT_DEFAULT);
+    //$this->getWindow()->startContext(common\_window::CONTEXT_DEFAULT);
 
     $children = $doc->getChildren();
     $children->setIndex(count($aResults));
@@ -134,7 +134,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
                   $mResult = $this->getWindow()->argToInstance($mResult);
                 }
 
-                $bTemplate = $this->getWindow()->getContext() == common\_window::CONTEXT_DEFAULT;
+                $bTemplate = !($this->getWindow()->getContext());
 
                 $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
               }

@@ -16,10 +16,10 @@ interface argument extends \Iterator {
   /**
    * Replace object contained in argument with arrays with use of @method core\parsable::parse()
    */
-  function normalize();
+  function normalize($bEmpty = false);
   // function merge();
   // function parse();
   // function __toString();
-  function asArray();
+  function asArray($bEmpty = false);
 }
 

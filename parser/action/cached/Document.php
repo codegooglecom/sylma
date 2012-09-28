@@ -38,7 +38,7 @@ class Document extends Basic implements dom\domable {
 
     $manager = $this->getControler('parser');
 
-    $result = $manager->getParser($sNamespace);
+    $result = $manager->getParser($sNamespace, $this);
     $result->setParent($this);
 
     $this->setParser($result);

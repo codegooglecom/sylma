@@ -24,10 +24,18 @@ function addQuote($mValue) {
   if (is_array($mValue)) {
 
     foreach ($mValue as &$mSubValue) $mSubValue = addQuote($mSubValue);
-    return $mValue;
+    $mResult = $mValue;
+  }
+  else if ($sResult = (string) $mValue) {
 
-  } else if ($sResult = (string) $mValue) return "'".addslashes($sResult)."'";
-  else return null;
+    $mResult = "'".addslashes($sResult)."'";
+  }
+  else {
+
+    $mResult = null;
+  }
+
+  return $mResult;
 }
 
 function stringResume($mValue, $iLength = 50, $bXML = false) {

@@ -474,22 +474,9 @@ class Reflector extends Argumented {
   protected function reflectContext(dom\element $el) {
 
     $window = $this->getWindow();
-    $sName = $el->readAttribute('name');
 
-    $this->getWindow()->setContext($sName);
-
-    $call = $window->createCall($window->getSelf(), 'getContext', $window->stringToInstance('php-string'), array($sName));
-    $if = $window->createCondition($call);
-
-    $window->setScope($if);
-
-    $if->addContent($this->parseChildren($el->getChildren(), true, true));
-
-    $window->stopScope();
-
-    $window->add($if);
-    //$window->setContext($sName);
-
-    //$window->add();
+    $window->startContext($el->readAttribute('name'));
+    $window->add($this->parseChildren($el->getChildren(), true, true));
+    $window->stopContext();
   }
 }

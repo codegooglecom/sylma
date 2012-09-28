@@ -78,6 +78,21 @@ class Fragment extends \DOMDocumentFragment implements dom\node, dom\fragment {
     return $result;
   }
 
+  protected function insertChild($val) {
+
+    if ($val instanceof dom\collection) {
+
+      foreach ($val as $node) {
+
+        $this->appendChild($node);
+      }
+    }
+    else {
+      
+      $this->appendChild($val);
+    }
+  }
+
   public function getDocument() {
 
     return $this->ownerDocument;

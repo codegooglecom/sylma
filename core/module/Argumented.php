@@ -50,6 +50,12 @@ abstract class Argumented extends Controled {
     return $result;
   }
 
+  /**
+   *
+   * @param array $mArguments
+   * @param string $sNamespace
+   * @return core\argument
+   */
   protected function createArgument($mArguments, $sNamespace = '') {
 
     require_once(static::$sArgumentFile);
@@ -133,6 +139,14 @@ abstract class Argumented extends Controled {
     }
 
     return $this->getArguments()->set($sPath, $mValue);
+  }
+
+  protected function dsp() {
+
+    $mArgument = func_get_args();
+    if (count($mArgument) == 1) $mArgument = current ($mArgument);
+
+    echo \Sylma::show($mArgument, false);
   }
 
   protected function show($mVar, $bToken = true) {
