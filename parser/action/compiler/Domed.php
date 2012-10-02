@@ -73,34 +73,37 @@ abstract class Domed extends Runner implements parser\reflector\documented {
 
       $mResult = $this->reflectSelfCall($el);
     }
-    else if ($parser = $this->loadParser($el->getNamespace(), 'element')) {
+    else {
 
-      $mResult = $parser->parseRoot($el);
+      $mResult = parent::parseElementForeign($el);
+    }
+
+    return $mResult;
+  }
+
+  protected function parseElementUnknown(dom\element $el) {
+
+    $this->useTemplate(true);
+
+    $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
+
+    if ($this->useForeignAttributes($el)) {
+
+      $mResult = $this->parseAttributesForeign($el, $newElement);
     }
     else {
 
-      $this->useTemplate(true);
+      foreach ($el->getAttributes() as $attr) {
 
-      $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
-
-      if ($this->useForeignAttributes($el)) {
-
-        $mResult = $this->parseAttributesForeign($el, $newElement);
-      }
-      else {
-
-        foreach ($el->getAttributes() as $attr) {
-
-          $newElement->add($this->parseAttribute($attr));
-        }
-
-        $mResult = $newElement;
+        $newElement->add($this->parseAttribute($attr));
       }
 
-      if ($aChildren = $this->parseChildren($el->getChildren())) {
+      $mResult = $newElement;
+    }
 
-        $newElement->add($aChildren);
-      }
+    if ($aChildren = $this->parseChildren($el->getChildren())) {
+
+      $newElement->add($aChildren);
     }
 
     return $mResult;

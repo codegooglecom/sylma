@@ -131,8 +131,8 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
         $this->throwException(t('Cannot delete root directory !'));
       }
 
-      $fs = $this->getControler('fs/cache');
-      $tmp = $fs->getDirectory('#trash');
+      $fs = $this->getControler('fs/trash');
+      $tmp = $fs->getDirectory();
 
       $sName = 'trashed-' . uniqid() . '-' . $this->getName();
 

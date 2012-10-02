@@ -6,15 +6,11 @@ use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parse
 class Window extends php\basic\Window {
 
   protected $sContext = '';
+  protected $aObjects = array();
 
   public function __construct($controler, core\argument $args, $sClass) {
 
     parent::__construct($controler, $args, $sClass);
-  }
-
-  public function getSelf() {
-
-    return $this->self;
   }
 
   public function startContext($sName) {
@@ -23,10 +19,10 @@ class Window extends php\basic\Window {
 
       $this->throwException(sprintf('Cannot start context [%s] when previous context [%s] has not been stopped', $sName, $this->getContext()));
     }
-    
+
     $this->setContext($sName);
 
-    $call = $this->createCall($this->getSelf(), 'getContext', $this->stringToInstance('php-string'), array($sName));
+    $call = $this->createCall($this->getSelf(), 'getContext', $this->tokenToInstance('php-string'), array($sName));
     $if = $this->createCondition($call);
 
     $this->setScope($if);
@@ -105,14 +101,34 @@ class Window extends php\basic\Window {
     return $this->create('template', array($this, $node));
   }
 
+  protected function argToString($mValue) {
+
+    if ($mValue instanceof core\stringable) {
+
+      $result = $this->create('string', array($this, $mValue));
+    }
+    else {
+
+      $result = $this->create('concat', array($this, $mValue));
+    }
+
+    return $result;
+  }
+
   public function convertToString($val, $iMode = 0) {
 
     $result = null;
 
     if ($val instanceof common\_scalar) {
 
-      if ($val instanceof common\_var) $instance = $val->getInstance();
-      else $instance = $val;
+      if ($val instanceof common\_var) {
+
+        $instance = $val->getInstance();
+      }
+      else {
+
+        $instance = $val;
+      }
 
       if ($instance instanceof common\_scalar) {
 
@@ -152,7 +168,11 @@ class Window extends php\basic\Window {
       }
 
       $result = $this->createCall($this->getSelf(), 'loadStringable', 'php-string', array($val, $iMode));
-    }
+    }/*
+    else if ($val instanceof core\stringable) {
+
+      $result = $this->createString($val->asString());
+    }*/
     else if ($val instanceof dom\node) {
 
       $result = $this->argToInstance($val);
@@ -263,12 +283,55 @@ class Window extends php\basic\Window {
     return parent::addContentUnknown($mVal);
   }
 
-  protected function checkContent($mVal) {
+  protected function objectUnknownToInstance($obj) {
+
+    $result = null;
+
+    if ($obj instanceof core\stringable) {
+
+      $result = $this->createString($obj);
+    }
+    else {
+
+      parent::objectUnknownToInstance($obj);
+    }
+
+    return $result;
+  }
+
+  public function checkContent($mVal) {
 
     if ((!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node)) {
 
       $this->throwException(sprintf('Cannot add %s in content', $this->show($mVal, true)));
     }
+
+    return $mVal;
+  }
+
+  public function getObject() {
+
+    if (!$this->aObjects) {
+
+      $this->throwException(t('Cannot get object, no object defined'));
+    }
+
+    return $this->aObjects[count($this->aObjects) - 1];
+  }
+
+  public function setObject(common\_object $obj) {
+
+    $this->aObjects[] = $obj;
+  }
+
+  public function stopObject() {
+
+    if (!$this->aObjects) {
+
+      $this->throwException(t('Cannot stop object scope, no object defined'));
+    }
+
+    return array_pop($this->aObjects);
   }
 
   public function asArgument() {

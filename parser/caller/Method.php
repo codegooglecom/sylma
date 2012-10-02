@@ -131,7 +131,7 @@ class Method extends core\module\Argumented {
 
     $this->validateArguments($aArguments);
 
-    $result = $window->createCall($var, $this->getName(), $window->stringToInstance($this->getReturn()), $aArguments);
+    $result = $window->createCall($var, $this->getName(), $window->tokenToInstance($this->getReturn()), $aArguments);
 
     return $result;
   }

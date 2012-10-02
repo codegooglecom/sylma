@@ -77,7 +77,7 @@ class Basic extends core\module\Domed implements parser\context {
 
     $result = $this->asObject();
 
-    if (!$result instanceof dom\node) {
+    if (!$result instanceof dom\handler) {
 
       $result = $this->getControler('dom')->createDocument($result);
       //echo $this->show($result)->asString();

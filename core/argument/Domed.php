@@ -28,9 +28,12 @@ class Domed extends Iterator implements dom\domable {
     return new dom\Argument($doc, $schema);
   }
 
-  public function asDOM($sNamespace = '') {
+  public function asDOM($sParentNamespace = '') {
 
-    if (!$sNamespace) $sNamespace = $this->getNamespace();
+    if (!$sNamespace = $this->getNamespace()) {
+
+      $sNamespace = $sParentNamespace;
+    }
 
     if (!$sNamespace) {
 
@@ -67,8 +70,12 @@ class Domed extends Iterator implements dom\domable {
 
     $dom = \Sylma::getControler('dom');
     $doc = $dom->create('handler');
+    $fragment = $doc->createFragment();
+    $root = $fragment->add($doc->createElement('root'));
 
-    self::buildNode($doc, $aArray, $sNamespace);
+    self::buildNode($root, $aArray, $sNamespace);
+
+    $doc->set($root->getFirst());
 
     return $doc;
   }

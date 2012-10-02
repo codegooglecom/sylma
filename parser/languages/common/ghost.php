@@ -2,6 +2,7 @@
 
 namespace sylma\parser\languages\common;
 
-interface linable {
+interface ghost {
 
 }
+

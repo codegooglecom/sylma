@@ -9,7 +9,7 @@ require_once('core/argumentable.php');
 /**
  * Add content result to template, choose for wich as*() method to use for render
  */
-class Insert extends common\basic\Controled implements core\argumentable {
+class Insert extends common\basic\Controled implements common\argumentable {
 
   protected $content;
 
@@ -17,7 +17,7 @@ class Insert extends common\basic\Controled implements core\argumentable {
 
   protected $sContext = common\_window::CONTEXT_DEFAULT;
 
-  public function __construct(common\_window $controler, common\linable $mContent, $sContext, $iKey = null, $bTemplate = true) {
+  public function __construct(common\_window $controler, common\argumentable $mContent, $sContext, $iKey = null, $bTemplate = true) {
 
     $this->setControler($controler);
 
@@ -44,7 +44,7 @@ class Insert extends common\basic\Controled implements core\argumentable {
     $this->sContext = $sContext;
   }
 
-  protected function addContent(common\linable $mContent) {
+  protected function addContent(common\argumentable $mContent) {
 
     if ($this->content) {
 

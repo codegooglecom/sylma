@@ -3,7 +3,7 @@
 namespace sylma\parser\action;
 use sylma\parser\languages\php;
 
-interface window extends php\window {
+interface window extends php\window, core\argumentable {
 
   function setContext($sName);
 }

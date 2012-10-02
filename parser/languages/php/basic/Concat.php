@@ -10,45 +10,59 @@ require_once('parser/languages/common/_instance.php');
 class Concat extends instance\_Scalar implements common\_instance, core\argumentable {
 
   protected $sFormat = 'php-string';
+  protected $aValues = array();
 
   public function __construct(common\_window $controler, $mValue) {
 
     $this->setControler($controler);
-    $this->setValue($mValue);
+    $this->setValues($mValue);
+    //$this->loadValues();
   }
 
-  protected function setValue($mValue) {
+  protected function setValues($mValue) {
 
     if (is_array($mValue)) {
 
       foreach ($mValue as $mVal) {
 
-        $this->setValue($mVal);
+        $this->setValues($mVal);
       }
     }
     else {
 
-      $this->aValues[] = $this->getControler()->convertToString($mValue);
+      $this->aValues[] = $mValue;
     }
+  }
+
+  protected function loadValues() {
+
+    $aResult = array();
+
+    foreach ($this->aValues as $mValue) {
+
+      $aResult[] = $this->getControler()->convertToString($mValue);
+    }
+
+    return $aResult;
   }
 
   public function asArgument() {
 
-    if (!$this->aValues) {
+    if (!$aValues = $this->aValues) {
 
       $this->getControler()->throwException('No value defined for string');
     }
 
-    if (count($this->aValues) === 1) {
+    if (count($aValues) === 1) {
 
       $aResult = array('cast' => array(
         '@type' => 'string',
-        array_pop($this->aValues),
+        array_pop($aValues),
       ));
     }
     else {
 
-      $aResult = array('concat' => $this->aValues);
+      $aResult = array('concat' => $aValues);
     }
 
     return $this->getControler()->createArgument($aResult);

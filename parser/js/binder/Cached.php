@@ -14,7 +14,7 @@ class Cached extends core\module\Domed implements parser\cached\documented {
 
   public function __construct() {
 
-    $this->setNamespace(self::NS);
+    $this->setNamespace(self::NS, 'self');
     $this->setDirectory(__FILE__);
     $this->loadDefaultArguments();
   }
@@ -35,12 +35,14 @@ class Cached extends core\module\Domed implements parser\cached\documented {
   }
 
   public function parseDocument(dom\handler $doc) {
+    //$this->dsp($doc);
+    $doc = $this->getTemplate('ids.xsl')->parseDocument($doc);//$this->dsp($doc);
+    $doc = $this->getTemplate('cached.xsl')->parseDocument($doc);//$this->dsp($doc);
 
-    $root = $this->getTemplate('cached.xsl')->parseDocument($doc);
     $parser = $this->getControler('parser');
     $aResult = array();
-    //$this->dsp($doc);
-    foreach ($root->getChildren() as $el) {
+
+    foreach ($doc->getx('self:objects', $this->getNS())->getChildren() as $el) {
 
       $object = $parser->create('js/binder/object', array($this, $el));
       $aResult[$object->getName()] = $object;
@@ -49,11 +51,11 @@ class Cached extends core\module\Domed implements parser\cached\documented {
     $objects = $this->createArgument($aResult);
 
     $sJSON = json_encode($objects->asArray(true), JSON_FORCE_OBJECT);
-    $sContent = $this->getParent()->getContext('js/load')->add("sylma.ui.load($sJSON);");
+    $this->getParent()->getContext('js/load')->add("sylma.ui.load($sJSON);");
 
-    //$this->getParent()->getContext('js')->add($sContent);
+    $result = $doc->getx('self:render', $this->getNS())->getChildren();
 
-    return $doc;
+    return $result;
   }
 
 }

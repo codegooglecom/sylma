@@ -3,7 +3,7 @@
 namespace sylma\parser\js\binder;
 use sylma\core, sylma\parser, sylma\dom;
 
-class _Object extends core\module\Argumented implements core\argumentable {
+class _Object extends core\module\Controled implements core\argumentable {
 
   protected $aProperties = array();
   protected $aCollections = array();
@@ -12,16 +12,16 @@ class _Object extends core\module\Argumented implements core\argumentable {
   protected $sName;
   protected $sClass;
   protected $sID;
-  protected $sTemplate;
+  protected $sBinder;
 
   public function __construct(parser\cached\documented $reflector, dom\element $el) {
 
     $this->setControler($reflector);
 
-    $this->setID();
+    $this->setID($el->readAttribute('id'));
     $this->setName($el->readAttribute('name', null, false));
     $this->setClass($el->readAttribute('class'));
-    $this->setTemplate($el->readAttribute('template'));
+    $this->setBinder($el->readAttribute('binder'));
 
     $this->parseChildren($el->getChildren());
   }
@@ -31,9 +31,9 @@ class _Object extends core\module\Argumented implements core\argumentable {
     return $this->sID;
   }
 
-  protected function setID($sID = '') {
+  protected function setID($sID) {
 
-    if (!$sID) $sID = uniqid('sylma-');
+    //if (!$sID) $sID = uniqid('sylma-');
 
     $this->sID = $sID;
   }
@@ -60,14 +60,14 @@ class _Object extends core\module\Argumented implements core\argumentable {
     $this->sClass = $sName;
   }
 
-  public function getTemplate() {
+  public function getBinder() {
 
-    return $this->sTemplate;
+    return $this->sBinder;
   }
 
-  public function setTemplate($sTemplate) {
+  public function setBinder($sBinder) {
 
-    $this->sTemplate = $sTemplate;
+    $this->sBinder = $sBinder;
   }
 
   protected function parseChildren(dom\collection $children) {
@@ -128,8 +128,8 @@ class _Object extends core\module\Argumented implements core\argumentable {
 
     return $this->getControler()->createArgument(array(
       'id' => $this->getID(),
-      'class' => $this->getClass(),
-      'template' => $this->getTemplate(),
+      'extend' => $this->getClass(),
+      'binder' => $this->getBinder(),
       'properties' => $this->getProperties(),
       'objects' => $this->getObjects(),
       'collections' => $this->getCollections(),

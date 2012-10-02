@@ -10,7 +10,8 @@ class CSS extends parser\context\Basic implements dom\domable {
 
   public function asDOM() {
 
-    $aResult = array();
+    $result = null;
+    $aStyles = array();
 
     foreach ($this->asArray() as $mValue) {
 
@@ -31,12 +32,10 @@ class CSS extends parser\context\Basic implements dom\domable {
         ));
       }
 
-      $aResult[] = $aStyle;
+      $aStyles[] = $aStyle;
     }
 
-    $result = $this->createArgument($aResult, \Sylma::read('namespaces/html'))->asDOM();
-
-    //$this->dsp($result);
+    if ($aStyles) $result = $this->createArgument($aStyles, \Sylma::read('namespaces/html'))->asDOM();
 
     return $result;
   }

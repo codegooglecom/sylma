@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\parser;
+namespace sylma\parser\languages\php;
 use sylma\core, sylma\parser\languages\php;
 
 \Sylma::load('/core/argument/Domed.php');
@@ -20,4 +20,6 @@ class Argument extends core\argument\Domed {
 
     return $mResult;
   }
+
+
 }

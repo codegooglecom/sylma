@@ -108,7 +108,7 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
     }
 
     $this->setFormat($sFormat);
-    $this->return = $this->getWindow()->stringToInstance($sFormat);
+    $this->return = $this->getWindow()->tokenToInstance($sFormat);
   }
 
   protected function setFormat($sFormat) {

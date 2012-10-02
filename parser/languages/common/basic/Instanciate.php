@@ -9,7 +9,7 @@ use sylma\core, sylma\parser\languages\common;
 \Sylma::load('../linable.php', __DIR__);
 \Sylma::load('/core/argumentable.php');
 
-class Instanciate extends Controled implements common\_object, common\_instance, common\linable, core\argumentable {
+class Instanciate extends Controled implements common\_object, common\_instance, common\argumentable {
 
   protected $instance;
 

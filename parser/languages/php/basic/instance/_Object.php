@@ -8,7 +8,7 @@ require_once('parser/languages/common/_object.php');
 require_once('parser/languages/common/_instance.php');
 require_once('core/argumentable.php');
 
-class _Object extends common\basic\Controled implements common\_object, common\_instance {
+class _Object extends common\basic\Controled implements common\_object, common\scope, common\_instance {
 
   private $interfaceObject;
 

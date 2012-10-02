@@ -3,10 +3,6 @@
 
   <xsl:output method="text"/>
 
-  <xsl:param name="namespace"/>
-  <xsl:param name="class"/>
-  <xsl:param name="template"/>
-
 <xsl:variable name="break">
 <xsl:text>
 </xsl:text>
@@ -35,7 +31,7 @@
     <xsl:text>new </xsl:text>
     <xsl:value-of select="@class"/>
     <xsl:text>(</xsl:text>
-    <xsl:call-template name="arguments"/>
+    <xsl:call-template name="php:arguments"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
@@ -53,13 +49,13 @@
   <xsl:template match="php:function">
     <xsl:value-of select="@name"/>
     <xsl:text>(</xsl:text>
-    <xsl:call-template name="arguments"/>
+    <xsl:call-template name="php:arguments"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
   <xsl:template match="php:closure">
     <xsl:text>function(</xsl:text>
-    <xsl:call-template name="arguments"/>
+    <xsl:call-template name="php:arguments"/>
     <xsl:text>) {</xsl:text>
     <xsl:value-of select="$break"/>
     <xsl:apply-templates/>
@@ -82,7 +78,7 @@
     <xsl:text>-&gt;</xsl:text>
     <xsl:apply-templates select="@name"/>
     <xsl:text>(</xsl:text>
-    <xsl:call-template name="arguments"/>
+    <xsl:call-template name="php:arguments"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
@@ -99,7 +95,7 @@
     <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template name="arguments">
+  <xsl:template name="php:arguments">
     <xsl:for-each select="php:argument">
       <xsl:apply-templates select="."/>
       <xsl:if test="following-sibling::php:argument">, </xsl:if>

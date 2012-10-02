@@ -187,6 +187,20 @@ class Element extends \DOMElement implements dom\element {
     }
   }
 
+  public function setAttribute($sName, $sValue) {
+
+    if ($sValue !== '') {
+      
+      $result = parent::setAttribute($sName, $sValue);
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
+  }
+
   public function getParent() {
 
     return $this->parentNode;

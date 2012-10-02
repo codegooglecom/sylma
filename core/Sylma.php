@@ -10,7 +10,9 @@ class Sylma {
   const PATH = sylma\SYLMA_PATH; // ex: /sylma
   const PATH_SYSTEM = sylma\SYSTEM_PATH;  // ex : /var/www/mysite or C:/xampp/htdocs/mysite
   const PATH_OPTIONS = '/core/sylma.yml';
+
   const PATH_CACHE = 'cache';
+  const PATH_TRASH = 'trash';
 
   const MODE_EXECUTE = 1;
   const MODE_WRITE = 2;
@@ -136,6 +138,15 @@ class Sylma {
         require_once('storage/fs/Controler.php');
 
         $result = new storage\fs\Controler(self::PATH_CACHE, true, true, false);
+        $result->loadDirectory('');
+
+      break;
+
+      case 'fs/trash' :
+
+        require_once('storage/fs/Controler.php');
+
+        $result = new storage\fs\Controler(self::PATH_TRASH, true, true, false);
         $result->loadDirectory('');
 
       break;

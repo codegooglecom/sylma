@@ -2,7 +2,6 @@ debug :
   enable : false
   rights: false
   backtrace : false
-  html : true
 namespaces :
   html : http://www.w3.org/1999/xhtml
 render :

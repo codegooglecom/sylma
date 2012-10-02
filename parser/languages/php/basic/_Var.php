@@ -15,7 +15,7 @@ abstract class _Var extends common\basic\Controled implements common\_var {
   protected $bInserted = false;
   protected $content;
 
-  public function __construct(common\_window $controler, common\_instance $instance, $sName, common\linable $content) {
+  public function __construct(common\_window $controler, common\_instance $instance, $sName, common\argumentable $content) {
 
     $this->setName($sName);
     $this->setControler($controler);
@@ -28,7 +28,7 @@ abstract class _Var extends common\basic\Controled implements common\_var {
     return $this->instance;
   }
 
-  protected function setContent(common\linable $content) {
+  protected function setContent(common\argumentable $content) {
 
     $this->content = $content;
   }
@@ -38,7 +38,7 @@ abstract class _Var extends common\basic\Controled implements common\_var {
     return $this->content;
   }
 
-  public function insert(common\linable $content = null) {
+  public function insert(common\argumentable $content = null) {
 
     $window = $this->getControler();
 
@@ -51,7 +51,7 @@ abstract class _Var extends common\basic\Controled implements common\_var {
 
       if (!$content) $content = $this->getContent();
 
-      $assign = $window->create('assign', array($window, $this, $content));
+      $assign = $window->createAssign($this, $content);
       $window->add($assign);
 
       $this->bInserted = true;

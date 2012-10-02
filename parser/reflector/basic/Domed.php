@@ -3,8 +3,6 @@
 namespace sylma\parser\reflector\basic;
 use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
 
-\Sylma::load('Child.php', __DIR__);
-
 abstract class Domed extends Child {
 
   protected function parseNode(dom\node $node) {

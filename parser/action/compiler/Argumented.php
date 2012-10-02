@@ -62,7 +62,7 @@ abstract class Argumented extends Domed {
       $validate = $el->getx('self:validate', array(), false);
     }
 
-    $val = $window->stringToInstance($sFormat);
+    $val = $window->tokenToInstance($sFormat);
 
     $callArgument = $window->createCall($window->getSelf(), self::ARGUMENT_METHOD, $val, array($mKey, $bRequired));
     $var = $callArgument->getVar();
@@ -77,7 +77,7 @@ abstract class Argumented extends Domed {
       $window->setScope($if);
     }
 
-    $assign = $window->create('assign', array($window, $var, $callFormat));
+    $assign = $window->createAssign($var, $callFormat);
     $window->add($assign);
     //$var = $callFormat->getVar();
 
@@ -108,21 +108,21 @@ abstract class Argumented extends Domed {
 
     $window = $this->getWindow();
 
-    $bool = $window->stringToInstance('php-boolean');
+    $bool = $window->tokenToInstance('php-boolean');
 
     if ($val instanceof common\_scalar) {
 
       if ($val instanceof php\basic\instance\_String) {
 
-        $call = $window->createCall($window->getSelf(), 'validateString', $window->stringToInstance('php-string'), array($call));
+        $call = $window->createCall($window->getSelf(), 'validateString', $window->tokenToInstance('php-string'), array($call));
       }
       else if ($val instanceof php\basic\instance\_Numeric) {
 
-        $call = $window->createCall($window->getSelf(), 'validateNumeric', $window->stringToInstance('php-numeric'), array($call));
+        $call = $window->createCall($window->getSelf(), 'validateNumeric', $window->tokenToInstance('php-numeric'), array($call));
       }
       else if ($val instanceof php\basic\instance\_Array) {
 
-        $call = $window->createCall($window->getSelf(), 'validateArray', $window->stringToInstance('php-array'), array($call));
+        $call = $window->createCall($window->getSelf(), 'validateArray', $window->tokenToInstance('php-array'), array($call));
       }
     }
     else if ($val instanceof common\_object) {
@@ -170,7 +170,7 @@ abstract class Argumented extends Domed {
 
     $bReturn = $el->testAttribute('return', true);
 
-    $isnull = $window->callFunction('\is_null', $window->stringToInstance('php-boolean'), array($var));
+    $isnull = $window->callFunction('\is_null', $window->tokenToInstance('php-boolean'), array($var));
     $if = $window->createCondition($isnull);
 
     $window->add($if);
@@ -181,7 +181,7 @@ abstract class Argumented extends Domed {
 
     if ($bReturn) {
 
-      $assign = $window->create('assign', array($this->getWindow(), $var, $varDefault));
+      $assign = $window->createAssign($var, $varDefault);
       $window->add($assign);
     }
 
@@ -209,7 +209,7 @@ abstract class Argumented extends Domed {
     }
 
     $call = $window->createCall($window->getSelf(), 'validateArgument', 'php-boolean', array($sArgument, $var, $validation, $bRequired, $bReturn, $bDefault));
-    return $window->create('assign', array($this->getWindow(), $var, $call));
+    return $window->createAssign($var, $call);
   }
 }
 

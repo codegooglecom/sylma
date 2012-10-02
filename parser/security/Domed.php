@@ -37,6 +37,11 @@ class Domed extends Reflector implements parser\reflector\attributed {
     return $result;
   }
 
+  public function onClose() {
+
+    
+  }
+
   protected function parseElement(dom\node $el) {
 
     $sOwner = $el->readAttribute('owner', $this->getNamespace());

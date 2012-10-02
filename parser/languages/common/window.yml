@@ -2,6 +2,8 @@ classes :
   §sylma-classbase : \sylma\parser\languages\common\basic
   object :
     name : _Object
+  access :
+    name : Access
   call :
     name : _Call
   var :

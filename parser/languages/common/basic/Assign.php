@@ -3,26 +3,25 @@
 namespace sylma\parser\languages\common\basic;
 use sylma\core, sylma\parser\languages\common;
 
-\Sylma::load('/parser/languages/common/basic/Controled.php');
-\Sylma::load('/core/argumentable.php');
+class Assign extends Controled implements common\argumentable {
 
-class Assign extends Controled implements core\argumentable {
-
-  protected $variable;
+  protected $to;
   protected $value;
 
-  public function __construct(common\_window $controler, common\_var $variable, $value) {
+  public function __construct(common\_window $window, $variable, $value) {
 
-    $this->variable = $variable;
+    $this->to = $variable;
     $this->value = $value;
-    $this->setControler($controler);
+    $this->setControler($window);
+
+    $this->value = $window->checkContent($value);
   }
 
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
       'assign' => array(
-        'variable' => $this->variable,
+        'variable' => $this->to,
         'value' => $this->value,
       )));
   }

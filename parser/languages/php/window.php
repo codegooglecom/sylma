@@ -1,9 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php;
-use sylma\core, sylma\parser, sylma\parser\domed, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom;
-
-\Sylma::load('/parser/languages/common/_window.php');
+use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php;
 
 interface window extends common\_window {
 
@@ -26,14 +24,19 @@ interface window extends common\_window {
   /**
    * @return basic\CallMethod
    */
-  function createCall($obj, $sMethod, $mReturn, array $aArguments = array());
-
-  function createString($mContent);
+  function callFunction($sName, common\_instance $return = null, array $aArguments = array());
 
   /**
    * @return _instance
    */
   function loadInstance($sName, $sFile = '');
+
+  /**
+   *
+   * @param string $sFormat
+   * @return _instance
+   */
+  function tokenToInstance($sFormat);
 
   /**
    * @return php\basic\Insert

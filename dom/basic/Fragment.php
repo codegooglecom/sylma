@@ -54,11 +54,11 @@ class Fragment extends \DOMDocumentFragment implements dom\node, dom\fragment {
 
   public function add() {
 
-    $result = null;
+    $mResult = null;
 
     if (count(func_get_args()) > 1) {
 
-      $result = $this->add(func_get_args());
+      $mResult = $this->add(func_get_args());
     }
     else {
 
@@ -66,31 +66,35 @@ class Fragment extends \DOMDocumentFragment implements dom\node, dom\fragment {
 
       if (is_array($val)) {
 
-        $result = array();
-        foreach ($val as $arg) $result[] = $this->add($arg);
+        $mResult = array();
+        foreach ($val as $arg) $mResult[] = $this->add($arg);
       }
       else {
 
-        $result = $this->insertChild($val);
+        $mResult = $this->insertChild($val);
       }
     }
 
-    return $result;
+    return $mResult;
   }
 
   protected function insertChild($val) {
 
     if ($val instanceof dom\collection) {
 
+      $mResult = array();
+
       foreach ($val as $node) {
 
-        $this->appendChild($node);
+        $mResult[] = $this->appendChild($node);
       }
     }
     else {
-      
-      $this->appendChild($val);
+
+      $mResult = $this->appendChild($val);
     }
+
+    return $mResult;
   }
 
   public function getDocument() {

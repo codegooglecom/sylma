@@ -3,12 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-\Sylma::load('../../common/basic/Controled.php', __DIR__);
-
-\Sylma::load('/parser/languages/common/linable.php');
-\Sylma::load('/core/argumentable.php');
-
-abstract class Called extends common\basic\Controled implements common\linable, core\argumentable  {
+abstract class Called extends common\basic\Controled implements common\argumentable, common\_call  {
 
   protected $sName;
 

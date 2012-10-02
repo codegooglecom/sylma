@@ -1,5 +1,4 @@
 classes :
-  §sylma-classbase : \sylma\parser\languages\js
   window :
-    name : \sylma\parser\common\basic\Window
-  js : §sylma-import /#sylma/parser/languages/js/window.yml
+    name : \sylma\parser\languages\js\basic\Window
+  js : §sylma:import /#sylma/parser/languages/js/window.yml;

@@ -11,6 +11,36 @@ sylma.ui = {};
 
 (function() {
 
+  this.load = function(objects) {
+
+    var length = objects.length;
+
+    if (length > 1) {
+
+      this.tmp = [];
+
+      for (var obj in objects) {
+
+        this.tmp.push(this.createObject(obj));
+      }
+
+      if (objects.root) this.root = this.createObject(objects.root);
+    }
+    else {
+
+      for (var first in objects) break;
+      this.root = this.createObject(objects[first]);
+    }
+  }
+
+  this.createObject = function(options) {
+
+    var parent = window;
+    options.extend.split('.').each(function(item, index) { parent = parent[item] });
+
+    return new parent(options);
+  }
+
   this.Base = new Class({
 
     Implements : Options,
@@ -20,7 +50,9 @@ sylma.ui = {};
 
     initialize : function(options) {
 
-      options = this.loadOptions(options)
+      options = this.loadOptions(options);
+
+      this.initBasic(options);
 
       if (options.properties) this.initObjects(options.properties);
       if (options.objects) this.initObjects(options.objects);
@@ -38,16 +70,16 @@ sylma.ui = {};
 
     initEvents : function(events) {
 
-      for (var e in events) {
+      for (var name in events) {
 
-        this.initEvent(events[e]);
+        this.initEvent(name, events[name]);
       }
     },
 
-    initEvent : function(event) {
+    initEvent : function(name, event) {
 
       var nodes = event.target ? this.getNode().getElements('.' + event.target) : this.getNode();
-      nodes.addEvent(event.name, event.callback);
+      nodes.addEvent(name, event.callback);
     },
 
     initProperties : function(properties) {
@@ -61,11 +93,12 @@ sylma.ui = {};
       }
     },
 
-    initPropertiesBasic : function(options) {
+    initBasic : function(options) {
 
       if (!options.id) throw 'No node associated';
 
       this.node = document.id(options.id);
+      $(this.node).store('sylma-object', this);
     },
 
     /**
@@ -76,5 +109,12 @@ sylma.ui = {};
       return this.node;
     }
   });
+
+  this.Test = new Class({
+    Extends : this.Base,
+    test : function() {
+      alert('test');
+    }
+  })
 
 }).call(sylma.ui);

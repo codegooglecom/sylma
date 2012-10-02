@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\common\basic;
-use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
 abstract class Window extends core\module\Domed {
 
@@ -14,9 +14,15 @@ abstract class Window extends core\module\Domed {
    */
   protected $aScopes = array();
 
-  protected $aObjects = array();
-
   protected $aKeys = array();
+
+  // $this reference object
+  protected $self;
+
+  public function getSelf() {
+
+    return $this->self;
+  }
 
   public function createArgument($mArguments, $sNamespace = '') {
 
@@ -39,65 +45,118 @@ abstract class Window extends core\module\Domed {
     }
     else {
 
-      if ($mVal instanceof common\_var) {
-
-        $mVal->insert();
-      }
-      else {
-
-        $this->addContentUnknown($mVal);
-      }
+      $this->addContentUnknown($mVal);
     }
+  }
+
+  public function checkContent($mVal) {
+
+    if ($mVal instanceof common\ghost) {
+
+      $this->throwException('Cannot add ghost to content');
+    }
+
+    return $mVal;
   }
 
   protected function addContentUnknown($mVal) {
 
-    $this->aContent[] = $mVal;
+    $this->aContent[] = $this->createInstruction($this->checkContent($mVal));
   }
 
   protected function loadReturn($mReturn) {
 
     if (is_string($mReturn)) {
 
-      $result = $this->loadInstance($mReturn);
+      $result = $this->createGhost($mReturn);
     }
-    else {
+    else if (is_array($mReturn)) {
+
+      $this->throwException('Cannot convert yet array to return');
+    }
+    else if (is_null($mReturn)) {
 
       $result = $mReturn;
     }
+    else if ($mReturn instanceof common\ghost) {
+
+      $result = $mReturn;
+    }
+    else if ($mReturn instanceof common\_instance) {
+
+      $result = $mReturn->getInterface();
+
+    } else {
+
+      $this->throwException(sprintf('Cannot convert to return %s', $this->show($mReturn)));
+    }
 
     return $result;
   }
 
-  public function createProperty($obj, $sName, $mReturn) {
+  public function createGhost($sClass) {
 
-    $result = $this->create('property', array($this, $obj, $sName, $this->loadReturn($mReturn)));
+    return null;
+  }
+
+  public function createVariable($sName, $mReturn = null) {
+
+    return $this->create('variable', array($this, $sName, $this->loadReturn($mReturn)));
+  }
+
+  public function createAssign($to, $value) {
+
+    return $this->create('assign', array($this, $to, $value));
+  }
+
+  public function createString($mContent) {
+
+    if (is_string($mContent)) {
+
+      $result = $this->create('string', array($this, $mContent));
+    }
+    else {
+
+      $result = $this->argToString($mContent);
+    }
 
     return $result;
   }
 
-  public function createCall($obj, $sName, $mReturn, array $aArguments = array()) {
+  protected function argToString($mValue) {
 
-    $result = $this->create('call', array($this, $obj, $sName, $this->loadReturn($mReturn), $aArguments));
+    return $this->create('string', array($this, $mContent));
+  }
+
+  public function createInstruction(common\argumentable $content) {
+
+    return $this->create('instruction', array($this, $content));
+  }
+
+  public function createInstanciate(common\_instance $instance, array $aArguments = array()) {
+
+    return $this->create('instanciate', array($this, $instance, $aArguments));
+  }
+
+  public function addVar(common\argumentable $val) {
+
+    $result = $val;
+
+    if ($val instanceof common\_var) {
+
+      $result->insert();
+    }
+    else if ($val instanceof common\_call) {
+
+      $result = $val->getVar();
+    }
+    else {
+
+      $result = $this->createVar($val);
+      $result->insert();
+    }
 
     return $result;
-  }
-
-  public function createFunction(array $aArguments = array()) {
-
-    return $this->create('function', array($this, $aArguments));
-  }
-
-  public function createVar(common\linable $val) {
-
-    $return = $val;
-
-    return $this->create('variable', array($this, $return, $this->getVarName(), $val));
-  }
-
-  public function getVarName() {
-
-    return 'var' . $this->getKey('var');
   }
 
   public function getKey($sPrefix) {
@@ -112,11 +171,6 @@ abstract class Window extends core\module\Domed {
     }
 
     return $this->aKeys[$sPrefix];
-  }
-
-  public function createInstanciate(common\_instance $instance, array $aArguments = array()) {
-
-    return $this->create('instanciate', array($this, $instance, $aArguments));
   }
 
   public function getScope() {
@@ -144,70 +198,96 @@ abstract class Window extends core\module\Domed {
     return array_pop($this->aScopes);
   }
 
-  public function getObject() {
+  public function argToInstance($mVar) {
 
-    if (!$this->aObjects) {
+    if (is_object($mVar)) {
 
-      $this->throwException(t('Cannot get object, no object defined'));
+      $result = $this->objectToInstance($mVar);
     }
+    else {
 
-    return $this->aObjects[count($this->aObjects) - 1];
-  }
-
-  public function setObject(common\_object $obj) {
-
-    $this->aObjects[] = $obj;
-  }
-
-  public function stopObject() {
-
-    if (!$this->aObjects) {
-
-      $this->throwException(t('Cannot stop object scope, no object defined'));
+      $result = $this->typeToInstance(gettype($mVar), $mVar);
     }
-
-    return array_pop($this->aObjects);
-  }
-
-  public function loadInstance($sClass) {
-
-    $result = $this->create('object', array($this, $sClass));
 
     return $result;
   }
 
-  public function argToInstance($mVar) {
+  protected function typeToInstance($sFormat, $mVar = null) {
 
-    $arg = null;
+    $result = null;
 
-    if (is_object($mVar)) {
+    switch ($sFormat) {
 
-      if ($mVar instanceof dom\node) {
+      case 'boolean' :
 
-        $arg = $this->createTemplate($mVar);
-      }
-      else if ($mVar instanceof common\_instance ||
-          $mVar instanceof php\basic\Called ||
-          $mVar instanceof php\basic\_Closure ||
-          $mVar instanceof common\_var) {
+        if (is_null($mVar)) $mVar = false;
+        $result = $this->create('boolean', array($this, $mVar));
 
-        $arg = $mVar;
-      }
-      else {
+      break;
 
-        $arg = $this->loadInstance(get_class($mVar));
-      }
+      case 'integer' :
+      case 'numeric' :
+      case 'double' :
+
+        if (is_null($mVar)) $mVar = 0;
+        $result = $this->create('numeric', array($this, $mVar));
+
+      break;
+
+      case 'string' :
+
+        if (is_null($mVar)) $mVar = '';
+        $result = $this->createString($mVar);
+
+      break;
+
+      case 'array' :
+
+        if (is_null($mVar)) $mVar = array();
+        $result = $this->create('array', array($this, $mVar));
+
+      break;
+
+      case 'null' :
+
+        $result = $this->create('null', array($this));
+
+      break;
+
+      default :
+
+        $this->throwException(sprintf('Unkown scalar type as argument : %s', $sFormat));
     }
-    else if (is_null($mVar)) {
 
-      $arg = $this->create('null', array($this));
+    return $result;
+  }
+
+  protected function objectToInstance($obj) {
+
+    if ($obj instanceof common\argumentable) {
+
+      $result = $obj;
+    }
+    else if ($obj instanceof dom\node) {
+
+      $result = $this->nodeToInstance($obj);
     }
     else {
 
-      $this->throwException(sprintf('Cannot transform value %s', $this->show($mVar)));
+      $result = $this->objectUnknownToInstance($obj);
     }
 
-    return $arg;
+    return $result;
+  }
+
+  protected function nodeToInstance(dom\node $node) {
+
+    $this->throwException('Cannot handle dom');
+  }
+
+  protected function objectUnknownToInstance($obj) {
+
+    $this->throwException(sprintf('Cannot transform object of @class %s to instance', get_class($obj)));
   }
 
   public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
@@ -222,5 +302,4 @@ abstract class Window extends core\module\Domed {
 
     return $result;
   }
-
 }

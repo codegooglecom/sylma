@@ -108,7 +108,7 @@ class Document extends parser\action\handler\Basic {
       $sHTML = \Sylma::read('namespaces/html');
       $sJSBinder = 'http://www.sylma.org/parser/js/binder/cached';
 
-      $els = $doc->queryx("//*[namespace-uri() != '$sHTML' and namespace-uri() != '$sJSBinder']", array(), false);
+      $els = $doc->queryx("//*[namespace-uri() != '$sHTML']", array(), false);
 
       if ($els->length) {
 

@@ -1,10 +1,7 @@
 <?php
 
-namespace sylma\parser\languages\php\basic;
+namespace sylma\parser\languages\common\basic;
 use \sylma\core, \sylma\parser\languages\common;
-
-\Sylma::load('Controled.php', __DIR__);
-\Sylma::load('/core/argumentable.php');
 
 class Instruction extends Controled implements core\argumentable {
 
@@ -20,7 +17,7 @@ class Instruction extends Controled implements core\argumentable {
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
-      'line' => $this->content,
+      'instruction' => $this->content,
     ));
   }
 }

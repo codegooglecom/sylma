@@ -4,6 +4,6 @@ namespace sylma\parser\languages\common;
 
 require_once('scope.php');
 
-interface _object extends scope {
+interface _object {
   function getInterface();
 }

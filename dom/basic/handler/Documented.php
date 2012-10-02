@@ -63,14 +63,13 @@ abstract class Documented extends Container {
     }
     else if ($val instanceof dom\collection) {
 
-      $val->rewind();
-      $this->set($val->current());
-      $val->next();
+      if ($val->length > 1) {
 
-      while ($val->valid()) {
+        $this->throwException('Cannot add collection with multiple elements as root');
+      }
+      else if ($val->length) {
 
-        $this->add($val->current());
-        $val->next();
+        $this->set($val->current());
       }
     }
     else if ($val instanceof core\argumentable) {
@@ -129,7 +128,8 @@ abstract class Documented extends Container {
 
       $mResult = $aChildren;
 
-    } else {
+    }
+    else {
 
       // = 1
 
@@ -218,12 +218,12 @@ abstract class Documented extends Container {
   public function __toString() {
 
     $sResult = '';
-    
+
     if (!$this->isEmpty()) {
-      
+
       $sResult = $this->asString();
     }
-    
+
     return $sResult;
   }
 

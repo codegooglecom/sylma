@@ -1,18 +1,8 @@
 <?php
 
 namespace sylma\parser\js\binder;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
+use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\js;
 
-\Sylma::load('/parser/reflector/basic/Domed.php');
-
-\Sylma::load('/parser/reflector/elemented.php');
-\Sylma::load('/parser/reflector/attributed.php');
-
-/**
- * Description of Reflector
- *
- * @author Rodolphe Gerber
- */
 class Reflector extends parser\reflector\basic\Domed implements parser\reflector\elemented, parser\reflector\attributed {
 
   const NS = 'http://www.sylma.org/parser/js/binder';
@@ -23,9 +13,11 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
   const CACHED_NS = Cached::NS;
 
+  const JS_PATH = 'sylma.binder.classes';
+
   protected $window;
   protected $sPath = '';
-  protected $object;
+  protected $aObjects = array();
 
   public function __construct(parser\reflector\domed $parent) {
 
@@ -38,7 +30,9 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $this->addParser($parent->getWindow());
 
     $this->setParent($parent);
+
     $this->initWindow();
+    $this->prepareParent();
   }
 
   public function getPath() {
@@ -71,23 +65,31 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return $result;
   }
 
-  protected function initWindow() {
-/*
-    $window = $this->create('window', array($this, $this->getArgument('js')));
-    $this->setWindow($window);
-
-    $collection = $window->createObject();
-    $property = $window->createProperty(self::DEFAULT_PROPERTY)
- */
+  protected function prepareParent() {
 
     $window = $this->getParent()->getWindow();
-    //echo $this->show($window->getContexts(), false);
 
     $window->startContext('js');
 
     $window->insert($window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array((string) $this->getFile('../mootools.js'))));
     $window->insert($window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array((string) $this->getFile('../sylma.js'))));
-    //, $this->getFile('../sylma.js'));
+
+    $window->insert($this->getWindow());
+
+    $window->stopContext('js');
+  }
+
+  protected function initWindow() {
+
+    $window = $this->create('window', array($this, $this->getArgument('classes/js')));
+    $this->setWindow($window);
+
+    $classes = $window->createObject();
+    $window->assignProperty(self::JS_PATH, $classes);
+    $this->startObject($classes);
+
+    //echo $this->show($window->getContexts(), false);
+/*
 
     $window->insert("sylma.binder.classes = {
       test1 : {
@@ -95,7 +97,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
           value : 'hello'
         },
         events : {
-          clic : {
+          click : {
             callback : function() {
               $(this).retrieve('sylma-object').test();
             }
@@ -106,8 +108,28 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     }");
 
     $window->stopContext();
+ */
   }
 
+  public function getObject() {
+
+    return end($this->aObjects);
+  }
+
+  public function startObject(common\_object $object) {
+
+    $this->aObjects[] = $object;
+  }
+
+  protected function stopObject() {
+
+    return array_pop($this->aObjects);
+  }
+
+  /**
+   *
+   * @return js\window
+   */
   protected function getWindow() {
 
     return $this->window;
@@ -124,8 +146,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     switch ($el->getName()) {
 
-      //case 'event' : $result = $this->reflectEvent($el); break;
-      case 'event' :
+      case 'event' : $result = $this->reflectEvent($el); break;
       case 'property' :
 
       break;
@@ -138,14 +159,49 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
   public function parseAttributes(dom\node $el, dom\element $resultElement, $result) {
 
-    $result = $this->buildElement($el, $resultElement);
+    if ($el->readx('@self:class', $this->getNS())) {
+
+      $result = $this->reflectObject($el, $resultElement);
+    }
 
     return $result;
   }
 
+  public function onClose() {
+
+    $this->stopObject();
+  }
+
   protected function reflectEvent(dom\element $el) {
 
-    $this->getObject()->set($sName, $function);
+    $window = $this->getWindow();
+
+    $function = $window->createFunction(array('e'), $this->parseEventContent($el->read()));
+    $sName = $el->readAttribute('name');
+
+    $this->getObject()->setProperty("events.$sName.callback", $function);
+  }
+
+  protected function parseEventContent($sContent) {
+
+    $aReplaces = array(
+      '/%([\w-_]+)%/' => '\$(this).retrieve(\'sylma-$1\')',
+      '/%([\w-_]+)\s*,\s*([^%]+)%/' => '\$(this).store(\'sylma-$1\', $2)');
+
+    $sResult = preg_replace(array_keys($aReplaces), $aReplaces, $sContent);
+
+    return $sResult;
+  }
+
+  protected function reflectObject(dom\element $el, dom\element $resultElement) {
+
+    $result = $this->buildElement($el, $resultElement);
+    $obj = $this->getWindow()->createObject();
+
+    $this->getObject()->setProperty($result->readAttribute('binder'), $obj);
+    $this->startObject($obj);
+
+    return $result;
   }
 
   protected function buildElement(dom\element $el, dom\element $resultElement) {
@@ -156,7 +212,8 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $aAttributes = array(
       'class' => $sClass,
       'name' => $sName,
-      'template' => 'test1'//uniqid('sylma'),
+      'id' => $resultElement->readAttribute('id', null, false),
+      'binder' => 'test1'//uniqid('sylma'),
     );
 
     $result = $resultElement->createElement('object', $resultElement, $aAttributes, $this->getNamespace('cached'));

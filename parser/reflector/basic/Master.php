@@ -3,8 +3,6 @@
 namespace sylma\parser\reflector\basic;
 use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
 
-\Sylma::load('Domed.php', __DIR__);
-
 abstract class Master extends Domed {
 
   /**
@@ -14,6 +12,7 @@ abstract class Master extends Domed {
   protected $aParsers = array();
 
   protected $foreignElements;
+  protected $aAttributeParsers = array();
 
   /**
    *
@@ -101,36 +100,18 @@ abstract class Master extends Domed {
 
   protected function parseElementForeign(dom\element $el) {
 
-    $mResult = null;
-    $parser = $this->loadParser($el->getNamespace());
-
-    if ($parser) {
+    if ($parser = $this->loadParser($el->getNamespace(), 'element')) {
 
       $mResult = $parser->parseRoot($el);
     }
     else {
 
-      $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
-
-      if ($this->useForeignAttributes($el)) {
-
-        $mResult = $this->parseAttributesForeign($el, $newElement);
-      }
-      else {
-
-        foreach ($el->getAttributes() as $attr) {
-
-          $newElement->add($this->parseAttribute($attr));
-        }
-
-        $mResult = $newElement;
-      }
-
-      if ($aChildren = $this->parseChildren($el->getChildren())) {
-
-        $newElement->add($aChildren);
-      }
       $mResult = $this->parseElementUnknown($el);
+
+      foreach ($this->getAttributeParsers() as $parser) {
+
+        $parser->onClose();
+      }
     }
 
     return $mResult;
@@ -161,9 +142,11 @@ abstract class Master extends Domed {
 
     $mResult = $newElement;
 
+    $aParsers = array();
+
     foreach ($aForeigns as $sNamespace => $bVal) {
 
-      $parser = $this->loadParser($sNamespace, 'attribute');
+      $aParsers[] = $parser = $this->loadParser($sNamespace, 'attribute');
 
       if ($parser) {
 
@@ -175,7 +158,18 @@ abstract class Master extends Domed {
       }
     }
 
+    $this->setAttributeParsers($aParsers);
+
     return $mResult;
   }
 
+  protected function getAttributeParsers() {
+
+    return $this->aAttributeParsers;
+  }
+
+  protected function setAttributeParsers(array $aParsers) {
+
+    $this->aAttributeParsers = $aParsers;
+  }
 }

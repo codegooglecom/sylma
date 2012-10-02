@@ -78,9 +78,9 @@ abstract class Runner extends Action {
         $content = $this->parse($child->getFirst());
         $var = $window->createVar($content);
 
-        $var->insert($window->stringToInstance('php-null'));
-        //$window->add($window->create('assign', array($window, $var, )));
-        $assign = $window->create('assign', array($window, $var, $content));
+        $var->insert($window->tokenToInstance('php-null'));
+        //$window->add($window->createAssign($var, )));
+        $assign = $window->createAssign($var, $content);
 
         $call->insert();
 

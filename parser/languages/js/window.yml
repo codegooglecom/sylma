@@ -1,0 +1,33 @@
+classes :
+  §sylma-classbase : \sylma\parser\languages
+  property :
+    name : common\basic\Property
+  call :
+    name : common\basic\_Call
+  variable :
+    name : common\basic\Variable
+  instanciate :
+    name : common\basic\Instanciate
+  assign :
+    name : common\basic\Assign
+  instruction :
+    name : common\basic\Instruction
+  concat :
+    name : common\basic\Concat
+  ghost :
+    name : js\basic\Ghost
+  object :
+    name : js\basic\instance\_Object
+  function :
+    name : js\basic\instance\_Function
+  string :
+    name : js\basic\instance\_String
+  array :
+    name : js\basic\instance\_Array
+  numeric :
+    name : js\basic\instance\_Numeric
+  null :
+    name : js\basic\instance\_Null
+  boolean :
+    name : js\basic\instance\_Boolean
+

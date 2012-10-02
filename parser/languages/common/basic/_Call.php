@@ -3,12 +3,7 @@
 namespace sylma\parser\languages\common\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-\Sylma::load('Controled.php', __DIR__);
-
-\Sylma::load('../linable.php', __DIR__);
-\Sylma::load('/core/argumentable.php');
-
-abstract class _Call extends Controled implements common\linable, core\argumentable  {
+abstract class _Call extends Controled implements common\argumentable  {
 
   protected $sName;
 
@@ -20,7 +15,7 @@ abstract class _Call extends Controled implements common\linable, core\argumenta
 
   protected $called;
 
-  public function __construct(common\_window $controler, $called, $sName, common\_instance $return, array $aArguments = array()) {
+  public function __construct(common\_window $controler, $called, array $aArguments = array(), common\ghost $return = null) {
 
     $this->setCalled($called);
     $this->setName($sName);
@@ -40,16 +35,6 @@ abstract class _Call extends Controled implements common\linable, core\argumenta
 
       $this->throwException(sprintf('Cannot call non object %s', $this->show($called)));
     }
-  }
-
-  public function getName() {
-
-    return $this->sName;
-  }
-
-  public function setName($sName) {
-
-    $this->sName = $sName;
   }
 
   /**
@@ -95,30 +80,12 @@ abstract class _Call extends Controled implements common\linable, core\argumenta
     return $aResult;
   }
 
-  /**
-   * Build an (optionnaly temporary) variable assigned with this call
-   * @param boolean $bInsert
-   * @return common\_var
-   */
-  public function getVar($bInsert = true) {
-
-    if (!$this->var) {
-
-      $this->var = $this->getControler()->createVar($this);
-    }
-
-    if ($bInsert) $this->var->insert();
-
-    return $this->var;
-  }
-
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
       'call' => array(
-          '@name' => $this->getName(),
-          'called' => $this->called,
-          '#argument' => $this->getArguments(),
+        '@name' => $this->getName(),
+        'called' => $this->called,
       ),
     ));
   }

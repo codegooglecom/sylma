@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ls="http://www.sylma.org/security" xmlns:php="http://www.sylma.org/parser/languages/php" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ls="http://www.sylma.org/security" xmlns:js="http://www.sylma.org/parser/languages/js" xmlns:php="http://www.sylma.org/parser/languages/php" version="1.0">
 
   <xsl:include href="/#sylma/parser/languages/php/source.xsl"/>
+
+  <xsl:param name="namespace"/>
+  <xsl:param name="class"/>
+  <xsl:param name="template"/>
 
   <xsl:template match="php:window">&lt;?php
 

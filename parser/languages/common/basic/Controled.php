@@ -12,6 +12,10 @@ class Controled {
     $this->controler = $controler;
   }
 
+  /**
+   *
+   * @return window
+   */
   public function getControler() {
 
     return $this->controler;

@@ -5,8 +5,8 @@ use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parse
 
 class Window extends common\basic\Window implements php\window, core\controled {
 
-  protected static $sArgumentClass = '\sylma\parser\Argument';
-  protected static $sArgumentFile = 'parser/Argument.php';
+  protected static $sArgumentClass = '\sylma\parser\languages\php\Argument';
+  protected static $sArgumentFile = 'parser/languages/php/Argument.php';
 
   // Keyed by alias. ex : storage/fs
   protected $aControlers = array();
@@ -18,9 +18,6 @@ class Window extends common\basic\Window implements php\window, core\controled {
   protected $aDependencies = array();
 
   protected $aInterfaces = array();
-
-  // $this reference object
-  protected $self;
 
   // static reference to class
   protected $sylma;
@@ -44,12 +41,17 @@ class Window extends common\basic\Window implements php\window, core\controled {
 
   protected function addContentUnknown($mVal) {
 
+    if ($mVal instanceof common\_var) {
+
+      $mVal->insert();
+    }
+
     if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
 
       $mVal = $this->create('line', array($this, $mVal));
     }
 
-    return parent::addContentUnknown($mVal);
+    $this->aContent[] = $mVal;
   }
 
   public function addControler($sName) {
@@ -57,7 +59,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
     if (!array_key_exists($sName, $this->aControlers)) {
 
       $controler = $this->getControler($sName);
-      $return = $this->stringToInstance(get_class($controler));
+      $return = $this->tokenToInstance(get_class($controler));
 
       $call = $this->createCall($this->getSelf(), 'getControler', $return, array($sName));
       $this->aControlers[$sName] = $call->getVar();
@@ -71,32 +73,23 @@ class Window extends common\basic\Window implements php\window, core\controled {
     return $this->sylma;
   }
 
-  public function createCall($obj, $sMethod, $mReturn, array $aArguments = array()) {
+  protected function loadReturn($mReturn) {
 
     if (is_string($mReturn)) {
 
-      $return = $this->stringToInstance($mReturn);
+      $result = $this->tokenToInstance($mReturn);
     }
     else {
 
-      $return = $mReturn;
+      $result = $mReturn;
     }
-
-    $result = $this->create('call', array($this, $obj, $sMethod, $return, $aArguments));
 
     return $result;
   }
 
-  public function createString($mContent) {
+  public function createCall($obj, $sMethod, $mReturn, array $aArguments = array()) {
 
-    if (is_string($mContent)) {
-
-      $result = $this->create('string', array($this, $mContent));
-    }
-    else {
-
-      $result = $this->create('concat', array($this, $mContent));
-    }
+    $result = $this->create('call', array($this, $obj, $sMethod, $this->loadReturn($mReturn), $aArguments));
 
     return $result;
   }
@@ -106,38 +99,12 @@ class Window extends common\basic\Window implements php\window, core\controled {
     return $this->create('function', array($this, $sName, $return, $aArguments));
   }
 
-  public function createInstanciate(common\_instance $instance, array $aArguments = array()) {
-
-    return $this->create('instanciate', array($this, $instance, $aArguments));
-  }
-
   public function createCondition($test, $content = null) {
 
     return $this->create('condition', array($this, $test, $content));
   }
 
-  public function addVar(common\linable $val) {
-
-    $result = $val;
-
-    if ($val instanceof common\_var) {
-
-      $result->insert();
-    }
-    else if ($val instanceof php\basic\Called) {
-
-      $result = $val->getVar();
-    }
-    else {
-
-      $result = $this->createVar($val);
-      $result->insert();
-    }
-
-    return $result;
-  }
-
-  public function createVar(common\linable $val) {
+  public function createVar(common\argumentable $val) {
 
     if ($val instanceof php\basic\Called) {
 
@@ -169,6 +136,11 @@ class Window extends common\basic\Window implements php\window, core\controled {
     ));
   }
 
+  public function getVarName() {
+
+    return 'var' . $this->getKey('var');
+  }
+
   public function setInterface(php\basic\_Interface $interface) {
 
     $this->aInterfaces[$interface->getName()] = $interface;
@@ -184,92 +156,17 @@ class Window extends common\basic\Window implements php\window, core\controled {
     return $this->aInterfaces[$sName];
   }
 
-  public function getObject() {
-
-    if (!$this->aObjects) {
-
-      $this->throwException(t('Cannot get object, no object defined'));
-    }
-
-    return $this->aObjects[count($this->aObjects) - 1];
-  }
-
-  public function setObject(common\_object $obj) {
-
-    $this->aObjects[] = $obj;
-  }
-
-  public function stopObject() {
-
-    if (!$this->aObjects) {
-
-      $this->throwException(t('Cannot stop object scope, no object defined'));
-    }
-
-    return array_pop($this->aObjects);
-  }
-
-  public function stringToInstance($sFormat) {
+  public function tokenToInstance($sFormat) {
 
     $result = null;
 
     if (substr($sFormat, 0, 4) == 'php-') {
 
-      $result = $this->stringToScalar(substr($sFormat, 4));
+      $result = $this->typeToInstance(substr($sFormat, 4));
     }
     else {
 
       $result = $this->loadInstance($sFormat);
-    }
-
-    return $result;
-  }
-
-  protected function stringToScalar($sFormat, $mVar = null) {
-
-    $result = null;
-
-    switch ($sFormat) {
-
-      case 'boolean' :
-
-        if (is_null($mVar)) $mVar = false;
-        $result = $this->create('boolean', array($this, $mVar));
-
-      break;
-
-      case 'integer' :
-      case 'numeric' :
-      case 'double' :
-
-        if (is_null($mVar)) $mVar = 0;
-        $result = $this->create('numeric', array($this, $mVar));
-
-      break;
-
-      case 'string' :
-
-        if (is_null($mVar)) $mVar = '';
-        $result = $this->createString($mVar);
-
-      break;
-
-      case 'array' :
-
-        if (is_null($mVar)) $mVar = array();
-        $result = $this->create('array', array($this, $mVar));
-
-      break;
-
-      case 'null' :
-
-        $result = $this->create('null', array($this));
-
-      break;
-
-      default :
-
-        $this->throwException(sprintf('Unkown scalar type as argument : %s', $sFormat));
     }
 
     return $result;
@@ -283,39 +180,9 @@ class Window extends common\basic\Window implements php\window, core\controled {
     return $result;
   }
 
-  public function argToInstance($mVar) {
+  protected function nodeToInstance(dom\node $node) {
 
-    $arg = null;
-
-    if (is_object($mVar)) {
-
-      if ($mVar instanceof dom\node) {
-
-        $arg = $this->createTemplate($mVar);
-      }
-      else if ($mVar instanceof common\_instance ||
-          $mVar instanceof php\basic\Called ||
-          $mVar instanceof php\basic\_Closure ||
-          $mVar instanceof php\basic\Insert ||
-          $mVar instanceof common\_var) {
-
-        $arg = $mVar;
-      }
-      else {
-
-        $arg = $this->loadInstance(get_class($mVar));
-      }
-    }
-    else if (is_null($mVar) || is_resource($mVar)) {
-
-      $arg = $this->create('null', array($this));
-    }
-    else {
-
-      $arg = $this->stringToScalar(gettype($mVar), $mVar);
-    }
-
-    return $arg;
+    return $this->createTemplate($node);
   }
 
   /*public function validateFormat(common\_var $var, $sFormat) {
