@@ -209,7 +209,7 @@ abstract class Documented extends Container {
 
     if ($bDebug && !$result) {
 
-      $this->throwException('No root element defined');
+      $this->throwException('Cannot get root, document is empty.');
     }
 
     return $result;

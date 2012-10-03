@@ -34,21 +34,29 @@ class Document extends Basic implements dom\domable {
     return $mResult;
   }
 
+  protected function getParser($sNamespace) {
+
+    return array_key_exists($sNamespace, $this->aParsers) ? $this->aParsers[$sNamespace] : null;
+  }
+
   public function loadParser($sNamespace) {
 
-    $manager = $this->getControler('parser');
+    if (!$result = $this->getParser($sNamespace)) {
 
-    $result = $manager->getParser($sNamespace, $this);
-    $result->setParent($this);
+      $manager = $this->getControler('parser');
 
-    $this->setParser($result);
+      $result = $manager->getParser($sNamespace, $this);
+      $result->setParent($this);
+
+      $this->addParser($sNamespace, $result);
+    }
 
     return $result;
   }
 
-  protected function setParser(parser\cached\documented $parser) {
+  protected function addParser($sNamespace, parser\cached\documented $parser) {
 
-    $this->aParsers[] = $parser;
+    $this->aParsers[$sNamespace] = $parser;
   }
 
   protected function getParsers() {
@@ -70,7 +78,7 @@ class Document extends Basic implements dom\domable {
 
     $sResult = $this->includeTemplate($this->sTemplate, $iKey, $aArguments);
 
-    $doc = $this->create('document');
+    $doc = $this->createDocument();
     $doc->setContent($sResult);
 
     return $doc;

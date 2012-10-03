@@ -3,10 +3,6 @@
 namespace sylma\parser\context;
 use sylma\core, sylma\parser, sylma\dom;
 
-require_once('core/module/Argumented.php');
-require_once(dirname(__dir__) . '/context.php');
-//require_once('core/argumentable.php');
-
 class Basic extends core\module\Domed implements parser\context {
 
   protected $parent;
@@ -14,6 +10,11 @@ class Basic extends core\module\Domed implements parser\context {
   public function __construct() {
 
     $this->setArguments(array());
+  }
+
+  public function shift($mValue) {
+
+    $this->getArguments()->shift($mValue);
   }
 
   public function add($mValue) {
@@ -70,7 +71,6 @@ class Basic extends core\module\Domed implements parser\context {
     }
 
     return $aResult;
-
   }
 
   public function asDOM() {

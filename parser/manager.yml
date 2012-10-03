@@ -18,6 +18,8 @@ classes :
             name : \sylma\parser\js\binder\Cached
           object :
             name : \sylma\parser\js\binder\_Object
+          context :
+            name : \sylma\parser\js\binder\Context
       template :
         name : \sylma\parser\js\template\Handler
   factory :

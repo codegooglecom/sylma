@@ -36,7 +36,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
       $this->getWindow()->add($this->reflectSettings($settings));
       $settings->remove();
     }
-
+/*
     $sFormat = $this->getFormat();
 
     $this->setFormat('object');
@@ -49,6 +49,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
     }
 
     $this->setFormat($sFormat);
+ */
     //$this->getWindow()->startContext(common\_window::CONTEXT_DEFAULT);
 
     $children = $doc->getChildren();

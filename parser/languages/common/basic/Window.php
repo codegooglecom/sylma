@@ -31,22 +31,26 @@ abstract class Window extends core\module\Domed {
 
   public function add($mVal) {
 
-    $this->getScope()->addContent($mVal);
+    return $this->getScope()->addContent($mVal);
   }
 
   public function addContent($mVal) {
 
     if (is_array($mVal)) {
 
+      $mResult = array();
+
       foreach ($mVal as $mChild) {
 
-        $this->addContent($mChild);
+        $mResult[] = $this->addContent($mChild);
       }
     }
     else {
 
-      $this->addContentUnknown($mVal);
+      $mResult = $this->addContentUnknown($mVal);
     }
+    
+    return $mResult;
   }
 
   public function checkContent($mVal) {
@@ -248,6 +252,7 @@ abstract class Window extends core\module\Domed {
 
       break;
 
+      case 'NULL' :
       case 'null' :
 
         $result = $this->create('null', array($this));

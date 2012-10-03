@@ -93,7 +93,7 @@ class _Object extends core\module\Controled implements core\argumentable {
 
   protected function reflectObject(dom\element $el) {
 
-    $obj = new self($el);
+    $obj = new self($this->getControler(), $el);
     $this->aObjects[$obj->getName()] = $obj;
   }
 

@@ -8,6 +8,20 @@ use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
  */
 class JS extends parser\context\Basic implements dom\domable {
 
+  protected function loadString($mValue) {
+
+    if (is_string($mValue)) {
+
+      $sResult = $mValue;
+    }
+    else if ($mValue instanceof core\stringable) {
+
+      $sResult = $mValue->asString();
+    }
+
+    return $sResult;
+  }
+
   public function asDOM() {
 
     $aScripts = array();
@@ -25,7 +39,7 @@ class JS extends parser\context\Basic implements dom\domable {
       }
       else {
 
-        $aScript[] = $mValue;
+        $aScript[] = $this->loadString($mValue);
       }
 
       $aScripts[] = array('script' => $aScript);

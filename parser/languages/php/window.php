@@ -26,6 +26,8 @@ interface window extends common\_window {
    */
   function callFunction($sName, common\_instance $return = null, array $aArguments = array());
 
+  
+
   /**
    * @return _instance
    */

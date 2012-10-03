@@ -13,11 +13,18 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
   const CACHED_NS = Cached::NS;
 
-  const JS_PATH = 'sylma.binder.classes';
+  const JS_TEMPLATES_PATH = 'sylma.binder.classes';
+  const JS_OBJECTS_PATH = 'sylma.ui.tmp';
+
+  const CONTEXT_ALIAS = Cached::CONTEXT_ALIAS;
 
   protected $window;
   protected $sPath = '';
   protected $aObjects = array();
+  protected $bRootElement = true;
+  protected $context;
+
+  protected $iDepth = 0;
 
   public function __construct(parser\reflector\domed $parent) {
 
@@ -34,7 +41,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $this->initWindow();
     $this->prepareParent();
   }
-
+/*
   public function getPath() {
 
     if (!$this->sPath) {
@@ -49,13 +56,18 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     $this->sPath = $path;
   }
-
+*/
   protected function addParser(common\_window $window) {
 
     $parent = $window->createCall($window->getSelf(), self::PARENT_METHOD, self::PARENT_RETURN, array(true));
     $call = $window->createCall($parent, self::PARSER_METHOD, 'php-boolean', array($this->getNamespace('cached')));
 
     $window->add($call);
+  }
+
+  protected function getDepth() {
+
+    return $this->iDepth;
   }
 
   public function parseRoot(dom\element $el) {
@@ -65,18 +77,26 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return $result;
   }
 
+  /**
+   * @return common\_var
+   */
+  public function getContext() {
+
+    return $this->context;
+  }
+
+  public function setContext(common\_var $context) {
+
+    $this->context = $context;
+  }
+
   protected function prepareParent() {
 
     $window = $this->getParent()->getWindow();
+    $manager = $window->addControler('parser');
 
-    $window->startContext('js');
-
-    $window->insert($window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array((string) $this->getFile('../mootools.js'))));
-    $window->insert($window->createCall($window->getSelf(), 'getFile', '\sylma\storage\fs\file', array((string) $this->getFile('../sylma.js'))));
-
-    $window->insert($this->getWindow());
-
-    $window->stopContext('js');
+    $call = $window->createCall($manager, 'getContext', '\parser\context', array(self::CONTEXT_ALIAS));
+    $this->setContext($call->getVar());
   }
 
   protected function initWindow() {
@@ -84,9 +104,11 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $window = $this->create('window', array($this, $this->getArgument('classes/js')));
     $this->setWindow($window);
 
-    $classes = $window->createObject();
-    $window->assignProperty(self::JS_PATH, $classes);
-    $this->startObject($classes);
+    $root = $window->createObject();
+    //$window->assignProperty(self::JS_TEMPLATES_PATH, $root);
+    $this->startObject($root);
+
+    return $root;
 
     //echo $this->show($window->getContexts(), false);
 /*
@@ -116,7 +138,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return end($this->aObjects);
   }
 
-  public function startObject(common\_object $object) {
+  protected function startObject(common\_object $object) {
 
     $this->aObjects[] = $object;
   }
@@ -164,11 +186,20 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
       $result = $this->reflectObject($el, $resultElement);
     }
 
+    $this->iDepth++;
+
     return $result;
   }
 
   public function onClose() {
 
+    if (!$this->getDepth()) {
+
+      $sContent = $this->getWindow()->objAsString($this->getObject());
+      $this->getContext()->call('add', array($sContent), '\parser\context', false);
+    }
+
+    $this->iDepth--;
     $this->stopObject();
   }
 
@@ -208,12 +239,24 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     $sClass = $el->readx('@self:class', $this->getNS());
     $sName = $el->readx('@self:name', $this->getNS(), false);
+    $sParent = $el->readx('@self:parent', $this->getNS(), false);
+
+    if (!$this->getDepth() && !$sParent) {
+
+      $sParent = self::JS_OBJECTS_PATH;
+    }
+
+    if ($this->getDepth() && $sParent) {
+
+      $this->throwException(sprintf('@attribute parent must only appears on root element %s', $el->asToken()));
+    }
 
     $aAttributes = array(
       'class' => $sClass,
       'name' => $sName,
       'id' => $resultElement->readAttribute('id', null, false),
-      'binder' => 'test1'//uniqid('sylma'),
+      'binder' => uniqid('sylma'),
+      'parent' => $sParent,
     );
 
     $result = $resultElement->createElement('object', $resultElement, $aAttributes, $this->getNamespace('cached'));

@@ -11,6 +11,7 @@ class Cached extends core\module\Domed implements parser\cached\documented {
   protected $parent;
 
   const NS = 'http://www.sylma.org/parser/js/binder/cached';
+  const CONTEXT_ALIAS = 'js/binder/context';
 
   public function __construct() {
 
@@ -35,14 +36,24 @@ class Cached extends core\module\Domed implements parser\cached\documented {
   }
 
   public function parseDocument(dom\handler $doc) {
-    //$this->dsp($doc);
+
+    $js = $this->getParent()->getContext('js');
+
+    $js->shift($this->getFile('../sylma.js'));
+    $js->shift($this->getFile('../mootools.js'));
+    $js->add($this->getControler('parser')->getContext(self::CONTEXT_ALIAS));
+
     $doc = $this->getTemplate('ids.xsl')->parseDocument($doc);//$this->dsp($doc);
     $doc = $this->getTemplate('cached.xsl')->parseDocument($doc);//$this->dsp($doc);
 
     $parser = $this->getControler('parser');
     $aResult = array();
 
+    $sParent = '';
+
     foreach ($doc->getx('self:objects', $this->getNS())->getChildren() as $el) {
+
+      $sParent = $el->readAttribute('parent', null, false);
 
       $object = $parser->create('js/binder/object', array($this, $el));
       $aResult[$object->getName()] = $object;
@@ -51,11 +62,11 @@ class Cached extends core\module\Domed implements parser\cached\documented {
     $objects = $this->createArgument($aResult);
 
     $sJSON = json_encode($objects->asArray(true), JSON_FORCE_OBJECT);
-    $this->getParent()->getContext('js/load')->add("sylma.ui.load($sJSON);");
+    $this->getParent()->getContext('js/load')->add("sylma.ui.load($sParent, $sJSON);");
 
     $result = $doc->getx('self:render', $this->getNS())->getChildren();
 
-    return $result;
+    return $this->createDocument($result);
   }
 
 }

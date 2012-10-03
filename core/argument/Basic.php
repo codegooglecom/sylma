@@ -166,6 +166,11 @@ abstract class Basic extends core\module\Namespaced {
     return $this->aArray[] = $mValue;
   }
 
+  public function shift($mValue) {
+
+    return array_unshift($this->aArray, $mValue);
+  }
+
   public function query($sPath = '', $bDebug = true) {
 
     if ($sPath) return (array) $this->getValue($sPath, $bDebug);

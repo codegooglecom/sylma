@@ -10,6 +10,7 @@ interface argument extends \Iterator {
   //function query($sPath = '', $bDebug = true);
   function set($sPath = '', $mValue = null);
   function add($mValue);
+  //function shift($mValue);
   function setParent(core\argument $parent);
   function getParent();
 

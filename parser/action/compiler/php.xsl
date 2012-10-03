@@ -39,8 +39,7 @@
       <xsl:otherwise>
         <xsl:text>  $this->getContext('</xsl:text>
         <xsl:value-of select="@context"/>
-        <xsl:text>')->set(</xsl:text>
-        <xsl:value-of select="@key"/><xsl:text>, </xsl:text>
+        <xsl:text>')->add(</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>)</xsl:text>
       </xsl:otherwise>

@@ -50,7 +50,7 @@ class Reflector extends Argumented {
 
       // case 'get-settings' :
       case 'interface' : $mResult = $this->reflectInterface($el); break;
-
+      case 'context' : $mResult = $this->reflectContext($el); break;
       case 'switch' :
       case 'function' :
 
@@ -473,10 +473,15 @@ class Reflector extends Argumented {
 
   protected function reflectContext(dom\element $el) {
 
+    $sFormat = $this->getFormat();
+    $this->setFormat('object');
+
     $window = $this->getWindow();
 
     $window->startContext($el->readAttribute('name'));
     $window->add($this->parseChildren($el->getChildren(), true, true));
     $window->stopContext();
+
+    $this->setFormat($sFormat);
   }
 }

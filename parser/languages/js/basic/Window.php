@@ -20,7 +20,7 @@ class Window extends common\basic\Window implements js\window, core\stringable {
 
     $this->setControler($controler);
     $this->setArguments($args);
-    $this->setNamespace(self::NS);
+    $this->setNamespace(self::NS, 'self');
 
     $this->self = $this->createVariable('window', $this->createGhost($sClass));
     $this->setScope($this);
@@ -139,15 +139,33 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     return $var;
   }
 
-  public function asString() {
+  protected function parseArgument(dom\handler $doc) {
 
     $this->setDirectory(__FILE__);
     $this->loadDefaultArguments();
 
-    $doc = parent::asArgument()->asDOM();
-
     $sResult = $this->getTemplate(self::TEMPLATE)->parseDocument($doc, false);
 
     return $sResult;
+  }
+
+  public function objAsString(common\_object $obj) {
+
+    $sResult = '';
+    $node = $obj->asArgument()->asDOM();
+    $doc = $this->createDocument('window');
+
+    $doc->add($node->queryx('self:item', $this->getNS(), false));
+
+    if (!$doc->isEmpty()) $sResult = $this->parseArgument($doc);
+
+    return $sResult;
+  }
+
+  public function asString() {
+
+    $doc = parent::asArgument()->asDOM();
+
+    return $this->parseArgument($doc);
   }
 }

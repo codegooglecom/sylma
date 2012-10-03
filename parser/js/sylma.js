@@ -1,45 +1,67 @@
 /* Document JS */
 
-sylma = {};
+var sylma = {};
 
 sylma.binder = {
   classes : {},
   objects : {}
 };
 
-sylma.ui = {};
+sylma.classes = {
 
-(function() {
+  ui : new Class({
 
-  this.load = function(objects) {
+    tmp : {},
 
-    var length = objects.length;
+    load : function(parent, objects) {
 
-    if (length > 1) {
+      var length = objects.length;
 
-      this.tmp = [];
+      if (length > 1) {
+
+        this.loadMultiple(objects, parent);
+      }
+      else {
+
+        this.loadOne(objects, parent);
+      }
+    },
+
+    loadPath : function(path) {
+
+      var result = window;
+
+      path.split('.').each(function(item) { result = result[item] });
+
+      return result;
+    },
+
+    loadMultiple : function(objects, parent) {
 
       for (var obj in objects) {
 
-        this.tmp.push(this.createObject(obj));
+        parent[obj] = this.createObject(objects[obj]);
       }
+    },
 
-      if (objects.root) this.root = this.createObject(objects.root);
-    }
-    else {
+    loadOne : function(objects) {
 
       for (var first in objects) break;
-      this.root = this.createObject(objects[first]);
+      parent[first] = this.createObject(objects[first]);
+    },
+
+    createObject : function(options) {
+
+      var parent = this.loadPath(options.extend);
+
+      return new parent(options);
     }
-  }
+  })
+}
 
-  this.createObject = function(options) {
+sylma.ui = new sylma.classes.ui;
 
-    var parent = window;
-    options.extend.split('.').each(function(item, index) { parent = parent[item] });
-
-    return new parent(options);
-  }
+(function() {
 
   this.Base = new Class({
 
@@ -115,6 +137,6 @@ sylma.ui = {};
     test : function() {
       alert('test');
     }
-  })
+  });
 
 }).call(sylma.ui);

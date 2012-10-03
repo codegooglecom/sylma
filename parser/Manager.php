@@ -7,6 +7,7 @@ class Manager extends core\module\Domed {
 
   protected $aNamespaces = array();
   protected $aParsers = array();
+  protected $aContexts = array();
 
   public function __construct() {
 
@@ -40,5 +41,15 @@ class Manager extends core\module\Domed {
     }
 
     return $result;
+  }
+
+  public function getContext($sName) {
+
+    if (!array_key_exists($sName, $this->aContexts)) {
+
+      $this->aContexts[$sName] = $this->create($sName);
+    }
+
+    return $this->aContexts[$sName];
   }
 }
