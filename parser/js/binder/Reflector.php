@@ -21,6 +21,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
   protected $window;
   protected $sPath = '';
   protected $aObjects = array();
+  protected $root;
   protected $bRootElement = true;
   protected $context;
 
@@ -33,6 +34,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     $this->setNamespace(self::NS, 'self');
     $this->setNamespace(self::CACHED_NS, 'cached', false);
+    //$this->setNamespace(\Sylma::read('namespaces/html'), 'html', false);
 
     $this->addParser($parent->getWindow());
 
@@ -63,11 +65,6 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $call = $window->createCall($parent, self::PARSER_METHOD, 'php-boolean', array($this->getNamespace('cached')));
 
     $window->add($call);
-  }
-
-  protected function getDepth() {
-
-    return $this->iDepth;
   }
 
   public function parseRoot(dom\element $el) {
@@ -106,7 +103,8 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     $root = $window->createObject();
     //$window->assignProperty(self::JS_TEMPLATES_PATH, $root);
-    $this->startObject($root);
+    //$this->startObject($root);
+    $this->setRoot($root);
 
     return $root;
 
@@ -136,6 +134,16 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
   public function getObject() {
 
     return end($this->aObjects);
+  }
+
+  public function setRoot(common\_object $root) {
+
+    $this->root = $root;
+  }
+
+  public function getRoot() {
+
+    return $this->root;
   }
 
   protected function startObject(common\_object $object) {
@@ -179,28 +187,38 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return $result;
   }
 
+  protected function isRoot() {
+
+    return !$this->aObjects;
+  }
+
+  protected function elementIsObject(dom\element $el) {
+
+    return $el->readx('@self:class', $this->getNS(), false);
+  }
+
   public function parseAttributes(dom\node $el, dom\element $resultElement, $result) {
 
-    if ($el->readx('@self:class', $this->getNS())) {
+    if ($this->elementIsObject($el)) {
 
       $result = $this->reflectObject($el, $resultElement);
     }
 
-    $this->iDepth++;
-
     return $result;
   }
 
-  public function onClose() {
+  public function onClose(dom\element $el, dom\element $newElement) {
 
-    if (!$this->getDepth()) {
+    if ($this->elementIsObject($el)) {
 
-      $sContent = $this->getWindow()->objAsString($this->getObject());
-      $this->getContext()->call('add', array($sContent), '\parser\context', false);
+      $this->stopObject();
+
+      if ($this->isRoot()) {
+
+        $sContent = $this->getWindow()->objAsString($this->getRoot());
+        $this->getContext()->call('add', array($sContent), '\parser\context', false);
+      }
     }
-
-    $this->iDepth--;
-    $this->stopObject();
   }
 
   protected function reflectEvent(dom\element $el) {
@@ -209,8 +227,20 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     $function = $window->createFunction(array('e'), $this->parseEventContent($el->read()));
     $sName = $el->readAttribute('name');
+    $sID = uniqid('sylma');
 
-    $this->getObject()->setProperty("events.$sName.callback", $function);
+    $event = $this->getObject()->setProperty("events.$sID", $window->createObject());
+
+    $event->setProperty('name', $sName);
+    $event->setProperty('callback', $function);
+
+    if (!$this->elementIsObject($el->getParent())) {
+
+      $sClass = uniqid('sylma');
+
+      $this->getParent()->getLastElement()->addToken('class', $sClass);
+      $event->setProperty('target', $sClass);
+    }
   }
 
   protected function parseEventContent($sContent) {
@@ -229,7 +259,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $result = $this->buildElement($el, $resultElement);
     $obj = $this->getWindow()->createObject();
 
-    $this->getObject()->setProperty($result->readAttribute('binder'), $obj);
+    $this->getRoot()->setProperty($result->readAttribute('binder'), $obj);
     $this->startObject($obj);
 
     return $result;
@@ -241,12 +271,12 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $sName = $el->readx('@self:name', $this->getNS(), false);
     $sParent = $el->readx('@self:parent', $this->getNS(), false);
 
-    if (!$this->getDepth() && !$sParent) {
+    if ($this->isRoot() && !$sParent) {
 
       $sParent = self::JS_OBJECTS_PATH;
     }
 
-    if ($this->getDepth() && $sParent) {
+    if (!$this->isRoot() && $sParent) {
 
       $this->throwException(sprintf('@attribute parent must only appears on root element %s', $el->asToken()));
     }

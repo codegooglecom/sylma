@@ -190,7 +190,7 @@ class Element extends \DOMElement implements dom\element {
   public function setAttribute($sName, $sValue) {
 
     if ($sValue !== '') {
-      
+
       $result = parent::setAttribute($sName, $sValue);
     }
     else {
@@ -234,10 +234,62 @@ class Element extends \DOMElement implements dom\element {
     return $bResult;
   }
 
-  public function loadAttribute($sName, $sUri = '') {
+  public function loadAttribute($sName, $sNamespace = '', $bDebug = true) {
 
-    if ($sUri) return parent::getAttributeNodeNS($sUri, $sName);
-    else return parent::getAttributeNode($sName);
+    if ($sNamespace) $result = parent::getAttributeNodeNS($sNamespace, $sName);
+    else $result = parent::getAttributeNode($sName);
+
+    if (!$result && $bDebug) {
+
+      $this->throwException(sprintf('No result for @attribute %s:%s', $sNamespace, $sName));
+    }
+
+    return $result;
+  }
+
+  public function createAttribute($sName, $sValue, $sNamespace = null) {
+
+    $this->setAttributeNS($sNamespace, $sName, $sValue);
+  }
+
+  public function addToken($sAttribute, $sValue, $sNamespace = null, $sSeparator = ' ') {
+
+    $attr = $this->loadAttribute($sAttribute, $sNamespace, false);
+
+    if ($attr) {
+
+      $aTokens = explode($sSeparator, $attr->getValue());
+
+      if (!in_array($sValue, $aTokens)) {
+
+        $aTokens[] = $sValue;
+        $attr->setValue(implode($sSeparator, $aTokens));
+      }
+    }
+    else {
+
+      $this->createAttribute($sAttribute, $sValue, $sNamespace);
+    }
+
+    return $this->readAttribute($sAttribute, $sNamespace);
+  }
+
+  public function removeToken($sAttribute, $sValue, $sNamespace = null, $sSeparator = ' ') {
+
+    $attr = $this->loadAttribute($sAttribute, $sNamespace);
+
+    if ($attr) {
+
+      $aTokens = explode($sSeparator, $attr->getValue());
+
+      if ($sKey = array_search($sValue, $aTokens)) {
+
+        unset($aTokens[$sKey]);;
+        $attr->setValue(implode($sSeparator, $aTokens));
+      }
+    }
+
+    return $this->readAttribute($sAttribute, $sNamespace, false);
   }
 
   public function shift() {

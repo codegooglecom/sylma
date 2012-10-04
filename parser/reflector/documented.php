@@ -12,5 +12,6 @@ interface documented {
    */
   function parse(dom\node $source);
   function getNamespace($sPrefix = '');
+  function getLastElement();
 }
 

@@ -42,7 +42,7 @@
   </xsl:template>
 
   <xsl:template match="*">
-    <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
+    <xsl:element name="{name()}" namespace="{namespace-uri()}">
       <xsl:apply-templates select="@* | node()"/>
     </xsl:element>
   </xsl:template>

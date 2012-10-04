@@ -3,9 +3,6 @@
 namespace sylma\dom;
 use sylma\core;
 
-require_once('core/tokenable.php');
-require_once('core/stringable.php');
-
 interface node extends core\tokenable, core\stringable {
 
   const HANDLER = 66;

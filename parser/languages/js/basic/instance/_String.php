@@ -9,7 +9,8 @@ class _String extends _Object {
 
   public function __construct(common\_window $window, $sValue = '') {
 
-    parent::__construct($window, 'String');
+    $this->setControler($window);
+    $this->setInterface('String');
 
     $this->sValue = $sValue;
   }

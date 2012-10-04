@@ -13,6 +13,7 @@ abstract class Master extends Domed {
 
   protected $foreignElements;
   protected $aAttributeParsers = array();
+  protected $lastElement;
 
   /**
    *
@@ -107,14 +108,53 @@ abstract class Master extends Domed {
     else {
 
       $mResult = $this->parseElementUnknown($el);
-
-      foreach ($this->getAttributeParsers() as $parser) {
-
-        $parser->onClose();
-      }
     }
 
     return $mResult;
+  }
+
+  protected function parseElementUnknown(dom\element $el) {
+
+    $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
+
+    if ($this->useForeignAttributes($el)) {
+
+      $mResult = $this->parseAttributesForeign($el, $newElement);
+    }
+    else {
+
+      foreach ($el->getAttributes() as $attr) {
+
+        $newElement->add($this->parseAttribute($attr));
+      }
+
+      $mResult = $newElement;
+    }
+
+    $aParsers = $this->getAttributeParsers();
+    $this->setLastElement($newElement);
+
+    if ($aChildren = $this->parseChildren($el->getChildren())) {
+
+      $newElement->add($aChildren);
+    }
+
+    foreach ($aParsers as $parser) {
+
+      $parser->onClose($el, $newElement);
+    }
+
+    return $mResult;
+  }
+
+  public function getLastElement() {
+
+    return $this->lastElement;
+  }
+
+  public function setLastElement($lastElement) {
+
+    $this->lastElement = $lastElement;
   }
 
   /**
@@ -168,7 +208,7 @@ abstract class Master extends Domed {
     return $this->aAttributeParsers;
   }
 
-  protected function setAttributeParsers(array $aParsers) {
+  protected function setAttributeParsers(array $aParsers = array()) {
 
     $this->aAttributeParsers = $aParsers;
   }

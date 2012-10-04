@@ -155,7 +155,7 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     $node = $obj->asArgument()->asDOM();
     $doc = $this->createDocument('window');
 
-    $doc->add($node->queryx('self:item', $this->getNS(), false));
+    $doc->add($node->getx('self:items', $this->getNS(), false));
 
     if (!$doc->isEmpty()) $sResult = $this->parseArgument($doc);
 

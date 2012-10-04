@@ -59,13 +59,15 @@ class _Object extends js\basic\Base implements common\_instance, common\_object 
 
     return $result;
   }
-  
+
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
       'object' => array(
         '@class' => $this->getInterface(),
-        '#item' => $this->loadProperties()
+        'items' => array(
+          '#item' => $this->loadProperties(),
+        )
       ),
     ));
   }

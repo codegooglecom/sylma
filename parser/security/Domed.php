@@ -37,9 +37,9 @@ class Domed extends Reflector implements parser\reflector\attributed {
     return $result;
   }
 
-  public function onClose() {
+  public function onClose(dom\element $el, dom\element $newElement) {
 
-    
+
   }
 
   protected function parseElement(dom\node $el) {

@@ -8,6 +8,6 @@ use \sylma\core, \sylma\storage\fs, \sylma\dom;
 interface attributed extends domed {
 
   function parseAttributes(dom\node $el, dom\element $resultElement, $result);
-  function onClose();
+  function onClose(dom\element $el, dom\element $newElement);
 }
 

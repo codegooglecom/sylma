@@ -85,29 +85,8 @@ abstract class Domed extends Runner implements parser\reflector\documented {
   protected function parseElementUnknown(dom\element $el) {
 
     $this->useTemplate(true);
-
-    $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
-
-    if ($this->useForeignAttributes($el)) {
-
-      $mResult = $this->parseAttributesForeign($el, $newElement);
-    }
-    else {
-
-      foreach ($el->getAttributes() as $attr) {
-
-        $newElement->add($this->parseAttribute($attr));
-      }
-
-      $mResult = $newElement;
-    }
-
-    if ($aChildren = $this->parseChildren($el->getChildren())) {
-
-      $newElement->add($aChildren);
-    }
-
-    return $mResult;
+    
+    return parent::parseElementUnknown($el);
   }
 
   /**
@@ -237,5 +216,4 @@ abstract class Domed extends Runner implements parser\reflector\documented {
     //dspf($sValue);
     return $sValue;
   }
-
 }

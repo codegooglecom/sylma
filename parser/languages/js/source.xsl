@@ -47,6 +47,13 @@
     <xsl:text>}</xsl:text>
   </xsl:template>
 
+  <xsl:template match="js:items">
+    <xsl:for-each select="js:item">
+      <xsl:apply-templates select="."/>
+      <xsl:if test="position() != last()">, </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
   <xsl:template match="js:item">
     <xsl:apply-templates select="@key"/>
     <xsl:text> : </xsl:text>

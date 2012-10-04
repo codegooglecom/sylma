@@ -63,9 +63,13 @@ sylma.ui = new sylma.classes.ui;
 
 (function() {
 
+  var ui = this;
+
   this.Base = new Class({
 
     Implements : Options,
+
+    node : null,
     options : {
 
     },
@@ -88,19 +92,35 @@ sylma.ui = new sylma.classes.ui;
 
     initObjects : function(objects) {
 
+      for (var key in objects) {
+
+        this[key] = ui.createObject(objects[key]);
+      }
     },
 
     initEvents : function(events) {
 
       for (var name in events) {
 
-        this.initEvent(name, events[name]);
+        this.initEvent(events[name]);
       }
     },
 
-    initEvent : function(name, event) {
+    initEvent : function(event) {
 
-      var nodes = event.target ? this.getNode().getElements('.' + event.target) : this.getNode();
+      var name = event.name;
+      var nodes;
+
+      if (event.target) {
+
+        nodes = this.getNode().getElements('.' + event.target);
+        this.prepareNodes(nodes);
+      }
+      else {
+
+        nodes = this.getNode();
+      }
+
       nodes.addEvent(name, event.callback);
     },
 
@@ -119,8 +139,13 @@ sylma.ui = new sylma.classes.ui;
 
       if (!options.id) throw 'No node associated';
 
-      this.node = document.id(options.id);
-      $(this.node).store('sylma-object', this);
+      this.node = $(options.id);
+      this.prepareNodes(this.node);
+    },
+
+    prepareNodes : function(nodes) {
+
+      $$(nodes).store('sylma-object', this);
     },
 
     /**
