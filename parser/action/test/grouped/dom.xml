@@ -150,4 +150,23 @@
         );
     </tst:expected>
   </tst:test>
+  <tst:test name="Mupltiple namespaces">
+    <le:action>
+      <div>
+        <p>hello</p>
+        <html:span>world</html:span>
+        <p>hello</p>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org"><p>hello</p><span xmlns="http://www.w3.org/1999/xhtml">world</span><p>hello</p></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
 </tst:tests>

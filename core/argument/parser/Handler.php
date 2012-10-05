@@ -50,7 +50,7 @@ class Handler extends parser\Handler implements core\argument {
   }
 
   public function query() {
-    
+
     return $this->getArguments()->query();
   }
 
@@ -79,9 +79,9 @@ class Handler extends parser\Handler implements core\argument {
     return $this->getArguments()->getParent();
   }
 
-  public function normalize() {
+  public function normalize($iMode = self::NORMALIZE_DEFAULT) {
 
-    return $this->getArguments()->normalize();
+    return $this->getArguments()->normalize($iMode);
   }
 
   public function asArray() {

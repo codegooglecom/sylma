@@ -5,5 +5,7 @@ classes :
     name : test\controler\Filed
   basic :
     name : Iterator
+  domed :
+    name : Domed
   filed :
     name : Filed

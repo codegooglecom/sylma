@@ -91,10 +91,10 @@ abstract class Master extends Domed {
     if (!$this->foreignElements) {
 
       $this->foreignElements = $this->getControler('dom')->createDocument();
-      $this->foreignElements->addElement('root', null, array(), $this->getNamespace());
+      $this->foreignElements->addElement('root');
     }
 
-    $el = $this->foreignElements->addElement($sName, $mContent, $aAttributes, $sNamespace);
+    $el = $this->foreignElements->createElement($sName, $mContent, $aAttributes, $sNamespace);
 
     return $el;
   }
@@ -132,6 +132,8 @@ abstract class Master extends Domed {
     }
 
     $aParsers = $this->getAttributeParsers();
+    $this->setAttributeParsers();
+
     $this->setLastElement($newElement);
 
     if ($aChildren = $this->parseChildren($el->getChildren())) {
@@ -186,10 +188,11 @@ abstract class Master extends Domed {
 
     foreach ($aForeigns as $sNamespace => $bVal) {
 
-      $aParsers[] = $parser = $this->loadParser($sNamespace, 'attribute');
+      $parser = $this->loadParser($sNamespace, 'attribute');
 
       if ($parser) {
 
+        $aParsers[] = $parser;
         $mResult = $parser->parseAttributes($el, $newElement, $mResult);
       }
       else {

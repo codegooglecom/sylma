@@ -63,8 +63,10 @@ abstract class Namespaced extends Exceptionable {
 
   protected function getNS($sPrefix = null) {
 
-    if ($sPrefix) return array($sPrefix => array_val($sPrefix, $this->aNamespaces));
-    else return $this->aNamespaces;
+    if ($sPrefix) $aResult = array($sPrefix => $this->getNamespace ($sPrefix));
+    else $aResult = $this->aNamespaces;
+
+    return $aResult;
   }
 
   /**

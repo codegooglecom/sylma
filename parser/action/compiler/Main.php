@@ -49,12 +49,29 @@ class Main extends parser\compiler\Basic implements parser\compiler\documented {
 
     if ($window->getRoot()->testAttribute('use-template')) {
 
-      $template = $this->getTemplate(self::DOM_TEMPLATE);
+      //if ($sContent = $this->getTemplate(self::DOM_TEMPLATE)->parseDocument($window, false)) {
+      if ($doc = $this->getTemplate(self::DOM_TEMPLATE)->parseDocument($window)) {
 
-      if ($sContent = $template->parseDocument($window, false)) {
+        $sContent = '';
+
+        foreach ($doc->getChildren() as $child) {
+
+          if ($child->getType() == dom\node::ELEMENT) {
+
+            $iString = $this->getControler()->readArgument('template/indent') ? dom\handler::STRING_INDENT : 0;
+
+            $tmp = $this->createDocument($child);
+            $sContent .= $tmp->asString($iString);
+          }
+          else {
+
+            $sContent .= $child->asString();
+          }
+
+        }
 
         $sContent = $this->parseAttributes($sContent);
-        $tpl->saveText(substr($sContent, 22));
+        $tpl->saveText($sContent);
       }
     }
 

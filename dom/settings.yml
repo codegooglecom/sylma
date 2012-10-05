@@ -16,6 +16,8 @@ classes :
     name : basic\Text
   comment :
     name : basic\Comment
+  instruction :
+    name : basic\Instruction
   argument :
     name : argument\Tokened
     classes :

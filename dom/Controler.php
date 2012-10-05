@@ -20,6 +20,7 @@ class Controler extends core\module\Domed {
     'text' => 'DOMText',
     'attribute' => 'DOMAttr',
     'comment' => 'DOMComment',
+    'instruction' => 'DOMProcessingInstruction',
     //'collection' => 'DOMNodeList', // See https://bugs.php.net/bug.php?id=48352
   );
 

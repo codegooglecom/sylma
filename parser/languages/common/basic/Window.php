@@ -49,7 +49,7 @@ abstract class Window extends core\module\Domed {
 
       $mResult = $this->addContentUnknown($mVal);
     }
-    
+
     return $mResult;
   }
 

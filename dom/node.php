@@ -12,6 +12,7 @@ interface node extends core\tokenable, core\stringable {
   const CDATA = \XML_CDATA_SECTION_NODE;
   const COMMENT = \XML_COMMENT_NODE;
   const FRAGMENT = \XML_DOCUMENT_FRAG_NODE;
+  const INSTRUCTION = \XML_PI_NODE;
 
   const COMPARE_SUCCESS = 0;
   const COMPARE_BAD_ELEMENT = 1;

@@ -225,7 +225,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $val;
   }
 
-  protected function getActionFile($sPath, array $aArguments) {
+  protected function getActionFile($sPath, array $aArguments = array()) {
 
     $action = $this->create('action', array($this->getFile($sPath), $aArguments));
     $action->setContexts($this->getContexts());

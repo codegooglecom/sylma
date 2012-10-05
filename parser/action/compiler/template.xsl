@@ -3,31 +3,33 @@
 
   <xsl:template match="php:window">
     <xsl:variable name="tpl" select="//php:template"/>
-    <xsl:choose>
-      <xsl:when test="$tpl">
+    <php:root>
+      <xsl:choose>
+        <xsl:when test="$tpl">
 
-        <!-- Sub templates with if/else -->
-        <xsl:for-each select="$tpl">
-          <xsl:processing-instruction name="php">
-            <xsl:if test="position() != 1">else</xsl:if>
-            <xsl:value-of select="concat('if ($iTemplate == ', @key, ')')"/>
-            <xsl:text> : </xsl:text>
-          </xsl:processing-instruction>
+          <!-- Sub templates with if/else -->
+          <xsl:for-each select="$tpl">
+            <xsl:processing-instruction name="php">
+              <xsl:if test="position() != 1">else</xsl:if>
+              <xsl:value-of select="concat('if ($iTemplate == ', @key, ')')"/>
+              <xsl:text> : </xsl:text>
+            </xsl:processing-instruction>
+            <xsl:apply-templates/>
+          </xsl:for-each>
+
+          <!-- Main template with else -->
+          <xsl:processing-instruction name="php">else : </xsl:processing-instruction>
           <xsl:apply-templates/>
-        </xsl:for-each>
+          <xsl:processing-instruction name="php">
+            <xsl:text>endif; </xsl:text>
+          </xsl:processing-instruction>
 
-        <!-- Main template with else -->
-        <xsl:processing-instruction name="php">else : </xsl:processing-instruction>
-        <xsl:apply-templates/>
-        <xsl:processing-instruction name="php">
-          <xsl:text>endif; </xsl:text>
-        </xsl:processing-instruction>
-
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates/>
-      </xsl:otherwise>
-    </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </php:root>
   </xsl:template>
 
   <xsl:template match="php:insert-call">
@@ -42,7 +44,7 @@
   </xsl:template>
 
   <xsl:template match="*">
-    <xsl:element name="{name()}" namespace="{namespace-uri()}">
+    <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
       <xsl:apply-templates select="@* | node()"/>
     </xsl:element>
   </xsl:template>

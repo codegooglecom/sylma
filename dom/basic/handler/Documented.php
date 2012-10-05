@@ -144,7 +144,7 @@ abstract class Documented extends Container {
     return !$this->getContent() && !$this->getRoot(false, false);
   }
 
-  public function addElement($sName, $mContent = '', array $aAttributes = null, $sNamespace = null) {
+  public function addElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null) {
 
     $result = null;
     $el = $this->createElement($sName, $mContent, $aAttributes, $sNamespace);
@@ -169,6 +169,8 @@ abstract class Documented extends Container {
 
     if ($sNamespace) {
 
+      // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
+      if (!strpos($sName, ':')) $sName = uniqid('ns') . ':' . $sName;
       $el = $doc->createElementNS($sNamespace, $sName);
     }
     else {

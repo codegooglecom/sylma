@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/core/argument/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument/test" arg:class="domed">
+  <tst:description>Basic</tst:description>
+  <tst:test name="Multiples NS">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'div' => array(
+          'p' => 'hello',
+          $controler->createArgument(array(
+            'yup' => 'world',
+          ), 'http://www.sylma.org'),
+        )
+      ), 'http://www.w3.org/1999/xhtml'));
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.w3.org/1999/xhtml"><p>hello</p><yup xmlns="http://www.sylma.org">world</yup></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->get('arg')->asDOM();
+      $node = $controler->get('node');
+
+      return
+        $controler->compareNodes($result, $node);
+
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

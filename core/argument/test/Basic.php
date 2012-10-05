@@ -19,7 +19,7 @@ class Basic extends tester\Prepare {
 
     $this->setArguments('settings.yml');
 
-    $controler = $this->create('controler', array($this->getDirectory('samples')));
+    $controler = $this->create('controler', array($this, $this->getDirectory('samples')));
     $controler->setArguments($this->getArguments());
 
     $this->setControler($controler);
@@ -33,6 +33,16 @@ class Basic extends tester\Prepare {
     }
 
     return parent::loadDocument($doc, $file);
+  }
+
+  protected function test(dom\element $test, $sExpected, $controler, dom\document $doc, fs\file $file) {
+
+    if ($nodeResult = $test->getx('self:node', array(), false)) {
+
+      $this->setArgument('node', $nodeResult->getFirst());
+    }
+
+    return parent::test($test, $sExpected, $controler, $doc, $file);
   }
 }
 

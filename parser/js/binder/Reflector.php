@@ -43,22 +43,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $this->initWindow();
     $this->prepareParent();
   }
-/*
-  public function getPath() {
 
-    if (!$this->sPath) {
-
-      $this->throwException('No path defined');
-    }
-
-    return $this->sPath;
-  }
-
-  public function setPath($path) {
-
-    $this->sPath = $path;
-  }
-*/
   protected function addParser(common\_window $window) {
 
     $parent = $window->createCall($window->getSelf(), self::PARENT_METHOD, self::PARENT_RETURN, array(true));
@@ -294,5 +279,3 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return $result;
   }
 }
-
-?>

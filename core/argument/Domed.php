@@ -28,44 +28,6 @@ class Domed extends Iterator implements dom\domable {
     return new dom\Argument($doc, $schema);
   }
 
-  public function asDOM($sParentNamespace = '') {
-
-    if (!$sNamespace = $this->getNamespace()) {
-
-      $sNamespace = $sParentNamespace;
-    }
-
-    if (!$sNamespace) {
-
-      $this->throwException(t('No namespace defined for export as dom document'));
-    }
-
-    $bChildren = false;
-
-    $this->normalize();
-
-    if (count($this->aArray) > 1) {
-
-      $bChildren = true;
-      $aValues = array('root' => $this->aArray);
-    }
-    else {
-
-      $aValues = $this->aArray;
-    }
-
-    $result = self::buildDocument($aValues, $sNamespace);
-
-    if (!$result || $result->isEmpty()) {
-
-      $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
-    }
-
-    if ($bChildren) $result = $result->getChildren();
-
-    return $result;
-  }
-
   public static function buildDocument(array $aArray, $sNamespace) {
 
     $dom = \Sylma::getControler('dom');
@@ -86,17 +48,6 @@ class Domed extends Iterator implements dom\domable {
     else $aArray = $this->aArray;
 
     return self::buildNode($parent, $aArray);
-  }
-
-  protected static function buildPrefix($sNamespace) {
-
-    if (!array_key_exists($sNamespace, self::$aPrefixes)) {
-
-      $sPrefix = 'ns' . count(self::$aPrefixes);
-      self::$aPrefixes[$sNamespace] = $sPrefix;
-    }
-
-    return self::$aPrefixes[$sNamespace] . ':';
   }
 
   private static function buildNode(dom\complex $parent, array $aArray, $sNamespace) {
@@ -122,7 +73,7 @@ class Domed extends Iterator implements dom\domable {
 
             foreach ($mValue as $mSubValue) {
 
-              $node = $parent->addElement(self::buildPrefix($sNamespace) . substr($sKey, 1), null, array(), $sNamespace);
+              $node = $parent->addElement(substr($sKey, 1), null, array(), $sNamespace);
 
               if (is_array($mSubValue)) self::buildNode($node, $mSubValue, $sNamespace);
               else $node->add($mSubValue);
@@ -132,7 +83,7 @@ class Domed extends Iterator implements dom\domable {
           }
           else {
 
-            $node = $parent->addElement(self::buildPrefix($sNamespace) . $sKey, null, array(), $sNamespace);
+            $node = $parent->addElement($sKey, null, array(), $sNamespace);
           }
         }
 
@@ -142,13 +93,20 @@ class Domed extends Iterator implements dom\domable {
         }
         else {
 
-          $node->add($mValue);
+          if ($mValue instanceof core\argument) {
+
+            $node->add($mValue->asDOM());
+          }
+          else {
+
+            $node->add($mValue);
+          }
         }
       }
     }
   }
 
-  protected static function normalizeObject($val, $bEmpty = false) {
+  protected static function normalizeObject($val, $iMode = self::NORMALIZE_DEFAULT) {
 
     if ($val instanceof dom\node ||
         $val instanceof dom\collection) {
@@ -157,9 +115,47 @@ class Domed extends Iterator implements dom\domable {
     }
     else {
 
-      $mResult = parent::normalizeObject($val, $bEmpty);
+      $mResult = parent::normalizeObject($val, $iMode);
     }
 
     return $mResult;
+  }
+
+  public function asDOM($sParentNamespace = '') {
+
+    if (!$sNamespace = $this->getNamespace()) {
+
+      $sNamespace = $sParentNamespace;
+    }
+
+    if (!$sNamespace) {
+
+      $this->throwException(t('No namespace defined for export as dom document'));
+    }
+
+    $bChildren = false;
+
+    $this->normalize(self::NORMALIZE_EMPTY_ARRAY & self::NORMALIZE_ARGUMENT);
+
+    if (count($this->aArray) > 1) {
+
+      $bChildren = true;
+      $aValues = array('root' => $this->aArray);
+    }
+    else {
+
+      $aValues = $this->aArray;
+    }
+
+    $result = self::buildDocument($aValues, $sNamespace);
+
+    if (!$result || $result->isEmpty()) {
+
+      $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
+    }
+
+    if ($bChildren) $result = $result->getChildren();
+
+    return $result;
   }
 }

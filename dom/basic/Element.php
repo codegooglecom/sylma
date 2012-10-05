@@ -249,7 +249,8 @@ class Element extends \DOMElement implements dom\element {
 
   public function createAttribute($sName, $sValue, $sNamespace = null) {
 
-    $this->setAttributeNS($sNamespace, $sName, $sValue);
+    if ($sNamespace) $this->setAttributeNS($sNamespace, $sName, $sValue);
+    else $this->setAttribute($sName, $sValue);
   }
 
   public function addToken($sAttribute, $sValue, $sNamespace = null, $sSeparator = ' ') {
@@ -331,13 +332,14 @@ class Element extends \DOMElement implements dom\element {
    */
   public function insertChild(\DOMNode $node, dom\node $referer = null, $bPrevious = false) {
 
-    $result = null;
     if ($node === $referer) $referer = null;
 
     if ($node->ownerDocument && ($node->ownerDocument !== $this->getDocument())) {
 
       $node = $this->getDocument()->importNode($node);
     }
+
+    $result = $node;
 
     if ($bPrevious) {
 
@@ -349,7 +351,6 @@ class Element extends \DOMElement implements dom\element {
 
       if ($referer) $result = parent::insertBefore($node, $referer);
       else $result = parent::appendChild($node);
-
     }
 
     return $result;
@@ -387,7 +388,10 @@ class Element extends \DOMElement implements dom\element {
       }
       else if ($value instanceof dom\collection) {
 
-        foreach ($value as $oChild) $this->insert($oChild, $next);
+        foreach ($value as $oChild) {
+
+          $this->insert($oChild, $next);
+        }
       }
       else if ($value instanceof dom\document) {
 
@@ -409,6 +413,8 @@ class Element extends \DOMElement implements dom\element {
 
         $mResult[] = $this->insertChild($sub, $next);
       }
+
+      if ($mResult && count($mResult) == 1) $mResult = current($mResult);
     }
     else if ($value instanceof dom\domable) {
 
@@ -446,8 +452,7 @@ class Element extends \DOMElement implements dom\element {
       $mResult[] = $this->insert($mSubValue, $next);
     }
 
-    if ($mResult && count($mResult) == 1) $mValue = array_pop($mResult);
-    else $mValue = $mResult;
+    if ($mResult && count($mResult) == 1) $mResult = current($mResult);
 
     return $mResult;
   }
@@ -684,7 +689,7 @@ class Element extends \DOMElement implements dom\element {
 
       if (substr($attribute->getName(), 0, 6) == 'xmlns:') continue;
 
-      $compare = $el2->loadAttribute($attribute->getName(), $attribute->getNamespace());
+      $compare = $el2->loadAttribute($attribute->getName(), $attribute->getNamespace(), false);
       if (!$compare || $compare->getValue() != $attribute->getValue()) {
 
         return $attribute;

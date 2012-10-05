@@ -50,17 +50,30 @@ class Document extends \DOMDocument implements dom\document {
     return null;
   }
 
-  public function importNode(\DOMNode $el, $bDeep = true) {
+  public function importNode(\DOMNode $node, $bDeep = true) {
 
     $result = null;
 
-    if ((bool) $el->ownerDocument && ($el->ownerDocument !== $this)) {
+    if ((bool) $node->ownerDocument && ($node->ownerDocument !== $this)) {
 
-      $result = parent::importNode($el, $bDeep);
+      $result = parent::importNode($node, $bDeep);
     }
     else {
 
-      $result = $el;
+      $result = $node;
+    }
+
+    // Import error can append with not-prefixed element
+
+    if (\Sylma::read('debug/xml/import')) {
+
+      if ($node instanceof dom\element) {
+
+        if ($node->compare($result)) {
+
+          $this->throwException('Bad import compare fail  on : ' . $node->compareBadNode->asToken());
+        }
+      }
     }
 
     return $result;

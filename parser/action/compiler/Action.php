@@ -207,15 +207,8 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
 
     $window = $this->getWindow();
     $this->build($window);
-    //dspf($aResult[1]->asArgument());
-    //dspf($aResult);
 
     $arg = $window->asArgument();
-
-    //$formater = \Sylma::getControler('formater');
-    //echo $formater->asHTML($arg);
-    //$tst = $arg->get('window')->query();
-    //dspm((string) $tst[1]);
 
     $result = $arg->asDOM();
 

@@ -13,7 +13,7 @@ require_once('core/module/Namespaced.php');
  *
  * @author rodolphe.gerber (at) gmail.com
  */
-abstract class Basic extends core\module\Namespaced {
+abstract class Basic extends core\module\Namespaced implements core\argument {
 
   const MESSAGES_STATUT = \Sylma::LOG_STATUT_DEFAULT;
   const DEBUG_NORMALIZE_RECURSION = false;
@@ -449,7 +449,7 @@ abstract class Basic extends core\module\Namespaced {
     return $aFrom;
   }
 
-  protected static function normalizeObject($val, $bEmpty = false) {
+  protected static function normalizeObject($val, $iMode = self::NORMALIZE_DEFAULT) {
 //echo '- ' .get_class($val).'<br/>';
     $mResult = null;
 
@@ -467,11 +467,12 @@ abstract class Basic extends core\module\Namespaced {
 
     if ($val instanceof core\argumentable) {
 
-      $mResult = static::normalizeArgument($val->asArgument(), $bEmpty);
+      $mResult = static::normalizeArgument($val->asArgument(), $iMode);
     }
     else if ($val instanceof core\argument) {
 
-      $mResult = static::normalizeArgument($val, $bEmpty);
+      if ($iMode & self::NORMALIZE_ARGUMENT) $mResult = static::normalizeArgument($val, $iMode);
+      else $mResult = $val;
     }
     else {
 
@@ -492,7 +493,7 @@ abstract class Basic extends core\module\Namespaced {
    * @param array $aArray The array to use
    * @return array A new array with replaced values
    */
-  public static function normalizeArray(array $aArray, $bEmpty = false) {
+  public static function normalizeArray(array $aArray, $iMode = self::NORMALIZE_DEFAULT) {
 
     $aResult = array();
     $sCurrentPath = self::$sCurrentPath;
@@ -503,14 +504,14 @@ abstract class Basic extends core\module\Namespaced {
 
       if (is_object($mVal)) {
 
-        $mResult = static::normalizeObject($mVal, $bEmpty);
+        $mResult = static::normalizeObject($mVal, $iMode);
 
         if (!$mResult) $mResult = null;
       }
       else if (is_array($mVal)) {
 
-        $mResult = static::normalizeArray($mVal, $bEmpty);
-        if ($bEmpty && !$mResult) $mResult = null; // transform empty array to null
+        $mResult = static::normalizeArray($mVal, $iMode);
+        if (($iMode & self::NORMALIZE_EMPTY_ARRAY) && !$mResult) $mResult = null; // transform empty array to null
       }
       else {
 
@@ -530,12 +531,12 @@ abstract class Basic extends core\module\Namespaced {
     return $mVar;
   }
 
-  public function normalize($bEmpty = false) {
+  public function normalize($iMode = self::NORMALIZE_DEFAULT) {
 
     self::$sCurrentPath = '';
 
     try {
-      $this->aArray = static::normalizeArray($this->aArray, $bEmpty);
+      $this->aArray = static::normalizeArray($this->aArray, $iMode);
     }
     catch (core\exception $e) {
 

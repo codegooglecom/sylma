@@ -2,6 +2,8 @@ debug :
   show : false
   run : true
   update : true
+template :
+  indent : false
 extensions :
   - eml
   - iml

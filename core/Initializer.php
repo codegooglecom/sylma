@@ -188,11 +188,13 @@ class Initializer extends module\Filed {
     }
     catch (core\exception $e) {
 
-      header('HTTP/1.0 404 Not Found');
-
       if (\Sylma::read('debug/enable')) {
 
         throw $e;
+      }
+      else {
+
+        header('HTTP/1.0 404 Not Found');
       }
 
       $window = $this->loadWindow('');
