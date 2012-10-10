@@ -93,14 +93,14 @@ class Grouped extends tester\Basic {
 
     if ($sException = $test->readAttribute('catch', null, false)) {
 
-      $bResult = false;
-
       try {
 
         $this->prepareTest($test);
         $aArguments = $this->loadArguments();
 
         $action = $controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $this->getDirectory(), $sName);
+        $action->useExceptions(true);
+
         $action->asArray();
 
         $bResult = false;

@@ -85,7 +85,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
   protected function parseElementUnknown(dom\element $el) {
 
     $this->useTemplate(true);
-    
+
     return parent::parseElementUnknown($el);
   }
 
@@ -190,9 +190,15 @@ abstract class Domed extends Runner implements parser\reflector\documented {
 
           break;
 
-          case 'arg' :
+          case 'argument' :
 
             $arg = $this->getActionArgument($aResult['val'][0]);
+
+          break;
+
+          case 'variable' :
+
+            $arg = $this->getVariable($aResult['val'][0]);
 
           break;
 

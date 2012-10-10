@@ -46,7 +46,7 @@ abstract class Handler extends core\module\Argumented {
 
     if ($this->getControler()->readArgument('debug/run')) {
 
-      $result = $this->loadCache($file);
+      if ($file) $result = $this->loadCache($file);
     }
     else {
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <le:settings>
+    <le:string le:set-variable="id">sylma-binder-test</le:string>
+  </le:settings>
+  <le:context name="title">Test Binder</le:context>
+  <le:context name="js">
+    <lm:file path="/#sylma/parser/js/mootools.js"/>
+    <lm:file path="script.js"/>
+    <le:string>sylma.binder.standalone = '<lm:directory/>/standalone'; sylma.binder.id = '<le:get-variable name="id"/>';</le:string>
+  </le:context>
+  <h3>JS Binder</h3>
+  <le:interface path="interface"/>
+  <div id="[sylma:variable::id]"/>
+</le:action>
+

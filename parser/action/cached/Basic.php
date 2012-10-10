@@ -3,11 +3,6 @@
 namespace sylma\parser\action\cached;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
-require_once('core/module/Domed.php');
-require_once('core/stringable.php');
-
-require_once(dirname(__dir__) . '/cached.php');
-
 abstract class Basic extends core\module\Domed implements parser\action\cached, core\stringable {
 
   //protected $bTemplate = false;
@@ -16,7 +11,8 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
   protected $aResults = array();
   protected $bRunned = false;
 
-  protected $file = null;
+  protected $file;
+  protected $handler;
 
   /**
    *
@@ -38,13 +34,23 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     $this->setFile($file);
 
     $this->setContexts($aContexts);
-    $this->setControler($handler);
+    $this->setHandler($handler);
 
     $this->setDirectory($dir);
     $this->setNamespace(parser\action::NS);
 
     $this->loadDefaultArguments();
     $this->setActionArguments($aArguments);
+  }
+
+  public function getHandler() {
+
+    return $this->handler;
+  }
+
+  public function setHandler(parser\action $handler) {
+
+    $this->handler = $handler;
   }
 
   public function setActionArguments(array $aArguments) {
@@ -58,7 +64,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!array_key_exists($sName, $this->aActionArguments)) {
 
-      if ($bRequired) $this->throwException(sprintf('Unknow argument : %s', $sName));
+      if ($bRequired) $this->throwException(sprintf('Missing argument : %s', $sName));
     }
     else {
 
@@ -185,7 +191,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   public function getParentParser($bRoot = false) {
 
-    return $this->getControler()->getParentParser($bRoot);
+    return $this->getHandler()->getParentParser($bRoot);
   }
 
   public function setContexts(array $aContexts) {
@@ -198,7 +204,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
    * @param type $sContext
    * @return parser\context
    */
-  public function getContext($sContext = self::CONTEXT_DEFAULT) {
+  public function getContext($sContext = self::CONTEXT_DEFAULT, $bDebug = true) {
 
     $mResult = null;
 
@@ -206,9 +212,9 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
       $mResult = $this->aResults[$sContext];
     }
-    else {
+    else if ($bDebug) {
 
-      //$this->throwException(sprintf('Context %s does not exists', $sContext));
+      $this->throwException(sprintf('Context %s does not exists', $sContext));
     }
 
     return $mResult;
@@ -229,7 +235,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     $action = $this->create('action', array($this->getFile($sPath), $aArguments));
     $action->setContexts($this->getContexts());
-    $action->setParentParser($this);
+    $action->setParentParser($this->getHandler());
 
     return $action;
   }

@@ -153,6 +153,16 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
     return null;
   }
 
+  protected function getVariable($sName) {
+
+    if (!array_key_exists($sName, $this->aVariables)) {
+
+      $this->throwException(sprintf('Variable %s does not exists', $sName));
+    }
+
+    return $this->aVariables[$sName];
+  }
+
   protected function setVariable(dom\element $el, $obj) {
 
     $result = null;

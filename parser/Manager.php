@@ -43,13 +43,34 @@ class Manager extends core\module\Domed {
     return $result;
   }
 
-  public function getContext($sName) {
+  public function setContext($sName, $context) {
+
+    $this->aContexts[$sName] = $context;
+  }
+
+  /**
+   *
+   * @param type $sName
+   * @param type $bLoad
+   * @return parser\context|parser\handler
+   */
+  public function getContext($sName, $bLoad = true) {
+
+    $result = null;
 
     if (!array_key_exists($sName, $this->aContexts)) {
 
-      $this->aContexts[$sName] = $this->create($sName);
+      if ($bLoad) {
+
+        $result = $this->create($sName);
+        $this->setContext($sName, $result);
+      }
+    }
+    else {
+
+      $result = $this->aContexts[$sName];
     }
 
-    return $this->aContexts[$sName];
+    return $result;
   }
 }

@@ -233,7 +233,13 @@ class Reflector extends Argumented {
       $aResult[] = $this->parse($child);
     }
 
-    return $this->getWindow()->createString($aResult);
+    $result = $this->getWindow()->createString($aResult);
+
+    $var = $this->getWindow()->createVar($result);
+
+    if ($this->setVariable($el, $var)) $result = $var;
+
+    return $result;
   }
 
   /**
@@ -390,7 +396,7 @@ class Reflector extends Argumented {
       $this->throwException(sprintf('Unknown variable : %s', $sName));
     }
 
-    $var = $this->aVariables[$sName];
+    $var = $this->getVariable($sName);
 
     //if ($var instanceof php\basic\Called) $var = $var->getVar(false);
 
@@ -461,7 +467,9 @@ class Reflector extends Argumented {
     $sPath = $el->readAttribute('path');
 
     $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
-    $path = $this->getControler()->create('path', array($sPath, $this->getDirectory()));
+    $path = $this->getControler()->create('path', array($sPath, $this->getDirectory(), array(), false));
+    $path->setExtensions(array('iml'));
+    $path->parse();
 
     $interface = $caller->getInterface((string) $path->getFile());
     $instance = $interface->getInstance($this->getWindow(), $el->getChildren());

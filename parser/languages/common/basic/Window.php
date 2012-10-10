@@ -36,7 +36,11 @@ abstract class Window extends core\module\Domed {
 
   public function addContent($mVal) {
 
-    if (is_array($mVal)) {
+    if (is_null($mVal)) {
+
+      $mResult = null;
+    }
+    else if (is_array($mVal)) {
 
       $mResult = array();
 

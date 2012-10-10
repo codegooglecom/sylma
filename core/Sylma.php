@@ -81,8 +81,7 @@ class Sylma {
 
   public static function autoload($sClass) {
 
-    // convert '_' to '/'
-    \Sylma::load(str_replace('\\', '/', $sClass . '.php'));
+    require_once(str_replace('\\', '/', $sClass . '.php'));
   }
 
   public static function setControler($sName, $controler) {

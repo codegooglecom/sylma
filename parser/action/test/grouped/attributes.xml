@@ -13,7 +13,7 @@
     <tst:expected>
       $result = $controler->getResult('dom');
       $root = $result->getRoot();
-      
+
       return
         $root->readAttribute('src') == (string) $controler->getDirectory();
     </tst:expected>
@@ -25,12 +25,12 @@
           <le:default>world</le:default>
         </le:argument>
       </le:settings>
-      <img src="[sylma:call::get-directory]/hello/[sylma:arg::0]" alt="bonsoir"/>
+      <img src="[sylma:call::get-directory]/hello/[sylma:argument::0]" alt="bonsoir"/>
     </le:action>
     <tst:expected>
       $result = $controler->getResult('dom');
       $root = $result->getRoot();
-      
+
       return
         $root->readAttribute('src') == (string) $controler->getDirectory() . '/hello/world';
     </tst:expected>

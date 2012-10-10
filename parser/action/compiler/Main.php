@@ -24,6 +24,12 @@ class Main extends parser\compiler\Basic implements parser\compiler\documented {
     $this->loadDefaultArguments();
 
     $window = $this->runReflector($file, $base);
+    $result = $this->buildFiles($window, $file);
+
+    return $result;
+  }
+
+  protected function buildFiles(dom\handler $window, fs\file $file) {
 
     if ($this->getControler()->readArgument('debug/show')) {
 
@@ -42,10 +48,10 @@ class Main extends parser\compiler\Basic implements parser\compiler\documented {
       'template' => $tpl->getRealPath(),
     ));
 
-    $script = $this->getCachedFile($file);
+    $result = $this->getCachedFile($file);
 
     $sContent = $template->parseDocument($window, false);
-    $script->saveText($sContent);
+    $result->saveText($sContent);
 
     if ($window->getRoot()->testAttribute('use-template')) {
 
@@ -75,7 +81,7 @@ class Main extends parser\compiler\Basic implements parser\compiler\documented {
       }
     }
 
-    return $script;
+    return $result;
   }
 
   public function buildInto(fs\file $file, fs\directory $base, common\_window $window) {

@@ -44,7 +44,7 @@ sylma.classes = {
       }
     },
 
-    loadOne : function(objects) {
+    loadOne : function(objects, parent) {
 
       for (var first in objects) break;
       parent[first] = this.createObject(objects[first]);
@@ -95,6 +95,7 @@ sylma.ui = new sylma.classes.ui;
       for (var key in objects) {
 
         this[key] = ui.createObject(objects[key]);
+        this[key].parent = this;
       }
     },
 

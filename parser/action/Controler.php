@@ -3,11 +3,6 @@
 namespace sylma\parser\action;
 use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
-require_once('parser/action.php');
-require_once('core/module/Domed.php');
-
-require_once('core/factory.php');
-
 class Controler extends core\module\Domed implements core\factory {
 
   const FS_EDITABLE = 'fs/editable';
@@ -40,7 +35,7 @@ class Controler extends core\module\Domed implements core\factory {
     $fs = \Sylma::getControler('fs');
     //$file = $fs->getFile($sPath, true, );
 
-    return $this->create('action', array($path->getFile(), $aArguments));
+    return $this->loadAction($path->getFile());
   }
 
   public function buildAction(dom\handler $doc, array $aArguments = array(), fs\editable\directory $dir = null, fs\directory $base = null, $sName = '') {
@@ -60,7 +55,18 @@ class Controler extends core\module\Domed implements core\factory {
 
     $doc->saveFile($file, self::FORMAT_ACTION);
 
+    return $this->loadAction($file, $aArguments, $base);
+  }
+
+  protected function loadAction(fs\file $file, array $aArguments = array(), $base = null) {
+
     $result = $this->create('action', array($file, $aArguments, $base));
+
+    if ($parent = $this->getControler('parser')->getContext('action/current')) {
+
+      $result->setParentParser($parent);
+      $result->setContexts($parent->getContexts());
+    }
 
     return $result;
   }

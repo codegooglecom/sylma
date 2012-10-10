@@ -3,9 +3,6 @@
 namespace sylma\parser\action\cached;
 use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
 
-require_once('Basic.php');
-require_once('dom/domable.php');
-
 class Document extends Basic implements dom\domable {
 
   protected $sTemplate = '';

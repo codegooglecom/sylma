@@ -88,7 +88,9 @@ class Initializer extends module\Filed {
     $this->setDirectory($fs->getDirectory());
     //$this->getDirectory()->getSettings()->loadDocument();
 
-    $path = $this->create('path', array($this->loadGET(), null, array(), false));
+    $aGET = $this->loadGET();
+
+    $path = $this->create('path', array($aGET['path'], null, $aGET['arguments'], false));
 
     // The extension specify the window type
 
@@ -149,7 +151,7 @@ class Initializer extends module\Filed {
 
   protected function loadAction(parser\action\path $path) {
 
-    $path->parsePath();
+    $path->parse();
 
     return $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
   }
@@ -178,6 +180,7 @@ class Initializer extends module\Filed {
 
     $action = $this->loadAction($path);
     $action->setContexts($window->getContexts());
+    $action->setParentParser($window);
 
     $window->setArgument('content', $action);
     $window->setArgument('current', $path);
@@ -325,16 +328,21 @@ class Initializer extends module\Filed {
 
   protected function loadGET() {
 
-    $sResult = '';
+    $aResult = array();
 
     if (array_key_exists('q', $_GET) && $_GET['q']) {
 
-      $sResult = '/' . $_GET['q'];
-      //unset($aGET['q']);
+      $aResult['path'] = '/' . $_GET['q'];
+      unset($_GET['q']);
+    }
+    else {
 
-    } else $sResult = '/';
+      $aResult['path'] = '/';
+    }
 
-    return $sResult;
+    $aResult['arguments'] = $_GET;
+
+    return $aResult;
   }
 
   protected function loadPOST() {

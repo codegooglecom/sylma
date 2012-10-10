@@ -11,6 +11,8 @@ require_once(dirname(dirname(__dir__)) . '/handler.php');
  */
 abstract class Documented extends Container {
 
+  static protected $iNS = 0;
+
   public function set() {
 
     $mResult = null;
@@ -44,9 +46,7 @@ abstract class Documented extends Container {
     return $mResult;
   }
 
-  protected function setObject($val) {
-
-    $result = null;
+  protected function setObjectDOM(dom\node $val) {
 
     if ($val instanceof dom\element || $val instanceof dom\fragment) {
 
@@ -60,6 +60,18 @@ abstract class Documented extends Container {
       }
 
       $result = $this->setRoot($val->getRoot());
+    }
+
+    return $result;
+  }
+
+  protected function setObject($val) {
+
+    $result = null;
+
+    if ($val instanceof dom\node) {
+
+      $result = $this->setObjectDOM($val);
     }
     else if ($val instanceof dom\collection) {
 
@@ -78,16 +90,16 @@ abstract class Documented extends Container {
     }
     else if ($val instanceof dom\domable) {
 
-      $result = $this->setRoot($val->asDOM());
+      $result = $this->setRoot($this->setObjectDOM($val->asDOM()));
     }
     else if ($val instanceof \DOMDocument) {
 
       $el = $val->documentElement;
-      $result = $this->setDOMNode($el);
+      $result = $this->setObjectNode($el);
     }
     else if ($val instanceof \DOMNode) {
 
-      $result = $this->setDOMNode($val);
+      $result = $this->setObjectNode($val);
     }
     else {
 
@@ -98,7 +110,7 @@ abstract class Documented extends Container {
     return $result;
   }
 
-  protected function setDOMNode(\DOMNode $node) {
+  protected function setObjectNode(\DOMNode $node) {
 
     $container = $this->getContainer();
 
@@ -170,7 +182,7 @@ abstract class Documented extends Container {
     if ($sNamespace) {
 
       // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
-      if (!strpos($sName, ':')) $sName = uniqid('ns') . ':' . $sName;
+      if (!strpos($sName, ':')) $sName = 'ns' . self::$iNS++ . ':' . $sName;
       $el = $doc->createElementNS($sNamespace, $sName);
     }
     else {

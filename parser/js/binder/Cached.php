@@ -3,9 +3,6 @@
 namespace sylma\parser\js\binder;
 use sylma\core, sylma\dom, sylma\parser;
 
-\Sylma::load('/core/module/Domed.php');
-\Sylma::load('/parser/cached/documented.php');
-
 class Cached extends core\module\Domed implements parser\cached\documented {
 
   protected $parent;
@@ -61,8 +58,8 @@ class Cached extends core\module\Domed implements parser\cached\documented {
 
     $objects = $this->createArgument($aResult);
 
-    $sJSON = json_encode($objects->asArray(true), JSON_FORCE_OBJECT);
-    $this->getParent()->getContext('js/load')->add("sylma.ui.load($sParent, $sJSON);");
+    $sObjects = $objects->asJSON();
+    $this->getParent()->getContext('js/load')->shift("sylma.ui.load($sParent, $sObjects);");
 
     $result = $doc->getx('self:render', $this->getNS())->getChildren();
 

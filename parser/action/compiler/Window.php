@@ -22,7 +22,7 @@ class Window extends php\basic\Window {
 
     $this->setContext($sName);
 
-    $call = $this->createCall($this->getSelf(), 'getContext', $this->tokenToInstance('php-string'), array($sName));
+    $call = $this->createCall($this->getSelf(), 'getContext', $this->tokenToInstance('php-string'), array($sName, false));
     $if = $this->createCondition($call);
 
     $this->setScope($if);

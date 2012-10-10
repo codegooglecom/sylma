@@ -560,6 +560,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     return static::normalizeArray($this->query(), $bEmpty);
   }
 
+  public function asJSON() {
+
+    return json_encode($this->asArray(true), \JSON_FORCE_OBJECT);
+  }
+
   public function __toString() {
 
     $sResult = '';

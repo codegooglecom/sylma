@@ -4,9 +4,7 @@ debug :
   update : true
 template :
   indent : false
-extensions :
-  - eml
-  - iml
+extensions : [eml, iml]
 classes :
   §sylma-classbase : \sylma\parser\action
   window :

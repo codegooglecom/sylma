@@ -10,6 +10,7 @@ interface cached extends dom\domable {
   const CONTEXT_DEFAULT = 'default';
 
   function __construct(fs\file $file, fs\directory $dir, parser\action $controler, array $aArguments);
+
   function getParentParser($bRoot = false);
 
   /**
