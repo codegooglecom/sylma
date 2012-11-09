@@ -4,11 +4,21 @@
   <xsl:template match="/frm:window">
     <div>
       <xsl:apply-templates/>
+      <style type="text/css">
+        .formater-array {
+          padding-left: 2em;
+          border-left: 1px solid #ddd;
+        }
+
+        .formater-array:hover {
+          border-left: 1px solid #aaa;
+        }
+      </style>
     </div>
   </xsl:template>
 
   <xsl:template match="frm:array">
-    <span class="formater-array">
+    <div class="formater-array">
       <xsl:text>Array[</xsl:text>
       <xsl:value-of select="count(frm:item)"/>
       <xsl:text>](</xsl:text>
@@ -19,17 +29,17 @@
         <xsl:if test="position() != last()">, </xsl:if>
       </xsl:for-each>
       <xsl:text>)</xsl:text>
-    </span>
+    </div>
   </xsl:template>
 
   <xsl:template match="frm:object">
-    <span class="formater-object">
+    <div class="formater-object">
       <xsl:text>Object[</xsl:text>
       <xsl:value-of select="@class"/>
       <xsl:text>](</xsl:text>
       <xsl:apply-templates/>
       <xsl:text>)</xsl:text>
-    </span>
+    </div>
   </xsl:template>
 
   <xsl:template match="frm:item">

@@ -125,16 +125,12 @@ class Sylma {
 
       case 'fs/editable' :
 
-        require_once('storage/fs/Controler.php');
-
         $result = new storage\fs\Controler(self::ROOT, true);
         $result->loadDirectory();
 
       break;
 
       case 'fs/cache' :
-
-        require_once('storage/fs/Controler.php');
 
         $result = new storage\fs\Controler(self::PATH_CACHE, true, true, false);
         $result->loadDirectory('');
@@ -143,8 +139,6 @@ class Sylma {
 
       case 'fs/trash' :
 
-        require_once('storage/fs/Controler.php');
-
         $result = new storage\fs\Controler(self::PATH_TRASH, true, true, false);
         $result->loadDirectory('');
 
@@ -152,14 +146,11 @@ class Sylma {
 
       case 'dom' :
 
-        require_once('dom/Controler.php');
         $result = new dom\Controler;
 
       break;
 
       case 'user' :
-
-        require_once('core/user/Controler.php');
 
         $result = new core\user\Controler;
         $result = $result->getUser();
@@ -168,14 +159,12 @@ class Sylma {
 
       case 'formater' :
 
-        require_once('modules/formater/Controler.php');
         $result = new modules\formater\Controler;
 
       break;
 
       case 'factory' :
 
-        require_once('core/factory/Reflector.php');
         $result = new core\factory\Reflector;
 
       break;
@@ -189,21 +178,18 @@ class Sylma {
 
       case 'action' :
 
-        require_once('parser/action/Controler.php');
         $result = new parser\action\Controler();
 
       break;
 
       case 'argument' :
 
-        self::load('/core/argument/Manager.php');
         $result = new core\argument\Manager;
 
       break;
 
       case 'caller' :
 
-        require_once('parser/caller/Controler.php');
         $result = new parser\caller\Controler;
 
 
@@ -211,14 +197,12 @@ class Sylma {
 
       case 'parser' :
 
-        self::load('/parser/Manager.php');
         $result = new parser\Manager;
 
       break;
 
       case 'timer' :
 
-        require_once('modules/timer/Controler.php');
         $timer = new modules\timer\Controler;
 
         $result = $timer->create('timer');

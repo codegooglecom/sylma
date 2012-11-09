@@ -28,7 +28,7 @@ class Basic extends core\module\Argumented implements core\user {
 
   // controler :: create, getDocument, createArgument
 
-  public function __construct(Controler $controler, $sName = '', array $aGroups = array(), array $aOptions = array()) {
+  public function __construct(Controler $controler, $sName = '', array $aGroups = array(), $bPrivate = false) {
 
     $this->setName($sName);
     $this->setNamespace(self::NS);
@@ -43,6 +43,7 @@ class Basic extends core\module\Argumented implements core\user {
     }*/
 
     $this->setGroups($aGroups);
+    $this->setPrivate($bPrivate);
   }
 
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {

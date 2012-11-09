@@ -19,6 +19,8 @@ abstract class Window extends core\module\Domed {
   // $this reference object
   protected $self;
 
+  protected $aVariables = array();
+
   public function getSelf() {
 
     return $this->self;
@@ -62,6 +64,10 @@ abstract class Window extends core\module\Domed {
     if ($mVal instanceof common\ghost) {
 
       $this->throwException('Cannot add ghost to content');
+    }
+    else if (is_object($mVal) && !$mVal instanceof common\argumentable) {
+
+      $this->throwException(sprintf('Cannot add %s to content', $this->show($mVal)));
     }
 
     return $mVal;
@@ -107,11 +113,6 @@ abstract class Window extends core\module\Domed {
     return null;
   }
 
-  public function createVariable($sName, $mReturn = null) {
-
-    return $this->create('variable', array($this, $sName, $this->loadReturn($mReturn)));
-  }
-
   public function createAssign($to, $value) {
 
     return $this->create('assign', array($this, $to, $value));
@@ -146,22 +147,27 @@ abstract class Window extends core\module\Domed {
     return $this->create('instanciate', array($this, $instance, $aArguments));
   }
 
-  public function addVar(common\argumentable $val) {
+  public function setVariable(common\_var $var) {
 
-    $result = $val;
+    $sName = $var->getName();
 
-    if ($val instanceof common\_var) {
+    if (array_key_exists($sName, $this->aVariables)) {
 
-      $result->insert();
+      $this->throwException(sprintf('Variable %s ever registered', $sName));
     }
-    else if ($val instanceof common\_call) {
 
-      $result = $val->getVar();
+    $this->aVariables[$sName] = $var;
+  }
+
+  public function getVariable($sName) {
+
+    if (array_key_exists($sName, $this->aVariables)) {
+
+      $result = $this->aVariables[$sName];
     }
     else {
 
-      $result = $this->createVar($val);
-      $result->insert();
+      $this->throwException(sprintf('No variable with name %s', $sName));
     }
 
     return $result;

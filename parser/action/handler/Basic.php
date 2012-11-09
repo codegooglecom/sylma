@@ -118,6 +118,7 @@ class Basic extends parser\Handler implements parser\action, core\stringable, co
       catch (core\exception $e) {
 
         $e->addPath('Compiler error');
+        $e->addPath($this->getFile()->asToken());
 
         if ($this->useExceptions()) throw $e;
         else $e->save();

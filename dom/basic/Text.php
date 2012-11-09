@@ -7,6 +7,16 @@ require_once(dirname(__dir__) . '/text.php');
 
 class Text extends \DOMText implements dom\text {
 
+  public function __construct($sValue) {
+
+    if (Sylma::read('dom/encoding/check') && !mb_check_encoding($sValue, 'UTF-8')) {
+
+      //$sValue = utf8_encode($sContent); // TODO , result not always in utf-8
+      $this->getParent()->throwException('Bad encoding');
+    }
+
+    parent::__construct($sValue);
+  }
   public function getDocument() {
 
     return $this->ownerDocument;

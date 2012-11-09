@@ -13,6 +13,8 @@ abstract class _Var extends common\basic\Controled implements common\_var {
   protected $instance;
 
   protected $bInserted = false;
+  protected $bStatic = false;
+
   protected $content;
 
   public function __construct(common\_window $controler, common\_instance $instance, $sName, common\argumentable $content) {
@@ -58,6 +60,12 @@ abstract class _Var extends common\basic\Controled implements common\_var {
     }
   }
 
+  public function isStatic($bValue = null) {
+
+    if (!is_null($bValue)) $this->bStatic = $bValue;
+    return $this->bStatic;
+  }
+
   protected function setInstance(common\_instance $instance) {
 
     $this->instance = $instance;
@@ -73,12 +81,17 @@ abstract class _Var extends common\basic\Controled implements common\_var {
     return $this->sName;
   }
 
-  public function asArgument() {
+  protected function checkInserted() {
 
-    if (!$this->bInserted && $this->getContent()) {
+    if (!$this->isStatic() && !$this->bInserted && $this->getContent()) {
 
       $this->getControler()->throwException(sprintf('Variable "%s" has not been inserted', $this->getName()));
     }
+  }
+
+  public function asArgument() {
+
+    $this->checkInserted();
 
     return $this->getControler()->createArgument(array(
       'var' => array(

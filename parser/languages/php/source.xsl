@@ -13,7 +13,7 @@
   </xsl:template>
 
   <xsl:template match="php:*">
-    $this->throwException(sprintf('Invalid template\'s %s', '@element <xsl:value-of select="local-name()"/>'))
+    $this->throwException(sprintf('Invalid template\'s %s', '@element <xsl:value-of select="concat(namespace-uri(), ':', local-name())"/>'))
   </xsl:template>
 
   <xsl:template match="php:assign">
@@ -58,13 +58,17 @@
     <xsl:call-template name="php:arguments"/>
     <xsl:text>) {</xsl:text>
     <xsl:value-of select="$break"/>
-    <xsl:apply-templates/>
+    <xsl:apply-templates select="php:content/*"/>
     <xsl:text>}</xsl:text>
   </xsl:template>
 
   <xsl:template match="php:return">
     <xsl:text>return </xsl:text>
     <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="php:class">
+    <xsl:value-of select="."/>
   </xsl:template>
 
   <xsl:template name="php:assign">
@@ -75,7 +79,10 @@
 
   <xsl:template match="php:call">
     <xsl:apply-templates select="php:called"/>
-    <xsl:text>-&gt;</xsl:text>
+    <xsl:choose>
+      <xsl:when test="@static">::</xsl:when>
+      <xsl:otherwise>-&gt;</xsl:otherwise>
+    </xsl:choose>
     <xsl:apply-templates select="@name"/>
     <xsl:text>(</xsl:text>
     <xsl:call-template name="php:arguments"/>

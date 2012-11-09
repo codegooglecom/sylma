@@ -3,8 +3,6 @@
 namespace sylma\core;
 use sylma\core;
 
-require_once('core/module/Argumented.php');
-
 class Redirect extends core\module\Argumented {
 
   private $sPath = null; // URL cible

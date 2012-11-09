@@ -3,10 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-\Sylma::load('Controled.php', __DIR__);
-\Sylma::load('/core/argumentable.php');
-
-class _Closure extends common\basic\Controled implements common\scope, common\argumentable {
+class _Closure extends common\basic\Window implements common\scope, common\argumentable {
 
   protected $aArguments = array();
   protected $return;
@@ -14,7 +11,16 @@ class _Closure extends common\basic\Controled implements common\scope, common\ar
   public function __construct(common\_window $controler, array $aArguments = array()) {
 
     $this->setControler($controler);
-    $this->aArguments = $aArguments;
+    $this->loadArguments($aArguments);
+  }
+
+  protected function loadArguments(array $aArguments) {
+
+    foreach ($aArguments as $var) {
+
+      $var->isStatic(true);
+      $this->setVariable($var);
+    }
   }
 
   public function addContent($mVar) {
@@ -47,7 +53,7 @@ class _Closure extends common\basic\Controled implements common\scope, common\ar
 
   protected function getArguments() {
 
-    return $this->aArguments;
+    return $this->aVariables;
   }
 
   public function getReturn() {
@@ -63,8 +69,10 @@ class _Closure extends common\basic\Controled implements common\scope, common\ar
     return $this->getControler()->createArgument(array(
        'closure' => array(
          '#argument' => $this->getArguments(),
-         $aContent,
-         'return' => array($return),
+         'content' => array(
+           $aContent,
+           'return' => array($return),
+         ),
        ),
     ));
   }

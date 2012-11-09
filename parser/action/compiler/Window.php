@@ -78,6 +78,11 @@ class Window extends php\basic\Window {
     return $this->add($this->createInsert($this->toInstance($mValue)));
   }
 
+  public function addControler($sName) {
+    
+    return parent::addControler($sName, $this->getSelf());
+  }
+
   public function createInsert($mVal, $sFormat = '', $iKey = null, $bTemplate = true, $bRoot = false) {
 
     if ($sFormat) {
@@ -301,7 +306,7 @@ class Window extends php\basic\Window {
 
   public function checkContent($mVal) {
 
-    if ((!is_string($mVal) && !$mVal instanceof core\argumentable && !$mVal instanceof dom\node)) {
+    if ((!is_string($mVal) && !$mVal instanceof common\argumentable && !$mVal instanceof dom\node)) {
 
       $this->throwException(sprintf('Cannot add %s in content', $this->show($mVal, true)));
     }

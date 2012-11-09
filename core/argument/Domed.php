@@ -3,9 +3,6 @@
 namespace sylma\core\argument;
 use sylma\core, sylma\dom;
 
-require_once('Iterator.php');
-require_once('dom/domable.php');
-
 class Domed extends Iterator implements dom\domable {
 
   protected static $aPrefixes = array();
@@ -99,7 +96,7 @@ class Domed extends Iterator implements dom\domable {
           }
           else {
 
-            $node->add($mValue);
+            $node->add($mValue); // TODO sometime value not added (encoding?)
           }
         }
       }

@@ -3,12 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom;
 
-require_once('core/argumentable.php');
-require_once('parser/languages/common/scope.php');
-require_once('parser/languages/common/structure.php');
-\Sylma::load('/parser/languages/common/basic/Controled.php');
-
-class Condition extends common\basic\Controled implements core\argumentable, common\scope, common\structure {
+class Condition extends common\basic\Controled implements common\argumentable, common\scope, common\structure {
 
   protected $aContent = array();
   protected $test;
@@ -65,7 +60,7 @@ class Condition extends common\basic\Controled implements core\argumentable, com
     $window = $this->getControler();
 
     if ($this->useTemplate()) {
-      
+
       $insert = $window->createInsert($window->argToInstance(true), '', null, false);
       $sArgument = $insert->getKey();
       $this->addContent($insert);

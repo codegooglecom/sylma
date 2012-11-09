@@ -5,6 +5,7 @@ namespace sylma\core\functions\text;
 /**
  * Check encoding and optionnaly return value in utf-8
  */
+/*
 function checkEncoding($sContent) {
 
   if (Sylma::read('dom/encoding/check') && !mb_check_encoding($sContent, 'UTF-8')) {
@@ -15,7 +16,7 @@ function checkEncoding($sContent) {
 
   return $sContent;
 }
-
+*/
 /**
  * Quote and escape one string or array of strings
  */

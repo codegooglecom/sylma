@@ -3,7 +3,7 @@
   <le:settings>
     <le:document le:set-variable="doc">
       <test:tests>
-        <le:interface path="/#sylma/core/argument/test/interface"/>
+        <le:action path="/#sylma/core/argument/test/group"/>
         <le:interface path="/#sylma/core/factory/test/interface"/>
         <le:action path="/#sylma/storage/fs/test/group"/>
         <le:action path="/#sylma/parser/action/test/group"/>

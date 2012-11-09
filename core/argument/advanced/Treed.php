@@ -3,8 +3,6 @@
 namespace sylma\core\argument;
 use \sylma\core, sylma\dom;
 
-require_once('Filed.php');
-
 class Treed extends Filed {
 
   public function parseTree() {

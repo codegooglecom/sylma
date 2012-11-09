@@ -11,8 +11,6 @@ abstract class Called extends common\basic\Controled implements common\argumenta
 
   protected $aArguments;
 
-  protected $var;
-
   public function getName() {
 
     return $this->sName;
@@ -64,22 +62,5 @@ abstract class Called extends common\basic\Controled implements common\argumenta
     }
 
     return $aResult;
-  }
-
-  /**
-   * Build an (optionnaly temporary) variable assigned with this call
-   * @param boolean $bInsert
-   * @return common\_var
-   */
-  public function getVar($bInsert = true) {
-
-    if (!$this->var) {
-
-      $this->var = $this->getControler()->createVar($this);
-    }
-
-    if ($bInsert) $this->var->insert();
-
-    return $this->var;
   }
 }

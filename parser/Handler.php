@@ -1,9 +1,7 @@
 <?php
 
 namespace sylma\parser;
-use \sylma\core, sylma\parser\languages\common, sylma\storage\fs;
-
-\Sylma::load('/core/module/Argumented.php');
+use \sylma\core, sylma\storage\fs;
 
 abstract class Handler extends core\module\Argumented {
 
@@ -66,7 +64,7 @@ abstract class Handler extends core\module\Argumented {
     $factory = $this->getControler();
     $compiler = $factory->create('compiler', array($factory));
 
-    if (!$file = $compiler->getCache($this->getFile())) {
+    if ((!$file = $compiler->getCache($this->getFile())) && $this->getControler('user')->isPrivate()) {
 
       $file = $compiler->build($this->getFile(), $this->getBaseDirectory());
     }

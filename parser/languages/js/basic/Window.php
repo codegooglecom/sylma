@@ -14,8 +14,6 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     '$$' => 'mootools\elements',
   );
 
-  protected $aVariables = array();
-
   public function __construct(parser\reflector\domed $controler, core\argument $args, $sClass = 'window') {
 
     $this->setControler($controler);
@@ -79,18 +77,9 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     return $this->createArgument(array('code' => $sValue));
   }
 
-  public function getVariable($sName) {
+  public function createVariable($sName, $mReturn) {
 
-    if (array_key_exists($sName, $this->aVariables)) {
-
-      $result = $this->aVariables[$sName];
-    }
-    else {
-
-      $this->throwException(sprintf('No variable with name %s', $sName));
-    }
-
-    return $result;
+    return $this->create('variable', array($this, $sName, $this->loadReturn($mReturn)));
   }
 
   public function assignProperty($sPath, $mValue) {

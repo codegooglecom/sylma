@@ -69,15 +69,14 @@ sylma.classes.binder = new Class({
   loadResult : function(test, result) {
 
     var content = result.value ? 'ok' : 'failed';
+    if (result.timemax) content += ' (time elapsed)';
+    
     var className = 'sylma-test-' + (result.value ? 'success' : 'failed');
+
 
     this.node.grab(new Element('div', {
       html : '<li class="' + className + '"><span>' + test.name + '</span> - <span class="sylma-tester-result">' + content + '</span></li>',
     }));
-
-    if (result.timemax) {
-
-    }
 
     this.loadNext();
   }

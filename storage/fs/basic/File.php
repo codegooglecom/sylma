@@ -3,9 +3,6 @@
 namespace sylma\storage\fs\basic;
 use sylma\storage\fs, sylma\core\functions;
 
-require_once('Resource.php');
-require_once('storage/fs/file.php');
-
 class File extends Resource implements fs\file {
 
   const NS = 'http://www.sylma.org/storage/fs/basic/file';

@@ -151,6 +151,16 @@ abstract class Basic extends core\module\Controled implements core\argument {
     return $bResult;
   }
 
+  public function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {
+
+    $this->throwException('Not yet implemented');
+  }
+
+  public function merge($mArgument) {
+
+    $this->throwException('Feature not implemented');
+  }
+
   public function get($sPath = '', $bDebug = true) {
 
     $result = null;

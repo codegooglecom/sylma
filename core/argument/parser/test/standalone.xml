@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/core/argument/parser/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument">
+  <tst:description>Cached</tst:description>
+  <tst:test name="Simple read">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('simple1.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple import">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('single-import.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Double import">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('double-import.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def') === '456' &amp;&amp;
+        $arg->read('ghi') === '789' &amp;&amp;
+        $arg->read('jkl') === '001'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Single merge">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('single-merge.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === 'new' &amp;&amp;
+        $arg->read('def') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Embeded imports">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('embedded-imports.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def') === '456'
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

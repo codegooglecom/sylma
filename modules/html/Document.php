@@ -120,19 +120,22 @@ class Document extends parser\action\handler\Basic {
 
   public function asString() {
 
-    $sProlog = $this->loadHeaders('text/html'); // 'application/xhtml+xml'
-
+    $result = null;
     $doc = parent::asDOM();
 
-    $this->result = $doc;
+    if ($doc) {
 
-    $doc->registerNamespaces($this->getNS());
+      $this->result = $doc;
+      $doc->registerNamespaces($this->getNS());
 
-    if ($this->getControler('user')->isPrivate()) $this->loadSystemInfos($doc);
+      if ($this->getControler('user')->isPrivate()) $this->loadSystemInfos($doc);
 
-    $this->loadContexts();
+      $this->loadContexts();
 
-    return $sProlog . "\n" . $this->cleanResult($doc);
+      $result = $this->loadHeaders('text/html') . "\n" . $this->cleanResult($doc);
+    }
+
+    return $result;
   }
 }
 

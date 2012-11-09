@@ -174,7 +174,6 @@ class Controler extends core\module\Domed {
 
         $template = $this->getTemplate('default.xsl');
         $result = $template->parseDocument($doc);
-        //dspm($result->asString());
       }
     }
 

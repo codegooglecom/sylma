@@ -3,8 +3,6 @@
 namespace sylma\core\argument\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('modules/tester/Prepare.php');
-
 class Basic extends tester\Prepare {
 
   const NS = 'http://www.sylma.org/core/argument/test';

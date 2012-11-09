@@ -3,8 +3,6 @@
 namespace sylma\core\factory;
 use \sylma\core;
 
-require_once('core/factory.php');
-require_once('core/module/Namespaced.php');
 require_once('core/functions/Path.php');
 
 class Reflector extends core\module\Namespaced implements core\factory {

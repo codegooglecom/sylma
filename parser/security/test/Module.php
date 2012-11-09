@@ -86,7 +86,7 @@ class Module extends tester\Prepare {
     $user = $this->getControler('user')->getControler();
 
     $aGroups = $this->aUsers[$sName];
-    $this->user = $user->create('user', array($user, $sName, $aGroups));
+    $this->user = $user->create('user', array($user, $sName, $aGroups, true));
   }
 
   public function getAction($sPath, array $aArguments = array()) {

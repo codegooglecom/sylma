@@ -36,7 +36,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
     $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom/node.php');
     $this->setInterface($node->getInterface());
 
-    //$this->sylma = $this->create('class-static', array('\Sylma'));
+    $this->sylma = $this->tokenToInstance('\Sylma');
   }
 
   protected function addContentUnknown($mVal) {
@@ -54,14 +54,16 @@ class Window extends common\basic\Window implements php\window, core\controled {
     $this->aContent[] = $mVal;
   }
 
-  public function addControler($sName) {
+  public function addControler($sName, $from = null) {
+
+    if (!$from) $from = $this->getSylma();
 
     if (!array_key_exists($sName, $this->aControlers)) {
 
       $controler = $this->getControler($sName);
       $return = $this->tokenToInstance(get_class($controler));
 
-      $call = $this->createCall($this->getSelf(), 'getControler', $return, array($sName));
+      $call = $this->createCall($from, 'getControler', $return, array($sName));
       $this->aControlers[$sName] = $call->getVar();
     }
 
@@ -94,6 +96,15 @@ class Window extends common\basic\Window implements php\window, core\controled {
     return $result;
   }
 
+  public function getStatic($sName) {
+
+    return $this->createArgument(array(
+      'class-static' => array(
+        '@name' => $sName,
+      )
+    ));
+  }
+
   public function callFunction($sName, common\_instance $return = null, array $aArguments = array()) {
 
     return $this->create('function', array($this, $sName, $return, $aArguments));
@@ -104,7 +115,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
     return $this->create('condition', array($this, $test, $content));
   }
 
-  public function createVar(common\argumentable $val) {
+  public function createVar(common\argumentable $val, $sName = '') {
 
     if ($val instanceof php\basic\Called) {
 
@@ -126,7 +137,35 @@ class Window extends common\basic\Window implements php\window, core\controled {
     if ($return instanceof common\_object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
 
-    return $this->create($sAlias, array($this, $return, $this->getVarName(), $val));
+    if (!$sName) $sName = $this->getVarName();
+
+    return $this->create($sAlias, array($this, $return, $sName, $val));
+  }
+
+  public function addVar(common\argumentable $val, $sName = '') {
+
+    $result = $val;
+
+    if ($val instanceof common\_var) {
+
+      $result->insert();
+    }
+    else if ($val instanceof common\_call) {
+
+      $result = $val->getVar();
+    }
+    else {
+
+      $result = $this->createVar($val, $sName);
+      $result->insert();
+    }
+
+    return $result;
+  }
+
+  public function createVariable($sName, $mReturn) {
+
+    return $this->create('object-var', array($this, $this->loadReturn($mReturn), $sName));
   }
 
   public function createNot($mContent) {

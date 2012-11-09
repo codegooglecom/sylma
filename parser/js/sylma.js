@@ -69,6 +69,10 @@ sylma.ui = new sylma.classes.ui;
 
     Implements : Options,
 
+    /**
+     * List of unnamed sub-objects
+     */
+    tmp : [],
     node : null,
     options : {
 
@@ -92,10 +96,15 @@ sylma.ui = new sylma.classes.ui;
 
     initObjects : function(objects) {
 
+      var obj;
+
       for (var key in objects) {
 
-        this[key] = ui.createObject(objects[key]);
-        this[key].parent = this;
+        objects[key].parent = this;
+        obj = ui.createObject(objects[key]);
+
+        if (objects[key].name) this[key] = obj;
+        else this.tmp.push(obj);
       }
     },
 

@@ -3,10 +3,6 @@
 namespace sylma\core\argument;
 use sylma\core;
 
-require_once('core/argument.php');
-require_once('core/argumentable.php');
-require_once('core/module/Namespaced.php');
-
 /**
  * This class act as an interface to arrays of arrays/objects/strings with dom-like functions get/set/add
  * It can also be used with YAML files with the extended version @class XArguments
@@ -177,14 +173,6 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     else return $this->aArray;
   }
 
-  /**
-   * Load a pathed value and return it as argument object. It's opposite to @method read()
-   *
-   * @param string $sPath The path to look for value
-   * @param boolean $bDebug If TRUE, a result is expected and an exception is thrown if NULL
-   *
-   * @return core\argument|null The value located in the path as an object or NULL if none
-   */
   public function get($sPath = '', $bDebug = true) {
 
     $mResult =& $this->getValue($sPath, $bDebug);
@@ -275,17 +263,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     return $aResult;
   }
 
-  /**
-   * Main search method, it will go through the tree to localize value
-   *
-   * @param array $aPath The array of keys to look for
-   * @param boolean $bDebug If set to FALSE, no exception will be thrown if path is incorrect
-   * @param boolean $bReturn If set to TRUE, return the result even though path is incorrect
-   *
-   * @return null|mixed The value localized by path, or NULL
-   */
-
-  protected function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {
+  public function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {
 
     $mCurrent =& $this->aArray;
     $mResult = null;
@@ -327,7 +305,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
           $mCurrent =& $mCurrent[$sKey];
 
           // run hypotheticals parse on strings
-          if ($mCurrent && is_string($mCurrent)) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
+          if ($mCurrent) $mCurrent = $this->parseValue($mCurrent, $aParentPath);
 
           // if last, save result
           if (!$aPath) $mResult =& $mCurrent;
@@ -404,13 +382,16 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     $this->aArray = $this->mergeArrays($this->aArray, $aArray);
   }
 
-  /**
-   * Recursively merge two argument objects, argument object received as argument (sic) will overwrite this one
-   * @param core\argument $with The argument that will merge on this one
-   */
-  public function merge(core\argument $arg) {
+  public function merge($mArgument) {
 
-    $this->mergeArray($arg->query());
+    if (is_array($mArgument)) {
+
+      $this->mergeArray($mArgument);
+    }
+    else if ($mArgument instanceof core\argument) {
+
+      $this->mergeArray($mArgument->query());
+    }
   }
 
   private function mergeArrays(array $aFrom, array $aTo, array $aPath = array()) {
@@ -488,6 +469,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     return $arg->asArray($bEmpty);
   }
+
   /**
    * Replace @class SettingsInterface and remove null values from array
    * @param array $aArray The array to use

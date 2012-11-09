@@ -3,8 +3,6 @@
 namespace sylma\core;
 use sylma\parser, sylma\core, sylma\storage\fs;
 
-require_once('module/Filed.php');
-
 class Initializer extends module\Filed {
 
   const NS = 'http://www.sylma.org/core/initializer';

@@ -69,30 +69,31 @@ abstract class Argumented extends Controled {
 
   protected function setArguments($mArguments = null, $bMerge = true) {
 
-    if ($mArguments !== null) {
+    if (is_null($mArguments)) {
 
-      if (is_array($mArguments)) {
-
-        if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
-        else $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
-      }
-      else if (is_object($mArguments)) {
-
-        if (!$mArguments instanceof core\argument) {
-
-          $this->throwException('Illegal argument sent');
-        }
-
-        if ($this->getArguments() && $bMerge) {
-
-          $this->getArguments()->merge($mArguments);
-        }
-        else $this->arguments = $mArguments;
-      }
+      $this->arguments = null;
     }
     else {
 
-      $this->arguments = null;
+      if ($this->getArguments()) {
+
+        $this->getArguments()->merge($mArguments);
+      }
+      else {
+
+        if (is_array($mArguments)) {
+
+          $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
+        }
+        else if ($mArguments instanceof core\argument) {
+
+          $this->arguments = $mArguments;
+        }
+        else {
+
+          $this->throwException('Illegal argument sent');
+        }
+      }
     }
 
     return $this->getArguments();

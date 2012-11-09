@@ -3,20 +3,24 @@
 namespace sylma\core\argument\parser;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
-\Sylma::load('/parser/Handler.php');
-
-\Sylma::load('/core/argument.php');
-
 class Handler extends parser\Handler implements core\argument {
 
-  public function __construct(fs\file $file, core\argument $parent = NULL) {
+  public function __construct(fs\file $file, core\argument $parent = NULL, core\factory $manager = NULL) {
 
-    $this->setControler(\Sylma::getControler('argument'));
+    if (!$manager) $manager = \Sylma::getControler('argument');
+    $this->setControler($manager);
 
     $this->setFile($file);
+    $this->setBaseDirectory($file->getParent());
+
     if ($parent) $this->setParent($parent);
 
     $this->setArguments($this->load());
+  }
+
+  public function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {
+
+    return $this->getArguments()->locateValue(&$aPath, $bDebug, $bReturn);
   }
 
   public function current() {
@@ -69,6 +73,11 @@ class Handler extends parser\Handler implements core\argument {
     return $this->getArguments()->set($sPath, $mValue);
   }
 
+  public function merge($mArgument) {
+
+    return $this->getArguments()->merge($mArgument);
+  }
+
   public function setParent(core\argument $parent) {
 
     return $this->getArguments()->setParent($parent);
@@ -84,7 +93,7 @@ class Handler extends parser\Handler implements core\argument {
     return $this->getArguments()->normalize($iMode);
   }
 
-  public function asArray() {
+  public function asArray($bEmpty = false) {
 
     return $this->getArguments()->asArray();
   }

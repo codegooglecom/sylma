@@ -84,7 +84,7 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
       $this->throwException('You have no rights to create this directory');
     }
 
-    if (!$bResult = mkdir($this->getRealPath(), 0711)) { //$this->getControler()->readArgument('system/rights')
+    if (!$bResult = mkdir($this->getRealPath(), 0750)) { //$this->getControler()->readArgument('system/rights')
 
       $this->throwException(sprintf('Cannot create directory called %s', $sName));
     }

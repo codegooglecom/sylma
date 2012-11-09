@@ -12,6 +12,11 @@ interface window extends common\_window {
   function addControler($sName);
 
   /**
+   * @return common\_var
+   */
+  function addVar(common\argumentable $val);
+
+  /**
    * @return ?
    */
   function getSylma();
@@ -26,7 +31,7 @@ interface window extends common\_window {
    */
   function callFunction($sName, common\_instance $return = null, array $aArguments = array());
 
-  
+
 
   /**
    * @return _instance

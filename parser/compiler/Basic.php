@@ -21,7 +21,9 @@ abstract class Basic extends core\module\Domed {
       $tmpFile = $this->getCachedFile($file, self::EXTENSION_DEFAULT, fs\resource::DEBUG_NOT);
     }
 
-    if ($tmpDir && $tmpFile && $tmpFile->getLastChange() > $file->getLastChange() && !$this->getControler()->readArgument('debug/update')) {
+    $bUpdate = $this->getControler()->readArgument('debug/update') && $this->getControler('user')->isPrivate();
+
+    if (!$bUpdate && $tmpDir && $tmpFile && $tmpFile->getLastChange() > $file->getLastChange()) {
 
       $result = $tmpFile;
     }

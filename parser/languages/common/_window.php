@@ -3,9 +3,6 @@
 namespace sylma\parser\languages\common;
 use sylma\core, sylma\parser\languages\common;
 
-require_once('scope.php');
-require_once('core/argumentable.php');
-
 interface _window extends scope {
 
   const CONTEXT_DEFAULT = 'default';
@@ -21,21 +18,17 @@ interface _window extends scope {
    */
   //function getSelf();
 
-  /**
-   * @return common\_var
-   */
-  function addVar(common\argumentable $val);
-
   function checkContent($mVar);
 
   function getScope();
   function setScope(common\scope $scope);
   function stopScope();
 
-  function createVariable($sName);
+  function createVariable($sName, $mReturn);
   function createString($mContent);
   function createAssign($to, $value);
   function createInstruction(common\argumentable $content);
+  function createInstanciate(common\_instance $instance, array $aArguments = array());
 
   /**
    * @return _instance

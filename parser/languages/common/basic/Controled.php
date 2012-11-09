@@ -6,6 +6,7 @@ use sylma\parser\languages\common;
 class Controled {
 
   protected $controler;
+  protected $var;
 
   public function setControler(common\_window $controler) {
 
@@ -20,4 +21,22 @@ class Controled {
 
     return $this->controler;
   }
+
+  /**
+   * Build an (optionnaly temporary) variable assigned with this call
+   * @param boolean $bInsert
+   * @return common\_var
+   */
+  public function getVar($bInsert = true) {
+
+    if (!$this->var) {
+
+      $this->var = $this->getControler()->createVar($this);
+    }
+
+    if ($bInsert) $this->var->insert();
+
+    return $this->var;
+  }
+
 }

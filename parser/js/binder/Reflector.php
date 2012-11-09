@@ -241,8 +241,12 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
   protected function reflectObject(dom\element $el, dom\element $resultElement) {
 
+    $bName = (bool) $el->readx('@self:name', $this->getNS(), false);
+
     $result = $this->buildElement($el, $resultElement);
     $obj = $this->getWindow()->createObject();
+
+    if ($bName) $obj->setProperty('name', true);
 
     $this->getRoot()->setProperty($result->readAttribute('binder'), $obj);
     $this->startObject($obj);

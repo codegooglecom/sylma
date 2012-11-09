@@ -14,16 +14,47 @@
   </tst:test>
   <tst:test name="Simple event">
     <le:action>
-      <div la:class="sylma.ui.Base" la:parent="sylma.binder" la:name="test">
+      <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
         <la:event name="click">return %object%.getNode();</la:event>
-        <p>world</p>
+        <p>hello</p>
       </div>
     </le:action>
     <tst:expected>
-      var test = sylma.binder.test;
-      var node = test.fireEvent('click');
+      var test = example.test;
+      var node = test.node.fireEvent('click');
 
-      return n.getValue() == 'hello';
+      return node.getChildren()[0].get('text') == 'hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Sub object">
+    <le:action>
+      <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+        <div>Hello world</div>
+        <div la:class="sylma.ui.Base" la:name="sub">yup</div>
+      </div>
+    </le:action>
+    <tst:expected>
+      var test = example.test;
+      var node = test.sub.node;
+
+      return node.get('text') == 'yup';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Sub object without name">
+    <le:action>
+      <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+        <div>Hello world</div>
+        <div la:class="sylma.ui.Base">
+          <la:event name="mouseover">return %object%.getNode();</la:event>
+          <span>bonsoir</span>
+        </div>
+      </div>
+    </le:action>
+    <tst:expected>
+      var tmp = example.test.tmp;
+      var node = tmp[0].node.fireEvent('mouseover');
+
+      return node.getChildren()[0].get('text') == 'bonsoir';
     </tst:expected>
   </tst:test>
 </tst:tests>

@@ -8,22 +8,27 @@ require_once('parser/languages/common/_instance.php');
 
 class _Array extends _Scalar implements common\_instance, \Iterator {
 
-  private $aValues;
+  private $aValues = array();
 
   public function __construct(common\_window $controler, array $aValues = array()) {
 
     $this->setControler($controler);
-    $this->aValues = $aValues;
+    $this->setContent($aValues);
   }
 
   public function set($sKey, $mValue) {
+
+    $this->getControler()->checkContent($mValue);
 
     $this->aValues[$sKey] = $mValue;
   }
 
   public function setContent(array $aValues) {
 
-    $this->aValues = $aValues;
+    foreach ($aValues as $sKey => $mValue) {
+
+      $this->set($sKey, $mValue);
+    }
   }
 
   public function rewind() {

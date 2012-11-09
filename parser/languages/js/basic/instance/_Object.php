@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\js\basic\instance;
 use sylma\parser\languages\js, sylma\parser\languages\common;
 
-class _Object extends js\basic\Base implements common\_instance, common\_object {
+class _Object extends js\basic\Base implements common\_instance, common\_object, common\argumentable {
 
   protected $aProperties = array();
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/core/argument/parser/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument">
+  <tst:description>Cached</tst:description>
+  <tst:test name="Construction with an array">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>123</abc>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123'
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

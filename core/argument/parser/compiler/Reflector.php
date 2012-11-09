@@ -3,8 +3,6 @@
 namespace sylma\core\argument\parser\compiler;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
 
-\Sylma::load('/parser/reflector/basic/Documented.php');
-
 /**
  * Description of Reflector
  *
@@ -59,44 +57,11 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
   protected function parseChildren(dom\collection $children) {
 
-    $imports = $children->current()->getParent()->queryx('arg:import', $this->getNS(), false);
+    $imports = $children->length ? $children->current()->getParent()->queryx('arg:import', $this->getNS(), false) : $children;
 
     if ($imports->length) {
 
-      $aChildren = parent::parseChildren($children);
-
-      $window = $this->getWindow();
-      $closure = $window->create('closure', array($window));
-      $window->setScope($closure);
-
-      $import = $this->reflectImport($imports->current());
-
-      if ($imports->length == 1 && !$aChildren) {
-
-        $closure->addContent($import);
-      }
-      else {
-
-        $closure->addContent($import->getVar());
-
-        $imports->next();
-
-        while ($import = $imports->current()) {
-
-          $this->mergeArguments($closure, $this->reflectImport($import));
-          $imports->next();
-        }
-
-        if ($aChildren) {
-
-          $array = $window->argToInstance($aChildren);
-          $this->mergeArguments($closure, $array);
-        }
-      }
-
-      $window->stopScope();
-
-      $mResult = $closure;
+      $mResult = $this->reflectImports($imports, parent::parseChildren($children));
     }
     else {
 
@@ -106,13 +71,62 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     return $mResult;
   }
 
-  protected function mergeArguments(php\basic\_Closure $closure, common\_instance $arg) {
+  protected function reflectImports(dom\collection $children, $aChildren) {
 
-    $return = $closure->getReturn();
     $window = $this->getWindow();
 
-    $merge = $this->getWindow()->createCall($return, 'merge', $window->tokenToInstance('\sylma\core\argument'), array($window->createVar($arg)));
-    $closure->addContent($merge);
+    $self = $window->createVariable('self', $this->getHandlerInstance());
+    $closure = $window->create('closure', array($window, array($self)));
+
+    $window->setScope($closure);
+    $import = $children->current();
+
+    $handler = $this->reflectImport($import);
+
+    if ($children->length != 1 || $aChildren) {
+
+      //$var = $handler->getVar();
+      //$closure->addContent($var);
+
+      $children->next();
+
+      while ($children->current()) {
+
+        $import = $children->current();
+
+        $this->mergeArguments($handler, $this->reflectImport($import));
+
+        $children->next();
+      }
+
+      if ($aChildren) {
+
+        $array = $window->argToInstance($aChildren);
+        $this->mergeArguments($handler, $array);
+      }
+    }
+
+    if ($import->getParent()->isRoot()) {
+
+      $call = $window->createCall($handler->getVar(), 'asArray', 'php-array');
+      $closure->addContent($call);
+    }
+    else {
+
+      $closure->addContent($handler);
+    }
+
+    $window->stopScope();
+
+    return $closure;
+  }
+
+  protected function mergeArguments($first, common\_instance $second) {
+
+    $window = $this->getWindow();
+    $call = $window->createCall($first->getVar(), 'merge', $window->tokenToInstance('\sylma\core\argument'), array($second));
+
+    $window->add($call);
   }
 
   protected function parseElementArgument(dom\element $el) {
@@ -140,11 +154,23 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     return $result;
   }
 
+  protected function getHandlerInstance() {
+
+    $sClass = $this->getControler()->getClassName('handler');
+    $result = $this->getWindow()->tokenToInstance($sClass);
+
+    return $result;
+  }
+
   protected function reflectImport(dom\element $el) {
 
     $window = $this->getWindow();
 
-    $result = $window->callFunction('include', $window->tokenToInstance('\sylma\core\argument'), array($el->read()));
+    $sFile = (string) $this->getFile($el->read());
+    //$fs = $window->addControler('fs');
+
+    $file = $window->createCall($window->getScope()->getVariable('self'), 'getFile', '\sylma\storage\fs\file', array($sFile));
+    $result = $window->createInstanciate($this->getHandlerInstance(), array($file));
 
     return $result;
   }

@@ -3,9 +3,6 @@
 namespace sylma\core\argument\parser\compiler;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
 
-\Sylma::load('Reflector.php', __DIR__);
-\Sylma::load('/parser/reflector/documented.php');
-
 /**
  * Description of Reflector
  *
@@ -25,7 +22,7 @@ class Domed extends Reflector implements parser\reflector\documented {
 
     $this->loadDefaultNamespace();
     $this->setNamespace(self::NS, 'arg', false);
-    //$this->setDirectory($dir);
+    $this->setDirectory($dir);
   }
 
   protected function loadDefaultNamespace() {
@@ -43,13 +40,14 @@ class Domed extends Reflector implements parser\reflector\documented {
 
     $doc->registerNamespaces($this->getNS());
 
-    $array = $this->getWindow()->create('array', array($this->getWindow()));
+    //$array = $this->getWindow()->create('array', array($this->getWindow()));
 
     $mResult = $this->parseChildren($doc->getChildren());
-    //echo $this->show($aResult, false);
-    $array->setContent((array) $mResult);
 
-    $this->getWindow()->add($array);
+    //if (!is_array($mResult)) $mResult = array($mResult);
+    //$array->setContent($mResult);
+
+    $this->getWindow()->add($this->getWindow()->argToInstance($mResult));
 
     return $this->getWindow();
   }
@@ -63,7 +61,7 @@ class Domed extends Reflector implements parser\reflector\documented {
 
     $window = $this->build();
     $arg = $window->asArgument();
-    //$this->show($arg, false);
+    //echo $this->show($arg, false);
     $result = $arg->asDOM();
 
     return $result;

@@ -13,7 +13,7 @@ class _Line extends common\basic\Controled implements core\argumentable {
   public function __construct(common\_window $controler, $content) {
 
     $this->setControler($controler);
-    //$controler->checkContent($content);
+    $controler->checkContent($content);
     $this->content = $content;
   }
 

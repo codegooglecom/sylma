@@ -3,9 +3,7 @@
 namespace sylma\core\argument;
 use \sylma\core, sylma\storage\fs, sylma\core\functions\path;
 
-require_once('Domed.php');
 require_once('core/functions/Path.php');
-
 require_once('spyc.php');
 
 class Filed extends Domed {
@@ -68,9 +66,14 @@ class Filed extends Domed {
     }
   }
 
-  protected function parseValue($sValue, array $aParentPath = array()) {
+  protected function parseValue($mValue, array $aParentPath = array()) {
 
-    return $this->parseYAMLProperties($sValue, $aParentPath);
+    if (is_string($mValue)) {
+
+      $mValue = $this->parseYAMLProperties($mValue, $aParentPath);
+    }
+
+    return $mValue;
   }
 
   protected function extractValue(array $aArray, array &$aPath, array &$aParentPath = array(), $bDebug = true) {
@@ -307,7 +310,7 @@ class Filed extends Domed {
     return implode('', array_map('trim', $aArguments));
   }
 
-  public function merge(core\argument $arg) {
+  public function merge($arg) {
 
     if ($arg instanceof self) $this->file = $arg->getFile();
 

@@ -30,7 +30,7 @@ class _ObjectVar extends _Var implements common\_object, common\scope {
     return $this->getControler()->add($mVar);
   }
 
-  public function call($sMethod, array $aArguments = array(), $mReturn, $bReturn = true) {
+  public function call($sMethod, array $aArguments = array(), $mReturn = null, $bReturn = true) {
 
     $call = $this->getControler()->createCall($this, $sMethod, $mReturn, $aArguments);
 
@@ -38,6 +38,8 @@ class _ObjectVar extends _Var implements common\_object, common\scope {
   }
 
   public function asArgument() {
+
+    $this->checkInserted();
 
     return $this->getControler()->createArgument(array(
       'var' => array(

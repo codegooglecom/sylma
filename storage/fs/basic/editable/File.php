@@ -1,11 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic\editable;
-
 use \sylma\storage\fs;
-
-require_once(dirname(__dir__) . '/File.php');
-require_once(dirname(dirname(__dir__)) . '/editable/file.php');
 
 class File extends fs\basic\File implements fs\editable\file {
 
@@ -138,8 +134,10 @@ class File extends fs\basic\File implements fs\editable\file {
     }
 
     $bResult = file_put_contents($this->getRealPath(), $sContent);
+    if (!$this->doExist()) chmod($this->getRealPath(), 0750);
 
     if (!$bResult) $this->throwException ('Cannot save text content for unknown reason');
+    $this->doExist(true);
 
     //$this->update();
 

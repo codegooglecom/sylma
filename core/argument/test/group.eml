@@ -4,8 +4,11 @@
   <tst:group>
     <tst:description>Argument</tst:description>
     <le:interface path="interface"/>
-    <le:interface path="../parser/test/basic"/>
-    <le:interface path="../parser/test/standalone"/>
+    <tst:group>
+      <tst:description>Parser</tst:description>
+      <le:interface path="../parser/test/basic"/>
+      <le:interface path="../parser/test/standalone"/>
+    </tst:group>
   </tst:group>
 </le:action>
 

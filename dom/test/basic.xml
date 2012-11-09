@@ -20,6 +20,5 @@
 
     return $doc->asString($doc::STRING_HEAD) === $sDoc;
   </tst:test>
-
 </tst:tests>
 

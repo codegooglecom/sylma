@@ -3,9 +3,6 @@
 namespace sylma\core\argument\parser\compiler;
 use sylma\core, sylma\parser, sylma\parser\languages\common, sylma\storage\fs;
 
-\Sylma::load('/parser/compiler/Basic.php');
-\Sylma::load('/parser/compiler/documented.php');
-
 class Main extends parser\compiler\Basic implements parser\compiler\documented {
 
   const WINDOW_ARGS = 'classes/php';
