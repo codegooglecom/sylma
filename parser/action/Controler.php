@@ -3,7 +3,7 @@
 namespace sylma\parser\action;
 use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
-class Controler extends core\module\Domed implements core\factory {
+class Controler extends parser\compiler\Manager implements core\factory {
 
   const FS_EDITABLE = 'fs/editable';
 
@@ -12,12 +12,15 @@ class Controler extends core\module\Domed implements core\factory {
    */
   const FORMAT_ACTION = true;
 
-  public function __construct() {
+  const PHP_TEMPLATE = 'compiler/php.xsl';
+  const DOM_TEMPLATE = 'compiler/template.xsl';
 
-    //$this->loadDefaultArguments();
+  public function __construct() {
 
     $this->setDirectory(__file__);
     $this->setNamespace(parser\action::NS);
+
+    $this->loadDefaultArguments();
     $this->setArguments('controler.yml');
   }
 
@@ -71,34 +74,194 @@ class Controler extends core\module\Domed implements core\factory {
     return $result;
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
-
-    return parent::getArgument($sPath, $mDefault, $bDebug);
-  }
-
-  public function getDirectory($sPath = '', $bDebug = true) {
-
-    return parent::getDirectory($sPath, $bDebug);
-  }
-
-  public function readArgument($sPath, $mDefault = null, $bDebug = false) {
-
-    return parent::readArgument($sPath, $mDefault, $bDebug);
-  }
-
   public function createAction(fs\file $file, array $aArguments = array(), array $aContexts = array(), $dir = null) {
 
-    $dir = $dir ? $file->getParent() : $dir;
+    $dir = $dir ? $dir : $file->getParent();
 
-    $result = $this->create('action', array($file, $aArguments, $dir));
-    $result->setContexts($aContexts);
+    $result = $this->load($file, array($aArguments, $aContexts, $dir));
 
     return $result;
+  }
+
+  public function load(fs\file $file, array $aArguments = array()) {
+
+    return parent::load($file, $aArguments);
+  }
+
+  protected function build(fs\file $file, fs\directory $base) {
+
+    $this->setDirectory(__FILE__);
+
+    $reflector = $this->createReflector($file, $base);
+    $window = $this->runReflector($reflector, $reflector->getInterface()->getName(), $file);
+
+    $result = $this->buildFiles($window, $file);
+
+    return $result;
+  }
+
+  protected function buildFiles(dom\handler $window, fs\file $file) {
+
+    if ($this->readArgument('debug/show')) {
+
+      $tmp = $this->create('document', array($window));
+
+      echo '<pre>' . $file->asToken() . '</pre>';
+      echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
+    }
+
+    $tpl = $this->getCachedFile($file, '.tpl.php');
+
+    $template = $this->getTemplate(static::PHP_TEMPLATE);
+
+    $template->setParameters(array(
+      'template' => $tpl->getRealPath(),
+    ));
+
+    $result = $this->getCachedFile($file);
+
+    $sContent = $template->parseDocument($window, false);
+    $result->saveText($sContent);
+
+    if ($window->getRoot()->testAttribute('use-template')) {
+
+      //if ($sContent = $this->getTemplate(self::DOM_TEMPLATE)->parseDocument($window, false)) {
+      if ($doc = $this->getTemplate(static::DOM_TEMPLATE)->parseDocument($window)) {
+
+        $sContent = '';
+
+        foreach ($doc->getChildren() as $child) {
+
+          if ($child->getType() == dom\node::ELEMENT) {
+
+            $iString = $this->readArgument('template/indent') ? dom\handler::STRING_INDENT : 0;
+
+            $tmp = $this->createDocument($child);
+            $sContent .= $tmp->asString($iString);
+          }
+          else {
+
+            $sContent .= $child->asString();
+          }
+
+        }
+
+        $sContent = $this->parseAttributes($sContent);
+        $tpl->saveText($sContent);
+      }
+    }
+
+    return $result;
+  }
+
+  public function buildInto(fs\file $file, fs\directory $base, common\_window $window) {
+
+    $reflector = $this->createReflector($file, $base);
+    $reflector->setWindow($window);
+
+    try {
+
+      $reflector->build($window);
+    }
+    catch (core\exception $e) {
+
+      $e->addPath($file->asToken());
+      throw $e;
+    }
+  }
+
+  protected function parseAttributes($sContent) {
+
+    $sContent = preg_replace('/\[sylma:insert:(\d+)\]/', '<?php echo $aArguments[$1]; ?>', $sContent);
+
+    return $sContent;
   }
 
   public function createContext() {
 
     return $this->create('context');
+  }
+
+  public function validateString($sVal) {
+
+    if (!is_string($sVal)) {
+
+      $this->throwException(sprintf('Invalid argument type : string expected, %s given', $this->show($sVal)));
+    }
+
+    return $sVal;
+  }
+
+  public function validateArgument($sName, $mVar, $mVal, $bRequired = true, $bReturn = false, $bDefault = false) {
+
+    $mResult = null;
+
+    if ($bRequired && (is_null($mVal) || $mVal === false)) {
+
+      if ($bDefault) $mResult = null;
+      else $this->throwException(sprintf('Validation failed for argument %s', $sName));
+    }
+
+    if (!$bDefault) {
+
+      if ($bReturn) $mResult = $mVal;
+      else $mResult = $mVar;
+    }
+
+    return $mResult;
+  }
+
+  public function validateNumeric($iVal) {
+
+    if (!is_numeric($iVal)) {
+
+      $this->throwException(sprintf('Invalid argument type : numeric expected, %s given', $this->show($iVal)));
+    }
+
+    return $iVal + 0;
+  }
+
+  public function validateArray($aVal) {
+
+    if (!is_array($aVal)) {
+
+      $this->throwException(sprintf('Invalid argument type : array expected, %s given', $this->show($aVal)));
+    }
+
+    return $aVal;
+  }
+
+  public function validateObject($val, $sInterface) {
+
+    if (!$val instanceof $sInterface) {
+
+      $formater = \Sylma::getControler('formater');
+      $this->throwException(sprintf('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
+    }
+
+    return $val;
+  }
+
+  public function loadTemplate($sTemplate, $iKey, array $aArguments) {
+
+    $sResult = $this->includeTemplate($sTemplate, $iKey, $aArguments);
+
+    $doc = $this->getControler('dom')->createDocument();
+    $doc->setContent($sResult);
+
+    return $doc;
+  }
+
+  protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {
+
+    ob_start();
+
+    include($sTemplate);
+    $sResult = ob_get_clean();;
+
+    //ob_end_clean();
+
+    return $sResult;
   }
 
 }

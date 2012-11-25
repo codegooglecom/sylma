@@ -16,21 +16,14 @@ class Cached extends core\argument\Iterator {
 
     $mResult = include($file->getRealPath());
 
-    if (is_callable($mResult)) $mResult = $this->callFunction($mResult);
+    if (is_callable($mResult)) $mResult = self::callFunction($mResult);
 
     return $mResult;
   }
 
-  public function getFile($sPath) {
+  protected static function callFunction(\Closure $function) {
 
-    $fs = \Sylma::getControler(self::FILE_MANAGER_ALIAS);
-
-    return $fs->getFile($sPath);
-  }
-
-  protected function callFunction(\Closure $function) {
-
-    return $function($this);
+    return $function(\Sylma::getControler(self::FILE_MANAGER_ALIAS));
   }
 
   public function parseValue($mValue, array $aParentPath = array()) {
@@ -42,6 +35,22 @@ class Cached extends core\argument\Iterator {
     else {
 
       $mResult = parent::parseValue($mValue, $aParentPath);
+    }
+
+    return $mResult;
+  }
+
+  protected static function normalizeObjectUnknown($mVar, $iMode) {
+
+    $mResult = null;
+
+    if (is_callable($mVar)) {
+
+      $mResult = self::normalizeValue(self::callFunction($mVar), $iMode);
+    }
+    else {
+
+      $mResult = parent::normalizeUnknown($mVar);
     }
 
     return $mResult;

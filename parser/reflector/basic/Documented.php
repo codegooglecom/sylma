@@ -3,8 +3,6 @@
 namespace sylma\parser\reflector\basic;
 use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
 
-\Sylma::load('Master.php', __DIR__);
-
 abstract class Documented extends Master {
 
   /**

@@ -21,7 +21,8 @@
   </xsl:template>
 
   <xsl:template match="php:template">
-    <xsl:value-of select="concat('$this->loadTemplate(', @key, ', $aArguments)')"/>
+    <xsl:variable name="apos">'</xsl:variable>
+    <xsl:value-of select="concat('$this->getControler(', $apos, 'action', $apos, ')->loadTemplate($this->sTemplate, ', @key, ', $aArguments)')"/>
   </xsl:template>
 
   <xsl:template match="php:insert-call">

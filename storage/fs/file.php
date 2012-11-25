@@ -30,4 +30,6 @@ interface file extends fs\resource {
    * ex : /sylma/index.eml will output index
    */
   function getSimpleName();
+
+  function getExtension();
 }

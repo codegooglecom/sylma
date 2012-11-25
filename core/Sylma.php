@@ -113,6 +113,28 @@ class Sylma {
 
     switch ($sName) {
 
+      /** Parsers **/
+
+      case 'parser' :
+
+        $result = new parser\Manager;
+
+      break;
+
+      case 'action' :
+
+        $result = new parser\action\Controler();
+
+      break;
+
+      case 'caller' :
+
+        $result = new parser\caller\Controler;
+
+      break;
+
+      /** Others **/
+
       /*
       case 'fs' :
 
@@ -175,29 +197,10 @@ class Sylma {
         $result = $init->loadRedirect();
 
       break;
+    
+      case 'argument/parser' :
 
-      case 'action' :
-
-        $result = new parser\action\Controler();
-
-      break;
-
-      case 'argument' :
-
-        $result = new core\argument\Manager;
-
-      break;
-
-      case 'caller' :
-
-        $result = new parser\caller\Controler;
-
-
-      break;
-
-      case 'parser' :
-
-        $result = new parser\Manager;
+        $result = new core\argument\parser\Manager;
 
       break;
 

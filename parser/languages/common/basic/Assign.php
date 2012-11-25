@@ -10,10 +10,9 @@ class Assign extends Controled implements common\argumentable {
 
   public function __construct(common\_window $window, $variable, $value) {
 
-    $this->to = $variable;
-    $this->value = $value;
     $this->setControler($window);
 
+    $this->to = $variable;
     $this->value = $window->checkContent($value);
   }
 

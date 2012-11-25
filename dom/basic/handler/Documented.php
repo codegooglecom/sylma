@@ -12,6 +12,7 @@ require_once(dirname(dirname(__dir__)) . '/handler.php');
 abstract class Documented extends Container {
 
   static protected $iNS = 0;
+  protected $aPrefixes = array();
 
   public function set() {
 
@@ -182,7 +183,10 @@ abstract class Documented extends Container {
     if ($sNamespace) {
 
       // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
-      if (!strpos($sName, ':')) $sName = 'ns' . self::$iNS++ . ':' . $sName;
+      if (!strpos($sName, ':')) {
+
+        $sName = $this->generateName($sName, $sNamespace);
+      }
       $el = $doc->createElementNS($sNamespace, $sName);
     }
     else {
@@ -201,6 +205,21 @@ abstract class Documented extends Container {
     }
 
     return $el;
+  }
+
+  protected function generateName($sName, $sNamespace) {
+
+    if (!array_key_exists($sNamespace, $this->aPrefixes)) {
+
+      $sPrefix = self::$iNS++;
+      $this->aPrefixes[$sNamespace] = $sPrefix;
+    }
+    else {
+
+      $sPrefix = $this->aPrefixes[$sNamespace];
+    }
+
+    return 'ns' . $sPrefix . ':' . $sName;
   }
 
   public function setRoot(dom\element $el) {

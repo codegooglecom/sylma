@@ -78,23 +78,21 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     $self = $window->createVariable('self', $this->getHandlerInstance());
     $closure = $window->create('closure', array($window, array($self)));
 
+    $bChildren = false;
     $window->setScope($closure);
     $import = $children->current();
 
     $handler = $this->reflectImport($import);
 
-    if ($children->length != 1 || $aChildren) {
+    if ($children->length > 1 || $aChildren) {
 
-      //$var = $handler->getVar();
-      //$closure->addContent($var);
-
+      $bChildren = true;
       $children->next();
 
       while ($children->current()) {
 
         $import = $children->current();
-
-        $this->mergeArguments($handler, $this->reflectImport($import));
+        $this->mergeArguments($handler->getVar(), $this->reflectImport($import));
 
         $children->next();
       }
@@ -102,8 +100,10 @@ abstract class Reflector extends parser\reflector\basic\Documented {
       if ($aChildren) {
 
         $array = $window->argToInstance($aChildren);
-        $this->mergeArguments($handler, $array);
+        $this->mergeArguments($handler->getVar(), $array);
       }
+
+      $closure->addContent($handler->getVar());
     }
 
     if ($import->getParent()->isRoot()) {
@@ -111,7 +111,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
       $call = $window->createCall($handler->getVar(), 'asArray', 'php-array');
       $closure->addContent($call);
     }
-    else {
+    else if (!$bChildren) {
 
       $closure->addContent($handler);
     }
@@ -121,10 +121,10 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     return $closure;
   }
 
-  protected function mergeArguments($first, common\_instance $second) {
+  protected function mergeArguments(common\_var $first, common\argumentable $second) {
 
     $window = $this->getWindow();
-    $call = $window->createCall($first->getVar(), 'merge', $window->tokenToInstance('\sylma\core\argument'), array($second));
+    $call = $window->createCall($first, 'merge', $window->tokenToInstance('\sylma\core\argument'), array($second));
 
     $window->add($call);
   }
@@ -156,10 +156,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
   protected function getHandlerInstance() {
 
-    $sClass = $this->getControler()->getClassName('handler');
-    $result = $this->getWindow()->tokenToInstance($sClass);
-
-    return $result;
+    return $this->getWindow()->tokenToInstance('\sylma\core\argument\parser\Cached');
   }
 
   protected function reflectImport(dom\element $el) {
@@ -170,7 +167,9 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     //$fs = $window->addControler('fs');
 
     $file = $window->createCall($window->getScope()->getVariable('self'), 'getFile', '\sylma\storage\fs\file', array($sFile));
-    $result = $window->createInstanciate($this->getHandlerInstance(), array($file));
+
+    $manager = $this->getWindow()->addControler(static::ARGUMENT_MANAGER);
+    $result = $this->getWindow()->createCall($manager, 'createArguments', $this->getHandlerInstance(), array($file));
 
     return $result;
   }

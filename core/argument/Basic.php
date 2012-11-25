@@ -430,7 +430,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     return $aFrom;
   }
 
-  protected static function normalizeObject($val, $iMode = self::NORMALIZE_DEFAULT) {
+  protected static function normalizeObject($val, $iMode) {
 //echo '- ' .get_class($val).'<br/>';
     $mResult = null;
 
@@ -457,12 +457,17 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
     else {
 
-      \Sylma::throwException(sprintf('Cannot normalize object @class %s', get_class($val)));
+      $mResult = static::normalizeObjectUnknown($val, $iMode);
     }
 
     if (self::DEBUG_NORMALIZE_RECURSION) self::$aNormalizedObjects[] = $val;
 
     return $mResult;
+  }
+
+  protected static function normalizeObjectUnknown($val, $iMode) {
+
+    \Sylma::throwException(sprintf('Cannot normalize object @class %s', get_class($val)));
   }
 
   protected static function normalizeArgument(core\argument $arg, $bEmpty = false) {
@@ -483,22 +488,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     foreach ($aArray as $sKey => $mVal) {
 
       self::$sCurrentPath = $sCurrentPath . '/' . $sKey;
-
-      if (is_object($mVal)) {
-
-        $mResult = static::normalizeObject($mVal, $iMode);
-
-        if (!$mResult) $mResult = null;
-      }
-      else if (is_array($mVal)) {
-
-        $mResult = static::normalizeArray($mVal, $iMode);
-        if (($iMode & self::NORMALIZE_EMPTY_ARRAY) && !$mResult) $mResult = null; // transform empty array to null
-      }
-      else {
-
-        $mResult = static::normalizeUnknown($mVal);
-      }
+      $mResult = self::normalizeValue($mVal, $iMode);
 
       if ($mResult !== null) $aResult[$sKey] = $mResult;
     }
@@ -508,7 +498,30 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     return $aResult;
   }
 
-  protected static function normalizeUnknown($mVar) {
+  protected static function normalizeValue($mValue, $iMode) {
+
+    $mResult = null;
+
+    if (is_object($mValue)) {
+
+      $mResult = static::normalizeObject($mValue, $iMode);
+
+      if (!$mResult) $mResult = null;
+    }
+    else if (is_array($mValue)) {
+
+      $mResult = static::normalizeArray($mValue, $iMode);
+      if (($iMode & self::NORMALIZE_EMPTY_ARRAY) && !$mResult) $mResult = null; // transform empty array to null
+    }
+    else {
+
+      $mResult = static::normalizeUnknown($mValue, $iMode);
+    }
+
+    return $mResult;
+  }
+
+  protected static function normalizeUnknown($mVar, $iMode) {
 
     return $mVar;
   }

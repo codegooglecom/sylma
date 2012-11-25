@@ -3,7 +3,7 @@ namespaces :
   #'http://www.sylma.org/parser/action' : action
   'http://www.sylma.org/parser/js/binder' : js/binder/compiler
   'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
-  'http://www.sylma.org/parser/js/template' : js/template
+  #'http://www.sylma.org/parser/js/template' : js/template
   'http://www.sylma.org/core/factory' : factory
 classes :
   security :

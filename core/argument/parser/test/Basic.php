@@ -21,7 +21,7 @@ class Basic extends tester\Basic {
       'arg' => self::ARGUMENT_NS,
     ));
 
-    $this->setControler($this->getControler('argument'));
+    $this->setControler($this->getControler('argument/parser'));
 
     $cache = \Sylma::getControler('fs/cache');
     $this->exportDirectory = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
@@ -40,8 +40,8 @@ class Basic extends tester\Basic {
 
     $doc->saveFile($tmp, true);
 
-    $result = $this->getControler()->create('handler', array($tmp));
-    $result->setBaseDirectory($file->getParent());
+    $result = $this->getControler()->createArguments($tmp);
+    //$result->setBaseDirectory($file->getParent());
 
     return $result;
   }

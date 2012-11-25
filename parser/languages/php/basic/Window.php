@@ -36,7 +36,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
     $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom/node.php');
     $this->setInterface($node->getInterface());
 
-    $this->sylma = $this->tokenToInstance('\Sylma');
+    $this->sylma =  $this->create('class', array($this, $this->tokenToInstance('\Sylma')->getInterface()));
   }
 
   protected function addContentUnknown($mVal) {

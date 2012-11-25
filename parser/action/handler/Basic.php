@@ -6,12 +6,12 @@ use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 /**
  * "Controller free" class.
  */
-class Basic extends parser\Handler implements parser\action, core\stringable, core\tokenable {
+class Basic extends core\module\Filed implements parser\action, core\stringable, core\tokenable {
 
   const CONTROLER_ALIAS = 'action';
 
-  protected static $sArgumentClass = 'sylma\core\argument\Filed';
-  protected static $sArgumentFile = 'core/argument/Filed.php';
+  //protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  //protected static $sArgumentFile = 'core/argument/Filed.php';
 
   const FS_CONTROLER = 'fs/editable';
 
@@ -25,16 +25,17 @@ class Basic extends parser\Handler implements parser\action, core\stringable, co
   protected $bRunned = false;
   protected $bExceptions = false;
 
-  public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
+  public function __construct(fs\file $file, array $aArguments = array(), fs\directory $dir = null) {
 
     $this->setArguments($aArguments);
-
     $this->setControler(\Sylma::getControler(self::CONTROLER_ALIAS));
-    //$this->setDirectory(__file__);
 
     $this->setNamespace($this->getControler()->getNamespace());
 
-    parent::__construct($file, $base);
+    $this->setFile($file);
+
+    if ($dir) $this->setDirectory($dir);
+    else $this->setDirectory($file->getParent());
   }
 
   protected function getAction() {
@@ -105,12 +106,13 @@ class Basic extends parser\Handler implements parser\action, core\stringable, co
       $sContext = 'action/current';
 
       $manager = $this->getControler('parser');
-      $parent = $manager->getContext($sContext, false);
+      //$parent = $manager->getContext($sContext, false);
       $manager->setContext($sContext, $this);
 
       try {
 
-        $action = $this->load();
+        $aArguments = array($this->getDirectory(), $this, $this->getContexts(), $this->getArguments()->query(), $this->getControlers());
+        $action = $this->getControler()->load($this->getFile(), $aArguments);
 
         $this->setAction($action);
         $this->getAction()->loadAction();
@@ -135,21 +137,6 @@ class Basic extends parser\Handler implements parser\action, core\stringable, co
     if (!is_null($mValue)) $this->bRunned = $mValue;
 
     return $this->bRunned;
-  }
-
-  protected function createCached(fs\file $file, fs\directory $dir, $controler, array $aContexts, array $aArguments) {
-  }
-
-  protected function loadCache(fs\file $file) {
-
-    $result = $this->getControler()->create('cached', array($file, $this->getBaseDirectory(), $this, $this->getContexts(), $this->getArguments()->query()));
-
-    foreach ($this->getControlers() as $sName => $controler) {
-
-      $result->setControler($controler, $sName);
-    }
-
-    return $result;
   }
 
   protected function parseString(core\stringable $mVal) {

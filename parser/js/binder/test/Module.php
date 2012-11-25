@@ -7,7 +7,6 @@ class Module extends core\module\Domed implements dom\domable {
 
   const NS = 'http://www.sylma.org/parser/js/binder/test';
 
-  protected $file;
   protected $iTestKey;
 
   public function __construct() {
@@ -16,19 +15,6 @@ class Module extends core\module\Domed implements dom\domable {
     $this->setNamespace(self::NS, 'self');
 
     $this->setFile($this->getFile('basic.xml'));
-  }
-
-  protected function getFile($sPath = '', $bDebug = true) {
-
-    if (!$sPath) $result = $this->file;
-    else $result = parent::getFile($sPath, $bDebug);
-
-    return $result;
-  }
-
-  protected function setFile(fs\file $file) {
-
-    $this->file = $file;
   }
 
   public function asDOM() {

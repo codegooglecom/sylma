@@ -6,7 +6,7 @@ use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 class Basic extends tester\Prepare {
 
   const NS = 'http://www.sylma.org/core/argument/test';
-  protected $sTitle = 'Arguments';
+  protected $sTitle = 'Basic';
 
   public function __construct() {
 

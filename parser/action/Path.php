@@ -5,6 +5,8 @@ use sylma\core, sylma\storage\fs, sylma\core\functions;
 
 class Path extends core\module\Argumented {
 
+  const FILE_MANAGER = 'fs';
+
   private $sPath = '';
   private $file = null;
 
@@ -77,10 +79,8 @@ class Path extends core\module\Argumented {
 */
   public function parse($bDebug = true) {
 
-    $controler = $this->getControler();
-
     $file = null;
-    $dir = $controler->getDirectory('/');
+    $dir = $this->getControler(static::FILE_MANAGER)->getDirectory('/');
 
     $aPath = $this->getPath(true);
 

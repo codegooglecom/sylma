@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/core/argument/parser/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument">
-  <tst:description>Cached</tst:description>
+  <tst:description>Basic</tst:description>
   <tst:test name="Simple read">
     <tst:prepare>
       $controler->setArgument('arg', $controler->createHandler('simple1.xml'));
@@ -13,7 +13,7 @@
         $arg->read('def') === '456'
     </tst:expected>
   </tst:test>
-  <tst:test name="Simple import">
+  <tst:test name="Single import">
     <tst:prepare>
       $controler->setArgument('arg', $controler->createHandler('single-import.xml'));
     </tst:prepare>
@@ -25,7 +25,7 @@
         $arg->read('def') === '456'
     </tst:expected>
   </tst:test>
-  <tst:test name="Double import">
+  <tst:test name="Double imports">
     <tst:prepare>
       $controler->setArgument('arg', $controler->createHandler('double-import.xml'));
     </tst:prepare>
@@ -51,9 +51,9 @@
         $arg->read('def') === '456'
     </tst:expected>
   </tst:test>
-  <tst:test name="Embeded imports">
+  <tst:test name="Encapsed imports">
     <tst:prepare>
-      $controler->setArgument('arg', $controler->createHandler('embedded-imports.xml'));
+      $controler->setArgument('arg', $controler->createHandler('encapsed-imports.xml'));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->getArgument('arg');
@@ -61,6 +61,49 @@
       return
         $arg->read('abc') === '123' &amp;&amp;
         $arg->read('def') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Inner import">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('inner-import.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def/ghi') === '789' &amp;&amp;
+        $arg->read('def/jkl') === '001'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Inner import merged">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('inner-import-merged.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def/ghi') === '789' &amp;&amp;
+        $arg->read('def/jkl') === '002' &amp;&amp;
+        $arg->read('def/lmn') === '003'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple import merged">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('multiple-import-merged.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def/abc') === '123' &amp;&amp;
+        $arg->read('def/def') === '004' &amp;&amp;
+        $arg->read('def/ghi') === '789' &amp;&amp;
+        $arg->read('def/jkl') === '002' &amp;&amp;
+        $arg->read('def/lmn') === '003'
     </tst:expected>
   </tst:test>
 </tst:tests>

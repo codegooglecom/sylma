@@ -7,7 +7,6 @@ class Standalone extends core\module\Domed implements dom\domable {
 
   const NS = 'http://www.sylma.org/parser/js/binder/test';
 
-  protected $file;
   protected $iTestKey;
 
   public function __construct(fs\file $file, $iTest) {
@@ -27,19 +26,6 @@ class Standalone extends core\module\Domed implements dom\domable {
   public function setTestKey($iTestKey) {
 
     $this->iTestKey = $iTestKey;
-  }
-
-  protected function getFile($sPath = '', $bDebug = true) {
-
-    if (!$sPath) $result = $this->file;
-    else $result = parent::getFile($sPath, $bDebug);
-
-    return $result;
-  }
-
-  protected function setFile(fs\file $file) {
-
-    $this->file = $file;
   }
 
   protected function loadTest(dom\handler $doc) {

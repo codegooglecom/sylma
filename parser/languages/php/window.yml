@@ -8,6 +8,8 @@ classes :
     name : instance\_Numeric
   object :
     name : instance\_Object
+  class :
+    name : instance\_Class
   call :
     name : CallMethod
   object-var :

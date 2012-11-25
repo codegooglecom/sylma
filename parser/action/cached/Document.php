@@ -20,7 +20,7 @@ class Document extends Basic implements dom\domable {
       $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
 */
 
-      $doc = $this->loadTemplate(0, $aArguments);
+      $doc = $this->getHandler()->getControler()->loadTemplate($this->sTemplate, 0, $aArguments);
       $mResult = $this->loadParsers($doc);
     }
     else {
@@ -71,26 +71,13 @@ class Document extends Basic implements dom\domable {
     return $result;
   }
 
-  protected function loadTemplate($iKey, array $aArguments) {
+  protected function loadArgumentable(core\argumentable $val = null) {
 
-    $sResult = $this->includeTemplate($this->sTemplate, $iKey, $aArguments);
+    if (!$val) return null;
 
-    $doc = $this->createDocument();
-    $doc->setContent($sResult);
+    $arg = $val->asArgument();
 
-    return $doc;
-  }
-
-  protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {
-
-    ob_start();
-
-    include($sTemplate);
-    $sResult = ob_get_contents();
-
-    ob_end_clean();
-
-    return $sResult;
+    return $this->loadDomable($arg);
   }
 
   protected function setTemplate($sTemplate) {

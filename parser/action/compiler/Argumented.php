@@ -8,6 +8,7 @@ require_once('Domed.php');
 abstract class Argumented extends Domed {
 
   const ARGUMENT_METHOD = 'getActionArgument';
+  const ACTION_ALIAS = 'action';
 
   protected $aActionArguments = array();
   protected $iArgument = 0;
@@ -109,26 +110,27 @@ abstract class Argumented extends Domed {
     $window = $this->getWindow();
 
     $bool = $window->tokenToInstance('php-boolean');
+    $manager = $window->addControler(self::ACTION_ALIAS);
 
     if ($val instanceof common\_scalar) {
 
       if ($val instanceof php\basic\instance\_String) {
 
-        $call = $window->createCall($window->getSelf(), 'validateString', $window->tokenToInstance('php-string'), array($call));
+        $call = $window->createCall($manager, 'validateString', $window->tokenToInstance('php-string'), array($call));
       }
       else if ($val instanceof php\basic\instance\_Numeric) {
 
-        $call = $window->createCall($window->getSelf(), 'validateNumeric', $window->tokenToInstance('php-numeric'), array($call));
+        $call = $window->createCall($manager, 'validateNumeric', $window->tokenToInstance('php-numeric'), array($call));
       }
       else if ($val instanceof php\basic\instance\_Array) {
 
-        $call = $window->createCall($window->getSelf(), 'validateArray', $window->tokenToInstance('php-array'), array($call));
+        $call = $window->createCall($manager, 'validateArray', $window->tokenToInstance('php-array'), array($call));
       }
     }
     else if ($val instanceof common\_object) {
 
       $interface = $val->getInterface();
-      $call = $window->createCall($window->getSelf(), 'validateObject', $val, array($call, $interface->getName()));
+      $call = $window->createCall($manager, 'validateObject', $val, array($call, $interface->getName()));
     }
 
     return $call;
@@ -208,7 +210,7 @@ abstract class Argumented extends Domed {
       $this->setActionArgument($sArgument, $result);
     }
 
-    $call = $window->createCall($window->getSelf(), 'validateArgument', 'php-boolean', array($sArgument, $var, $validation, $bRequired, $bReturn, $bDefault));
+    $call = $window->createCall($window->addControler(self::ACTION_ALIAS), 'validateArgument', 'php-boolean', array($sArgument, $var, $validation, $bRequired, $bReturn, $bDefault));
     return $window->createAssign($var, $call);
   }
 }

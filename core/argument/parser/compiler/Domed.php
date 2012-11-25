@@ -15,7 +15,7 @@ class Domed extends Reflector implements parser\reflector\documented {
 
   const NS = 'http://www.sylma.org/core/argument';
 
-  public function __construct(core\factory $manager, dom\handler $doc, fs\directory $dir = null) {
+  public function __construct(core\factory $manager, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
     $this->setControler($manager);
