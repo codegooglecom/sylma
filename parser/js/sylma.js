@@ -167,11 +167,5 @@ sylma.ui = new sylma.classes.ui;
     }
   });
 
-  this.Test = new Class({
-    Extends : this.Base,
-    test : function() {
-      alert('test');
-    }
-  });
 
 }).call(sylma.ui);

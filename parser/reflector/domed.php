@@ -3,8 +3,9 @@
 namespace sylma\parser\reflector;
 use \sylma\core, \sylma\storage\fs, \sylma\dom;
 
-\Sylma::load('/core/controled.php');
-
+/**
+ * TODO : Name should be child
+ */
 interface domed extends core\controled {
 
   /**

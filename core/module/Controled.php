@@ -3,9 +3,6 @@
 namespace sylma\core\module;
 use \sylma\core;
 
-require_once('core/controled.php');
-require_once('Namespaced.php');
-
 class Controled extends Namespaced implements core\controled {
 
   protected $controler;
@@ -64,7 +61,7 @@ class Controled extends Namespaced implements core\controled {
     return $controler;
   }
 
-  public function getNamespace($sPrefix = null) {
+  protected function getNamespace($sPrefix = null) {
 
     $sNamespace = parent::getNamespace($sPrefix);
 

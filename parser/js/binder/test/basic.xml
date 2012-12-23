@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/parser/js/binder/test" xmlns="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:la="http://www.sylma.org/parser/js/binder">
+<tst:tests xmlns:tst="http://www.sylma.org/parser/js/binder/test" xmlns="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:la="http://www.sylma.org/parser/js/binder">
   <tst:description>JS</tst:description>
   <tst:test name="Base object">
     <le:action>
@@ -55,6 +55,19 @@
       var node = tmp[0].node.fireEvent('mouseover');
 
       return node.getChildren()[0].get('text') == 'bonsoir';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple property">
+    <le:action>
+      <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+        <la:property name="directory"><lm:directory/></la:property>
+        <div>Hello world</div>
+      </div>
+    </le:action>
+    <tst:expected>
+      var test = example.test;
+
+      return test.directory = '/sylma/parser/js/binder/test';
     </tst:expected>
   </tst:test>
 </tst:tests>

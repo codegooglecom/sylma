@@ -11,7 +11,15 @@ require_once('Filed.php');
  */
 abstract class Domed extends Filed {
 
+  /**
+   * @var dom\argument
+   */
   private $options = null;  // contextual settings
+
+  /**
+   * @var dom\handler
+   */
+  protected $document = null;
 
   //protected static $sArgumentClass = 'sylma\core\argument\Domed';
   //protected static $sArgumentFile = 'core/argument/Domed.php';
@@ -86,25 +94,39 @@ abstract class Domed extends Filed {
   }
 
   /**
-   * Load a DOM Document from a path relative to the module's directory
+   * Load a DOM Document from a path relative to the module's directory or self document property if no path is sent
    *
    * @param string $sPath The path to the document, relative to the module's directory
    * @param integer $iMode The load mode (READ, WRITE, EXECUTION)
    *
-   * @return dom\document|null The loaded document, or null if not found/valid
+   * @return dom\document|null The loaded document, the document property if path is not sent (or empty), or null if not found/valid
    */
-  protected function getDocument($sPath, $iMode = \Sylma::MODE_EXECUTE) {
+  protected function getDocument($sPath = '', $iMode = \Sylma::MODE_EXECUTE) {
 
     $doc = null;
 
-    if ($file = $this->getFile($sPath)) {
+    if ($sPath) {
 
-      $doc = $file->getDocument(array(), $iMode);
+      if ($file = $this->getFile($sPath)) {
+
+        $doc = $file->getDocument(array(), $iMode);
+      }
+    }
+    else {
+
+      $doc = $this->document;
     }
 
     return $doc;
   }
 
+  protected function setDocument(dom\handler $doc) {
+
+    $doc->registerNamespaces($this->getNS());
+    $this->document = $doc;
+  }
+
+/*
   protected function setOptions(dom\document $options, dom\document $schema = null, $aNS = array()) {
 
     $this->options = $this->create('options', array($options, $schema, $this->mergeNamespaces($this->getNS(), $aNS)));
@@ -116,7 +138,7 @@ abstract class Domed extends Filed {
 
     return $this->options;
   }
-
+*/
   /**
    * Return a setting result from @interface SettingsInterface object set with @method setOptions()
    *

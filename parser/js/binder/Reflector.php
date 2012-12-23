@@ -22,12 +22,12 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
   protected $sPath = '';
   protected $aObjects = array();
   protected $root;
-  protected $bRootElement = true;
+  //protected $bRootElement = true;
   protected $context;
 
   protected $iDepth = 0;
 
-  public function __construct(parser\reflector\domed $parent) {
+  public function __construct(parser\reflector\documented $parent) {
 
     $this->setDirectory(__file__);
     $this->setArguments('settings.yml');

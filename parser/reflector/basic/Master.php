@@ -113,6 +113,21 @@ abstract class Master extends Domed {
     return $mResult;
   }
 
+  /**
+   * Build a new element from the source element, cannot copy cause of following steps
+   *
+   * - Check for foreign attributes.
+   *   They define result if exists with @method parseAttributesForeign([new element]) (1st pass)
+   * - Add parsed children to new element.
+   * - Inform foreign attributes parser that element has been parsed with @method $parser->onClose
+   *   This allow parsers to edit new element (2nd pass)
+   *
+   * These steps give the ability to attribute parsers to return element into new container
+   *
+   * @param dom\element $el
+   * @return dom\element|mixed The new element or, if foreign attributes exists, result of parsing, so if result
+   *         is changed on 1st pass and changes happened to new element on 2nd pass, they will we be ignored.
+   */
   protected function parseElementUnknown(dom\element $el) {
 
     $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
@@ -147,16 +162,6 @@ abstract class Master extends Domed {
     }
 
     return $mResult;
-  }
-
-  public function getLastElement() {
-
-    return $this->lastElement;
-  }
-
-  public function setLastElement($lastElement) {
-
-    $this->lastElement = $lastElement;
   }
 
   /**

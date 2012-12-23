@@ -70,6 +70,7 @@ abstract class Domed extends Child {
 
   protected function parseElementUnknown(dom\element $el) {
 
+    //$this->throwException('Foreign element not recognized');
     return $el;
   }
 
@@ -79,7 +80,6 @@ abstract class Domed extends Child {
   }
 
   /**
-   * Parse children into main context. Insert results
    * @param dom\element $el
    * @return array
    */

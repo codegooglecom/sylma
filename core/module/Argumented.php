@@ -5,7 +5,7 @@ use sylma\core;
 
 require_once('Controled.php');
 
-abstract class Argumented extends Controled {
+abstract class Argumented extends Managed {
 
   const FACTORY_CONTROLER = 'factory';
 

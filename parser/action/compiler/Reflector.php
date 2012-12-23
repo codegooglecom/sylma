@@ -1,11 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action, \sylma\parser\languages\common, sylma\parser\languages\php;
-
-require_once('Argumented.php');
-
-require_once('core/functions/Path.php');
+use \sylma\core, \sylma\dom, \sylma\parser\action, \sylma\parser\languages\common, sylma\parser\languages\php;
 
 class Reflector extends Argumented {
 

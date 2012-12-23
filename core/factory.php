@@ -2,9 +2,7 @@
 
 namespace sylma\core;
 
-require_once('namespaced.php');
-
-interface factory extends namespaced {
+interface factory {
 
   /**
    * Used in @class argument for keeping file path for relative path import

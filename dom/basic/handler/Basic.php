@@ -3,10 +3,6 @@
 namespace sylma\dom\basic\handler;
 use \sylma\dom, \sylma\storage\fs, \sylma\core;
 
-require_once('core/module/Controled.php');
-require_once(dirname(dirname(__dir__)) . '/handler.php');
-//require_once('core/argumentable.php');
-
 /**
  * Existenz of this class mainly due to https://bugs.php.net/bug.php?id=28473
  * Allow too extension of document methods with others arguments
@@ -22,7 +18,8 @@ abstract class Basic extends core\module\Controled implements dom\handler {
   protected $aClasses = array();
 
   /**
-   * See @method setMode() for details
+   * See @method getMode() for details
+   * @var integer
    */
   private $iMode = null;
 
@@ -104,20 +101,11 @@ abstract class Basic extends core\module\Controled implements dom\handler {
     return $bResult;
   }
 
-  /**
-   * Register some couples prefix => namespaces that will be used in next queries
-   *   Used in @method dom\element\get, @method dom\element\query and @method dom\element\read
-   * @param array $aNS The couples prefix => namespaces
-   */
   public function registerNamespaces(array $aNS = array()) {
 
     $this->setNamespaces($aNS);
   }
 
-  /**
-   * Set the used class for returned child nodes
-   * @param core\argument $settings The classes to use for child node
-   */
   public function registerClasses(core\argument $settings = null) {
 
     $aClasses = $this->getControler()->getClasses($settings);

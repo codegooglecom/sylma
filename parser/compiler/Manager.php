@@ -21,9 +21,8 @@ abstract class Manager extends core\module\Domed {
       $arguments = 'manager.xml';
     }
 
-    $this->setArguments($arguments);
-
     $this->loadDefaultArguments();
+    $this->setArguments($arguments);
   }
 
   public function getClassName($sClass) {
@@ -139,7 +138,6 @@ abstract class Manager extends core\module\Domed {
   protected function build(fs\file $file, fs\directory $dir) {
 
     $reflector = $this->createReflector($file, $dir);
-
     $window = $this->runReflector($reflector, $this->readArgument('classes\cached'), $file);
 
     if ($this->readArgument('debug/show')) {
@@ -158,6 +156,15 @@ abstract class Manager extends core\module\Domed {
     return $result;
   }
 
+  /**
+   * Build window, then return result as PHP DOM Document
+   *
+   * @param parser\reflector\documented $reflector
+   * @param string $sInstance
+   * @param fs\file $file
+   *
+   * @return dom\handler
+   */
   protected function runReflector(parser\reflector\documented $reflector, $sInstance, fs\file $file) {
 
     try {
@@ -175,5 +182,4 @@ abstract class Manager extends core\module\Domed {
 
     return $result;
   }
-
 }

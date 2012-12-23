@@ -259,25 +259,12 @@ class Initializer extends module\Filed {
 
   public function getMime($sExtension) {
 
-    switch (strtolower($sExtension)) {
+    if (!$sResult = $this->readArgument("mime/$sExtension", false)) {
 
-      case 'jpg' : $sExtension = 'jpeg';
-      case 'jpeg' :
-      case 'png' :
-      case 'gif' : return 'image/'.$sExtension;
-
-      case 'js' : return 'application/javascript';
-      case 'css' : return 'text/css';
-      case 'xml' :
-      case 'xsl' : return 'text/xml';
-
-      case 'htm' :
-      case 'html' : return 'text/html';
-      case 'xhtml' : return 'application/xhtml+xml';
-      case 'json' : return 'application/json';
-
-      default : return 'plain/text';
+      $sResult = $this->readArgument("mime/default");
     }
+
+    return $sResult;
   }
 
   public function setHeaderCache($iTime) {

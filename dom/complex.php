@@ -1,8 +1,7 @@
 <?php
 
 namespace sylma\dom;
-
-require_once('node.php');
+use sylma\dom;
 
 /**
  * Nodes containing other nodes

@@ -10,6 +10,21 @@ namespaces :
 render :
   gzip : true
 initializer :
+  mime :
+    default : plain/text
+    jpg : image/jpeg
+    jpeg : image/jpeg
+    png : image/png
+    gif : image/gif
+    js : application/javascript
+    webm : video/webm
+    css : text/css
+    xml : text/xml
+    xsl : text/xml
+    htm : text/html
+    html : text/html
+    xhtml : application/xhtml+xml
+    json : application/json
   executables : [json]
   error :
     action : error.eml
@@ -56,64 +71,10 @@ users:
   authenticated:
     arguments: [ ]
     groups: [users]
-maintenance:
-  enable: false
-  file: protected/sylma/modules/html/maintenance.html
-  login: protected/sylma/modules/users/maintenance-login.html
-  login-do: sylma/modules/users/interface/login_do.redirect
-db:
-  # Switch to TRUE to enable database
-  enable: false
-  # Will check for existence of collections and documents and build it if none
-  install: false
-  host: http://localhost:8080/exist/services/Query?wsdl
-  user: myuser
-  password: mypass
-  collection: /mycollection
-  namespace: http://www.example.com
-  default:
-    group: dba
-    # octal value
-    mode: '0770'
-  debug:
-    run: true
-    queries:
-      show: false
-      statut: db/notice
-    results:
-      show: false
-      statut: db/notice
+
 dom:
   debug:
     # display all xpath queries in a formatted table containing paths grouped by count
     show-queries: false
   encoding:
     check: false
-form:
-  redirect: .redirect
-messages:
-  print:
-    all: false
-    # Messages sent before Messages handler's creation. Only available in DEBUG mode
-    hidden: true
-  format:
-    enable: true
-  backtrace:
-    enable: false
-    count: 3
-  array:
-    line-break: false
-  xml:
-    # WARNING : with false can cause UTF-8 errors - TODO
-    enable: true
-  log:
-    enable: false
-    all: false
-    # Write to this file if DB is not active
-    file : /debug.log
-  rights:
-    enable: true
-
-
-
-

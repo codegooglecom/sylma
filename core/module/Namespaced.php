@@ -2,8 +2,6 @@
 
 namespace sylma\core\module;
 
-require_once('Exceptionable.php');
-
 abstract class Namespaced extends Exceptionable {
 
   private $aNamespaces = array();

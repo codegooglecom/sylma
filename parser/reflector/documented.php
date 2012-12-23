@@ -1,17 +1,16 @@
 <?php
 
 namespace sylma\parser\reflector;
-use \sylma\core, \sylma\storage\fs, \sylma\dom;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
-interface documented {
+interface documented extends dom\domable {
 
   /**
    *
    * @param dom\element $el
    * @return core\argumentable|array|null
    */
-  function parse(dom\node $source);
-  function getNamespace($sPrefix = '');
-  function getLastElement();
+  //function build(common\_window $window);
+  function setWindow(common\_window $window);
 }
 

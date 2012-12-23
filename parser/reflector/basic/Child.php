@@ -3,8 +3,6 @@
 namespace sylma\parser\reflector\basic;
 use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
 
-require_once('core/module/Filed.php');
-
 abstract class Child extends core\module\Filed {
 
   protected $parent;

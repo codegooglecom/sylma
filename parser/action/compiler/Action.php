@@ -3,9 +3,6 @@
 namespace sylma\parser\action\compiler;
 use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php, \sylma\parser;
 
-\Sylma::load('/parser/reflector/basic/Documented.php');
-\Sylma::load('../reflector.php', __DIR__);
-
 abstract class Action extends parser\reflector\basic\Documented implements parser\action\reflector {
 
   //const CONTROLER = 'parser/action';
@@ -121,6 +118,16 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
     return $this->sFormat;
   }
 
+  public function getLastElement() {
+
+    return $this->lastElement;
+  }
+
+  public function setLastElement($lastElement) {
+
+    $this->lastElement = $lastElement;
+  }
+
   /**
    *
    * @return common\_instance
@@ -203,7 +210,13 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
     return $result;
   }
 
-  public function build(common\_window $window) {
+  /**
+   * TODO : make public for sub-action integration
+   *
+   * @param common\_window $window
+   * @return common\_window
+   */
+  protected function build(common\_window $window) {
 
     if ($aResult = $this->parseDocument($this->getDocument())) {
 

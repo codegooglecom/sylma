@@ -1,10 +1,7 @@
 <?php
 
 namespace sylma\dom;
-use \sylma\dom, \sylma\storage\fs;
-
-require_once('document.php');
-require_once('complex.php');
+use sylma\core, sylma\dom, sylma\storage\fs;
 
 interface handler extends dom\document, dom\complex {
 
@@ -14,6 +11,19 @@ interface handler extends dom\document, dom\complex {
 
   function setFile(fs\file $file);
   function getFile();
+
+  /**
+   * Register some couples prefix => namespaces that will be used in next queries
+   *   Used in @method dom\element\get, @method dom\element\query and @method dom\element\read
+   * @param array $aNS The couples prefix => namespaces
+   */
+  function registerNamespaces(array $aNS = array());
+
+  /**
+   * Set the used class for returned child nodes
+   * @param core\argument $settings The classes to use for child node
+   */
+  public function registerClasses(core\argument $settings = null);
 
   function createElement($sName, $mContent = '', array $aAttributes = array(), $sUri = null);
   function loadText($sContent);

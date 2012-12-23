@@ -3,6 +3,10 @@
 namespace sylma\parser\js\binder;
 use sylma\core, sylma\dom, sylma\parser;
 
+/**
+ * On run, this class will work with the _Object instances to build final js tree of datas
+ */
+
 class Cached extends core\module\Domed implements parser\cached\documented {
 
   protected $parent;

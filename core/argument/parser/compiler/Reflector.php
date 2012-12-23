@@ -14,7 +14,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
     if ($el->isComplex()) {
 
-      $mContent = $this->parseChildren($el->getChildren());
+      $mContent = $this->parseChildrenImports($el->getChildren());
     }
     else {
 
@@ -38,16 +38,17 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
       $result = $this->parseElementArgument($el);
     }
-    else if ($parser = $this->loadParser($el->getNamespace())) {
-
-      $result = $parser->parseRoot($el);
-    }
     else {
 
-      $this->throwException('No foreign element allowed with this parser');
+      $result = parent::parseElementForeign($el);
     }
 
     return $result;
+  }
+
+  protected function parseElementUnknown(dom\element $el) {
+
+    $this->throwException('Foreign element not recognized');
   }
 
   protected function parseText(dom\text $node) {
@@ -55,20 +56,21 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     $this->throwException('Mixed element (element and text) or multiple text node not allowed here', array($child->getParent()->asToken()));
   }
 
-  protected function parseChildren(dom\collection $children) {
+  protected function parseChildrenImports(dom\collection $children) {
 
     $imports = $children->length ? $children->current()->getParent()->queryx('arg:import', $this->getNS(), false) : $children;
 
     if ($imports->length) {
 
-      $mResult = $this->reflectImports($imports, parent::parseChildren($children));
+      $mResult = $this->reflectImports($imports, $this->parseChildren($children));
     }
     else {
 
-      $mResult = parent::parseChildren($children);
+      $mResult = $this->parseChildren($children);
     }
 
     return $mResult;
+
   }
 
   protected function reflectImports(dom\collection $children, $aChildren) {
