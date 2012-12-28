@@ -5,6 +5,8 @@ use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parse
 
 class Window extends php\basic\Window {
 
+  const ACTION_ALIAS = 'action';
+
   protected $sContext = '';
   protected $aObjects = array();
 
@@ -79,7 +81,7 @@ class Window extends php\basic\Window {
   }
 
   public function addControler($sName) {
-    
+
     return parent::addControler($sName, $this->getSelf());
   }
 
@@ -172,7 +174,7 @@ class Window extends php\basic\Window {
         $this->throwException(sprintf('Cannot convert object %s to string', $interface->getName()));
       }
 
-      $result = $this->createCall($this->getSelf(), 'loadStringable', 'php-string', array($val, $iMode));
+      $result = $this->createCall($this->addControler(static::ACTION_ALIAS), 'loadStringable', 'php-string', array($val, $iMode));
     }/*
     else if ($val instanceof core\stringable) {
 
@@ -267,11 +269,11 @@ class Window extends php\basic\Window {
     }
     else if ($interface->isInstance('\sylma\core\argumentable')) {
 
-      $result = $this->createCall($this->getSelf(), 'loadArgumentable', '\sylma\dom\node', array($val));
+      $result = $this->createCall($this->addControler(static::ACTION_ALIAS), 'loadArgumentable', '\sylma\dom\node', array($val));
     }
     else if ($interface->isInstance('\sylma\dom\domable')) {
 
-      $result = $this->createCall($this->getSelf(), 'loadDomable', '\sylma\dom\node', array($val));
+      $result = $this->createCall($this->addControler(static::ACTION_ALIAS), 'loadDomable', '\sylma\dom\node', array($val));
     }
     else {
 

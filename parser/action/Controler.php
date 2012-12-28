@@ -182,6 +182,28 @@ class Controler extends parser\compiler\Manager implements core\factory {
     return $this->create('context');
   }
 
+  public function loadTemplate($sTemplate, $iKey, array $aArguments) {
+
+    $sResult = $this->includeTemplate($sTemplate, $iKey, $aArguments);
+
+    $doc = $this->getControler('dom')->createDocument();
+    $doc->setContent($sResult);
+
+    return $doc;
+  }
+
+  protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {
+
+    ob_start();
+
+    include($sTemplate);
+    $sResult = ob_get_clean();;
+
+    //ob_end_clean();
+
+    return $sResult;
+  }
+
   public function validateString($sVal) {
 
     if (!is_string($sVal)) {
@@ -242,26 +264,24 @@ class Controler extends parser\compiler\Manager implements core\factory {
     return $val;
   }
 
-  public function loadTemplate($sTemplate, $iKey, array $aArguments) {
+  public function loadStringable(core\stringable $val, $iMode = 0) {
 
-    $sResult = $this->includeTemplate($sTemplate, $iKey, $aArguments);
-
-    $doc = $this->getControler('dom')->createDocument();
-    $doc->setContent($sResult);
-
-    return $doc;
+    return $val->asString($iMode);
   }
 
-  protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {
+  public function loadArgumentable(core\argumentable $val = null) {
 
-    ob_start();
+    if (!$val) return null;
 
-    include($sTemplate);
-    $sResult = ob_get_clean();;
+    $arg = $val->asArgument();
 
-    //ob_end_clean();
-
-    return $sResult;
+    return $this->loadDomable($arg);
   }
 
+  public function loadDomable(dom\domable $val) {
+
+    $dom = $val->asDOM();
+
+    return $dom;
+  }
 }

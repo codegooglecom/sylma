@@ -3,6 +3,11 @@
 namespace sylma\parser\reflector\basic;
 use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
 
+/**
+ * This class offers 2 main methods to load external parsers on dom element :
+ * /@method loadElementForeign() and @method loadElementUnknown()
+ * /@method parseElementForeign() and @method parseElementUknown() must be overrided to use them
+ */
 abstract class Master extends Domed {
 
   /**
@@ -41,6 +46,11 @@ abstract class Master extends Domed {
     return $result;
   }
 
+  /**
+   * Set local parsers, with associated namespaces
+   * @param parser\reflector\domed $parser
+   * @param array $aNS
+   */
   public function setParser(parser\reflector\domed $parser, array $aNS) {
 
     $aResult = array();
@@ -99,7 +109,7 @@ abstract class Master extends Domed {
     return $el;
   }
 
-  protected function parseElementForeign(dom\element $el) {
+  protected function loadElementForeign(dom\element $el) {
 
     if ($parser = $this->loadParser($el->getNamespace(), 'element')) {
 
@@ -111,6 +121,7 @@ abstract class Master extends Domed {
     }
 
     return $mResult;
+
   }
 
   /**
@@ -128,7 +139,7 @@ abstract class Master extends Domed {
    * @return dom\element|mixed The new element or, if foreign attributes exists, result of parsing, so if result
    *         is changed on 1st pass and changes happened to new element on 2nd pass, they will we be ignored.
    */
-  protected function parseElementUnknown(dom\element $el) {
+  protected function loadElementUnknown(dom\element $el) {
 
     $newElement = $this->createElement($el->getName(), null, array(), $el->getNamespace());
 

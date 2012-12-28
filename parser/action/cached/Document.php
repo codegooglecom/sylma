@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\parser\action\cached;
-use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\parser, sylma\storage\fs;
 
-class Document extends Basic implements dom\domable {
+class Document extends Basic implements core\stringable {
 
   protected $sTemplate = '';
   protected $aParsers = array();
@@ -71,15 +71,6 @@ class Document extends Basic implements dom\domable {
     return $result;
   }
 
-  protected function loadArgumentable(core\argumentable $val = null) {
-
-    if (!$val) return null;
-
-    $arg = $val->asArgument();
-
-    return $this->loadDomable($arg);
-  }
-
   protected function setTemplate($sTemplate) {
 
     $this->sTemplate = $sTemplate;
@@ -88,13 +79,6 @@ class Document extends Basic implements dom\domable {
   protected function useTemplate() {
 
     return (bool) $this->sTemplate;
-  }
-
-  protected function loadDomable(dom\domable $val) {
-
-    $dom = $val->asDOM();
-
-    return $dom;
   }
 
   public function asDOM() {

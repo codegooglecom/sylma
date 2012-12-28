@@ -76,7 +76,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
     }
     else {
 
-      $mResult = parent::parseElementForeign($el);
+      $mResult = $this->loadElementForeign($el);
     }
 
     return $mResult;
@@ -86,7 +86,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
 
     $this->useTemplate(true);
 
-    return parent::parseElementUnknown($el);
+    return $this->loadElementUnknown($el);
   }
 
   /**

@@ -40,15 +40,10 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     }
     else {
 
-      $result = parent::parseElementForeign($el);
+      $result = $this->loadElementForeign($el);
     }
 
     return $result;
-  }
-
-  protected function parseElementUnknown(dom\element $el) {
-
-    $this->throwException('Foreign element not recognized');
   }
 
   protected function parseText(dom\text $node) {

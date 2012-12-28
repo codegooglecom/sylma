@@ -64,14 +64,12 @@ abstract class Domed extends Child {
 
   protected function parseElementForeign(dom\element $el) {
 
-    //$this->throwException('Foreign element not allowed here');
     return $this->parseElementUnknown($el);
   }
 
   protected function parseElementUnknown(dom\element $el) {
 
-    //$this->throwException('Foreign element not recognized');
-    return $el;
+    $this->throwException('Uknown element not recognized');
   }
 
   protected function parseText(dom\text $node) {

@@ -3,13 +3,6 @@
 namespace sylma\core\factory\parser;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
 
-\Sylma::load('/parser/reflector/basic/Domed.php');
-\Sylma::load('/parser/reflector/elemented.php');
-/**
- * Description of Reflector
- *
- * @author Rodolphe Gerber
- */
 class Reflector extends parser\reflector\basic\Domed implements parser\reflector\elemented {
 
   const NS = 'http://www.sylma.org/core/factory';

@@ -31,7 +31,7 @@ class Cached extends core\module\Domed implements parser\cached\documented {
     return $this->parent;
   }
 
-  public function setParent($parent) {
+  public function setParent(parser\action\cached $parent) {
 
     $this->parent = $parent;
   }

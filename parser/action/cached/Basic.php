@@ -3,7 +3,7 @@
 namespace sylma\parser\action\cached;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
-abstract class Basic extends core\module\Domed implements parser\action\cached, core\stringable {
+abstract class Basic extends core\module\Domed implements parser\action\cached {
 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
@@ -13,19 +13,11 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
   protected $handler;
 
-  /**
-   *
-   * @param \sylma\storage\fs\file $file The php file containing instructions
-   * @param \sylma\storage\fs\directory $dir
-   * @param \sylma\parser\action $handler
-   * @param array $aContexts
-   * @param \sylma\core\argument $arguments
-   */
-  public function __construct(fs\file $file, fs\directory $dir, parser\action $handler, array $aContexts, array $aArguments = array(), array $aControlers = array()) {
+  public function __construct(fs\file $file, fs\directory $dir, parser\action $handler, array $aContexts, array $aArguments = array(), array $aManagers = array()) {
 
-    foreach ($aControlers as $sName => $controler) {
+    foreach ($aManagers as $sName => $manager) {
 
-      $this->setControler($controler, $sName);
+      $this->setControler($manager, $sName);
     }
 
     if (!array_key_exists(self::CONTEXT_DEFAULT, $aContexts)) {
@@ -45,17 +37,17 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     $this->setActionArguments($aArguments);
   }
 
-  public function getHandler() {
+  protected function getHandler() {
 
     return $this->handler;
   }
 
-  public function setHandler(parser\action $handler) {
+  protected function setHandler(parser\action $handler) {
 
     $this->handler = $handler;
   }
 
-  public function setActionArguments(array $aArguments) {
+  protected function setActionArguments(array $aArguments) {
 
     $this->aActionArguments = $aArguments;
   }
@@ -107,11 +99,6 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     }
 
     //return $this->aResults;
-  }
-
-  protected function loadStringable(core\stringable $val, $iMode = 0) {
-
-    return $val->asString($iMode);
   }
 
   protected function getContexts() {

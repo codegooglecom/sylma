@@ -172,6 +172,11 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return $result;
   }
 
+  protected function parseElementUnknown(dom\element $el) {
+
+    return $el;
+  }
+  
   protected function isRoot() {
 
     return !$this->aObjects;
