@@ -36,10 +36,9 @@ class _String extends _Scalar implements common\_instance {
 
       $this->getControler()->throwException(sprintf('Cannot insert object @class ', get_class($mValue)));
     }
-  
+
     $this->mValue = $mResult;
   }
-
 
   public function asArgument() {
 

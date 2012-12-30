@@ -157,6 +157,9 @@ class Cleaner extends core\module\Domed {
 
     $cleaned = $cleaner->parseDocument($doc);
 
-    return $cleaned->asString(dom\handler::STRING_INDENT); // | dom\handler::STRING_HEAD
+    $iMode = 0;
+    if (\Sylma::read('initializer/output/indent')) $iMode = dom\handler::STRING_INDENT;
+
+    return $cleaned->asString($iMode); // | dom\handler::STRING_HEAD
   }
 }

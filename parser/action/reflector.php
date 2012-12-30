@@ -5,7 +5,7 @@ use sylma\parser, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sy
 
 interface reflector extends parser\reflector\documented, parser\reflector\domed {
 
-  function __construct(parser\action\Controler $controler, dom\handler $doc, fs\directory $dir);
+  function __construct(parser\action\Manager $controler, dom\handler $doc, fs\directory $dir);
   function getInterface();
   function setInterface(parser\caller $interface);
   function useTemplate();

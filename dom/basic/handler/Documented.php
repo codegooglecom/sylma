@@ -3,9 +3,6 @@
 namespace sylma\dom\basic\handler;
 use \sylma\dom, \sylma\core;
 
-require_once('Container.php');
-require_once(dirname(dirname(__dir__)) . '/handler.php');
-
 /**
  * Extends main dom\element root's methods
  */
@@ -34,7 +31,7 @@ abstract class Documented extends Container {
 
         $mResult = $this->setArray($mValue);
       }
-      else if (is_string($mValue)) {
+      else if (is_string($mValue) && $mValue) {
 
         $mResult = $this->startString($mValue);
       }
@@ -121,7 +118,7 @@ abstract class Documented extends Container {
 
   protected function setArgument(core\argument $arg) {
 
-    $doc = $arg->getDocument();
+    $doc = $arg->asDOM();
 
     return $this->setObject($doc);
   }
@@ -172,39 +169,6 @@ abstract class Documented extends Container {
     }
 
     return $result;
-  }
-
-  public function createElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null) {
-
-    $doc = $this->getDocument();
-
-    if (!$sName) $this->throwException(t('Empty value cannot be used as element\'s name'));
-
-    if ($sNamespace) {
-
-      // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
-      if (!strpos($sName, ':')) {
-
-        $sName = $this->generateName($sName, $sNamespace);
-      }
-      $el = $doc->createElementNS($sNamespace, $sName);
-    }
-    else {
-
-      $el = $doc->createElement($sName);
-    }
-
-    if ($mContent) {
-
-      $el->set($mContent);
-    }
-
-    if ($aAttributes) {
-
-      $el->setAttributes($aAttributes);
-    }
-
-    return $el;
   }
 
   protected function generateName($sName, $sNamespace) {

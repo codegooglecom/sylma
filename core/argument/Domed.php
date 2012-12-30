@@ -118,6 +118,14 @@ class Domed extends Iterator implements dom\domable {
     return $mResult;
   }
 
+  protected static function normalizeArgument(core\argument $arg, $bEmpty = false) {
+
+    if ($bEmpty) $result = $arg->asArray($bEmpty);
+    else $result = $arg->asDOM();
+
+    return $result;
+  }
+
   public function asDOM($sParentNamespace = '') {
 
     if (!$sNamespace = $this->getNamespace()) {

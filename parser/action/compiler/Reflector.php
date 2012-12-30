@@ -47,6 +47,7 @@ class Reflector extends Argumented {
       // case 'get-settings' :
       case 'interface' : $mResult = $this->reflectInterface($el); break;
       case 'context' : $mResult = $this->reflectContext($el); break;
+      case 'escape' : $mResult = $this->reflectEscape($el); break;
       case 'switch' :
       case 'function' :
 
@@ -487,5 +488,18 @@ class Reflector extends Argumented {
     $window->stopContext();
 
     $this->setFormat($sFormat);
+  }
+
+  protected function reflectEscape(dom\element $el) {
+
+    if ($el->countChildren() != 1) {
+
+      $this->throwException('Need one and only one argument');
+    }
+
+    $window = $this->getWindow();
+    $result = $window->createCall($window->addControler(self::ACTION_ALIAS), 'escape', 'php-string', array($this->parse($el->getFirst())));
+
+    return $result;
   }
 }

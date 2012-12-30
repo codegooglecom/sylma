@@ -3,10 +3,6 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-require_once('parser/languages/common/_var.php');
-
-\Sylma::load('/parser/languages/common/basic/Controled.php');
-
 abstract class _Var extends common\basic\Controled implements common\_var {
 
   private $sName = '';
@@ -17,7 +13,7 @@ abstract class _Var extends common\basic\Controled implements common\_var {
 
   protected $content;
 
-  public function __construct(common\_window $controler, common\_instance $instance, $sName, common\argumentable $content) {
+  public function __construct(php\window $controler, common\_instance $instance, $sName, common\argumentable $content) {
 
     $this->setName($sName);
     $this->setControler($controler);

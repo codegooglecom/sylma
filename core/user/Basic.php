@@ -352,6 +352,8 @@ class Basic extends core\module\Argumented implements core\user {
 
   public function isPrivate() {
 
+    if (\Sylma::read('debug/rights')) return true;
+
     return $this->bPrivate;
   }
 

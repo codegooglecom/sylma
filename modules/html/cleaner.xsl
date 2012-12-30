@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:html="http://www.w3.org/1999/xhtml" version="1.0">
 
+  <xsl:variable name="break"><![CDATA[
+]]></xsl:variable>
+
+  <xsl:template match="html:script">
+    <xsl:element name="script">
+      <xsl:apply-templates select="@*"/>
+      <xsl:choose>
+        <xsl:when test="text()">
+          <xsl:text disable-output-escaping="yes">//&lt;![CDATA[</xsl:text>
+          <xsl:value-of select="$break"/>
+          <xsl:value-of select="normalize-space(text())" disable-output-escaping="yes"/>
+          <xsl:value-of select="$break"/>
+          <xsl:text disable-output-escaping="yes">//]]&gt;</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text> </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:element>
+  </xsl:template>
+
   <xsl:template match="/">
     <xsl:apply-templates/>
   </xsl:template>

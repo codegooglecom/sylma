@@ -16,13 +16,12 @@ class Load extends parser\context\Basic implements dom\domable {
     if ($aValues) {
 
       $sCalls = join(";\n", $aValues);
+      $sContent = "window.addEvent('domready', function() { $sCalls });";
 
-      $aScript = array('script' => array(
-        '@type' => 'text/javascript',
-        "window.addEvent('domready', function() { $sCalls });",
-      ));
+      $doc = $this->createDocument();
 
-      $result = $this->createArgument($aScript, \Sylma::read('namespaces/html'))->asDOM();
+      $result = $doc->addElement('script', null, array('type' => 'text/javascript'), \Sylma::read('namespaces/html'));
+      $result->set($sContent);
     }
 
     return $result;

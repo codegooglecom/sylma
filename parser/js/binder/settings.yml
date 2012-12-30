@@ -1,3 +1,5 @@
+debug:
+  show: false
 classes :
   window :
     name : \sylma\parser\languages\js\basic\Window

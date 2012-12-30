@@ -10,9 +10,6 @@
 namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\common, sylma\parser\languages\php;
 
-require_once('Runner.php');
-require_once('parser/reflector/documented.php');
-
 abstract class Domed extends Runner implements parser\reflector\documented {
 
   protected $currentElement;

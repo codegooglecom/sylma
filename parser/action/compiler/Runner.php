@@ -3,8 +3,6 @@
 namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
 
-require_once('Action.php');
-
 abstract class Runner extends Action {
 
   /**

@@ -552,7 +552,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
   public function asArray($bEmpty = false) {
 
-    return static::normalizeArray($this->query(), $bEmpty);
+    $iMode = self::NORMALIZE_DEFAULT;
+    if (!$bEmpty) $iMode = $iMode & self::NORMALIZE_EMPTY_ARRAY;
+
+    return static::normalizeArray($this->query(), $iMode);
   }
 
   public function asJSON() {

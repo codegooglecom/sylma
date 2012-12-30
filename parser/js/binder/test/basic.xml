@@ -35,6 +35,7 @@
     </le:action>
     <tst:expected>
       var test = example.test;
+
       var node = test.sub.node;
 
       return node.get('text') == 'yup';
@@ -68,6 +69,33 @@
       var test = example.test;
 
       return test.directory = '/sylma/parser/js/binder/test';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple sub node">
+    <le:action>
+      <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+        <div la:node="hello">Hello</div>
+        <div>World</div>
+      </div>
+    </le:action>
+    <tst:expected>
+      var test = example.test;
+
+      return test.getNode('hello').get('text') === 'Hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple sub nodes">
+    <le:action>
+      <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+        <p>Bla bla bla</p>
+        <div la:node="hello">Hello</div>
+        <div la:node="world">World</div>
+      </div>
+    </le:action>
+    <tst:expected>
+      var test = example.test;
+
+      return test.getNode('hello').get('text') === 'Hello' &amp;&amp; test.getNode('world').get('text') === 'World';
     </tst:expected>
   </tst:test>
 </tst:tests>

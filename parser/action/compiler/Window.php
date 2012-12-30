@@ -108,6 +108,20 @@ class Window extends php\basic\Window {
     return $this->create('template', array($this, $node));
   }
 
+  public function createSimpleString($mValue) {
+
+    if (is_string($mValue) || $mValue instanceof core\stringable) {
+
+      $result = $this->create('string', array($this, $mValue));
+    }
+    else {
+
+      $result = $mValue; // TODO : is stringable
+    }
+
+    return $result;
+  }
+
   protected function argToString($mValue) {
 
     if ($mValue instanceof core\stringable) {
@@ -188,10 +202,13 @@ class Window extends php\basic\Window {
 
       $result = $val;
     }
+    else if (is_string($val)) {
+
+      $result = $this->createString($val);
+    }
     else {
 
-      $formater = $this->getControler('formater');
-      $this->throwException(sprintf('Cannot convert %s to string', $formater->asToken($val)));
+      $this->throwException(sprintf('Cannot convert %s to string', $this->show($val)));
     }
 
     return $result;

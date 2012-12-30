@@ -8,18 +8,18 @@ abstract class Namespaced extends Exceptionable {
   private $sNamespace = '';
   private $sPrefix = '';
 
-  protected function setNamespace($sUri, $sPrefix = null, $bDefault = true) {
+  protected function setNamespace($sNamespace, $sPrefix = null, $bDefault = true) {
 
-    if (!$sUri) {
+    if (!$sNamespace) {
 
       $this->throwException('Cannot use empty string as dom namespace');
     }
 
-    $this->aNamespaces[$sPrefix] = $sUri;
+    $this->aNamespaces[$sPrefix] = $sNamespace;
 
     if ($bDefault) {
 
-      $this->sNamespace = $sUri;
+      $this->sNamespace = $sNamespace;
       $this->sPrefix = $sPrefix;
     }
   }

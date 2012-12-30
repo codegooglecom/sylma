@@ -29,7 +29,7 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
 
   // controler : getNamespace, create, getArgument
 
-  public function __construct(parser\action\Controler $controler, dom\handler $doc, fs\directory $dir) {
+  public function __construct(parser\action\Manager $controler, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
     $this->setControler($controler);
@@ -44,7 +44,10 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
 
     if ($this->getInterface()->useElement()) {
 
-      $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
+      $sNamespace = $this->getInterface()->getNamespace(self::CLASS_PREFIX);
+
+      $this->setNamespace($sNamespace, self::CLASS_PREFIX, false);
+      $this->setUsedNamespace($sNamespace);
     }
   }
 

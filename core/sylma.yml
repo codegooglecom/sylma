@@ -10,6 +10,8 @@ namespaces :
 render :
   gzip : true
 initializer :
+  output :
+    indent : true
   mime :
     default : plain/text
     jpg : image/jpeg

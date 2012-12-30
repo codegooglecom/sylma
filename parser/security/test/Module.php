@@ -27,7 +27,7 @@ class Module extends tester\Prepare {
     ),
   );
 
-  public function __construct(parser\action\Controler $controler = null) {
+  public function __construct(parser\action\Manager $controler = null) {
 
     \Sylma::getControler('dom');
 

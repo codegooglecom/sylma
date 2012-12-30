@@ -21,6 +21,7 @@ class Controler extends core\module\Domed {
     'attribute' => 'DOMAttr',
     'comment' => 'DOMComment',
     'instruction' => 'DOMProcessingInstruction',
+    'cdata' => 'DOMCdataSection'
     //'collection' => 'DOMNodeList', // See https://bugs.php.net/bug.php?id=48352
   );
 

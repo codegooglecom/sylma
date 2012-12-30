@@ -3,9 +3,6 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-require_once('Called.php');
-require_once('core/argumentable.php');
-
 class CallMethod extends Called  {
 
   private $called;

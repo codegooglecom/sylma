@@ -3,7 +3,7 @@
 namespace sylma\parser\reflector\basic;
 use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
 
-abstract class Child extends core\module\Filed {
+abstract class Child extends Namespaced {
 
   protected $parent;
 

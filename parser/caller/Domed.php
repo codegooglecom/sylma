@@ -149,9 +149,10 @@ class Domed extends core\module\Argumented {
               break 2;
             }
           }
-          else if ($child->getNamespace() == $this->getControler()->getParent()->getNamespace()) {
+          else if ($this->getControler()->getParent()->useNamespace($child->getNamespace())) {
 
             // if not special call (with parent namespace), use as argument
+            // TODO : bad bad bad
             if (in_array($child->getName(), array('if', 'if-not'))) {
 
               break 2;

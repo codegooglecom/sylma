@@ -3,10 +3,6 @@
 namespace sylma\modules\tester;
 use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-require_once('core/module/Domed.php');
-require_once('core/argumentable.php');
-//require_once('modules/tester/test.php');
-
 abstract class Basic extends core\module\Domed implements core\argumentable {
 
   const NS = 'http://www.sylma.org/modules/tester';
@@ -17,7 +13,7 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
 
     if (!$this->aFiles) {
 
-      $this->aFiles = $this->getDirectory()->getFiles(array('xml'), null, 0);
+      $this->aFiles = $this->getDirectory()->getFiles(array('xml'), null, 1);
     }
 
     return $this->aFiles;

@@ -11,6 +11,9 @@
     <argument name="path" format="php-string"/>
     <argument name="debug" format="php-boolean" required="false"/>
   </method>
+  <method path="create-argument" name="createArgument" element="argument" return="\sylma\core\argument">
+    <argument name="content" format="php-array"/>
+  </method>
   <method path="get-document" name="getDocument" element="document" return="\sylma\dom\handler">
     <argument name="path" format="php-string"/>
   </method>

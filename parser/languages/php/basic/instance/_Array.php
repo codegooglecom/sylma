@@ -9,6 +9,7 @@ require_once('parser/languages/common/_instance.php');
 class _Array extends _Scalar implements common\_instance, \Iterator {
 
   private $aValues = array();
+  protected $sFormat = 'php-array';
 
   public function __construct(common\_window $controler, array $aValues = array()) {
 

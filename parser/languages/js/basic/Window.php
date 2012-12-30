@@ -6,7 +6,9 @@ use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\js, sylma\parser
 class Window extends common\basic\Window implements js\window, core\stringable {
 
   const NS = 'http://www.sylma.org/parser/languages/js';
-  const TEMPLATE = '/#sylma/parser/languages/js/source.xsl';
+
+  const DEFAULT_TEMPLATE = '../source.xsl';
+  const PHP_TEMPLATE = '../php.xsl';
 
   protected $aDefaultVariables = array(
     'sylma' => 'sylma',
@@ -16,14 +18,18 @@ class Window extends common\basic\Window implements js\window, core\stringable {
 
   public function __construct(parser\reflector\domed $controler, core\argument $args, $sClass = 'window') {
 
+    $this->setDirectory(__FILE__);
+    $this->loadDefaultArguments();
+
     $this->setControler($controler);
     $this->setArguments($args);
-    $this->setNamespace(self::NS, 'self');
+    $this->setNamespace(static::NS, 'self');
 
     $this->self = $this->createVariable('window', $this->createGhost($sClass));
     $this->setScope($this);
 
     $this->loadDefaultVariables();
+
     //$node = $this->loadInstance('\sylma\dom\node', '/sylma/dom/node.php');
     //$this->setInterface($node->getInterface());
 
@@ -128,33 +134,29 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     return $var;
   }
 
-  protected function parseArgument(dom\handler $doc) {
+  public function objAsDOM(common\_object $obj) {
 
-    $this->setDirectory(__FILE__);
-    $this->loadDefaultArguments();
+    $result = null;
 
-    $sResult = $this->getTemplate(self::TEMPLATE)->parseDocument($doc, false);
-
-    return $sResult;
-  }
-
-  public function objAsString(common\_object $obj) {
-
-    $sResult = '';
     $node = $obj->asArgument()->asDOM();
-    $doc = $this->createDocument('window');
 
+    $doc = $this->createDocument();
+    $doc->addElement('window', null, array(), $this->getNamespace('self'));
     $doc->add($node->getx('self:items', $this->getNS(), false));
 
-    if (!$doc->isEmpty()) $sResult = $this->parseArgument($doc);
+    if (!$doc->isEmpty()) {
 
-    return $sResult;
+      $result = $this->getTemplate(static::PHP_TEMPLATE)->parseDocument($doc);
+    }
+
+    return $result;
+
   }
 
   public function asString() {
 
     $doc = parent::asArgument()->asDOM();
 
-    return $this->parseArgument($doc);
+    return $this->getTemplate(static::DEFAULT_TEMPLATE)->parseDocument($doc, false);
   }
 }

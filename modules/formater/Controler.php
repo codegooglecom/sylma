@@ -43,10 +43,17 @@ class Controler extends core\module\Domed {
    */
   protected function loadObjectElement($val, $mContent) {
 
-    return array('object' => array(
+    $aResult = array('object' => array(
       '@class' => get_class($val),
       $mContent,
     ));
+
+    if ($val instanceof core\argument) {
+
+      $aResult['object']['note'] = "namespace : {$val->getNamespace()}";
+    }
+
+    return $aResult;
   }
 
   protected function loadObject($val) {

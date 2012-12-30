@@ -123,7 +123,7 @@ class Sylma {
 
       case 'action' :
 
-        $result = new parser\action\Controler();
+        $result = new parser\action\Manager();
 
       break;
 
@@ -197,7 +197,7 @@ class Sylma {
         $result = $init->loadRedirect();
 
       break;
-    
+
       case 'argument/parser' :
 
         $result = new core\argument\parser\Manager;

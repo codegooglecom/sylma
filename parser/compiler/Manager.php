@@ -142,7 +142,7 @@ abstract class Manager extends core\module\Domed {
 
     if ($this->readArgument('debug/show')) {
 
-      $tmp = $this->create('document', array($window));
+      $tmp = $this->createDocument($window);
       echo '<pre>' . $file->asToken() . '</pre>';
       echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
     }

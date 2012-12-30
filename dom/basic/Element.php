@@ -426,7 +426,7 @@ class Element extends \DOMElement implements dom\element {
       $arg = $value->asArgument();
       $mResult = $this->insertArgument($arg, $next);
     }
-    else if ($value instanceof \DOMDocument || $value instanceof \DOMElement) {
+    else if ($value instanceof \DOMDocument || $value instanceof \DOMElement || $value instanceof \DOMCdataSection) {
 
       $mResult = $this->insertChild($value, $next);
     }
@@ -525,7 +525,10 @@ class Element extends \DOMElement implements dom\element {
     }
     else {
 
-      if ($this->hasChildren()) $this->getChildren()->remove();
+      if ($this->hasChildren()) {
+
+        foreach ($this->getChildren() as $child) $child->remove();
+      }
     }
 
     return $mResult;

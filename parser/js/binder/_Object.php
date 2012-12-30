@@ -126,7 +126,7 @@ class _Object extends core\module\Controled implements core\argumentable {
 
   public function asArgument() {
 
-    return $this->getControler()->createArgument(array(
+    $result = $this->getControler()->createArgument(array(
       'id' => $this->getID(),
       'extend' => $this->getClass(),
       'binder' => $this->getBinder(),
@@ -134,6 +134,8 @@ class _Object extends core\module\Controled implements core\argumentable {
       'objects' => $this->getObjects(),
       'collections' => $this->getCollections(),
     ));
+
+    return $result;
   }
 }
 

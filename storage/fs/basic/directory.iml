@@ -7,9 +7,7 @@
     <argument name="mode" format="php-integer"/>
   </method>
   <method name="browse" path="browse" return-default="true">
-    <argument required="false" format="php-array" name="allowed-ext"/>
-    <argument required="false" format="php-array" name="excluded-path"/>
-    <argument required="false" format="php-integer" name="depth"/>
+    <argument required="false" format="\sylma\core\argument" name="options"/>
   </method>
   <method return-default="true" name="getParent" path="get-parent"/>
   <method return-default="true" name="getSystemPath" path="get-system-path" ls:owner="root" ls:group="users" ls:mode="711"/>

@@ -221,7 +221,29 @@ class Window extends common\basic\Window implements php\window, core\controled {
 
   protected function nodeToInstance(dom\node $node) {
 
-    return $this->createTemplate($node);
+    if ($node instanceof dom\handler) {
+
+      $sNamespace = $node->getRoot()->getNamespace();
+    }
+    else if ($node instanceof dom\element) {
+
+      $sNamespace = $node->getNamespace();
+    }
+    else {
+
+      $this->throwException(sprintf('Cannot convert %s to instance', $node->asToken()));
+    }
+
+    if ($sNamespace == $this->getNamespace()) {
+
+      $result = $node;
+    }
+    else {
+
+      $result = $this->createTemplate($node);
+    }
+
+    return $result;
   }
 
   /*public function validateFormat(common\_var $var, $sFormat) {

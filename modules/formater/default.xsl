@@ -36,11 +36,19 @@
     <div class="formater-object">
       <xsl:text>Object[</xsl:text>
       <xsl:value-of select="@class"/>
-      <xsl:text>](</xsl:text>
+      <xsl:text>]</xsl:text>
+      <xsl:apply-templates select="frm:note" mode="view"/>
+      <xsl:text>(</xsl:text>
       <xsl:apply-templates/>
       <xsl:text>)</xsl:text>
     </div>
   </xsl:template>
+
+  <xsl:template match="frm:note" mode="view">
+    <em class="formater-note"><xsl:value-of select="."/></em>
+  </xsl:template>
+
+  <xsl:template match="frm:note"/>
 
   <xsl:template match="frm:item">
     <xsl:apply-templates select="frm:key"/>

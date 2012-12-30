@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\dom;
-use sylma\core;
+use sylma\core, sylma\dom;
 
 interface node extends core\tokenable, core\stringable {
 
@@ -26,6 +26,10 @@ interface node extends core\tokenable, core\stringable {
   //function getHandler();
   function getType();
   function getParent();
+
+  /**
+   * TODO : describe
+   */
   function __toString();
 }
 

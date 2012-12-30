@@ -3,7 +3,7 @@
 namespace sylma\parser\action;
 use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
-class Controler extends parser\compiler\Manager implements core\factory {
+class Manager extends parser\compiler\Manager implements core\factory {
 
   const FS_EDITABLE = 'fs/editable';
 
@@ -283,5 +283,10 @@ class Controler extends parser\compiler\Manager implements core\factory {
     $dom = $val->asDOM();
 
     return $dom;
+  }
+
+  public function escape($mValue) {
+
+    return parent::escape($mValue);
   }
 }

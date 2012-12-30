@@ -60,11 +60,15 @@ abstract class Domed extends Filed {
   /**
    * Create a DOM document with content sent to it
    */
-  protected function createDocument($mContent = '') {
+  protected function createDocument($mContent = null) {
 
     $dom = \Sylma::getControler(self::DOM_CONTROLER);
+    $result = $dom->create(self::DOM_DOCUMENT_ALIAS);
 
-    return $dom->create(self::DOM_DOCUMENT_ALIAS, array($mContent));
+    $result->registerNamespaces($this->getNS());
+    if ($mContent) $result->set($mContent);
+
+    return $result;
   }
 
   protected function readAction($sPath, array $aArguments = array()) {

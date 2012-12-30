@@ -24,32 +24,25 @@ class JS extends parser\context\Basic implements dom\domable {
 
   public function asDOM() {
 
-    $aScripts = array();
-    $result = null;
+    $doc = $this->createDocument('root');
+    $sNamespace = \Sylma::read('namespaces/html');
 
     foreach ($this->asArray() as $mValue) {
 
-      $aScript = array(
-        '@type' => 'text/javascript',
-      );
+      $el = $doc->addElement('script', null, array('type' => 'text/javascript'), $sNamespace);
 
       if ($mValue instanceof fs\file) {
 
-        $aScript['@src'] = (string) $mValue;
+        $el->setAttribute('src', (string) $mValue);
       }
       else {
 
-        $aScript[] = $this->loadString($mValue);
+        $el->set($this->loadString($mValue));
+        //$el->set($doc->createCData($this->loadString($mValue)));
       }
-
-      $aScripts[] = array('script' => $aScript);
     }
 
-    if ($aScripts) $result = $this->createArgument($aScripts, \Sylma::read('namespaces/html'))->asDOM();
-
-    //$this->dsp($result);
-
-    return $result;
+    return $doc->getChildren();
   }
 }
 

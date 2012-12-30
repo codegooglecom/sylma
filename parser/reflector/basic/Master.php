@@ -38,7 +38,7 @@ abstract class Master extends Domed {
       $manager = $this->getControler('parser');
       $result = $manager->getParser($sNamespace, $this, false);
 
-      if ($result) $this->setParser($result, $result->getNS());
+      if ($result) $this->setParser($result, $result->getUsedNamespaces());
     }
 
     if ($result) $result->setParent($this);

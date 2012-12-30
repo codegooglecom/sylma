@@ -7,7 +7,7 @@ use \sylma\dom, \sylma\storage\fs, \sylma\core;
  * Existenz of this class mainly due to https://bugs.php.net/bug.php?id=28473
  * Allow too extension of document methods with others arguments
  */
-abstract class Basic extends core\module\Controled implements dom\handler {
+abstract class Basic extends core\module\Managed implements dom\handler {
 
   /**
    * See @method setFile()
@@ -25,23 +25,18 @@ abstract class Basic extends core\module\Controled implements dom\handler {
 
   public function __construct($mContent = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
 
-    $controler = \Sylma::getControler('dom');
+    $manager = \Sylma::getControler('dom');
 
-    $this->setControler($controler);
+    $this->setManager($manager);
     $this->setMode($iMode);
 
-    $this->setDocument($controler->create('document'));
+    $this->setDocument($manager->create('document'));
 
     $this->registerClasses();
     $this->registerNamespaces($aNamespaces);
 
     $this->setFragment($this->getDocument()->createDocumentFragment());
-
-    if ($mContent) {
-
-      if (is_object($mContent)) $this->set($mContent);
-      else if (is_string($mContent)) $this->startString($mContent);
-    }
+    $this->set($mContent);
   }
 
   public function getType() {
@@ -77,7 +72,7 @@ abstract class Basic extends core\module\Controled implements dom\handler {
     return $this->iMode;
   }
 
-  public function startString($sValue) {
+  protected function startString($sValue) {
 
     $bResult = false;
 
@@ -95,10 +90,48 @@ abstract class Basic extends core\module\Controled implements dom\handler {
     }
     else {
 
-      $bResult = (bool) $this->set($this->createElement($sValue, '', array(), '', $this));
+      $bResult = (bool) $this->set($this->createElement($sValue, null, array(), $this->getNamespace()));
     }
 
     return $bResult;
+  }
+
+  public function createElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null) {
+
+    $doc = $this->getDocument();
+
+    if (!$sName) $this->throwException(t('Empty value cannot be used as element\'s name'));
+
+    if ($sNamespace) {
+
+      // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
+      if (!strpos($sName, ':')) {
+
+        $sName = $this->generateName($sName, $sNamespace);
+      }
+      $el = $doc->createElementNS($sNamespace, $sName);
+    }
+    else {
+
+      $el = $doc->createElement($sName);
+    }
+
+    if ($mContent) {
+
+      $el->set($mContent);
+    }
+
+    if ($aAttributes) {
+
+      $el->setAttributes($aAttributes);
+    }
+
+    return $el;
+  }
+
+  public function createCData($mContent) {
+
+    return $this->getDocument()->createCDATASection($mContent);
   }
 
   public function registerNamespaces(array $aNS = array()) {

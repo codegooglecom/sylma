@@ -12,12 +12,6 @@ abstract class Documented extends Master {
   private $window;
 
   /**
-   *
-   * @var dom\handler
-   */
-  private $document;
-
-  /**
    * @param common\_window $window
    */
   public function setWindow(common\_window $window) {
@@ -37,20 +31,6 @@ abstract class Documented extends Master {
     }
 
     return $this->window;
-  }
-
-  protected function setDocument(dom\handler $doc) {
-
-    $this->document = $doc;
-  }
-
-  /**
-   *
-   * @return dom\handler
-   */
-  protected function getDocument() {
-
-    return $this->document;
   }
 
   protected function parseDocument(dom\document $doc) {

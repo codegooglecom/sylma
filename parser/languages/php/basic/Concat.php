@@ -3,10 +3,6 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\parser\languages\common, sylma\parser\languages\php, sylma\core;
 
-require_once('instance/_Scalar.php');
-require_once('core/argumentable.php');
-require_once('parser/languages/common/_instance.php');
-
 class Concat extends instance\_Scalar implements common\_instance, core\argumentable {
 
   protected $sFormat = 'php-string';
@@ -30,20 +26,8 @@ class Concat extends instance\_Scalar implements common\_instance, core\argument
     }
     else {
 
-      $this->aValues[] = $mValue;
+      $this->aValues[] = $this->getControler()->convertToString($mValue);
     }
-  }
-
-  protected function loadValues() {
-
-    $aResult = array();
-
-    foreach ($this->aValues as $mValue) {
-
-      $aResult[] = $this->getControler()->convertToString($mValue);
-    }
-
-    return $aResult;
   }
 
   public function asArgument() {

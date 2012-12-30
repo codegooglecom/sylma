@@ -5,6 +5,9 @@ rights:
   user-mode:
 browse :
   excluded : [.svn]
+  depth : 1
+  extensions : []
+  only-path : true
 tokens :
   sylma :
     path : sylma

@@ -11,7 +11,7 @@ class Standalone extends tester\Prepare {
 
   protected $sTitle = 'Standalone';
 
-  public function __construct(parser\action\Controler $controler = null) {
+  public function __construct(parser\action\Manager $controler = null) {
 
     \Sylma::getControler('dom');
 
@@ -28,10 +28,10 @@ class Standalone extends tester\Prepare {
   }
 
   public function getDirectory($sPath = '', $bDebug = true) {
-    
+
     return parent::getDirectory($sPath, $bDebug);
   }
-  
+
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {
 
     return parent::getArgument($sPath, $mDefault, $bDebug);

@@ -2,6 +2,8 @@
 
 var sylma = {};
 
+sylma.modules = {};
+
 sylma.binder = {
   classes : {},
   objects : {}
@@ -74,6 +76,7 @@ sylma.ui = new sylma.classes.ui;
      */
     tmp : [],
     node : null,
+    nodes : [],
     options : {
 
     },
@@ -87,6 +90,7 @@ sylma.ui = new sylma.classes.ui;
       if (options.properties) this.initObjects(options.properties);
       if (options.objects) this.initObjects(options.objects);
       if (options.events) this.initEvents(options.events);
+      if (options.nodes) this.initNodes(options.nodes);
     },
 
     loadOptions : function(options) {
@@ -105,6 +109,14 @@ sylma.ui = new sylma.classes.ui;
 
         if (objects[key].name) this[key] = obj;
         else this.tmp.push(obj);
+      }
+    },
+
+    initNodes : function(nodes) {
+
+      for (var key in nodes) {
+
+        this.nodes[key] = this.getNode().getElement('.' + nodes[key]);
       }
     },
 
@@ -161,9 +173,25 @@ sylma.ui = new sylma.classes.ui;
     /**
      * @return Element
      */
-    getNode : function() {
+    getNode : function(name) {
 
-      return this.node;
+      var result;
+
+      if (name) {
+
+        if (!this.nodes[name]) {
+
+          throw 'Unknow node ' + name;
+        }
+
+        result = this.nodes[name];
+      }
+      else {
+
+        result = this.node;
+      }
+
+      return result;
     }
   });
 

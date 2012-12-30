@@ -15,3 +15,4 @@ class Managed extends Controled {
     return parent::getControler($sName, $bDebug);
   }
 }
+

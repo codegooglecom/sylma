@@ -34,7 +34,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     $this->setNamespace(self::NS, 'self');
     $this->setNamespace(self::CACHED_NS, 'cached', false);
-    //$this->setNamespace(\Sylma::read('namespaces/html'), 'html', false);
+    $this->setNamespace(\Sylma::read('namespaces/html'), 'html', false);
 
     $this->addParser($parent->getWindow());
 
@@ -44,6 +44,10 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $this->prepareParent();
   }
 
+  /**
+   * Add this parser to parent PHP window
+   * @param common\_window $window Window to add the parsers to
+   */
   protected function addParser(common\_window $window) {
 
     $parent = $window->createCall($window->getSelf(), self::PARENT_METHOD, self::PARENT_RETURN, array(true));
@@ -126,6 +130,10 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $this->root = $root;
   }
 
+  /**
+   *
+   * @return common\_object
+   */
   public function getRoot() {
 
     return $this->root;
@@ -162,9 +170,8 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     switch ($el->getName()) {
 
       case 'event' : $result = $this->reflectEvent($el); break;
-      case 'property' :
-
-      break;
+      case 'property' : break;
+      case 'static' : $result = $this->reflectStatic($el); break;
 
       default : $this->throwException(sprintf('Unknown element %s', $el->asToken()));
     }
@@ -187,11 +194,22 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return $el->readx('@self:class', $this->getNS(), false);
   }
 
+  protected function elementIsNode(dom\element $el) {
+
+    return $el->readx('@self:node', $this->getNS(), false) && $el->getNamespace() === $this->getNamespace('html');
+  }
+
   public function parseAttributes(dom\node $el, dom\element $resultElement, $result) {
+
+    $result = null;
 
     if ($this->elementIsObject($el)) {
 
       $result = $this->reflectObject($el, $resultElement);
+    }
+    else if ($this->elementIsNode($el)) {
+
+      $result = $this->reflectNode($el, $resultElement);
     }
 
     return $result;
@@ -205,10 +223,34 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
       if ($this->isRoot()) {
 
-        $sContent = $this->getWindow()->objAsString($this->getRoot());
-        $this->getContext()->call('add', array($sContent), '\parser\context', false);
+        $this->addToWindow($this->getRoot());
       }
     }
+  }
+
+  protected function addToWindow(common\_object $obj) {
+
+    $contents = $this->getWindow()->objAsDOM($obj);
+
+    if ($this->readArgument('debug/show')) {
+
+      $this->loadDefaultArguments();
+      $tmp = $this->createDocument($contents);
+
+      //echo '<pre>' . $file->asToken() . '</pre>';
+      echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
+      //exit;
+    }
+
+    $window = $this->getParent()->getWindow(); // PHP window
+
+    foreach($contents->getChildren() as $child) {
+
+      if ($child->getType() == $child::TEXT) $aResult[] = $child->getValue();
+      else $aResult[] = $child;
+    }
+
+    $this->getContext()->call('add', array($window->createString($aResult)), '\parser\context', false);
   }
 
   protected function reflectEvent(dom\element $el) {
@@ -286,5 +328,23 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $result = $resultElement->createElement('object', $resultElement, $aAttributes, $this->getNamespace('cached'));
 
     return $result;
+  }
+
+  protected function reflectStatic(dom\element $el) {
+
+    $content = $this->getParent()->parse($el->getFirst());
+    $this->getObject()->setProperty($el->readAttribute('name'), $content);
+
+  }
+
+  protected function reflectNode(dom\element $el, dom\element $resultElement) {
+
+    $sName = $el->readx('@self:node', $this->getNS());
+    $sClass = uniqid('sylma-');
+
+    $this->getObject()->setProperty("nodes.$sName", $sClass);
+    $resultElement->addToken('class', $sClass);
+
+    return $resultElement;
   }
 }

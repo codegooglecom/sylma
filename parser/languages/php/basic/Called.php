@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
+use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php;
 
 abstract class Called extends common\basic\Controled implements common\argumentable, common\_call  {
 

@@ -97,18 +97,27 @@ class Directory extends Resource implements fs\directory {
     return $oResult;
   }
 
-  public function browse(array $aExtensions, array $aPaths = array(), $iDepth = null, $bRender = true) {
+  public function browse(core\argument $arg = null) {
 
-    $result = $this->asArgument();
+    if ($arg) {
 
-    if ($excluded = $this->getControler()->getArgument('browse/excluded')) {
+      $tmp = $this->getControler()->getArgument('browse');
+      $tmp->merge($arg);
 
-      $aPaths += $excluded->query();
+      $arg = $tmp;
     }
 
-    if ($iDepth === null || $iDepth > 0) {
+    //array $aExtensions = array(), array $aPaths = array(), $iDepth = null, $bRender = true
+    $aResult = array();
 
-      if ($iDepth) $iDepth--;
+    $bOnlyPath = $arg->read('only-path');
+    $iDepth = $arg->read('depth');
+    $aExtensions = $arg->query('extensions');
+    $aPaths = $arg->query('excluded');
+
+    if ($iDepth) {
+
+      $iDepth--;
 
       $aFiles = scandir($this->getRealPath(), 0);
 
@@ -118,10 +127,10 @@ class Directory extends Resource implements fs\directory {
 
           if ($file = $this->getFile($sFile, self::DEBUG_NOT)) {
 
-            if ($file->getUserMode() != 0 && $bRender &&
-              (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions))) {
+            if (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions)) {
 
-              $result->add('#file', $file->asArgument()->get('file'));
+              if ($bOnlyPath) $aResult[] = $file->getName();
+              else $aResult[] = $file->asArgument();
             }
           }
           else if ($dir = $this->getDirectory($sFile)) {
@@ -137,16 +146,17 @@ class Directory extends Resource implements fs\directory {
               }
             }
 
-            if ($bValid && $bRender) {
+            if ($bValid) {
 
-              $result->add('#directory', $dir->browse($aExtensions, $aPaths, $iDepth)->get('directory'));
+              $arg->set('depth', $iDepth);
+              $aResult += $dir->browse($arg)->asArray();
             }
           }
         }
       }
     }
 
-    return $result;
+    return $this->getControler()->createArgument($aResult);
   }
 
   /**
@@ -157,9 +167,14 @@ class Directory extends Resource implements fs\directory {
    * @param integer $iDepth Nbr. of level to look through, or all if 0
    * @return array
    */
-  public function getFiles(array $aExtensions = array(), $sPreg = null, $iDepth = 0) {
+  public function getFiles(array $aExtensions = array(), $sPreg = null, $iDepth = 1) {
 
-    $this->browse($aExtensions, array(), 1, false);
+    $arg = $this->getControler()->createArgument(array(
+      'extensions' => $aExtensions,
+      'depth' => $iDepth,
+    ));
+
+    $this->browse($arg);
     $aResult = array();
 
     // Files of current directory
