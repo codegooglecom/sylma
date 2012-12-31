@@ -67,7 +67,7 @@ class _Array extends _Scalar implements common\_instance, \Iterator {
     foreach ($this->aValues as $mKey => $mVal) {
 
       $aResult[] = array(
-        '@key' => $mKey,
+        '@key' => addslashes($mKey),
         $window->argToInstance($mVal),
       );
     }

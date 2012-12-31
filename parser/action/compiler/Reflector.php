@@ -48,9 +48,9 @@ class Reflector extends Argumented {
       case 'interface' : $mResult = $this->reflectInterface($el); break;
       case 'context' : $mResult = $this->reflectContext($el); break;
       case 'escape' : $mResult = $this->reflectEscape($el); break;
-      case 'switch' :
-      case 'function' :
+      case 'function' : $mResult = $this->reflectFunction($el); break;
 
+      case 'switch' :
       case 'xquery' :
       //case 'recall' :
       case 'namespace' :
@@ -499,6 +499,39 @@ class Reflector extends Argumented {
 
     $window = $this->getWindow();
     $result = $window->createCall($window->addControler(self::ACTION_ALIAS), 'escape', 'php-string', array($this->parse($el->getFirst())));
+
+    return $result;
+  }
+
+  protected function reflectFunction(dom\element $el) {
+
+    $sName = $el->readAttribute('name');
+
+    if (!function_exists($sName)) {
+
+      $this->throwException(sprintf('Unknown function : %s', $sName));
+    }
+
+    $window = $this->getWindow();
+    $aArguments = array();
+
+    foreach ($el->getChildren() as $child) {
+
+      if ($child->getType() != dom\node::ELEMENT) {
+
+        $this->throwException(sprintf('Invalid %s, element expected', $child->asToken()));
+      }
+
+      $aArguments[] = $this->parse($child);
+    }
+
+
+    $call = $window->callFunction($sName, $window->argToInstance('php-string'), $aArguments);
+
+    $var = $call->getVar(false);
+
+    if ($this->setVariable($el, $var)) $result = $var;
+    else $result = $call;
 
     return $result;
   }
