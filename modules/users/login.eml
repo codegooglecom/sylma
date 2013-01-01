@@ -1,38 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:usr="http://www.sylma.org/modules/users" xmlns:dbx="http://www.sylma.org/modules/dbx" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <le:settings>
-    <le:name>Connexion</le:name>
-    <le:argument format="php-string" enum="add,add-do" required="false">
-      <le:default replace="true">add</le:default>
-    </le:argument>
-  </le:settings>
-  <le:action le:set-variable="interface" path="interface" return="false">
-    <le:directory/>
-    <le:file path="login.xsd"/>
-    <le:action path="options">
-      <li:add>
-        <dbx:path>
-          <le:path>
-            <li:get-action/>
-          </le:path>
-        </dbx:path>
-        <dbx:add-do-path>
-          <le:directory/>
-          <le:string>/login-do</le:string>
-        </dbx:add-do-path>
-        <dbx:template-form>
-          <le:file path="login-ext.xsl" mode="1"/>
-        </dbx:template-form>
-      </li:add>
-    </le:action>
-    <li:connection>
-      <le:redirect return="true"/>
-    </li:connection>
-  </le:action>
-  <le:window>
-    <li:add-css le:format="string">
-      <le:directory/>
-      <le:argument>/login.css</le:argument>
-    </li:add-css>
-  </le:window>
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:li="http://www.sylma.org/parser/caller">
+  <le:context name="title">Connexion</le:context>
+  <le:context name="css">
+    <lm:file path="login.css"/>
+  </le:context>
+  <form id="sylma-user-login" action="[sylma:call::get-directory]/login-do.redirect" method="post">
+    <div class="field clearfix">
+      <label for="field-name">Nom d'utilisateur : </label>
+      <input type="text" id="field-name" name="name"/>
+    </div>
+    <div class="field clearfix">
+      <label for="field-password">Mot de passe : </label>
+      <input type="password" name="password" id="field-password"/>
+    </div>
+    <div class="field-actions">
+      <input type="submit" value="Connexion"/>
+    </div>
+  </form>
 </le:action>

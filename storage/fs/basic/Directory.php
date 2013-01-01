@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic;
-use \sylma\core, \sylma\dom, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
 require_once('Resource.php');
 require_once('storage/fs/directory.php');
@@ -15,7 +15,6 @@ class Directory extends Resource implements fs\directory {
 
   public $aDirectories = array();
   private $aFiles = array();
-  private $aFreeFiles = array();
   private $settings = null;
 
   private $aChildrenRights = null;
@@ -28,19 +27,12 @@ class Directory extends Resource implements fs\directory {
     $this->sName = $sName;
 
     $this->bExist = is_dir($this->getRealPath());
-
+//echo $this->getRealPath() . '<br/>';
     $this->aRights = $this->aChildrenRights = $aRights;
-
-    $settings = $this->getControler()->create('security', array($this, $this->getControler()));
-    $this->setSettings($settings);
 
     if ($this->doExist()) {
 
-      $this->loadRights(); //if ($parent)
-    }
-    else if ($sName) {
-
-      $this->isSecured(true);
+      $this->loadRights();
     }
   }
 
@@ -61,7 +53,7 @@ class Directory extends Resource implements fs\directory {
    */
   public function getSettings($bRecursive = false) {
 
-    if ($bRecursive && !$this->settings) {
+    if ($bRecursive) {
 
       if ($this->getParent()) return $this->getParent()->getSettings(true);
       else $this->throwException(t('No security file in parent directory'));
@@ -72,7 +64,10 @@ class Directory extends Resource implements fs\directory {
 
   private function loadRights() {
 
-    if (!$this->isSecured() && $this->getSettings()->isReady()) {
+    if ($this->getControler()->mustSecure()) {
+
+      $settings = $this->getControler()->createSettings($this);
+      $this->setSettings($settings);
 
       // self rights
       $aRights = $this->setRights($this->getSettings()->getDirectory());
@@ -102,18 +97,27 @@ class Directory extends Resource implements fs\directory {
     return $oResult;
   }
 
-  public function browse(array $aExtensions, array $aPaths = array(), $iDepth = null, $bRender = true) {
+  public function browse(core\argument $arg = null) {
 
-    $result = $this->asArgument();
+    if ($arg) {
 
-    if ($excluded = $this->getControler()->getArgument('browse/excluded')) {
+      $tmp = $this->getControler()->getArgument('browse');
+      $tmp->merge($arg);
 
-      $aPaths += $excluded->query();
+      $arg = $tmp;
     }
 
-    if ($iDepth === null || $iDepth > 0) {
+    //array $aExtensions = array(), array $aPaths = array(), $iDepth = null, $bRender = true
+    $aResult = array();
 
-      if ($iDepth) $iDepth--;
+    $bOnlyPath = $arg->read('only-path');
+    $iDepth = $arg->read('depth');
+    $aExtensions = $arg->query('extensions');
+    $aPaths = $arg->query('excluded');
+
+    if ($iDepth) {
+
+      $iDepth--;
 
       $aFiles = scandir($this->getRealPath(), 0);
 
@@ -123,10 +127,10 @@ class Directory extends Resource implements fs\directory {
 
           if ($file = $this->getFile($sFile, self::DEBUG_NOT)) {
 
-            if ($file->getUserMode() != 0 && $bRender &&
-              (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions))) {
+            if (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions)) {
 
-              $result->add('#file', $file->asArgument()->get('file'));
+              if ($bOnlyPath) $aResult[] = $file->getName();
+              else $aResult[] = $file->asArgument();
             }
           }
           else if ($dir = $this->getDirectory($sFile)) {
@@ -142,16 +146,17 @@ class Directory extends Resource implements fs\directory {
               }
             }
 
-            if ($bValid && $bRender) {
+            if ($bValid) {
 
-              $result->add('#directory', $dir->browse($aExtensions, $aPaths, $iDepth)->get('directory'));
+              $arg->set('depth', $iDepth);
+              $aResult += $dir->browse($arg)->asArray();
             }
           }
         }
       }
     }
 
-    return $result;
+    return $this->getControler()->createArgument($aResult);
   }
 
   /**
@@ -162,9 +167,14 @@ class Directory extends Resource implements fs\directory {
    * @param integer $iDepth Nbr. of level to look through, or all if 0
    * @return array
    */
-  public function getFiles(array $aExtensions = array(), $sPreg = null, $iDepth = 0) {
+  public function getFiles(array $aExtensions = array(), $sPreg = null, $iDepth = 1) {
 
-    $this->browse($aExtensions, array(), 1, false);
+    $arg = $this->getControler()->createArgument(array(
+      'extensions' => $aExtensions,
+      'depth' => $iDepth,
+    ));
+
+    $this->browse($arg);
     $aResult = array();
 
     // Files of current directory
@@ -272,12 +282,6 @@ class Directory extends Resource implements fs\directory {
   public function getFile($sName, $iDebug = self::DEBUG_LOG) {
 
     $result = null;
-    $this->loadRights();
-
-    if (!$this->isSecured()) {
-
-      $this->throwException(txt('Unauthorized access to @file %s', $this . '/' . $sName));
-    }
 
     if ($sName && is_string($sName)) {
 
@@ -288,12 +292,7 @@ class Directory extends Resource implements fs\directory {
 
         if (!$file) {
 
-          $this->throwException(txt('File lost : %s', (string) $this . '/' . $sName));
-        }
-
-        if (!$file->isSecured()) {
-
-          $this->secureFile($file);
+          $this->throwException(sprintf('File lost : %s', (string) $this . '/' . $sName));
         }
 
         $result = $file;
@@ -322,23 +321,25 @@ class Directory extends Resource implements fs\directory {
 
     //dspf($file);
 
-    if (!$aRights = $this->getSettings()->getFile($file->getName())) $aRights = $this->getChildrenRights();
+    if ($this->getControler()->mustSecure()) {
 
-    $file->setRights($aRights);
-    $file->isSecured(true);
+      if (!$aRights = $this->getSettings()->getFile($file->getName())) $aRights = $this->getChildrenRights();
+
+      $file->setRights($aRights);
+    }
+    else {
+
+      $file->setRights($this->getChildrenRights());
+    }
   }
 
   public function getDirectory($sName, $iDebug = self::DEBUG_LOG) {
 
     $result = null;
 
-    // Mainly for config files and related directories rights for wich security rights
-    // has not yet been loaded in @method __construct() cause of missing @controler user
-    $this->loadRights();
-
     if (!$sName) {
 
-      $this->throwException(t('Cannot get a directory without name'));
+      $this->throwException('Cannot get a directory without name');
     }
 
     if ($sName == '.') {
@@ -361,11 +362,12 @@ class Directory extends Resource implements fs\directory {
         // not yet builded, build it
         $result = $this->loadDirectory($sName, $iDebug);
       }
+
     }
 
     if (!$result && ($iDebug & self::DEBUG_LOG)) {
 
-      $this->throwException(txt('@directory %s does not exists', $sName));
+      $this->throwException(sprintf('@directory %s does not exists in %s', $sName, $this->getRealPath()));
     }
 
     return $result;
@@ -414,14 +416,16 @@ class Directory extends Resource implements fs\directory {
 
         $sName = array_shift($aPath);
 
-        $dir = $this->getDirectory($sName);
+        $dir = $this->getDirectory($sName, $iDebug);
 
-        if (!$dir && $iDebug & self::DEBUG_LOG) {
+        if ($dir) {
 
-          $this->throwException(txt('Directory %s does not exists', $sName));
+          $result = $dir->getDistantFile($aPath, $iDebug);
         }
+        else if ($iDebug & self::DEBUG_LOG) {
 
-        $result = $dir->getDistantFile($aPath, $iDebug);
+          $this->throwException(sprintf('Directory %s does not exists', $sName));
+        }
       }
     }
 
@@ -430,36 +434,35 @@ class Directory extends Resource implements fs\directory {
 
   public function getDistantDirectory($mPath, $iDebug = self::DEBUG_LOG) {
 
+    $result = null;
     if (is_string($mPath)) $mPath = explode('/', $mPath);
 
     if ($mPath) {
 
       $sName = array_shift($mPath);
 
-      if ($oSubDirectory = $this->getDirectory($sName, $iDebug)) return $oSubDirectory->getDistantDirectory($mPath, $iDebug);
+      if ($sub = $this->getDirectory($sName, $iDebug)) {
 
-    } else return $this;
+        $result = $sub->getDistantDirectory($mPath, $iDebug);
+      }
+    } else {
 
-    return null;
-  }
+      $result = $this;
+    }
 
-  public function checkRights($iMode) {
-
-    $this->loadRights();
-
-    if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
-
-    return false;
+    return $result;
   }
 
   public function getSystemPath() {
 
-    return \Controler::getSystemPath().'/'.$this->getRealPath();
+    return $this->getControler()->getSystemPath() . '/' . $this->getRealPath();
   }
 
   public function getRealPath() {
 
-    return ($this->getParent() ? $this->getParent()->getRealPath() . '/' . $this->getName() : \Sylma::ROOT . $this->getName());
+    return $this->getParent() ?
+           $this->getParent()->getRealPath() . '/' . $this->getName() :
+           $this->getControler()->getPath() . $this->getName();
   }
 
   public function asToken() {
@@ -480,15 +483,17 @@ class Directory extends Resource implements fs\directory {
       $sPath = $this->getFullPath();
     }
 
+    require_once('core/functions/Global.php');
+
     return $this->getControler()->createArgument(array(
       'directory' => array(
         'full-path' => $sPath,
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),
-        'read' => booltostr($this->checkRights(\Sylma::MODE_READ)),
-        'write' => booltostr($this->checkRights(\Sylma::MODE_WRITE)),
-        'execution' => booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
+        'read' => functions\booltostr($this->checkRights(\Sylma::MODE_READ)),
+        'write' => functions\booltostr($this->checkRights(\Sylma::MODE_WRITE)),
+        'execution' => functions\booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
         'name' => $sName,
       ),
     ), self::NS);

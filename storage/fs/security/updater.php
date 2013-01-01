@@ -3,11 +3,11 @@
 namespace sylma\storage\fs\security;
 use \sylma\dom, \sylma\storage\fs;
 
-interface updater implements manager {
-  
-  public function build();
-  public function updateFileName($sName, $sNewName);
-  public function updateFile($sName, $sOwner, $sGroup, $sMode);
-  public function deleteFile($sName);
-  public function updateDirectory($sOwner, $sGroup, $sMode);
+interface updater extends manager {
+
+  function build();
+  function updateFileName($sName, $sNewName);
+  function updateFile($sName, $sOwner, $sGroup, $sMode);
+  function deleteFile($sName);
+  function updateDirectory($sOwner, $sGroup, $sMode);
 }

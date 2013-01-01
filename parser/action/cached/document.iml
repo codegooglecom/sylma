@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security">
+<class xmlns="http://www.sylma.org/parser/caller">
   <namespace>\sylma\parser\action\cached</namespace>
   <name>Document</name>
   <element>http://www.sylma.org/parser/action/basic</element>
@@ -11,6 +11,9 @@
     <argument name="path" format="php-string"/>
     <argument name="debug" format="php-boolean" required="false"/>
   </method>
+  <method path="create-argument" name="createArgument" element="argument" return="\sylma\core\argument">
+    <argument name="content" format="php-array"/>
+  </method>
   <method path="get-document" name="getDocument" element="document" return="\sylma\dom\handler">
     <argument name="path" format="php-string"/>
   </method>
@@ -20,8 +23,7 @@
   <method path="get-controler" name="getControler" element="controler" return="\sylma\core\factory">
     <argument name="alias" format="php-string" required="false"/>
   </method>
-  <method path="get-action" name="getAction" return="\sylma\dom\handler">
+  <method path="get-action" name="readAction" return="\sylma\parser\action">
     <argument name="path" format="php-string"/>
-    <argument name="arguments" format="php-array" required="false"/>
   </method>
 </class>

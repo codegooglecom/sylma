@@ -27,7 +27,7 @@ class Module extends tester\Prepare {
     ),
   );
 
-  public function __construct(parser\action\Controler $controler = null) {
+  public function __construct(parser\action\Manager $controler = null) {
 
     \Sylma::getControler('dom');
 
@@ -53,14 +53,14 @@ class Module extends tester\Prepare {
     return parent::setArgument($sPath, $mValue);
   }
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     if ($node = $test->getx('self:node', array(), false)) {
 
       $this->setArgument('node', $node->getFirst());
     }
 
-    return parent::test($test, $controler, $doc, $file);
+    return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
   public function onPrepared($mResult) {
@@ -80,18 +80,18 @@ class Module extends tester\Prepare {
 
     if (!array_key_exists($sName, $this->aUsers)) {
 
-      $this->throwException(txt('Unknown test user : %s', $sName));
+      $this->throwException(sprintf('Unknown test user : %s', $sName));
     }
 
     $user = $this->getControler('user')->getControler();
 
     $aGroups = $this->aUsers[$sName];
-    $this->user = $user->create('user', array($user, $sName, $aGroups));
+    $this->user = $user->create('user', array($user, $sName, $aGroups, true));
   }
 
   public function getAction($sPath, array $aArguments = array()) {
 
-    return parent::getAction($sPath, $aArguments);
+    return parent::readAction($sPath, $aArguments);
   }
 }
 

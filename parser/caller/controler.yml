@@ -1,6 +1,6 @@
 classes :
-  @sylma-classbase : \sylma\parser\caller
+  §sylma-classbase : \sylma\parser\caller
   method :
     name : Method
   interface :
-    name : Domed
+    name : Instanciable

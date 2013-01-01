@@ -1,27 +1,17 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action\php, \sylma\parser;
+use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php, \sylma\parser;
 
-require_once(dirname(dirname(__dir__)) . '/Reflector.php');
-require_once(dirname(__dir__) . '/compiler.php');
+abstract class Action extends parser\reflector\basic\Documented implements parser\action\reflector {
 
-abstract class Action extends parser\Reflector implements parser\action\compiler {
-
-  const CONTROLER = 'parser/action';
+  //const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
-  const CLASS_DEFAULT = '\sylma\parser\action\cached\Document';
+  const CLASS_FILE_DEFAULT = '/sylma/parser/action/cached/document.iml';
   const CLASS_PREFIX = 'class';
 
-  const WINDOW_ARGS = 'classes/php';
-
   const CALLER_ALIAS = 'caller';
-  /**
-   * See @method setFile()
-   * @var storage\fs
-   */
-  private $document;
 
   private $bTemplate = false;
   private $bString = false;
@@ -29,52 +19,36 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
   protected $aVariables = array();
 
   /**
-   * Sub parsers
-   * @var array
-   */
-  private $aParsers = array();
-
-  /**
-   * Interface of new cached class. See @method php\_window::getSelf()
+   * Interface of new cached class. See @method common\_window::getSelf()
    * @var parser\caller\Domed
    */
   protected $interface;
 
   protected $return;
+  protected $sFormat = 'object';
 
   // controler : getNamespace, create, getArgument
 
-  public function __construct(parser\action\Controler $controler, dom\handler $doc, fs\directory $dir) {
+  public function __construct(parser\action\Manager $controler, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
     $this->setControler($controler);
     $this->setNamespace($controler->getNamespace(), 'self');
     $this->setDirectory($dir);
 
-    $sClass = $this->loadClass($doc);
-
-    $window = $this->getControler()->create('window', array($this, $controler->getArgument(self::WINDOW_ARGS), $sClass));
-    $this->setWindow($window);
-
     $caller = $this->getControler(self::CALLER_ALIAS);
     $caller->setParent($this);
 
-    $this->setInterface($caller->getInterface($sClass));
+    $interface = $this->loadInterface($doc);
+    $this->setInterface($interface);
 
-    $security = $this->getControler()->create('parser/security');
-    $this->setParser($security, $security->getNS());
+    if ($this->getInterface()->useElement()) {
 
-    $this->setNamespace($this->getInterface()->getNamespace(self::CLASS_PREFIX), self::CLASS_PREFIX, false);
-  }
+      $sNamespace = $this->getInterface()->getNamespace(self::CLASS_PREFIX);
 
-  protected function setDocument(dom\handler $doc) {
-
-    $this->document = $doc;
-  }
-
-  protected function getDocument() {
-
-    return $this->document;
+      $this->setNamespace($sNamespace, self::CLASS_PREFIX, false);
+      $this->setUsedNamespace($sNamespace);
+    }
   }
 
   public function getInterface() {
@@ -87,39 +61,24 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     $this->interface = $interface;
   }
 
-  protected function getParser($sUri) {
+  protected function loadInterface(dom\handler $doc) {
 
-    $parser = null;
+    $result = null;
 
-    if (array_key_exists($sUri, $this->aParsers)) {
+    $caller = $this->getControler(self::CALLER_ALIAS);
 
-      $parser = $this->aParsers[$sUri];
-      $parser->setParent($this);
+    if (!$sInterface = $doc->getRoot()->readAttribute('interface', null, false)) {
+
+      $sInterface = self::CLASS_FILE_DEFAULT;
+    }
+    else {
+
+      $sInterface = $sInterface . '.iml';
     }
 
-    return $parser;
-  }
+    $result = $caller->getInterface($sInterface, $this->getDirectory());
 
-  protected function setParser(parser\domed $parser, array $aNS) {
-
-    $aResult = array();
-
-    foreach ($aNS as $sNamespace) {
-
-      $aResult[$sNamespace] = $parser;
-    }
-
-    $this->aParsers = array_merge($this->aParsers, $aResult);
-  }
-
-  protected function loadClass(dom\handler $doc) {
-
-    if (!$sResult = $doc->getRoot()->readAttribute('class', null, false)) {
-
-      $sResult = self::CLASS_DEFAULT;
-    }
-
-    return $sResult;
+    return $result;
   }
 
   protected function setReturn(dom\element $el) {
@@ -144,16 +103,37 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
       default :
 
-        $this->throwException(txt('Unknown return format in %s', $el->asToken()));
+        $this->throwException(sprintf('Unknown return format in %s', $el->asToken()));
 
     }
 
-    $this->return = $this->getWindow()->stringToInstance($sFormat);
+    $this->setFormat($sFormat);
+    $this->return = $this->getWindow()->tokenToInstance($sFormat);
+  }
+
+  protected function setFormat($sFormat) {
+
+    $this->sFormat = $sFormat;
+  }
+
+  protected function getFormat() {
+
+    return $this->sFormat;
+  }
+
+  public function getLastElement() {
+
+    return $this->lastElement;
+  }
+
+  public function setLastElement($lastElement) {
+
+    $this->lastElement = $lastElement;
   }
 
   /**
    *
-   * @return php\_instance
+   * @return common\_instance
    */
   protected function getReturn() {
 
@@ -178,9 +158,19 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
     return $this->bString;
   }
 
-  public function setParent(parser\elemented $parent) {
+  public function setParent(parser\reflector\documented $parent) {
 
     return null;
+  }
+
+  protected function getVariable($sName) {
+
+    if (!array_key_exists($sName, $this->aVariables)) {
+
+      $this->throwException(sprintf('Variable %s does not exists', $sName));
+    }
+
+    return $this->aVariables[$sName];
   }
 
   protected function setVariable(dom\element $el, $obj) {
@@ -189,42 +179,62 @@ abstract class Action extends parser\Reflector implements parser\action\compiler
 
     if ($sName = $el->readAttribute('set-variable', $this->getNamespace(), false)) {
 
-      $this->aVariables[$sName] = $obj;
+      if (array_key_exists($sName, $this->aVariables)) {
 
-      if ($obj instanceof php\_var) {
+        $result = $this->aVariables[$sName];
 
-        $result = $obj;
-        $obj->insert();
-      }
-      else if ($obj instanceof php\basic\Called) {
+        if ($obj instanceof common\_var) {
 
-        $result = $obj->getVar();
+          $obj->insert();
+        }
+
+        $result->insert($obj);
       }
       else {
 
-        $result = $this->getWindow()->addVar($obj);
+        if ($obj instanceof common\_var) {
+
+          $result = $obj;
+          $obj->insert();
+        }
+        else if ($obj instanceof php\basic\Called) {
+
+          $result = $obj->getVar();
+        }
+        else {
+
+          $result = $this->getWindow()->addVar($obj);
+        }
+
+        $this->aVariables[$sName] = $result;
       }
     }
 
     return $result;
   }
 
-  public function asDOM() {
+  /**
+   * TODO : make public for sub-action integration
+   *
+   * @param common\_window $window
+   * @return common\_window
+   */
+  protected function build(common\_window $window) {
 
-    $doc = $this->getDocument();
-    $window = $this->getWindow();
-
-    if ($aResult = $this->parseDocument($doc)) {
+    if ($aResult = $this->parseDocument($this->getDocument())) {
 
       $window->add($aResult);
     }
-    //dspf($aResult[1]->asArgument());
-    //dspf($aResult);
+
+    return $window;
+  }
+
+  public function asDOM() {
+
+    $window = $this->getWindow();
+    $this->build($window);
 
     $arg = $window->asArgument();
-
-    //$tst = $arg->get('window')->query();
-    //dspm((string) $tst[1]);
 
     $result = $arg->asDOM();
 

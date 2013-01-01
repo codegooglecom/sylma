@@ -1,23 +1,82 @@
-classes :
-  sylma :
-    name : Sylma
-  initializer :
-    name : Initializer
-  exception :
-    name : SylmaException
-  controler :
-    name : Controler
+debug :
+  enable : false
+  rights: false
+  backtrace : false
+  html : false
+  xml :
+    import : false
+namespaces :
+  html : http://www.w3.org/1999/xhtml
+render :
+  gzip : true
+initializer :
+  output :
+    indent : true
+  mime :
+    default : plain/text
+    jpg : image/jpeg
+    jpeg : image/jpeg
+    png : image/png
+    gif : image/gif
+    js : application/javascript
+    webm : video/webm
+    css : text/css
+    xml : text/xml
+    xsl : text/xml
+    htm : text/html
+    html : text/html
+    xhtml : application/xhtml+xml
+    json : application/json
+  executables : [json]
+  error :
+    action : error.eml
+    html : error.html
+  window :
+    html :
+      action : /sylma/modules/html/backend.eml
   redirect :
-    name : Redirect
-  messages :
-    name : Messages
-  message :
-    name : Message
-  user :
-    name : User
-  cookie :
-    name : Cookie
-  logger :
-    name : Logger
-  xsl :
-    name : XSL_Document
+    extension : redirect
+  classes :
+    html :
+      name : \sylma\modules\html\Document
+    redirect :
+      name : \sylma\core\Redirect
+    path :
+      name : \sylma\parser\action\Path
+    action :
+      name : \sylma\parser\action\handler\Basic
+    window :
+      name : \sylma\core\window\classes\File
+    json :
+      name : \sylma\core\window\classes\Context
+session :
+  lifetime : 403200
+users:
+  root:
+    # E_ALL | E_STRICT | E_NOTICE = 32767
+    error-level: 6143
+    arguments: [ ]
+    groups: ['0']
+  # server user for cron jobs
+  server:
+    name: server
+    ip:
+    groups:
+      - famous
+      - server
+    arguments: [ ]
+  anonymouse:
+    name: anonymouse
+    groups: [famous]
+    arguments:
+      full-name: Anonymous
+  authenticated:
+    arguments: [ ]
+    groups: [users]
+
+dom:
+  debug:
+    # display all xpath queries in a formatted table containing paths grouped by count
+    show-queries: false
+  encoding:
+    check: false

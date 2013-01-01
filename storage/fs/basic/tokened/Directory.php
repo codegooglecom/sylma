@@ -67,7 +67,7 @@ class Directory extends fs\basic\Directory implements fs\tokened\directory {
     
     if (!array_key_exists($sName, $this->aTokens)) {
       
-      $this->throwException(txt('Token #%s does not exists', $sName));
+      $this->throwException(sprintf('Token #%s does not exists', $sName));
     }
     
     return $this->aTokens[$sName]['value'];

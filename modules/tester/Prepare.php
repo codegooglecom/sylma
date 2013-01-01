@@ -7,7 +7,7 @@ require_once('Basic.php');
 
 abstract class Prepare extends Basic {
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sExpected, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = false;
 
@@ -30,7 +30,7 @@ abstract class Prepare extends Basic {
     }
     catch (core\exception $e) {
 
-      $bResult = $this->catchException($test, $e);
+      $bResult = $this->catchException($test, $e, $file);
     }
 
     return $bResult;

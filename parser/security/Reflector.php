@@ -1,11 +1,11 @@
 <?php
 
 namespace sylma\parser\security;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\action\php;
+use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
 
-require_once('core/module/Filed.php');
+require_once('parser/reflector/basic/Child.php');
 
-abstract class Reflector extends core\module\Filed {
+abstract class Reflector extends parser\reflector\basic\Child {
 
   const NS = 'http://www.sylma.org/parser/security';
 
@@ -14,16 +14,6 @@ abstract class Reflector extends core\module\Filed {
   public function __construct() {
 
     $this->setNamespace(self::NS);
-  }
-
-  public function setParent(parser\elemented $parent) {
-
-    $this->parent = $parent;
-  }
-
-  protected function getParent() {
-
-    return $this->parent;
   }
 
   protected function reflectTest(array $aRights) {
@@ -43,6 +33,6 @@ abstract class Reflector extends core\module\Filed {
 
     $window = $this->getParent()->getWindow();
 
-    return $window->create('condition', array($window, $this->reflectTest($aRights), $result));
+    return $window->createCondition($this->reflectTest($aRights), $result);
   }
 }

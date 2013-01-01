@@ -1,19 +1,34 @@
 classes :
-  controler :
-    name : XML_Controler
+  §sylma-classbase : \sylma\dom
+  handler :
+    name : basic\handler\Rooted
   document :
-    name : XML_Document
+    name : basic\Document
   element :
-    name : XML_Element
-  text :
-    name : XML_Text
+    name : basic\Element
   attribute :
-    name : XML_Attribute
+    name : basic\Attribute
+  collection :
+    name : basic\Collection
   fragment :
-    name : XML_Fragment
-  cdata :
-    name : XML_CData
+    name : basic\Fragment
+  text :
+    name : basic\Text
   comment :
-    name : XML_Comment
-  list :
-    name : XML_NodeList
+    name : basic\Comment
+  cdata :
+    name : basic\CData
+  instruction :
+    name : basic\Instruction
+  argument :
+    name : argument\Tokened
+    classes :
+      filed :
+        name : argument\Filed
+
+stats :
+  enable : false
+namespaces :
+  html : http://www.w3.org/1999/xhtml
+  dom : http://www.sylma.org/dom
+import-depth : 5

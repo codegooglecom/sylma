@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class xmlns="http://www.sylma.org/parser/caller" xmlns:ls="http://www.sylma.org/security">
+  <namespace>\sylma\core</namespace>
+  <name>argument</name>
+  <method path="as-json" name="asJSON" return="php-string"/>
+</class>

@@ -1,9 +1,11 @@
 class-alias : basic
 classes :
-  @sylma-classbase : \sylma\core\argument
+  §sylma-classbase : \sylma\core\argument
   controler :
     name : test\controler\Filed
   basic :
     name : Iterator
+  domed :
+    name : Domed
   filed :
     name : Filed

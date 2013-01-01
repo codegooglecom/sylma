@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:usr="http://www.sylma.org/modules/users" xmlns:dbx="http://www.sylma.org/modules/dbx" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:li="http://www.sylma.org/parser/caller">
   <le:settings>
-    <le:name>Connexion</le:name>
-    <le:argument format="php-string" enum="add,add-do" required="false">
-      <le:default replace="true">add</le:default>
-    </le:argument>
-    <le:return format="Redirect"/>
+    <le:return format="object"/>
   </le:settings>
-  <le:action le:set-variable="interface" path="interface" return="false">
-    <le:directory/>
-    <le:file path="login.xsd"/>
-    <le:action path="options"/>
-    <li:login>
-      <le:redirect return="true"/>
-    </li:login>
-  </le:action>
+  <le:interface path="interface">
+    <li:call name="login"/>
+  </le:interface>
 </le:action>

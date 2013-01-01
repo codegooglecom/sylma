@@ -8,6 +8,7 @@ require_once('core/functions/Path.php');
 
 class Basic extends \Exception implements core\exception {
 
+  const NS_MESSAGE = 'http://www.sylma.org/core/message';
   /**
    * Number of exceptions created during the script
    * @var integer
@@ -35,7 +36,7 @@ class Basic extends \Exception implements core\exception {
     return self::$iCount;
   }
 
-  public function load($iOffset = 1, $aTrace = array()) {
+  public function load($iOffset = 1, array $aTrace = array()) {
 
     // for exceptions : line 1, file 2, class/method 2
 
@@ -53,7 +54,7 @@ class Basic extends \Exception implements core\exception {
 
       $this->aCall = array(
         'type' => array_key_exists('class', $aCaller) ? 'method' : 'function',
-        'value' => array_val('class', $aCaller) . array_val('type', $aCaller) . array_val('function', $aCaller));
+        'value' => self::loadKey('class', $aCaller) . self::loadKey('type', $aCaller) . self::loadKey('function', $aCaller));
 
       if (array_key_exists('line', $aCall)) $this->line = $aCall['line'];
       if (array_key_exists('file', $aCall)) $this->file = $aCall['file'];
@@ -62,11 +63,16 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
+  protected static function loadKey($sKey, array $aArray) {
+
+    return array_key_exists($sKey, $aArray) ? $aArray[$sKey] : null;
+  }
+
   public function addPath($sValue) {
 
     $this->aPath[] = $sValue;
   }
-  
+
   public function setPath(array $aPath) {
 
     $this->aPath = $aPath;
@@ -102,7 +108,7 @@ class Basic extends \Exception implements core\exception {
 
         $sDirectory = $fs->getDirectory()->getSystemPath();
 
-        $aResult[] = new \HTML_A('netbeans://' . $sDirectory . $sFile, $sFile);
+        $aResult[] = '<a href="netbeans://' . $sDirectory . $sFile.'">' . $sFile . '</a>';
         $aResult[] = substr($sValue, $iFile + $iLength);
       }
       else {
@@ -120,9 +126,10 @@ class Basic extends \Exception implements core\exception {
 
   protected function getPath() {
 
-    $sCall = array_val('value', $this->aCall, 'unknown');
+    $sCall = self::loadKey('value', $this->aCall, 'unknown');
 
-    $link = new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()');
+    //$link = new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()');
+    $link = '<a href="netbeans://' . $this->getFile() . ':' . $this->getLine() . '">' . $sCall . '()' . '</a>';
     $message = $this->parseString($this->getMessage());
     $path = $this->parsePath();
 
@@ -133,7 +140,7 @@ class Basic extends \Exception implements core\exception {
 
     if ($iNo & \Sylma::read('users/root/error-level')) {
 
-      $exception = new \Sylma::$exception($sMessage);
+      $exception = new \Sylma::$sExceptionClass($sMessage);
       $exception->importError($iNo, $sMessage, $sFile, $iLine);
 
       if (self::throwError()) throw $exception;
@@ -163,7 +170,8 @@ class Basic extends \Exception implements core\exception {
   public function importError($iNo, $sMessage, $sFile, $iLine) {
 
     $this->code = $iNo;
-    $this->message = checkEncoding($sMessage);
+    //$this->message = checkEncoding($sMessage);
+    $this->message = $sMessage;
 
     // for error : line def, file def, class/method 1
 
@@ -191,16 +199,60 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
+  public function errorAsHTML(array $aError) {
+
+    $sFile = array_key_exists('file', $aError) ? $aError['file'] : '-unknown-';
+    $sLine = array_key_exists('line', $aError) ? $aError['line'] : '-unknown-';
+    $sClass = array_key_exists('class', $aError) ? $aError['class'] : '-unknown-';
+    $sFunction = array_key_exists('function', $aError) ? $aError['function'] : '-unknown-';
+
+    return "<a href=\"netbeans://$sFile:$sLine\">$sFile [$sLine] - $sClass->$sFunction()</a><br/>";
+  }
+
   public function save() {
 
-    if (\Controler::useMessages()) {
+    $init = \Sylma::getControler('init', false, false);
+    $window = \Sylma::getControler('window', false, false);
 
-      if (\Sylma::read('messages/print/visible')) {
+    if ($init && $window && 0) {
 
-        print_r($this->getPath());
+      $this->getPath();
+      $message = $init->createArgument(array(
+        'message' => array(
+          'title' => $this->getMessage(),
+          '#content' => $this->getPath(),
+        )
+      ), self::NS_MESSAGE);
+
+      $window->addContext('messages', $message);
+    }
+    else {
+
+      if (\Sylma::read('debug/enable')) {
+
+        $aTraces = $this->getTrace();
+
+        $aPath = $this->getPath();
+
+        echo $this->getMessage() . '<br/>';
+        echo $aPath[0];
+
+        echo '<pre>';
+
+        print_r($aPath);
+        //print_r($aTraces);
+
+        if (\Sylma::read('debug/backtrace')) {
+
+          foreach ($aTraces as $aTrace) {
+
+            echo $this->errorAsHTML($aTrace);
+          }
+        }
+
+        echo '</pre>';
+
       }
-      $backtrace = \Controler::getBacktrace($this->getTrace());
-      \Controler::addMessage(array($this->getPath(), $backtrace));
     }
   }
 

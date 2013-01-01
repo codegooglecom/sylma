@@ -1,0 +1,18 @@
+debug :
+  run : true
+  update : true
+  show : false
+classes :
+  §sylma-classbase : \sylma\core\argument
+  handler :
+    name : parser\Handler
+  compiler :
+    name : parser\compiler\Main
+  reflector :
+    name : parser\compiler\Domed
+  window :
+    name : \sylma\parser\languages\php\basic\Window
+  cached :
+    name : parser\Cached
+  php : §sylma:import /#sylma/parser/languages/php/window.yml;
+

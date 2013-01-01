@@ -1,19 +1,17 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\parser\action\php, sylma\parser;
-
-require_once('Action.php');
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
 
 abstract class Runner extends Action {
 
   /**
    *
-   * @param php\_var $var
+   * @param common\_var $var
    * @param dom\collection $children
-   * @return array|\sylma\parser\action\php\_var
+   * @return array|\sylma\parser\languages\common\_var
    */
-  public function runVar(php\_var $var, dom\collection $children) {
+  public function runVar(common\_var $var, dom\collection $children) {
 
     $aResult = array();
 
@@ -22,7 +20,7 @@ abstract class Runner extends Action {
       $var->insert();
 
       $window = $this->getWindow();
-      $window->setScope($var);
+      $window->setObject($var);
 
       $caller = $this->getControler(self::CALLER_ALIAS);
       $interface = $caller->loadObject($var);
@@ -45,7 +43,7 @@ abstract class Runner extends Action {
 //      if (count($aResult) == 1) $mResult = $aResult[0];
 //      else $mResult = $aResult;
 
-      $window->stopScope();
+      $window->stopObject();
     }
 
     return $aResult;
@@ -57,13 +55,13 @@ abstract class Runner extends Action {
    * @param dom\collection $children
    * @return array
    */
-  public function runConditions(php\_var $call, dom\collection $children) {
+  public function runConditions(common\_var $call, dom\collection $children) {
 
     $aResult = array();
 
-    while ($child = $children->current()) {
+    while (($child = $children->current()) && $child->getType() == dom\node::ELEMENT) {
 
-      if ($child->getNamespace() == $this->getNamespace()) {
+      if ($child->getNamespace() == $this->getNamespace() && in_array($child->getName(), array('if', 'if-not'))) {
 
         // from here, condition can be builded
 
@@ -72,30 +70,26 @@ abstract class Runner extends Action {
 
         if ($child->getChildren()->length != 1) {
 
-          $this->throwException(txt('Invalid children, one child expected in %s', $child->asToken()));
+          $this->throwException(sprintf('Invalid children, one child expected in %s', $child->asToken()));
         }
 
         $content = $this->parse($child->getFirst());
         $var = $window->createVar($content);
 
-        $var->insert($window->stringToInstance('php-null'));
-        //$window->add($window->create('assign', array($window, $var, )));
-        $assign = $window->create('assign', array($window, $var, $content));
+        $var->insert($window->tokenToInstance('php-null'));
+        //$window->add($window->createAssign($var, )));
+        $assign = $window->createAssign($var, $content);
 
         $call->insert();
 
         if ($sName == 'if') {
 
-          $condition = $window->create('condition', array($window, $call, $assign));
+          $condition = $window->createCondition($call, $assign);
         }
-        else if ($sName == 'if-not') {
+        else { // if ($sName == 'if-not') {
 
           $not = $window->createNot($call);
-          $condition = $window->create('condition', array($window, $not, $assign));
-        }
-        else {
-
-          $this->throwException(txt('Condition expected, invalid %s', $child->asToken()));
+          $condition = $window->createCondition($not, $assign);
         }
 
         $window->add($condition);

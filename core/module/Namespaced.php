@@ -2,26 +2,24 @@
 
 namespace sylma\core\module;
 
-require_once('Exceptionable.php');
-
 abstract class Namespaced extends Exceptionable {
 
   private $aNamespaces = array();
   private $sNamespace = '';
   private $sPrefix = '';
 
-  protected function setNamespace($sUri, $sPrefix = null, $bDefault = true) {
+  protected function setNamespace($sNamespace, $sPrefix = null, $bDefault = true) {
 
-    if (!$sUri) {
+    if (!$sNamespace) {
 
-      \Sylma::throwException(t('Cannot use empty string as dom namespace'));
+      $this->throwException('Cannot use empty string as dom namespace');
     }
 
-    $this->aNamespaces[$sPrefix] = $sUri;
+    $this->aNamespaces[$sPrefix] = $sNamespace;
 
     if ($bDefault) {
 
-      $this->sNamespace = $sUri;
+      $this->sNamespace = $sNamespace;
       $this->sPrefix = $sPrefix;
     }
   }
@@ -32,7 +30,7 @@ abstract class Namespaced extends Exceptionable {
 
       if (!array_key_exists($sPrefix, $this->aNamespaces)) {
 
-        $this->throwException(txt('Unknown prefix : %s', $sPrefix));
+        $this->throwException(sprintf('Unknown prefix : %s', $sPrefix));
       }
 
       $sResult = $this->aNamespaces[$sPrefix];
@@ -63,8 +61,10 @@ abstract class Namespaced extends Exceptionable {
 
   protected function getNS($sPrefix = null) {
 
-    if ($sPrefix) return array($sPrefix => array_val($sPrefix, $this->aNamespaces));
-    else return $this->aNamespaces;
+    if ($sPrefix) $aResult = array($sPrefix => $this->getNamespace ($sPrefix));
+    else $aResult = $this->aNamespaces;
+
+    return $aResult;
   }
 
   /**
@@ -110,7 +110,7 @@ abstract class Namespaced extends Exceptionable {
     $sNamespace = $this->getNamespace();
 
     $mSender = (array) $mSender;
-    $mSender[] = '@namespace ' . $sNamespace;
+    $mSender[] = '@class ' . get_class($this);
 
     \Sylma::throwException($sMessage, $mSender, $iOffset);
   }

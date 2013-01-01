@@ -1,0 +1,44 @@
+classes :
+  §sylma-classbase : \sylma\parser\languages\php\basic
+  string :
+    name : instance\_String
+  array :
+    name : instance\_Array
+  numeric :
+    name : instance\_Numeric
+  object :
+    name : instance\_Object
+  class :
+    name : instance\_Class
+  call :
+    name : CallMethod
+  object-var :
+    name : _ObjectVar
+  simple-var :
+    name : _ScalarVar
+  template :
+    name : Template
+  function :
+    name : _Function
+  closure :
+    name : _Closure
+  instanciate :
+    name : Instanciate
+  assign :
+    name : Assign
+  insert :
+    name : Insert
+  interface :
+    name : _Interface
+  line :
+    name : _Line
+  null :
+    name : instance\_Null
+  boolean :
+    name : instance\_Boolean
+  concat :
+    name : Concat
+  condition :
+    name : Condition
+  test :
+    name : Test

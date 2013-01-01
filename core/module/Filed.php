@@ -3,16 +3,19 @@
 namespace sylma\core\module;
 use \sylma\core, \sylma\storage\fs;
 
-require_once('core/argument/Filed.php');
-require_once('core/functions/Path.php');
-require_once('Argumented.php');
-
-abstract class Filed extends Argumented {
+abstract class Filed extends Sessioned {
 
   const FS_CONTROLER = 'fs';
 
   protected $directory = null;
-  protected static $argumentClass = 'sylma\core\argument\Filed';
+  protected $file = null;
+
+  const ARGUMENT_MANAGER = 'argument/parser';
+
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  protected static $sArgumentFile = 'core/argument/Filed.php';
+
+  protected static $sArgumentXMLClass = '\sylma\core\argument\parser\Handler';
 
   protected function createArgument($mArguments, $sNamespace = '') {
 
@@ -33,7 +36,16 @@ abstract class Filed extends Argumented {
   private function createArgumentFromString($sPath, $sNamespace) {
 
     $file = $this->getFile($sPath);
-    $result = parent::createArgument((string) $file, $sNamespace);
+
+    if ($file->getExtension() === 'xml') {
+
+      $manager = $this->getControler(self::ARGUMENT_MANAGER);
+      $result = $manager->createArguments($file);
+    }
+    else {
+
+      $result = parent::createArgument((string) $file, $sNamespace);
+    }
 
     return $result;
   }
@@ -88,10 +100,8 @@ abstract class Filed extends Argumented {
       $this->directory = $mDirectory;
     }
 
-    if (!$this->getDirectory()) {
-
-      $this->throwException(txt('Cannot use %s as a directory', $mDirectory));
-    }
+    // check if directory is accessible
+    $this->getDirectory();
   }
 
   protected function loadControler($sName) {
@@ -128,7 +138,7 @@ abstract class Filed extends Argumented {
 
     if (!$result && $bDebug) {
 
-      $this->throwException(t('No base directory defined'));
+      $this->throwException('No base directory defined');
     }
 
     return $result;
@@ -136,20 +146,38 @@ abstract class Filed extends Argumented {
 
   /**
    * Get a file object relative to the current module's directory. (See @method setDirectory())
+   * If no path sent, try to get local file set with @method setFile()
    *
    * @param string $sPath The relative or absolute path to the file
    * @return fs\file|null The file corresponding to the path given, or NULL if none found
    */
-  protected function getFile($sPath, $bDebug = true) {
+  protected function getFile($sPath = '', $bDebug = true) {
 
-    $fs = $this->getControler(static::FS_CONTROLER);
+    if ($sPath) {
 
-    if (!$directory = $this->getDirectory()) {
+      $fs = $this->getControler(static::FS_CONTROLER);
+      $result = $fs->getFile($sPath, $this->getDirectory(), $bDebug);
+    }
+    else {
 
-      $this->throwException(t('No directory defined'), array(), 3);
+      if (!$this->file && $bDebug) {
+
+        $this->throwException('No file associated to this object');
+      }
+
+      $result = $this->file;
     }
 
-    return $fs->getFile($sPath, $directory, $bDebug);
+    return $result;
+  }
+
+  /**
+   * Set a local file (exists mainly cause of @method getFile())
+   * @param \sylma\storage\fs\file $file
+   */
+  protected function setFile(fs\file $file) {
+
+    $this->file = $file;
   }
 
   protected function createTempDirectory($sName = '') {

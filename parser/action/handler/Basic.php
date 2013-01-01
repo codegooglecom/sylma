@@ -3,105 +3,174 @@
 namespace sylma\parser\action\handler;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 
-require_once('core/module/Domed.php');
-require_once('parser/action.php');
-
 /**
  * "Controller free" class.
  */
-abstract class Basic extends core\module\Domed implements parser\action {
+class Basic extends core\module\Filed implements parser\action, core\stringable, core\tokenable {
 
   const CONTROLER_ALIAS = 'action';
 
+  //protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  //protected static $sArgumentFile = 'core/argument/Filed.php';
+
   const FS_CONTROLER = 'fs/editable';
 
-  const DEBUG_UPDATE = true; // default : false
-  const DEBUG_RUN = true; // default : true
-  const DEBUG_SHOW = false; // default : false
-
-  protected $file;
   protected $controler;
 
-  protected $baseDirectory = null;
+  protected $aArguments = array();
+  protected $aContexts = array();
 
-  protected function getBaseDirectory() {
+  protected $action = null;
+  protected $parentParser;
+  protected $bRunned = false;
+  protected $bExceptions = false;
 
-    return $this->baseDirectory;
+  public function __construct(fs\file $file, array $aArguments = array(), fs\directory $dir = null) {
+
+    $this->setArguments($aArguments);
+    $this->setControler(\Sylma::getControler(self::CONTROLER_ALIAS));
+
+    $this->setNamespace($this->getControler()->getNamespace());
+
+    $this->setFile($file);
+
+    if ($dir) $this->setDirectory($dir);
+    else $this->setDirectory($file->getParent());
   }
 
-  protected function setBaseDirectory(fs\directory $baseDirectory) {
+  protected function getAction() {
 
-    $this->baseDirectory = $baseDirectory;
+    return $this->action;
   }
 
-  protected function setFile(fs\file $file) {
+  protected function setAction(parser\action\cached $action) {
 
-    $this->file = $file;
+    $this->action = $action;
+  }
+
+  public function getContexts() {
+
+    return $this->aContexts;
+  }
+
+  public function setContexts(array $aContexts) {
+
+    $this->aContexts = $aContexts;
+  }
+
+  public function setParentParser(parser\action $parent) {
+
+    $this->parentParser = $parent;
+  }
+
+  public function getParentParser($bRoot = false) {
+
+    if ($bRoot) {
+
+      $result = $this->parentParser ? $this->parentParser->getParentParser($bRoot) : $this;
+    }
+    else {
+
+      $result = $this->parentParser;
+    }
+
+    return $result;
+  }
+
+  public function loadParser($sNamespace) {
+
+    if (!$this->getAction()) {
+
+      $this->throwException('Cannot load parser, action not yet loaded');
+    }
+
+    return $this->getAction()->loadParser($sNamespace);
+  }
+
+  public function setArgument($sPath, $mValue) {
+
+    return parent::setArgument($sPath, $mValue);
   }
 
   /**
-   * Allow get of object's file or object's directory's files
-   *
-   * @param string $sPath
-   * @param boolean $bDebug
-   * @return fs\file|null
+   * Allow management of multiple calls on same action
+   * @return parser\action\cached
    */
-  protected function getFile($sPath = '', $bDebug = true) {
-
-    if ($sPath) {
-
-      $result = parent::getFile($sPath, $bDebug);
-    }
-    else {
-
-      $result = $this->file;
-    }
-
-    return $result;
-  }
-
-  protected function cleanPath($sPath) {
-
-    return str_replace(array('-', '_', '.'), array(), $sPath);
-  }
-
-  protected function reflectAction() {
-
-    $parser = $this->getControler();
-    $doc = $this->getFile()->getDocument();
-
-    $action = $parser->create('dom', array($parser, $doc, $this->getBaseDirectory()));
-
-    $result = $action->asDOM();
-
-    return $result;
-  }
-
   protected function runAction() {
 
-    $result = null;
-    $file = $this->getFile();
-    $sName = $file->getName() . '.php';
+    if (!$this->isRunned()) {
 
-    $tmpDir = $this->getDirectory((string) $file->getParent())->addDirectory(parser\action::EXPORT_DIRECTORY);
+      $this->isRunned(true);
 
-    if ($tmpDir) {
+      // temporary change current parser, then restore it
+      $sContext = 'action/current';
 
-      $tmpFile = $tmpDir->getFile($sName, 0);
+      $manager = $this->getControler('parser');
+      //$parent = $manager->getContext($sContext, false);
+      $manager->setContext($sContext, $this);
+
+      try {
+
+        $aArguments = array($this->getDirectory(), $this, $this->getContexts(), $this->getArguments()->query(), $this->getControlers());
+        $action = $this->getControler()->load($this->getFile(), $aArguments);
+
+        $this->setAction($action);
+        $this->getAction()->loadAction();
+      }
+      catch (core\exception $e) {
+
+        $e->addPath('Compiler error');
+        $e->addPath($this->getFile()->asToken());
+
+        if ($this->useExceptions()) throw $e;
+        else $e->save();
+      }
+
+      //$manager->setContext($sContext, $parent);
     }
 
-    if (!$tmpDir || !$tmpFile || $tmpFile->getLastChange() < $file->getLastChange() || self::DEBUG_UPDATE) {
+    return $this->getAction();
+  }
 
-      $tmpFile = $this->buildAction();
-    }
+  protected function isRunned($mValue = null) {
 
-    if (self::DEBUG_RUN) $result = $this->runCache($tmpFile);
-    else {
+    if (!is_null($mValue)) $this->bRunned = $mValue;
 
-      $this->throwException(t('No result, DEBUG_RUN set to TRUE'));
-    }
+    return $this->bRunned;
+  }
 
-    return $result;
+  protected function parseString(core\stringable $mVal) {
+
+    return $mVal->asString();
+  }
+
+  protected function parseObject(parser\action\cached $mVal) {
+
+    return $mVal->asObject();
+  }
+
+  public function getContext($sContext) {
+
+    $action = $this->runAction();
+    return $action->getContext($sContext);
+  }
+
+  public function asObject() {
+
+    $action = $this->runAction();
+    return $action ? $this->parseObject($action) : null;
+  }
+
+  public function asArray() {
+
+    $action = $this->runAction();
+    return $action ? $action->asArray() : null;
+  }
+
+  public function asString($iMode = 0) {
+
+    $action = $this->runAction();
+    return $action ? $this->parseString($action) : null;
   }
 
   protected function parseDOM(dom\domable $val) {
@@ -109,9 +178,20 @@ abstract class Basic extends core\module\Domed implements parser\action {
     return $val->asDOM();
   }
 
+  public function useExceptions($mValue = null) {
+
+    if (!is_null($mValue)) $this->bExceptions = $mValue;
+    return $this->bExceptions;
+  }
+
+  public function asToken() {
+
+    return 'Action : ' . $this->getFile();
+  }
+
   public function asDOM() {
 
     $action = $this->runAction();
-    return $this->parseDOM($action);
+    return $action ? $this->parseDOM($action) : NULL;
   }
 }

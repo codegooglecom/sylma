@@ -1,23 +1,28 @@
-extensions :
-  - eml
-  - iml
+debug :
+  show : false
+  run : true
+  update : true
+template :
+  indent : false
+extensions : [eml, iml]
 classes :
-  @sylma-classbase : \sylma\parser\action
+  §sylma-classbase : \sylma\parser\action
   window :
-    name : php\basic\Window
-  basic :
-    name : Basic
-  dom :
+    name : compiler\Window
+  caller :
+    name : \sylma\parser\caller\Controler
+  cached :
+    name : cached\Document
+  compiler :
+    name : compiler\Main
+  reflector :
     name : compiler\Reflector
-  php : @sylma:import php/window.yml;
+  php : §sylma:import ../languages/php/window.yml;
   document :
-    file : /sylma/dom2/basic/handler/Rooted.php
     name : \sylma\dom\basic\handler\Rooted
   action :
-    name : handler\Action
+    name : handler\Basic
   path :
     name : Path
-  parser :
-    classes :
-      security :
-        name : \sylma\parser\security\Domed
+  context :
+    name : \sylma\parser\context\Basic

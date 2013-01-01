@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests xmlns:tst="http://www.sylma.org/dom/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+  <tst:description>Filed</tst:description>
+  <tst:test name="Load a file">
+    $file = $controler->getFile('samples/hello.xml');
+    $doc = $controler->create('handler', array((string) $file));
+
+    return
+      $doc instanceof \sylma\dom\handler &amp;&amp;
+      ($root = $doc->getRoot()) &amp;&amp;
+      $root->getName() == 'root' &amp;&amp;
+      $root->getNamespace() == 'http://www.sylma.org/dom/test/samples';
+  </tst:test>
+  <tst:test name="Save a file">
+    $file = $controler->getFile('samples/hello.xml');
+    $doc = $controler->create('handler', array((string) $file));
+
+    $sDoc = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;&lt;div&gt;hello&lt;/div&gt;&lt;/root&gt;';
+
+    return $doc->asString($doc::STRING_HEAD) === $sDoc;
+  </tst:test>
+</tst:tests>
+

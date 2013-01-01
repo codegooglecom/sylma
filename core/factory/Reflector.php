@@ -3,8 +3,6 @@
 namespace sylma\core\factory;
 use \sylma\core;
 
-require_once('core/factory.php');
-require_once('core/module/Namespaced.php');
 require_once('core/functions/Path.php');
 
 class Reflector extends core\module\Namespaced implements core\factory {
@@ -46,13 +44,13 @@ class Reflector extends core\module\Namespaced implements core\factory {
 
     if (!$this->getSettings()) {
 
-      $this->throwException(txt('Cannot build object @class %s. No argument defined', $sName));
+      $this->throwException(sprintf('Cannot build object @class %s. No argument defined', $sName));
     }
 
     // set class name
     if (!$class = $this->loadClass($sName, $this->getSettings())) {
 
-      $this->throwException(txt('Class %s cannot be load', $sName));
+      $this->throwException(sprintf('Class %s cannot be load', $sName));
     }
 
     //if ($sName == 'directory') dspf()
@@ -67,7 +65,7 @@ class Reflector extends core\module\Namespaced implements core\factory {
 
     if ($sFile = $class->read('file', false)) {
 
-      $class->set('file', path_absolute($sFile, $sDirectory));
+      $class->set('file', core\functions\path\toAbsolute($sFile, $sDirectory));
     }
     //echo($class->read('name')) . '<br/>';
     return $class;
@@ -92,7 +90,7 @@ class Reflector extends core\module\Namespaced implements core\factory {
 
     if (!$class = $args->get($sPath)) {
 
-      $this->throwException(txt('Cannot build object @class %s. No argument defined for these class', $sName));
+      $this->throwException(sprintf('Cannot build object @class %s. No argument defined for these class', $sName));
     }
 
     $args->unRegisterToken(self::DIRECTORY_TOKEN);
@@ -116,7 +114,7 @@ class Reflector extends core\module\Namespaced implements core\factory {
 
     if (!$sClass = $class->read('name')) { // has name ?
 
-      \Sylma::throwException(txt('Cannot build object. No "name" defined in class'), array(), 3);
+      \Sylma::throwException(sprintf('Cannot build object. No "name" defined in class'), array(), 3);
     }
 
     if (self::includeClass($sClass, $class->read('file', false))) {
@@ -138,7 +136,7 @@ class Reflector extends core\module\Namespaced implements core\factory {
 
     $sMain = \Sylma::ROOT;
 
-    if (!class_exists($sClass)) {
+    if (!class_exists($sClass, false)) {
 
       if (!$sFile) {
 
@@ -152,13 +150,13 @@ class Reflector extends core\module\Namespaced implements core\factory {
       if (file_exists($sFile)) require_once($sFile);
       else {
 
-        \Sylma::throwException(txt('Cannot load @class %s. @file %s not found !', $sClass, $sFile));
+        \Sylma::throwException(sprintf('Cannot load @class %s. @file %s not found !', $sClass, $sFile));
       }
     }
 
-    if (!interface_exists($sClass) && !class_exists($sClass)) {
+    if (!interface_exists($sClass) && !class_exists($sClass, false)) {
 
-      \Sylma::throwException(txt('@class %s has not been loaded !', $sClass));
+      \Sylma::throwException(sprintf('@class %s has not been loaded !', $sClass));
     }
 
     return true;

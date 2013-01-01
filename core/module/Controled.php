@@ -3,13 +3,15 @@
 namespace sylma\core\module;
 use \sylma\core;
 
-require_once('core/controled.php');
-require_once('Namespaced.php');
-
-abstract class Controled extends Namespaced implements core\controled {
+class Controled extends Namespaced implements core\controled {
 
   protected $controler;
   protected $aControlers = array();
+
+  public function getControlers() {
+
+    return $this->aControlers;
+  }
 
   public function setControler($controler, $sName = '') {
 
@@ -20,11 +22,6 @@ abstract class Controled extends Namespaced implements core\controled {
 
     if ($sName) $this->aControlers[$sName] = $controler;
     else $this->controler = $controler;
-  }
-
-  public function getControlers() {
-
-    return $this->aControlers;
   }
 
   public function getControler($sName = '', $bDebug = true) {
@@ -64,7 +61,7 @@ abstract class Controled extends Namespaced implements core\controled {
     return $controler;
   }
 
-  public function getNamespace($sPrefix = null) {
+  protected function getNamespace($sPrefix = null) {
 
     $sNamespace = parent::getNamespace($sPrefix);
 

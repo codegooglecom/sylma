@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:ls="http://www.sylma.org/security">
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml">
   <le:settings>
-    <le:name>Template HTML Admin</le:name>
-    <le:get-settings run="true" set-variable="language">infos/language</le:get-settings>
-    <le:get-settings run="true" set-variable="icone">infos/icone</le:get-settings>
-    <le:get-settings run="true" set-variable="webmaster-href">infos/webmaster/@href</le:get-settings>
+    <le:name>Sylma Backend</le:name>
+    <le:argument name="content" format="\sylma\parser\action"/>
   </le:settings>
   <html>
     <head>
       <title>
-        <le:get-settings>infos/name</le:get-settings>
       </title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-      <meta http-equiv="content-language" content="[$language]"/>
-      <link rel="icon" href="[$icone]" type="image/x-icon"/>
-      <link rel="stylesheet" type="text/css" media="all" href="/sylma/css/global.css"/>
-      <link rel="stylesheet" type="text/css" media="all" href="/sylma/css/messages.css"/>
-      <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/global.css"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/backend.css"/>
+      <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/infos.css"/>
+      <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/clearfix.css"/>
     </head>
     <body>
-      <a id="user-login" ls:mode="710" ls:group="famous" href="/sylma/modules/users/login" ls:owner="root">connexion</a>
       <div id="container">
         <div id="header">
           <h1>
@@ -31,18 +24,12 @@
           <div id="menus">
             <ul>
               <li>
-                <a href="/sylma">Accueil</a>
-              </li>
-              <li ls:owner="root" ls:group="users" ls:mode="710">
-                <a href="/modules/editeur">Editeur</a>
-              </li>
-              <li ls:owner="root" ls:group="users" ls:mode="710">
-                <a href="/sylma/user/logout.redirect">Déconnexion</a>
+                <a href="/">Accueil</a>
               </li>
             </ul>
           </div>
           <div id="content">
-            <le:get-argument name="window-action"/>
+            <le:get-argument name="content"/>
           </div>
         </div>
         <div id="footer"><a href="http://www.sylma.org">Sylma</a> XML Framework</div>

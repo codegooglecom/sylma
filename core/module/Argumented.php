@@ -1,15 +1,11 @@
 <?php
 
 namespace sylma\core\module;
-use \sylma\core;
+use sylma\core;
 
-require_once('core/argument/Domed.php');
 require_once('Controled.php');
-//require_once('core/factory.php');
 
-//require_once('core/Reflector.php');
-
-abstract class Argumented extends Controled {
+abstract class Argumented extends Managed {
 
   const FACTORY_CONTROLER = 'factory';
 
@@ -19,7 +15,8 @@ abstract class Argumented extends Controled {
   private $reflector;
   private $aClasses = array();
 
-  protected static $argumentClass = 'sylma\core\argument\Domed';
+  protected static $sArgumentClass = '\sylma\core\argument\Iterator';
+  protected static $sArgumentFile = 'core/argument/Iterator.php';
 
   /**
    * Argument object linked to this module, contains various parameters for the module
@@ -39,7 +36,7 @@ abstract class Argumented extends Controled {
 
       if (!$this->getArguments()) {
 
-        $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
+        $this->throwException(sprintf('Cannot build object @class %s. No settings defined', $sName));
       }
 
       $factory->setSettings($this->getArguments());
@@ -53,36 +50,50 @@ abstract class Argumented extends Controled {
     return $result;
   }
 
+  /**
+   *
+   * @param array $mArguments
+   * @param string $sNamespace
+   * @return core\argument
+   */
   protected function createArgument($mArguments, $sNamespace = '') {
+
+    require_once(static::$sArgumentFile);
 
     if ($sNamespace) $aNS = array($sNamespace);
     else if ($this->getNamespace()) $aNS = array($this->getNamespace());
     else $aNS = array();
 
-    return new static::$argumentClass($mArguments, $aNS);
+    return new static::$sArgumentClass($mArguments, $aNS);
   }
 
   protected function setArguments($mArguments = null, $bMerge = true) {
 
-    if ($mArguments !== null) {
+    if (is_null($mArguments)) {
 
-      if (is_array($mArguments)) {
-
-        if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
-        else $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
-      }
-      else if (is_object($mArguments)) {
-
-        if ($this->getArguments() && $bMerge) {
-
-          $this->getArguments()->merge($mArguments);
-        }
-        else $this->arguments = $mArguments;
-      }
+      $this->arguments = null;
     }
     else {
 
-      $this->arguments = null;
+      if ($this->getArguments()) {
+
+        $this->getArguments()->merge($mArguments);
+      }
+      else {
+
+        if (is_array($mArguments)) {
+
+          $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
+        }
+        else if ($mArguments instanceof core\argument) {
+
+          $this->arguments = $mArguments;
+        }
+        else {
+
+          $this->throwException('Illegal argument sent');
+        }
+      }
     }
 
     return $this->getArguments();
@@ -101,7 +112,7 @@ abstract class Argumented extends Controled {
 
     $mResult = $mDefault;
 
-    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
+    if (!$this->getArguments()) $this->throwException('No arguments has been defined');
 
     $mResult = $this->getArguments()->get($sPath, $bDebug);
     if ($mResult === null && $mDefault !== null) $mResult = $mDefault;
@@ -113,7 +124,7 @@ abstract class Argumented extends Controled {
 
     $mResult = $mDefault;
 
-    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
+    if (!$this->getArguments()) $this->throwException('No arguments has been defined');
 
     $mResult = $this->getArguments()->read($sPath, $bDebug);
     if ($mResult === null && $mDefault !== null) $mResult = $mDefault;
@@ -129,6 +140,19 @@ abstract class Argumented extends Controled {
     }
 
     return $this->getArguments()->set($sPath, $mValue);
+  }
+
+  protected function dsp() {
+
+    $mArgument = func_get_args();
+    if (count($mArgument) == 1) $mArgument = current ($mArgument);
+
+    echo \Sylma::show($mArgument, false);
+  }
+
+  protected function show($mVar, $bToken = true) {
+
+    return \Sylma::show($mVar, $bToken);
   }
 
   /**

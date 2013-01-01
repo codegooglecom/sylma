@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:tst="http://www.sylma.org/modules/tester">
-  <le:settings>
-    <le:name>Test FS</le:name>
-    <le:return format="XML_Document"/>
-  </le:settings>
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:li="http://www.sylma.org/parser/caller" xmlns:tst="http://www.sylma.org/modules/tester">
+  <le:context name="title">Test FS</le:context>
   <tst:group>
     <tst:description>File system</tst:description>
-    <le:action path="basic"/>
-    <le:action path="editable"/>
+    <le:interface path="basic"/>
+    <le:interface path="editable"/>
+    <le:interface path="security"/>
   </tst:group>
 </le:action>
+

@@ -66,4 +66,41 @@
         $controler->compareNodes($action->asDOM(), $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Action as argument">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/backend'));
+      $controler->setArgument('content', $controler->getAction('samples/div'));
+    </tst:prepare>
+    <tst:node>
+      <html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><div id="content"><div xmlns="http://www.sylma.org">abc</div></div></body></html>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $action->setArgument('content', $controler->getArgument('content'));
+
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Sub-action without root">
+    <tst:prepare>
+      $controler->setArgument('action', $controler->getAction('samples/backend'));
+      $controler->setArgument('content', $controler->getAction('samples/no-root'));
+    </tst:prepare>
+    <tst:node>
+      <html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><div id="content"><h1>Titre</h1><p>Hello world</p></div></body></html>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $action->setArgument('content', $controler->getArgument('content'));
+
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node);
+    </tst:expected>
+  </tst:test>
+
 </tst:tests>

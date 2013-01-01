@@ -1,0 +1,6 @@
+debug:
+  show: false
+classes :
+  window :
+    name : \sylma\parser\languages\js\basic\Window
+  js : §sylma:import /#sylma/parser/languages/js/window.yml;

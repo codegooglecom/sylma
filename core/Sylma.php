@@ -1,15 +1,18 @@
 <?php
 
-use \sylma\core, \sylma\modules, \sylma\dom, \sylma\storage, \sylma\parser;
+use sylma\core, sylma\modules, sylma\dom, sylma\storage, sylma\parser;
 
 class Sylma {
 
   const NS = 'http://www.sylma.org';
 
-  const ROOT = SYLMA_ROOT; // ex: protected
-  const PATH = SYLMA_PROTECTED_PATH; // ex: /sylma
+  const ROOT = sylma\ROOT; // ex: protected
+  const PATH = sylma\SYLMA_PATH; // ex: /sylma
+  const PATH_SYSTEM = sylma\SYSTEM_PATH;  // ex : /var/www/mysite or C:/xampp/htdocs/mysite
+  const PATH_OPTIONS = '/core/sylma.yml';
 
-  const PATH_OPTIONS = '/system/sylma.yml';
+  const PATH_CACHE = 'cache';
+  const PATH_TRASH = 'trash';
 
   const MODE_EXECUTE = 1;
   const MODE_WRITE = 2;
@@ -21,10 +24,15 @@ class Sylma {
    * @var core\argument
    */
   private static $settings = null;
-  private static $logger = null;
-  protected static $aControlers;
 
-  public static $exception = '\sylma\core\exception\Basic';
+  protected static $aControlers;
+  protected static $aFiles = array();
+
+  public static $sExceptionFile = 'core/exception/Basic.php';
+  public static $sExceptionClass = '\sylma\core\exception\Basic';
+
+  public static $sInitializerFile = 'core/Initializer.php';
+  public static $sInitializerClass = '\sylma\core\Initializer';
 
   /**
    * Handle final result for @method render()
@@ -34,36 +42,46 @@ class Sylma {
 
   public static function init($sServer = '') {
 
-    require_once('core/exception/Basic.php');
+    require_once(self::$sExceptionFile);
     //xdebug_disable();
-    set_error_handler(self::$exception . "::loadError");
+    set_error_handler(self::$sExceptionClass . "::loadError");
 
-    require_once('old/Initializer.php');
+    spl_autoload_register('\Sylma::autoload');
+
+    require_once(self::$sInitializerFile);
 
     //xdebug_start_code_coverage();
 
+    $init = self::$aControlers['init'] = new self::$sInitializerClass;
+    self::setControler('init', $init);
+
     try {
 
-      $init = self::$aControlers['init'] = new Initializer();
-
       self::$settings = $init->loadSettings($sServer, self::ROOT . self::PATH . self::PATH_OPTIONS);
-      $init->load();
-
-      self::setControler('init', $init);
-
-      self::getControler('fs');
-      //self::getControler('dom');
-
-      self::$result = Controler::trickMe();
+      self::$result = $init->run(self::get('initializer'));
     }
     catch (core\exception $e) {
 
-      print_r($e->getTrace());
-      throw $e;
+      $e->save();
+
+      if (!self::read('debug/enable')) {
+
+        header('HTTP/1.0 404 Not Found');
+        self::$result = $init->getError();
+      }
+      else {
+
+        self::get('render')->set('gzip', false);
+      }
     }
 
     //var_dump(xdebug_get_code_coverage());
     //session_write_close();
+  }
+
+  public static function autoload($sClass) {
+
+    require_once(str_replace('\\', '/', $sClass . '.php'));
   }
 
   public static function setControler($sName, $controler) {
@@ -74,7 +92,7 @@ class Sylma {
 
   public static function getControler($sName, $bLoad = true, $bDebug = true) {
 
-    $controler = array_val($sName, self::$aControlers);
+    $controler = array_key_exists($sName, self::$aControlers) ? self::$aControlers[$sName] : null;
 
     if (!$controler && $bLoad) {
 
@@ -83,7 +101,7 @@ class Sylma {
 
     if (!$controler && $bLoad && $bDebug) {
 
-      self::throwException(txt('Controler %s is not defined', $sName));
+      self::throwException(sprintf('Controler %s is not defined', $sName));
     }
 
     return $controler;
@@ -95,6 +113,29 @@ class Sylma {
 
     switch ($sName) {
 
+      /** Parsers **/
+
+      case 'parser' :
+
+        $result = new parser\Manager;
+
+      break;
+
+      case 'action' :
+
+        $result = new parser\action\Manager();
+
+      break;
+
+      case 'caller' :
+
+        $result = new parser\caller\Controler;
+
+      break;
+
+      /** Others **/
+
+      /*
       case 'fs' :
 
         require_once('storage/fs/Controler.php');
@@ -102,26 +143,36 @@ class Sylma {
         $result->loadDirectory();
 
       break;
+      */
 
       case 'fs/editable' :
 
-        require_once('storage/fs/Controler.php');
-
-        $result = new storage\fs\Controler('', true);
+        $result = new storage\fs\Controler(self::ROOT, true);
         $result->loadDirectory();
+
+      break;
+
+      case 'fs/cache' :
+
+        $result = new storage\fs\Controler(self::PATH_CACHE, true, true, false);
+        $result->loadDirectory('');
+
+      break;
+
+      case 'fs/trash' :
+
+        $result = new storage\fs\Controler(self::PATH_TRASH, true, true, false);
+        $result->loadDirectory('');
 
       break;
 
       case 'dom' :
 
-        require_once('dom2/Controler.php');
         $result = new dom\Controler;
 
       break;
 
       case 'user' :
-
-        require_once('core/user/Controler.php');
 
         $result = new core\user\Controler;
         $result = $result->getUser();
@@ -130,14 +181,12 @@ class Sylma {
 
       case 'formater' :
 
-        require_once('modules/formater/Controler.php');
         $result = new modules\formater\Controler;
 
       break;
 
       case 'factory' :
 
-        require_once('core/factory/Reflector.php');
         $result = new core\factory\Reflector;
 
       break;
@@ -149,23 +198,14 @@ class Sylma {
 
       break;
 
-      case 'action' :
+      case 'argument/parser' :
 
-        require_once('parser/action/Controler.php');
-        $result = new parser\action\Controler;
-
-      break;
-
-      case 'caller' :
-
-        require_once('parser/caller/Controler.php');
-        $result = new parser\caller\Controler;
+        $result = new core\argument\parser\Manager;
 
       break;
 
       case 'timer' :
 
-        require_once('modules/timer/Controler.php');
         $timer = new modules\timer\Controler;
 
         $result = $timer->create('timer');
@@ -212,16 +252,18 @@ class Sylma {
     $aMessage = array($sPath, ' @message ', $mMessage);
     $sMessage = implode('', $aMessage);
     //print_r(debug_backtrace());
-    if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
+    //if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
 
-      if (self::read('messages/print/visible')) echo $sMessage."<br/>\n";
-      Controler::addMessage($aMessage, $sStatut); // temp
-    }
-    else if (self::read('messages/print/hidden')) {
+      //if (self::read('messages/print/visible')) echo $sMessage."<br/>\n";
+      //Controler::addMessage($aMessage, $sStatut); // temp
+    //}
+
+    if (self::read('debug/enable')) {
 
       echo $sMessage . "<br/>\n";
     }
 
+    /*
     if (class_exists('Logger')) {
 
       // database is open log into
@@ -239,6 +281,17 @@ class Sylma {
         fclose($fp);
       }
     }
+    */
+  }
+
+  public static function show($mVal, $bToken = true) {
+
+    $formater = self::getControler('formater');
+
+    $result = $bToken ? $formater->asToken($mVal) : $formater->asHTML($mVal);
+
+    //echo '<pre>' . $result . '</pre>';
+    return $result;
   }
 
   public static function loadException(Exception $e) {
@@ -251,7 +304,7 @@ class Sylma {
 
   public static function throwException($sMessage, array $aPath = array(), $iOffset = 1) {
 
-    $e = new Sylma::$exception($sMessage);
+    $e = new Sylma::$sExceptionClass($sMessage);
 
     $e->setPath($aPath);
     $e->load($iOffset);
@@ -264,7 +317,42 @@ class Sylma {
     return PHP_OS == 'WINNT';
   }
 
+  public static function load($sFile, $sDirectory = '') {
+
+    $bRoot = $sFile{0} == '/';
+
+    if (!$sDirectory || $bRoot) {
+
+      if ($bRoot) $sFile = substr($sFile, 1);
+      $sPath = $sFile;
+    }
+    else {
+
+      $aFile = explode('/', $sFile);
+      $aDirectory = explode('/', $sDirectory);
+
+      foreach ($aFile as $sName) {
+
+        if ($sName == '..') {
+
+          array_pop($aDirectory);
+          array_shift($aFile);
+        }
+        else {
+
+          $aDirectory[] = $sName;
+        }
+      }
+
+      $sPath = implode('/', $aDirectory);
+    }
+
+    if (!array_key_exists($sPath, self::$aFiles)) require_once($sPath);
+  }
+
   public static function render() {
+
+    if (!self::read('debug/enable') && self::read('render/gzip')) ob_start('ob_gzhandler');
 
     return self::$result;
   }

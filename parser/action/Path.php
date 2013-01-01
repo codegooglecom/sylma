@@ -1,14 +1,17 @@
 <?php
 
 namespace sylma\parser\action;
-use sylma\core, sylma\storage\fs;
-
-require_once('core/module/Argumented.php');
+use sylma\core, sylma\storage\fs, sylma\core\functions;
 
 class Path extends core\module\Argumented {
 
+  const FILE_MANAGER = 'fs';
+
   private $sPath = '';
   private $file = null;
+
+  protected $sExtension = '';
+  protected $aExtensions = array();
 
   const NS = 'http://www.sylma.org/parser/action/path';
   /**
@@ -19,21 +22,38 @@ class Path extends core\module\Argumented {
    * @param $bDebug throw exceptions on error
    */
 
-  public function __construct($sPath, array $aArguments = array(), $bParse = true, $bArguments = true, $bDebug = true) {
+  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, $bDebug = true) {
 
     $this->setControler($this->getControler('action'));
+
+    if ($directory) {
+
+      require_once('core/functions/Path.php');
+      $sPath = functions\path\toAbsolute($sPath, $directory);
+    }
 
     $this->setPath($sPath);
     $this->setNamespace(self::NS);
 
     $this->setArguments($aArguments);
+    $this->setExtensions($this->getControler()->getArgument('extensions')->asArray());
 
     // Remove arguments following '?' of type ..?arg1=val&arg2=val..
-    $this->getArguments()->mergeArray($this->extractArguments($sPath));
+    //$this->getArguments()->mergeArray($this->extractArguments($sPath));
 
-    if ($bParse) $this->parsePath($bArguments, $bDebug);
+    if ($bParse) $this->parse($bDebug);
   }
 
+  public function getExtensions() {
+
+    return $this->aExtensions;
+  }
+
+  public function setExtensions($aExtensions) {
+
+    $this->aExtensions = $aExtensions;
+  }
+/*
   protected function extractArguments($sPath) {
 
     $aResult = array();
@@ -56,52 +76,60 @@ class Path extends core\module\Argumented {
 
     return $aResult;
   }
-
-  protected function parsePath($bArguments = true, $bDebug = true) {
-
-    $controler = $this->getControler();
+*/
+  public function parse($bDebug = true) {
 
     $file = null;
-    $dir = $controler->getDirectory('/');
+    $dir = $this->getControler(static::FILE_MANAGER)->getDirectory('/');
 
     $aPath = $this->getPath(true);
 
     do {
 
-      $sSubPath = $aPath ? $aPath[0] : '.';
+      $sub = null;
+      $sSubPath = $aPath ? $aPath[0] : '';
 
-      if (!$sub = $dir->getDirectory($sSubPath, false)) {
+      if ($sSubPath) {
 
-        $file = $this->findAction($dir, $sSubPath, $bArguments, $bDebug);
+        if (!$sub = $dir->getDirectory($sSubPath, false)) {
 
-      } else {
+          $file = $this->findAction($dir, $sSubPath);
+        }
+        else {
 
-        $dir = $sub;
-      }
-
-      if (!$file && (!$aPath || !$sub)) {
-
-        if (!$file = $this->findAction($dir, 'index', $bArguments, $bDebug)) {
-
-          if ($dir->checkRights(MODE_EXECUTION)) {
-
-            $controler->throwException(txt('No index file in %s', $dir->asToken()));
-
-          } else {
-
-            $controler->throwExecution(txt('No execution rights on %s', $dir->asToken()));
-          }
+          $dir = $sub;
+          array_shift($aPath);
         }
       }
 
-      array_shift($aPath);
+      if (!$sub) {
 
-    } while (!$file && $aPath);
+        if (!$file) {
 
-    $aPath = $this->loadIndexed($aPath);
+          $file = $this->findAction($dir, 'index');
+
+          if (!$file) {
+
+            $this->throwException(sprintf('No index file in %s', $dir->asToken()));
+          }
+        }
+        else {
+
+          array_shift($aPath);
+        }
+      }
+
+    } while (!$file && $sub);
+
+    //$aPath = $this->loadIndexed($aPath);
+    if ($aPath) {
+
+      $sFile = $file ? $file->asToken() : '[no file found]';
+      $this->throwException(sprintf('Too much arguments sent to %s', $sFile));
+    }
 
     $this->setFile($file);
-    $this->getArguments()->mergeArray($aPath);
+    //$this->getArguments()->mergeArray($aPath);
   }
 
   protected function loadIndexed(array $aPath) {
@@ -116,17 +144,11 @@ class Path extends core\module\Argumented {
     return $aResult;
   }
 
-  protected function findAction(fs\directory $dir, $sPath, $bArguments, $bDebug) {
+  protected function findAction(fs\directory $dir, $sPath) {
 
-    $exts = $this->getControler()->getArgument('extensions');
     $result = null;
 
-    if (!$bArguments && $bDebug) {
-
-      $controler->throwException(t('Directory %s not found in path %s', $sPath, $this->getPath()));
-    }
-
-    foreach ($exts->asArray() as $sExtension) {
+    foreach ($this->getExtensions() as $sExtension) {
 
       if ($result = $dir->getFile($sPath . '.' . $sExtension, false)) break;
     }
@@ -168,7 +190,7 @@ class Path extends core\module\Argumented {
     return $mResult;
   }
 
-  protected function parseExtension($bRemove) {
+  public function parseExtension($bRemove) {
 
     $sPath = $this->getPath();
 
@@ -185,6 +207,11 @@ class Path extends core\module\Argumented {
     return $this->getExtension();
   }
 
+  public function getExtension() {
+
+    return $this->sExtension;
+  }
+
   public function getFile() {
 
     return $this->file;
@@ -192,7 +219,7 @@ class Path extends core\module\Argumented {
 
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {
 
-    return parent::getArgument($sPath, $bDebug);
+    return parent::getArgument($sPath, $mDefault, $bDebug);
   }
 
   public function getArgumentsArray() {
@@ -213,7 +240,7 @@ class Path extends core\module\Argumented {
 
     if ($sPath{0} != '/') {
 
-      $this->throwException(txt('Invalid path : %s', $sPath));
+      $this->throwException(sprintf('Invalid path : %s', $sPath));
     }
 
     $this->sPath = $sPath;
@@ -248,6 +275,11 @@ class Path extends core\module\Argumented {
     $mSender[] = '@path ' . $this->getPath();
 
     return $this->getControler()->throwException($sMessage, $mSender);
+  }
+
+  public function __toString() {
+
+    return $this->sPath;
   }
 }
 
