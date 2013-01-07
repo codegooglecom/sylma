@@ -21,6 +21,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
 
   // static reference to class
   protected $sylma;
+  protected $return;
 
   public function __construct($controler, core\argument $args, $sClass) {
 
@@ -91,7 +92,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
 
   public function createCall($obj, $sMethod, $mReturn, array $aArguments = array()) {
 
-    $result = $this->create('call', array($this, $obj, $sMethod, $this->loadReturn($mReturn), $aArguments));
+    $result = $this->create('call-method', array($this, $obj, $sMethod, $this->loadReturn($mReturn), $aArguments));
 
     return $result;
   }
@@ -108,6 +109,11 @@ class Window extends common\basic\Window implements php\window, core\controled {
   public function callFunction($sName, common\_instance $return = null, array $aArguments = array()) {
 
     return $this->create('function', array($this, $sName, $return, $aArguments));
+  }
+
+  public function callClosure($closure, common\_instance $return, array $aArguments = array()) {
+
+    return $this->create('call', array($this, $closure, $return, $aArguments));
   }
 
   public function createCondition($test, $content = null) {
@@ -140,6 +146,16 @@ class Window extends common\basic\Window implements php\window, core\controled {
     if (!$sName) $sName = $this->getVarName();
 
     return $this->create($sAlias, array($this, $return, $sName, $val));
+  }
+
+  protected function getReturn() {
+
+    return $this->return;
+  }
+
+  public function setReturn($return) {
+
+    $this->return = $return;
   }
 
   public function addVar(common\argumentable $val, $sName = '') {
@@ -245,6 +261,18 @@ class Window extends common\basic\Window implements php\window, core\controled {
 
     return $result;
   }
+
+  public function asArgument() {
+
+    if ($this->getReturn()) {
+
+      $return = $this->createArgument(array('line' => array('return' => $this->getReturn())));
+      $this->aContent[] = $return;
+    }
+
+    return parent::asArgument();
+  }
+
 
   /*public function validateFormat(common\_var $var, $sFormat) {
 

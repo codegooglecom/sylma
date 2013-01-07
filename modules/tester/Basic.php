@@ -9,6 +9,8 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
   protected $sTitle;
   protected $aFiles = array();
 
+  const FILE_MANAGER = 'fs/editable';
+
   protected function getFiles() {
 
     if (!$this->aFiles) {
@@ -113,6 +115,11 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
   }
 
   protected function evaluate($closure, $controler) {
+
+    if (!is_callable($closure)) {
+
+      $this->throwException('Cannot call test');
+    }
 
     return $closure($controler);
   }

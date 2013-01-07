@@ -50,7 +50,7 @@ class CallMethod extends Called  {
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
-      'call' => array(
+      'call-method' => array(
           '@name' => $this->getName(),
           '@static' => $this->isStatic() ? true : null,
           'called' => $this->called,

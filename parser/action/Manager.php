@@ -3,14 +3,14 @@
 namespace sylma\parser\action;
 use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
-class Manager extends parser\compiler\Manager implements core\factory {
+class Manager extends parser\compiler\Builder implements core\factory {
 
   const FS_EDITABLE = 'fs/editable';
 
   /**
-   * Format action builded with @method buildAction(), must be set to FALSE in production
+   * Indent action's result builded with @method buildAction(), must be set to FALSE in production
    */
-  const FORMAT_ACTION = true;
+  const FORMAT_ACTION = false;
 
   const PHP_TEMPLATE = 'compiler/php.xsl';
   const DOM_TEMPLATE = 'compiler/template.xsl';
@@ -83,16 +83,25 @@ class Manager extends parser\compiler\Manager implements core\factory {
     return $result;
   }
 
+  /**
+   * Made public to allow use of an handler
+   */
   public function load(fs\file $file, array $aArguments = array()) {
 
     return parent::load($file, $aArguments);
+  }
+
+  protected function createCache(fs\file $file, array $aArguments = array()) {
+
+    array_unshift($aArguments, $file);
+    return $this->create('cached', $aArguments);
   }
 
   protected function build(fs\file $file, fs\directory $base) {
 
     $this->setDirectory(__FILE__);
 
-    $reflector = $this->createReflector($file, $base);
+    $reflector = $this->createReflector($file->getDocument(), $base);
     $window = $this->runReflector($reflector, $reflector->getInterface()->getName(), $file);
 
     $result = $this->buildFiles($window, $file);

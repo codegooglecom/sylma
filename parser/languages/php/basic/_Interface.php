@@ -29,6 +29,10 @@ class _Interface extends common\basic\Controled {
 
       $this->getControler()->throwException(sprintf('Invalid class name : %s', $sInterface));
     }
+    else if (!$sInterface) {
+
+      $this->getControler()->throwException('Empty name not allowed');
+    }
 
     $this->sName = $sInterface;
   }

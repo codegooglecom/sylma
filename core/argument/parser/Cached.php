@@ -7,18 +7,9 @@ class Cached extends core\argument\Iterator {
 
   const FILE_MANAGER_ALIAS = 'fs';
 
-  public function __construct(fs\file $file, core\argument $parent = null) {
+  public function __construct(array $aContent, core\argument $parent = null) {
 
-    parent::__construct($this->loadFile($file), array(), $parent);
-  }
-
-  protected function loadFile(fs\file $file) {
-
-    $mResult = include($file->getRealPath());
-
-    if (is_callable($mResult)) $mResult = self::callFunction($mResult);
-
-    return $mResult;
+    parent::__construct($aContent, array(), $parent);
   }
 
   protected static function callFunction(\Closure $function) {

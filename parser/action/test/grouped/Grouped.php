@@ -8,7 +8,6 @@ require_once('modules/tester/Basic.php');
 class Grouped extends tester\Basic {
 
   const NS = 'http://www.sylma.org/parser/action/test/grouped';
-  const FS_CONTROLER = 'fs/editable';
 
   protected $sTitle = 'Grouped';
   protected $exportDirectory;

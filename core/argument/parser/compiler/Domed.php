@@ -33,17 +33,29 @@ class Domed extends Reflector implements parser\reflector\documented {
 
   protected function parseDocument(dom\document $doc) {
 
-    return $this->parseChildrenImports($doc->getChildren());
+    $mArguments = $this->parseChildrenImports($doc->getChildren());
+
+    if (!is_array($mArguments)) {
+
+      $window = $this->getWindow();
+      $mResult = $window->callClosure($mArguments, $window->tokenToInstance('php-array'));
+    }
+    else {
+
+      $mResult = $mArguments;
+    }
+
+    return $mResult;
   }
 
   public function asDOM() {
 
-    $window = $this->build();
-    $arg = $window->asArgument();
-    //echo $this->show($arg, false);
-    $result = $arg->asDOM();
+    $this->build();
 
-    return $result;
+    $arg = $this->getWindow()->asArgument();
+    //echo $this->show($arg, false);
+
+    return $arg->asDOM();
   }
 }
 

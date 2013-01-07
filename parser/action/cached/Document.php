@@ -3,7 +3,7 @@
 namespace sylma\parser\action\cached;
 use sylma\core, sylma\dom, sylma\parser, sylma\storage\fs;
 
-class Document extends Basic implements core\stringable {
+class Document extends Basic implements core\stringable, dom\domable {
 
   protected $sTemplate = '';
   protected $aParsers = array();

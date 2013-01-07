@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-class _Closure extends common\basic\Window implements common\scope, common\argumentable {
+class _Closure extends common\basic\Window implements common\scope, common\argumentable, common\_instance, common\_object {
 
   protected $aArguments = array();
   protected $return;
@@ -54,6 +54,11 @@ class _Closure extends common\basic\Window implements common\scope, common\argum
   protected function getArguments() {
 
     return $this->aVariables;
+  }
+
+  public function getInterface() {
+
+    return $this->getReturn();
   }
 
   public function getReturn() {

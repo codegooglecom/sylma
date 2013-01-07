@@ -8,8 +8,6 @@ class Basic extends tester\Basic {
   const NS = 'http://www.sylma.org/core/argument/parser/test';
   const ARGUMENT_NS = 'http://www.sylma.org/core/argument';
 
-  const FS_CONTROLER = 'fs/editable';
-
   protected $sTitle = 'Grouped';
   protected $exportDirectory;
 

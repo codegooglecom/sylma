@@ -46,11 +46,20 @@
     <xsl:value-of select="$break"/>
   </xsl:template>
 
-  <xsl:template match="php:function">
-    <xsl:value-of select="@name"/>
+  <xsl:template name="php:call">
     <xsl:text>(</xsl:text>
     <xsl:call-template name="php:arguments"/>
     <xsl:text>)</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="php:call">
+    <xsl:apply-templates select="php:called"/>
+    <xsl:call-template name="php:call"/>
+  </xsl:template>
+
+  <xsl:template match="php:call-function">
+    <xsl:value-of select="@name"/>
+    <xsl:call-template name="php:call"/>
   </xsl:template>
 
   <xsl:template match="php:closure">
@@ -77,16 +86,14 @@
     <xsl:apply-templates select="$variable"/> = <xsl:apply-templates select="$value"/>
   </xsl:template>
 
-  <xsl:template match="php:call">
+  <xsl:template match="php:call-method">
     <xsl:apply-templates select="php:called"/>
     <xsl:choose>
       <xsl:when test="@static">::</xsl:when>
       <xsl:otherwise>-&gt;</xsl:otherwise>
     </xsl:choose>
     <xsl:apply-templates select="@name"/>
-    <xsl:text>(</xsl:text>
-    <xsl:call-template name="php:arguments"/>
-    <xsl:text>)</xsl:text>
+    <xsl:call-template name="php:call"/>
   </xsl:template>
 
   <xsl:template match="php:called">

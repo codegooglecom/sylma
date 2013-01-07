@@ -3,7 +3,7 @@
 namespace sylma\core\argument\parser;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
-class Manager extends parser\compiler\Manager implements core\factory {
+class Manager extends parser\compiler\Builder implements core\factory {
 
   const PHP_TEMPLATE = 'compiler/basic.xsl';
 

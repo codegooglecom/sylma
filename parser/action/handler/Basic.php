@@ -13,7 +13,7 @@ class Basic extends core\module\Filed implements parser\action, core\stringable,
   //protected static $sArgumentClass = 'sylma\core\argument\Filed';
   //protected static $sArgumentFile = 'core/argument/Filed.php';
 
-  const FS_CONTROLER = 'fs/editable';
+  //const FILE_MANAGER = 'fs/editable';
 
   protected $controler;
 

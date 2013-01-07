@@ -78,7 +78,7 @@ abstract class Domed extends Child {
   }
 
   /**
-   * @param dom\element $el
+   * @param $children
    * @return array
    */
   protected function parseChildren(dom\collection $children) {

@@ -2,6 +2,8 @@ debug :
   run : true
   update : true
   show : false
+cache :
+  class : \sylma\core\argument\parser\Cached
 classes :
   §sylma-classbase : \sylma\core\argument
   handler :

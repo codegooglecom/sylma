@@ -10,8 +10,10 @@ classes :
     name : instance\_Object
   class :
     name : instance\_Class
-  call :
+  call-method :
     name : CallMethod
+  call :
+    name : _Call
   object-var :
     name : _ObjectVar
   simple-var :

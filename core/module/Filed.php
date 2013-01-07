@@ -5,13 +5,12 @@ use \sylma\core, \sylma\storage\fs;
 
 abstract class Filed extends Sessioned {
 
-  const FS_CONTROLER = 'fs';
-
   protected $directory = null;
   protected $file = null;
 
   const ARGUMENT_MANAGER = 'argument/parser';
-
+  const FILE_MANAGER = 'fs';
+  
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
   protected static $sArgumentFile = 'core/argument/Filed.php';
 
@@ -110,7 +109,7 @@ abstract class Filed extends Sessioned {
 
     if ($sName == 'fs') {
 
-      $result = \Sylma::getControler(static::FS_CONTROLER);
+      $result = \Sylma::getControler(static::FILE_MANAGER);
     }
     else {
 
@@ -155,7 +154,7 @@ abstract class Filed extends Sessioned {
 
     if ($sPath) {
 
-      $fs = $this->getControler(static::FS_CONTROLER);
+      $fs = $this->getControler(static::FILE_MANAGER);
       $result = $fs->getFile($sPath, $this->getDirectory(), $bDebug);
     }
     else {

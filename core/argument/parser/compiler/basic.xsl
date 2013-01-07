@@ -4,7 +4,7 @@
   <xsl:include href="/#sylma/parser/languages/php/source.xsl"/>
 
   <xsl:template match="php:window">&lt;?php
-    return <xsl:apply-templates select="*"/>
+    <xsl:apply-templates select="*"/>
   </xsl:template>
 
   <xsl:template match="php:array">

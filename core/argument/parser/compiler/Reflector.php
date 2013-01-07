@@ -72,8 +72,8 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
     $window = $this->getWindow();
 
-    $self = $window->createVariable('self', $this->getHandlerInstance());
-    $closure = $window->create('closure', array($window, array($self)));
+    //$self = $window->createVariable('self', $this->getHandlerInstance());
+    $closure = $window->create('closure', array($window));
 
     $bChildren = false;
     $window->setScope($closure);
@@ -151,11 +151,6 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     return $result;
   }
 
-  protected function getHandlerInstance() {
-
-    return $this->getWindow()->tokenToInstance('\sylma\core\argument\parser\Cached');
-  }
-
   protected function reflectImport(dom\element $el) {
 
     $window = $this->getWindow();
@@ -163,10 +158,10 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     $sFile = (string) $this->getFile($el->read());
     //$fs = $window->addControler('fs');
 
-    $file = $window->createCall($window->getScope()->getVariable('self'), 'getFile', '\sylma\storage\fs\file', array($sFile));
+    $file = $window->createCall($window->addControler(static::FILE_MANAGER), 'getFile', '\sylma\storage\fs\file', array($sFile));
 
     $manager = $this->getWindow()->addControler(static::ARGUMENT_MANAGER);
-    $result = $this->getWindow()->createCall($manager, 'createArguments', $this->getHandlerInstance(), array($file));
+    $result = $this->getWindow()->createCall($manager, 'createArguments', '\sylma\core\argument', array($file));
 
     return $result;
   }

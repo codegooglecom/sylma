@@ -33,11 +33,31 @@ abstract class Documented extends Master {
     return $this->window;
   }
 
+  /**
+   *
+   * @param $doc
+   * @return array
+   */
   protected function parseDocument(dom\document $doc) {
 
     return $this->parseChildren($doc->getChildren());
   }
 
+/*
+  protected function buildContainer(php\window $window) {
+
+    $switch = $window->createSwitch();
+    $switch->setCase(self::MODE_DEFAULT);
+
+    $window->add($switch);
+    $window->setScope($switch);
+  }
+*/
+
+  /**
+   *
+   * @return array
+   */
   protected function build() {
 
     $doc = $this->getDocument();
@@ -50,11 +70,16 @@ abstract class Documented extends Master {
     $doc->registerNamespaces($this->getNS());
 
     $window = $this->getWindow();
+    //$this->buildContainer($window);
+
     $mContent = $this->parseDocument($doc);
-
-    $window->add($window->argToInstance($mContent));
-
-    return $window;
+    $this->buildInstanciation($window, array($mContent));
   }
 
+  protected function buildInstanciation(common\_window $window, array $aArguments) {
+
+    $new = $window->createInstanciate($window->getSelf()->getInstance(), $aArguments);
+    //$window->add($new);
+    $window->setReturn($new);
+  }
 }

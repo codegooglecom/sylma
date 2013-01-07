@@ -30,14 +30,12 @@ abstract class Domed extends Filed {
   const DOM_DOCUMENT_ALIAS = 'handler';
   const DOM_ARGUMENT_ALIAS = 'argument';
 
-  const FILE_CONTROLER = 'fs';
-
   protected function loadDefaultArguments() {
 
-    $fs = \Sylma::getControler(self::FILE_CONTROLER);
+    $fs = \Sylma::getControler(static::FILE_MANAGER);
 
     $dir = $fs->extractDirectory(__file__);
-    $this->setArguments($dir . '/' . self::ARGUMENTS);
+    $this->setArguments($dir . '/' . static::ARGUMENTS);
   }
 
   /*protected function createArgument($mArguments, $sNamespace = '') {

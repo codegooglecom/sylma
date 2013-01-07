@@ -4,21 +4,38 @@ namespace sylma\parser\action;
 use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser;
 
 /**
- * Dynamic (on-run) parsers are managed, by default, by the root action.
- * There parsers must be available with @method loadParser().
- * Tree of action is accessible with @method getParentParser()
+ * Cached actions are the public part of the parser action. . It means they are They are managed, by default, by the root action.
+ * There parsers are available with @method loadParser().
+ * The parent actions are accessible with @method getParentParser().
+ * Both methods are used in conjunction to get wanted parser
  */
-interface cached extends dom\domable {
+interface cached {
 
   const CONTEXT_DEFAULT = 'default';
 
-  function __construct(fs\file $file, fs\directory $dir, parser\action $controler, array $aContexts, array $aArguments = array(), array $aControlers = array());
+  /**
+   * @param $file File pointing to DOM document
+   * @param $dir Base directory
+   * @param $manager Handler
+   * @param array $aContexts Render contexts (body/js/css)
+   * @param array $aArguments Arguments
+   * @param array $aManagers
+   */
+  function __construct(fs\file $file, fs\directory $dir, parser\action $manager, array $aContexts, array $aArguments = array(), array $aManagers = array());
 
+  /**
+   * Get parent or root parser.
+   * This second usage explains the need of making it public
+   *
+   * @param bool $bRoot If TRUE, get root parser, else get first parent
+   * @return parser\action
+   */
   function getParentParser($bRoot = false);
 
   /**
-   * Load dynamic parser. Generally used with root action.
-   * @param type $sNamespace
+   * Load dynamic parser. Generally called on root action.
+   *
+   * @param string $sNamespace
    * @return parser\cached\documented
    */
   function loadParser($sNamespace);

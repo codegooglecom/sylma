@@ -5,10 +5,7 @@ use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 
 abstract class Manager extends core\module\Domed {
 
-  const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
   const EXTENSION_DEFAULT = '.php';
-
-  const WINDOW_ARGS = 'classes/php';
 
   protected $baseDirectory = null;
 
@@ -46,15 +43,6 @@ abstract class Manager extends core\module\Domed {
     return $this->getCachedDirectory($file)->getFile($sName, $iDebug);
   }
 
-  protected function createReflector(fs\file $file, fs\directory $base) {
-
-    $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
-
-    $result = $this->create('reflector', array($this, $doc, $base));
-
-    return $result;
-  }
-
   protected function load(fs\file $file, array $aArguments = array()) {
 
     $result = null;
@@ -64,8 +52,7 @@ abstract class Manager extends core\module\Domed {
 
       if ($cache) {
 
-        array_unshift($aArguments, $cache);
-        $result = $this->createCache($aArguments);
+        $result = $this->createCache($cache, $aArguments);
       }
     }
     else {
@@ -77,11 +64,9 @@ abstract class Manager extends core\module\Domed {
   }
 
   /**
-   * Read cache or build file
+   * Load cache file. Built it if it doesn't exists
    *
-   * @param \sylma\storage\fs\file $file
-   * @param \sylma\storage\fs\directory $dir
-   *
+   * @param $file
    * @return fs\file
    */
   protected function loadCache(fs\file $file) {
@@ -97,8 +82,7 @@ abstract class Manager extends core\module\Domed {
   /**
    * Search then read cache file if exists
    *
-   * @param fs\file $file
-   *
+   * @param $file
    * @return fs\file
    */
   protected function getCache(fs\file $file) {
@@ -113,11 +97,7 @@ abstract class Manager extends core\module\Domed {
       $tmpFile = $this->getCachedFile($file, static::EXTENSION_DEFAULT, fs\resource::DEBUG_NOT);
     }
 
-    if (!$this->getControler('user')->isPrivate()) {
-
-      $result = $tmpFile;
-    }
-    else {
+    if ($this->getControler('user')->isPrivate()) {
 
       $bUpdate = $this->readArgument('debug/update');
 
@@ -126,60 +106,23 @@ abstract class Manager extends core\module\Domed {
         $result = $tmpFile;
       }
     }
+    else {
 
-    return $result;
-  }
-
-  protected function createCache(array $aArguments = array()) {
-
-    return $this->create('cached', $aArguments);
-  }
-
-  protected function build(fs\file $file, fs\directory $dir) {
-
-    $reflector = $this->createReflector($file, $dir);
-    $window = $this->runReflector($reflector, $this->readArgument('classes\cached'), $file);
-
-    if ($this->readArgument('debug/show')) {
-
-      $tmp = $this->createDocument($window);
-      echo '<pre>' . $file->asToken() . '</pre>';
-      echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
+      $result = $tmpFile;
     }
-
-    $result = $this->getCachedFile($file);
-    $template = $this->getTemplate(static::PHP_TEMPLATE);
-
-    $sContent = $template->parseDocument($window, false);
-    $result->saveText($sContent);
 
     return $result;
   }
 
   /**
-   * Build window, then return result as PHP DOM Document
+   * Create cache object
    *
-   * @param parser\reflector\documented $reflector
-   * @param string $sInstance
-   * @param fs\file $file
-   *
-   * @return dom\handler
+   * @param $file Script
+   * @param array $aArguments
+   * @return parser\cached\documented
    */
-  protected function runReflector(parser\reflector\documented $reflector, $sInstance, fs\file $file) {
+  protected function createCache(fs\file $file, array $aArguments = array()) {
 
-    try {
-
-      $window = $this->create('window', array($reflector, $this->getArgument(static::WINDOW_ARGS), $sInstance));
-      $reflector->setWindow($window);
-
-      $result = $reflector->asDOM();
-    }
-    catch (core\exception $e) {
-
-      $e->addPath($file->asToken());
-      throw $e;
-    }
-
-    return $result;
+    return include($file->getRealPath());
   }
 }

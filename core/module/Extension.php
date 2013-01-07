@@ -35,7 +35,7 @@ class Extension extends Domed {
       $result = null;
       $aDirs = $this->getDirectories();
 
-      $fs = $this->getControler(static::FS_CONTROLER);
+      $fs = $this->getControler(static::FILE_MANAGER);
 
       foreach ($aDirs as $dir) {
 
@@ -61,10 +61,10 @@ class Extension extends Domed {
     $file = null;
     $aDirs = $this->getDirectories();
 
-    $fs = $this->getControler(static::FS_CONTROLER);
+    $fs = $this->getControler(static::FILE_MANAGER);
 
     foreach ($aDirs as $dir) {
-      
+
       if ($file = $fs->getFile($sPath, $dir, false)) break;
     }
 

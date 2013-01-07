@@ -18,7 +18,7 @@ class _Function extends Called {
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
-       'function' => array(
+       'call-function' => array(
            '@name' => $this->getName(),
            '#argument' => $this->getArguments(),
        )
