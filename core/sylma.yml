@@ -54,7 +54,7 @@ session :
 users:
   root:
     # E_ALL | E_STRICT | E_NOTICE = 32767
-    error-level: 6143
+    error-level: 32767
     arguments: [ ]
     groups: ['0']
   # server user for cron jobs

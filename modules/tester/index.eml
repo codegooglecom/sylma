@@ -4,13 +4,13 @@
     <le:document le:set-variable="doc">
       <test:tests>
         <le:action path="/#sylma/core/argument/test/group"/>
-        <le:interface path="/#sylma/core/factory/test/interface"/>
+        <le:object class="\sylma\core\factory\test\Basic"/>
         <le:action path="/#sylma/storage/fs/test/group"/>
         <le:action path="/#sylma/parser/action/test/group"/>
-        <le:interface path="/#sylma/parser/security/test/interface"/>
-        <le:interface path="/#sylma/core/module/test/interface"/>
-        <le:interface path="/#sylma/dom/test/interface"/>
-        <le:interface path="/#sylma/dom/argument/test/interface"/>
+        <le:object class="\sylma\parser\security\test\Module"/>
+        <le:object class="\sylma\core\module\test\Basic"/>
+        <le:object class="\sylma\dom\test\Basic"/>
+        <le:object class="\sylma\dom\argument\test\Basic"/>
       </test:tests>
     </le:document>
   </le:settings>
@@ -21,9 +21,9 @@
   <div class="sylma-tests">
     <le:action path="/#sylma/parser/js/binder/test"/>
     <lm:template path="index.xsl">
-      <li:call name="parse">
+      <le:call name="parse-document">
         <le:get-variable name="doc"/>
-      </li:call>
+      </le:call>
     </lm:template>
   </div>
 </le:action>

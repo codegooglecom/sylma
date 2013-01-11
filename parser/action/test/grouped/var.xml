@@ -41,7 +41,7 @@
   <tst:test name="Create obj variable on self-call">
     <le:action>
       <le:settings>
-        <le:call name="get-directory" le:set-variable="dir"/>
+        <le:call-self name="get-directory" le:set-variable="dir"/>
         <le:return format="object"/>
       </le:settings>
       <le:get-variable name="dir"/>
@@ -60,7 +60,7 @@
       </le:settings>
       <le:array>
         <lm:directory>
-          <li:call name="get-file" le:set-variable="file">samples/path.txt</li:call>
+          <le:call name="get-file" le:set-variable="file">samples/path.txt</le:call>
         </lm:directory>
         <le:null/>
         <le:get-variable name="file"/>
@@ -94,7 +94,7 @@
   <tst:test name="Call self-call variable">
     <le:action>
       <le:settings>
-        <le:call name="get-file" le:set-variable="file">samples/simple.txt</le:call>
+        <le:call-self name="get-file" le:set-variable="file">samples/simple.txt</le:call-self>
       </le:settings>
       <le:get-variable name="file">
         <li:call name="read"/>

@@ -3,8 +3,6 @@
 namespace sylma\parser\reflector;
 use \sylma\core, \sylma\storage\fs, \sylma\dom;
 
-\Sylma::load('domed.php', __DIR__);
-
 interface elemented extends domed {
 
   /**

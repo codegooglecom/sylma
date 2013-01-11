@@ -1,17 +1,14 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php, \sylma\parser;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
 
-abstract class Action extends parser\reflector\basic\Documented implements parser\action\reflector {
+abstract class Action extends parser\reflector\basic\Documented {
 
   //const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
 
-  const CLASS_FILE_DEFAULT = '/sylma/parser/action/cached/document.iml';
-  const CLASS_PREFIX = 'class';
-
-  const CALLER_ALIAS = 'caller';
+  //const CLASS_DEFAULT = '\sylma\parser\action\cached';
 
   private $bTemplate = false;
   private $bString = false;
@@ -29,56 +26,12 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
 
   // controler : getNamespace, create, getArgument
 
-  public function __construct(parser\action\Manager $controler, dom\handler $doc, fs\directory $dir) {
+  public function __construct(parser\action\Manager $manager, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
-    $this->setControler($controler);
-    $this->setNamespace($controler->getNamespace(), 'self');
+    $this->setManager($manager);
+    $this->setNamespace($manager->getNamespace(), 'self');
     $this->setDirectory($dir);
-
-    $caller = $this->getControler(self::CALLER_ALIAS);
-    $caller->setParent($this);
-
-    $interface = $this->loadInterface($doc);
-    $this->setInterface($interface);
-
-    if ($this->getInterface()->useElement()) {
-
-      $sNamespace = $this->getInterface()->getNamespace(self::CLASS_PREFIX);
-
-      $this->setNamespace($sNamespace, self::CLASS_PREFIX, false);
-      $this->setUsedNamespace($sNamespace);
-    }
-  }
-
-  public function getInterface() {
-
-    return $this->interface;
-  }
-
-  public function setInterface(parser\caller $interface) {
-
-    $this->interface = $interface;
-  }
-
-  protected function loadInterface(dom\handler $doc) {
-
-    $result = null;
-
-    $caller = $this->getControler(self::CALLER_ALIAS);
-
-    if (!$sInterface = $doc->getRoot()->readAttribute('interface', null, false)) {
-
-      $sInterface = self::CLASS_FILE_DEFAULT;
-    }
-    else {
-
-      $sInterface = $sInterface . '.iml';
-    }
-
-    $result = $caller->getInterface($sInterface, $this->getDirectory());
-
-    return $result;
   }
 
   protected function setReturn(dom\element $el) {
@@ -219,22 +172,18 @@ abstract class Action extends parser\reflector\basic\Documented implements parse
    * @param common\_window $window
    * @return common\_window
    */
-  protected function build(common\_window $window) {
+  protected function build() {
 
     if ($aResult = $this->parseDocument($this->getDocument())) {
 
-      $window->add($aResult);
+      $this->getWindow()->add($aResult);
     }
-
-    return $window;
   }
 
   public function asDOM() {
 
-    $window = $this->getWindow();
-    $this->build($window);
-
-    $arg = $window->asArgument();
+    $this->build();
+    $arg = $this->getWindow()->asArgument();
 
     $result = $arg->asDOM();
 

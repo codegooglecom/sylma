@@ -2,6 +2,14 @@ debug :
   show : false
   run : true
   update : true
+cache :
+  elements :
+    directory : getDirectory
+    file : getFile
+    document : getDocument
+    template : getTemplate
+  namespace : 'http://www.sylma.org/parser/action/basic'
+  class : \sylma\parser\action\cached\Document
 template :
   indent : false
 extensions : [eml, iml]
@@ -9,8 +17,6 @@ classes :
   §sylma-classbase : \sylma\parser\action
   window :
     name : compiler\Window
-  caller :
-    name : \sylma\parser\caller\Controler
   cached :
     name : cached\Document
   compiler :

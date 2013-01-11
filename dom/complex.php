@@ -25,7 +25,7 @@ interface complex extends node {
    * @param string $sQuery Query to evaluate
    * @param array $aNS Prefixes as keys and related namespaces
    *
-   * @return dom\element|null The first element resulting from the XPath query
+   * @return \sylma\dom\element|null The first element resulting from the XPath query
    */
   function getx($sQuery, array $aNS = array(), $bDebug = true);
 

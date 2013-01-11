@@ -8,9 +8,9 @@
   </le:context>
   <div class="sylma-tests sylma-tests-class">
     <lm:template path="index.xsl">
-      <li:call name="parse">
+      <le:call name="parse">
         <le:get-argument index="0"/>
-      </li:call>
+      </le:call>
     </lm:template>
   </div>
 </le:action>

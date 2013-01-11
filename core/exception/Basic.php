@@ -17,7 +17,7 @@ class Basic extends \Exception implements core\exception {
 
   protected $aPath = array();
   protected $aCall = array();
-  protected static $bThrowError = true;
+  protected static $bThrowError = false;
 
   /**
    * Allow import of other classes, used class is showed in message
@@ -138,13 +138,13 @@ class Basic extends \Exception implements core\exception {
 
   public static function loadError($iNo, $sMessage, $sFile, $iLine) {
 
-    if ($iNo & \Sylma::read('users/root/error-level')) {
+    //if ($iNo & \Sylma::read('users/root/error-level')) {
 
       $exception = new \Sylma::$sExceptionClass($sMessage);
       $exception->importError($iNo, $sMessage, $sFile, $iLine);
 
       if (self::throwError()) throw $exception;
-    }
+    //}
   }
 
   /**
@@ -256,12 +256,30 @@ class Basic extends \Exception implements core\exception {
     }
   }
 
+  protected function implodePath($aPath, $sSeparator = '') {
+
+    $sResult = '';
+
+    foreach ($aPath as $mKey => $mValue) {
+
+      if (is_array($mValue)) $sValue = $sSeparator . $this->implodePath($mValue);
+      else $sValue = $mValue;
+
+      if (is_string($mKey)) $sKey = $mKey . ' ';
+      else $sKey = '';
+
+      $sResult .= $sKey . $sValue;
+    }
+
+    return $sResult;
+  }
+
   /**
    * Associate properties of exceptions into a path with tokens
    */
   public function __toString() {
 
-  	return  implode(' ', $this->getPath()) . ' @message ' . $this->getMessage();
+    return  $this->implodePath($this->getPath()) . ' @message ' . $this->getMessage();
   }
 }
 

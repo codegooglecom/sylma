@@ -1,8 +1,8 @@
 <?php
 
-namespace sylma\parser\action\test\samples;
+namespace sylma\parser\action\test\grouped\samples;
 
 class Sample1 {
 
-  
+
 }

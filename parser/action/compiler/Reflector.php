@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\parser\action, \sylma\parser\languages\common, sylma\parser\languages\php;
+use sylma\core, sylma\dom, sylma\parser\action, sylma\parser\languages\common, sylma\parser\languages\php;
 
 class Reflector extends Argumented {
 
@@ -18,7 +18,7 @@ class Reflector extends Argumented {
 
       case 'action' : $mResult = $this->reflectAction($el); break;
 
-      case 'call' : $mResult = $this->reflectCall($el); break;
+
 
       // primitives
 
@@ -33,11 +33,6 @@ class Reflector extends Argumented {
       case 'get-variable' : $mResult = $this->reflectGetVariable($el); break;
       case 'ns' : $mResult = $this->reflectNS($el); break;
       //case 'argument' :
-      case 'test-argument' :
-      case 'get-all-arguments' :
-      case 'get-argument' :
-
-        $mResult = $this->reflectGetArgument($el);
 
       break;
 
@@ -45,7 +40,7 @@ class Reflector extends Argumented {
       //case 'template' : $mResult = $this->reflectTemplate($el); break;
 
       // case 'get-settings' :
-      case 'interface' : $mResult = $this->reflectInterface($el); break;
+
       case 'context' : $mResult = $this->reflectContext($el); break;
       case 'escape' : $mResult = $this->reflectEscape($el); break;
       case 'function' : $mResult = $this->reflectFunction($el); break;
@@ -83,7 +78,7 @@ class Reflector extends Argumented {
 
       default :
 
-        $this->throwException(sprintf('Unknown action element : %s', $el->asToken()));
+        $mResult = parent::parseElementSelf($el);
     }
 
     return $mResult;
@@ -128,34 +123,6 @@ class Reflector extends Argumented {
     }
 
     return $aResult;
-  }
-
-  protected function reflectSelfCall(dom\element $el) {
-
-    $window = $this->getWindow();
-    $method = $this->getInterface()->loadMethod($el->getName(), 'element');
-
-    $aArguments = array();
-
-    foreach ($el->getAttributes() as $attr) {
-
-      if (!$attr->getNamespace()) $aArguments[$attr->getName()] = $window->createString($attr->getValue());
-    }
-
-    $call = $method->reflectCall($window, $window->getSelf(), $aArguments);
-    $var = $call->getVar(false);
-
-    $children = $el->getChildren();
-    $aResult = array();
-
-    $this->setVariable($el, $var);
-
-    $aResult = array_merge($aResult, $this->runConditions($var, $children));
-    $aResult = array_merge($aResult, $this->runVar($var, $children));
-
-    if (!$aResult) $aResult[] = $call;
-
-    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
   protected function reflectBoolean(dom\element $el) {
@@ -351,19 +318,6 @@ class Reflector extends Argumented {
     return $result;
   }
 
-  protected function reflectCall(dom\element $el) {
-
-    $window = $this->getWindow();
-    $sMethod = $el->readAttribute('name');
-
-    $method = $this->getInterface()->loadMethod($sMethod);
-
-    $result = $this->runObject($el, $window->getSelf(), $method);
-    //$result = $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
-
-    return $result;
-  }
-
   protected function reflectDocument(dom\element $el) {
 
     $window = $this->getWindow();
@@ -376,7 +330,7 @@ class Reflector extends Argumented {
 
     $content = $this->parseElement($first->remove());
 
-    $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom/handler.php');
+    $interface = $window->loadInstance('\sylma\dom\handler');
     $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
 
     $mResult = $this->runObject($el, $call->getVar(false));
@@ -455,25 +409,6 @@ class Reflector extends Argumented {
     $content = $this->parseNode($el->getFirst());
 
     return $this->getWindow()->create('numeric', array($this->getWindow(), $content));
-  }
-
-  protected function reflectInterface(dom\element $el) {
-
-    $caller = $this->getControler(self::CALLER_ALIAS);
-
-    $sPath = $el->readAttribute('path');
-
-    $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
-    $path = $this->getControler()->create('path', array($sPath, $this->getDirectory(), array(), false));
-    $path->setExtensions(array('iml'));
-    $path->parse();
-
-    $interface = $caller->getInterface((string) $path->getFile());
-    $instance = $interface->getInstance($this->getWindow(), $el->getChildren());
-
-    $var = $this->getWindow()->addVar($instance);
-
-    return $this->runObject($el, $var);
   }
 
   protected function reflectContext(dom\element $el) {

@@ -3,9 +3,9 @@
   <le:settings>
     <le:argument format="php-string" name="file">
       <le:validate return="true">
-        <le:call name="get-file">
+        <le:call-self name="get-file">
           <le:get-argument name="file"/>
-        </le:call>
+        </le:call-self>
       </le:validate>
     </le:argument>
     <le:argument format="php-integer" name="key"/>
@@ -14,9 +14,9 @@
   <le:context name="js">
     <lm:file path="standalone.js"/>
   </le:context>
-  <le:interface path="standalone">
+  <le:object class="Standalone">
     <le:get-argument name="file"/>
     <le:get-argument name="key"/>
-  </le:interface>
+  </le:object>
 </le:action>
 

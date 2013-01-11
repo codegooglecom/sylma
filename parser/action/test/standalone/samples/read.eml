@@ -4,7 +4,7 @@
     <le:return format="txt"/>
   </le:settings>
   <lm:file path="read.txt">
-    <li:call name="read"/>
+    <le:call name="read"/>
   </lm:file>
 </le:action>
 

@@ -80,7 +80,7 @@ abstract class Domed extends Filed {
    * Load an XSL Template from a path relative to the module's directory
    *
    * @param string $sPath The path to the template, relative to the module's directory
-   * @return null|DOMDocument The loaded template, or null if not found/valid
+   * @return \sylma\parser\xslt\Handler|null The loaded template, or null if not found/valid
    */
   protected function getTemplate($sPath) {
 
@@ -99,24 +99,27 @@ abstract class Domed extends Filed {
    * Load a DOM Document from a path relative to the module's directory or self document property if no path is sent
    *
    * @param string $sPath The path to the document, relative to the module's directory
-   * @param integer $iMode The load mode (READ, WRITE, EXECUTION)
-   *
-   * @return dom\document|null The loaded document, the document property if path is not sent (or empty), or null if not found/valid
+   * @return \sylma\dom\document|null The loaded document, the document property if path is not sent (or empty), or null if not found/valid
    */
-  protected function getDocument($sPath = '', $iMode = \Sylma::MODE_EXECUTE) {
+  protected function getDocument($sPath = '', $bDebug = true) {
 
     $doc = null;
 
     if ($sPath) {
 
-      if ($file = $this->getFile($sPath)) {
+      if ($file = $this->getFile($sPath, $bDebug)) {
 
-        $doc = $file->getDocument(array(), $iMode);
+        $doc = $file->getDocument($this->getNS());
       }
     }
     else {
 
       $doc = $this->document;
+
+      if (!$doc && $bDebug) {
+
+        $this->throwException('No document associated to this object');
+      }
     }
 
     return $doc;

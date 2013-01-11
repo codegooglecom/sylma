@@ -10,7 +10,7 @@
     <le:string>sylma.binder.standalone = '<lm:directory/>/standalone'; sylma.binder.id = '<le:get-variable name="id"/>';</le:string>
   </le:context>
   <h3>JS Binder</h3>
-  <le:interface path="interface"/>
+  <le:object class="Module"/>
   <div id="[sylma:variable::id]"/>
 </le:action>
 

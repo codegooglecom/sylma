@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php;
-use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php;
+use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
 
 interface window extends common\_window {
 
@@ -34,7 +34,7 @@ interface window extends common\_window {
   /**
    * @return _instance
    */
-  function loadInstance($sName, $sFile = '');
+  function loadInstance($sName, fs\file $file = null);
 
   /**
    *

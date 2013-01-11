@@ -10,7 +10,7 @@ abstract class Filed extends Sessioned {
 
   const ARGUMENT_MANAGER = 'argument/parser';
   const FILE_MANAGER = 'fs';
-  
+
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
   protected static $sArgumentFile = 'core/argument/Filed.php';
 
@@ -120,7 +120,7 @@ abstract class Filed extends Sessioned {
   }
 
   /**
-   * @return fs\directory The current directory
+   * @return \sylma\storage\fs\directory The current directory
    */
   protected function getDirectory($sPath = '', $bDebug = true) {
 
@@ -148,7 +148,7 @@ abstract class Filed extends Sessioned {
    * If no path sent, try to get local file set with @method setFile()
    *
    * @param string $sPath The relative or absolute path to the file
-   * @return fs\file|null The file corresponding to the path given, or NULL if none found
+   * @return \sylma\storage\fs\file|null The file corresponding to the path given, or NULL if none found
    */
   protected function getFile($sPath = '', $bDebug = true) {
 

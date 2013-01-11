@@ -23,7 +23,7 @@ class Initializer extends module\Filed {
 
     //$settings = $this->createArgument($sSylma, \Sylma::NS);
     require_once(self::$sArgumentFile);
-    $settings = new self::$sArgumentClass($sSylma, \Sylma::NS);
+    $settings = new self::$sArgumentClass($sSylma, array(\Sylma::NS));
 
     if ($sServer) $settings->mergeFile($sServer);
 

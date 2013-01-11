@@ -81,7 +81,7 @@ class Sylma {
 
   public static function autoload($sClass) {
 
-    require_once(str_replace('\\', '/', $sClass . '.php'));
+    include_once(str_replace('\\', '/', $sClass . '.php'));
   }
 
   public static function setControler($sName, $controler) {

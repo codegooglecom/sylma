@@ -7,10 +7,16 @@ interface documented extends dom\domable {
 
   /**
    *
-   * @param dom\element $el
-   * @return core\argumentable|array|null
    */
-  //function build(common\_window $window);
+  function getWindow();
   function setWindow(common\_window $window);
+
+  /**
+   * Allow child parser to re-send element to parent
+   *
+   * @param $node
+   * @return common\argumentable
+   */
+  function parse(dom\node $node);
 }
 

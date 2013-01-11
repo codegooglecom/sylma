@@ -20,7 +20,7 @@ class Basic extends tester\Basic {
     $this->setControler($this);
   }
 
-  public function getFile($sPath, $bDebug = true) {
+  public function getFile($sPath = '', $bDebug = true) {
 
     return parent::getFile($sPath, $bDebug);
   }

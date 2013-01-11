@@ -30,7 +30,7 @@
       </le:settings>
       <le:text>directory :</le:text>
       <lm:file path="samples/simple.txt">
-        <li:call name="read"/>
+        <le:call name="read"/>
       </lm:file>
     </le:action>
     <tst:expected>
@@ -45,7 +45,7 @@
       <le:string>
         <le:text>directory :</le:text>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </le:string>
     </le:action>
@@ -132,7 +132,7 @@
     </le:action>
     <tst:expected>
       $aResult = $controler->getResult('array');
-      
+
       return
         $aResult === array(
           true, false, true, false, false, true

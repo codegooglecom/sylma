@@ -337,7 +337,7 @@ class Window extends php\basic\Window {
 
     if (!$this->aObjects) {
 
-      $this->throwException(t('Cannot get object, no object defined'));
+      $this->throwException('Cannot get object, no object defined');
     }
 
     return $this->aObjects[count($this->aObjects) - 1];
@@ -362,8 +362,8 @@ class Window extends php\basic\Window {
 
     $result = parent::asArgument();
 
-    $interface = $this->getControler()->getInterface();
-    $result->set('window/@extends', $interface->getName());
+    //$interface = $this->getControler()->getInterface();
+    //$result->set('window/@extends', $interface->getName());
 
     return $result;
   }

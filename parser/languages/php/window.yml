@@ -32,6 +32,8 @@ classes :
     name : Insert
   interface :
     name : _Interface
+  method :
+    name : Method
   line :
     name : _Line
   null :

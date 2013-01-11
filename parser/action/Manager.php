@@ -100,9 +100,10 @@ class Manager extends parser\compiler\Builder implements core\factory {
   protected function build(fs\file $file, fs\directory $base) {
 
     $this->setDirectory(__FILE__);
+    $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
 
-    $reflector = $this->createReflector($file->getDocument(), $base);
-    $window = $this->runReflector($reflector, $reflector->getInterface()->getName(), $file);
+    $reflector = $this->createReflector($doc, $base);
+    $window = $this->runReflector($reflector, $this->getClass($doc), $file);
 
     $result = $this->buildFiles($window, $file);
 
@@ -292,10 +293,5 @@ class Manager extends parser\compiler\Builder implements core\factory {
     $dom = $val->asDOM();
 
     return $dom;
-  }
-
-  public function escape($mValue) {
-
-    return parent::escape($mValue);
   }
 }

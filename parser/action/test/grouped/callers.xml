@@ -40,7 +40,7 @@
       <le:settings>
         <le:return format="dom"/>
       </le:settings>
-      <le:call name="get-file">samples/simple.txt</le:call>
+      <le:call-self name="get-file">samples/simple.txt</le:call-self>
     </le:action>
     <tst:node>
       <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
@@ -58,9 +58,9 @@
       <le:settings>
         <le:return format="dom"/>
       </le:settings>
-      <le:call name="get-file">
-        <li:argument>samples/simple.txt</li:argument>
-      </le:call>
+      <le:call-self name="get-file">
+        <le:string>samples/simple.txt</le:string>
+      </le:call-self>
     </le:action>
     <tst:node>
       <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
@@ -76,10 +76,10 @@
   <tst:test name="Load file with self-call and multiple arguments">
     <le:action>
       <div>
-        <le:call name="get-file">
-          <li:argument>samples/nofile.txt</li:argument>
+        <le:call-self name="get-file">
+          <le:string>samples/nofile.txt</le:string>
           <le:bool value="false"/>
-        </le:call>
+        </le:call-self>
       </div>
     </le:action>
     <tst:node>
@@ -97,7 +97,7 @@
     <le:action>
       <div>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </div>
     </le:action>
@@ -118,9 +118,9 @@
         <le:return format="dom"/>
       </le:settings>
       <lm:directory>
-        <li:call name="get-directory">
-          <li:argument>samples</li:argument>
-        </li:call>
+        <le:call name="get-directory">
+          <le:string>samples</le:string>
+        </le:call>
       </lm:directory>
     </le:action>
     <tst:node>
@@ -140,12 +140,12 @@
         <le:return format="txt"/>
       </le:settings>
       <lm:directory>
-        <li:call name="get-directory">
-          <li:argument>samples</li:argument>
-          <li:call name="get-file">
+        <le:call name="get-directory">
+          <le:string>samples</le:string>
+          <le:call name="get-file">
             <le:string>path.txt</le:string>
-          </li:call>
-        </li:call>
+          </le:call>
+        </le:call>
       </lm:directory>
     </le:action>
     <tst:expected>
@@ -161,13 +161,11 @@
         <le:return format="dom"/>
       </le:settings>
       <lm:directory>
-        <li:call name="get-directory">
-          <li:argument>
-            <lm:file path="samples/path.txt">
-              <li:call name="read"/>
-            </lm:file>
-          </li:argument>
-        </li:call>
+        <le:call name="get-directory">
+          <lm:file path="samples/path.txt">
+            <le:call name="read"/>
+          </lm:file>
+        </le:call>
       </lm:directory>
     </le:action>
     <tst:node>
@@ -185,8 +183,8 @@
     <le:action>
       <le:text>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
-          <li:call name="read"/>
+          <le:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </le:text>
     </le:action>
@@ -201,8 +199,8 @@
     <le:action>
       <div>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
-          <li:call name="read"/>
+          <le:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </div>
     </le:action>
@@ -217,46 +215,46 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
-  <tst:test name="Interface construction with fixed relative path">
+  <tst:test name="Absolute object construction">
     <le:action>
       <le:settings>
         <le:return format="object"/>
       </le:settings>
-      <le:interface path="samples/sample1"/>
+      <le:object class="\sylma\parser\action\test\grouped\samples\Sample1"/>
     </le:action>
     <tst:expected>
       $result = $controler->getResult('object');
 
       return
-        $result instanceof \sylma\parser\action\test\samples\Sample1;
+        $result instanceof \sylma\parser\action\test\grouped\samples\Sample1;
     </tst:expected>
   </tst:test>
-  <tst:test name="Interface construction with fixed absolute path">
+  <tst:test name="Relative object construction">
     <le:action>
       <le:settings>
         <le:return format="object"/>
       </le:settings>
-      <le:interface path="samples/sample1b"/>
+      <le:object class="samples\Sample1"/>
     </le:action>
     <tst:expected>
       $result = $controler->getResult('object');
 
       return
-        $result instanceof \sylma\parser\action\test\samples\Sample1;
+        $result instanceof \sylma\parser\action\test\grouped\samples\Sample1;
     </tst:expected>
   </tst:test>
-  <tst:test name="Interface construction with guessed path">
+  <tst:test name="Parent object construction">
     <le:action>
       <le:settings>
         <le:return format="object"/>
       </le:settings>
-      <le:interface path="samples/sample2"/>
+      <le:action path="samples/sub/parent-object"/>
     </le:action>
     <tst:expected>
       $result = $controler->getResult('object');
 
       return
-        $result instanceof \sylma\parser\action\test\grouped\samples\Sample2;
+        $result instanceof \sylma\parser\action\test\grouped\samples\Sample1;
     </tst:expected>
   </tst:test>
 </tst:tests>

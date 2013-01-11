@@ -1,24 +1,37 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use \sylma\parser\languages\common, \sylma\parser\languages\php;
+use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom, sylma\parser;
 
-\Sylma::load('/parser/languages/common/basic/Controled.php');
-
-class _Interface extends common\basic\Controled {
+class _Interface extends core\module\Managed {
 
   protected $sName = '';
   protected $reflection;
-  protected $sFile = '';
+  protected $file = null;
 
-  public function __construct(common\_window $window, $sInterface, $sFile = '') {
+  protected $aMethods = array();
 
-    $this->setControler($window);
+  public function __construct(parser\reflector\documented $reflector, $sInterface, fs\file $file = null) {
+
+    $this->setManager($reflector);
     $this->setName($sInterface);
-    $this->sFile = $sFile;
+
+    $this->setNamespace($this->getManager()->getNamespace());
+
+    if ($file) $this->setFile($file);
   }
 
-  public function getName($bRelative = false) {
+  protected function setFile(fs\file $file) {
+
+    $this->file = $file;
+  }
+
+  protected function getFile() {
+
+    return $this->file;
+  }
+
+  public function getName() {
 
     return $this->sName;
   }
@@ -27,24 +40,32 @@ class _Interface extends common\basic\Controled {
 
     if (!preg_match('/^[\w_\\\]*$/', $sInterface)) {
 
-      $this->getControler()->throwException(sprintf('Invalid class name : %s', $sInterface));
+      $this->throwException(sprintf('Invalid class name : %s', $sInterface));
     }
     else if (!$sInterface) {
 
-      $this->getControler()->throwException('Empty name not allowed');
+      $this->throwException('Empty name not allowed');
     }
 
     $this->sName = $sInterface;
   }
 
-  public function getFile() {
-
-    return $this->sFile;
-  }
-
-  protected function getReflection() {
+  /**
+   * Made public for child methods
+   * @return \ReflectionClass
+   */
+  public function getReflection() {
 
     return $this->reflection;
+  }
+
+  /**
+   *
+   * @return common\_window
+   */
+  public function getWindow() {
+
+    return $this->getManager()->getWindow();
   }
 
   protected function loadReflection() {
@@ -66,9 +87,117 @@ class _Interface extends common\basic\Controled {
 
     if (!$reflection = $this->getReflection()) {
 
-      $this->getControler()->throwException(sprintf('No reflector implemented, cannot find @class %s', $this->getName()));
+      $this->throwException(sprintf('No reflector implemented, cannot find @class %s', $this->getName()));
     }
 
     return $reflection->implementsInterface($sInterface);
+  }
+
+  public function loadCall(_ObjectVar $var, Method $method, dom\collection $args) {
+
+    $aArguments = $this->parseArguments($args);
+
+    $call = $method->reflectCall($var->getControler(), $var, $aArguments);
+
+    return $call;
+  }
+
+  protected function parseArgument(dom\element $el, $iKey) {
+
+    if (!$mKey = $el->readAttribute('name', $this->getNamespace(), false)) {
+
+      $mKey = $iKey;
+    }
+
+    return array(
+      'name' => $mKey,
+      'value' => $this->getManager()->parse($el),
+    );
+  }
+
+  protected function parseArguments(dom\collection $children) {
+
+    $aResult = array();
+    $iKey = 0;
+
+    while ($child = $children->current()) {
+
+      switch ($child->getType()) {
+
+        case dom\node::TEXT :
+
+          $aResult[] = $this->getManager()->parse($child);
+
+        break;
+
+        case dom\node::ELEMENT :
+
+          if ($child->isElement('call', $this->getNamespace())) {
+
+            break 2;
+          }
+          else if ($child->getNamespace() == $this->getNamespace()) {
+
+            if (in_array($child->getName(), array('if', 'if-not'))) {
+
+              break 2;
+            }
+          }
+
+          $aArgument = $this->parseArgument($child, $iKey);
+          $aResult[$aArgument['name']] = $aArgument['value'];
+          $child->remove();
+          
+        break;
+
+        default :
+
+          $this->throwException(sprintf('Cannot use %s, valid argument expected', $child->asToken()));
+      }
+
+      $children->next();
+      $iKey++;
+    }
+
+    return $aResult;
+  }
+
+  public function getMethod($sName) {
+
+    if (!array_key_exists($sName, $this->aMethods)) {
+
+      $this->aMethods[$sName] = $this->loadMethod($sName);
+    }
+
+    return $this->aMethods[$sName];
+  }
+
+  public function loadMethod($sName) {
+
+    $result = $this->getWindow()->create('method', array($this, $sName));
+    $this->aMethods[$sName] = $result;
+
+    return $result;
+  }
+
+  public function addInstance(common\_window $window, dom\collection $children) {
+
+    $aArguments = $this->parseArguments($children);
+
+    if ($file = $this->getFile()) {
+
+      $require = $window->callFunction('require_once', $window->argToInstance('php-bool'), array($file->getRealPath()));
+      $window->add($require);
+    }
+
+    $instance = $window->loadInstance($this->getName(), $file);
+
+    return $window->createInstanciate($instance, $aArguments);
+  }
+
+  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+
+    $mSender['@class'] = $this->getName();
+    parent::throwException($sMessage, $mSender, $iOffset);
   }
 }

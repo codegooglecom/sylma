@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
+use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common, sylma\storage\fs;
 
 class Window extends common\basic\Window implements php\window, core\controled {
 
@@ -34,7 +34,7 @@ class Window extends common\basic\Window implements php\window, core\controled {
     $this->self = $this->create('object-var', array($this, $self, 'this'));
     $this->setScope($this);
 
-    $node = $this->loadInstance('\sylma\dom\node', '/sylma/dom/node.php');
+    $node = $this->loadInstance('\sylma\dom\node');
     $this->setInterface($node->getInterface());
 
     $this->sylma =  $this->create('class', array($this, $this->tokenToInstance('\Sylma')->getInterface()));
@@ -201,11 +201,11 @@ class Window extends common\basic\Window implements php\window, core\controled {
     $this->aInterfaces[$interface->getName()] = $interface;
   }
 
-  public function getInterface($sName, $sFile = '') {
+  public function getInterface($sName, fs\file $file = null) {
 
     if (!array_key_exists($sName, $this->aInterfaces)) {
 
-      $this->aInterfaces[$sName] = $this->create('interface', array($this, $sName, $sFile));
+      $this->aInterfaces[$sName] = $this->create('interface', array($this->getManager(), $sName, $file));
     }
 
     return $this->aInterfaces[$sName];
@@ -227,9 +227,9 @@ class Window extends common\basic\Window implements php\window, core\controled {
     return $result;
   }
 
-  public function loadInstance($sName, $sFile = '') {
+  public function loadInstance($sName, fs\file $file = null) {
 
-    $interface = $this->getInterface($sName, $sFile);
+    $interface = $this->getInterface($sName, $file);
     $result = $this->create('object', array($this, $interface));
 
     return $result;

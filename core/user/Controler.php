@@ -39,8 +39,8 @@ class Controler extends core\module\Domed {
     $this->user = $user;
   }
 
-  public function getDocument($sPath, $iMode = \Sylma::MODE_READ) {
+  public function getDocument($sPath = '', $bDebug = true) {
 
-    return parent::getDocument($sPath, $iMode);
+    return parent::getDocument($sPath, $bDebug);
   }
 }

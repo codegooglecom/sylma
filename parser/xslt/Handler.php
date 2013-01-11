@@ -40,6 +40,12 @@ class Handler extends dom\basic\handler\Rooted {
     return $mResult;
   }
 
+  /**
+   *
+   * @param \sylma\dom\handler $doc
+   * @param type $bXML
+   * @return \sylma\dom\handler
+   */
   public function parseDocument(dom\handler $doc, $bXML = true) { // WARNING, XML_Document typed can cause crashes
 
     $mResult = null;

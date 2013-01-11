@@ -4,6 +4,6 @@
     <le:return format="object"/>
   </le:settings>
   <le:interface path="interface">
-    <li:call name="login"/>
+    <le:call name="login"/>
   </le:interface>
 </le:action>

@@ -3,11 +3,11 @@
   <le:context name="title">Test Argument</le:context>
   <tst:group>
     <tst:description>Argument</tst:description>
-    <le:interface path="interface"/>
+    <le:object class="Basic"/>
     <tst:group>
       <tst:description>Parser</tst:description>
-      <le:interface path="../parser/test/basic"/>
-      <le:interface path="../parser/test/standalone"/>
+      <le:object class="..\parser\test\Basic"/>
+      <le:object class="..\parser\test\Standalone"/>
     </tst:group>
   </tst:group>
 </le:action>

@@ -96,10 +96,10 @@
           <h2>
             <span>hello</span>
           </h2>
-          <li:call name="getx">
-            <li:argument>/self:h2/self:span</li:argument>
+          <le:call name="getx">
+            <le:string>/self:h2/self:span</le:string>
             <le:ns>*self</le:ns>
-          </li:call>
+          </le:call>
         </le:document>
       </div>
     </le:action>

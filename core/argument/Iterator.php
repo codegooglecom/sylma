@@ -3,7 +3,7 @@
 namespace sylma\core\argument;
 use \sylma\core;
 
-class Iterator extends Basic implements core\argument {
+class Iterator extends Basic implements core\argument, \ArrayAccess {
 
   public function rewind() {
 
@@ -46,5 +46,32 @@ class Iterator extends Basic implements core\argument {
     $sKey = key($this->aArray);
 
     return $sKey !== NULL && $sKey !== FALSE;
+  }
+
+  public function offsetSet($offset, $value) {
+
+    if (is_null($offset)) {
+
+      $this->aArray[] = $value;
+
+    } else {
+
+      $this->aArray[$offset] = $value;
+    }
+  }
+
+  public function offsetExists($offset) {
+
+    return isset($this->aArray[$offset]);
+  }
+
+  public function offsetUnset($offset) {
+
+    unset($this->aArray[$offset]);
+  }
+
+  public function offsetGet($offset) {
+
+    return isset($this->aArray[$offset]) ? $this->aArray[$offset] : null;
   }
 }

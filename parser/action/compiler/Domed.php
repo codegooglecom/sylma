@@ -1,16 +1,9 @@
 <?php
 
-/**
-* This file is part of the PHP framework Sylma : http://www.sylma.org
-*
-* @copyright 2012 Rodolphe Gerber [rodolphe.gerber@sylma.org]
-* @licence http://www.gnu.org/licenses/gpl.html General Public Licence version 3
-*/
-
 namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\common, sylma\parser\languages\php;
 
-abstract class Domed extends Runner implements parser\reflector\documented {
+abstract class Domed extends Action {
 
   protected $currentElement;
 
@@ -57,26 +50,14 @@ abstract class Domed extends Runner implements parser\reflector\documented {
     return $aResults;
   }
 
-  /**
-   *
-   * @param dom\element $el
-   * @return dom\node|array|null
-   */
+  protected function parseElementSelf(dom\element $el) {
+
+    $this->throwException(sprintf('Unknown action element : %s', $el->asToken()));
+  }
+
   protected function parseElementForeign(dom\element $el) {
 
-    $mResult = null;
-    //$parent = $this->getControler()->create('document');
-
-    if ($this->getInterface()->useElement() && $el->getNamespace() == $this->getNamespace('class')) {
-
-      $mResult = $this->reflectSelfCall($el);
-    }
-    else {
-
-      $mResult = $this->loadElementForeign($el);
-    }
-
-    return $mResult;
+    return $this->loadElementForeign($el);
   }
 
   protected function parseElementUnknown(dom\element $el) {
@@ -176,34 +157,7 @@ abstract class Domed extends Runner implements parser\reflector\documented {
 
         $iVarLength = strlen($aResult[0][0]);
 
-        switch ($aResult['typ'][0]) {
-
-          case 'call' :
-
-            $aArguments = array();
-
-            $method = $this->getInterface()->loadMethod($aResult['val'][0]);
-            $arg = $method->reflectCall($window, $window->getSelf(), $aArguments);
-
-          break;
-
-          case 'argument' :
-
-            $arg = $this->getActionArgument($aResult['val'][0]);
-
-          break;
-
-          case 'variable' :
-
-            $arg = $this->getVariable($aResult['val'][0]);
-
-          break;
-
-          default :
-
-            $this->throwException(sprintf('unknown attribute call : %s', $aResult['typ']));
-
-        }
+        $arg = $this->parseStringCall($aResult['typ'][0], $aResult['val'][0]);
 
         $insert = $window->createInsert($arg);
         $sVarValue = $insert->asString();
@@ -218,5 +172,24 @@ abstract class Domed extends Runner implements parser\reflector\documented {
     }
     //dspf($sValue);
     return $sValue;
+  }
+
+  protected function parseStringCall($sName, $sValue) {
+
+    switch ($sName) {
+
+      case 'variable' :
+
+        $result = $this->getVariable($sValue);
+
+      break;
+
+      default :
+
+        $this->throwException(sprintf('unknown attribute call : %s', $sName));
+
+    }
+
+    return $result;
   }
 }

@@ -139,7 +139,8 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
       if ($sPath === '') {
 
-        $mResult =& reset($this->aArray);
+        reset($this->aArray);
+        $mResult =& $this->aArray;
         //$mResult =& end($this->aArray);//reset($this->aArray);
       }
       else if (is_object($mValue) || is_array($mValue)) {
@@ -540,7 +541,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
   }
 
-  protected function throwException($sMessage, $iOffset = 1) {
+  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
     \Sylma::throwException($sMessage, array('@namespace ' . $this->getNamespace()), $iOffset);
   }

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/interface">
-  <namespace>\sylma\modules\users</namespace>
-  <name>Module</name>
-  <method name="login" path="login" return="\sylma\core\redirect"/>
-  <method name="logout" path="logout" return="\sylma\core\redirect"/>
-</class>

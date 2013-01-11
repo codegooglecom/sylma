@@ -1,17 +1,49 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs, \sylma\parser\languages\common, sylma\parser\languages\php;
+use sylma\core, sylma\dom, sylma\parser, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php;
 
-require_once('Domed.php');
-
-abstract class Argumented extends Domed {
+abstract class Argumented extends Caller {
 
   const ARGUMENT_METHOD = 'getActionArgument';
   const ACTION_ALIAS = 'action';
 
   protected $aActionArguments = array();
   protected $iArgument = 0;
+
+  protected function parseElementSelf(dom\element $el) {
+
+    switch ($el->getName()) {
+
+      //case 'test-argument' :
+      //case 'get-all-arguments' :
+      case 'get-argument' : $mResult = $this->reflectGetArgument($el); break;
+
+      default :
+
+        $mResult = parent::parseElementSelf($el);
+    }
+
+    return $mResult;
+  }
+
+  protected function parseStringCall($sName, $sValue) {
+
+    switch ($sName) {
+
+      case 'argument' :
+
+        $result = $this->getActionArgument($sValue);
+
+      break;
+
+      default :
+
+        $result = parent::parseStringCall($sName, $sValue);
+    }
+
+    return $result;
+  }
 
   protected function setActionArgument($mKey, common\_var $var) {
 
@@ -39,6 +71,7 @@ abstract class Argumented extends Domed {
 
     return $this->iArgument++;
   }
+
   /**
    *
    * @param dom\element $el

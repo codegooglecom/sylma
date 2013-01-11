@@ -152,7 +152,7 @@ class Grouped extends tester\Basic {
     return parent::getDirectory($sPath, $bDebug);
   }
 
-  public function getFile($sPath, $bDebug = true) {
+  public function getFile($sPath = '', $bDebug = true) {
 
     return parent::getFile($sPath, $bDebug);
   }
