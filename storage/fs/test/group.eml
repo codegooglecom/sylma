@@ -3,9 +3,8 @@
   <le:context name="title">Test FS</le:context>
   <tst:group>
     <tst:description>File system</tst:description>
-    <le:interface path="basic"/>
-    <le:interface path="editable"/>
-    <le:interface path="security"/>
+    <le:object class="Basic"/>
+    <le:object class="Editable"/>
+    <le:object class="Security"/>
   </tst:group>
 </le:action>
-
