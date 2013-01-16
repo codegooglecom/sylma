@@ -170,15 +170,20 @@
   <xsl:template match="php:array">
     <xsl:text>array(</xsl:text>
     <xsl:for-each select="php:item">
-      <xsl:apply-templates select="."/>
+      <xsl:apply-templates select=".">
+        <xsl:with-param name="assoc" select="../@associative"/>
+      </xsl:apply-templates>
       <xsl:if test="position() != last()">, </xsl:if>
     </xsl:for-each>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
   <xsl:template match="php:item">
-    <xsl:apply-templates select="@key"/>
-    <xsl:text> => </xsl:text>
+    <xsl:param name="assoc"/>
+    <xsl:if test="$assoc">
+      <xsl:apply-templates select="@key"/>
+      <xsl:text> => </xsl:text>
+    </xsl:if>
     <xsl:apply-templates/>
   </xsl:template>
 

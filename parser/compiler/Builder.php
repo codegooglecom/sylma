@@ -27,7 +27,7 @@ abstract class Builder extends Manager {
 
     if ($this->readArgument('debug/show')) {
 
-      $tmp = $this->createDocument($window);
+      $tmp = $this->createDocument($content);
       echo '<pre>' . $file->asToken() . '</pre>';
       echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
     }

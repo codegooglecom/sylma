@@ -78,6 +78,7 @@ abstract class Domed extends Child {
   }
 
   /**
+   * TODO? : rename parseCollection, parseCollectionElement and parseCollectionText (+node,+...)
    * @param $children
    * @return array
    */
@@ -116,6 +117,10 @@ abstract class Domed extends Child {
     return $aResult;
   }
 
+  /**
+   * @param $el
+   * @param array $aResult
+   */
   protected function parseChildrenElement(dom\element $el, &$aResult) {
 
     $mResult = $this->parseElement($el);
@@ -125,6 +130,9 @@ abstract class Domed extends Child {
     if (!is_null($mResult)) $aResult[] = $mResult;
   }
 
+  /**
+   * @param $node
+   */
   protected function parseChildrenText(dom\text $node) {
 
     $this->throwException('Text node not allowed here', array($node->asToken()));

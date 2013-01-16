@@ -6,8 +6,6 @@ use sylma\core;
 /**
  * This class act as an interface to arrays of arrays/objects/strings with dom-like functions get/set/add
  * It can also be used with YAML files with the extended version @class XArguments
- *
- * @author rodolphe.gerber (at) gmail.com
  */
 abstract class Basic extends core\module\Namespaced implements core\argument {
 

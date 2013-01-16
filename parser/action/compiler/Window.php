@@ -3,7 +3,7 @@
 namespace sylma\parser\action\compiler;
 use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
 
-class Window extends php\basic\Window {
+class Window extends php\basic\window\Domed {
 
   const ACTION_ALIAS = 'action';
 

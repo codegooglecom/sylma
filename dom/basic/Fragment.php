@@ -3,9 +3,6 @@
 namespace sylma\dom\basic;
 use \sylma\dom;
 
-require_once(dirname(__dir__) . '/node.php');
-require_once(dirname(__dir__) . '/fragment.php');
-
 class Fragment extends \DOMDocumentFragment implements dom\node, dom\fragment {
 
   private $sNamespace;
@@ -112,6 +109,11 @@ class Fragment extends \DOMDocumentFragment implements dom\node, dom\fragment {
     $this->appendChild($node);
 
     return $node;
+  }
+
+  public function remove() {
+
+    $this->throwException('Cannot remove fragment');
   }
 
   public function asToken() {

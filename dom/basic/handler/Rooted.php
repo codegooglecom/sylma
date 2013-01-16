@@ -3,12 +3,10 @@
 namespace sylma\dom\basic\handler;
 use \sylma\dom;
 
-require_once('Documented.php');
-
 /**
  * Extends main dom\element root's methods
  */
-class Rooted extends Documented {
+class Rooted extends Documented implements dom\handler {
 
   public function getx($sQuery, array $aNS = array(), $bDebug = true) {
 
@@ -62,5 +60,10 @@ class Rooted extends Documented {
   public function getLast() {
 
     return $this->getRoot()->getLast();
+  }
+
+  public function remove() {
+
+    return $this->getRoot()->remove();
   }
 }

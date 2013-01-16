@@ -14,6 +14,7 @@
     <xsl:for-each select="php:item">
       <xsl:value-of select="$indent"/>
       <xsl:apply-templates select=".">
+        <xsl:with-param name="assoc" select="../@associative"/>
         <xsl:with-param name="indent" select="concat($indent, '  ')"/>
       </xsl:apply-templates>
       <xsl:if test="position() != last()">,<xsl:value-of select="$break"/></xsl:if>
@@ -22,9 +23,12 @@
   </xsl:template>
 
   <xsl:template match="php:item">
+    <xsl:param name="assoc"/>
     <xsl:param name="indent"/>
-    <xsl:apply-templates select="@key"/>
-    <xsl:text> => </xsl:text>
+    <xsl:if test="$assoc">
+      <xsl:apply-templates select="@key"/>
+      <xsl:text> => </xsl:text>
+    </xsl:if>
     <xsl:apply-templates select="*">
       <xsl:with-param name="indent" select="$indent"/>
     </xsl:apply-templates>

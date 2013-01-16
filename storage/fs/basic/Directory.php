@@ -3,9 +3,6 @@
 namespace sylma\storage\fs\basic;
 use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-require_once('Resource.php');
-require_once('storage/fs/directory.php');
-
 class Directory extends Resource implements fs\directory {
 
   const NS = 'http://www.sylma.org/storage/fs/basic/directory';

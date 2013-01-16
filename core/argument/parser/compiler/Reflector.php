@@ -14,20 +14,79 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
     if ($el->isComplex()) {
 
-      $mContent = $this->parseChildrenImports($el->getChildren());
+      $mContent = $this->parseElementComplex($el);
     }
     else {
 
-      $mContent = $el->read();
+      $mContent = $this->parseElementSimple($el);
     }
 
     return $mContent;
   }
 
+  protected function parseElementSimple(dom\element $el) {
+
+    $sValue = $this->loadElementValue($el);
+    $mResult = $this->parseElementType($el, $sValue);
+
+    return $mResult;
+  }
+
+  protected function parseElementType(dom\element $el, $sValue) {
+
+    $sType = $el->readAttribute('type', null, false);
+
+    switch ($sType) {
+
+      case 'bool' :
+      case 'boolean' :
+
+        $mResult = $this->getWindow()->argToInstance((bool) $sValue);
+
+        break;
+
+      case 'array' :
+
+        break;
+
+      case 'string' :
+      case 'integer' :
+      case '' :
+
+        $mResult = $sValue;
+
+        break;
+
+      default :
+
+        $this->throwException(sprintf('Uknown argument type : %s', $sType));
+    }
+
+    return $mResult;
+  }
+
+  protected function loadElementValue(dom\element $el) {
+
+    $sValue = $el->read() ? $el->read() : $el->readAttribute('value', null, false);
+
+    return $sValue;
+  }
+
   protected function parseChildrenElement(dom\element $el, &$aResult) {
 
     $mResult = $this->parseElement($el);
-    if (!is_null($mResult)) $aResult[$el->getName()] = $mResult;
+
+    if (!is_null($mResult)) {
+
+      if ($el->hasChildren() || $this->loadElementValue($el) !== '') {
+
+        $aResult[$el->getName()] = $mResult;
+      }
+      else {
+
+        $aResult[] = $mResult;
+      }
+    }
   }
 
   protected function parseElementForeign(dom\element $el) {
@@ -46,18 +105,46 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     return $result;
   }
 
+  protected function parseElementArgument(dom\element $el) {
+
+    $result = null;
+
+    switch ($el->getName()) {
+
+      case 'arg' :
+
+        if ($el->getParent()) {
+
+          $this->throwException('Arg element only allowed as root');
+        }
+
+      break;
+      case 'import' : break;
+      //case 'item' : $result = $this->reflectItem($el); break;
+
+      default :
+
+        $this->throwException(sprintf('Unknown element %s', $el->asToken()));
+    }
+
+    return $result;
+  }
+
   protected function parseText(dom\text $node) {
 
     $this->throwException('Mixed element (element and text) or multiple text node not allowed here', array($child->getParent()->asToken()));
   }
 
-  protected function parseChildrenImports(dom\collection $children) {
+  protected function parseElementComplex(dom\element $el) {
 
-    $imports = $children->length ? $children->current()->getParent()->queryx('arg:import', $this->getNS(), false) : $children;
+    $this->reflectImportsStatic($el);
+
+    $children = $el->getChildren();
+    $imports = $this->loadImports($children);
 
     if ($imports->length) {
 
-      $mResult = $this->reflectImports($imports, $this->parseChildren($children));
+      $mResult = $this->reflectImportsDynamic($imports, $this->parseChildren($children));
     }
     else {
 
@@ -68,7 +155,85 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
   }
 
-  protected function reflectImports(dom\collection $children, $aChildren) {
+  protected function loadImports(dom\collection $children, $bStatic = false) {
+
+    $sQuery = $bStatic ? '@static' : 'not(@static)';
+
+    $result = $children->length ? $children->current()->getParent()->queryx("arg:import[$sQuery]", $this->getNS(), false) : $children;
+
+    return $result;
+  }
+
+  protected function reflectImportsStatic(dom\element $el) {
+
+    $imports = $this->loadImports($el->getChildren(), true);
+
+    foreach ($imports as $import) $this->reflectImportStatic($el, $import);
+  }
+
+  protected function reflectImportStatic(dom\element $parent, dom\element $import) {
+
+    $doc = $this->getDocument($import->read());
+    $this->mergeElement($parent, $doc->getRoot(), false);
+    $import->replace($doc->getChildren());
+  }
+
+  protected function mergeElement(dom\element $current, dom\element $import, $bCheckNS = true) {
+
+    if ($bCheckNS && $current->getNamespace() !== $import->getNamespace()) {
+
+      $this->throwException(sprintf('Cannot merge elements with same name but different namespaces %s and %s', $current->asToken(), $import->asToken()));
+    }
+
+    if ($current->isComplex()) {
+
+      if (!$import->isComplex()) {
+
+        $this->throwException(sprintf('Cannot merge simple type %s on complex type %s', $import->asToken(), $current->asToken()));
+      }
+
+      $this->mergeElementComplex($current, $import);
+    }
+    else {
+
+      if ($import->isComplex()) {
+
+        $this->throwException(sprintf('Cannot merge complex type %s on simple type %s', $import->asToken(), $current->asToken()));
+      }
+
+      $this->mergeElementSimple($current, $import);
+    }
+  }
+
+  protected function mergeElementComplex(dom\element $current, dom\element $import) {
+
+    foreach ($import->getChildren() as $child) {
+
+      if ($child->getNamespace() === $this->getNamespace('arg')) {
+
+        continue;
+      }
+      else if ($el = $current->getx("{$child->getName()}", array(), false)) {
+
+        $this->mergeElement($el, $child);
+      }
+    }
+
+    foreach ($current->getChildren() as $child) {
+
+      $import->add($child);
+    }
+
+    $current->replace($import);
+  }
+
+  protected function mergeElementSimple(dom\element $current, dom\element $import) {
+
+    $import->replace($current);
+    $current->remove();
+  }
+
+  protected function reflectImportsDynamic(dom\collection $children, $aChildren) {
 
     $window = $this->getWindow();
 
@@ -79,7 +244,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     $window->setScope($closure);
     $import = $children->current();
 
-    $handler = $this->reflectImport($import);
+    $handler = $this->reflectImportDynamic($import);
 
     if ($children->length > 1 || $aChildren) {
 
@@ -89,7 +254,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
       while ($children->current()) {
 
         $import = $children->current();
-        $this->mergeArguments($handler->getVar(), $this->reflectImport($import));
+        $this->mergeArguments($handler->getVar(), $this->reflectImportDynamic($import));
 
         $children->next();
       }
@@ -126,32 +291,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     $window->add($call);
   }
 
-  protected function parseElementArgument(dom\element $el) {
-
-    $result = null;
-
-    switch ($el->getName()) {
-
-      case 'arg' :
-
-        if ($el->getParent()) {
-
-          $this->throwException('Arg element only allowed as root');
-        }
-
-      break;
-      case 'import' : break;
-      //case 'item' : $result = $this->reflectItem($el); break;
-
-      default :
-
-        $this->throwException(sprintf('Unknown element %s', $el->asToken()));
-    }
-
-    return $result;
-  }
-
-  protected function reflectImport(dom\element $el) {
+  protected function reflectImportDynamic(dom\element $el) {
 
     $window = $this->getWindow();
 

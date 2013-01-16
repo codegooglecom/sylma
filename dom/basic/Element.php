@@ -113,7 +113,7 @@ class Element extends \DOMElement implements dom\element {
 
       if ($bDebug && !$domlist->length) {
 
-        $this->throwException(sprintf('No result for get/query expression : %s', $sQuery));
+        $this->throwException(sprintf('No result for xpath expression : %s', $sQuery));
       }
 
       if ($bConvert) $result->addList($domlist);

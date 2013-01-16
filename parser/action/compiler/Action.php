@@ -13,14 +13,6 @@ abstract class Action extends parser\reflector\basic\Documented {
   private $bTemplate = false;
   private $bString = false;
 
-  protected $aVariables = array();
-
-  /**
-   * Interface of new cached class. See @method common\_window::getSelf()
-   * @var parser\caller\Domed
-   */
-  protected $interface;
-
   protected $return;
   protected $sFormat = 'object';
 
@@ -74,16 +66,6 @@ abstract class Action extends parser\reflector\basic\Documented {
     return $this->sFormat;
   }
 
-  public function getLastElement() {
-
-    return $this->lastElement;
-  }
-
-  public function setLastElement($lastElement) {
-
-    $this->lastElement = $lastElement;
-  }
-
   /**
    *
    * @return common\_instance
@@ -114,56 +96,6 @@ abstract class Action extends parser\reflector\basic\Documented {
   public function setParent(parser\reflector\documented $parent) {
 
     return null;
-  }
-
-  protected function getVariable($sName) {
-
-    if (!array_key_exists($sName, $this->aVariables)) {
-
-      $this->throwException(sprintf('Variable %s does not exists', $sName));
-    }
-
-    return $this->aVariables[$sName];
-  }
-
-  protected function setVariable(dom\element $el, $obj) {
-
-    $result = null;
-
-    if ($sName = $el->readAttribute('set-variable', $this->getNamespace(), false)) {
-
-      if (array_key_exists($sName, $this->aVariables)) {
-
-        $result = $this->aVariables[$sName];
-
-        if ($obj instanceof common\_var) {
-
-          $obj->insert();
-        }
-
-        $result->insert($obj);
-      }
-      else {
-
-        if ($obj instanceof common\_var) {
-
-          $result = $obj;
-          $obj->insert();
-        }
-        else if ($obj instanceof php\basic\Called) {
-
-          $result = $obj->getVar();
-        }
-        else {
-
-          $result = $this->getWindow()->addVar($obj);
-        }
-
-        $this->aVariables[$sName] = $result;
-      }
-    }
-
-    return $result;
   }
 
   /**

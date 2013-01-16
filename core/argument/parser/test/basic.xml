@@ -12,5 +12,29 @@
         $arg->read('abc') === '123'
     </tst:expected>
   </tst:test>
+  <tst:test name="Using value attribute">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc value="123"/>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Boolean value">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc type="boolean" value="1"/>
+      <def type="boolean" value="0"/>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === true &amp;&amp;
+        $arg->read('def') === false
+    </tst:expected>
+  </tst:test>
 </tst:tests>
 

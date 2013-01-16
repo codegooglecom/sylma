@@ -77,8 +77,16 @@ class _Array extends _Scalar implements common\_instance, \Iterator {
 
   public function asArgument() {
 
+    $aValues = $this->aValues;
+    reset($aValues);
+
+    $bAssoc = key($aValues) !== 0 || array_keys($aValues) !== range(0, count($aValues) - 1);
+
     return $this->getControler()->createArgument(array(
-      'array' => array('#item' =>  $this->loadValues()),
+      'array' => array(
+        '@associative' => $bAssoc,
+        '#item' =>  $this->loadValues(),
+      ),
     ));
   }
 }

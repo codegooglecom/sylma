@@ -121,7 +121,11 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
       $this->throwException('Cannot call test');
     }
 
-    return $closure($controler);
+    //core\exception\Basic::throwError(false);
+    $mResult = $closure($controler);
+    //core\exception\Basic::throwError(true);
+
+    return $mResult;
   }
 
   /**

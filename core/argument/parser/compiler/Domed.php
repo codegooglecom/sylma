@@ -3,11 +3,6 @@
 namespace sylma\core\argument\parser\compiler;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
 
-/**
- * Description of Reflector
- *
- * @author Rodolphe Gerber
- */
 class Domed extends Reflector implements parser\reflector\documented {
 
   protected static $sArgumentClass = '\sylma\parser\Argument';
@@ -33,7 +28,7 @@ class Domed extends Reflector implements parser\reflector\documented {
 
   protected function parseDocument(dom\document $doc) {
 
-    $mArguments = $this->parseChildrenImports($doc->getChildren());
+    $mArguments = $this->parseElementComplex($doc->getRoot());
 
     if (!is_array($mArguments)) {
 
@@ -58,5 +53,3 @@ class Domed extends Reflector implements parser\reflector\documented {
     return $arg->asDOM();
   }
 }
-
-?>

@@ -231,4 +231,14 @@ abstract class Master extends Domed {
 
     $this->aAttributeParsers = $aParsers;
   }
+
+  public function getLastElement() {
+
+    return $this->lastElement;
+  }
+
+  protected function setLastElement($lastElement) {
+
+    $this->lastElement = $lastElement;
+  }
 }

@@ -3,8 +3,6 @@
 namespace sylma\dom\basic;
 use \sylma\dom, \sylma\core;
 
-require_once(dirname(__dir__) . '/node.php');
-
 class Comment extends \DOMComment implements dom\node {
 
   public function getDocument() {
@@ -25,6 +23,11 @@ class Comment extends \DOMComment implements dom\node {
   public function getValue() {
 
     return $this->nodeValue;
+  }
+
+  public function remove() {
+
+    return $this->getParent()->removeChild($this);
   }
 
   public function asString($iMode = 0) {

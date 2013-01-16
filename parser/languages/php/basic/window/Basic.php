@@ -1,21 +1,15 @@
 <?php
 
-namespace sylma\parser\languages\php\basic;
+namespace sylma\parser\languages\php\basic\window;
 use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common, sylma\storage\fs;
 
-class Window extends common\basic\Window implements php\window, core\controled {
+class Basic extends common\basic\Window implements php\window {
 
   protected static $sArgumentClass = '\sylma\parser\languages\php\Argument';
   protected static $sArgumentFile = 'parser/languages/php/Argument.php';
 
-  // Keyed by alias. ex : storage/fs
-  protected $aControlers = array();
-
-  // Keyed by namespace. ex : http://www.sylma.org/parser/action
-  protected $aParsers = array();
-
   // Keyed by file path. ex : #sylma/action/index.xsl
-  protected $aDependencies = array();
+  //protected $aDependencies = array();
 
   protected $aInterfaces = array();
 

@@ -3,8 +3,6 @@
 namespace sylma\dom\basic;
 use \sylma\dom, \sylma\core;
 
-require_once(dirname(__dir__) . '/attribute.php');
-
 class Attribute extends \DOMAttr implements dom\attribute {
 
   public function __toString() {
@@ -51,6 +49,11 @@ class Attribute extends \DOMAttr implements dom\attribute {
   public function setValue($mValue) {
 
     $this->value = (string) $mValue;
+  }
+
+  public function remove() {
+
+    $this->getParent()->removeAttributeNode($this);
   }
 
   public function asString($iMode = 0) {

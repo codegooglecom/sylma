@@ -30,7 +30,7 @@ class Reflector extends Argumented {
       case 'array' : $mResult = $this->reflectArray($el); break;
       case 'numeric' : $mResult = $this->reflectNumeric($el); break;
 
-      case 'get-variable' : $mResult = $this->reflectGetVariable($el); break;
+
       case 'ns' : $mResult = $this->reflectNS($el); break;
       //case 'argument' :
 
@@ -336,30 +336,6 @@ class Reflector extends Argumented {
     $mResult = $this->runObject($el, $call->getVar(false));
 
     return $mResult;
-  }
-
-  protected function reflectGetVariable(dom\element $el) {
-
-    $sName = $el->readAttribute('name');
-
-    if (!array_key_exists($sName, $this->aVariables)) {
-
-      $this->throwException(sprintf('Unknown variable : %s', $sName));
-    }
-
-    $var = $this->getVariable($sName);
-
-    //if ($var instanceof php\basic\Called) $var = $var->getVar(false);
-
-    $aResult = array();
-    $children = $el->getChildren();
-
-    $aResult = array_merge($aResult, $this->runConditions($var, $children));
-    $aResult = array_merge($aResult, $this->runVar($var, $children));
-
-    if (!$aResult) $aResult[] = $var;
-
-    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
   protected function reflectNS(dom\element $el) {

@@ -127,12 +127,6 @@ class Sylma {
 
       break;
 
-      case 'caller' :
-
-        $result = new parser\caller\Controler;
-
-      break;
-
       /** Others **/
 
       /*
@@ -282,6 +276,15 @@ class Sylma {
       }
     }
     */
+  }
+
+  public static function dsp() {
+
+    foreach (func_get_args() as $mVal) {
+
+      echo self::show($mVal, false);
+      echo '<hr/>';
+    }
   }
 
   public static function show($mVal, $bToken = true) {

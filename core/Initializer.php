@@ -56,7 +56,7 @@ class Initializer extends module\Filed {
     $this->setErrorReporting();
 
     //set_exception_handler("self::sendException");
-    ini_set('session.gc_maxlifetime', \Sylma::read('session/lifetime'));
+    ini_set('session.gc_maxlifetime', $this->readArgument('session/lifetime'));
 
     session_start();
 

@@ -23,6 +23,18 @@ class Instruction extends \DOMProcessingInstruction implements dom\node {
     return self::INSTRUCTION;
   }
 
+  public function compare(dom\node $element) {
+
+    if ($element->getType() == $this->getType() && $element->asString() == $this->asString()) return self::COMPARE_SUCCESS;
+
+    return self::COMPARE_BAD_ELEMENT;
+  }
+
+  public function remove() {
+
+    return $this->getParent()->removeChild($this);
+  }
+  
   public function asString() {
 
     return '<?' . $this->target . ' ' . $this->data . ' ?>';
@@ -30,13 +42,6 @@ class Instruction extends \DOMProcessingInstruction implements dom\node {
 
   public function asToken() {
 
-  }
-
-  public function compare(dom\node $element) {
-
-    if ($element->getType() == $this->getType() && $element->asString() == $this->asString()) return self::COMPARE_SUCCESS;
-
-    return self::COMPARE_BAD_ELEMENT;
   }
 }
 

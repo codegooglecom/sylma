@@ -17,7 +17,7 @@ class Basic extends \Exception implements core\exception {
 
   protected $aPath = array();
   protected $aCall = array();
-  protected static $bThrowError = false;
+  protected static $bThrowError = true;
 
   /**
    * Allow import of other classes, used class is showed in message

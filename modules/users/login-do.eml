@@ -3,7 +3,7 @@
   <le:settings>
     <le:return format="object"/>
   </le:settings>
-  <le:interface path="interface">
+  <le:object class="Module">
     <le:call name="login"/>
-  </le:interface>
+  </le:object>
 </le:action>

@@ -4,7 +4,7 @@
   <le:action path="/sylma/modules/tester/class">
     <le:document>
       <tst:tests>
-        <le:interface path="interface"/>
+        <le:object class="Basic"/>
       </tst:tests>
     </le:document>
   </le:action>

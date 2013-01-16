@@ -63,7 +63,7 @@ class Domed extends Iterator implements dom\domable {
 
           if ($sKey[0] == '@') {
 
-            $parent->setAttribute(substr($sKey, 1), $mValue);
+            if ($mValue !== '' && !is_null($mValue) && $mValue !== false) $parent->setAttribute(substr($sKey, 1), $mValue);
             continue;
           }
           else if ($sKey[0] == '#') {

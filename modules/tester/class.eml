@@ -8,7 +8,7 @@
   </le:context>
   <div class="sylma-tests sylma-tests-class">
     <lm:template path="index.xsl">
-      <le:call name="parse">
+      <le:call name="parse-document">
         <le:get-argument index="0"/>
       </le:call>
     </lm:template>

@@ -110,7 +110,7 @@ class Path extends core\module\Argumented {
 
           if (!$file) {
 
-            $this->throwException(sprintf('No index file in %s', $dir->asToken()));
+            $this->throwException(sprintf("No index file or no '%s' directory in %s", $sSubPath, $dir->asToken()));
           }
         }
         else {

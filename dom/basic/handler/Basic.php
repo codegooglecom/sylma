@@ -7,7 +7,7 @@ use \sylma\dom, \sylma\storage\fs, \sylma\core;
  * Existenz of this class mainly due to https://bugs.php.net/bug.php?id=28473
  * Allow too extension of document methods with others arguments
  */
-abstract class Basic extends core\module\Managed implements dom\handler {
+abstract class Basic extends core\module\Managed {
 
   /**
    * See @method setFile()
@@ -291,7 +291,7 @@ abstract class Basic extends core\module\Managed implements dom\handler {
 
   public function asString($iMode = 0) {
 
-    if ($iMode & self::STRING_INDENT) {
+    if ($iMode & dom\handler::STRING_INDENT) {
 
       $doc = new static($this->getRoot());
       $doc->getRoot()->prepareHTML();
@@ -301,7 +301,7 @@ abstract class Basic extends core\module\Managed implements dom\handler {
       $doc = $this;
     }
 
-    if ($iMode & self::STRING_HEAD) $sResult = $doc->elementAsString();
+    if ($iMode & dom\handler::STRING_HEAD) $sResult = $doc->elementAsString();
     else $sResult = $doc->elementAsString($doc->getRoot());
 
     return $sResult;
@@ -311,11 +311,10 @@ abstract class Basic extends core\module\Managed implements dom\handler {
 
     $mSender = (array) $mSender;
 
-    $mSender[] = '@namespace ' . self::NS;
+    $mSender[] = '@namespace ' . dom\handler::NS;
     $mSender[] = $this->asToken();
 
-    $dom = $this->getControler();
-    \Sylma::throwException($sMessage, $mSender, $iOffset);
+    parent::throwException($sMessage, $mSender, $iOffset);
   }
 
   public function saveFile(fs\editable\file $file, $bFormat = false) {
@@ -326,7 +325,7 @@ abstract class Basic extends core\module\Managed implements dom\handler {
     }
 
     if ($bFormat) $this->getRoot()->prepareHTML();
-    $file->saveText($this->asString(self::STRING_HEAD));
+    $file->saveText($this->asString(dom\handler::STRING_HEAD));
   }
 
   public function dsp() {

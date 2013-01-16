@@ -49,8 +49,8 @@ initializer :
       name : \sylma\core\window\classes\File
     json :
       name : \sylma\core\window\classes\Context
-session :
-  lifetime : 403200
+    session :
+      lifetime : 403200
 users:
   root:
     # E_ALL | E_STRICT | E_NOTICE = 32767

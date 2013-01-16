@@ -26,7 +26,8 @@ interface node extends core\tokenable, core\stringable {
   //function getHandler();
   function getType();
   function getParent();
-
+  function remove();
+  
   /**
    * TODO : describe
    */

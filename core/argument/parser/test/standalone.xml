@@ -106,5 +106,47 @@
         $arg->read('def/lmn') === '003'
     </tst:expected>
   </tst:test>
+  <tst:test name="Static import">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('static-import.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Static import merged">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('static-import-merged.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === 'new' &amp;&amp;
+        $arg->read('def') === '456' &amp;&amp;
+        $arg->read('ghi') === 'hello'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Static and dynamic import">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('static-dynamic-import.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def/abc') === '123' &amp;&amp;
+        $arg->read('def/def') === '004' &amp;&amp;
+        $arg->read('def/ghi') === '789' &amp;&amp;
+        $arg->read('def/jkl') === '002' &amp;&amp;
+        $arg->read('def/lmn') === '003'
+    </tst:expected>
+  </tst:test>
+
 </tst:tests>
 

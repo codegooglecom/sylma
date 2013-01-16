@@ -3,7 +3,7 @@
 namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php;
 
-abstract class Argumented extends Caller {
+abstract class Argumented extends Variabled {
 
   const ARGUMENT_METHOD = 'getActionArgument';
   const ACTION_ALIAS = 'action';

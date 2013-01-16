@@ -3,8 +3,6 @@
 namespace sylma\dom\basic;
 use \sylma\dom;
 
-require_once(dirname(__dir__) . '/text.php');
-
 class Text extends \DOMText implements dom\text {
 
   public function __construct($sValue) {
@@ -17,6 +15,7 @@ class Text extends \DOMText implements dom\text {
 
     parent::__construct($sValue);
   }
+
   public function getDocument() {
 
     return $this->ownerDocument;
@@ -54,6 +53,11 @@ class Text extends \DOMText implements dom\text {
     $parent = $this->getParent();
 
     return '@text in ' . ($parent ? $this->getParent()->asToken() : '[no parent]');
+  }
+
+  public function remove() {
+
+    return $this->getParent()->removeChild($this);
   }
 
   public function __toString() {

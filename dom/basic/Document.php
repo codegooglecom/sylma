@@ -3,8 +3,6 @@
 namespace sylma\dom\basic;
 use \sylma\dom, \sylma\storage\fs, \sylma\core;
 
-require_once(dirname(__dir__) . '/document.php');
-
 class Document extends \DOMDocument implements dom\document {
 
   const NS = 'http://www.sylma.org/dom/basic/Document';
@@ -150,6 +148,11 @@ class Document extends \DOMDocument implements dom\document {
   public function unserialize($sDocument) {
 
     return $this->__construct('<?xml version="1.0" encoding="utf-8"?>'."\n".$sDocument);
+  }
+
+  public function remove() {
+
+    return null;
   }
 
   public function asToken() {

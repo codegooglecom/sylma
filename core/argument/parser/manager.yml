@@ -13,7 +13,7 @@ classes :
   reflector :
     name : parser\compiler\Domed
   window :
-    name : \sylma\parser\languages\php\basic\Window
+    name : \sylma\parser\languages\php\basic\window\Basic
   cached :
     name : parser\Cached
   php : §sylma:import /#sylma/parser/languages/php/window.yml;
