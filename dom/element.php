@@ -78,5 +78,7 @@ interface element extends complex, namespaced {
   function getHandler();
 
   function read();
+
+  function replace($mContent);
 }
 

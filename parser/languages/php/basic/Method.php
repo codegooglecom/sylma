@@ -57,6 +57,8 @@ class Method extends core\module\Argumented {
       }
       else {
 
+        $sFormat = '';
+
         switch ($sName{0}) {
 
           case 's' : $sFormat = 'php-string'; break;
@@ -64,11 +66,12 @@ class Method extends core\module\Argumented {
           case 'a' : $sFormat = 'php-array'; break;
           case 'i' : $sFormat = 'php-integer'; break;
           case 'f' : $sFormat = 'php-float'; break;
+          case 'm' : $sFormat = 'php-' . $this->loadArgumentFormat($sName); break; // TODO : handle multiple argument types
         }
 
         if (!$sFormat) {
 
-          $this->throwException('Unknown format for parameter');
+          $this->throwException(sprintf('No format defined for parameter %s', $sName));
         }
       }
 
@@ -86,28 +89,50 @@ class Method extends core\module\Argumented {
     $this->setArguments($aArguments);
   }
 
-  protected function loadReturn() {
+  public function loadCommentFormat($sPreg) {
 
-    $sComment = $this->getReflection()->getDocComment();
-    preg_match('/@return ([\w\\\\\|]*)/', $sComment, $aMatches);
+    preg_match($sPreg, $this->getReflection()->getDocComment(), $aMatches);
+    $aResult = array();
 
     if (!isset($aMatches[1])) {
 
-      $this->throwException('Cannot find return value');
+      if ($ext = $this->getManager()->getExtension()) {
+
+        $method = $ext->getMethod($this->getName());
+        $aResult = $method->loadCommentFormat($sPreg);
+      }
+      else {
+
+        $this->throwException(sprintf('Cannot find format with %s', $sPreg));
+      }
+    }
+    else {
+
+      $aResult = explode('|', $aMatches[1]);
+
+      if (false !== $iKey = array_search('null', $aResult)) {
+
+        unset($aResult[$iKey]);
+      }
+
+      if (count($aResult) > 1) {
+
+        $this->throwException('Cannot handle more than one type');
+      }
     }
 
-    $aParameters = explode('|', $aMatches[1]);
+    return $aResult;
+  }
 
-    if (false !== $iKey = array_search('null', $aParameters)) {
+  protected function loadArgumentFormat($sName) {
 
-      unset($aParameters[$iKey]);
-    }
+    $aParameters = $this->loadCommentFormat('/@param ([\w\\\\\|]*) \$' . $sName . '/');
+    return current($aParameters);
+  }
 
-    if (count($aParameters) > 1) {
+  protected function loadReturn() {
 
-      $this->throwException('Cannot handle more than one type in return');
-    }
-
+    $aParameters = $this->loadCommentFormat('/@return ([\w\\\\\|]*)/');
     $this->return = $this->loadInstance(current($aParameters));
 
     if (!$this->return) {

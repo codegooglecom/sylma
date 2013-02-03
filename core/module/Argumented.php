@@ -3,20 +3,21 @@
 namespace sylma\core\module;
 use sylma\core;
 
-require_once('Controled.php');
-
 abstract class Argumented extends Managed {
 
-  const FACTORY_CONTROLER = 'factory';
+  const FACTORY_MANAGER = 'factory';
 
   /**
    * Class manager
    */
-  private $reflector;
-  private $aClasses = array();
+  protected $factory;
 
   protected static $sArgumentClass = '\sylma\core\argument\Iterator';
-  protected static $sArgumentFile = 'core/argument/Iterator.php';
+  protected static $sArgumentFile = '/core/argument/Iterator.php';
+
+  protected static $sFactoryFile = '/core/factory/Reflector.php';
+  protected static $sFactoryClass = '\sylma\core\factory\Reflector';
+
 
   /**
    * Argument object linked to this module, contains various parameters for the module
@@ -26,26 +27,27 @@ abstract class Argumented extends Managed {
 
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
 
-    $factory = $this->getControler(self::FACTORY_CONTROLER);
+    return $this->getFactory()->create($sName, $aArguments, $sDirectory);
+  }
 
-    if (array_key_exists($sName, $this->aClasses)) {
+  /**
+   *
+   * @return \sylma\core\factory
+   */
+  protected function getFactory() {
 
-      $class = $this->aClasses[$sName];
-    }
-    else {
+    if (!$this->factory) {
 
-      if (!$this->getArguments()) {
-
-        $this->throwException(sprintf('Cannot build object @class %s. No settings defined', $sName));
-      }
-
-      $factory->setSettings($this->getArguments());
-      $class = $factory->findClass($sName, $aArguments, $sDirectory);
-
-      $this->aClasses[$sName] = $class;
+      $this->factory = $this->createFactory($this->getArguments());
     }
 
-    $result = $factory->createObject($class, $aArguments);
+    return $this->factory;
+  }
+
+  protected function createFactory(core\argument $arg = null) {
+
+    \Sylma::load(static::$sFactoryFile);
+    $result = new static::$sFactoryClass($arg);
 
     return $result;
   }
@@ -54,11 +56,11 @@ abstract class Argumented extends Managed {
    *
    * @param array $mArguments
    * @param string $sNamespace
-   * @return core\argument
+   * @return \sylma\core\argument
    */
   protected function createArgument($mArguments, $sNamespace = '') {
 
-    require_once(static::$sArgumentFile);
+    \Sylma::load(static::$sArgumentFile);
 
     if ($sNamespace) $aNS = array($sNamespace);
     else if ($this->getNamespace()) $aNS = array($this->getNamespace());

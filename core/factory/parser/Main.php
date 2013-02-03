@@ -1,18 +1,13 @@
 <?php
 
 namespace sylma\core\factory\parser;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\parser\reflector;
 
-class Reflector extends parser\reflector\basic\Domed implements parser\reflector\elemented {
+class Main extends reflector\basic\Elemented implements reflector\elemented {
 
   const NS = 'http://www.sylma.org/core/factory';
 
   protected $sClassBase = '';
-
-  public function __construct() {
-
-    $this->setNamespace(self::NS, 'self');
-  }
 
   public function parseRoot(dom\element $el) {
 
@@ -51,7 +46,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return array('classes' => $this->parseChildren($el->getChildren()));
   }
 
-  protected function parseChildrenElement(dom\element $el, &$aResult) {
+  protected function parseChildrenElement(dom\element $el, array &$aResult) {
 
     $mResult = $this->parseElement($el);
     if (!is_null($mResult)) $aResult[] = $mResult;

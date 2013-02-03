@@ -3,9 +3,6 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\dom, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-require_once('core/argumentable.php');
-\Sylma::load('/parser/languages/common/basic/Controled.php');
-
 /**
  * Add content result to template, choose for wich as*() method to use for render
  */

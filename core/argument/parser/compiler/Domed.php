@@ -10,20 +10,14 @@ class Domed extends Reflector implements parser\reflector\documented {
 
   const NS = 'http://www.sylma.org/core/argument';
 
-  public function __construct(core\factory $manager, dom\handler $doc, fs\directory $dir) {
+  public function __construct(core\argument\parser\Manager $manager, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
-    $this->setControler($manager);
+    $this->setManager($manager);
 
-    $this->loadDefaultNamespace();
+    $this->setNamespace(static::loadDefaultNamespace($doc));
     $this->setNamespace(self::NS, 'arg', false);
-    $this->setDirectory($dir);
-  }
-
-  protected function loadDefaultNamespace() {
-
-    $sNamespace = $this->getDocument()->getRoot()->lookupNamespace();
-    $this->setNamespace($sNamespace);
+    $this->setSourceDirectory($dir);
   }
 
   protected function parseDocument(dom\document $doc) {

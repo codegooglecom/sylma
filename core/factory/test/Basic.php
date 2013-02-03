@@ -9,22 +9,14 @@ class Basic extends tester\Basic {
 
   protected $sTitle = 'Factory';
 
-  /**
-   * @var core\factory
-   */
-  protected $factory;
-
-  public function __construct(core\factory $factory = null) {
+  public function __construct() {
 
     \Sylma::getControler('dom');
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
 
-    if (!$factory) $factory = $this->getControler('factory');
-    $this->factory = $factory;
-
-    $this->setControler($factory);
+    $this->setControler($this->getFactory());
   }
 
   public function createArgument($mArguments, $sNamespace = '') {
@@ -37,9 +29,9 @@ class Basic extends tester\Basic {
     return parent::getDirectory($sPath, $bDebug);
   }
 
-  public function getFactory() {
+  public function createFactory(core\argument $arg = null) {
 
-    return $this->factory;
+    return parent::createFactory($arg);
   }
 
   protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {

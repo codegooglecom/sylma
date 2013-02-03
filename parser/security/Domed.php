@@ -3,16 +3,13 @@
 namespace sylma\parser\security;
 use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
 
-\Sylma::load('/parser/reflector/attributed.php');
-\Sylma::load('Reflector.php', __DIR__);
-
 class Domed extends Reflector implements parser\reflector\attributed {
 
   const NS = 'http://www.sylma.org/parser/security';
 
   protected $element;
 
-  public function parseAttributes(dom\node $el, dom\element $resultElement, $result) {
+  public function parseAttributes(dom\element $el, dom\element $resultElement, $result) {
 
     if (!is_object($result)) {
 
@@ -42,7 +39,7 @@ class Domed extends Reflector implements parser\reflector\attributed {
 
   }
 
-  protected function parseElement(dom\node $el) {
+  protected function parseElement(dom\element $el) {
 
     $sOwner = $el->readAttribute('owner', $this->getNamespace());
     $sGroup = $el->readAttribute('group', $this->getNamespace());

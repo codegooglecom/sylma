@@ -3,16 +3,16 @@
 namespace sylma\core\argument\parser;
 use sylma\core, sylma\parser, sylma\storage\fs;
 
-class Manager extends parser\compiler\Builder implements core\factory {
+class Manager extends parser\compiler\Builder {
 
   const PHP_TEMPLATE = 'compiler/basic.xsl';
 
-  public function __construct(core\argument $arguments = null) {
+  public function __construct() {
 
     $this->setDirectory(__FILE__);
 
-    $arguments = $this->createArgument('manager.yml');
-    parent::__construct($arguments);
+    $this->loadDefaultArguments();
+    $this->setArguments('manager.yml');
   }
 
   public function createArguments(fs\file $file, core\argument $parent = null) {

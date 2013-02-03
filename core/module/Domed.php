@@ -3,8 +3,6 @@
 namespace sylma\core\module;
 use \sylma\dom, \sylma\core;
 
-require_once('Filed.php');
-
 /**
  * Settings in DOM Document with @method getSettings() (global settings) and @method getOptions() (context settings)
  * Main directory relative calls (actions, documents, templates)
@@ -32,10 +30,10 @@ abstract class Domed extends Filed {
 
   protected function loadDefaultArguments() {
 
-    $fs = \Sylma::getControler(static::FILE_MANAGER);
+    $fs = $this->getManager(static::FILE_MANAGER);
 
     $dir = $fs->extractDirectory(__file__);
-    $this->setArguments($dir . '/' . static::ARGUMENTS);
+    $this->setArguments((string) $dir->getFile(self::ARGUMENTS));
   }
 
   /*protected function createArgument($mArguments, $sNamespace = '') {
@@ -60,8 +58,8 @@ abstract class Domed extends Filed {
    */
   protected function createDocument($mContent = null) {
 
-    $dom = \Sylma::getControler(self::DOM_CONTROLER);
-    $result = $dom->create(self::DOM_DOCUMENT_ALIAS);
+    $dom = \Sylma::getControler(static::DOM_CONTROLER);
+    $result = $dom->create(static::DOM_DOCUMENT_ALIAS);
 
     $result->registerNamespaces($this->getNS());
     if ($mContent) $result->set($mContent);

@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser\reflector, sylma\parser\action;
 
-abstract class Action extends parser\reflector\basic\Documented {
+abstract class Main extends reflector\basic\Documented {
 
   //const CONTROLER = 'parser/action';
   const FORMATER_ALIAS = 'formater';
@@ -16,9 +16,11 @@ abstract class Action extends parser\reflector\basic\Documented {
   protected $return;
   protected $sFormat = 'object';
 
+  protected $allowComponent = false;
+
   // controler : getNamespace, create, getArgument
 
-  public function __construct(parser\action\Manager $manager, dom\handler $doc, fs\directory $dir) {
+  public function __construct(action\Manager $manager, dom\handler $doc, fs\directory $dir) {
 
     $this->setDocument($doc);
     $this->setManager($manager);
@@ -93,7 +95,7 @@ abstract class Action extends parser\reflector\basic\Documented {
     return $this->bString;
   }
 
-  public function setParent(parser\reflector\documented $parent) {
+  public function setParent(reflector\domed $parent) {
 
     return null;
   }

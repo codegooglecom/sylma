@@ -471,7 +471,7 @@ class Directory extends Resource implements fs\directory {
 
     if (!$this->getParent()) {
 
-      $sName = t('<racine>');
+      $sName = '<racine>';
       $sPath = '';
 
     } else {

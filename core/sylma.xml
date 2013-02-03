@@ -1,0 +1,82 @@
+<arg:argument xmlns:arg="http://www.sylma.org/core/argument" xmlns="http://www.sylma.org/core/sylma" xmlns:cls="http://www.sylma.org/core/factory">
+  <debug>
+    <enable>1</enable>
+    <rights>0</rights>
+    <backtrace>1</backtrace>
+    <html>1</html>
+    <xml>
+      <import>0</import>
+    </xml>
+  </debug>
+  <namespaces>
+    <html>http://www.w3.org/1999/xhtml</html>
+  </namespaces>
+  <render>
+    <gzip>1</gzip>
+  </render>
+  <initializer>
+    <ouput>
+      <indent>1</indent>
+    </ouput>
+    <mime name="default">plain/text</mime>
+    <mime name="jpg">image/jpeg</mime>
+    <mime name="jpeg">image/jpeg</mime>
+    <mime name="png">image/png</mime>
+    <mime name="gif">image/gif</mime>
+    <mime name="webm">video/webm</mime>
+    <mime name="js">application/javascript</mime>
+    <mime name="css">text/css</mime>
+    <mime name="xml">text/xml</mime>
+    <mime name="htm">text/html</mime>
+    <mime name="html">text/html</mime>
+    <mime name="xhtml">application/xhtml+xml</mime>
+    <mime name="json">application/json</mime>
+    <executables>json</executables>
+    <error>
+      <action>error.eml</action>
+      <html>error.html</html>
+    </error>
+    <window name="html">
+      <action>/sylma/modules/html/backend.eml</action>
+    </window>
+    <redirect>
+      <extension>redirect</extension>
+    </redirect>
+    <cls:classes>
+      <cls:class alias="html" name="\sylma\modules\html\Document"/>
+      <cls:class alias="redirect" name="\sylma\core\Redirect"/>
+      <cls:class alias="path" name="\sylma\parser\action\Path"/>
+      <cls:class alias="action" name="\sylma\parser\action\handler\Basic"/>
+      <cls:class alias="window" name="\sylma\core\window\classes\File"/>
+      <cls:class alias="json" name="\sylma\core\window\classes\Context"/>
+    </cls:classes>
+    <session>
+      <lifetime>403200</lifetime>
+    </session>
+  </initializer>
+  <users>
+    <user name="root">
+      <error-level>32767</error-level>
+      <group name="0"/>
+    </user>
+    <user name="server">
+      <ip>0</ip>
+      <group name="famous"/>
+      <group name="server"/>
+    </user>
+    <user name="anonymouse">
+      <group name="famous"/>
+    </user>
+    <user name="authenticated">
+      <group name="users"/>
+    </user>
+  </users>
+  <dom>
+    <debug>
+      <show-queries>0</show-queries>
+    </debug>
+    <encoding>
+      <check>0</check>
+    </encoding>
+  </dom>
+</arg:argument>

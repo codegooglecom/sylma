@@ -3,7 +3,7 @@
 namespace sylma\parser\action;
 use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
-class Manager extends parser\compiler\Builder implements core\factory {
+class Manager extends parser\compiler\Builder {
 
   const FS_EDITABLE = 'fs/editable';
 
@@ -97,7 +97,7 @@ class Manager extends parser\compiler\Builder implements core\factory {
     return $this->create('cached', $aArguments);
   }
 
-  protected function build(fs\file $file, fs\directory $base) {
+  public function build(fs\file $file, fs\directory $base) {
 
     $this->setDirectory(__FILE__);
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
@@ -291,6 +291,11 @@ class Manager extends parser\compiler\Builder implements core\factory {
   public function loadDomable(dom\domable $val) {
 
     $dom = $val->asDOM();
+
+    if (!is_null($dom) && !$dom instanceof dom\node) {
+
+      $this->throwException(sprintf('Bad type return %s when DOM expected', $this->show($dom)));
+    }
 
     return $dom;
   }

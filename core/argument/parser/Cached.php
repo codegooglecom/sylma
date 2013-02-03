@@ -3,9 +3,10 @@
 namespace sylma\core\argument\parser;
 use sylma\core, sylma\storage\fs;
 
-class Cached extends core\argument\Iterator {
+class Cached extends core\argument\Domed {
 
   const FILE_MANAGER_ALIAS = 'fs';
+  const ARGUMENTS_MANAGER = 'argument/parser';
 
   public function __construct(array $aContent, core\argument $parent = null) {
 
@@ -45,5 +46,10 @@ class Cached extends core\argument\Iterator {
     }
 
     return $mResult;
+  }
+
+  protected function createInstance($mPath) {
+
+    return new parent($mPath, $this->getNS(), $this);
   }
 }

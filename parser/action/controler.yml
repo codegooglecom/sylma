@@ -8,6 +8,7 @@ cache :
     file : getFile
     document : getDocument
     template : getTemplate
+    argument : createArgument
   namespace : 'http://www.sylma.org/parser/action/basic'
   class : \sylma\parser\action\cached\Document
 template :

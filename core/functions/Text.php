@@ -56,3 +56,19 @@ function stringResume($mValue, $iLength = 50, $bXML = false) {
   return $sValue;
 }
 
+function toggleCamel($sName, $bToCamel = true) {
+
+  if ($bToCamel) {
+
+    $aWords = explode('-', strtolower($sName));
+
+    $sResult = array_shift($aWords);
+    foreach ($aWords as $sWord) $sResult .= ucfirst(trim($sWord));
+  }
+  else {
+
+    $sResult = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $sName));
+  }
+
+  return $sResult;
+}

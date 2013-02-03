@@ -15,4 +15,13 @@ interface factory {
   const CLASSBASE_TOKEN = '§sylma-classbase';
 
   function create($sName, array $aArguments = array(), $sDirectory = '');
+
+  static function includeClass($sClass, $sFile = '');
+
+  /**
+   * Lookup classe's argument
+   * @param string $sName
+   * @return \sylma\core\argument
+   */
+  function findClass($sName);
 }

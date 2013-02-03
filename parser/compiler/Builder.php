@@ -3,7 +3,7 @@
 namespace sylma\parser\compiler;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\languages\php;
 
-abstract class Builder extends Manager {
+class Builder extends Manager {
 
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
   const WINDOW_ARGS = 'classes/php';
@@ -18,7 +18,7 @@ abstract class Builder extends Manager {
     return $sResult;
   }
 
-  protected function build(fs\file $file, fs\directory $dir) {
+  public function build(fs\file $file, fs\directory $dir) {
 
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
 

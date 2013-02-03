@@ -10,6 +10,14 @@ use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\pa
  */
 abstract class Reflector extends parser\reflector\basic\Documented {
 
+  protected $allowForeign = true;
+
+  protected static function loadDefaultNamespace(dom\document $doc) {
+
+    $sNamespace = $doc->getRoot()->lookupNamespace();
+    return $sNamespace;
+  }
+
   protected function parseElementSelf(dom\element $el) {
 
     if ($el->isComplex()) {
@@ -26,7 +34,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
   protected function parseElementSimple(dom\element $el) {
 
-    $sValue = $this->loadElementValue($el);
+    $sValue = $el->read();
     $mResult = $this->parseElementType($el, $sValue);
 
     return $mResult;
@@ -34,51 +42,18 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
   protected function parseElementType(dom\element $el, $sValue) {
 
-    $sType = $el->readAttribute('type', null, false);
-
-    switch ($sType) {
-
-      case 'bool' :
-      case 'boolean' :
-
-        $mResult = $this->getWindow()->argToInstance((bool) $sValue);
-
-        break;
-
-      case 'array' :
-
-        break;
-
-      case 'string' :
-      case 'integer' :
-      case '' :
-
-        $mResult = $sValue;
-
-        break;
-
-      default :
-
-        $this->throwException(sprintf('Uknown argument type : %s', $sType));
-    }
-
-    return $mResult;
-  }
-
-  protected function loadElementValue(dom\element $el) {
-
-    $sValue = $el->read() ? $el->read() : $el->readAttribute('value', null, false);
+    // TODO : get schema to convert
 
     return $sValue;
   }
 
-  protected function parseChildrenElement(dom\element $el, &$aResult) {
+  protected function parseChildrenElement(dom\element $el, array &$aResult) {
 
     $mResult = $this->parseElement($el);
 
     if (!is_null($mResult)) {
 
-      if ($el->hasChildren() || $this->loadElementValue($el) !== '') {
+      if ($el->hasChildren() || $el->read() !== '') {
 
         $aResult[$el->getName()] = $mResult;
       }
@@ -99,7 +74,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     }
     else {
 
-      $result = $this->loadElementForeign($el);
+      $result = parent::parseElementForeign($el);
     }
 
     return $result;
@@ -173,9 +148,14 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
   protected function reflectImportStatic(dom\element $parent, dom\element $import) {
 
-    $doc = $this->getDocument($import->read());
+    $doc = $this->getSourceFile($import->read())->getDocument();
+
     $this->mergeElement($parent, $doc->getRoot(), false);
     $import->replace($doc->getChildren());
+
+    $sNamespace = static::loadDefaultNamespace($doc);
+
+    if (!$this->useNamespace($sNamespace)) $this->setUsedNamespace($sNamespace);
   }
 
   protected function mergeElement(dom\element $current, dom\element $import, $bCheckNS = true) {
@@ -224,13 +204,15 @@ abstract class Reflector extends parser\reflector\basic\Documented {
       $import->add($child);
     }
 
-    $current->replace($import);
+    return $current->replace($import);
   }
 
   protected function mergeElementSimple(dom\element $current, dom\element $import) {
 
-    $import->replace($current);
+    $result = $import->replace($current);
     $current->remove();
+
+    return $result;
   }
 
   protected function reflectImportsDynamic(dom\collection $children, $aChildren) {
@@ -294,9 +276,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
   protected function reflectImportDynamic(dom\element $el) {
 
     $window = $this->getWindow();
-
-    $sFile = (string) $this->getFile($el->read());
-    //$fs = $window->addControler('fs');
+    $sFile = (string) $this->getSourceFile($el->read());
 
     $file = $window->createCall($window->addControler(static::FILE_MANAGER), 'getFile', '\sylma\storage\fs\file', array($sFile));
 

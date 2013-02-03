@@ -34,11 +34,14 @@ abstract class Filed extends Sessioned {
 
   private function createArgumentFromString($sPath, $sNamespace) {
 
-    $file = $this->getFile($sPath);
+    $file = $this->getManager(self::FILE_MANAGER)->getFile($sPath, $this->getDirectory('', false));
 
     if ($file->getExtension() === 'xml') {
 
-      $manager = $this->getControler(self::ARGUMENT_MANAGER);
+      static::$sFactoryFile = '/core/factory/Cached.php';
+      static::$sFactoryClass = '\sylma\core\factory\Cached';
+
+      $manager = $this->getManager(self::ARGUMENT_MANAGER);
       $result = $manager->createArguments($file);
     }
     else {
@@ -69,11 +72,11 @@ abstract class Filed extends Sessioned {
   }
 
   /**
-   * Allow relative paths for classe's files
+   * Factory connection
    *
-   * @param type $sName
+   * @param string $sName
    * @param array $aArguments
-   * @param type $sDirectory
+   * @param string $sDirectory
    * @return mixed
    */
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
@@ -85,13 +88,15 @@ abstract class Filed extends Sessioned {
 
   /**
    * Set the current directory
-   * @param fs\directory|string $mPath An object or string to set as default directory
+   *
+   * @param fs\directory|string $mDirectory An object or string to set as default directory can be used with (__FILE__ or get_class($this))
+   * @return fs\directory
    */
   protected function setDirectory($mDirectory) {
 
     if (is_string($mDirectory)) {
 
-      $fs = $this->getControler('fs');
+      $fs = $this->getManager('fs');
       $this->directory = $fs->extractDirectory($mDirectory);
     }
     else {
@@ -109,7 +114,7 @@ abstract class Filed extends Sessioned {
 
     if ($sName == 'fs') {
 
-      $result = \Sylma::getControler(static::FILE_MANAGER);
+      $result = \Sylma::getManager(static::FILE_MANAGER);
     }
     else {
 
@@ -154,7 +159,7 @@ abstract class Filed extends Sessioned {
 
     if ($sPath) {
 
-      $fs = $this->getControler(static::FILE_MANAGER);
+      $fs = $this->getManager(static::FILE_MANAGER);
       $result = $fs->getFile($sPath, $this->getDirectory(), $bDebug);
     }
     else {
@@ -181,8 +186,8 @@ abstract class Filed extends Sessioned {
 
   protected function createTempDirectory($sName = '') {
 
-    $fs = $this->getControler('fs/editable');
-    $user = $this->getControler('user');
+    $fs = $this->getManager('fs/editable');
+    $user = $this->getManager('user');
 
     $tmp = $fs->getDirectory((string) $user->getDirectory('#tmp'));
 

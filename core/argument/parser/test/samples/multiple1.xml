@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample2" xmlns:arg="http://www.sylma.org/core/argument">
+  <def>456</def>
+</arg:argument>
+

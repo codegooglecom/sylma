@@ -1,11 +1,26 @@
+debug :
+  show : false
+  run : true
+  update : true
 namespaces :
-  'http://www.sylma.org/parser/security' : security
-  #'http://www.sylma.org/parser/action' : action
-  'http://www.sylma.org/parser/js/binder' : js/binder/compiler
-  'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
-  #'http://www.sylma.org/parser/js/template' : js/template
-  'http://www.sylma.org/core/factory' : factory
+  reflector :
+    'http://www.sylma.org/parser/security' : security
+    'http://www.sylma.org/parser/js/binder' : js/binder/compiler
+    'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
+    #'http://www.sylma.org/parser/js/template' : js/template
+    'http://www.sylma.org/core/factory' : factory
+    'http://www.sylma.org/template/elemented' : template/elemented
+  manager :
+    'http://www.sylma.org/template' : template
+    'http://www.sylma.org/parser/action' : action
 classes :
+  action :
+    name : \sylma\parser\compiler\Builder
+    directory : /#sylma/action
+    classes :
+      elemented :
+        name : \sylma\action\parser\handler\Elemented
+
   security :
     name : \sylma\parser\security\Domed
   js :
@@ -20,7 +35,11 @@ classes :
             name : \sylma\parser\js\binder\_Object
           context :
             name : \sylma\parser\js\binder\Context
-      template :
-        name : \sylma\parser\js\template\Handler
   factory :
-    name : \sylma\core\factory\parser\Reflector
+    name : \sylma\core\factory\parser\Main
+  template :
+    name : \sylma\parser\compiler\Manager
+    directory : /#sylma/template
+    classes :
+      elemented :
+        name : \sylma\template\parser\handler\Elemented

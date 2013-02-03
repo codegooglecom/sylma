@@ -261,6 +261,10 @@ class Window extends php\basic\window\Domed {
 
       $result = $bTemplate ? $this->convertToString($val) : $val;
     }
+    else if ($val instanceof common\argumentable) {
+
+      $result = $val->asArgument();
+    }
     else {
 
       $this->throwException(sprintf('Cannot insert %s', $this->show($val, true)));
@@ -291,6 +295,10 @@ class Window extends php\basic\window\Domed {
     else if ($interface->isInstance('\sylma\dom\domable')) {
 
       $result = $this->createCall($this->addControler(static::ACTION_ALIAS), 'loadDomable', '\sylma\dom\node', array($val));
+    }
+    else if ($interface->isInstance('\sylma\core\stringable')) {
+
+      $result = $this->createCall($this->addControler(static::ACTION_ALIAS), 'loadStringable', 'php-string', array($val));
     }
     else {
 

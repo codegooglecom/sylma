@@ -107,6 +107,16 @@ class Sylma {
     return $controler;
   }
 
+  public static function setManager($sName, $controler) {
+
+    return self::setControler($sName, $controler);
+  }
+  
+  public static function getManager($sName, $bLoad = true, $bDebug = true) {
+
+    return self::getControler($sName, $bLoad, $bDebug);
+  }
+
   protected static function loadControler($sName) {
 
     $result = null;
@@ -179,12 +189,6 @@ class Sylma {
 
       break;
 
-      case 'factory' :
-
-        $result = new core\factory\Reflector;
-
-      break;
-
       case 'redirect' :
 
         $init = self::getControler('init');
@@ -205,6 +209,10 @@ class Sylma {
         $result = $timer->create('timer');
 
       break;
+
+      case 'mysql' :
+
+        $result = new storage\sql\Manager(self::get('database'));
     }
 
     if ($result) self::setControler($sName, $result);

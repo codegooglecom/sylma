@@ -5,6 +5,11 @@ use \sylma\core;
 
 class Iterator extends Basic implements core\argument, \ArrayAccess {
 
+  function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
+
+    parent::__construct($aArray, $aNS, $parent);
+  }
+
   public function rewind() {
 
     reset($this->aArray);
@@ -74,4 +79,5 @@ class Iterator extends Basic implements core\argument, \ArrayAccess {
 
     return isset($this->aArray[$offset]) ? $this->aArray[$offset] : null;
   }
+
 }

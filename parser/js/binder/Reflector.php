@@ -1,9 +1,12 @@
 <?php
 
 namespace sylma\parser\js\binder;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\js;
+use sylma\core, sylma\parser\reflector as ns_reflector, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\js;
 
-class Reflector extends parser\reflector\basic\Domed implements parser\reflector\elemented, parser\reflector\attributed {
+class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\elemented, ns_reflector\attributed {
+
+  protected static $sFactoryFile = '/core/factory/Reflector.php';
+  protected static $sFactoryClass = '\sylma\core\factory\Reflector';
 
   const NS = 'http://www.sylma.org/parser/js/binder';
 
@@ -27,7 +30,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
   protected $iDepth = 0;
 
-  public function __construct(parser\reflector\documented $parent) {
+  public function __construct(ns_reflector\domed $parent, core\argument $arg = null) {
 
     $this->setDirectory(__file__);
     $this->setArguments('settings.yml');
@@ -54,13 +57,6 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     $call = $window->createCall($parent, self::PARSER_METHOD, 'php-boolean', array($this->getNamespace('cached')));
 
     $window->add($call);
-  }
-
-  public function parseRoot(dom\element $el) {
-
-    $result = $this->parseElementSelf($el);
-
-    return $result;
   }
 
   /**
@@ -183,7 +179,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
 
     return $el;
   }
-  
+
   protected function isRoot() {
 
     return !$this->aObjects;
@@ -199,7 +195,7 @@ class Reflector extends parser\reflector\basic\Domed implements parser\reflector
     return $el->readx('@self:node', $this->getNS(), false) && $el->getNamespace() === $this->getNamespace('html');
   }
 
-  public function parseAttributes(dom\node $el, dom\element $resultElement, $result) {
+  public function parseAttributes(dom\element $el, dom\element $resultElement, $result) {
 
     $result = null;
 

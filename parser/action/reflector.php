@@ -1,11 +1,11 @@
 <?php
 
 namespace sylma\parser\action;
-use sylma\parser, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php;
+use sylma\parser\reflector as reflector_ns, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser\action;
 
-interface reflector extends parser\reflector\documented, parser\reflector\domed {
+interface reflector extends reflector_ns\documented {
 
-  function __construct(parser\action\Manager $controler, dom\handler $doc, fs\directory $dir);
+  function __construct(action\Manager $controler, dom\handler $doc, fs\directory $dir);
   //function getInterface();
   //function setInterface(parser\caller $interface);
   function useTemplate();

@@ -1,0 +1,30 @@
+<arg:argument xmlns:arg="http://www.sylma.org/core/argument" xmlns="http://www.sylma.org/languages/php/window" xmlns:cls="http://www.sylma.org/core/factory">
+  <php>
+    <cls:classes>
+      <cls:base>\sylma\parser\languages\php\basic</cls:base>
+      <cls:class alias="string" name="instance\_String"/>
+      <cls:class alias="array" name="instance\_Array"/>
+      <cls:class alias="numeric" name="instance\_Numeric"/>
+      <cls:class alias="object" name="instance\_Object"/>
+      <cls:class alias="class" name="instance\_Class"/>
+      <cls:class alias="call-method" name="CallMethod"/>
+      <cls:class alias="call" name="_Call"/>
+      <cls:class alias="object-var" name="_ObjectVar"/>
+      <cls:class alias="simple-var" name="_ScalarVar"/>
+      <cls:class alias="template" name="Template"/>
+      <cls:class alias="function" name="_Function"/>
+      <cls:class alias="closure" name="_Closure"/>
+      <cls:class alias="instanciate" name="Instanciate"/>
+      <cls:class alias="assign" name="Assign"/>
+      <cls:class alias="insert" name="Insert"/>
+      <cls:class alias="interface" name="_Interface"/>
+      <cls:class alias="method" name="Method"/>
+      <cls:class alias="line" name="_Line"/>
+      <cls:class alias="null" name="instance\_Null"/>
+      <cls:class alias="boolean" name="instance\_Boolean"/>
+      <cls:class alias="concat" name="Concat"/>
+      <cls:class alias="condition" name="Condition"/>
+      <cls:class alias="test" name="Test"/>
+    </cls:classes>
+  </php>
+</arg:argument>

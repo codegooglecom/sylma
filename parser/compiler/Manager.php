@@ -3,23 +3,36 @@
 namespace sylma\parser\compiler;
 use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
 
-abstract class Manager extends core\module\Domed {
+class Manager extends core\module\Domed {
 
   const EXTENSION_DEFAULT = '.php';
+  const ARGUMENTS = 'manager.xml';
 
   protected $baseDirectory = null;
 
-  public function __construct(core\argument $arguments = null) {
-
-    //$this->setDirectory(__FILE__);
-
-    if (!$arguments && $this->getDirectory()) {
-
-      $arguments = 'manager.xml';
-    }
+  /**
+   * order of arguments merge : domed, argument, directory
+   * @param $arg
+   */
+  public function __construct(core\argument $arg = null) {
 
     $this->loadDefaultArguments();
-    $this->setArguments($arguments);
+    if ($arg) $this->setArguments($arg);
+
+    if ($arg && $sDirectory = $arg->read('directory', null, false)) {
+
+      $dir = $this->getManager(self::FILE_MANAGER)->getDirectory($sDirectory);
+      $this->setDirectory($dir);
+    }
+
+    if ($this->getDirectory('', false)) {
+
+      if ($file = $this->getFile(static::ARGUMENTS, false)) {
+
+        $manager = $this->getManager(self::ARGUMENT_MANAGER);
+        $this->setArguments($manager->createArguments($file));
+      }
+    }
   }
 
   public function getClassName($sClass) {
@@ -43,7 +56,7 @@ abstract class Manager extends core\module\Domed {
     return $this->getCachedDirectory($file)->getFile($sName, $iDebug);
   }
 
-  protected function load(fs\file $file, array $aArguments = array()) {
+  public function load(fs\file $file, array $aArguments = array()) {
 
     $result = null;
     $cache = $this->loadCache($file);
@@ -77,6 +90,11 @@ abstract class Manager extends core\module\Domed {
     }
 
     return $result;
+  }
+
+  public function build(fs\file $file, fs\directory $dir) {
+
+    $this->throwException('This manager cannot build');
   }
 
   /**

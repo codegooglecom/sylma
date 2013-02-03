@@ -147,6 +147,17 @@
         $arg->read('def/lmn') === '003'
     </tst:expected>
   </tst:test>
+  <tst:test name="Import static multiple namespaces">
+    <tst:prepare>
+      $controler->setArgument('arg', $controler->createHandler('import-foreign.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
 
+      return
+        $arg->read('abc') === '123' &amp;&amp;
+        $arg->read('def') === '456'
+    </tst:expected>
+  </tst:test>
 </tst:tests>
 

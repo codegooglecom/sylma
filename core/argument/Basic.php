@@ -183,7 +183,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     if (is_array($mResult)) {
 
-      if ($sPath) $mResult = new static($mResult, $this->getNS(), $this);
+      if ($sPath) {
+
+        $mResult = $this->createInstance($mResult, $this->getNS());
+      }
       else return $this;
     }
     else if (is_scalar($mResult)) {
@@ -197,6 +200,11 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
 
     return $mResult;
+  }
+
+  protected function createInstance($mPath) {
+
+    return new static($mPath, $this->getNS(), $this);
   }
 
   protected function parseGetUnknown($mValue) {

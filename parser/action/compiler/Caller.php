@@ -1,7 +1,9 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser, sylma\core\functions\text;
+
+\Sylma::load('/core/functions/Text.php');
 
 class Caller extends Domed implements parser\action\reflector {
 
@@ -16,12 +18,7 @@ class Caller extends Domed implements parser\action\reflector {
     return parent::build();
   }
 
-  /**
-   *
-   * @param dom\element $el
-   * @return dom\node|array|null
-   */
-  protected function parseElementForeign(dom\element $el) {
+  protected function parseElementSelf(dom\element $el) {
 
     $mResult = null;
 
@@ -31,25 +28,16 @@ class Caller extends Domed implements parser\action\reflector {
     }
     else {
 
-      $mResult = parent::parseElementForeign($el);
-    }
+      switch ($el->getName()) {
 
-    return $mResult;
-  }
+        case 'call-self' : $mResult = $this->reflectCallSelf($el); break;
+        case 'call' : $mResult = $this->reflectCallMethod($el); break;
+        case 'object' : $mResult = $this->reflectObject($el); break;
 
-  protected function parseElementSelf(dom\element $el) {
+        default :
 
-    $mResult = null;
-
-    switch ($el->getName()) {
-
-      case 'call-self' : $mResult = $this->reflectCallSelf($el); break;
-      case 'call' : $mResult = $this->reflectCallMethod($el); break;
-      case 'object' : $mResult = $this->reflectObject($el); break;
-
-      default :
-
-        $mResult = parent::parseElementSelf($el);
+          $mResult = parent::parseElementSelf($el);
+      }
     }
 
     return $mResult;
@@ -64,7 +52,7 @@ class Caller extends Domed implements parser\action\reflector {
         $aArguments = array();
         $window = $this->getWindow();
 
-        $method = $this->getInterface()->loadMethod($this->toggleMethod($sValue));
+        $method = $this->getInterface()->loadMethod(text\toggleCamel($sValue));
         $result = $method->reflectCall($window, $window->getSelf(), $aArguments);
 
       break;
@@ -249,31 +237,19 @@ class Caller extends Domed implements parser\action\reflector {
 
   protected function getCallShort($sName) {
 
+    if (!array_key_exists($sName, $this->aCallShorts)) {
+
+      $this->throwException(sprintf('Unknown short call : %s', $sName));
+    }
+
     return $this->aCallShorts[$sName];
-  }
-
-  protected function toggleMethod($sName, $bToCamel = true) {
-
-    if ($bToCamel) {
-
-      $aWords = explode('-', strtolower($sName));
-
-      $sResult = array_shift($aWords);
-      foreach ($aWords as $sWord) $sResult .= ucfirst(trim($sWord));
-    }
-    else {
-
-      $sResult = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $sName));
-    }
-
-    return $sResult;
   }
 
   public function parseCall(php\basic\_Interface $interface, dom\element $el, php\basic\_ObjectVar $var) {
 
     $sMethod = $el->readAttribute('name');
 
-    return $this->runObject($el, $var, $interface->getMethod($this->toggleMethod($sMethod)));
+    return $this->runObject($el, $var, $interface->getMethod(text\toggleCamel($sMethod)));
   }
 
   protected function reflectObject(dom\element $el) {
@@ -333,7 +309,7 @@ class Caller extends Domed implements parser\action\reflector {
     $window = $this->getWindow();
     $sMethod = $el->readAttribute('name');
 
-    $method = $this->getInterface()->loadMethod($this->toggleMethod($sMethod));
+    $method = $this->getInterface()->loadMethod(text\toggleCamel($sMethod));
 
     $result = $this->runObject($el, $window->getSelf(), $method);
     //$result = $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());

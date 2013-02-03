@@ -790,7 +790,7 @@ class Element extends \DOMElement implements dom\element {
 
   public function asToken() {
 
-    return $this->getHandler()->asToken() . ':' . $this->getLineNo() . ' @element ' . $this->getPath();
+    return ' @element ' . $this->getPath() . ' in ' . $this->getHandler()->asToken() . ':' . $this->getLineNo();
   }
 
   public function prepareHTML($iLevel = 0) {

@@ -86,6 +86,14 @@ class Controler extends core\module\Argumented {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
+  /**
+   * Retrieve the directory from a file path, return an object by default
+   *
+   * @param type $sFile A file path (get with __FILE__))
+   * @param type $bObject If set to TRUE, will return an object, else a string
+   *
+   * @return fs\directory|string Result depends on @param $bObject
+   */
   public function extractDirectory($sFile, $bObject = true) {
 
     $sFile = substr($sFile, strlen(getcwd() . \Sylma::ROOT) + 1);

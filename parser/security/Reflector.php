@@ -1,20 +1,13 @@
 <?php
 
 namespace sylma\parser\security;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
+use sylma\core, sylma\parser\reflector as reflector_ns, sylma\dom, sylma\parser\languages\php;
 
-require_once('parser/reflector/basic/Child.php');
-
-abstract class Reflector extends parser\reflector\basic\Child {
+abstract class Reflector extends reflector_ns\basic\Elemented {
 
   const NS = 'http://www.sylma.org/parser/security';
 
   protected $parent;
-
-  public function __construct() {
-
-    $this->setNamespace(self::NS);
-  }
 
   protected function reflectTest(array $aRights) {
 

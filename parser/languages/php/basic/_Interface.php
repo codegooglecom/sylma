@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom, sylma\parser;
 
-class _Interface extends core\module\Managed {
+class _Interface extends core\module\Argumented {
 
   protected $sName = '';
   protected $reflection;
@@ -59,6 +59,19 @@ class _Interface extends core\module\Managed {
     return $this->reflection;
   }
 
+  public function getExtension() {
+
+    $result = null;
+    $this->loadReflection();
+
+    if ($sExtension = get_parent_class($this->getName())) {
+
+      $result = new static($this->getManager(), $sExtension);
+    }
+
+    return $result;
+  }
+
   /**
    *
    * @return common\_window
@@ -72,7 +85,7 @@ class _Interface extends core\module\Managed {
 
     if (!$this->reflection) {
 
-      $factory = \Sylma::getControler('factory');
+      $factory = $this->getFactory();
       $factory::includeClass($this->getName(), $this->getFile());
 
       $this->reflection = new \ReflectionClass($this->getName());
@@ -147,7 +160,7 @@ class _Interface extends core\module\Managed {
           $aArgument = $this->parseArgument($child, $iKey);
           $aResult[$aArgument['name']] = $aArgument['value'];
           $child->remove();
-          
+
         break;
 
         default :
@@ -197,7 +210,7 @@ class _Interface extends core\module\Managed {
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
-    $mSender['@class'] = $this->getName();
+    $mSender['@class'] = $this->getName() . 'in' . $this->getFile() ? $this->getFile()->asToken() : '[no-file]';
     parent::throwException($sMessage, $mSender, $iOffset);
   }
 }

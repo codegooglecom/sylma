@@ -1,9 +1,15 @@
 <?php
 
 namespace sylma\parser\reflector\basic;
-use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
+use \sylma\core, sylma\dom, sylma\storage\fs;
 
 abstract class Domed extends Child {
+
+  CONST PREFIX = null;
+
+  protected $sRootName = '';
+  //protected $componentsDir;
+  protected $sourceDir;
 
   protected function parseNode(dom\node $node) {
 
@@ -42,24 +48,18 @@ abstract class Domed extends Child {
    */
   protected function parseElement(dom\element $el) {
 
-    $sNamespace = $el->getNamespace();
     $mResult = null;
 
-    if ($sNamespace == $this->getNamespace()) {
+    if ($this->useNamespace($el->getNamespace())) {
 
       $mResult = $this->parseElementSelf($el);
     }
     else {
 
-     $mResult = $this->parseElementForeign($el);
+      $mResult = $this->parseElementForeign($el);
     }
 
     return $mResult;
-  }
-
-  protected function parseElementSelf(dom\element $el) {
-
-    return $el;
   }
 
   protected function parseElementForeign(dom\element $el) {
@@ -69,12 +69,36 @@ abstract class Domed extends Child {
 
   protected function parseElementUnknown(dom\element $el) {
 
-    $this->throwException('Uknown element not recognized');
+    $this->throwException(sprintf('Uknown %s not recognized', $el->asToken()));
   }
 
   protected function parseText(dom\text $node) {
 
     return $this->getWindow()->createString((string) $node);
+  }
+
+  /**
+   * Get a file relative to the source file's directory
+   * @param string $sPath
+   * @return fs\file
+   */
+  protected function getSourceFile($sPath) {
+
+    return $this->getControler(static::FILE_MANAGER)->getFile($sPath, $this->getSourceDirectory());
+  }
+
+  /**
+   * Get the source file's directory
+   * @return fs\directory
+   */
+  protected function getSourceDirectory() {
+
+    return $this->sourceDir;
+  }
+
+  protected function setSourceDirectory(fs\directory $sourceDirectory) {
+
+    $this->sourceDir = $sourceDirectory;
   }
 
   /**
@@ -85,9 +109,9 @@ abstract class Domed extends Child {
   protected function parseChildren(dom\collection $children) {
 
     $aResult = $mResult = array();
-//echo get_class($this);
+
     while ($child = $children->current()) {
-      //$this->show($child);
+
       switch ($child->getType()) {
 
         case $child::ELEMENT :
@@ -102,9 +126,14 @@ abstract class Domed extends Child {
             throw $e;
           }
 
-        break;
+          break;
 
-        case $child::TEXT : $this->parseChildrenText($child, $aResult); break;
+        case $child::TEXT :
+
+          $this->parseChildrenText($child, $aResult);
+
+          break;
+
         default :
 
           $this->throwException('Node type not allowed here', array($child->asToken()));
@@ -118,22 +147,26 @@ abstract class Domed extends Child {
   }
 
   /**
+   * Browsing function, result is not returned but added to $aResult,
+   * @see @method parseElement()
+   *
    * @param $el
    * @param array $aResult
    */
-  protected function parseChildrenElement(dom\element $el, &$aResult) {
+  protected function parseChildrenElement(dom\element $el, array &$aResult) {
 
     $mResult = $this->parseElement($el);
 
     //if (is_null($mResult)) $this->throwException (sprintf('NULL value not accepted with %s', $el->asToken ()));
-
     if (!is_null($mResult)) $aResult[] = $mResult;
   }
 
   /**
+   * Browsing function, result is not returned but added to $aResult
    * @param $node
+   * @param array $aResult
    */
-  protected function parseChildrenText(dom\text $node) {
+  protected function parseChildrenText(dom\text $node, array &$aResult) {
 
     $this->throwException('Text node not allowed here', array($node->asToken()));
   }
@@ -151,7 +184,7 @@ abstract class Domed extends Child {
 
       $sNamespace = $attr->getNamespace();
 
-      if ($sNamespace && $sNamespace != $this->getNamespace()) {
+      if ($sNamespace && $sNamespace != $this->getNamespace(static::PREFIX)) {
 
         $bResult = true;
         break;
@@ -160,5 +193,4 @@ abstract class Domed extends Child {
 
     return $bResult;
   }
-
 }

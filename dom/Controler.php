@@ -58,7 +58,7 @@ class Controler extends core\module\Domed {
 
     if (!$this->aDefaultClasses || $settings) {
 
-      $factory = \Sylma::getControler('factory');
+      $factory = $this->getFactory();
 
       $this->getArguments()->registerToken(core\factory::CLASSBASE_TOKEN);
       $this->getArguments()->registerToken(core\factory::DIRECTORY_TOKEN);

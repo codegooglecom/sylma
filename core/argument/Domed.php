@@ -6,6 +6,7 @@ use sylma\core, sylma\dom;
 class Domed extends Iterator implements dom\domable {
 
   protected static $aPrefixes = array();
+
   /**
    * Build an @class Options's object with this argument's array
    *
@@ -92,7 +93,14 @@ class Domed extends Iterator implements dom\domable {
 
           if ($mValue instanceof core\argument) {
 
-            $node->add($mValue->asDOM());
+            if ($mValue instanceof dom\domable) {
+
+              $node->add($mValue->asDOM());
+            }
+            else {
+
+              self::buildNode($node, $mValue->asArray(), $sNamespace);
+            }
           }
           else {
 

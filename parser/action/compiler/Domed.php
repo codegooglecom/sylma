@@ -3,9 +3,12 @@
 namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\common, sylma\parser\languages\php;
 
-abstract class Domed extends Action {
+abstract class Domed extends Main {
 
   protected $currentElement;
+
+  protected $allowForeign = true;
+  protected $allowUnknown = true;
 
   protected function parseDocument(dom\document $doc) {
 
@@ -55,16 +58,11 @@ abstract class Domed extends Action {
     $this->throwException(sprintf('Unknown action element : %s', $el->asToken()));
   }
 
-  protected function parseElementForeign(dom\element $el) {
-
-    return $this->loadElementForeign($el);
-  }
-
   protected function parseElementUnknown(dom\element $el) {
 
     $this->useTemplate(true);
 
-    return $this->loadElementUnknown($el);
+    return parent::parseElementUnknown($el);
   }
 
   /**
@@ -84,25 +82,7 @@ abstract class Domed extends Action {
 
           try {
 
-            $mResult = $this->parseElement($child);
-
-            if ($mResult) {
-
-              if (!$mResult instanceof dom\node && !$mResult instanceof common\structure) {
-
-                if (is_array($mResult)) {
-
-                  $mResult = $this->getWindow()->argToInstance($mResult);
-                }
-
-                $bTemplate = !($this->getWindow()->getContext());
-
-                $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
-              }
-
-              $aResult[] = $mResult;
-            }
-
+            $this->parseChildrenElement($child, $aResult, $bRoot);
           }
           catch (core\exception $e) {
 
@@ -110,20 +90,13 @@ abstract class Domed extends Action {
             throw $e;
           }
 
-        break;
+          break;
 
         case $child::TEXT :
 
-          if ($bContext) {
+          $this->parseChildrenText($child, $aResult, $bContext);
 
-            $mResult = $this->getWindow()->createInsert($this->getWindow()->argToInstance($child->getValue()), 'txt');
-          }
-          else {
-
-            $aResult[] = $child;
-          }
-
-        break;
+          break;
 
         default :
 
@@ -134,6 +107,42 @@ abstract class Domed extends Action {
     }
 
     return $aResult;
+  }
+
+  protected function parseChildrenElement(dom\element $el, array &$aResult, $bRoot = false) {
+
+    $mResult = $this->parseElement($el);
+
+    if ($mResult) {
+
+      if (!$mResult instanceof dom\node && !$mResult instanceof common\structure) {
+
+        if (is_array($mResult)) {
+
+          $mResult = $this->getWindow()->argToInstance($mResult);
+        }
+
+        $bTemplate = !($this->getWindow()->getContext());
+
+        $mResult = $this->getWindow()->createInsert($mResult, $this->getFormat(), null, $bTemplate, $bRoot);
+      }
+
+      $aResult[] = $mResult;
+    }
+  }
+
+  protected function parseChildrenText(dom\text $node, array &$aResult, $bContext = false) {
+
+    if ($bContext) {
+
+      $mResult = $this->getWindow()->createInsert($this->getWindow()->argToInstance($node->getValue()), 'txt');
+    }
+    else {
+
+      $mResult = $node;
+    }
+
+    $aResult[] = $mResult;
   }
 
   protected function parseAttribute(dom\attribute $attr) {

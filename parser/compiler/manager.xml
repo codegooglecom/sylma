@@ -1,0 +1,15 @@
+<arg:argument
+  xmlns:arg="http://www.sylma.org/core/argument"
+  xmlns="http://www.sylma.org/parser/compiler/manager"
+  xmlns:cls="http://www.sylma.org/core/factory"
+>
+  <debug>
+    <show>0</show>
+    <run>1</run>
+    <update>0</update>
+  </debug>
+  <cls:classes>
+    <cls:class alias="window" name="\sylma\parser\languages\php\basic\Window"/>
+    <arg:import>/#sylma/parser/languages/php/window.xml</arg:import>
+  </cls:classes>
+</arg:argument>

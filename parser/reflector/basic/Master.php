@@ -16,16 +16,28 @@ abstract class Master extends Domed {
    */
   protected $aParsers = array();
 
+  protected $allowComponent = true;
+  protected $allowForeign = false;
+  protected $allowUnknown = false;
+
+  /**
+   * Handler for element creation with NS bug fixes
+   */
   protected $foreignElements;
   protected $aAttributeParsers = array();
   protected $lastElement;
+
+  public function parseRoot(dom\element $el) {
+
+    return $this->parseElementSelf($el);
+  }
 
   /**
    *
    * @param string $sNamespace
    * @return parser\domed
    */
-  public function getParser($sNamespace) {
+  public function getGlobalParser($sNamespace) {
 
     $result = null;
 
@@ -41,7 +53,7 @@ abstract class Master extends Domed {
       if ($result) $this->setParser($result, $result->getUsedNamespaces());
     }
 
-    if ($result) $result->setParent($this);
+    //if ($result) $result->setParent($this);
 
     return $result;
   }
@@ -65,7 +77,7 @@ abstract class Master extends Domed {
 
   protected function loadParser($sNamespace, $sParser = 'element') {
 
-    $result = $this->getParser($sNamespace);
+    $result = $this->getGlobalParser($sNamespace);
 
     if ($result) {
 
@@ -86,7 +98,7 @@ abstract class Master extends Domed {
     return $result;
   }
 
-  public function parse(dom\node $node) {
+  protected function parse(dom\node $node) {
 
     return $this->parseNode($node);
   }
@@ -109,6 +121,61 @@ abstract class Master extends Domed {
     return $el;
   }
 
+  protected function parseElementSelf(dom\element $el) {
+
+    if ($this->allowComponent()) {
+
+      $result = $this->createComponent($el);
+    }
+    else {
+
+      $result = $this->getParent()->parseRoot($el);
+    }
+
+    return $result;
+  }
+
+  protected function allowComponent($mValue = null) {
+
+    if (!is_null($mValue)) $this->allowComponent = $mValue;
+    return $this->allowComponent;
+  }
+
+  protected function createComponent(dom\element $el) {
+
+    $class = $this->getFactory()->findClass($el->getName());
+    return $this->create($el->getName(), array($this, $el, $class, false, $this->allowForeign(), $this->allowUnknown()));
+  }
+
+  protected function parseElementForeign(dom\element $el) {
+
+    $result = null;
+
+    if ($this->allowForeign()) {
+
+      $result = $this->loadElementForeign($el);
+    }
+    else {
+
+      if ($parser = $this->getParser($el->getNamespace())) {
+
+        $parser->parseRoot($el);
+      }
+      else {
+
+        $result = parent::parseElementForeign($el);
+      }
+    }
+
+    return $result;
+  }
+
+  protected function allowForeign($mValue = null) {
+
+    if (!is_null($mValue)) $this->allowForeign = $mValue;
+    return $this->allowForeign;
+  }
+
   protected function loadElementForeign(dom\element $el) {
 
     if ($parser = $this->loadParser($el->getNamespace(), 'element')) {
@@ -121,7 +188,26 @@ abstract class Master extends Domed {
     }
 
     return $mResult;
+  }
 
+  protected function parseElementUnknown(dom\element $el) {
+
+    if ($this->allowUnknown()) {
+
+      $result = $this->loadElementUnknown($el);
+    }
+    else {
+
+      $result = parent::parseElementUnknown($el);
+    }
+
+    return $result;
+  }
+
+  protected function allowUnknown($mValue = null) {
+
+    if (!is_null($mValue)) $this->allowUnknown = $mValue;
+    return $this->allowUnknown;
   }
 
   /**
@@ -242,3 +328,37 @@ abstract class Master extends Domed {
     $this->lastElement = $lastElement;
   }
 }
+
+
+/*
+  protected function createComponent(dom\element $el) {
+
+    $aClass = explode('\\', get_class($this));
+
+    \Sylma::load('/core/functions/Text.php');
+    $sName = text\toggleCamel($el->getName());
+
+    if ($dir = $this->getComponentsDirectory($el->getNamespace())) {
+
+      $sClass = str_replace('/', '\\', (string) $dir) . $sName;
+    }
+    else {
+
+      $sClass = '\\' . implode('\\', array_slice($aClass, 0, -1)) . '\\' . $sName;
+    }
+
+    return new $sClass($this, $el);
+  }
+
+  protected function getComponentsDirectory($sNamespace) {
+
+    return $this->componentsDirs[$sNamespace];
+  }
+
+  protected function setComponentsDirectory(fs\directory $dir, $sNamespace = '') {
+
+    if (!$sNamespace) $sNamespace = $this->getNamespace();
+
+    $this->componentsDirs[$sNamespace] = $dir;
+  }
+*/

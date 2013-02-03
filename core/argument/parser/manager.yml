@@ -6,15 +6,9 @@ cache :
   class : \sylma\core\argument\parser\Cached
 classes :
   §sylma-classbase : \sylma\core\argument
-  handler :
-    name : parser\Handler
-  compiler :
-    name : parser\compiler\Main
   reflector :
     name : parser\compiler\Domed
   window :
     name : \sylma\parser\languages\php\basic\window\Basic
-  cached :
-    name : parser\Cached
   php : §sylma:import /#sylma/parser/languages/php/window.yml;
 

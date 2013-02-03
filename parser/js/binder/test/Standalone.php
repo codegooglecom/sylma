@@ -66,7 +66,7 @@ class Standalone extends core\module\Domed implements dom\domable {
 
     $parent->getContext('js/load')->add("sylma.tester.run(function() { $sExpected; }, $sBind);");
 
-    return $action;
+    return $action->asDOM();
   }
 }
 

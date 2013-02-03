@@ -82,4 +82,14 @@ abstract class Documented extends Master {
     //$window->add($new);
     $window->setReturn($new);
   }
+
+  public function useNamespace($sNamespace, $bParent = false) {
+
+    return parent::useNamespace($sNamespace, $bParent);
+  }
+
+  public function parse(dom\node $node) {
+
+    return parent::parse($node);
+  }
 }
