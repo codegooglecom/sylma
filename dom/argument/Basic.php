@@ -9,7 +9,7 @@ require_once('core/argument.php');
 abstract class Basic extends core\module\Controled implements core\argument {
 
   const NS = 'http://www.sylma.org/dom/argument';
-  const PREFIX_DEFAULT = 'self';
+  //const PREFIX_DEFAULT = 'self';
 
   private $document = null;
   private $schema = null;
@@ -34,18 +34,7 @@ abstract class Basic extends core\module\Controled implements core\argument {
     if (!$this->getPrefix()) {
 
       $root = $doc->getRoot();
-      $this->registerNamespaces(array($root->getNamespace()));
-    }
-  }
-
-  public function loadPrefix() {
-
-    if (!$this->getPrefix()) {
-
-      if ($sNamespace = $this->getNamespace()) {
-
-        $this->setNamespace($sNamespace, self::PREFIX_DEFAULT);
-      }
+      $this->registerNamespaces(array('self' => $root->getNamespace()));
     }
   }
 
@@ -75,8 +64,6 @@ abstract class Basic extends core\module\Controled implements core\argument {
   }
 
   protected function parsePath($sPath) {
-
-    $sResult = $sPath;
 
     $aPath = explode('/', $sPath);
 
@@ -234,8 +221,10 @@ abstract class Basic extends core\module\Controled implements core\argument {
 
   public function registerNamespaces(array $aNS) {
 
-    $this->setNamespaces($aNS);
-    $this->loadPrefix();
+    foreach ($aNS as $sPrefix => $sNamespace) {
+
+      $this->setNamespace($sNamespace, $sPrefix);
+    }
 
     $this->getDocument()->registerNamespaces($this->getNS());
   }

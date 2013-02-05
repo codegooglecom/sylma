@@ -24,19 +24,24 @@ abstract class Child extends Namespaced {
    *
    * @return parser\reflector\domed
    */
-  protected function getParent($bRoot = false) {
+  protected function getParent() {
 
-    if ($bRoot && $this->parent) {
+    return $this->parent;
+  }
 
-      $result = $this->parent->getParent(true);
-    }
-    else if ($this->parent) {
+  public function getParentParser() {
 
-      $result = $this->parent;
-    }
-    else {
+    $result = null;
+    $parent = $this->getParent();
 
-      $result = $this;
+    if ($parent) {
+
+      $result = $parent->getParentParser();
+
+      if (!$result) {
+
+        $result = $parent;
+      }
     }
 
     return $result;
@@ -55,21 +60,4 @@ abstract class Child extends Namespaced {
 
     return $this->getParent()->getWindow();
   }
-
-  public function getParser($sNamespace) {
-
-    $result = null;
-
-    if ($this->useNamespace($sNamespace)) { // TODO : not optimal, getParser only called on foreign
-
-      $result = $this;
-    }
-    else if ($this->getParent()) {
-
-      $result = $this->getParent()->getParser($sNamespace);
-    }
-
-    return $result;
-  }
-
 }

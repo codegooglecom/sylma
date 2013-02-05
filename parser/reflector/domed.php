@@ -17,7 +17,7 @@ interface domed extends core\controled {
   function parseRoot(dom\element $source);
 
   //function useNamespace($sNamespace, $bParent = false);
-  function getParser($sNamespace);
+  function lookupParser($sNamespace);
 
   /**
    *

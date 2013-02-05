@@ -32,14 +32,43 @@ abstract class Master extends Domed {
     return $this->parseElementSelf($el);
   }
 
+  public function lookupParser($sNamespace) {
+
+    $result = null;
+
+    if ($this->useNamespace($sNamespace)) {
+
+      $result = $this;
+    }
+    else {
+
+      $result = $this->getParser($sNamespace);
+    }
+
+    return $result;
+  }
+
+  protected function lookupParserForeign($sNamespace) {
+
+    if ($this->getParentParser()) {
+
+      $result = $this->getParentParser()->lookupParser($sNamespace);
+    }
+    else {
+
+      $result = $this->getParser($sNamespace);
+    }
+
+    return $result;
+  }
+
   /**
+   * Exception free parser loader
    *
    * @param string $sNamespace
    * @return parser\domed
    */
-  public function getGlobalParser($sNamespace) {
-
-    $result = null;
+  protected function getParser($sNamespace) {
 
     if (array_key_exists($sNamespace, $this->aParsers)) {
 
@@ -50,7 +79,10 @@ abstract class Master extends Domed {
       $manager = $this->getControler('parser');
       $result = $manager->getParser($sNamespace, $this, false);
 
-      if ($result) $this->setParser($result, $result->getUsedNamespaces());
+      if ($result) {
+
+        $this->setParser($result, $result->getUsedNamespaces());
+      }
     }
 
     //if ($result) $result->setParent($this);
@@ -77,7 +109,7 @@ abstract class Master extends Domed {
 
   protected function loadParser($sNamespace, $sParser = 'element') {
 
-    $result = $this->getGlobalParser($sNamespace);
+    $result = $this->lookupParserForeign($sNamespace);
 
     if ($result) {
 
@@ -91,7 +123,7 @@ abstract class Master extends Domed {
 
       if (!$bValid) {
 
-        $this->throwException(sprintf('Cannot use parser %s in %s context', $sNamespace, $sParser));
+        $this->throwException(sprintf('Cannot use parser %s in %s context', get_class($result), $sParser));
       }
     }
 
@@ -157,14 +189,7 @@ abstract class Master extends Domed {
     }
     else {
 
-      if ($parser = $this->getParser($el->getNamespace())) {
-
-        $parser->parseRoot($el);
-      }
-      else {
-
-        $result = parent::parseElementForeign($el);
-      }
+      $result = parent::parseElementForeign($el);
     }
 
     return $result;
@@ -178,7 +203,7 @@ abstract class Master extends Domed {
 
   protected function loadElementForeign(dom\element $el) {
 
-    if ($parser = $this->loadParser($el->getNamespace(), 'element')) {
+    if ($parser = $this->lookupParserForeign($el->getNamespace())) {
 
       $mResult = $parser->parseRoot($el);
     }

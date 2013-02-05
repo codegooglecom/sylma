@@ -17,7 +17,7 @@ abstract class Namespaced extends Exceptionable {
 
     $this->aNamespaces[$sPrefix] = $sNamespace;
 
-    if ($bDefault) {
+    if ($bDefault && (!$this->sNamespace || !$sPrefix)) {
 
       $this->sNamespace = $sNamespace;
       $this->sPrefix = $sPrefix;
@@ -54,7 +54,7 @@ abstract class Namespaced extends Exceptionable {
 
       // prefix 0 identify main namespace
 
-      if (!$sPrefix) $this->setNamespace($sNamespace, $sPrefix);
+      if (!$sPrefix) $this->setNamespace($sNamespace);
       else $this->setNamespace($sNamespace, $sPrefix, false);
     }
   }

@@ -16,7 +16,7 @@ class Domed extends Reflector implements parser\reflector\documented {
     $this->setManager($manager);
 
     $this->setNamespace(static::loadDefaultNamespace($doc));
-    $this->setNamespace(self::NS, 'arg', false);
+    $this->setNamespace(self::NS, 'arg');
     $this->setSourceDirectory($dir);
   }
 

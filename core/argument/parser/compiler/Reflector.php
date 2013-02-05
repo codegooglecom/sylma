@@ -20,16 +20,25 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
   protected function parseElementSelf(dom\element $el) {
 
-    if ($el->isComplex()) {
+    $result = null;
 
-      $mContent = $this->parseElementComplex($el);
+    if ($el->getNamespace() == $this->getNamespace('arg')) {
+
+      $result = $this->parseElementArgument($el);
     }
     else {
 
-      $mContent = $this->parseElementSimple($el);
+      if ($el->isComplex()) {
+
+        $result = $this->parseElementComplex($el);
+      }
+      else {
+
+        $result = $this->parseElementSimple($el);
+      }
     }
 
-    return $mContent;
+    return $result;
   }
 
   protected function parseElementSimple(dom\element $el) {
@@ -62,22 +71,6 @@ abstract class Reflector extends parser\reflector\basic\Documented {
         $aResult[] = $mResult;
       }
     }
-  }
-
-  protected function parseElementForeign(dom\element $el) {
-
-    $result = null;
-
-    if ($el->getNamespace() == $this->getNamespace('arg')) {
-
-      $result = $this->parseElementArgument($el);
-    }
-    else {
-
-      $result = parent::parseElementForeign($el);
-    }
-
-    return $result;
   }
 
   protected function parseElementArgument(dom\element $el) {

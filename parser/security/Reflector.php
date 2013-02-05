@@ -5,8 +5,6 @@ use sylma\core, sylma\parser\reflector as reflector_ns, sylma\dom, sylma\parser\
 
 abstract class Reflector extends reflector_ns\basic\Elemented {
 
-  const NS = 'http://www.sylma.org/parser/security';
-
   protected $parent;
 
   protected function reflectTest(array $aRights) {

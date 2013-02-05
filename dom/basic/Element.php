@@ -67,7 +67,16 @@ class Element extends \DOMElement implements dom\element {
       $aNS = $this->mergeNamespaces($aNS);
 
       $xpath = $this->buildXPath($aNS);
-      $mResult = $xpath->evaluate($sQuery, $this);
+
+      try {
+
+        $mResult = $xpath->evaluate($sQuery, $this);
+      }
+      catch (core\exception $e) {
+
+        $this->throwException(sprintf('Bad query : %s', $sQuery));
+      }
+
 
       $this->getControler()->addStat('evaluation', array($sQuery, $aNS));
 

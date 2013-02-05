@@ -8,6 +8,7 @@ class Main extends reflector\basic\Elemented implements reflector\elemented {
   const NS = 'http://www.sylma.org/core/factory';
 
   protected $sClassBase = '';
+  protected $allowForeign = true;
 
   public function parseRoot(dom\element $el) {
 
@@ -102,4 +103,4 @@ class Main extends reflector\basic\Elemented implements reflector\elemented {
   }
 }
 
-?>
+

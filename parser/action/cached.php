@@ -24,7 +24,7 @@ interface cached {
   function __construct(fs\file $file, fs\directory $dir, parser\action $manager, array $aContexts, array $aArguments = array(), array $aManagers = array());
 
   /**
-   * Get parent or root parser.
+   * Get parent or root parser. If none return itself
    * This second usage explains the need of making it public
    *
    * @param bool $bRoot If TRUE, get root parser, else get first parent
