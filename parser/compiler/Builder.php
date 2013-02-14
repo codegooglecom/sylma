@@ -18,6 +18,16 @@ class Builder extends Manager {
     return $sResult;
   }
 
+  protected function getTemplatePath() {
+
+    if (!$sResult = $this->readArgument('template')) {
+
+      $sResult = static::PHP_TEMPLATE;
+    }
+
+    return $sResult;
+  }
+
   public function build(fs\file $file, fs\directory $dir) {
 
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
@@ -33,7 +43,7 @@ class Builder extends Manager {
     }
 
     $result = $this->getCachedFile($file);
-    $template = $this->getTemplate(static::PHP_TEMPLATE);
+    $template = $this->getTemplate($this->getTemplatePath());
 
     $sContent = $template->parseDocument($content, false);
     $result->saveText($sContent);
@@ -44,9 +54,11 @@ class Builder extends Manager {
   protected function createReflector(dom\document $doc, fs\directory $base) {
 
     $result = $this->create('reflector', array($this, $doc, $base));
+    $result->setReflector($this->create('elemented', array($this, $result)));
 
     return $result;
   }
+
   /**
    * Build window, then return result as PHP DOM Document
    *

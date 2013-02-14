@@ -38,7 +38,7 @@ class Basic extends tester\Basic {
 
     $doc->saveFile($tmp, true);
 
-    $result = $this->getControler()->createArguments($tmp);
+    $result = $this->getControler()->load($tmp);
     //$result->setBaseDirectory($file->getParent());
 
     return $result;

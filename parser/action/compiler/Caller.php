@@ -1,11 +1,11 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser, sylma\core\functions\text;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser\action, sylma\parser\reflector, sylma\core\functions\text;
 
 \Sylma::load('/core/functions/Text.php');
 
-class Caller extends Domed implements parser\action\reflector {
+class Caller extends Domed implements action\reflector {
 
   const CALLSELF_PREFIX = 'class';
 

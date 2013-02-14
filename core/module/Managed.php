@@ -5,12 +5,12 @@ use \sylma\core;
 
 class Managed extends Controled {
 
-  public function setManager($controler, $sName = '') {
+  protected function setManager($manager, $sName = '') {
 
-    return parent::setControler($controler, $sName);
+    return parent::setControler($manager, $sName);
   }
 
-  public function getManager($sName = '', $bDebug = true) {
+  protected function getManager($sName = '', $bDebug = true) {
 
     return parent::getControler($sName, $bDebug);
   }

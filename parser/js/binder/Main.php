@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\parser\js\binder;
-use sylma\core, sylma\parser\reflector as ns_reflector, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\js;
+use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\js;
 
-class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\elemented, ns_reflector\attributed {
+class Main extends reflector\handler\Elemented implements reflector\elemented, reflector\attributed {
 
   protected static $sFactoryFile = '/core/factory/Reflector.php';
   protected static $sFactoryClass = '\sylma\core\factory\Reflector';
@@ -24,13 +24,18 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
   protected $window;
   protected $sPath = '';
   protected $aObjects = array();
-  protected $root;
+  protected $rootObject;
   //protected $bRootElement = true;
   protected $context;
 
   protected $iDepth = 0;
 
-  public function __construct(ns_reflector\domed $parent, core\argument $arg = null) {
+  public function __construct($manager, reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
+
+    $this->setManager($manager);
+    $this->setRoot($root);
+
+    if ($parent) $this->setParent($parent);
 
     $this->setDirectory(__file__);
     $this->setArguments('settings.yml');
@@ -39,9 +44,7 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
     $this->setNamespace(self::CACHED_NS, 'cached', false);
     $this->setNamespace(\Sylma::read('namespaces/html'), 'html', false);
 
-    $this->addParser($parent->getWindow());
-
-    $this->setParent($parent);
+    $this->addToParent($root->getWindow());
 
     $this->initWindow();
     $this->prepareParent();
@@ -51,7 +54,7 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
    * Add this parser to parent PHP window
    * @param common\_window $window Window to add the parsers to
    */
-  protected function addParser(common\_window $window) {
+  protected function addToParent(common\_window $window) {
 
     $parent = $window->createCall($window->getSelf(), self::PARENT_METHOD, self::PARENT_RETURN, array(true));
     $call = $window->createCall($parent, self::PARSER_METHOD, 'php-boolean', array($this->getNamespace('cached')));
@@ -74,7 +77,7 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
 
   protected function prepareParent() {
 
-    $window = $this->getParent()->getWindow();
+    $window = $this->getRoot()->getWindow();
     $manager = $window->addControler('parser');
 
     $call = $window->createCall($manager, 'getContext', '\parser\context', array(self::CONTEXT_ALIAS));
@@ -89,7 +92,7 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
     $root = $window->createObject();
     //$window->assignProperty(self::JS_TEMPLATES_PATH, $root);
     //$this->startObject($root);
-    $this->setRoot($root);
+    $this->setRootObject($root);
 
     return $root;
 
@@ -121,18 +124,18 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
     return end($this->aObjects);
   }
 
-  public function setRoot(common\_object $root) {
+  public function setRootObject(common\_object $root) {
 
-    $this->root = $root;
+    $this->rootObject = $root;
   }
 
   /**
    *
    * @return common\_object
    */
-  public function getRoot() {
+  public function getRootObject() {
 
-    return $this->root;
+    return $this->rootObject;
   }
 
   protected function startObject(common\_object $object) {
@@ -145,18 +148,18 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
     return array_pop($this->aObjects);
   }
 
+  protected function setWindow(common\_window $window) {
+
+    $this->window = $window;
+  }
+
   /**
    *
    * @return js\window
    */
-  protected function getWindow() {
+  public function getWindow() {
 
     return $this->window;
-  }
-
-  protected function setWindow(common\_window $window) {
-
-    $this->window = $window;
   }
 
   protected function parseElementSelf(dom\element $el) {
@@ -219,7 +222,7 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
 
       if ($this->isRoot()) {
 
-        $this->addToWindow($this->getRoot());
+        $this->addToWindow($this->getRootObject());
       }
     }
   }
@@ -238,7 +241,7 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
       //exit;
     }
 
-    $window = $this->getParent()->getWindow(); // PHP window
+    $window = $this->getRoot()->getWindow(); // PHP window
 
     foreach($contents->getChildren() as $child) {
 
@@ -291,7 +294,7 @@ class Reflector extends ns_reflector\basic\Elemented implements ns_reflector\ele
 
     if ($bName) $obj->setProperty('name', true);
 
-    $this->getRoot()->setProperty($result->readAttribute('binder'), $obj);
+    $this->getRootObject()->setProperty($result->readAttribute('binder'), $obj);
     $this->startObject($obj);
 
     return $result;

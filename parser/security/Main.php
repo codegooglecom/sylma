@@ -1,15 +1,15 @@
 <?php
 
 namespace sylma\parser\security;
-use sylma\core, sylma\parser\reflector as reflector_ns, sylma\dom, sylma\parser\languages\php;
+use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\php;
 
-abstract class Reflector extends reflector_ns\basic\Elemented {
+abstract class Main extends reflector\handler\Elemented {
 
   protected $parent;
 
   protected function reflectTest(array $aRights) {
 
-    $window = $this->getParent()->getWindow();
+    $window = $this->getWindow();
 
     $user = $window->addControler('user');
     $call = $window->createCall($user, 'getMode', 'php-boolean', array($aRights['user'], $aRights['group'], $aRights['mode']));
@@ -22,7 +22,7 @@ abstract class Reflector extends reflector_ns\basic\Elemented {
 
   protected function reflectRights($result, array $aRights) {
 
-    $window = $this->getParent()->getWindow();
+    $window = $this->getWindow();
 
     return $window->createCondition($this->reflectTest($aRights), $result);
   }

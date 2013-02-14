@@ -60,7 +60,7 @@ class Controled extends Namespaced implements core\controled {
 
     return $controler;
   }
-
+/*
   protected function getNamespace($sPrefix = null) {
 
     $sNamespace = parent::getNamespace($sPrefix);
@@ -72,5 +72,5 @@ class Controled extends Namespaced implements core\controled {
 
     return $sNamespace;
   }
-
+*/
 }

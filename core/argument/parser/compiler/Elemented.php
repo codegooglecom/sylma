@@ -1,20 +1,27 @@
 <?php
 
 namespace sylma\core\argument\parser\compiler;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
+use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php, sylma\storage\fs;
 
-/**
- * Description of Reflector
- *
- * @author Rodolphe Gerber
- */
-abstract class Reflector extends parser\reflector\basic\Documented {
+class Elemented extends reflector\handler\Elemented implements reflector\elemented {
+
+  const NS = 'http://www.sylma.org/core/argument';
+  const PREFIX = 'arg';
+
+  protected static $sArgumentClass = '\sylma\parser\Argument';
+  protected static $sArgumentFile = 'parser/Argument.php';
 
   protected $allowForeign = true;
 
-  protected static function loadDefaultNamespace(dom\document $doc) {
+  public function parseRoot(dom\element $el) {
 
-    $sNamespace = $doc->getRoot()->lookupNamespace();
+    $this->setNamespace(self::loadDefaultNamespace($el));
+    return $this->parseElementComplex($el);
+  }
+
+  public static function loadDefaultNamespace(dom\element $el) {
+
+    $sNamespace = $el->lookupNamespace();
     return $sNamespace;
   }
 
@@ -146,7 +153,7 @@ abstract class Reflector extends parser\reflector\basic\Documented {
     $this->mergeElement($parent, $doc->getRoot(), false);
     $import->replace($doc->getChildren());
 
-    $sNamespace = static::loadDefaultNamespace($doc);
+    $sNamespace = static::loadDefaultNamespace($doc->getRoot());
 
     if (!$this->useNamespace($sNamespace)) $this->setUsedNamespace($sNamespace);
   }
@@ -281,4 +288,3 @@ abstract class Reflector extends parser\reflector\basic\Documented {
 
 }
 
-?>

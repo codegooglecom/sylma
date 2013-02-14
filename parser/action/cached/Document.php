@@ -42,8 +42,7 @@ class Document extends Basic implements core\stringable, dom\domable {
 
       $manager = $this->getControler('parser');
 
-      $result = $manager->getParser($sNamespace, $this);
-      $result->setParent($this);
+      $result = $manager->getCachedParser($sNamespace, $this);
 
       $this->addParser($sNamespace, $result);
     }

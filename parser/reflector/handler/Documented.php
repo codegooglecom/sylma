@@ -1,15 +1,35 @@
 <?php
 
-namespace sylma\parser\reflector\basic;
-use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
+namespace sylma\parser\reflector\handler;
+use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector, sylma\storage\fs;
 
-abstract class Documented extends Master {
+class Documented extends core\module\Domed implements reflector\documented {
 
   /**
    *
    * @var common\_window
    */
   private $window;
+  private $reflector;
+  protected $sourceDir;
+
+  public function __construct($manager, dom\handler $doc, fs\directory $dir) {
+
+    $this->setManager($manager);
+    $this->setDocument($doc);
+
+    $this->setSourceDirectory($dir);
+  }
+
+  public function setReflector(reflector\elemented $reflector) {
+
+    $this->reflector = $reflector;
+  }
+
+  protected function getReflector() {
+
+    return $this->reflector;
+  }
 
   /**
    * @param common\_window $window
@@ -40,7 +60,12 @@ abstract class Documented extends Master {
    */
   protected function parseDocument(dom\document $doc) {
 
-    return $this->parseChildren($doc->getChildren());
+    //$reflector = $this->getManager()->create('elemented', array());
+    //$this->setReflector($reflector);
+
+    $reflector = $this->getReflector();
+
+    return $reflector->parseRoot($doc->getRoot());
   }
 
 /*
@@ -83,13 +108,32 @@ abstract class Documented extends Master {
     $window->setReturn($new);
   }
 
-  public function useNamespace($sNamespace, $bParent = false) {
+  protected function setSourceDirectory(fs\directory $sourceDirectory) {
 
-    return parent::useNamespace($sNamespace, $bParent);
+    $this->sourceDir = $sourceDirectory;
   }
 
-  public function parse(dom\node $node) {
+  /**
+   * Get the source file's directory
+   * @return fs\directory
+   */
+  public function getSourceDirectory() {
 
-    return parent::parse($node);
+    return $this->sourceDir;
+  }
+
+  public function getNamespace($sPrefix = null) {
+
+    return $this->getReflector()->getNamespace($sPrefix);
+  }
+
+  public function asDOM() {
+
+    $this->build();
+
+    $arg = $this->getWindow()->asArgument();
+    //echo $this->show($arg, false);
+
+    return $arg->asDOM();
   }
 }

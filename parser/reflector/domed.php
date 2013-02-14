@@ -4,26 +4,29 @@ namespace sylma\parser\reflector;
 use sylma\core, sylma\dom;
 
 /**
- * All domed interfaces (documented, elemented, attributed)
+ * All domed objects (elemented, attributed)
  */
-interface domed extends core\controled {
+interface domed {
 
-  //function __construct(domed $parent, core\argument $arg = null);
-/**
-   *
-   * @param dom\element $el
-   * @return core\argumentable|array|null
+  /**
+   * @return dom\element
    */
-  function parseRoot(dom\element $source);
-
-  //function useNamespace($sNamespace, $bParent = false);
+  function getLastElement();
+  
+  /**
+   * @param string $sNamespace
+   * @return reflector\domed
+   */
   function lookupParser($sNamespace);
 
   /**
-   *
-   * @param dom\element $el
-   * @return type core\argumentable|array|null
+   * @return reflector\documented
    */
-  //function setParent(documented $parent);
+  function getRoot();
+
+  /**
+   * @return common\_window
+   */
+  function getWindow();
 }
 

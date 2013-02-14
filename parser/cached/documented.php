@@ -16,5 +16,5 @@ interface documented {
    */
   function parseDocument(dom\handler $doc);
 
-  function setParent(parser\action\cached $parent);
+  //function setParent(parser\action\cached $parent);
 }

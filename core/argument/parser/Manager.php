@@ -1,17 +1,15 @@
 <?php
 
 namespace sylma\core\argument\parser;
-use sylma\core, sylma\parser, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\parser\compiler, sylma\storage\fs;
 
-class Manager extends parser\compiler\Builder {
+class Manager extends compiler\Builder {
 
-  const PHP_TEMPLATE = 'compiler/basic.xsl';
+  public function __construct(core\argument $arg = null) {
 
-  public function __construct() {
+    parent::__construct($arg);
 
     $this->setDirectory(__FILE__);
-
-    $this->loadDefaultArguments();
     $this->setArguments('manager.yml');
   }
 

@@ -3,7 +3,7 @@
 namespace sylma\core\factory\parser;
 use sylma\core, sylma\dom, sylma\parser\reflector;
 
-class Main extends reflector\basic\Elemented implements reflector\elemented {
+class Main extends reflector\handler\Elemented implements reflector\elemented {
 
   const NS = 'http://www.sylma.org/core/factory';
 

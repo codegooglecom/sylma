@@ -455,7 +455,10 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     if ($val instanceof core\argumentable) {
 
-      $mResult = static::normalizeArgument($val->asArgument(), $iMode);
+      //if ($arg = $val->asArgument()) {
+
+        $mResult = static::normalizeArgument($val->asArgument(), $iMode);
+      //}
     }
     else if ($val instanceof core\argument) {
 

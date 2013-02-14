@@ -7,6 +7,7 @@ class Manager extends parser\compiler\Builder {
 
   const MANAGER_PATH = 'manager';
   const REFLECTOR_PATH = 'reflector';
+  const CACHED_PATH = 'cached';
 
   protected $aNamespaces = array();
 
@@ -48,7 +49,7 @@ class Manager extends parser\compiler\Builder {
    * @param boolean $bDebug
    * @return \sylma\parser\compiler\Manager
    */
-  protected function getParserManager($sNamespace, $bDebug = true) {
+  public function getParserManager($sNamespace, $bDebug = true) {
 
     $result = null;
 
@@ -69,14 +70,29 @@ class Manager extends parser\compiler\Builder {
     return $result;
   }
 
+  public function getCachedParser($sNamespace, $parent, $bDebug = true) {
+
+    if (array_key_exists($sNamespace, $this->aNamespaces[self::CACHED_PATH])) {
+
+      $sClass = $this->aNamespaces[self::CACHED_PATH][$sNamespace];
+      $result = $this->createParser($sClass, array($parent));
+    }
+    else if ($bDebug) {
+
+      $this->throwException(sprintf('No cached parser associated to namespace %s', $sNamespace));
+    }
+
+    return $result;
+  }
+
   /**
    *
    * @param string $sNamespace
    * @param unknown $parent TODO : set type (between cached parser and reflector\elemented)
    * @param boolean $bDebug
-   * @return \sylma\parser\reflector\domed
+   * @return \sylma\parser\reflector\container
    */
-  public function getParser($sNamespace, $parent, $bDebug = true) {
+  public function getParser($sNamespace, parser\reflector\documented $documented, parser\reflector\domed $parent = null, $bDebug = true) {
 
     $result = null;
 
@@ -87,7 +103,7 @@ class Manager extends parser\compiler\Builder {
     else if (array_key_exists($sNamespace, $this->aNamespaces[self::REFLECTOR_PATH])) {
 
       $sClass = $this->aNamespaces[self::REFLECTOR_PATH][$sNamespace];
-      $result = $this->createParser($sClass, array($parent, $this->findClass($sClass)));
+      $result = $this->createParser($sClass, array($this, $documented, $parent, $this->findClass($sClass)));
     }
     else if ($bDebug) {
 
@@ -102,7 +118,7 @@ class Manager extends parser\compiler\Builder {
     return $this->getFactory()->findClass($sPath);
   }
 
-  protected function createParser($sAlias, array $aArguments) {
+  protected function createParser($sAlias, array $aArguments = array()) {
 
     $result = $this->create($sAlias, $aArguments);
 

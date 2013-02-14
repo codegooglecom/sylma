@@ -14,11 +14,12 @@ class Cached extends core\module\Domed implements parser\cached\documented {
   const NS = 'http://www.sylma.org/parser/js/binder/cached';
   const CONTEXT_ALIAS = 'js/binder/context';
 
-  public function __construct() {
+  public function __construct($parent) {
 
     $this->setNamespace(self::NS, 'self');
     $this->setDirectory(__FILE__);
     $this->loadDefaultArguments();
+    $this->setParent($parent);
   }
 
   public function createArgument($mArguments, $sNamespace = '') {
@@ -26,12 +27,12 @@ class Cached extends core\module\Domed implements parser\cached\documented {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
-  public function getParent() {
+  protected function getParent() {
 
     return $this->parent;
   }
 
-  public function setParent(parser\action\cached $parent) {
+  protected function setParent(parser\action\cached $parent) {
 
     $this->parent = $parent;
   }

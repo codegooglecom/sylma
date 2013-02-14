@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\js\basic;
-use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\js, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\js, sylma\parser\languages\common;
 
 class Window extends common\basic\Window implements js\window, core\stringable {
 
@@ -16,7 +16,7 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     '$$' => 'mootools\elements',
   );
 
-  public function __construct(parser\reflector\domed $controler, core\argument $args, $sClass = 'window') {
+  public function __construct(reflector\elemented $controler, core\argument $args, $sClass = 'window') {
 
     $this->setDirectory(__FILE__);
     $this->loadDefaultArguments();

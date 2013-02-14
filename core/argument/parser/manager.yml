@@ -7,7 +7,9 @@ cache :
 classes :
   §sylma-classbase : \sylma\core\argument
   reflector :
-    name : parser\compiler\Domed
+    name : parser\compiler\Documented
+  elemented :
+    name : parser\compiler\Elemented
   window :
     name : \sylma\parser\languages\php\basic\window\Basic
   php : §sylma:import /#sylma/parser/languages/php/window.yml;

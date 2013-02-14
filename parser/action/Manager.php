@@ -179,6 +179,13 @@ class Manager extends parser\compiler\Builder {
       throw $e;
     }
   }
+  
+  protected function createReflector(dom\document $doc, fs\directory $base) {
+
+    $result = $this->create('reflector', array($this, $doc, $base));
+
+    return $result;
+  }
 
   protected function parseAttributes($sContent) {
 

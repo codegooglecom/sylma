@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\parser\security;
-use sylma\core, sylma\parser, sylma\dom, sylma\parser\languages\php;
+use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\php;
 
-class Domed extends Reflector implements parser\reflector\attributed {
+class Domed extends Main implements reflector\attributed {
 
   const NS = 'http://www.sylma.org/parser/security';
 

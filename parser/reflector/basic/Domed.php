@@ -1,15 +1,30 @@
 <?php
 
 namespace sylma\parser\reflector\basic;
-use \sylma\core, sylma\dom, sylma\storage\fs;
+use \sylma\core, sylma\dom, sylma\storage\fs, symla\parser\reflector;
 
-abstract class Domed extends Child {
+abstract class Domed extends Namespaced {
 
   CONST PREFIX = null;
 
-  protected $sRootName = '';
-  //protected $componentsDir;
-  protected $sourceDir;
+  protected $allowComponent = false;
+  protected $allowForeign = false;
+  protected $allowUnknown = false;
+
+  protected function allowComponent($mValue = null) {
+
+    if (!is_null($mValue)) $this->allowComponent = $mValue;
+    return $this->allowComponent;
+  }
+
+  abstract protected function parseComponent(dom\element $el);
+
+  protected function createComponent(dom\element $el, $parser) {
+
+    $class = $this->getFactory()->findClass($el->getName());
+
+    return $this->create($el->getName(), array($parser, $el, $class, false, $this->allowForeign(), $this->allowUnknown()));
+  }
 
   protected function parseNode(dom\node $node) {
 
@@ -62,9 +77,35 @@ abstract class Domed extends Child {
     return $mResult;
   }
 
+  protected function parseElementSelf(dom\element $el) {
+
+    if ($this->allowComponent()) {
+
+      $result = $this->parseComponent($el);
+    }
+    else {
+
+      $this->throwException('Cannot handle sub element');
+    }
+
+    return $result;
+  }
+
+  protected function allowForeign($mValue = null) {
+
+    if (!is_null($mValue)) $this->allowForeign = $mValue;
+    return $this->allowForeign;
+  }
+
   protected function parseElementForeign(dom\element $el) {
 
     return $this->parseElementUnknown($el);
+  }
+
+  protected function allowUnknown($mValue = null) {
+
+    if (!is_null($mValue)) $this->allowUnknown = $mValue;
+    return $this->allowUnknown;
   }
 
   protected function parseElementUnknown(dom\element $el) {
@@ -75,30 +116,6 @@ abstract class Domed extends Child {
   protected function parseText(dom\text $node) {
 
     return $this->getWindow()->createString((string) $node);
-  }
-
-  /**
-   * Get a file relative to the source file's directory
-   * @param string $sPath
-   * @return fs\file
-   */
-  protected function getSourceFile($sPath) {
-
-    return $this->getControler(static::FILE_MANAGER)->getFile($sPath, $this->getSourceDirectory());
-  }
-
-  /**
-   * Get the source file's directory
-   * @return fs\directory
-   */
-  protected function getSourceDirectory() {
-
-    return $this->sourceDir;
-  }
-
-  protected function setSourceDirectory(fs\directory $sourceDirectory) {
-
-    $this->sourceDir = $sourceDirectory;
   }
 
   /**

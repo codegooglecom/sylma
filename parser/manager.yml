@@ -6,14 +6,42 @@ namespaces :
   reflector :
     'http://www.sylma.org/parser/security' : security
     'http://www.sylma.org/parser/js/binder' : js/binder/compiler
-    'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
     #'http://www.sylma.org/parser/js/template' : js/template
     'http://www.sylma.org/core/factory' : factory
-    'http://www.sylma.org/template/elemented' : template/elemented
+    'http://2013.sylma.org/template' : template/elemented
+    'http://2013.sylma.org/schema/ssd' : schema/ssd
+    'http://2013.sylma.org/schema/xsd' : schema/xsd/elemented
+    'http://2013.sylma.org/schema/template' : schema/template
+    'http://2013.sylma.org/view' : view
   manager :
-    'http://www.sylma.org/template' : template
+    'http://www.w3.org/2001/XMLSchema' : schema/xsd
+    'http://2013.sylma.org/template' : template
     'http://www.sylma.org/parser/action' : action
+    'http://www.sylma.org/core/argument' : argument
+  cached :
+    'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
 classes :
+  argument :
+    name : \sylma\core\argument\parser\Manager
+    template : /#sylma/core/argument/parser/compiler/basic.xsl
+    cache :
+      class : \sylma\core\argument\parser\Cached
+    classes :
+      reflector :
+        name : \sylma\core\argument\parser\compiler\Documented
+      elemented :
+        name : \sylma\core\argument\parser\compiler\Elemented
+  view :
+    name : view\handler\Elemented
+    directory : /#sylma/view
+  schema :
+    ssd :
+      name : schema\ssd\Elemented
+    xsd :
+      name : \sylma\parser\compiler\Builder
+      directory : /#sylma/schema/xsd
+    template :
+      name : schema\parser\handler\Templated
   action :
     name : \sylma\parser\compiler\Builder
     directory : /#sylma/action
@@ -28,7 +56,7 @@ classes :
       binder :
         classes :
           compiler :
-            name : \sylma\parser\js\binder\Reflector
+            name : \sylma\parser\js\binder\Main
           cached :
             name : \sylma\parser\js\binder\Cached
           object :

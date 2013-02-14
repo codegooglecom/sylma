@@ -46,7 +46,7 @@ class Standalone extends tester\Prepare {
 
     $file = $this->getControler('fs')->getFile($sPath, $this->getDirectory('samples'));
 
-    return $this->getControler()->createArguments($file);
+    return $this->getControler()->load($file);
   }
 }
 

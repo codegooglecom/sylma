@@ -133,27 +133,34 @@ class Cached extends core\module\Argumented implements core\factory {
    * Include classe's file
    *
    * @param string $sClass
-   * @param string $sFile
+   * @param string $sPath
    * @return bool
    */
-  public static function includeClass($sClass, $sFile = '') {
+  public static function includeClass($sClass, $sPath = '') {
 
     $sMain = \Sylma::ROOT;
 
     if (!class_exists($sClass, false)) {
 
-      if (!$sFile) {
+      if (!$sPath) {
 
-        $sFile = str_replace('\\', '/', $sClass . '.php');
+        $sPath = str_replace('\\', '/', $sClass . '.php');
       }
 
       // include the file
 
-      $sFile = $sMain . $sFile;
+      $sFile = $sMain . $sPath;
 
       if (file_exists($sFile)) {
 
-        require_once($sFile);
+        try {
+
+          require_once($sFile);
+        }
+        catch (core\exception $e) {
+
+          \Sylma::throwException(sprintf('Cannot load @class %s : %s', $sClass, $e->getMessage()), array('@file ' . $sPath));
+        }
       }
       else {
 

@@ -8,106 +8,27 @@ use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
  * /@method loadElementForeign() and @method loadElementUnknown()
  * /@method parseElementForeign() and @method parseElementUknown() must be overrided to use them
  */
-abstract class Master extends Domed {
-
-  /**
-   * Sub parsers
-   * @var array
-   */
-  protected $aParsers = array();
-
-  protected $allowComponent = true;
-  protected $allowForeign = false;
-  protected $allowUnknown = false;
+abstract class Foreigner extends Domed {
 
   /**
    * Handler for element creation with NS bug fixes
    */
   protected $foreignElements;
-  protected $aAttributeParsers = array();
   protected $lastElement;
+
+  protected $aAttributeParsers = array();
 
   public function parseRoot(dom\element $el) {
 
     return $this->parseElementSelf($el);
   }
 
-  public function lookupParser($sNamespace) {
-
-    $result = null;
-
-    if ($this->useNamespace($sNamespace)) {
-
-      $result = $this;
-    }
-    else {
-
-      $result = $this->getParser($sNamespace);
-    }
-
-    return $result;
-  }
-
   protected function lookupParserForeign($sNamespace) {
 
-    if ($this->getParentParser()) {
-
-      $result = $this->getParentParser()->lookupParser($sNamespace);
-    }
-    else {
-
-      $result = $this->getParser($sNamespace);
-    }
-
-    return $result;
+    return $this->getRoot()->lookupParser($sNamespace);
   }
 
-  /**
-   * Exception free parser loader
-   *
-   * @param string $sNamespace
-   * @return parser\domed
-   */
-  protected function getParser($sNamespace) {
-
-    if (array_key_exists($sNamespace, $this->aParsers)) {
-
-      $result = $this->aParsers[$sNamespace];
-    }
-    else {
-
-      $manager = $this->getControler('parser');
-      $result = $manager->getParser($sNamespace, $this, false);
-
-      if ($result) {
-
-        $this->setParser($result, $result->getUsedNamespaces());
-      }
-    }
-
-    //if ($result) $result->setParent($this);
-
-    return $result;
-  }
-
-  /**
-   * Set local parsers, with associated namespaces
-   * @param parser\reflector\domed $parser
-   * @param array $aNS
-   */
-  public function setParser(parser\reflector\domed $parser, array $aNS) {
-
-    $aResult = array();
-
-    foreach ($aNS as $sNamespace) {
-
-      $aResult[$sNamespace] = $parser;
-    }
-
-    $this->aParsers = array_merge($this->aParsers, $aResult);
-  }
-
-  protected function loadParser($sNamespace, $sParser = 'element') {
+  protected function validateParser($sNamespace, $sParser = 'element') {
 
     $result = $this->lookupParserForeign($sNamespace);
 
@@ -153,32 +74,6 @@ abstract class Master extends Domed {
     return $el;
   }
 
-  protected function parseElementSelf(dom\element $el) {
-
-    if ($this->allowComponent()) {
-
-      $result = $this->createComponent($el);
-    }
-    else {
-
-      $result = $this->getParent()->parseRoot($el);
-    }
-
-    return $result;
-  }
-
-  protected function allowComponent($mValue = null) {
-
-    if (!is_null($mValue)) $this->allowComponent = $mValue;
-    return $this->allowComponent;
-  }
-
-  protected function createComponent(dom\element $el) {
-
-    $class = $this->getFactory()->findClass($el->getName());
-    return $this->create($el->getName(), array($this, $el, $class, false, $this->allowForeign(), $this->allowUnknown()));
-  }
-
   protected function parseElementForeign(dom\element $el) {
 
     $result = null;
@@ -195,17 +90,11 @@ abstract class Master extends Domed {
     return $result;
   }
 
-  protected function allowForeign($mValue = null) {
-
-    if (!is_null($mValue)) $this->allowForeign = $mValue;
-    return $this->allowForeign;
-  }
-
   protected function loadElementForeign(dom\element $el) {
 
     if ($parser = $this->lookupParserForeign($el->getNamespace())) {
 
-      $mResult = $parser->parseRoot($el);
+      $mResult = $parser->parseFromChild($el);
     }
     else {
 
@@ -227,12 +116,6 @@ abstract class Master extends Domed {
     }
 
     return $result;
-  }
-
-  protected function allowUnknown($mValue = null) {
-
-    if (!is_null($mValue)) $this->allowUnknown = $mValue;
-    return $this->allowUnknown;
   }
 
   /**
@@ -315,7 +198,7 @@ abstract class Master extends Domed {
 
     foreach ($aForeigns as $sNamespace => $bVal) {
 
-      $parser = $this->loadParser($sNamespace, 'attribute');
+      $parser = $this->validateParser($sNamespace, 'attribute');
 
       if ($parser) {
 
@@ -343,7 +226,7 @@ abstract class Master extends Domed {
     $this->aAttributeParsers = $aParsers;
   }
 
-  public function getLastElement() {
+  protected function getLastElement() {
 
     return $this->lastElement;
   }

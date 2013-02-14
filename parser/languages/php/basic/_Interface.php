@@ -210,7 +210,7 @@ class _Interface extends core\module\Argumented {
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
-    $mSender['@class'] = $this->getName() . 'in' . $this->getFile() ? $this->getFile()->asToken() : '[no-file]';
+    $mSender['@class'] = $this->getName() . ' in ' . ($this->getFile() ? $this->getFile()->asToken() : '[no-file]');
     parent::throwException($sMessage, $mSender, $iOffset);
   }
 }
