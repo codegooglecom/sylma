@@ -16,12 +16,6 @@ abstract class Elemented extends reflector\basic\Foreigner {
   protected $root;
   protected $parent;
 
-  /**
-   * Sub parsers
-   * @var array
-   */
-  protected $aParsers = array();
-
   public function __construct($manager, reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
 
     $this->setManager($manager);
@@ -128,30 +122,15 @@ abstract class Elemented extends reflector\basic\Foreigner {
     }
     else {
 
-      $result = $this->loadParser($sNamespace);
+      //$result = $this->loadParser($sNamespace);
     }
 
     return $result;
   }
 
-  /**
-   * Set local parsers, with associated namespaces
-   * @param parser\reflector\domed $parser
-   * @param array $aNS
-   */
-  protected function addParser(parser\reflector\domed $parser, array $aNS) {
-
-    $aResult = array();
-
-    foreach ($aNS as $sNamespace) {
-
-      $aResult[$sNamespace] = $parser;
-    }
-
-    $this->aParsers = array_merge($this->aParsers, $aResult);
-  }
-
   protected function lookupParserForeign($sNamespace) {
+
+    $result = null;
 
     if ($this->getParent()) {
 
@@ -159,43 +138,10 @@ abstract class Elemented extends reflector\basic\Foreigner {
     }
     else {
 
-      $result = $this->loadParser($sNamespace);
+      //$result = $this->loadParser($sNamespace);
     }
 
     return $result;
-  }
-
-  /**
-   * Exception free parser loader
-   *
-   * @param string $sNamespace
-   * @return parser\domed
-   */
-  protected function loadParser($sNamespace) {
-
-    if (array_key_exists($sNamespace, $this->aParsers)) {
-
-      $result = $this->aParsers[$sNamespace];
-    }
-    else {
-
-      $result = $this->createParser($sNamespace);
-
-      if ($result) {
-
-        $this->addParser($result, $result->getUsedNamespaces());
-      }
-    }
-
-    //if ($result) $result->setParent($this);
-
-    return $result;
-  }
-
-  protected function createParser($sNamespace) {
-
-    $manager = $this->getManager('parser');
-    return $manager->getParser($sNamespace, $this->getRoot(), $this, false);
   }
 
   public function getLastElement() {

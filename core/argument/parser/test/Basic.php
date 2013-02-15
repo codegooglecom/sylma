@@ -5,8 +5,10 @@ use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\pa
 
 class Basic extends tester\Basic {
 
-  const NS = 'http://www.sylma.org/core/argument/parser/test';
-  const ARGUMENT_NS = 'http://www.sylma.org/core/argument';
+  const NS = 'http://www.sylma.org/modules/tester';
+
+  const PARSER_NS = 'http://www.sylma.org/core/argument';
+  const PARSER_PREFIX = 'arg';
 
   protected $sTitle = 'Grouped';
   protected $exportDirectory;
@@ -16,12 +18,12 @@ class Basic extends tester\Basic {
     $this->setDirectory(__file__);
     $this->setNamespaces(array(
       'self' => self::NS,
-      'arg' => self::ARGUMENT_NS,
+      self::PARSER_PREFIX => self::PARSER_NS,
     ));
 
-    $this->setControler($this->getControler('argument/parser'));
+    $this->setManager($this->getManager('argument/parser'));
 
-    $cache = \Sylma::getControler('fs/cache');
+    $cache = \Sylma::getManager('fs/cache');
     $this->exportDirectory = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
 
     $this->setArguments(array());
@@ -34,11 +36,11 @@ class Basic extends tester\Basic {
     $sName = core\functions\path\urlize($file->getName() . '-' . $test->readAttribute('name'));
 
     $tmp = $this->exportDirectory->createFile($sName . '.xml');
-    $doc = $this->getControler('dom')->createDocument($arg);
+    $doc = $this->getManager('dom')->createDocument($arg);
 
     $doc->saveFile($tmp, true);
 
-    $result = $this->getControler()->load($tmp);
+    $result = $this->getManager()->load($tmp);
     //$result->setBaseDirectory($file->getParent());
 
     return $result;
@@ -59,7 +61,7 @@ class Basic extends tester\Basic {
     }
     catch (core\exception $e) {
 
-      $e->save();
+      $e->save(false);
     }
 
     return $bResult;

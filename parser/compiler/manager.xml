@@ -9,6 +9,8 @@
     <update>0</update>
   </debug>
   <cls:classes>
+    <cls:class alias="elemented" name="\sylma\parser\reflector\handler\Elemented"/>
+    <cls:class alias="documented" name="\sylma\parser\reflector\handler\Documented"/>
     <cls:class alias="window" name="\sylma\parser\languages\php\basic\Window"/>
     <arg:import>/#sylma/parser/languages/php/window.xml</arg:import>
   </cls:classes>

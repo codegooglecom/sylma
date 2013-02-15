@@ -14,6 +14,7 @@ class Document extends parser\action\handler\Basic {
       'css' => new context\CSS,
       'js' => new context\JS,
       'js/load' => new parser\js\context\Load,
+      'message' =>  new context\Messages,
       //'title' =>  new parser\context\Basic,
     ));
 
@@ -70,12 +71,24 @@ class Document extends parser\action\handler\Basic {
 
     foreach ($this->getContexts() as $sName => $context) {
 
-      if ($sName !== parser\action\cached::CONTEXT_DEFAULT) {
+      switch ($sName) {
 
-        if ($context instanceof dom\domable) $content = $context;
-        else $content = $context->asArray();
+        case parser\action\cached::CONTEXT_DEFAULT : break;
+        case 'message' :
 
-        if ($content) $this->addHeadContent($content);
+          if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
+
+            $messages->add($context->asDOM());
+          }
+          
+          break;
+
+        default :
+
+          if ($context instanceof dom\domable) $content = $context;
+          else $content = $context->asArray();
+
+          if ($content) $this->addHeadContent($content);
       }
     }
   }

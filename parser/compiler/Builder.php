@@ -8,6 +8,8 @@ class Builder extends Manager {
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
   const WINDOW_ARGS = 'classes/php';
 
+  protected $bThrow = true;
+
   protected function getClass(dom\handler $doc) {
 
     if (!$sResult = $doc->getRoot()->readAttribute('class', null, false)) {
@@ -31,29 +33,32 @@ class Builder extends Manager {
   public function build(fs\file $file, fs\directory $dir) {
 
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
+    $result = null;
 
-    $reflector = $this->createReflector($doc, $dir);
-    $content = $this->runReflector($reflector, $this->getClass($doc), $file);
+    $content = $this->runReflector($doc, $dir, $file);
 
-    if ($this->readArgument('debug/show')) {
+    if ($content) {
 
-      $tmp = $this->createDocument($content);
-      echo '<pre>' . $file->asToken() . '</pre>';
-      echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
+      if ($this->readArgument('debug/show')) {
+
+        $tmp = $this->createDocument($content);
+        echo '<pre>' . $file->asToken() . '</pre>';
+        echo '<pre>' . str_replace(array('<', '>'), array('&lt;', '&gt'), $tmp->asString(true)) . '</pre>';
+      }
+
+      $result = $this->getCachedFile($file);
+      $template = $this->getTemplate($this->getTemplatePath());
+
+      $sContent = $template->parseDocument($content, false);
+      $result->saveText($sContent);
     }
-
-    $result = $this->getCachedFile($file);
-    $template = $this->getTemplate($this->getTemplatePath());
-
-    $sContent = $template->parseDocument($content, false);
-    $result->saveText($sContent);
 
     return $result;
   }
 
   protected function createReflector(dom\document $doc, fs\directory $base) {
 
-    $result = $this->create('reflector', array($this, $doc, $base));
+    $result = $this->create('documented', array($this, $doc, $base));
     $result->setReflector($this->create('elemented', array($this, $result)));
 
     return $result;
@@ -68,9 +73,14 @@ class Builder extends Manager {
    *
    * @return dom\handler
    */
-  protected function runReflector(parser\reflector\documented $reflector, $sInstance, fs\file $file) {
+  protected function runReflector(dom\document $doc, fs\directory $dir, fs\file $file) {
+
+    $result = null;
 
     try {
+
+      $reflector = $this->createReflector($doc, $dir);
+      $sInstance = $this->getClass($doc);
 
       $window = $this->create('window', array($reflector, $this->getArgument(static::WINDOW_ARGS), $sInstance));
       $reflector->setWindow($window);
@@ -80,9 +90,17 @@ class Builder extends Manager {
     catch (core\exception $e) {
 
       $e->addPath($file->asToken());
-      throw $e;
+      if ($this->throwExceptions()) throw $e;
+      else $e->save(false);
     }
 
     return $result;
+  }
+
+  public function throwExceptions($mValue = null) {
+
+    if (!is_null($mValue)) $this->bThrow = $mValue;
+
+    return $this->bThrow;
   }
 }

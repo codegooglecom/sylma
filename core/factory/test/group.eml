@@ -5,14 +5,13 @@
   xmlns:lm="http://www.sylma.org/parser/action/basic"
   xmlns:tst="http://www.sylma.org/modules/tester"
 >
-  <le:context name="title">Test Argument</le:context>
+  <le:context name="title">Test Factory</le:context>
   <tst:group>
-    <tst:description>Argument</tst:description>
+    <tst:description>Factory</tst:description>
     <le:object class="Basic"/>
     <tst:group>
       <tst:description>Parser</tst:description>
       <le:object class="..\parser\test\Basic"/>
-      <le:object class="..\parser\test\Standalone"/>
     </tst:group>
   </tst:group>
 </le:action>

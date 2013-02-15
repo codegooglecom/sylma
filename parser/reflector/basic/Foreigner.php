@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\reflector\basic;
-use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
+use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector;
 
 /**
  * This class offers 2 main methods to load external parsers on dom element :
@@ -18,6 +18,12 @@ abstract class Foreigner extends Domed {
 
   protected $aAttributeParsers = array();
 
+  /**
+   * Sub parsers
+   * @var array
+   */
+  protected $aParsers = array();
+
   public function parseRoot(dom\element $el) {
 
     return $this->parseElementSelf($el);
@@ -26,6 +32,56 @@ abstract class Foreigner extends Domed {
   protected function lookupParserForeign($sNamespace) {
 
     return $this->getRoot()->lookupParser($sNamespace);
+  }
+
+  /**
+   * Exception free parser loader
+   *
+   * @param string $sNamespace
+   * @return parser\domed
+   */
+  protected function loadParser($sNamespace) {
+
+    if (array_key_exists($sNamespace, $this->aParsers)) {
+
+      $result = $this->aParsers[$sNamespace];
+    }
+    else {
+
+      $result = $this->createParser($sNamespace);
+
+      if ($result) {
+
+        $this->addParser($result, $result->getUsedNamespaces());
+      }
+    }
+
+    //if ($result) $result->setParent($this);
+
+    return $result;
+  }
+
+  protected function createParser($sNamespace) {
+
+    $manager = $this->getManager('parser');
+    return $manager->getParser($sNamespace, $this->getRoot(), $this, false);
+  }
+
+  /**
+   * Set local parsers, with associated namespaces
+   * @param parser\reflector\domed $parser
+   * @param array $aNS
+   */
+  protected function addParser(reflector\domed $parser, array $aNS) {
+
+    $aResult = array();
+
+    foreach ($aNS as $sNamespace) {
+
+      $aResult[$sNamespace] = $parser;
+    }
+
+    $this->aParsers = array_merge($this->aParsers, $aResult);
   }
 
   protected function validateParser($sNamespace, $sParser = 'element') {
@@ -38,8 +94,8 @@ abstract class Foreigner extends Domed {
 
       switch ($sParser) {
 
-        case 'element' : $bValid = $result instanceof parser\reflector\elemented; break;
-        case 'attribute' : $bValid = $result instanceof parser\reflector\attributed; break;
+        case 'element' : $bValid = $result instanceof reflector\elemented; break;
+        case 'attribute' : $bValid = $result instanceof reflector\attributed; break;
       }
 
       if (!$bValid) {
@@ -92,9 +148,15 @@ abstract class Foreigner extends Domed {
 
   protected function loadElementForeign(dom\element $el) {
 
-    if ($parser = $this->lookupParserForeign($el->getNamespace())) {
+    $sNamespace = $el->getNamespace();
+
+    if ($parser = $this->lookupParserForeign($sNamespace)) {
 
       $mResult = $parser->parseFromChild($el);
+    }
+    else if ($parser = $this->loadParser($sNamespace)) {
+
+      $mResult = $parser->parseRoot($el);
     }
     else {
 

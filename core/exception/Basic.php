@@ -84,7 +84,6 @@ class Basic extends \Exception implements core\exception {
 
     foreach ($this->aPath as $sPath) {
 
-      $aResult[] = ' ';
       $aResult[] = $this->parseString($sPath);
     }
 
@@ -121,7 +120,7 @@ class Basic extends \Exception implements core\exception {
       $aResult[] = $sValue;
     }
 
-    return $aResult;
+    return implode(' ', $aResult);
   }
 
   protected function getPath() {
@@ -130,11 +129,11 @@ class Basic extends \Exception implements core\exception {
 
     //$link = new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()');
     $link = '<a href="netbeans://' . $this->getFile() . ':' . $this->getLine() . '">' . $sCall . '()' . '</a>';
-    $message = $this->parseString($this->getMessage());
+    //$message = $this->parseString($this->getMessage());
     $path = $this->parsePath();
 
-		return array($link, $path, ' ', $message);
-	}
+    return array($link, $path);
+  }
 
   public static function loadError($iNo, $sMessage, $sFile, $iLine) {
 
@@ -199,61 +198,80 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
-  public function errorAsHTML(array $aError) {
+  public function errorAsHTML($iIndex, array $aError) {
 
     $sFile = array_key_exists('file', $aError) ? $aError['file'] : '-unknown-';
     $sLine = array_key_exists('line', $aError) ? $aError['line'] : '-unknown-';
     $sClass = array_key_exists('class', $aError) ? $aError['class'] : '-unknown-';
     $sFunction = array_key_exists('function', $aError) ? $aError['function'] : '-unknown-';
 
-    return "<a href=\"netbeans://$sFile:$sLine\">$sFile [$sLine] - $sClass->$sFunction()</a><br/>";
+    $sDisplay = substr($sFile, strlen(\Sylma::PATH_SYSTEM));
+
+    return "<a href=\"netbeans://$sFile:$sLine\"><span class=\"sylma-file\">$iIndex. $sDisplay [$sLine]</span> $sClass->$sFunction()</a><br/>";
   }
 
-  public function save() {
+  public function save($bPrint = true) {
 
-    $init = \Sylma::getControler('init', false, false);
-    $window = \Sylma::getControler('window', false, false);
+    $sResult = '<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message">';
 
-    if ($init && $window && 0) {
+    if (\Sylma::read('debug/enable')) {
 
-      $this->getPath();
-      $message = $init->createArgument(array(
-        'message' => array(
-          'title' => $this->getMessage(),
-          '#content' => $this->getPath(),
-        )
-      ), self::NS_MESSAGE);
+      $aTraces = $this->getTrace();
+      $aPath = $this->getPath();
 
-      $window->addContext('messages', $message);
-    }
-    else {
+      $sResult .= $this->parseString($this->getMessage()) . '<br/>';
+      $sResult .= $this->readPaths($aPath);
 
-      if (\Sylma::read('debug/enable')) {
+      if (\Sylma::read('debug/backtrace')) {
 
-        $aTraces = $this->getTrace();
+        $sResult .= '<div class="sylma-backtrace">';
 
-        $aPath = $this->getPath();
+        foreach ($aTraces as $iTrace => $aTrace) {
 
-        echo $this->getMessage() . '<br/>';
-        echo $aPath[0];
-
-        echo '<pre>';
-
-        print_r($aPath);
-        //print_r($aTraces);
-
-        if (\Sylma::read('debug/backtrace')) {
-
-          foreach ($aTraces as $aTrace) {
-
-            echo $this->errorAsHTML($aTrace);
-          }
+          $sResult .= $this->errorAsHTML($iTrace, $aTrace);
         }
 
-        echo '</pre>';
+        $sResult .= '</div>';
+      }
 
+      $sResult .= '</div>';
+
+      $parser = \Sylma::getManager('parser');
+      $action = $parser ? $parser->getContext('action/current', false) : null;
+      $context = $action ? $action->getContext('message', false) : null;
+
+      //$window = \Sylma::getControler('window', false, false);
+
+      if ($bPrint || !$context) {
+
+        echo $sResult;
+      }
+      else {
+
+        $context->add($sResult);
       }
     }
+
+    return $sResult;
+  }
+
+  protected function readPaths(array $aPaths) {
+
+    $sResult = '';
+
+    foreach ($aPaths as $mPath) {
+
+      if (is_array($mPath)) {
+
+        $sResult .= $this->readPaths($mPath);
+      }
+      else if (trim($mPath)) {
+
+        $sResult .= '<li>' . $mPath . '</li>';
+      }
+    }
+
+    return '<ul>' . $sResult .'</ul>';
   }
 
   protected function implodePath($aPath, $sSeparator = '') {

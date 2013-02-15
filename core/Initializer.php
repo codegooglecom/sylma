@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core;
-use sylma\parser, sylma\core, sylma\storage\fs;
+use sylma\parser\action, sylma\core, sylma\storage\fs;
 
 class Initializer extends module\Filed {
 
@@ -126,7 +126,7 @@ class Initializer extends module\Filed {
 
         // Normal action
         $window = $this->create($sExtension, array($this));
-        \Sylma::setControler('window', $window);
+        \Sylma::setManager('window', $window);
 
         $sResult = $this->loadWindowObject($path, $window);
       }
@@ -134,7 +134,7 @@ class Initializer extends module\Filed {
 
         // HTML action
         $window = $this->createWindowAction($sExtension);
-        \Sylma::setControler('window', $window);
+        \Sylma::setManager('window', $window);
 
         $sResult = $this->loadWindowAction($path, $window);
       }
@@ -147,7 +147,7 @@ class Initializer extends module\Filed {
     return $sResult;
   }
 
-  protected function loadAction(parser\action\path $path) {
+  protected function loadAction(action\path $path) {
 
     $path->parse();
 
@@ -174,7 +174,7 @@ class Initializer extends module\Filed {
     return $window;
   }
 
-  protected function loadWindowAction(parser\action\path $path, parser\action $window) {
+  protected function loadWindowAction(action\path $path, action $window) {
 
     $action = $this->loadAction($path);
     $action->setContexts($window->getContexts());
@@ -243,7 +243,7 @@ class Initializer extends module\Filed {
     return $window->asString();
   }
 
-  protected function loadWindowObject(parser\action\path $path, core\window\action $window) {
+  protected function loadWindowObject(action\path $path, core\window\action $window) {
 
     $action = $this->loadAction($path);
 

@@ -169,8 +169,11 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
 
       $e->addPath($file->asToken());
       $e->addPath($test->readAttribute('name'));
+
+      if ($sCatch) $e->addPath(sprintf('Exception of type %s expected', $sCatch));
       //$e->addPath($test->asString());
-      $e->save();
+
+      $e->save(false);
     }
 
     return $bResult;

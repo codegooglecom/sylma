@@ -3,9 +3,6 @@
 namespace sylma\modules\html\context;
 use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
-/**
- *
- */
 class CSS extends parser\context\Basic implements dom\domable {
 
   public function asDOM() {

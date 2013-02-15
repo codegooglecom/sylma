@@ -136,7 +136,7 @@ class Grouped extends tester\Basic {
       }
       catch (core\exception $e) {
 
-        $e->save();
+        $e->save(false);
       }
     }
 

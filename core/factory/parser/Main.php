@@ -14,13 +14,13 @@ class Main extends reflector\handler\Elemented implements reflector\elemented {
 
     if ($el->getName() !== 'classes') {
 
-      $this->throwException(sprintf('Unknown root element name %s', $el->asToken()));
+      $this->throwException(sprintf('Unknown root %s', $el->asToken()));
     }
 
     $aResult = $this->reflectClasses($el);
     $doc = $this->createArgument($aResult, $this->getParent()->getNamespace())->asDOM();
 //$this->show($doc->asString(true), false);
-    return $this->getParent()->parse($doc->getRoot());
+    return $this->getParent()->parseFromChild($doc->getRoot());
   }
 
   protected function parseElementSelf(dom\element $el) {

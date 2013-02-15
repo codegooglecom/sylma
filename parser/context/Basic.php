@@ -39,14 +39,18 @@ class Basic extends core\module\Domed implements parser\context {
 
   public function asObject() {
 
+    $result = null;
     $aArguments = $this->getArguments()->query();
 
     if (count($aArguments) > 1) {
 
       $this->throwException('Multiple values when object expected');
     }
+    else if ($aArguments) {
 
-    $result = reset($aArguments);
+      $result = reset($aArguments);
+    }
+
     /*
     if (!is_object($result)) {
 
@@ -77,9 +81,9 @@ class Basic extends core\module\Domed implements parser\context {
 
     $result = $this->asObject();
 
-    if (!$result instanceof dom\handler) {
+    if ($result && !$result instanceof dom\handler) {
 
-      $result = $this->getControler('dom')->createDocument($result);
+      $result = $this->getManager('dom')->createDocument($result);
       //echo $this->show($result)->asString();
       //$this->throwException('Result should be a DOM object');
     }

@@ -102,8 +102,8 @@ class Manager extends parser\compiler\Builder {
     $this->setDirectory(__FILE__);
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
 
-    $reflector = $this->createReflector($doc, $base);
-    $window = $this->runReflector($reflector, $this->getClass($doc), $file);
+    //$reflector = $this->createReflector($doc, $base);
+    $window = $this->runReflector($doc, $base, $file);
 
     $result = $this->buildFiles($window, $file);
 
@@ -179,7 +179,7 @@ class Manager extends parser\compiler\Builder {
       throw $e;
     }
   }
-  
+
   protected function createReflector(dom\document $doc, fs\directory $base) {
 
     $result = $this->create('reflector', array($this, $doc, $base));

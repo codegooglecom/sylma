@@ -1,16 +1,20 @@
 /* Document CSS */
 
-body, h1, h2, ul, li { margin: 0; padding: 0; }
+body { margin: 0; padding: 0; }
 a img { border: 0; }
 
 body {
-	background-color: #afc1d3;
-	font-family: Verdana;
+  background-color: #afc1d3;
+  font-family: Verdana;
 }
 
 a { color: #467ca2; }
 a:hover { color: #ec8a23; }
 a:visited { color: #575757; }
+
+ul {
+  padding-left: 1em;
+}
 
 .center { text-align: center; }
 

@@ -107,8 +107,6 @@ abstract class Namespaced extends Exceptionable {
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
-    $sNamespace = $this->getNamespace();
-
     $mSender = (array) $mSender;
     $mSender[] = '@class ' . get_class($this);
 

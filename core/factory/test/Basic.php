@@ -7,7 +7,7 @@ class Basic extends tester\Basic {
 
   const NS = 'http://www.sylma.org/core/factory/test';
 
-  protected $sTitle = 'Factory';
+  protected $sTitle = 'Cached';
 
   public function __construct() {
 

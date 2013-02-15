@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml">
+<le:action
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ls="http://www.sylma.org/parser/security"
+>
   <le:settings>
     <le:name>Sylma Backend</le:name>
     <le:argument name="content" format="\sylma\parser\action"/>
@@ -10,7 +14,7 @@
       </title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/backend.css"/>
-      <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/infos.css"/>
+      <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/infos.css" ls:owner="root" ls:group="user" ls:mode="710"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/clearfix.css"/>
     </head>
     <body>
@@ -29,6 +33,7 @@
             </ul>
           </div>
           <div id="content">
+            <div id="messages"/>
             <le:get-argument name="content"/>
           </div>
         </div>

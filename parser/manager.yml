@@ -23,25 +23,18 @@ namespaces :
 classes :
   argument :
     name : \sylma\core\argument\parser\Manager
-    template : /#sylma/core/argument/parser/compiler/basic.xsl
-    cache :
-      class : \sylma\core\argument\parser\Cached
-    classes :
-      reflector :
-        name : \sylma\core\argument\parser\compiler\Documented
-      elemented :
-        name : \sylma\core\argument\parser\compiler\Elemented
   view :
     name : view\handler\Elemented
     directory : /#sylma/view
   schema :
-    ssd :
-      name : schema\ssd\Elemented
-    xsd :
-      name : \sylma\parser\compiler\Builder
-      directory : /#sylma/schema/xsd
-    template :
-      name : schema\parser\handler\Templated
+    classes :
+      ssd :
+        name : schema\ssd\Elemented
+      xsd :
+        name : \sylma\parser\compiler\Builder
+        directory : /#sylma/schema/xsd
+      template :
+        name : schema\parser\handler\Templated
   action :
     name : \sylma\parser\compiler\Builder
     directory : /#sylma/action

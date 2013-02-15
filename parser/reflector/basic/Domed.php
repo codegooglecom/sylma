@@ -22,8 +22,9 @@ abstract class Domed extends Namespaced {
   protected function createComponent(dom\element $el, $parser) {
 
     $class = $this->getFactory()->findClass($el->getName());
+    $sName = 'component/' . $el->getName();
 
-    return $this->create($el->getName(), array($parser, $el, $class, false, $this->allowForeign(), $this->allowUnknown()));
+    return $this->create($sName, array($parser, $el, $class, false, $this->allowForeign(), $this->allowUnknown()));
   }
 
   protected function parseNode(dom\node $node) {

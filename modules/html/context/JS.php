@@ -3,9 +3,6 @@
 namespace sylma\modules\html\context;
 use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
 
-/**
- *
- */
 class JS extends parser\context\Basic implements dom\domable {
 
   protected function loadString($mValue) {

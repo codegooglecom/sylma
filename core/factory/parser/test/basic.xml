@@ -4,17 +4,20 @@
   xmlns="http://www.sylma.org"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:arg="http://www.sylma.org/core/argument"
+  xmlns:cls="http://www.sylma.org/core/factory"
 >
   <tst:description>Basic</tst:description>
-  <tst:test name="Construction with an array">
+  <tst:test name="Single class">
     <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
-      <abc>123</abc>
+      <cls:classes>
+        <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1"/>
+      </cls:classes>
     </arg:argument>
     <tst:expected>
-      $arg = $controler->getArgument('arg');
+      $obj = $controler->create('test');
 
       return
-        $arg->read('abc') === '123'
+        $obj instanceof \sylma\core\factory\parser\test\samples\Sample1
     </tst:expected>
   </tst:test>
 </tst:tests>

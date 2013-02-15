@@ -14,6 +14,11 @@
   margin-bottom: 2px;
 }
 
+#sylma-system ul {
+  margin: 0;
+  padding: 0 3px;
+}
+
 #sylma-system:hover {
   width: auto;
   /*min-width: 550px;*/
@@ -25,4 +30,45 @@
 
 #sylma-system li {
   list-style-type: none;
+}
+
+
+#messages {
+
+}
+
+.sylma-message {
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  margin: 0.5em;
+}
+
+.sylma-backtrace {
+  background-color: #ddd;
+  font-size: 10px;
+  padding: 10px;
+  max-height: 0;
+  transition: max-height 0.5s ease 0s;
+  overflow: hidden;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.sylma-backtrace * {
+  opacity: 0;
+  transition: opacity 0.5s ease 0s;
+}
+
+.sylma-message:hover .sylma-backtrace {
+  max-height: 1000px;
+}
+
+.sylma-message:hover .sylma-backtrace * {
+  opacity: 1;
+}
+
+.sylma-backtrace .sylma-file {
+  display: block;
+  float: left;
+  width: 400px;
 }

@@ -123,7 +123,7 @@ class Basic extends core\module\Filed implements parser\action, core\stringable,
         $e->addPath($this->getFile()->asToken());
 
         if ($this->useExceptions()) throw $e;
-        else $e->save();
+        else $e->save(false);
       }
 
       //$manager->setContext($sContext, $parent);
@@ -152,7 +152,7 @@ class Basic extends core\module\Filed implements parser\action, core\stringable,
   public function getContext($sContext) {
 
     $action = $this->runAction();
-    return $action->getContext($sContext);
+    return $action ? $action->getContext($sContext) : null;
   }
 
   public function asObject() {
