@@ -5,7 +5,7 @@ use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\pa
 
 class Standalone extends tester\Prepare {
 
-  const NS = 'http://www.sylma.org/core/argument/parser/test';
+  const NS = 'http://2013.sylma.org/core/argument/parser/test';
 
   protected $sTitle = 'Standalone';
 

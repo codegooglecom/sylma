@@ -5,7 +5,7 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common
 
 class Elemented extends reflector\handler\Elemented implements reflector\elemented {
 
-  const NS = 'http://www.sylma.org/core/argument';
+  const NS = 'http://2013.sylma.org/core/argument';
   //const PREFIX = 'arg';
 
   protected $allowForeign = true;
@@ -125,15 +125,6 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     $result = null;
 
     switch ($el->getName()) {
-
-      case 'arg' :
-
-        if ($el->getParent()) {
-
-          $this->throwException('Arg element only allowed as root');
-        }
-
-        break;
 
       case 'import' : break;
       //case 'item' : $result = $this->reflectItem($el); break;

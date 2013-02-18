@@ -3,7 +3,7 @@
   xmlns:tst="http://www.sylma.org/modules/tester"
   xmlns="http://www.sylma.org"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  xmlns:arg="http://www.sylma.org/core/argument"
+  xmlns:arg="http://2013.sylma.org/core/argument"
 >
   <tst:description>Basic</tst:description>
   <tst:test name="Construction with an array">

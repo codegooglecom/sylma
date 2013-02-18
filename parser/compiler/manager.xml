@@ -1,7 +1,7 @@
 <arg:argument
-  xmlns:arg="http://www.sylma.org/core/argument"
-  xmlns="http://www.sylma.org/parser/compiler/manager"
-  xmlns:cls="http://www.sylma.org/core/factory"
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/parser/compiler/manager"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 >
   <debug>
     <show>0</show>

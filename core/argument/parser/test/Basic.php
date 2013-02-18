@@ -7,7 +7,7 @@ class Basic extends tester\Basic {
 
   const NS = 'http://www.sylma.org/modules/tester';
 
-  const PARSER_NS = 'http://www.sylma.org/core/argument';
+  const PARSER_NS = 'http://2013.sylma.org/core/argument';
   const PARSER_PREFIX = 'arg';
 
   protected $sTitle = 'Grouped';

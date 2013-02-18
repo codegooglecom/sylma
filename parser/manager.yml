@@ -4,10 +4,10 @@ debug :
   update : true
 namespaces :
   reflector :
-    'http://www.sylma.org/parser/security' : security
+    'http://2013.sylma.org/parser/security' : security
     'http://www.sylma.org/parser/js/binder' : js/binder/compiler
     #'http://www.sylma.org/parser/js/template' : js/template
-    'http://www.sylma.org/core/factory' : factory
+    'http://2013.sylma.org/core/factory' : factory
     'http://2013.sylma.org/template' : template/elemented
     'http://2013.sylma.org/schema/ssd' : schema/ssd
     'http://2013.sylma.org/schema/xsd' : schema/xsd/elemented
@@ -17,7 +17,7 @@ namespaces :
     'http://www.w3.org/2001/XMLSchema' : schema/xsd
     'http://2013.sylma.org/template' : template
     'http://www.sylma.org/parser/action' : action
-    'http://www.sylma.org/core/argument' : argument
+    'http://2013.sylma.org/core/argument' : argument
   cached :
     'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
 classes :

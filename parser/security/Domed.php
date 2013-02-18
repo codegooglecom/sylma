@@ -5,7 +5,7 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\php;
 
 class Domed extends Main implements reflector\attributed {
 
-  const NS = 'http://www.sylma.org/parser/security';
+  const NS = 'http://2013.sylma.org/parser/security';
 
   protected $element;
 

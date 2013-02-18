@@ -5,7 +5,7 @@ use sylma\core, sylma\dom, sylma\parser\reflector;
 
 class Main extends reflector\handler\Elemented implements reflector\elemented {
 
-  const NS = 'http://www.sylma.org/core/factory';
+  const NS = 'http://2013.sylma.org/core/factory';
 
   protected $sClassBase = '';
   protected $allowForeign = true;

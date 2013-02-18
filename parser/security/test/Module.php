@@ -7,7 +7,7 @@ require_once('modules/tester/Prepare.php');
 
 class Module extends tester\Prepare {
 
-  const NS = 'http://www.sylma.org/parser/security/test';
+  const NS = 'http://2013.sylma.org/parser/security/test';
 
   protected $sTitle = 'Security';
   protected $user;

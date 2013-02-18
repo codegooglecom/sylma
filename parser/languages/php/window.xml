@@ -1,4 +1,7 @@
-<arg:argument xmlns:arg="http://www.sylma.org/core/argument" xmlns="http://www.sylma.org/languages/php/window" xmlns:cls="http://www.sylma.org/core/factory">
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/languages/php/window"
+  xmlns:cls="http://2013.sylma.org/core/factory">
   <php>
     <cls:classes>
       <cls:base>\sylma\parser\languages\php\basic</cls:base>

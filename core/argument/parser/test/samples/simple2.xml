@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1" xmlns:arg="http://www.sylma.org/core/argument">
+<arg:argument
+  xmlns="http://www.sylma.org/core/argument/parser/test/sample1"
+  xmlns:arg="http://2013.sylma.org/core/argument"
+>
   <ghi>789</ghi>
   <jkl>001</jkl>
 </arg:argument>

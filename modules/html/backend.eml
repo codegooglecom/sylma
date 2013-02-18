@@ -2,7 +2,7 @@
 <le:action
   xmlns:le="http://www.sylma.org/parser/action"
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ls="http://www.sylma.org/parser/security"
+  xmlns:ls="http://2013.sylma.org/parser/security"
 >
   <le:settings>
     <le:name>Sylma Backend</le:name>

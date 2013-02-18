@@ -2,7 +2,7 @@
 <arg:argument
   xmlns="http://www.sylma.org/core/argument/parser/test/sample2"
   xmlns:test1="http://www.sylma.org/core/argument/parser/test/sample1"
-  xmlns:arg="http://www.sylma.org/core/argument"
+  xmlns:arg="http://2013.sylma.org/core/argument"
 >
   <abc>123</abc>
   <test1:def>456</test1:def>
