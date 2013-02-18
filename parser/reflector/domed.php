@@ -12,7 +12,7 @@ interface domed {
    * @return dom\element
    */
   function getLastElement();
-  
+
   /**
    * @param string $sNamespace
    * @return reflector\domed
@@ -28,5 +28,8 @@ interface domed {
    * @return common\_window
    */
   function getWindow();
+
+  function getNamespace();
+  function getUsedNamespaces();
 }
 

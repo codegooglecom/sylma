@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:frm="http://www.sylma.org/modules/formater" version="1.0">
+<xsl:stylesheet
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:frm="http://www.sylma.org/modules/formater"
+  version="1.0"
+>
 
   <xsl:template match="/frm:window">
     <div>
@@ -15,6 +21,12 @@
         }
       </style>
     </div>
+  </xsl:template>
+
+  <xsl:template match="html:*">
+    <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
+      <xsl:apply-templates select="@* | node()"/>
+    </xsl:element>
   </xsl:template>
 
   <xsl:template match="frm:array">
@@ -57,7 +69,7 @@
   </xsl:template>
 
   <xsl:template match="frm:string">
-    <span class="formater-string"><xsl:value-of select="."/></span>
+    <span class="formater-string">'<xsl:value-of select="."/>'</span>
   </xsl:template>
 
   <xsl:template match="frm:numeric">

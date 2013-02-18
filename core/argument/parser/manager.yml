@@ -5,6 +5,7 @@ debug :
 cache :
   class : \sylma\core\argument\parser\Cached
 template : /#sylma/core/argument/parser/compiler/basic.xsl
+php : §sylma:import /#sylma/parser/languages/php/window.yml;
 classes :
   §sylma-classbase : \sylma\core\argument
   documented :
@@ -13,5 +14,4 @@ classes :
     name : parser\compiler\Elemented
   window :
     name : \sylma\parser\languages\php\basic\window\Basic
-  php : §sylma:import /#sylma/parser/languages/php/window.yml;
 

@@ -6,17 +6,38 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common
 class Elemented extends reflector\handler\Elemented implements reflector\elemented {
 
   const NS = 'http://www.sylma.org/core/argument';
-  const PREFIX = 'arg';
-
-  protected static $sArgumentClass = '\sylma\parser\Argument';
-  protected static $sArgumentFile = 'parser/Argument.php';
+  //const PREFIX = 'arg';
 
   protected $allowForeign = true;
 
   public function parseRoot(dom\element $el) {
 
     $this->setNamespace(self::loadDefaultNamespace($el));
-    return $this->parseElementComplex($el);
+
+    if ($el->getName() !== 'argument') {
+
+      $this->throwException(sprintf('Bad root %s', $el->asToken()));
+    }
+
+    $aResult = $this->parseElementComplex($el);
+
+    return $aResult;
+  }
+
+  public function parseFromParent(dom\element $el) {
+
+    $aResult = array();
+    $this->parseChildrenElementSelf($el, $aResult);
+
+    return $aResult;
+  }
+
+  public function parseFromChild(dom\element $el) {
+
+    $aResult = array();
+    $this->parseChildrenElementSelf($el, $aResult);
+
+    return $aResult;
   }
 
   public static function loadDefaultNamespace(dom\element $el) {
@@ -29,7 +50,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     $result = null;
 
-    if ($el->getNamespace() == $this->getNamespace('arg')) {
+    if ($el->getNamespace() == $this->getNamespace('self')) {
 
       $result = $this->parseElementArgument($el);
     }
@@ -51,7 +72,15 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   protected function parseElementSimple(dom\element $el) {
 
     $sValue = $el->read();
-    $mResult = $this->parseElementType($el, $sValue);
+
+    if ($sValue !== '') {
+
+      $mResult = $this->parseElementType($el, $sValue);
+    }
+    else {
+
+      $mResult = $el->getName();
+    }
 
     return $mResult;
   }
@@ -63,9 +92,9 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     return $sValue;
   }
 
-  protected function parseChildrenElement(dom\element $el, array &$aResult) {
+  protected function parseChildrenElementSelf(dom\element $el, array &$aResult) {
 
-    $mResult = $this->parseElement($el);
+    $mResult = $this->parseElementSelf($el);
 
     if (!is_null($mResult)) {
 
@@ -77,6 +106,17 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
         $aResult[] = $mResult;
       }
+    }
+  }
+
+  protected function parseChildrenElementForeign(dom\element $el, array &$aResult) {
+
+    $mResult = $this->parseElementForeign($el);
+
+    if (!is_null($mResult)) {
+
+
+      $aResult = array_merge($aResult, $mResult);
     }
   }
 
@@ -93,7 +133,8 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
           $this->throwException('Arg element only allowed as root');
         }
 
-      break;
+        break;
+
       case 'import' : break;
       //case 'item' : $result = $this->reflectItem($el); break;
 
@@ -134,7 +175,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     $sQuery = $bStatic ? '@static' : 'not(@static)';
 
-    $result = $children->length ? $children->current()->getParent()->queryx("arg:import[$sQuery]", $this->getNS(), false) : $children;
+    $result = $children->length && $children->current() ? $children->current()->getParent()->queryx("self:import[$sQuery]", $this->getNS(), false) : $children;
 
     return $result;
   }
@@ -189,7 +230,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     foreach ($import->getChildren() as $child) {
 
-      if ($child->getNamespace() === $this->getNamespace('arg')) {
+      if ($child->getNamespace() === $this->getNamespace('self')) {
 
         continue;
       }

@@ -24,6 +24,11 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     $this->parseRoot($el);
   }
 
+  protected function lookupParserForeign($sNamespace) {
+
+    return $this->getParser()->lookupParser($sNamespace);
+  }
+
   protected function parseComponent(dom\element $el) {
 
     if ($this->allowComponent()) {
@@ -46,11 +51,6 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
   protected function getParser() {
 
     return $this->parent;
-  }
-
-  public function getRoot() {
-
-    return $this->getParent()->getRoot();
   }
 
   protected function parseRoot(dom\element $el) {

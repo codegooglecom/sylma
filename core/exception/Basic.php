@@ -198,6 +198,19 @@ class Basic extends \Exception implements core\exception {
     //$this->save();
   }
 
+  protected function strongLast($sValue, $sSep = '\\') {
+
+    $sResult = $sValue;
+    $iLast = strrpos($sValue, $sSep);
+
+    if ($iLast !== false) {
+
+      $sResult = substr($sValue, 0, $iLast + 1) . '<strong>' . substr($sValue, $iLast + 1) . '</strong>';
+    }
+
+    return $sResult;
+  }
+
   public function errorAsHTML($iIndex, array $aError) {
 
     $sFile = array_key_exists('file', $aError) ? $aError['file'] : '-unknown-';
@@ -205,50 +218,62 @@ class Basic extends \Exception implements core\exception {
     $sClass = array_key_exists('class', $aError) ? $aError['class'] : '-unknown-';
     $sFunction = array_key_exists('function', $aError) ? $aError['function'] : '-unknown-';
 
-    $sDisplay = substr($sFile, strlen(\Sylma::PATH_SYSTEM));
+    $sDisplay = $this->strongLast(substr($sFile, strlen(\Sylma::PATH_SYSTEM)), '/');
+    $sClass = $this->strongLast($sClass);
 
-    return "<a href=\"netbeans://$sFile:$sLine\"><span class=\"sylma-file\">$iIndex. $sDisplay [$sLine]</span> $sClass->$sFunction()</a><br/>";
+    if (array_key_exists('args', $aError)) { // TODO
+
+      $sFunctionArgs = count($aError['args']);
+
+      $sArgs = '<ul>';
+
+      foreach ($aError['args'] as $arg) {
+
+        $sArgs .= '<li>' . \Sylma::show($arg, !\Sylma::read('debug/backtrace/html')) . '</li>';
+      }
+
+      $sArgs .= '</ul>';
+    }
+    else {
+
+      $sArgs = '';
+      $sFunctionArgs = 0;
+    }
+
+    return "<li tabindex=\"1\"><a href=\"netbeans://$sFile:$sLine\">$iIndex. $sDisplay [$sLine]</a> <span>$sClass-></span><span class=\"sylma-function\">$sFunction($sFunctionArgs)</span>$sArgs</li>";
   }
 
   public function save($bPrint = true) {
 
-    $sResult = '<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message">';
+    $sResult = '';
 
     if (\Sylma::read('debug/enable')) {
 
       $aTraces = $this->getTrace();
       $aPath = $this->getPath();
 
-      $sResult .= $this->parseString($this->getMessage()) . '<br/>';
+      $sResult .= $this->parseString( htmlspecialchars($this->getMessage())) . '<br/>';
       $sResult .= $this->readPaths($aPath);
+//echo $this->getMessage();
+      if (\Sylma::read('debug/backtrace/show')) {
 
-      if (\Sylma::read('debug/backtrace')) {
-
-        $sResult .= '<div class="sylma-backtrace">';
+        $sResult .= '<ul class="sylma-backtrace">';
 
         foreach ($aTraces as $iTrace => $aTrace) {
 
           $sResult .= $this->errorAsHTML($iTrace, $aTrace);
         }
 
-        $sResult .= '</div>';
+        $sResult .= '</ul>';
       }
 
-      $sResult .= '</div>';
-
-      $parser = \Sylma::getManager('parser');
-      $action = $parser ? $parser->getContext('action/current', false) : null;
-      $context = $action ? $action->getContext('message', false) : null;
-
-      //$window = \Sylma::getControler('window', false, false);
-
-      if ($bPrint || !$context) {
+      if ($bPrint) {
 
         echo $sResult;
       }
       else {
 
-        $context->add($sResult);
+        \Sylma::display($sResult);
       }
     }
 
@@ -267,7 +292,7 @@ class Basic extends \Exception implements core\exception {
       }
       else if (trim($mPath)) {
 
-        $sResult .= '<li>' . $mPath . '</li>';
+        $sResult .= '<li>' .  $mPath . '</li>';
       }
     }
 

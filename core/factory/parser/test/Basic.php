@@ -11,6 +11,8 @@ class Basic extends parser\test\Basic {
   protected static $sFactoryFile = '/core/factory/Cached.php';
   protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
+  protected $factoryTest;
+
   public function __construct() {
 
     $this->setNamespace(self::PARSER_PREFIX, self::PARSER_NS);
@@ -25,11 +27,26 @@ class Basic extends parser\test\Basic {
     $this->setFiles(array($this->getFile('basic.xml')));
   }
 
+  protected function testArgument(dom\element $test, dom\document $doc, fs\file $file) {
+
+    $this->factoryTest = $this->createFactory($this->getArgument('arg'));
+
+    return parent::testArgument($test, $doc, $file);
+  }
+
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
 
-    $factory = $this->createFactory($this->getArgument('arg'));
+    return $this->factoryTest->create($sName, $aArguments, $sDirectory);
+  }
 
-    return $factory->create($sName, $aArguments, $sDirectory);
+  public function findClass($sName) {
+
+    return $this->factoryTest->findClass($sName);
+  }
+
+  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+
+    return parent::getArgument($sPath, $mDefault, $bDebug);
   }
 }
 

@@ -37,6 +37,11 @@ class Manager extends parser\compiler\Builder {
 
   public function build(fs\file $file, fs\directory $dir) {
 
+    if (!\Sylma::read('debug/enable')) {
+
+      $this->throwException('This function is low performance and must not be used in production environnement');
+    }
+
     $doc = $file->getDocument();
     $manager = $this->getParserManager($doc->getRoot()->getNamespace());
 

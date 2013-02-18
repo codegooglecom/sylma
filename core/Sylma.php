@@ -111,7 +111,7 @@ class Sylma {
 
     return self::setControler($sName, $controler);
   }
-  
+
   public static function getManager($sName, $bLoad = true, $bDebug = true) {
 
     return self::getControler($sName, $bLoad, $bDebug);
@@ -286,12 +286,21 @@ class Sylma {
     */
   }
 
+  public static function display($mValue) {
+
+    $parser = self::getManager('parser');
+    $action = $parser ? $parser->getContext('action/current', false) : null;
+    $context = $action ? $action->getContext('message', false) : null;
+
+    if ($context) $context->add('<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message" tabindex="0">' . $mValue . '</div>');
+    else echo $mValue . '<hr/>';
+  }
+
   public static function dsp() {
 
     foreach (func_get_args() as $mVal) {
 
-      echo self::show($mVal, false);
-      echo '<hr/>';
+      self::display(self::show($mVal, false));
     }
   }
 

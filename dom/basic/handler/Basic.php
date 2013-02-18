@@ -278,31 +278,37 @@ abstract class Basic extends core\module\Managed {
 
   public function elementAsString(dom\node $el = null, $iMode = 0) {
 
-    if (!$sResult = $this->getContent()) {
+    if ($iMode & dom\handler::STRING_INDENT) {
 
-      $doc = $this->getContainer();
+      if (!$el) $el = $this->getRoot();
 
-      if ($el) $sResult = $doc->saveXML($el);
-      else $sResult = $doc->saveXML();
+      $doc = new static($el);
+      $doc->getRoot()->prepareHTML();
+
+      $container = $doc->getContainer();
+      $sResult = $el ? $container->saveXML($doc->getRoot()) : $container->saveXML();
+      //echo $sResult;
+    }
+    else {
+
+      if (!$sResult = $this->getContent()) {
+
+        $container = $this->getContainer();
+
+        if ($el) $sResult = $container->saveXML($el);
+        else $sResult = $container->saveXML();
+      }
+
+      $sResult = trim($sResult);
     }
 
-    return trim($sResult);
+    return $sResult;
   }
 
   public function asString($iMode = 0) {
 
-    if ($iMode & dom\handler::STRING_INDENT) {
-
-      $doc = new static($this->getRoot());
-      $doc->getRoot()->prepareHTML();
-    }
-    else {
-
-      $doc = $this;
-    }
-
-    if ($iMode & dom\handler::STRING_HEAD) $sResult = $doc->elementAsString();
-    else $sResult = $doc->elementAsString($doc->getRoot());
+    if ($iMode & dom\handler::STRING_HEAD) $sResult = $this->elementAsString(null, $iMode);
+    else $sResult = $this->elementAsString($this->getRoot(), $iMode);
 
     return $sResult;
   }

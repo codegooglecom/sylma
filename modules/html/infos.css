@@ -32,15 +32,17 @@
   list-style-type: none;
 }
 
-
-#messages {
-
-}
-
 .sylma-message {
   padding: 0.5em;
   border: 1px solid #ddd;
   margin: 0.5em;
+  outline: 0 none;
+  transition: background 0.5s ease, border 0.5s ease;
+}
+
+.sylma-message:focus {
+  background-color: #eee;
+  border-color: #ccc;
 }
 
 .sylma-backtrace {
@@ -48,27 +50,87 @@
   font-size: 10px;
   padding: 10px;
   max-height: 0;
-  transition: max-height 0.5s ease 0s;
-  overflow: hidden;
+  transition: max-height 0.5s ease;
   white-space: nowrap;
-  overflow: visible;
+  min-width: 700px;
+  overflow: hidden;
 }
 
-.sylma-backtrace * {
+.sylma-backtrace > li {
+  list-style-type: none;
   opacity: 0;
-  transition: opacity 0.5s ease 0s;
+  transition: opacity 0.5s ease 0s, margin 0.5s;
 }
 
-.sylma-message:hover .sylma-backtrace {
+.sylma-backtrace > li:nth-child(even) {
+
+}
+
+.sylma-backtrace > li:focus,
+.sylma-backtrace > li:hover {
+  background-color: #eee;
+}
+
+.sylma-backtrace > li:focus {
+  margin: 0.5em 0;
+  border: 1px solid #ccc;
+  outline: 0 none;
+}
+
+.sylma-backtrace > li:hover span {
+  color: #444;
+}
+
+.sylma-message:hover .sylma-backtrace,
+.sylma-message:focus .sylma-backtrace
+{
   max-height: 1000px;
 }
 
-.sylma-message:hover .sylma-backtrace * {
+.sylma-message:hover .sylma-backtrace > li,
+.sylma-message:focus .sylma-backtrace > li
+{
   opacity: 1;
 }
 
-.sylma-backtrace .sylma-file {
-  display: block;
+.sylma-function {
+  color: #777;
+}
+
+.sylma-backtrace a {
   float: left;
-  width: 400px;
+  width: 50%;
+  padding-right: 1em;
+}
+
+.sylma-backtrace ul {
+  max-height: 0;
+  transition: max-height 0.5s ease, padding 0.5s;
+  overflow: hidden;
+  margin-left: 0.5em;
+  padding: 0;
+}
+
+.sylma-backtrace li li {
+  margin-left: 1em;
+  transition: opacity 0.5s ease 0s;
+  opacity: 0;
+}
+
+.sylma-backtrace li li:hover {
+  background-color: #ddd;
+}
+
+.sylma-backtrace li:focus ul {
+  max-height: 1000px;
+  transition: max-height 0s;
+  padding: 0.5em;
+}
+
+.sylma-backtrace li:focus li {
+  opacity: 1;
+}
+
+.sylma-backtrace pre {
+  white-space: pre-wrap;
 }

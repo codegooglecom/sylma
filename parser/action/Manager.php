@@ -11,7 +11,8 @@ class Manager extends parser\compiler\Builder {
    * Indent action's result builded with @method buildAction(), must be set to FALSE in production
    */
   const FORMAT_ACTION = false;
-
+  const WINDOW_ARGS = 'classes/php';
+  
   const PHP_TEMPLATE = 'compiler/php.xsl';
   const DOM_TEMPLATE = 'compiler/template.xsl';
 

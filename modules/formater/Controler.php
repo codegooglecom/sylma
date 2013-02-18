@@ -56,6 +56,11 @@ class Controler extends core\module\Domed {
     return $aResult;
   }
 
+  protected function replaceLineBreak($sContent) {
+
+    return $this->createDocument('<pre xmlns="http://www.w3.org/1999/xhtml">' . htmlspecialchars($sContent) . '</pre>');
+  }
+
   protected function loadObject($val) {
 
     $result = null;
@@ -69,7 +74,7 @@ class Controler extends core\module\Domed {
 
       if ($val->getRoot(false)) {
 
-        $result = $val->asString();
+        $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
       }
       else {
 
@@ -79,12 +84,14 @@ class Controler extends core\module\Domed {
     }
     else if ($val instanceof dom\node) {
 
-      $result = $val->asString();
+      $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
     }
     else if ($val instanceof dom\collection) {
 
       $result = $this->loadDOMCollection($val);
     }
+
+    /*
     else if ($val instanceof core\argumentable) {
 
       $arg = $val->asArgument();
@@ -102,7 +109,7 @@ class Controler extends core\module\Domed {
         $result = $val->asDOM();
       }
 
-    }
+    }*/
 
     return $this->loadObjectElement($val, $result);
   }
@@ -217,6 +224,10 @@ class Controler extends core\module\Domed {
     else if (is_numeric($mVal)) {
 
       $sResult = '[numeric = ' . $mVal . ']';
+    }
+    else if (is_bool($mVal)) {
+
+      $sResult = '[boolean = ' . ($mVal ? 'TRUE' : 'FALSE') . ']';
     }
     else {
 

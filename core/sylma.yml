@@ -1,7 +1,9 @@
 debug :
   enable : false
   rights: false
-  backtrace : false
+  backtrace :
+    show : false
+    html : true
   html : false
   xml :
     import : false

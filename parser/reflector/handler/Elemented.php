@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\parser\reflector\handler;
-use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector;
+use \sylma\core, sylma\dom, sylma\parser\reflector;
 
-abstract class Elemented extends reflector\basic\Foreigner {
+abstract class Elemented extends Parsed {
 
   const ARGUMENTS = '';
   const PREFIX = 'self';
@@ -110,38 +110,6 @@ abstract class Elemented extends reflector\basic\Foreigner {
     }
 
     return $this->createComponent($el, $this);
-  }
-
-  public function lookupParser($sNamespace) {
-
-    $result = null;
-
-    if ($this->useNamespace($sNamespace)) {
-
-      $result = $this;
-    }
-    else {
-
-      //$result = $this->loadParser($sNamespace);
-    }
-
-    return $result;
-  }
-
-  protected function lookupParserForeign($sNamespace) {
-
-    $result = null;
-
-    if ($this->getParent()) {
-
-      return $this->getParent()->lookupParser($sNamespace);
-    }
-    else {
-
-      //$result = $this->loadParser($sNamespace);
-    }
-
-    return $result;
   }
 
   public function getLastElement() {

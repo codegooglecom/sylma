@@ -149,7 +149,7 @@ abstract class Argumented extends Managed {
     $mArgument = func_get_args();
     if (count($mArgument) == 1) $mArgument = current ($mArgument);
 
-    echo \Sylma::show($mArgument, false);
+    \Sylma::dsp($mArgument);
   }
 
   protected function show($mVar, $bToken = true) {

@@ -19,8 +19,20 @@ class Main extends reflector\handler\Elemented implements reflector\elemented {
 
     $aResult = $this->reflectClasses($el);
     $doc = $this->createArgument($aResult, $this->getParent()->getNamespace())->asDOM();
-//$this->show($doc->asString(true), false);
-    return $this->getParent()->parseFromChild($doc->getRoot());
+    //$this->dsp($doc);
+    $result = $this->getParent()->parseFromChild($doc->getRoot());
+    //$this->dsp($result);
+    return $result;
+  }
+
+  public function parseFromParent(dom\element $el) {
+
+    return $this->parseRoot($el);
+  }
+
+  public function parseFromChild(dom\element $el) {
+
+    $this->throwException('Cannot parse from child');
   }
 
   protected function parseElementSelf(dom\element $el) {
@@ -30,7 +42,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented {
     switch ($el->getName()) {
 
       case 'classes' : $result = $this->reflectClasses($el); break;
-      case 'class' : $result = $this->reflectClass($el); break;
+      //case 'class' : $result = $this->reflectClass($el); break;
       case 'base' : $this->reflectBase($el); break;
 
       default : $this->throwException(sprintf('Unknown element %s', $el->asToken()));
@@ -44,12 +56,44 @@ class Main extends reflector\handler\Elemented implements reflector\elemented {
     //$result = $this->getWindow()->create('array', array($this->getWindow()));
     //$result->setContent(array('classes' => $this->parseChildren($el->getChildren())));
 
-    return array('classes' => $this->parseChildren($el->getChildren()));
+    $aResult = array('classes' => $this->parseClasses($el->getChildren()));
+    //$this->dsp($aResult);
+
+    return $aResult;
   }
 
-  protected function parseChildrenElement(dom\element $el, array &$aResult) {
+  protected function parseClasses(dom\collection $children) {
 
-    $mResult = $this->parseElement($el);
+    $aResult = array();
+
+    while ($child = $children->current()) {
+
+      if ($this->useNamespace($child->getNamespace())) {
+
+        if ($child->getName() == 'class') {
+
+          $aResult[] = $this->reflectClass($child);
+        }
+        else {
+
+          $this->parseChildrenElementSelf($child, $aResult);
+        }
+
+      }
+      else {
+
+        $this->parseChildrenElementForeign($child, $aResult);
+      }
+
+      $children->next();
+    }
+
+    return $aResult;
+  }
+
+  protected function parseChildrenElementSelf(dom\element $el, array &$aResult) {
+
+    $mResult = $this->parseElementSelf($el);
     if (!is_null($mResult)) $aResult[] = $mResult;
   }
 

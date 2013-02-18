@@ -53,18 +53,22 @@ class Basic extends tester\Basic {
 
     try {
 
-      //$controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $file->getParent(), $sName);
       $this->setArgument('arg', $this->buildArgument($node, $file, $test));
-
-      $expected = $test->getx('self:expected');
-      $bResult = parent::test($test, $expected->read(), $this, $doc, $file);
+      $bResult = $this->testArgument($test, $doc, $file);
     }
     catch (core\exception $e) {
 
-      $e->save(false);
+      $bResult = $this->catchException($test, $e, $file);
     }
 
     return $bResult;
+  }
+
+  protected function testArgument(dom\element $test, dom\document $doc, fs\file $file) {
+
+    $expected = $test->getx('self:expected');
+
+    return parent::test($test, $expected->read(), $this, $doc, $file);
   }
 
   public function getArgument($sPath, $mDefault = null, $bDebug = false) {

@@ -3,29 +3,12 @@
 namespace sylma\parser\reflector\basic;
 use \sylma\core, sylma\dom, sylma\storage\fs, symla\parser\reflector;
 
-abstract class Domed extends Namespaced {
+abstract class Domed extends Componented {
 
   CONST PREFIX = null;
 
-  protected $allowComponent = false;
   protected $allowForeign = false;
   protected $allowUnknown = false;
-
-  protected function allowComponent($mValue = null) {
-
-    if (!is_null($mValue)) $this->allowComponent = $mValue;
-    return $this->allowComponent;
-  }
-
-  abstract protected function parseComponent(dom\element $el);
-
-  protected function createComponent(dom\element $el, $parser) {
-
-    $class = $this->getFactory()->findClass($el->getName());
-    $sName = 'component/' . $el->getName();
-
-    return $this->create($sName, array($parser, $el, $class, false, $this->allowForeign(), $this->allowUnknown()));
-  }
 
   protected function parseNode(dom\node $node) {
 
@@ -136,7 +119,14 @@ abstract class Domed extends Namespaced {
 
           try {
 
-            $this->parseChildrenElement($child, $aResult);
+            if ($this->useNamespace($child->getNamespace())) {
+
+              $this->parseChildrenElementSelf($child, $aResult);
+            }
+            else {
+
+              $this->parseChildrenElementForeign($child, $aResult);
+            }
           }
           catch (core\exception $e) {
 
@@ -166,16 +156,27 @@ abstract class Domed extends Namespaced {
 
   /**
    * Browsing function, result is not returned but added to $aResult,
-   * @see @method parseElement()
    *
    * @param $el
    * @param array $aResult
    */
-  protected function parseChildrenElement(dom\element $el, array &$aResult) {
+  protected function parseChildrenElementSelf(dom\element $el, array &$aResult) {
 
-    $mResult = $this->parseElement($el);
+    $mResult = $this->parseElementSelf($el);
 
-    //if (is_null($mResult)) $this->throwException (sprintf('NULL value not accepted with %s', $el->asToken ()));
+    if (!is_null($mResult)) $aResult[] = $mResult;
+  }
+
+  /**
+   * Browsing function, result is not returned but added to $aResult,
+   *
+   * @param $el
+   * @param array $aResult
+   */
+  protected function parseChildrenElementForeign(dom\element $el, array &$aResult) {
+
+    $mResult = $this->parseElementForeign($el);
+
     if (!is_null($mResult)) $aResult[] = $mResult;
   }
 

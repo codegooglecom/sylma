@@ -6,7 +6,7 @@ use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\language
 class Builder extends Manager {
 
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
-  const WINDOW_ARGS = 'classes/php';
+  const WINDOW_ARGS = 'php';
 
   protected $bThrow = true;
 
@@ -31,7 +31,7 @@ class Builder extends Manager {
   }
 
   public function build(fs\file $file, fs\directory $dir) {
-
+//$this->dsp($this->getArguments());
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
     $result = null;
 
@@ -59,7 +59,9 @@ class Builder extends Manager {
   protected function createReflector(dom\document $doc, fs\directory $base) {
 
     $result = $this->create('documented', array($this, $doc, $base));
-    $result->setReflector($this->create('elemented', array($this, $result)));
+
+    $class = $this->getFactory()->findClass('elemented');
+    $result->setReflector($this->create('elemented', array($this, $result, null, $class)));
 
     return $result;
   }

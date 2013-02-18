@@ -24,87 +24,11 @@ abstract class Foreigner extends Domed {
    */
   protected $aParsers = array();
 
+  abstract protected function lookupParserForeign($sNamespace);
+
   public function parseRoot(dom\element $el) {
 
     return $this->parseElementSelf($el);
-  }
-
-  protected function lookupParserForeign($sNamespace) {
-
-    return $this->getRoot()->lookupParser($sNamespace);
-  }
-
-  /**
-   * Exception free parser loader
-   *
-   * @param string $sNamespace
-   * @return parser\domed
-   */
-  protected function loadParser($sNamespace) {
-
-    if (array_key_exists($sNamespace, $this->aParsers)) {
-
-      $result = $this->aParsers[$sNamespace];
-    }
-    else {
-
-      $result = $this->createParser($sNamespace);
-
-      if ($result) {
-
-        $this->addParser($result, $result->getUsedNamespaces());
-      }
-    }
-
-    //if ($result) $result->setParent($this);
-
-    return $result;
-  }
-
-  protected function createParser($sNamespace) {
-
-    $manager = $this->getManager('parser');
-    return $manager->getParser($sNamespace, $this->getRoot(), $this, false);
-  }
-
-  /**
-   * Set local parsers, with associated namespaces
-   * @param parser\reflector\domed $parser
-   * @param array $aNS
-   */
-  protected function addParser(reflector\domed $parser, array $aNS) {
-
-    $aResult = array();
-
-    foreach ($aNS as $sNamespace) {
-
-      $aResult[$sNamespace] = $parser;
-    }
-
-    $this->aParsers = array_merge($this->aParsers, $aResult);
-  }
-
-  protected function validateParser($sNamespace, $sParser = 'element') {
-
-    $result = $this->lookupParserForeign($sNamespace);
-
-    if ($result) {
-
-      $bValid = false;
-
-      switch ($sParser) {
-
-        case 'element' : $bValid = $result instanceof reflector\elemented; break;
-        case 'attribute' : $bValid = $result instanceof reflector\attributed; break;
-      }
-
-      if (!$bValid) {
-
-        $this->throwException(sprintf('Cannot use parser %s in %s context', get_class($result), $sParser));
-      }
-    }
-
-    return $result;
   }
 
   protected function parse(dom\node $node) {
@@ -121,7 +45,7 @@ abstract class Foreigner extends Domed {
 
     if (!$this->foreignElements) {
 
-      $this->foreignElements = $this->getControler('dom')->createDocument();
+      $this->foreignElements = $this->getManager('dom')->createDocument();
       $this->foreignElements->addElement('root');
     }
 
@@ -148,15 +72,9 @@ abstract class Foreigner extends Domed {
 
   protected function loadElementForeign(dom\element $el) {
 
-    $sNamespace = $el->getNamespace();
-
-    if ($parser = $this->lookupParserForeign($sNamespace)) {
+    if ($parser = $this->lookupParserForeign($el->getNamespace())) {
 
       $mResult = $parser->parseFromChild($el);
-    }
-    else if ($parser = $this->loadParser($sNamespace)) {
-
-      $mResult = $parser->parseRoot($el);
     }
     else {
 
@@ -164,6 +82,29 @@ abstract class Foreigner extends Domed {
     }
 
     return $mResult;
+  }
+
+  protected function validateParser($sNamespace, $sParser = 'element') {
+
+    $result = $this->lookupParserForeign($sNamespace);
+
+    if ($result) {
+
+      $bValid = false;
+
+      switch ($sParser) {
+
+        case 'element' : $bValid = $result instanceof reflector\elemented; break;
+        case 'attribute' : $bValid = $result instanceof reflector\attributed; break;
+      }
+
+      if (!$bValid) {
+
+        $this->throwException(sprintf('Cannot use parser %s in %s context', get_class($result), $sParser));
+      }
+    }
+
+    return $result;
   }
 
   protected function parseElementUnknown(dom\element $el) {
@@ -299,36 +240,3 @@ abstract class Foreigner extends Domed {
   }
 }
 
-
-/*
-  protected function createComponent(dom\element $el) {
-
-    $aClass = explode('\\', get_class($this));
-
-    \Sylma::load('/core/functions/Text.php');
-    $sName = text\toggleCamel($el->getName());
-
-    if ($dir = $this->getComponentsDirectory($el->getNamespace())) {
-
-      $sClass = str_replace('/', '\\', (string) $dir) . $sName;
-    }
-    else {
-
-      $sClass = '\\' . implode('\\', array_slice($aClass, 0, -1)) . '\\' . $sName;
-    }
-
-    return new $sClass($this, $el);
-  }
-
-  protected function getComponentsDirectory($sNamespace) {
-
-    return $this->componentsDirs[$sNamespace];
-  }
-
-  protected function setComponentsDirectory(fs\directory $dir, $sNamespace = '') {
-
-    if (!$sNamespace) $sNamespace = $this->getNamespace();
-
-    $this->componentsDirs[$sNamespace] = $dir;
-  }
-*/
