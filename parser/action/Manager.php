@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\parser\action;
-use \sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
+use \sylma\core, sylma\parser\compiler, sylma\parser\action, sylma\dom, sylma\storage\fs;
 
-class Manager extends parser\compiler\Builder {
+class Manager extends compiler\Builder {
 
   const FS_EDITABLE = 'fs/editable';
 
@@ -12,14 +12,16 @@ class Manager extends parser\compiler\Builder {
    */
   const FORMAT_ACTION = false;
   const WINDOW_ARGS = 'classes/php';
-  
+
   const PHP_TEMPLATE = 'compiler/php.xsl';
   const DOM_TEMPLATE = 'compiler/template.xsl';
 
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  
   public function __construct() {
 
     $this->setDirectory(__file__);
-    $this->setNamespace(parser\action::NS);
+    $this->setNamespace(action\handler::NS);
 
     $this->loadDefaultArguments();
     $this->setArguments('controler.yml');

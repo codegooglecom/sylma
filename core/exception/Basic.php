@@ -211,7 +211,7 @@ class Basic extends \Exception implements core\exception {
     return $sResult;
   }
 
-  public function errorAsHTML($iIndex, array $aError) {
+  public function errorAsHTML($iIndex, array $aError, $bHTML) {
 
     $sFile = array_key_exists('file', $aError) ? $aError['file'] : '-unknown-';
     $sLine = array_key_exists('line', $aError) ? $aError['line'] : '-unknown-';
@@ -221,6 +221,8 @@ class Basic extends \Exception implements core\exception {
     $sDisplay = $this->strongLast(substr($sFile, strlen(\Sylma::PATH_SYSTEM)), '/');
     $sClass = $this->strongLast($sClass);
 
+    $bHTML = $bHTML ? \Sylma::read('debug/backtrace/html') && !\Sylma::read('dom/debug/token') : false;
+
     if (array_key_exists('args', $aError)) { // TODO
 
       $sFunctionArgs = count($aError['args']);
@@ -229,7 +231,7 @@ class Basic extends \Exception implements core\exception {
 
       foreach ($aError['args'] as $arg) {
 
-        $sArgs .= '<li>' . \Sylma::show($arg, !\Sylma::read('debug/backtrace/html')) . '</li>';
+        $sArgs .= '<li>' . \Sylma::show($arg, !$bHTML) . '</li>';
       }
 
       $sArgs .= '</ul>';
@@ -243,7 +245,7 @@ class Basic extends \Exception implements core\exception {
     return "<li tabindex=\"1\"><a href=\"netbeans://$sFile:$sLine\">$iIndex. $sDisplay [$sLine]</a> <span>$sClass-></span><span class=\"sylma-function\">$sFunction($sFunctionArgs)</span>$sArgs</li>";
   }
 
-  public function save($bPrint = true) {
+  public function save($bPrint = true, $bHTML = true) {
 
     $sResult = '';
 
@@ -261,7 +263,7 @@ class Basic extends \Exception implements core\exception {
 
         foreach ($aTraces as $iTrace => $aTrace) {
 
-          $sResult .= $this->errorAsHTML($iTrace, $aTrace);
+          $sResult .= $this->errorAsHTML($iTrace, $aTrace, $bHTML);
         }
 
         $sResult .= '</ul>';

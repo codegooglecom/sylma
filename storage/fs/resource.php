@@ -42,7 +42,7 @@ interface resource extends core\argumentable, core\tokenable, core\stringable {
   function checkRights($iMode);
 
   /**
-   * @return fs\directory|null The parent directory or NULL if root directory
+   * @return \sylma\storage\fs\directory|null The parent directory or NULL if root directory
    */
   function getParent();
 

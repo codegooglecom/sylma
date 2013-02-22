@@ -170,7 +170,7 @@ class Cached extends core\module\Argumented implements core\factory {
 
     if (!interface_exists($sClass) && !class_exists($sClass, false)) {
 
-      $this->throwException(sprintf('@class %s has not been loaded !', $sClass));
+      \Sylma::throwException(sprintf('@class %s has not been loaded !', $sClass));
     }
 
     return true;

@@ -80,5 +80,6 @@ dom:
   debug:
     # display all xpath queries in a formatted table containing paths grouped by count
     show-queries: false
+    token : true
   encoding:
     check: false

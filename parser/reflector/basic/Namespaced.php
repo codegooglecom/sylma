@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\reflector\basic;
-use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser;
+use \sylma\core;
 
 abstract class Namespaced extends core\module\Domed {
 

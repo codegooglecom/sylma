@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/core/argument/test"
+  xmlns="http://www.sylma.org"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:arg="http://www.sylma.org/core/argument/test"
+  arg:class="setable"
+>
+  <tst:description>Set</tst:description>
+  <tst:test name="A basic set()">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->set('abc', '123');
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->read('abc') === '123'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A basic set on existing simple key">
+    <tst:prepare>
+      $arg = $controler->createArgument(array('abc' => 123));
+      $arg->set('abc', 456);
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->read('abc') === 456
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A set() with null path" disabled="true">
+    <tst:prepare>
+      $arg = $controler->createArgument(array('abc' => 123));
+      $arg->set(456);
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->read(1) === 456
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A set() of array">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->set('abc', array('def' => '123', 'ghi' => '456'));
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return
+        $arg->read('abc/def') === '123' &amp;&amp;
+        $arg->read('abc/ghi') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A set() to NULL">
+    <tst:prepare>
+      $arg = $controler->createArgument(array(
+        'abc' =>  123,
+        'def' => array(
+          'ghi' => 456,
+          'lmn' => 789,
+        ),
+      ));
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $arg->set('def');
+
+      return
+        $arg->query() === array(
+          'abc' => 123,
+        )
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A set() of array with stepped get">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->set('abc', array('def' => '123', 'ghi' => '456'));
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return
+        $arg->get('abc')->read('def') === '123' &amp;&amp;
+        $arg->get('abc')->read('ghi') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A two levels depth set()">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->set('abc/def', '123');
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->read('abc/def') === '123'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A two levels depth set() of array">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->set('abc/def', array('ghi' => '123', 'jkl' => '456'));
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return
+        $arg->read('abc/def/ghi') === '123' &amp;&amp;
+        $arg->read('abc/def/jkl') === '456'
+      </tst:expected>
+  </tst:test>
+  <tst:test name="Two two levels depth set()">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->set('abc/def', '123');
+      $arg->set('abc/ghi', '345');
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return
+        $arg->read('abc/def') === '123' &amp;&amp;
+        $arg->read('abc/ghi') === '345'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Two two levels depth set() with floats">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->set('abc/def', 1.23);
+      $arg->set('abc/ghi', 3.45);
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return
+        $arg->read('abc/def') === 1.23 &amp;&amp;
+        $arg->read('abc/ghi') === 3.45
+    </tst:expected>
+  </tst:test>
+  <tst:test name="A two levels depth set() with array and tmp object">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $test = $arg->set('abc/def', array('ghi' => '123'));
+      $test->set('lmn', '456');
+      $arg->get('abc/def')->set('opq', 789);
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return
+        $arg->read('abc/def/ghi') === '123' &amp;&amp;
+        $arg->read('abc/def/lmn') === '456' &amp;&amp;
+        $arg->read('abc/def/opq') === 789
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

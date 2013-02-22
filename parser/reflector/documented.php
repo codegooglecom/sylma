@@ -7,5 +7,6 @@ interface documented extends dom\domable {
 
   function setWindow(common\_window $window);
   function getSourceDirectory();
+  function getReflector();
 }
 

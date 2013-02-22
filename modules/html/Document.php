@@ -1,20 +1,24 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs, sylma\core\functions;
+use sylma\core, sylma\parser\action, sylma\parser\js, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-class Document extends parser\action\handler\Basic {
+class Document extends action\handler\Basic {
 
   private $head = null;
   protected $result = null;
 
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
+    // global context is usefull for free action (without parent)
+    $messages = new context\Messages;
+    $this->getManager('parser')->setContext('messages', $messages);
+
     $this->setContexts(array(
       'css' => new context\CSS,
       'js' => new context\JS,
-      'js/load' => new parser\js\context\Load,
-      'message' =>  new context\Messages,
+      'js/load' => new js\context\Load,
+      'message' =>  $messages,
       //'title' =>  new parser\context\Basic,
     ));
 
@@ -73,14 +77,14 @@ class Document extends parser\action\handler\Basic {
 
       switch ($sName) {
 
-        case parser\action\cached::CONTEXT_DEFAULT : break;
+        case action\cached::CONTEXT_DEFAULT : break;
         case 'message' :
 
           if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
 
             $messages->add($context->asDOM());
           }
-          
+
           break;
 
         default :
@@ -151,8 +155,6 @@ class Document extends parser\action\handler\Basic {
     return $result;
   }
 }
-
-require_once('core/module/Domed.php');
 
 class Cleaner extends core\module\Domed {
 

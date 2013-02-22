@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\xslt;
-use sylma\core, sylma\dom, sylma\parser;
+use sylma\core, sylma\dom;
 
 require_once('dom/basic/handler/Rooted.php');
 
@@ -162,7 +162,7 @@ class Processor extends dom\basic\handler\Rooted {
 
   }
 
-  public function includeExternal(parser\xslt\Processor $template, dom\element $external = null, array &$aPaths = array(), $iLevel = 0) {
+  public function includeExternal(Processor $template, dom\element $external = null, array &$aPaths = array(), $iLevel = 0) {
 
     if ($template->isEmpty()) {
 

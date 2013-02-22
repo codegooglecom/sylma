@@ -21,8 +21,8 @@ interface argument extends \Iterator {
   function get($sPath = '', $bDebug = true);
   function read($sPath = '', $bDebug = true);
   //function query($sPath = '', $bDebug = true);
-  function set($sPath = '', $mValue = null);
-  function add($mValue);
+  //function set($sPath = '', $mValue = null);
+  //function add($mValue);
   //function shift($mValue);
   function setParent(core\argument $parent);
   function getParent();
@@ -42,7 +42,7 @@ interface argument extends \Iterator {
    *
    * @return null|mixed The value localized by path, or NULL
    */
-  function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false);
+  //function locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false);
 
   /**
    * Recursively merge argument object or array, argument received will overwrite this one

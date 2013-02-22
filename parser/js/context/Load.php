@@ -1,12 +1,12 @@
 <?php
 
 namespace sylma\parser\js\context;
-use sylma\core, sylma\parser, sylma\dom;
+use sylma\core, sylma\parser\context, sylma\dom;
 
 /**
  *
  */
-class Load extends parser\context\Basic implements dom\domable {
+class Load extends context\Basic implements dom\domable {
 
   public function asDOM() {
 

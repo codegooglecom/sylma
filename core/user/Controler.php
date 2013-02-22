@@ -3,9 +3,7 @@
 namespace sylma\core\user;
 use sylma\core;
 
-require_once('core/module/Domed.php');
-
-class Controler extends core\module\Domed {
+class Controler extends core\module\Filed {
 
   protected $user;
 

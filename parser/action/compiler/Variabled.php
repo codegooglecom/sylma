@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\parser\languages\php;
 
 abstract class Variabled extends Caller {
 

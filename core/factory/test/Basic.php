@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\factory\test;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
 class Basic extends tester\Basic {
 

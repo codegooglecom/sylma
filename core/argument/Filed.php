@@ -6,7 +6,7 @@ use \sylma\core, sylma\storage\fs, sylma\core\functions\path;
 require_once('core/functions/Path.php');
 require_once('spyc.php');
 
-class Filed extends Domed {
+class Filed extends Setable {
 
   /**
    * Special calls use this prefix use in YAML files

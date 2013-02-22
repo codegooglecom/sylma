@@ -8,5 +8,7 @@ interface elemented extends domed {
   function parseRoot(dom\element $el);
   function parseFromParent(dom\element $el);
   function parseFromChild(dom\element $el);
+  function parseComponent(dom\element $el);
+  function loadComponent($sName, dom\element $el, $manager);
 }
 

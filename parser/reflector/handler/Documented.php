@@ -26,7 +26,7 @@ class Documented extends core\module\Domed implements reflector\documented {
     $this->reflector = $reflector;
   }
 
-  protected function getReflector() {
+  public function getReflector() {
 
     return $this->reflector;
   }

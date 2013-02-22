@@ -63,7 +63,7 @@ abstract class Main extends reflector\basic\Foreigner {
     }
 
     $this->setFormat($sFormat);
-    $this->return = $this->getWindow()->tokenToInstance($sFormat);
+    //$this->return = $this->getWindow()->tokenToInstance($sFormat);
   }
 
   protected function setFormat($sFormat) {
@@ -140,6 +140,10 @@ abstract class Main extends reflector\basic\Foreigner {
     return $this->parseChildren($doc->getChildren());
   }
 
+  public function getReflector() {
+
+  }
+
   /**
    *
    * @return array
@@ -161,7 +165,7 @@ abstract class Main extends reflector\basic\Foreigner {
 
   public function getSourceDirectory() {
 
-    return parent::getSourceDirectory();
+    return $this->getDirectory();
   }
 
   public function useNamespace($sNamespace, $bParent = false) {
@@ -262,18 +266,6 @@ abstract class Main extends reflector\basic\Foreigner {
   public function parseFromChild(dom\element $el) {
 
     return $this->parseElementSelf($el);
-  }
-
-  public function parseComponent(dom\element $el, reflector\domed $parent = null) {
-
-    if (!$this->allowComponent()) {
-
-      $this->throwException(sprintf('Component building not allowed with %s', $el->asToken()));
-    }
-
-    if (!$parent) $parent = $this;
-
-    return $this->createComponent($this, $parent, $el);
   }
 
   /**

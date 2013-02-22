@@ -1,10 +1,11 @@
 <?php
 
 namespace sylma\parser\context;
-use sylma\core, sylma\parser, sylma\dom;
+use sylma\core, sylma\parser\context, sylma\dom;
 
-class Basic extends core\module\Domed implements parser\context {
+class Basic extends core\module\Domed implements context {
 
+  protected static $sArgumentClass = 'sylma\core\argument\Setable';
   protected $parent;
 
   public function __construct() {

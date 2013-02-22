@@ -10,6 +10,71 @@ abstract class Domed extends Componented {
   protected $allowForeign = false;
   protected $allowUnknown = false;
 
+  protected $element;
+  protected $elementDocument;
+
+  /**
+   * Handler for element creation with NS bug fixes
+   */
+  protected $documentContainer;
+
+  public function getNode() {
+
+    if ($this->elementDocument) {
+
+      $result = $this->elementDocument->getRoot();
+    }
+    else {
+
+      $result = $this->element;
+    }
+
+    return $result;
+  }
+
+  public function setNode(dom\element $el, $bClone = true, $bNamespace = true) {
+
+    if ($bClone) {
+
+      if ($bNamespace) $this->setNamespace($el->getNamespace(), static::PREFIX);
+
+      $doc = $this->createDocument($el);
+      $result = $doc->getRoot();
+
+      $this->elementDocument = $doc;
+      $this->element = $result;
+    }
+    else {
+
+      $result = $this->element = $el;
+    }
+
+    return $result;
+  }
+
+  protected function getDocumentContainer() {
+
+    if (!$this->documentContainer) {
+
+      $this->documentContainer = $this->getManager('dom')->createDocument();
+      $this->documentContainer->addElement('root');
+    }
+
+    return $this->documentContainer;
+  }
+
+  protected function createElement($sName, $mContent = null, array $aAttributes = array(), $sNamespace = '') {
+
+    if (!$sNamespace) {
+
+      $this->throwException('Element without namespace vorbidden');
+    }
+
+    $el = $this->getDocumentContainer()->createElement($sName, $mContent, $aAttributes, $sNamespace);
+
+    return $el;
+  }
+
   protected function parseNode(dom\node $node) {
 
     $mResult = null;

@@ -43,6 +43,11 @@ abstract class Parsed extends reflector\basic\Foreigner {
     return parent::parseRoot($el);
   }
 
+  public function parseFromChild(dom\element $el) {
+
+    return $this->parseElementSelf($el);
+  }
+  
   protected function lookupParserForeign($sNamespace) {
 
     $result = null;

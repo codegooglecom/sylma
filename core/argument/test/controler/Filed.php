@@ -60,4 +60,9 @@ class Filed extends core\module\Filed implements test\controler {
 
     return $this->getControler()->compareNodes($node1, $node2);
   }
+
+  public function getFile($sPath = '', $bDebug = true) {
+
+    return parent::getFile($sPath, $bDebug);
+  }
 }

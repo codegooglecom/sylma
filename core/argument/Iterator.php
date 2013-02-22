@@ -3,7 +3,7 @@
 namespace sylma\core\argument;
 use \sylma\core;
 
-class Iterator extends Basic implements core\argument, \ArrayAccess {
+abstract class Iterator extends Basic implements \ArrayAccess {
 
   function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
 
@@ -28,8 +28,6 @@ class Iterator extends Basic implements core\argument, \ArrayAccess {
       if (!$result) {
 
         $result = $this->read($sKey);
-        //$this->next();
-        //if ($this->valid()) $result = $this->current();
       }
     }
 

@@ -1,9 +1,7 @@
 <?php
 
 namespace sylma\dom\basic;
-use \sylma\dom, \sylma\core;
-
-require_once(dirname(__dir__) . '/element.php');
+use sylma\core, sylma\dom;
 
 class Element extends \DOMElement implements dom\element {
 
@@ -14,13 +12,22 @@ class Element extends \DOMElement implements dom\element {
 
   public function getDocument() {
 
-    return $this->ownerDocument;
+    try {
+
+      $doc = $this->ownerDocument;
+
+    } catch (core\exception $e) {
+
+      //$e->save(false);
+      \Sylma::throwException('Lost DOM Document');
+    }
+
+    return $doc;
   }
 
   public function getHandler() {
 
-    if (!$doc = $this->getDocument()) $this->throwException(t('No document defined'));
-    $handler = $doc->getHandler();
+    $handler = $this->getDocument()->getHandler();
 
     return $handler;
   }
@@ -74,9 +81,11 @@ class Element extends \DOMElement implements dom\element {
       }
       catch (core\exception $e) {
 
-        $this->throwException(sprintf('Bad query : %s', $sQuery));
+        $aSender = array();
+        foreach ($this->getHandler()->mergeNamespaces() as $sPrefix => $sNamespace) $aSender[] = $sPrefix . ' => ' . $sNamespace;
+        
+        $this->throwException(sprintf('XPath error with "%s" : %s', $sQuery, $e->getMessage()), $aSender);
       }
-
 
       $this->getControler()->addStat('evaluation', array($sQuery, $aNS));
 
@@ -627,7 +636,7 @@ class Element extends \DOMElement implements dom\element {
 
       if ($this->isRoot()) {
 
-        $result = $this->getDocument()->set($mContent);
+        $result = $this->getHandler()->set($mContent);
 
       } else {
 
@@ -799,7 +808,16 @@ class Element extends \DOMElement implements dom\element {
 
   public function asToken() {
 
-    return ' @element ' . $this->getPath() . ' in ' . $this->getHandler()->asToken() . ':' . $this->getLineNo();
+    if (\Sylma::read('dom/debug/token')) {
+
+      $sResult = '[element]';
+    }
+    else {
+
+      $sResult = ' @element ' . $this->getPath() . ' in ' . $this->getHandler()->asToken() . ':' . $this->getLineNo();
+    }
+
+    return $sResult;
   }
 
   public function prepareHTML($iLevel = 0) {
@@ -832,16 +850,16 @@ class Element extends \DOMElement implements dom\element {
     }
   }
 
-  protected function throwException($sMessage) {
+  protected function throwException($sMessage, array $mSender = array()) {
 
-    $aPath = array($this->asToken());
+    $mSender[] = $this->asToken();
 
     if (!$controler = $this->getHandler()) {
 
       $controler = $this->getControler();
     }
 
-    $controler->throwException($sMessage, $aPath);
+    $controler->throwException($sMessage, $mSender);
   }
 
   public function asString($iMode = 0) {

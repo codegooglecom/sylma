@@ -22,7 +22,7 @@ class Initializer extends module\Filed {
   public function loadSettings($sServer, $sSylma) {
 
     //$settings = $this->createArgument($sSylma, \Sylma::NS);
-    require_once(self::$sArgumentFile);
+    //require_once(self::$sArgumentFile);
     $settings = new self::$sArgumentClass($sSylma, array(\Sylma::NS));
 
     if ($sServer) $settings->mergeFile($sServer);
@@ -174,7 +174,7 @@ class Initializer extends module\Filed {
     return $window;
   }
 
-  protected function loadWindowAction(action\path $path, action $window) {
+  protected function loadWindowAction(action\path $path, action\handler $window) {
 
     $action = $this->loadAction($path);
     $action->setContexts($window->getContexts());

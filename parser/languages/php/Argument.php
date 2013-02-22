@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php;
 use sylma\core, sylma\parser\languages\php, sylma\parser\languages\common;
 
-class Argument extends core\argument\Domed {
+class Argument extends core\argument\Setable {
 
   protected static function normalizeObject($val, $bEmpty = false) {
 

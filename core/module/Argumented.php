@@ -12,10 +12,7 @@ abstract class Argumented extends Managed {
    */
   protected $factory;
 
-  protected static $sArgumentClass = '\sylma\core\argument\Iterator';
-  protected static $sArgumentFile = '/core/argument/Iterator.php';
-
-  protected static $sFactoryFile = '/core/factory/Reflector.php';
+  protected static $sArgumentClass = '\sylma\core\argument\Readable';
   protected static $sFactoryClass = '\sylma\core\factory\Reflector';
 
 
@@ -46,7 +43,7 @@ abstract class Argumented extends Managed {
 
   protected function createFactory(core\argument $arg = null) {
 
-    \Sylma::load(static::$sFactoryFile);
+    //\Sylma::load(static::$sFactoryFile);
     $result = new static::$sFactoryClass($arg);
 
     return $result;
@@ -60,7 +57,7 @@ abstract class Argumented extends Managed {
    */
   protected function createArgument($mArguments, $sNamespace = '') {
 
-    \Sylma::load(static::$sArgumentFile);
+    //\Sylma::load(static::$sArgumentFile);
 
     if ($sNamespace) $aNS = array($sNamespace);
     else if ($this->getNamespace()) $aNS = array($this->getNamespace());

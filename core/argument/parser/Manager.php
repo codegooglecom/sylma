@@ -1,9 +1,11 @@
 <?php
 
 namespace sylma\core\argument\parser;
-use sylma\core, sylma\dom, sylma\parser\compiler, sylma\storage\fs;
+use sylma\core, sylma\parser\compiler, sylma\storage\fs;
 
 class Manager extends compiler\Builder {
+
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
 
   public function __construct(core\argument $arg = null) {
 

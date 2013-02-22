@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\parser;
-use sylma\dom, sylma\storage\fs, sylma\parser;
+namespace sylma\parser\action;
+use sylma\dom, sylma\storage\fs, sylma\parser\action;
 
-interface action extends dom\domable {
+interface handler extends dom\domable {
 
   const NS = 'http://www.sylma.org/parser/action';
   const FILE_DEFAULT_MODE = \Sylma::MODE_READ;
@@ -19,7 +19,7 @@ interface action extends dom\domable {
    */
   function loadParser($sNamespace);
 
-  public function setParentParser(parser\action $parent);
+  public function setParentParser(action\handler $parent);
   public function getParentParser($bRoot = false);
 
   public function setContexts(array $aContexts);

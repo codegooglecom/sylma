@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser;
+use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php;
 
 class Method extends core\module\Argumented {
 

@@ -1,10 +1,7 @@
 <?php
 
 namespace sylma\core\window\classes;
-use sylma\core, sylma\storage\fs, sylma\parser;
-
-require_once('core/module/Controled.php');
-require_once('core/window/action.php');
+use sylma\core, sylma\parser\action;
 
 class Context extends core\module\Controled implements core\window\action {
 
@@ -16,11 +13,11 @@ class Context extends core\module\Controled implements core\window\action {
     $this->setControler($controler);
   }
 
-  public function setAction(parser\action $action, $sContext = '') {
+  public function setAction(action\handler $action, $sContext = '') {
 
     $this->action = $action;
     $this->sContext = $sContext;
-    
+
     $parser = $this->getControler('action');
     $this->getAction()->setContexts(array(
       $sContext => $parser->createContext(),
@@ -50,7 +47,7 @@ class Context extends core\module\Controled implements core\window\action {
     $this->setHeader($this->getContext());
 
     if ($result = $this->getAction()->getContext($this->getContext())) {
-      
+
       $sResult = $result->asString();
     }
 

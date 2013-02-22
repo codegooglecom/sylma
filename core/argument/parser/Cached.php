@@ -3,7 +3,7 @@
 namespace sylma\core\argument\parser;
 use sylma\core, sylma\storage\fs;
 
-class Cached extends core\argument\Domed {
+class Cached extends core\argument\Readable {
 
   const FILE_MANAGER_ALIAS = 'fs';
   const ARGUMENTS_MANAGER = 'argument/parser';
@@ -18,15 +18,16 @@ class Cached extends core\argument\Domed {
     return $function(\Sylma::getControler(self::FILE_MANAGER_ALIAS));
   }
 
-  public function parseValue($mValue, array $aParentPath = array()) {
+  public function parseValue(array &$aPath, $mValue, $bDebug) {
 
     if (is_callable($mValue)) {
 
       $mResult = $this->callFunction($mValue);
+      prev($aPath);
     }
     else {
 
-      $mResult = parent::parseValue($mValue, $aParentPath);
+      $mResult = parent::parseValue($aPath, $mValue, $bDebug);
     }
 
     return $mResult;

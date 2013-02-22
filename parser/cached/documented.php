@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\cached;
-use sylma\core, sylma\parser, sylma\dom;
+use sylma\core, sylma\dom;
 
 /**
  * Domed, dynamic document parser

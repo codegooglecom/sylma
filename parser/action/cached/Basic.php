@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\parser\action\cached;
-use sylma\core, sylma\parser, sylma\storage\fs;
+use sylma\core, sylma\parser\action, sylma\storage\fs;
 
-abstract class Basic extends core\module\Domed implements parser\action\cached {
+abstract class Basic extends core\module\Domed implements action\cached {
 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
@@ -13,7 +13,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached {
 
   protected $handler;
 
-  public function __construct(fs\file $file, fs\directory $dir, parser\action $handler, array $aContexts, array $aArguments = array(), array $aManagers = array()) {
+  public function __construct(fs\file $file, fs\directory $dir, action\handler $handler, array $aContexts, array $aArguments = array(), array $aManagers = array()) {
 
     foreach ($aManagers as $sName => $manager) {
 
@@ -31,7 +31,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached {
     $this->setHandler($handler);
 
     $this->setDirectory($dir);
-    $this->setNamespace(parser\action::NS);
+    $this->setNamespace(action\handler::NS);
 
     $this->loadDefaultArguments();
     $this->setActionArguments($aArguments);
@@ -42,7 +42,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached {
     return $this->handler;
   }
 
-  protected function setHandler(parser\action $handler) {
+  protected function setHandler(action\handler $handler) {
 
     $this->handler = $handler;
   }
@@ -90,8 +90,8 @@ abstract class Basic extends core\module\Domed implements parser\action\cached {
 
     if (!$this->bRunned) {
 
-      $mResult = $this->runAction($this->getFile());
-      $this->aResults[self::CONTEXT_DEFAULT]->set('', $mResult);
+        $mResult = $this->runAction($this->getFile());
+        $this->aResults[self::CONTEXT_DEFAULT]->set('', $mResult);
       $this->bRunned = true;
 
       //echo $this->show($this->aResults['default']->getArguments());

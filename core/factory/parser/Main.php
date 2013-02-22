@@ -14,7 +14,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented {
 
     if ($el->getName() !== 'classes') {
 
-      $this->throwException(sprintf('Unknown root %s', $el->asToken()));
+      $this->throwException(sprintf('Bad root %s', $el->asToken()));
     }
 
     $aResult = $this->reflectClasses($el);

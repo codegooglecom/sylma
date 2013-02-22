@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom, sylma\parser;
+use sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector;
 
 class _Interface extends core\module\Argumented {
 
@@ -11,7 +11,7 @@ class _Interface extends core\module\Argumented {
 
   protected $aMethods = array();
 
-  public function __construct(parser\reflector\documented $reflector, $sInterface, fs\file $file = null) {
+  public function __construct(reflector\documented $reflector, $sInterface, fs\file $file = null) {
 
     $this->setManager($reflector);
     $this->setName($sInterface);
@@ -19,6 +19,8 @@ class _Interface extends core\module\Argumented {
     $this->setNamespace($this->getManager()->getNamespace());
 
     if ($file) $this->setFile($file);
+
+    $this->loadReflection();
   }
 
   protected function setFile(fs\file $file) {

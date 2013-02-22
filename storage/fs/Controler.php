@@ -3,8 +3,6 @@
 namespace sylma\storage\fs;
 use \sylma\core, \sylma\storage\fs, \sylma\core\functions\path;
 
-require_once('core/module/Filed.php');
-
 require_once('core/functions/Path.php');
 require_once('resource.php');
 

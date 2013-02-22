@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\action;
 
 /**
  * Cached actions are the public part of the parser action. . It means they are They are managed, by default, by the root action.
@@ -21,7 +21,7 @@ interface cached {
    * @param array $aArguments Arguments
    * @param array $aManagers
    */
-  function __construct(fs\file $file, fs\directory $dir, parser\action $manager, array $aContexts, array $aArguments = array(), array $aManagers = array());
+  function __construct(fs\file $file, fs\directory $dir, action\handler $manager, array $aContexts, array $aArguments = array(), array $aManagers = array());
 
   /**
    * Get parent or root parser. If none return itself

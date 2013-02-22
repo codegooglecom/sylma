@@ -1,9 +1,11 @@
 <?php
 
 namespace sylma\parser;
-use sylma\core, sylma\storage\fs, sylma\parser;
+use sylma\core, sylma\storage\fs, sylma\parser\compiler, sylma\parser\reflector;
 
-class Manager extends parser\compiler\Builder {
+class Manager extends compiler\Builder {
+
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
 
   const MANAGER_PATH = 'manager';
   const REFLECTOR_PATH = 'reflector';
@@ -35,6 +37,12 @@ class Manager extends parser\compiler\Builder {
     return parent::load($file, $aArguments);
   }
 
+  public function loadManager(fs\file $file) {
+
+    $doc = $file->getDocument();
+    return $this->getParserManager($doc->getRoot()->getNamespace());
+  }
+
   public function build(fs\file $file, fs\directory $dir) {
 
     if (!\Sylma::read('debug/enable')) {
@@ -42,8 +50,7 @@ class Manager extends parser\compiler\Builder {
       $this->throwException('This function is low performance and must not be used in production environnement');
     }
 
-    $doc = $file->getDocument();
-    $manager = $this->getParserManager($doc->getRoot()->getNamespace());
+    $manager = $this->loadManager($file);
 
     return $manager->build($file, $dir);
   }
@@ -97,7 +104,7 @@ class Manager extends parser\compiler\Builder {
    * @param boolean $bDebug
    * @return \sylma\parser\reflector\container
    */
-  public function getParser($sNamespace, parser\reflector\documented $documented, parser\reflector\domed $parent = null, $bDebug = true) {
+  public function getParser($sNamespace, reflector\documented $documented, reflector\domed $parent = null, $bDebug = true) {
 
     $result = null;
 

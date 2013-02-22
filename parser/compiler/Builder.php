@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\compiler;
-use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom, sylma\parser\languages\php;
+use sylma\core, sylma\parser\reflector, sylma\storage\fs, sylma\dom;
 
 class Builder extends Manager {
 
@@ -77,8 +77,6 @@ class Builder extends Manager {
    */
   protected function runReflector(dom\document $doc, fs\directory $dir, fs\file $file) {
 
-    $result = null;
-
     try {
 
       $reflector = $this->createReflector($doc, $dir);
@@ -87,16 +85,24 @@ class Builder extends Manager {
       $window = $this->create('window', array($reflector, $this->getArgument(static::WINDOW_ARGS), $sInstance));
       $reflector->setWindow($window);
 
-      $result = $reflector->asDOM();
+      $result = $this->getResult($reflector);
     }
     catch (core\exception $e) {
 
       $e->addPath($file->asToken());
+
       if ($this->throwExceptions()) throw $e;
       else $e->save(false);
+
+      $result = null;
     }
 
     return $result;
+  }
+
+  protected function getResult(reflector\documented $reflector) {
+
+    return $reflector->asDOM();
   }
 
   public function throwExceptions($mValue = null) {

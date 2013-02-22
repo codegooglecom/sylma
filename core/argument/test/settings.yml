@@ -4,8 +4,10 @@ classes :
   controler :
     name : test\controler\Filed
   basic :
-    name : Iterator
+    name : Readable
+  setable :
+    name : Setable
   domed :
-    name : Domed
+    name : Readable
   filed :
     name : Filed

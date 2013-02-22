@@ -18,6 +18,11 @@ interface element extends complex, namespaced {
    */
   function getByName($sName, $sNamespace = null);
 
+  /**
+   * Getter of $this->attributes
+   * @return \sylma\dom\collection
+   */
+  function getAttributes();
 
   /**
    * Alias of \DOMElement::getAttribute() and \DOMElement::getAttributeNS()

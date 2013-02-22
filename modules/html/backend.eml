@@ -6,7 +6,7 @@
 >
   <le:settings>
     <le:name>Sylma Backend</le:name>
-    <le:argument name="content" format="\sylma\parser\action"/>
+    <le:argument name="content" format="\sylma\parser\action\handler"/>
   </le:settings>
   <html>
     <head>

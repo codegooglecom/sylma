@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\compiler;
-use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
+use sylma\core, sylma\storage\fs;
 
 class Manager extends core\module\Domed {
 
@@ -137,7 +137,7 @@ class Manager extends core\module\Domed {
    *
    * @param $file Script
    * @param array $aArguments
-   * @return parser\cached\documented
+   * @return \sylma\parser\cached\documented
    */
   protected function createCache(fs\file $file, array $aArguments = array()) {
 

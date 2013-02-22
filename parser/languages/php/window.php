@@ -14,7 +14,7 @@ interface window extends common\_window {
   /**
    * @return common\_var
    */
-  function addVar(common\argumentable $val);
+  //function addVar(common\argumentable $val);
 
   /**
    * @return ?

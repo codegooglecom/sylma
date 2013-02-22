@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\modules\html\context;
-use sylma\core, sylma\parser, sylma\dom, sylma\storage\fs;
+use sylma\core, sylma\parser\context, sylma\dom;
 
-class Messages extends parser\context\Basic implements dom\domable {
+class Messages extends context\Basic implements dom\domable {
 
   public function asDOM() {
 

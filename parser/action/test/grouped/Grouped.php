@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\test\grouped;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
 
 require_once('modules/tester/Basic.php');
 
@@ -16,12 +16,10 @@ class Grouped extends tester\Basic {
 
     \Sylma::getControler('dom');
 
-    require_once('parser/action.php');
-
     $this->setDirectory(__file__);
     $this->setNamespaces(array(
         'self' => self::NS,
-        'le' => parser\action::NS,
+        'le' => action\handler::NS,
     ));
 
     $controler = \Sylma::getControler('action');

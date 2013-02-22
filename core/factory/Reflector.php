@@ -7,6 +7,14 @@ use sylma\core;
 
 class Reflector extends Cached {
 
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+
+  public function __construct(core\argument $classes = null) {
+
+    $this->setArguments($this->createArgument(array()));
+    if ($classes) $this->setArguments($classes);
+  }
+
   protected function loadClassBase(core\argument $class) {
 
     if ($sClassBase = $this->getArguments()->getToken(self::CLASSBASE_TOKEN)) {

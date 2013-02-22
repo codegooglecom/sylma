@@ -13,16 +13,48 @@ abstract class Componented extends Namespaced {
     return $this->allowComponent;
   }
 
-  abstract protected function parseComponent(dom\element $el);
+  protected function parseComponent(dom\element $el) {
 
-  protected function createComponent(dom\element $el, $parser) {
+    if (!$this->allowComponent()) {
 
-    $class = $this->getFactory()->findClass($el->getName());
-    $sName = 'component/' . $el->getName();
+      $this->throwException(sprintf('Component building not allowed with %s', $el->asToken()));
+    }
 
-    return $this->create($sName, array($parser, $el, $class, false, $this->allowForeign(), $this->allowUnknown()));
+    return $this->loadComponent('component/' . $el->getName(), $el, $this);
   }
 
+  protected function loadComponent($sName, dom\element $el, $manager) {
+
+    $result = $this->createComponent($sName, $manager);
+    $result->parseRoot($el);
+
+    return $result;
+  }
+
+  protected function loadSimpleComponent($sName, $manager) {
+
+    $result = $this->createComponent($sName, $manager);
+
+    return $result;
+  }
+
+  protected function createComponent($sAlias, $manager) {
+
+    $class = $this->getFactory()->findClass($sAlias);
+    $result = $this->create($sAlias, array($manager, $class, false, $this->allowForeign(), $this->allowUnknown()));
+
+    return $result;
+  }
+
+  /**
+   * Get a file relative to the source file's directory
+   * @param string $sPath
+   * @return fs\file
+   */
+  protected function getSourceFile($sPath) {
+
+    return $this->getManager(static::FILE_MANAGER)->getFile($sPath, $this->getRoot()->getSourceDirectory());
+  }
 }
 
 /*

@@ -1,11 +1,9 @@
 <?php
 
 namespace sylma\parser\js\cached;
-use sylma\core, sylma\parser, sylma\dom;
+use sylma\core, sylma\parser\context;
 
-\Sylma::load('../../context/Basic.php', __DIR__);
-
-class Context extends parser\context\Basic {
+class Context extends context\Basic {
 
   public function __construct() {
 

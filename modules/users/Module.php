@@ -2,8 +2,6 @@
 namespace sylma\modules\users;
 use sylma\core;
 
-require_once('core/module/Filed.php');
-
 class Module extends core\module\Filed {
 
   const NS = 'http://www.sylma.org/modules/users';
@@ -14,6 +12,10 @@ class Module extends core\module\Filed {
     $this->setArguments('module.yml');
   }
 
+  /**
+   *
+   * @return boolean
+   */
   public function login() {
 
     $redirect = $this->getControler('redirect');

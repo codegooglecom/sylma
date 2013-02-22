@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\argument\parser\test;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
 
 class Standalone extends tester\Prepare {
 
@@ -13,7 +13,7 @@ class Standalone extends tester\Prepare {
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-    $this->setNamespace(parser\action::NS, 'le', false);
+    $this->setNamespace(action\handler::NS, 'le', false);
 
     //if (!$controler) $controler = $this;
     //if (!$controler) $controler = \Sylma::getControler('action');

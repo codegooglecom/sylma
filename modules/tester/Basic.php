@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
 abstract class Basic extends core\module\Domed implements core\argumentable {
 
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+
   const NS = 'http://www.sylma.org/modules/tester';
   protected $sTitle;
   protected $aFiles = array();

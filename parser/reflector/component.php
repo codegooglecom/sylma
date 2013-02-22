@@ -5,6 +5,7 @@ use sylma\core, sylma\dom, sylma\parser\reflector;
 
 interface component {
 
-  function __construct(reflector\domed $parent, dom\element $el, core\argument $arg = null, $bComponent = null, $bForeign = null, $bUnknown = null);
+  function __construct(reflector\domed $parser, core\argument $arg = null);
+  function parseRoot(dom\element $el);
 }
 

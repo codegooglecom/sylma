@@ -12,8 +12,6 @@ abstract class Filed extends Sessioned {
   const FILE_MANAGER = 'fs';
 
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
-  protected static $sArgumentFile = 'core/argument/Filed.php';
-
   protected static $sArgumentXMLClass = '\sylma\core\argument\parser\Handler';
 
   protected function createArgument($mArguments, $sNamespace = '') {
@@ -38,7 +36,6 @@ abstract class Filed extends Sessioned {
 
     if ($file->getExtension() === 'xml') {
 
-      static::$sFactoryFile = '/core/factory/Cached.php';
       static::$sFactoryClass = '\sylma\core\factory\Cached';
 
       $manager = $this->getManager(self::ARGUMENT_MANAGER);

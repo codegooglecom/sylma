@@ -5,8 +5,8 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common
 
 class Main extends reflector\handler\Elemented implements reflector\elemented, reflector\attributed {
 
-  protected static $sFactoryFile = '/core/factory/Reflector.php';
   protected static $sFactoryClass = '\sylma\core\factory\Reflector';
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
 
   const NS = 'http://www.sylma.org/parser/js/binder';
 
@@ -80,7 +80,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
     $window = $this->getRoot()->getWindow();
     $manager = $window->addControler('parser');
 
-    $call = $window->createCall($manager, 'getContext', '\parser\context', array(self::CONTEXT_ALIAS));
+    $call = $window->createCall($manager, 'getContext', '\\sylma\\parser\\context', array(self::CONTEXT_ALIAS));
     $this->setContext($call->getVar());
   }
 
@@ -249,7 +249,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
       else $aResult[] = $child;
     }
 
-    $this->getContext()->call('add', array($window->createString($aResult)), '\parser\context', false);
+    $this->getContext()->call('add', array($window->createString($aResult)), '\sylma\parser\context', false);
   }
 
   protected function reflectEvent(dom\element $el) {

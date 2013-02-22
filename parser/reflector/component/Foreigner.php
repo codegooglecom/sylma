@@ -8,20 +8,26 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
   protected static $sFactoryFile = '/core/factory/Cached.php';
   protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
-  protected $allowComponent = true;
+  protected $allowComponent = false;
   protected $parser;
 
-  public function __construct(reflector\domed $parser, dom\element $el, core\argument $arg = null, $bComponent = null, $bForeign = null, $bUnknown = null) {
+  public function __construct(reflector\domed $parser, core\argument $arg = null, $bComponent = null, $bForeign = null, $bUnknown = null) {
 
-    $this->allowComponent($bComponent);
-    $this->allowForeign($bForeign);
-    $this->allowUnknown($bUnknown);
+    //$this->allowComponent($bComponent);
+    //$this->allowForeign($bForeign);
+    //$this->allowUnknown($bUnknown);
 
     $this->setParser($parser);
     $this->setArguments($arg);
 
-    $this->setNamespace($el->getNamespace());
-    $this->parseRoot($el);
+    //$this->setNamespace($el->getNamespace());
+    //$this->parseRoot($el);
+  }
+
+  public function parseRoot(dom\element $el) {
+
+    $this->throwException('No root instructions');
+    //return $this->parseComponentRoot($el);
   }
 
   protected function lookupParserForeign($sNamespace) {
@@ -33,7 +39,7 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
 
     if ($this->allowComponent()) {
 
-      $result = $this->createComponent($el, $this->getParser());
+      $result = $this->loadComponent('component/' . $el->getName(), $el, $this->getParser());
     }
     else {
 
@@ -53,7 +59,7 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $this->parent;
   }
 
-  protected function parseRoot(dom\element $el) {
+  protected function parseComponentRoot(dom\element $el) {
 
     $children = $el->getChildren();
 
@@ -74,9 +80,12 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $mResult;
   }
 
-  protected function parseElementForeign(dom\element $el) {
+    /**
+   * @return \sylma\parser\languages\common\_window
+   */
+  protected function getWindow() {
 
-    parent::parseElementForeign($el);
+    return $this->getParser()->getWindow();
   }
 }
 

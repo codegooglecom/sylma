@@ -3,8 +3,6 @@
 namespace sylma\storage\fs\basic;
 use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('storage/fs/resource.php');
-
 abstract class Resource implements fs\resource {
 
   const NS = 'http://www.sylma.org/storage/fs/basic/resource';

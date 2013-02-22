@@ -1,6 +1,6 @@
 <?php
 
-use sylma\core, sylma\modules, sylma\dom, sylma\storage, sylma\parser;
+use sylma\core, sylma\modules, sylma\dom, sylma\storage;
 
 class Sylma {
 
@@ -127,13 +127,13 @@ class Sylma {
 
       case 'parser' :
 
-        $result = new parser\Manager;
+        $result = new \sylma\parser\Manager;
 
       break;
 
       case 'action' :
 
-        $result = new parser\action\Manager();
+        $result = new \sylma\parser\action\Manager();
 
       break;
 
@@ -289,8 +289,9 @@ class Sylma {
   public static function display($mValue) {
 
     $parser = self::getManager('parser');
-    $action = $parser ? $parser->getContext('action/current', false) : null;
-    $context = $action ? $action->getContext('message', false) : null;
+    $context = $parser ? $parser->getContext('messages', false) : null;
+    //$action = $parser ? $parser->getContext('action/current', false) : null;
+    //$context = $action ? $action->getContext('message', false) : null;
 
     if ($context) $context->add('<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message" tabindex="0">' . $mValue . '</div>');
     else echo $mValue . '<hr/>';

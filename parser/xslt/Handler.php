@@ -1,9 +1,7 @@
 <?php
 
 namespace sylma\parser\xslt;
-use sylma\core, sylma\dom, sylma\parser;
-
-require_once('dom/basic/handler/Rooted.php');
+use sylma\core, sylma\dom;
 
 class Handler extends dom\basic\handler\Rooted {
 

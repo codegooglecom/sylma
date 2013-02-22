@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\js\binder;
-use sylma\core, sylma\parser, sylma\modules;
+use sylma\core, sylma\modules;
 
 class Context extends modules\html\context\JS implements core\stringable {
 

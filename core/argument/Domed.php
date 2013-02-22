@@ -3,7 +3,7 @@
 namespace sylma\core\argument;
 use sylma\core, sylma\dom;
 
-class Domed extends Iterator implements dom\domable {
+abstract class Domed extends Iterator implements dom\domable {
 
   protected static $aPrefixes = array();
 
@@ -143,7 +143,7 @@ class Domed extends Iterator implements dom\domable {
 
     if (!$sNamespace) {
 
-      $this->throwException(t('No namespace defined for export as dom document'));
+      $this->throwException('No namespace defined for export as dom document');
     }
 
     $bChildren = false;

@@ -1,9 +1,7 @@
 <?php
 
 namespace sylma\modules\formater;
-use \sylma\core, \sylma\dom, sylma\parser;
-
-require_once('core/module/Domed.php');
+use \sylma\core, \sylma\dom;
 
 class Controler extends core\module\Domed {
 
@@ -89,6 +87,10 @@ class Controler extends core\module\Domed {
     else if ($val instanceof dom\collection) {
 
       $result = $this->loadDOMCollection($val);
+    }
+    else if ($val instanceof core\tokenable) {
+
+      $result = $val->asToken();
     }
 
     /*
@@ -234,7 +236,7 @@ class Controler extends core\module\Domed {
       $sResult = '[' . gettype($mVal) . ']';
     }
 
-    return '@var ' . $sResult;
+    return '@var ' . htmlentities($sResult);
   }
 
   public function limitString($mValue, $iLength = 50, $bXML = false) {

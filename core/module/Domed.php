@@ -19,8 +19,7 @@ abstract class Domed extends Filed {
    */
   protected $document = null;
 
-  //protected static $sArgumentClass = 'sylma\core\argument\Domed';
-  //protected static $sArgumentFile = 'core/argument/Domed.php';
+  protected static $sArgumentClass = 'sylma\core\argument\Readable';
 
   const ARGUMENTS = 'domed.yml';
 
@@ -30,10 +29,20 @@ abstract class Domed extends Filed {
 
   protected function loadDefaultArguments() {
 
-    $fs = $this->getManager(static::FILE_MANAGER);
-
-    $dir = $fs->extractDirectory(__file__);
-    $this->setArguments((string) $dir->getFile(self::ARGUMENTS));
+    $this->setArguments(array(
+    'classes' => array(
+      'action' => array(
+        'file' => '\sylma\parser\action\handler\Basic.php',
+        'name' => '\sylma\parser\action\handler\Basic'),
+      'template' => array(
+        'file' => '\sylma\parser\xslt\Processor.php',
+        'name' => '\sylma\parser\xslt\Processor'),
+      'options' => array(
+        'file' => '\sylma\dom\Argument.php',
+        'name' => '\sylma\dom\Argument'),
+      'document' => array(
+        'file' => '\sylma\dom\basic\handler\Rooted.php',
+        'name' => '\sylma\dom\basic\handler\Rooted'))));
   }
 
   /*protected function createArgument($mArguments, $sNamespace = '') {

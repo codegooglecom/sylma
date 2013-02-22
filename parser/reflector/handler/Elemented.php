@@ -64,6 +64,16 @@ abstract class Elemented extends Parsed {
     }
   }
 
+  public function loadComponent($sName, dom\element $el, $manager) {
+
+    return parent::loadComponent($sName, $el, $manager);
+  }
+
+  public function parseComponent(dom\element $el) {
+
+    return parent::parseComponent($el);
+  }
+
   protected function loadDirectory(core\argument $arg) {
 
     if ($arg and $sDirectory = $arg->read('directory', null, false)) {
@@ -75,41 +85,19 @@ abstract class Elemented extends Parsed {
 
   protected function loadArguments(core\argument $arg = null) {
 
-    if (!$sArguments = static::ARGUMENTS) {
+    if ($sArguments = static::ARGUMENTS) {
 
-      if ($arg) $sArguments = $arg->read('arguments', null, false);
+      if ($this->getDirectory('', false)) {
+
+        $manager = $this->getManager(static::ARGUMENT_MANAGER);
+        $this->setArguments($manager->createArguments($this->getFile($sArguments)));
+      }
+    }
+    else if ($arg and $sArguments = $arg->read('arguments', null, false)) {
+
+       $this->setArguments($sArguments);
     }
 
-    if ($sArguments && $this->getDirectory('', false)) {
-
-      $manager = $this->getManager(static::ARGUMENT_MANAGER);
-      $this->setArguments($manager->createArguments($this->getFile($sArguments)));
-    }
-  }
-
-  /**
-   * Get a file relative to the source file's directory
-   * @param string $sPath
-   * @return fs\file
-   */
-  protected function getSourceFile($sPath) {
-
-    return $this->getManager(static::FILE_MANAGER)->getFile($sPath, $this->getRoot()->getSourceDirectory());
-  }
-
-  public function parseFromChild(dom\element $el) {
-
-    return $this->parseElementSelf($el);
-  }
-
-  public function parseComponent(dom\element $el) {
-
-    if (!$this->allowComponent()) {
-
-      $this->throwException(sprintf('Component building not allowed with %s', $el->asToken()));
-    }
-
-    return $this->createComponent($el, $this);
   }
 
   public function getLastElement() {

@@ -9,4 +9,3 @@ interface window extends php\window, core\argumentable {
   function createVar(common\argumentable $val);
 }
 
-?>

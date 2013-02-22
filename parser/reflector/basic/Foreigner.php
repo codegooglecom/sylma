@@ -10,10 +10,6 @@ use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflecto
  */
 abstract class Foreigner extends Domed {
 
-  /**
-   * Handler for element creation with NS bug fixes
-   */
-  protected $foreignElements;
   protected $lastElement;
 
   protected $aAttributeParsers = array();
@@ -26,7 +22,7 @@ abstract class Foreigner extends Domed {
 
   abstract protected function lookupParserForeign($sNamespace);
 
-  public function parseRoot(dom\element $el) {
+  protected function parseRoot(dom\element $el) {
 
     return $this->parseElementSelf($el);
   }
@@ -34,24 +30,6 @@ abstract class Foreigner extends Domed {
   protected function parse(dom\node $node) {
 
     return $this->parseNode($node);
-  }
-
-  protected function createElement($sName, $mContent = null, array $aAttributes = array(), $sNamespace = '') {
-
-    if (!$sNamespace) {
-
-      $this->throwException('Element without namespace vorbidden');
-    }
-
-    if (!$this->foreignElements) {
-
-      $this->foreignElements = $this->getManager('dom')->createDocument();
-      $this->foreignElements->addElement('root');
-    }
-
-    $el = $this->foreignElements->createElement($sName, $mContent, $aAttributes, $sNamespace);
-
-    return $el;
   }
 
   protected function parseElementForeign(dom\element $el) {
@@ -64,7 +42,7 @@ abstract class Foreigner extends Domed {
     }
     else {
 
-      $result = parent::parseElementForeign($el);
+      $result = $this->parseElementUnknown($el);
     }
 
     return $result;

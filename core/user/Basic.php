@@ -3,9 +3,6 @@
 namespace sylma\core\user;
 use \sylma\core, sylma\storage\fs, sylma\core\functions;
 
-require_once('core/module/Argumented.php');
-require_once(dirname(__dir__) . '/user.php');
-
 class Basic extends core\module\Argumented implements core\user {
 
   const NS = 'http://www.sylma.org/core/user';

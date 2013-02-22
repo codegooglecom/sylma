@@ -20,5 +20,24 @@
 
     return $doc->asString($doc::STRING_HEAD) === $sDoc;
   </tst:test>
+  <tst:test name="Create from node">
+    $doc1 = $controler->createDocument((string) $controler->getFile('samples/hello.xml'));
+    $doc2 = $controler->createDocument($doc1->getRoot());
+
+    $sDoc = '&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;&lt;div&gt;hello&lt;/div&gt;&lt;/root&gt;';
+
+    return $doc2->asString($doc1::STRING_HEAD) === $sDoc;
+  </tst:test>
+  <tst:test name="Set content">
+    $doc1 = $controler->createDocument((string) $controler->getFile('samples/hello.xml'));
+    $doc2 = $controler->createDocument();
+    $doc2->set($doc1->getRoot());
+
+    $sDoc = '&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;&lt;div&gt;hello&lt;/div&gt;&lt;/root&gt;';
+
+    return $doc2->asString($doc1::STRING_HEAD) === $sDoc;
+  </tst:test>
 </tst:tests>
 

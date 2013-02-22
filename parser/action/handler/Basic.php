@@ -1,12 +1,12 @@
 <?php
 
 namespace sylma\parser\action\handler;
-use sylma\core, sylma\parser, sylma\storage\fs, sylma\dom;
+use sylma\core, sylma\parser\action, sylma\storage\fs, sylma\dom;
 
 /**
  * "Controller free" class.
  */
-class Basic extends core\module\Filed implements parser\action, core\stringable, core\tokenable {
+class Basic extends core\module\Filed implements action\handler, core\stringable, core\tokenable {
 
   const CONTROLER_ALIAS = 'action';
 
@@ -43,7 +43,7 @@ class Basic extends core\module\Filed implements parser\action, core\stringable,
     return $this->action;
   }
 
-  protected function setAction(parser\action\cached $action) {
+  protected function setAction(action\cached $action) {
 
     $this->action = $action;
   }
@@ -58,7 +58,7 @@ class Basic extends core\module\Filed implements parser\action, core\stringable,
     $this->aContexts = $aContexts;
   }
 
-  public function setParentParser(parser\action $parent) {
+  public function setParentParser(action\handler $parent) {
 
     $this->parentParser = $parent;
   }
@@ -144,7 +144,7 @@ class Basic extends core\module\Filed implements parser\action, core\stringable,
     return $mVal->asString();
   }
 
-  protected function parseObject(parser\action\cached $mVal) {
+  protected function parseObject(action\cached $mVal) {
 
     return $mVal->asObject();
   }

@@ -88,6 +88,11 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     return $this->create('variable', array($this, $sName, $this->loadReturn($mReturn)));
   }
 
+  public function addVar(common\argumentable $val, $sName = '') {
+
+    $this->throwException('Not yet implemented');
+  }
+
   public function assignProperty($sPath, $mValue) {
 
     $val = $this->argToInstance($mValue);

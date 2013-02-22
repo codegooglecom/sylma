@@ -3,10 +3,11 @@
 namespace sylma\dom;
 use sylma\core, sylma\core\functions\path;
 
-require_once('core/module/Filed.php');
 require_once('core/functions/Path.php');
 
 class Controler extends core\module\Domed {
+
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
 
   const NS = 'http://www.sylma.org/dom';
   const SETTINGS = 'settings.yml';

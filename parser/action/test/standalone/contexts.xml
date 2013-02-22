@@ -5,7 +5,7 @@
     <tst:prepare>
       $action = $controler->getAction('samples/context01');
       $action->setContexts(array('css' => new \sylma\parser\context\Basic));
-      
+
       $controler->setArgument('action', $action);
     </tst:prepare>
     <tst:node>
@@ -14,7 +14,7 @@
     <tst:expected>
       $action = $controler->getArgument('action');
       $node = $controler->getArgument('node');
-      
+
       return
         $controler->compareNodes($action->asDOM(), $node) &amp;&amp;
         $action->getContext('css')->asArray() === array('hello');
@@ -24,7 +24,7 @@
     <tst:prepare>
       $action = $controler->getAction('samples/context02');
       $action->setContexts(array('css' =>  new \sylma\parser\context\Basic, 'js' => new \sylma\parser\context\Basic));
-      
+
       $controler->setArgument('action', $action);
     </tst:prepare>
     <tst:node>
@@ -41,11 +41,11 @@
         $action->getContext('js')->asArray() === array('bonsoir');
     </tst:expected>
   </tst:test>
-  <tst:test name="using short call">
+  <tst:test name="using short call" disabled="true">
     <tst:prepare>
       $action = $controler->getAction('samples/context03');
       $action->setContexts(array('css' =>  new \sylma\parser\context\Basic));
-      
+
       $controler->setArgument('action', $action);
     </tst:prepare>
     <tst:node>
@@ -54,6 +54,8 @@
     <tst:expected>
       $action = $controler->getArgument('action');
       $node = $controler->getArgument('node');
+
+\Sylma::dsp($action->getContext('css')->asArray());
 
       return
         $controler->compareNodes($action->asDOM(), $node) &amp;&amp;

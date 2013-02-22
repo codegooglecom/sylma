@@ -25,7 +25,7 @@ interface domed {
   function getRoot();
 
   /**
-   * @return common\_window
+   * @return \sylma\parser\languages\common\_window
    */
   function getWindow();
 

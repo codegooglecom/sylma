@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\test\standalone;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use sylma\modules\tester, sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\action;
 
 require_once('modules/tester/Prepare.php');
 
@@ -15,11 +15,9 @@ class Standalone extends tester\Prepare {
 
     \Sylma::getControler('dom');
 
-    require_once('parser/action.php');
-
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-    $this->setNamespace(parser\action::NS, 'le', false);
+    $this->setNamespace(action\handler::NS, 'le', false);
 
     if (!$controler) $controler = $this;
     //if (!$controler) $controler = \Sylma::getControler('action');

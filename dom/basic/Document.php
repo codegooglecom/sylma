@@ -18,6 +18,8 @@ class Document extends \DOMDocument implements dom\document {
 
   public function __call($sMethod, $aArgs) {
 
+    $this->throwException('Auto call not allowed with ' . $sMethod);
+
     $mResult = null;
 
     if ($root = $this->getRoot()) {
@@ -115,7 +117,7 @@ class Document extends \DOMDocument implements dom\document {
   public function throwException($sMessage, array $aPath = array()) {
 
     $handler = $this->getHandler();
-    $aPath[] = '@file ' . $this->getPath();
+    //$aPath[] = '@file ' . $this->getPath();
 
     $handler->throwException($sMessage, $aPath);
   }

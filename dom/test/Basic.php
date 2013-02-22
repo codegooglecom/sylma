@@ -24,5 +24,10 @@ class Basic extends tester\Basic {
 
     return parent::getFile($sPath, $bDebug);
   }
+
+  public function createDocument($mContent = null) {
+
+    return parent::createDocument($mContent);
+  }
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\parser, sylma\parser\languages\common, sylma\parser\languages\php;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
 abstract class Domed extends Main {
 
@@ -129,6 +129,20 @@ abstract class Domed extends Main {
 
       $aResult[] = $mResult;
     }
+  }
+
+  protected function loadElementForeign(dom\element $el) {
+
+    if ($parser = $this->lookupParserForeign($el->getNamespace())) {
+
+      $mResult = $parser->parseRoot($el);
+    }
+    else {
+
+      $mResult = $this->parseElementUnknown($el);
+    }
+
+    return $mResult;
   }
 
   protected function parseChildrenText(dom\text $node, array &$aResult, $bContext = false) {

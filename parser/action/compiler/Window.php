@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\parser, sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
 
 class Window extends php\basic\window\Domed {
 
@@ -189,11 +189,7 @@ class Window extends php\basic\window\Domed {
       }
 
       $result = $this->createCall($this->addControler(static::ACTION_ALIAS), 'loadStringable', 'php-string', array($val, $iMode));
-    }/*
-    else if ($val instanceof core\stringable) {
-
-      $result = $this->createString($val->asString());
-    }*/
+    }
     else if ($val instanceof dom\node) {
 
       $result = $this->argToInstance($val);
@@ -220,14 +216,7 @@ class Window extends php\basic\window\Domed {
 
     if (is_array($val)) {
 
-      // concat
-
-      foreach ($val as $mSub) {
-
-        $aResult[] = $this->convertToDOM($mSub, $bTemplate);
-      }
-
-      $result = $this->createString($aResult);
+      $result = $this->convertArrayToDOM($val, $bTemplate);
     }
     else if (is_object($val)) {
 
@@ -239,6 +228,20 @@ class Window extends php\basic\window\Domed {
     }
 
     return $result;
+  }
+
+  /**
+   * Concat
+   * @param array $aValue
+   */
+  protected function convertArrayToDOM(array $aValue, $bTemplate) {
+
+    foreach ($aValue as $mSub) {
+
+      $aResult[] = $this->convertToDOM($mSub, $bTemplate);
+    }
+
+    return $this->createString($aResult);
   }
 
   protected function convertObjectToDOM($val, $bTemplate = false) {
@@ -264,6 +267,10 @@ class Window extends php\basic\window\Domed {
     else if ($val instanceof common\argumentable) {
 
       $result = $val->asArgument();
+    }
+    else if ($val instanceof core\arrayable) {
+
+      $result = $val->asArray();
     }
     else {
 
