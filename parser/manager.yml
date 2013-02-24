@@ -11,7 +11,7 @@ namespaces :
     'http://2013.sylma.org/template' : template/elemented
     'http://2013.sylma.org/schema/ssd' : schema/ssd
     'http://2013.sylma.org/schema/xsd' : schema/xsd/elemented
-    'http://2013.sylma.org/schema/template' : schema/template
+    #'http://2013.sylma.org/schema/template' : schema/template
     'http://2013.sylma.org/view' : view
     'http://2013.sylma.org/storage/sql/view' : sql/resource
   manager :

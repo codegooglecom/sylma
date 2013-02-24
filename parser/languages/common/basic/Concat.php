@@ -13,28 +13,6 @@ class Concat extends common\basic\Controled {
     $this->setValues($aContent);
   }
 
-  protected function flattenArray(array $aContent) {
-
-    $aResult = array();
-
-    foreach ($aContent as $mContent) {
-
-      if (is_array($mContent)) {
-
-        if ($mContent) {
-
-          $aResult = array_merge($aResult, $this->flattenArray($mContent));
-        }
-      }
-      else if (!is_null($mContent)) {
-
-        $aResult[] = $mContent;
-      }
-    }
-
-    return $aResult;
-  }
-
   protected function fusionStrings(array $aContent) {
 
     $aResult = array();
@@ -86,7 +64,7 @@ class Concat extends common\basic\Controled {
 
   protected function convertContent(array $aContent) {
 
-    $aContent = $this->flattenArray($aContent);
+    $aContent = $this->getControler()->flattenArray($aContent);
     $aContent = $this->fusionStrings($aContent);
 
     $aResult = array();
@@ -101,7 +79,7 @@ class Concat extends common\basic\Controled {
 
   protected function setValues($aValues) {
 
-    $this->aValues = $this->convertContent($this->flattenArray($aValues));
+    $this->aValues = $this->convertContent($aValues);
   }
 
   public function asArgument() {

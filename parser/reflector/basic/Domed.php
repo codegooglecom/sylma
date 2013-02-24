@@ -39,6 +39,9 @@ abstract class Domed extends Componented {
       if ($bNamespace) $this->setNamespace($el->getNamespace(), static::PREFIX);
 
       $doc = $this->createDocument($el);
+      $doc->registerNamespaces($el->getHandler()->getNS());
+      $doc->registerNamespaces($this->getNS());
+
       $result = $doc->getRoot();
 
       $this->elementDocument = $doc;
@@ -128,16 +131,7 @@ abstract class Domed extends Componented {
 
   protected function parseElementSelf(dom\element $el) {
 
-    if ($this->allowComponent()) {
-
-      $result = $this->parseComponent($el);
-    }
-    else {
-
-      $this->throwException('Cannot handle sub element');
-    }
-
-    return $result;
+    return $this->parseComponent($el);
   }
 
   protected function allowForeign($mValue = null) {

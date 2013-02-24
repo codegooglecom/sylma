@@ -11,7 +11,7 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
   protected $allowComponent = false;
   protected $parser;
 
-  public function __construct(reflector\domed $parser, core\argument $arg = null, $bComponent = null, $bForeign = null, $bUnknown = null) {
+  public function __construct(reflector\domed $parser, core\argument $arg = null, array $aNamespaces = array()) {
 
     //$this->allowComponent($bComponent);
     //$this->allowForeign($bForeign);
@@ -19,6 +19,8 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
 
     $this->setParser($parser);
     $this->setArguments($arg);
+
+    $this->setUsedNamespaces($aNamespaces);
 
     //$this->setNamespace($el->getNamespace());
     //$this->parseRoot($el);
@@ -32,14 +34,19 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
 
   protected function lookupParserForeign($sNamespace) {
 
-    return $this->getParser()->lookupParser($sNamespace);
+    if (!$result = $this->getParser()->lookupParser($sNamespace)) {
+
+      $result = $this->getParser()->createParser($sNamespace);
+    }
+
+    return $result;
   }
 
   protected function parseComponent(dom\element $el) {
 
     if ($this->allowComponent()) {
 
-      $result = $this->loadComponent('component/' . $el->getName(), $el, $this->getParser());
+      $result = $this->loadComponent($el->getName(), $el, $this->getParser());
     }
     else {
 

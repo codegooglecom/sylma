@@ -7,6 +7,8 @@ interface _window extends scope {
 
   const CONTEXT_DEFAULT = 'default';
 
+  function flattenArray(array $aContent);
+
   /**
    * Add content to current scope
    * @param mixed $mVal

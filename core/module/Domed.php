@@ -64,6 +64,7 @@ abstract class Domed extends Filed {
 
   /**
    * Create a DOM document with content sent to it
+   * @return \sylma\dom\handler
    */
   protected function createDocument($mContent = null) {
 

@@ -17,6 +17,12 @@ abstract class Namespaced extends core\module\Domed {
     return $this->aManagedNS;
   }
 
+  protected function setUsedNamespaces(array $aNamespaces) {
+
+    $this->setNamespaces($aNamespaces);
+    $this->aManagedNS = $aNamespaces;
+  }
+
   protected function useNamespace($sNamespace) {
 
     return in_array($sNamespace, $this->aManagedNS);

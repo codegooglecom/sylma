@@ -19,7 +19,8 @@ class Element extends \DOMElement implements dom\element {
     } catch (core\exception $e) {
 
       //$e->save(false);
-      \Sylma::throwException('Lost DOM Document');
+      //\Sylma::throwException('Lost DOM Document');
+      $doc = null;
     }
 
     return $doc;
@@ -81,10 +82,7 @@ class Element extends \DOMElement implements dom\element {
       }
       catch (core\exception $e) {
 
-        $aSender = array();
-        foreach ($this->getHandler()->mergeNamespaces() as $sPrefix => $sNamespace) $aSender[] = $sPrefix . ' => ' . $sNamespace;
-        
-        $this->throwException(sprintf('XPath error with "%s" : %s', $sQuery, $e->getMessage()), $aSender);
+        $this->catchError($e, $sQuery);
       }
 
       $this->getControler()->addStat('evaluation', array($sQuery, $aNS));
@@ -115,6 +113,14 @@ class Element extends \DOMElement implements dom\element {
     return $sResult;
   }
 
+  protected function catchError(core\exception $e, $sQuery) {
+
+    $aSender = array();
+    foreach ($this->getHandler()->mergeNamespaces() as $sPrefix => $sNamespace) $aSender[] = $sPrefix . ' => ' . $sNamespace;
+
+    $this->throwException(sprintf('XPath error with "%s" : %s', $sQuery, $e->getMessage()), $aSender);
+  }
+
   public function queryx($sQuery = '', array $aNS = array(), $bDebug = true, $bConvert = true) {
 
     if ($bConvert) $result = $this->getControler()->create('collection');
@@ -123,9 +129,16 @@ class Element extends \DOMElement implements dom\element {
     if ($sQuery) {
 
       $aNS = $this->mergeNamespaces($aNS);
-
       $xpath = $this->buildXPath($aNS);
-      $domlist = $xpath->query($sQuery, $this);
+
+      try {
+
+        $domlist = $xpath->query($sQuery, $this);
+      }
+      catch (core\exception $e) {
+
+        $this->catchError($e, $sQuery);
+      }
 
       $this->getControler()->addStat('query', array($sQuery, $aNS));
 

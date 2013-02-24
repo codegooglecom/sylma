@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\dom\basic\handler;
-use \sylma\dom, \sylma\storage\fs, \sylma\core;
+use sylma\dom, sylma\storage\fs, sylma\core;
 
 /**
  * Existenz of this class mainly due to https://bugs.php.net/bug.php?id=28473

@@ -95,37 +95,41 @@ class Readable extends Domed implements core\argument {
   public function locateValue(array &$aPath, $bDebug) {
 
     $mCurrent = $this->aArray;
+    $mResult = null;
 
     do {
 
       $sKey = current($aPath);
       $mCurrent = $this->parseValue($aPath, $mCurrent, $bDebug);
+      $bArray = is_array($mCurrent);
 
-      if ($sKey !== false && is_array($mCurrent) && array_key_exists($sKey, $mCurrent)) {
+      if ($bArray && array_key_exists($sKey, $mCurrent)) {
 
-        $mCurrent = $mCurrent[$sKey];
+        $mResult = $mCurrent = $mCurrent[$sKey];
       }
       else {
 
-        if (is_null($mCurrent)) {
+        if (is_null($mCurrent) || $bArray) {
 
+          if ($bDebug) {
+
+            $this->throwException(sprintf('No result for path "%s"', implode('/', $aPath)));
+          }
+
+          $mResult = null;
           break;
+        }
+        else {
+
+          $mResult = $mCurrent;
         }
       }
 
-    } while (each($aPath));
+    } while (next($aPath));
 
     if (each($aPath) && $bDebug) {
 
       $this->throwException(sprintf('Path "%s" not found', implode('/', $aPath)));
-    }
-    else if (is_null($mCurrent) && $bDebug) {
-
-      $this->throwException(sprintf('No result for path "%s"', implode('/', $aPath)));
-    }
-    else {
-
-      $mResult = $mCurrent;
     }
 
     return $mResult;

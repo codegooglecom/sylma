@@ -17,7 +17,7 @@ class Controled extends Namespaced implements core\controled {
 
     if ($controler === $this) {
 
-      $this->throwException(t('Cannot use controler as himself'));
+      //$this->throwException('Cannot use controler as himself');
     }
 
     if ($sName) $this->aControlers[$sName] = $controler;

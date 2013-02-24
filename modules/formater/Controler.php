@@ -66,7 +66,7 @@ class Controler extends core\module\Domed {
     if ($val instanceof core\argument) {
 
       $aResult = $val->query();
-      $result = $this->loadArray($aResult);
+      $result = is_array($aResult) ? $this->loadArray($aResult) : $this->loadVar($aResult);
     }
     else if ($val instanceof dom\handler) {
 
@@ -82,7 +82,8 @@ class Controler extends core\module\Domed {
     }
     else if ($val instanceof dom\node) {
 
-      $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+      if ($val->getDocument()) $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+      else $result = '[Lost DOM Element]';
     }
     else if ($val instanceof dom\collection) {
 

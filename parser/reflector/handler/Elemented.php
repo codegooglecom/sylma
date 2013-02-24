@@ -64,11 +64,6 @@ abstract class Elemented extends Parsed {
     }
   }
 
-  public function loadComponent($sName, dom\element $el, $manager) {
-
-    return parent::loadComponent($sName, $el, $manager);
-  }
-
   public function parseComponent(dom\element $el) {
 
     return parent::parseComponent($el);

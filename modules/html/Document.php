@@ -151,6 +151,10 @@ class Document extends action\handler\Basic {
 
       $result = $this->loadHeaders('text/html') . "\n" . $this->cleanResult($doc);
     }
+    else if (\Sylma::read('debug/enable')) {
+
+      echo 'No result document';
+    }
 
     return $result;
   }

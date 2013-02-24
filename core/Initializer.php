@@ -52,6 +52,11 @@ class Initializer extends module\Filed {
 
   public function run($settings) {
 
+    if (\Sylma::read('debug/enable')) {
+
+      require_once('debug/Functions.php');
+    }
+
     $this->setArguments($settings);
     $this->setErrorReporting();
 

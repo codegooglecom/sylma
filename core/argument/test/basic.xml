@@ -28,6 +28,17 @@
       return $arg->read('abc') === $file
     </tst:expected>
   </tst:test>
+  <tst:test name="Get an non-existing key" catch="\sylma\core\exception">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array('abc' => 123)));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $arg->read('def');
+
+      return 0
+    </tst:expected>
+  </tst:test>
   <tst:test name="Set an object">
     <tst:prepare>
       $file = $controler->getFile('../samples/class.yml');

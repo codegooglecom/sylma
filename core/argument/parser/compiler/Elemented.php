@@ -6,6 +6,7 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common
 class Elemented extends reflector\handler\Elemented implements reflector\elemented {
 
   const NS = 'http://2013.sylma.org/core/argument';
+  const FACTORY_NS = 'http://2013.sylma.org/core/factory';
   //const PREFIX = 'arg';
 
   protected $allowForeign = true;
@@ -111,10 +112,14 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   protected function parseChildrenElementForeign(dom\element $el, array &$aResult) {
 
+    if ($el->getNamespace() !== self::FACTORY_NS) {
+
+      $this->throwException(sprintf('Bad child %s only factory allowed', $el->asToken()));
+    }
+
     $mResult = $this->parseElementForeign($el);
 
     if (!is_null($mResult)) {
-
 
       $aResult = array_merge($aResult, $mResult);
     }

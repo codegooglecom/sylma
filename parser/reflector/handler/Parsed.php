@@ -47,7 +47,7 @@ abstract class Parsed extends reflector\basic\Foreigner {
 
     return $this->parseElementSelf($el);
   }
-  
+
   protected function lookupParserForeign($sNamespace) {
 
     $result = null;
@@ -88,7 +88,7 @@ abstract class Parsed extends reflector\basic\Foreigner {
     return $result;
   }
 
-  protected function createParser($sNamespace) {
+  public function createParser($sNamespace) {
 
     $manager = $this->getManager('parser');
     $result = $manager->getParser($sNamespace, $this->getRoot(), $this, false);

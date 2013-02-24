@@ -40,8 +40,12 @@ abstract class Componented extends Namespaced {
 
   protected function createComponent($sAlias, $manager) {
 
-    $class = $this->getFactory()->findClass($sAlias);
-    $result = $this->create($sAlias, array($manager, $class, false, $this->allowForeign(), $this->allowUnknown()));
+    if (!$class = $this->getFactory()->findClass($sAlias, '', false)) {
+
+      $this->throwException(sprintf('Class not found for component "%s"', $sAlias));
+    }
+
+    $result = $this->create($sAlias, array($manager, $class, $this->getUsedNamespaces()));
 
     return $result;
   }

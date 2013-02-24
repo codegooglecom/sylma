@@ -33,7 +33,7 @@ class Reflector extends Cached {
     }
   }
 
-  protected function lookupClass($sPath, core\argument $args) {
+  protected function lookupClass($sPath, core\argument $args, $bDebug = true) {
 
     $args->registerToken(self::DIRECTORY_TOKEN);
     $args->registerToken(self::CLASSBASE_TOKEN);

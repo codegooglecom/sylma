@@ -3,8 +3,6 @@
 namespace sylma\modules\tester;
 use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('Basic.php');
-
 abstract class Prepare extends Basic {
 
   protected function test(dom\element $test, $sExpected, $controler, dom\document $doc, fs\file $file) {

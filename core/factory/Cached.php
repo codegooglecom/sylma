@@ -46,23 +46,18 @@ class Cached extends core\module\Argumented implements core\factory {
    * @param string $sDirectory
    * @return \sylma\core\argument
    */
-  public function findClass($sName, $sDirectory = '') {
-
-    $result = null;
+  public function findClass($sName, $sDirectory = '', $bDebug = true) {
 
     if (!$this->getArguments()) {
 
       $this->throwException(sprintf('Cannot build object @class %s. No argument defined', $sName));
     }
 
-    // set class name
-    if (!$result = $this->loadClass($sName, $this->getArguments())) {
+    if ($result = $this->loadClass($sName, $this->getArguments(), $bDebug)) {
 
-      $this->throwException(sprintf('Class %s cannot be load', $sName));
+      $this->loadClassBase($result);
+      $this->loadFileBase($result, $sDirectory);
     }
-
-    $this->loadClassBase($result);
-    $this->loadFileBase($result, $sDirectory);
 
     return $result;
   }
@@ -82,22 +77,22 @@ class Cached extends core\module\Argumented implements core\factory {
    * @param argument $args
    * @return core\argument
    */
-  protected function loadClass($sName, core\argument $args) {
+  protected function loadClass($sName, core\argument $args, $bDebug) {
 
     $aPath = explode('/', $sName);
     array_unshift($aPath, null);
 
-    $sPath = implode('/classes/', $aPath);
-    $class = $this->lookupClass($sPath, $args);
+    $sPath = substr(implode('/classes/', $aPath), 1);
+    $class = $this->lookupClass($sPath, $args, $bDebug);
 
     return $class;
   }
 
-  protected function lookupClass($sPath, core\argument $args) {
+  protected function lookupClass($sPath, core\argument $args, $bDebug = true) {
 
-    if (!$result = $args->get($sPath, false)) {
+    if (!$result = $args->get($sPath, false) and $bDebug) {
 
-      $this->throwException(sprintf('Cannot build object alias %s. Path not found', $sPath));
+      $this->throwException(sprintf('Cannot build object alias %s. Path not found', $sPath), array(), 4);
     }
 
     return $result;
@@ -167,12 +162,12 @@ class Cached extends core\module\Argumented implements core\factory {
         //$this->throwException(sprintf('Cannot load @class %s. @file %s not found !', $sClass, $sFile));
       }
     }
-
-    if (!interface_exists($sClass) && !class_exists($sClass, false)) {
+/*
+    if (!class_exists($sClass, false)) {
 
       \Sylma::throwException(sprintf('@class %s has not been loaded !', $sClass));
     }
-
+*/
     return true;
   }
 

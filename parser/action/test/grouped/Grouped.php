@@ -3,8 +3,6 @@
 namespace sylma\parser\action\test\grouped;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
 
-require_once('modules/tester/Basic.php');
-
 class Grouped extends tester\Basic {
 
   const NS = 'http://www.sylma.org/parser/action/test/grouped';

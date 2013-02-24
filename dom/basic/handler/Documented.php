@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\dom\basic\handler;
-use \sylma\dom, \sylma\core;
+use sylma\dom, sylma\core;
 
 /**
  * Extends main dom\element root's methods

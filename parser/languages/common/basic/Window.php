@@ -31,6 +31,28 @@ abstract class Window extends core\module\Domed {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
+  public function flattenArray(array $aContent) {
+
+    $aResult = array();
+
+    foreach ($aContent as $mContent) {
+
+      if (is_array($mContent)) {
+
+        if ($mContent) {
+
+          $aResult = array_merge($aResult, $this->flattenArray($mContent));
+        }
+      }
+      else if (!is_null($mContent)) {
+
+        $aResult[] = $mContent;
+      }
+    }
+
+    return $aResult;
+  }
+
   public function add($mVal) {
 
     return $this->getScope()->addContent($mVal);

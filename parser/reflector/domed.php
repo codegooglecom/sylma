@@ -15,9 +15,15 @@ interface domed {
 
   /**
    * @param string $sNamespace
-   * @return reflector\domed
+   * @return reflector\domed|null
    */
   function lookupParser($sNamespace);
+
+  /**
+   * @param string $sNamespace
+   * @return reflector\domed|null
+   */
+  function createParser($sNamespace);
 
   /**
    * @return reflector\documented
