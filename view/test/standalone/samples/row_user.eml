@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns="http://www.sylma.org"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+>
+  <view:view>
+    <sql:resource>
+      <sql:source>test</sql:source>
+      <sql:id>2</sql:id>
+    </sql:resource>
+    <view:schema>user.xsd</view:schema>
+    <view:template>
+      <div>
+        <h3><stp:apply select="name"/></h3>
+        <tpl:variable name="email"><stp:apply select="email"/></tpl:variable>
+        <a href="mailto:{$email}"><tpl:apply select="$email"/></a>
+      </div>
+    </view:template>
+  </view:view>
+</le:action>

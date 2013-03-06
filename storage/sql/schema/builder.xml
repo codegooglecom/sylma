@@ -1,0 +1,24 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/schema/xsd"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>/#sylma/schema/xsd/builder.xml</arg:import>
+  <cls:classes>
+    <cls:base>\sylma\storage\sql\schema</cls:base>
+    <cls:class alias="elemented" name="Handler">
+      <cls:classes>
+        <component>
+          <cls:classes>
+            <cls:class alias="table" name="component\Table"/>
+            <cls:class alias="field" name="component\Field"/>
+            <cls:class alias="complexType" name="component\ComplexType"/>
+            <cls:class alias="particle" name="component\Particle"/>
+            <cls:class alias="import" name="\sylma\schema\xsd\component\Import"/>
+            <cls:class alias="foreign" name="component\Foreign"/>
+          </cls:classes>
+        </component>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>

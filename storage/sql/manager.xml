@@ -1,0 +1,12 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/storage/sql"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <cls:classes>
+    <cls:class alias="insert" name="query/Insert"/>
+    <cls:class alias="select" name="query/Select"/>
+    <cls:class alias="update" name="query/Update"/>
+    <cls:class alias="delete" name="query/Delete"/>
+  </cls:classes>
+</arg:argument>
