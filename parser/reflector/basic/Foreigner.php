@@ -120,7 +120,9 @@ abstract class Foreigner extends Domed {
 
     if ($this->useForeignAttributes($el)) {
 
-      $mResult = $this->parseAttributesForeign($el, $newElement);
+      $aForeigns = $this->getForeignAttributes($el, $newElement);
+      $mResult = $this->parseAttributesForeign($el, $newElement, $aForeigns);
+
     }
     else {
 
@@ -150,30 +152,33 @@ abstract class Foreigner extends Domed {
     return $mResult;
   }
 
-  /**
-   *
-   * @param dom\element $el
-   * @return dom\element|common\_scope
-   */
-  protected function parseAttributesForeign(dom\element $el, dom\element $newElement) {
+  protected function getForeignAttributes(dom\element $source, dom\element $target = null, $bRemove = false) {
 
-    $aForeigns = array();
+    $aResult = array();
 
-    foreach ($el->getAttributes() as $attr) {
+    foreach ($source->getAttributes() as $attr) {
 
       $sNamespace = $attr->getNamespace();
 
       if (!$sNamespace || $sNamespace == $this->getNamespace()) {
 
-        $newElement->add($this->parseAttribute($attr));
+        if ($target) $target->add($this->parseAttribute($attr));
       }
       else {
 
-        $aForeigns[$sNamespace] = true;
+        $aResult[$sNamespace] = true;
+        if ($bRemove) $attr->remove();
       }
     }
 
-    $mResult = $newElement;
+    return $aResult;
+  }
+
+  /**
+   * @param dom\element $el
+   * @return dom\element|common\_scope
+   */
+  protected function parseAttributesForeign(dom\element $el, $content, array $aForeigns) {
 
     $aParsers = array();
 
@@ -184,7 +189,7 @@ abstract class Foreigner extends Domed {
       if ($parser) {
 
         $aParsers[] = $parser;
-        $mResult = $parser->parseAttributes($el, $newElement, $mResult);
+        $content = $parser->parseAttributes($el, $content, $content);
       }
       else {
 
@@ -194,7 +199,7 @@ abstract class Foreigner extends Domed {
 
     $this->setAttributeParsers($aParsers);
 
-    return $mResult;
+    return $content;
   }
 
   protected function getAttributeParsers() {

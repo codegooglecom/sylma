@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\parser\languages\php\basic\window;
+namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common, sylma\storage\fs;
 
-class Basic extends common\basic\Window implements php\window {
+class Window extends common\basic\Window implements php\window {
 
   protected static $sArgumentClass = '\sylma\parser\languages\php\Argument';
   protected static $sArgumentFile = 'parser/languages/php/Argument.php';
@@ -86,6 +86,11 @@ class Basic extends common\basic\Window implements php\window {
 
   public function createCall($obj, $sMethod, $mReturn, array $aArguments = array()) {
 
+    if (is_null($obj)) {
+
+      $this->throwException('NULL sent instead of callable object');
+    }
+
     $result = $this->create('call-method', array($this, $obj, $sMethod, $this->loadReturn($mReturn), $aArguments));
 
     return $result;
@@ -108,6 +113,39 @@ class Basic extends common\basic\Window implements php\window {
   public function callClosure($closure, common\_instance $return, array $aArguments = array()) {
 
     return $this->create('call', array($this, $closure, $return, $aArguments));
+  }
+
+  /**
+   * Temp for common\concat use
+   * @param type $mValue
+   * @return type
+   */
+  public function convertToString($mValue) {
+
+    if (is_string($mValue)) {
+
+      $result = $this->createString($mValue);
+    }
+    else {
+
+      $result = $mValue;
+    }
+
+    return $result;
+  }
+
+  protected function argToString($mValue) {
+
+    if ($mValue instanceof core\stringable) {
+
+      $result = $this->create('string', array($this, $mValue));
+    }
+    else {
+
+      $result = $this->create('concat', array($this, $mValue));
+    }
+
+    return $result;
   }
 
   public function createCondition($test, $content = null) {
@@ -199,7 +237,8 @@ class Basic extends common\basic\Window implements php\window {
 
     if (!array_key_exists($sName, $this->aInterfaces)) {
 
-      $this->aInterfaces[$sName] = $this->create('interface', array($this->getManager(), $sName, $file));
+      $sNamespace = $this->getManager()->getNamespace();
+      $this->aInterfaces[$sName] = $this->create('interface', array($this->getManager(), $sName, $sNamespace, $file));
     }
 
     return $this->aInterfaces[$sName];

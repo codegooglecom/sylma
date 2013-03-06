@@ -106,7 +106,7 @@
         $obj2 instanceof \sylma\core\factory\parser\test\samples\Sample2
     </tst:expected>
   </tst:test>
-  <tst:test name="Argument to class">
+  <tst:test name="Argument into class">
     <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
       <cls:classes>
         <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1">
@@ -121,6 +121,27 @@
       return
         $obj instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
         $args->read('hello') === 'world'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Import into class" disabled="true">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="hello" name="\sylma\core\factory\parser\test\samples\Sample1">
+          <cls:classes>
+            <abc>
+              <arg:import>samples/simple1.xml</arg:import>
+            </abc>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('hello');
+      $obj2 = $controler->create('hello/abc/world');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\Sample2
     </tst:expected>
   </tst:test>
 </tst:tests>

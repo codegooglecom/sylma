@@ -1,7 +1,6 @@
 debug :
-  show : false
   run : true
-  update : true
+  update : false
 namespaces :
   reflector :
     'http://2013.sylma.org/parser/security' : security
@@ -12,41 +11,43 @@ namespaces :
     'http://2013.sylma.org/schema/ssd' : schema/ssd
     'http://2013.sylma.org/schema/xsd' : schema/xsd/elemented
     #'http://2013.sylma.org/schema/template' : schema/template
-    'http://2013.sylma.org/view' : view
+    'http://2013.sylma.org/view' : view/elemented
     'http://2013.sylma.org/storage/sql/view' : sql/resource
   manager :
-    'http://www.w3.org/2001/XMLSchema' : schema/xsd
     'http://2013.sylma.org/template' : template
     'http://www.sylma.org/parser/action' : action
     'http://2013.sylma.org/core/argument' : argument
+    'http://2013.sylma.org/view' : view
+    'http://www.w3.org/2001/XMLSchema' : schema/xsd
+    'http://2013.sylma.org/storage/sql/schema' : sql/schema
   cached :
     'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
 classes :
-  sql :
-    classes :
-      resource :
-        name : \sylma\storage\sql\view\Resource
-        arguments : /#sylma/storage/sql/view/reflector.xml
   argument :
-    name : \sylma\core\argument\parser\Manager
+    name : \sylma\core\argument\parser\compiler\Documented
   view :
-    name : \sylma\view\parser\Elemented
-    directory : /#sylma/view
+    name : \sylma\view\parser\Builder
+    directory : /#sylma/view/parser
+    arguments : /#sylma/view/parser/manager.xml
+    classes :
+      elemented :
+        name : \sylma\view\parser\Elemented
+        arguments : /#sylma/view/parser/manager.xml
   schema :
     classes :
       ssd :
         name : schema\ssd\Elemented
       xsd :
-        name : \sylma\schema\Manager
-        directory : /#sylma/schema/xsd
-      template :
-        name : schema\parser\handler\Templated
-  action :
-    name : \sylma\parser\compiler\Builder
-    directory : /#sylma/action
+        name : \sylma\schema\Builder
+        arguments : /#sylma/schema/xsd/builder.xml
+  sql :
     classes :
-      elemented :
-        name : \sylma\action\parser\handler\Elemented
+      resource :
+        name : \sylma\storage\sql\view\Resource
+        arguments : /#sylma/storage/sql/template/builder.xml
+      schema :
+        name : \sylma\schema\Builder
+        arguments : /#sylma/storage/sql/schema/builder.xml
 
   security :
     name : \sylma\parser\security\Domed
@@ -65,8 +66,6 @@ classes :
   factory :
     name : \sylma\core\factory\parser\Main
   template :
-    name : \sylma\parser\compiler\Manager
-    directory : /#sylma/template
     classes :
       elemented :
-        name : \sylma\template\parser\handler\Elemented
+        name : \sylma\template\parser\Elemented

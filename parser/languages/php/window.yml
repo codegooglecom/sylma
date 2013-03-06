@@ -27,7 +27,7 @@ classes :
   instanciate :
     name : Instanciate
   assign :
-    name : Assign
+    name : \sylma\parser\languages\common\basic\Assign
   insert :
     name : Insert
   interface :

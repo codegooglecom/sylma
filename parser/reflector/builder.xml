@@ -1,0 +1,20 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <debug>
+    <show>0</show>
+  </debug>
+  <cache>
+    <class>\sylma\dom\basic\handler\Rooted</class>
+  </cache>
+  <cls:classes>
+    <cls:class alias="elemented" name="\sylma\parser\reflector\handler\Elemented"/>
+    <cls:class alias="window" name="\sylma\parser\languages\php\basic\Window"/>
+  </cls:classes>
+  <php>
+    <arg:import static="static">/#sylma/parser/languages/php/window.xml</arg:import>
+  </php>
+</arg:argument>
+

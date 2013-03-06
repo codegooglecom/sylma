@@ -10,6 +10,8 @@ class Basic extends tester\Basic {
   const PARSER_NS = 'http://2013.sylma.org/core/argument';
   const PARSER_PREFIX = 'arg';
 
+  protected static $sArgumentClass = 'sylma\core\argument\Readable';
+  
   protected $sTitle = 'Grouped';
   protected $exportDirectory;
 
@@ -21,7 +23,7 @@ class Basic extends tester\Basic {
       self::PARSER_PREFIX => self::PARSER_NS,
     ));
 
-    $this->setManager($this->getManager('argument/parser'));
+    $this->setManager($this->getManager('parser'));
 
     $cache = \Sylma::getManager('fs/cache');
     $this->exportDirectory = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
@@ -54,6 +56,7 @@ class Basic extends tester\Basic {
     try {
 
       $this->setArgument('arg', $this->buildArgument($node, $file, $test));
+
       $bResult = $this->testArgument($test, $doc, $file);
     }
     catch (core\exception $e) {

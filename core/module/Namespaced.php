@@ -104,12 +104,4 @@ abstract class Namespaced extends Exceptionable {
     if ($aNamespaces) return array_merge($this->getNS(), $aNamespaces);
     else return $this->getNS();
   }
-
-  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
-
-    $mSender = (array) $mSender;
-    $mSender[] = '@class ' . get_class($this);
-
-    \Sylma::throwException($sMessage, $mSender, $iOffset);
-  }
 }

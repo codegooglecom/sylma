@@ -313,14 +313,14 @@ abstract class Basic extends core\module\Managed {
     return $sResult;
   }
 
-  public function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+  public function throwException($sMessage, $mSender = array(), $iOffset = 0, array $aVars = array()) {
 
     $mSender = (array) $mSender;
 
     $mSender[] = '@namespace ' . dom\handler::NS;
     $mSender[] = $this->asToken();
 
-    parent::throwException($sMessage, $mSender, $iOffset);
+    \Sylma::throwException($sMessage, $mSender, $iOffset + 2, $aVars);
   }
 
   public function saveFile(fs\editable\file $file, $bFormat = false) {

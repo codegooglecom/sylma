@@ -181,7 +181,7 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
   public function useExceptions($mValue = null) {
 
     if (!is_null($mValue)) $this->bExceptions = $mValue;
-    return $this->bExceptions;
+    return $this->bExceptions || \Sylma::read('debug/action');
   }
 
   public function asToken() {

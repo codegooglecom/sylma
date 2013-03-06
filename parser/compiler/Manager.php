@@ -3,7 +3,7 @@
 namespace sylma\parser\compiler;
 use sylma\core, sylma\storage\fs;
 
-class Manager extends core\module\Domed {
+abstract class Manager extends core\module\Domed {
 
   const EXTENSION_DEFAULT = '.php';
   const ARGUMENTS = 'manager.xml';
@@ -16,9 +16,9 @@ class Manager extends core\module\Domed {
    */
   public function __construct(core\argument $arg = null) {
 
-    $this->loadDefaultArguments();
-    if ($arg) $this->setArguments($arg);
-
+    //$this->loadDefaultArguments();
+    //if ($arg) $this->setArguments($arg);
+/*
     if ($arg && $sDirectory = $arg->read('directory', null, false)) {
 
       $dir = $this->getManager(self::FILE_MANAGER)->getDirectory($sDirectory);
@@ -33,6 +33,7 @@ class Manager extends core\module\Domed {
         $this->setArguments($manager->createArguments($file));
       }
     }
+ */
   }
 
   public function getClassName($sClass) {
@@ -49,17 +50,17 @@ class Manager extends core\module\Domed {
     return $fs->getDirectory()->addDirectory((string) $file->getParent());
   }
 
-  protected function getCachedFile(fs\file $file, $sExtension = self::EXTENSION_DEFAULT, $iDebug = fs\resource::DEBUG_EXIST) {
+  public function getCachedFile(fs\file $file, $sExtension = self::EXTENSION_DEFAULT, $iDebug = fs\resource::DEBUG_EXIST) {
 
     $sName = $file->getName() . $sExtension;
 
     return $this->getCachedDirectory($file)->getFile($sName, $iDebug);
   }
 
-  public function load(fs\file $file, array $aArguments = array()) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null) {
 
     $result = null;
-    $cache = $this->loadCache($file);
+    $cache = $this->loadCache($file, $bUpdate);
 
     if ($this->readArgument('debug/run')) {
 
@@ -82,19 +83,32 @@ class Manager extends core\module\Domed {
    * @param $file
    * @return fs\file
    */
-  protected function loadCache(fs\file $file) {
+  protected function loadCache(fs\file $file, $bUpdate = null) {
 
-    if ((!$result = $this->getCache($file)) && $this->getControler('user')->isPrivate()) {
+    if ((!$result = $this->getCache($file, $bUpdate)) && $this->getControler('user')->isPrivate()) {
 
-      $result = $this->build($file, $file->getParent());
+      if ($bUpdate !== false) $result = $this->build($file, $file->getParent());
     }
 
     return $result;
   }
 
-  public function build(fs\file $file, fs\directory $dir) {
+  abstract function build(fs\file $file, fs\directory $dir);
+  /*
+  protected function build(fs\file $file, fs\directory $dir, $bUpdate = false) {
 
-    $this->throwException('This manager cannot build');
+    $builder = $this->createBuilder('documented', $file, $dir);
+    return $builder->build();
+  }
+*/
+  protected function createBuilder($sClass, fs\file $file, fs\directory $dir, core\argument $args = null) {
+
+    //$class = $this->getFactory()->findClass($sClass);
+    //$class->merge($args);
+    $class = $args ? $args : $this->getFactory()->findClass($sClass);
+    $result = $this->create($sClass, array($this, $file, $dir, $class));
+
+    return $result;
   }
 
   /**
@@ -103,7 +117,7 @@ class Manager extends core\module\Domed {
    * @param $file
    * @return fs\file
    */
-  protected function getCache(fs\file $file) {
+  protected function getCache(fs\file $file, $bUpdate = null) {
 
     $result = null;
 
@@ -115,11 +129,11 @@ class Manager extends core\module\Domed {
       $tmpFile = $this->getCachedFile($file, static::EXTENSION_DEFAULT, fs\resource::DEBUG_NOT);
     }
 
-    if ($this->getControler('user')->isPrivate()) {
+    if ($this->getControler('user')->isPrivate() && $bUpdate !== false) {
 
-      $bUpdate = $this->readArgument('debug/update');
+      $bUpdate = !$tmpFile || $bUpdate || $this->readArgument('debug/update') || $tmpFile->getLastChange() < $file->getLastChange();
 
-      if ($tmpFile && !$bUpdate && $tmpFile->getLastChange() > $file->getLastChange()) {
+      if ($tmpFile && !$bUpdate) {
 
         $result = $tmpFile;
       }

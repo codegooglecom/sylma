@@ -7,6 +7,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   const NS = 'http://2013.sylma.org/core/argument';
   const FACTORY_NS = 'http://2013.sylma.org/core/factory';
+  const PARSER_MANAGER = 'parser';
   //const PREFIX = 'arg';
 
   protected $allowForeign = true;
@@ -317,8 +318,8 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     $file = $window->createCall($window->addControler(static::FILE_MANAGER), 'getFile', '\sylma\storage\fs\file', array($sFile));
 
-    $manager = $this->getWindow()->addControler(static::ARGUMENT_MANAGER);
-    $result = $this->getWindow()->createCall($manager, 'createArguments', '\sylma\core\argument', array($file));
+    $manager = $this->getWindow()->addControler(static::PARSER_MANAGER);
+    $result = $this->getWindow()->createCall($manager, 'load', '\sylma\core\argument', array($file));
 
     return $result;
   }

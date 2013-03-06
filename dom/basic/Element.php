@@ -18,8 +18,6 @@ class Element extends \DOMElement implements dom\element {
 
     } catch (core\exception $e) {
 
-      //$e->save(false);
-      //\Sylma::throwException('Lost DOM Document');
       $doc = null;
     }
 
@@ -82,7 +80,7 @@ class Element extends \DOMElement implements dom\element {
       }
       catch (core\exception $e) {
 
-        $this->catchError($e, $sQuery);
+        $this->catchError($e, $sQuery, $aNS);
       }
 
       $this->getControler()->addStat('evaluation', array($sQuery, $aNS));
@@ -107,18 +105,30 @@ class Element extends \DOMElement implements dom\element {
 
     if (!$sResult && $bDebug) {
 
-      $this->throwException(sprintf('No result for read expression : %s', $sQuery));
+      $this->throwException(sprintf('No result for read expression : %s', $sQuery), $this->nsAsToken($aNS));
     }
 
     return $sResult;
   }
 
-  protected function catchError(core\exception $e, $sQuery) {
+  protected function catchError(core\exception $e, $sQuery, array $aNS) {
 
-    $aSender = array();
-    foreach ($this->getHandler()->mergeNamespaces() as $sPrefix => $sNamespace) $aSender[] = $sPrefix . ' => ' . $sNamespace;
+    $this->throwException(sprintf('XPath error with "%s" : %s', $sQuery, $e->getMessage()), $this->nsAsToken($aNS));
+  }
 
-    $this->throwException(sprintf('XPath error with "%s" : %s', $sQuery, $e->getMessage()), $aSender);
+  protected function nsAsToken($aNS) {
+
+    $aResult = array();
+
+    foreach ($aNS as $sPrefix => $sNamespace) {
+
+      $aResult[] = $sPrefix . ' => ' . $sNamespace;
+    }
+
+    return array(
+      'xpath namespaces :',
+      $aResult
+    );
   }
 
   public function queryx($sQuery = '', array $aNS = array(), $bDebug = true, $bConvert = true) {
@@ -137,14 +147,14 @@ class Element extends \DOMElement implements dom\element {
       }
       catch (core\exception $e) {
 
-        $this->catchError($e, $sQuery);
+        $this->catchError($e, $sQuery, $aNS);
       }
 
       $this->getControler()->addStat('query', array($sQuery, $aNS));
 
       if ($bDebug && !$domlist->length) {
 
-        $this->throwException(sprintf('No result for xpath expression : %s', $sQuery));
+        $this->throwException(sprintf('No result for xpath expression : %s', $sQuery), array(), 3, get_defined_vars());
       }
 
       if ($bConvert) $result->addList($domlist);
@@ -681,6 +691,11 @@ class Element extends \DOMElement implements dom\element {
     return $this->lookupNamespaceURI($sPrefix);
   }
 
+  public function lookupPrefix($sNamespace) {
+
+    return parent::lookupPrefix($sNamespace);
+  }
+
   public function getNamespace() {
 
     return $this->namespaceURI;
@@ -821,13 +836,13 @@ class Element extends \DOMElement implements dom\element {
 
   public function asToken() {
 
-    if (\Sylma::read('dom/debug/token')) {
+    if ($this->getDocument()) {
 
-      $sResult = '[element]';
+      $sResult = ' @element ' . $this->getPath() . ' in ' . $this->getHandler()->asToken() . ':' . $this->getLineNo();
     }
     else {
 
-      $sResult = ' @element ' . $this->getPath() . ' in ' . $this->getHandler()->asToken() . ':' . $this->getLineNo();
+      $sResult = " [Lost element {$this->getName()}]";
     }
 
     return $sResult;
@@ -863,16 +878,16 @@ class Element extends \DOMElement implements dom\element {
     }
   }
 
-  protected function throwException($sMessage, array $mSender = array()) {
+  protected function throwException($sMessage, array $mSender = array(), $iOffset = 3, array $aVars = array()) {
 
     $mSender[] = $this->asToken();
 
-    if (!$controler = $this->getHandler()) {
+    if (!$manager = $this->getHandler()) {
 
-      $controler = $this->getControler();
+      $manager = $this->getManager();
     }
 
-    $controler->throwException($sMessage, $mSender);
+    $manager->throwException($sMessage, $mSender, $iOffset, $aVars);
   }
 
   public function asString($iMode = 0) {

@@ -30,9 +30,8 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
 
   protected $iDepth = 0;
 
-  public function __construct($manager, reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
+  public function __construct(reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
 
-    $this->setManager($manager);
     $this->setRoot($root);
 
     if ($parent) $this->setParent($parent);
@@ -198,7 +197,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
     return $el->readx('@self:node', $this->getNS(), false) && $el->getNamespace() === $this->getNamespace('html');
   }
 
-  public function parseAttributes(dom\element $el, dom\element $resultElement, $result) {
+  public function parseAttributes(dom\element $el, $resultElement, $result) {
 
     $result = null;
 
@@ -214,7 +213,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
     return $result;
   }
 
-  public function onClose(dom\element $el, dom\element $newElement) {
+  public function onClose(dom\element $el, $newElement) {
 
     if ($this->elementIsObject($el)) {
 
@@ -285,7 +284,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
     return $sResult;
   }
 
-  protected function reflectObject(dom\element $el, dom\element $resultElement) {
+  protected function reflectObject(dom\element $el, $resultElement) {
 
     $bName = (bool) $el->readx('@self:name', $this->getNS(), false);
 
@@ -300,7 +299,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
     return $result;
   }
 
-  protected function buildElement(dom\element $el, dom\element $resultElement) {
+  protected function buildElement(dom\element $el, $resultElement) {
 
     $sClass = $el->readx('@self:class', $this->getNS());
     $sName = $el->readx('@self:name', $this->getNS(), false);
@@ -319,7 +318,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
     $aAttributes = array(
       'class' => $sClass,
       'name' => $sName,
-      'id' => $resultElement->readAttribute('id', null, false),
+      'id' => $el->readAttribute('id', null, false),//$resultElement->readAttribute('id', null, false),
       'binder' => uniqid('sylma'),
       'parent' => $sParent,
     );

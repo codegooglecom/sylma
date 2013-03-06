@@ -221,12 +221,12 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
       throw $e;
     }
   }
-
+/*
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
     \Sylma::throwException($sMessage, array('@namespace ' . $this->getNamespace()), $iOffset);
   }
-
+*/
   public function asArray($bEmpty = false) {
 
     $iMode = self::NORMALIZE_DEFAULT;

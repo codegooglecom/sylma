@@ -56,7 +56,8 @@ interface element extends complex, namespaced {
 
   function testAttribute($sAttribute, $mDefault = null, $sNamespace = '');
 
-  function lookupNamespace($sPrefix);
+  function lookupNamespace($sPrefix = null);
+  function lookupPrefix($sNamespace);
 
   /**
    * Insert the value given in argument before the $next element, if null insert at the end of the children's list

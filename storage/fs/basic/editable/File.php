@@ -106,16 +106,12 @@ class File extends fs\basic\File implements fs\editable\file {
 
     $bResult = null;
 
-    if ($this->checkRights(MODE_WRITE)) {
+    if ($this->checkRights(\Sylma::MODE_WRITE)) {
 
-      if ($bResult = unlink($this->getSystemPath())) {
+      if ($bResult = unlink($this->getRealPath())) {
 
-//        if ($bUpdateDirectory) $this->update();
-
-        // update directory settings
-        $this->getSettings()->deleteFile($this->getName());
-
-        if ($bMessage) dspm(xt('Suppression du fichier %s', $this->parse()), 'file/notice');
+        //if ($bUpdateDirectory) $this->update();
+        //$this->getSettings()->deleteFile($this->getName());
       }
     }
 
@@ -137,7 +133,7 @@ class File extends fs\basic\File implements fs\editable\file {
     if (!$this->doExist()) chmod($this->getRealPath(), 0750);
 
     if (!$bResult) $this->throwException ('Cannot save text content for unknown reason');
-    $this->doExist(true);
+    $this->bExist = true;
 
     //$this->update();
 

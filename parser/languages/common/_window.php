@@ -29,7 +29,7 @@ interface _window extends scope {
   function createVariable($sName, $mReturn);
   function addVar(common\argumentable $val, $sName = '');
   function createString($mContent);
-  function createAssign($to, $value);
+  function createAssign($to, $value, $sPrefix = '');
   function createInstruction(common\argumentable $content);
   function createInstanciate(common\_instance $instance, array $aArguments = array());
 

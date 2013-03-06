@@ -59,6 +59,10 @@ abstract class Documented extends Container {
 
       $result = $this->setRoot($val->getRoot());
     }
+    else {
+
+      $this->setRoot($val);
+    }
 
     return $result;
   }

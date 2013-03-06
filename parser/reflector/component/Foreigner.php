@@ -56,14 +56,42 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $result;
   }
 
+  protected function loadComponent($sName, dom\element $el, $manager) {
+
+    if (!$this->allowComponent()) {
+
+      $result = $this->getParser()->loadComponent($sName, $el);
+    }
+    else {
+
+      $result = parent::loadComponent($sName, $el, $this->getParser());
+    }
+
+    return $result;
+  }
+
+  protected function loadSimpleComponent($sName, $manager = null) {
+
+    if (!$this->allowComponent()) {
+
+      $result = $this->getParser()->loadSimpleComponent($sName);
+    }
+    else {
+
+      $result = parent::loadSimpleComponent($sName, $this->getParser());
+    }
+
+    return $result;
+  }
+
   protected function setParser(reflector\domed $parent) {
 
-    $this->parent = $parent;
+    $this->parser = $parent;
   }
 
   protected function getParser() {
 
-    return $this->parent;
+    return $this->parser;
   }
 
   protected function parseComponentRoot(dom\element $el) {
@@ -93,6 +121,16 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
   protected function getWindow() {
 
     return $this->getParser()->getWindow();
+  }
+
+  public function getSourceDirectory($sPath = '') {
+
+    return $this->getParser()->getSourceDirectory($sPath);
+  }
+
+  public function getSourceFile($sPath = '') {
+
+    return $this->getParser()->getSourceFile($sPath);
   }
 }
 

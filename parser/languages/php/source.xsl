@@ -20,6 +20,7 @@
     <xsl:call-template name="php:assign">
       <xsl:with-param name="variable" select="php:variable/*"/>
       <xsl:with-param name="value" select="php:value/*"/>
+      <xsl:with-param name="prefix" select="php:prefix"/>
     </xsl:call-template>
   </xsl:template>
 
@@ -43,7 +44,15 @@
     <xsl:apply-templates select="php:content/*"/>
     <xsl:value-of select="$break"/>
     <xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="php:foreach">
+    <xsl:text>foreach (</xsl:text>
+    <xsl:apply-templates select="php:looped/*"/> as <xsl:apply-templates select="php:var/*"/>
+    <xsl:text>) {</xsl:text>
     <xsl:value-of select="$break"/>
+    <xsl:apply-templates select="php:content/*"/>
+    <xsl:text>}</xsl:text>
   </xsl:template>
 
   <xsl:template name="php:call">
@@ -83,7 +92,8 @@
   <xsl:template name="php:assign">
     <xsl:param name="variable"/>
     <xsl:param name="value"/>
-    <xsl:apply-templates select="$variable"/> = <xsl:apply-templates select="$value"/>
+    <xsl:param name="prefix"/>
+    <xsl:apply-templates select="$variable"/> <xsl:value-of select="$prefix"/>= <xsl:apply-templates select="$value"/>
   </xsl:template>
 
   <xsl:template match="php:call-method">

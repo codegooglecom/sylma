@@ -3,7 +3,7 @@
 namespace sylma\parser\action;
 use \sylma\core, sylma\parser\compiler, sylma\parser\action, sylma\dom, sylma\storage\fs;
 
-class Manager extends compiler\Builder {
+class Manager extends compiler\Builder_old {
 
   const FS_EDITABLE = 'fs/editable';
 
@@ -11,20 +11,22 @@ class Manager extends compiler\Builder {
    * Indent action's result builded with @method buildAction(), must be set to FALSE in production
    */
   const FORMAT_ACTION = false;
-  const WINDOW_ARGS = 'classes/php';
+  //const WINDOW_ARGS = 'classes/php';
+  const WINDOW_ARGS = 'php';
 
   const PHP_TEMPLATE = 'compiler/php.xsl';
   const DOM_TEMPLATE = 'compiler/template.xsl';
 
-  protected static $sArgumentClass = 'sylma\core\argument\Filed';
-  
+  //protected static $sArgumentClass = 'sylma\core\argument\Filed';
+
   public function __construct() {
 
     $this->setDirectory(__file__);
     $this->setNamespace(action\handler::NS);
 
+    $this->setArguments(include('controler.xml.php'));
     $this->loadDefaultArguments();
-    $this->setArguments('controler.yml');
+    //$this->setArguments('controler.yml');
   }
 
   public function runAction($sPath, array $aArguments = array()) {
@@ -89,9 +91,9 @@ class Manager extends compiler\Builder {
   /**
    * Made public to allow use of an handler
    */
-  public function load(fs\file $file, array $aArguments = array()) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null) {
 
-    return parent::load($file, $aArguments);
+    return parent::load($file, $aArguments, $bUpdate);
   }
 
   protected function createCache(fs\file $file, array $aArguments = array()) {
@@ -100,7 +102,9 @@ class Manager extends compiler\Builder {
     return $this->create('cached', $aArguments);
   }
 
-  public function build(fs\file $file, fs\directory $base) {
+  public function build(fs\file $file, fs\directory $base = null) {
+
+    $this->getManager(self::PARSER_MANAGER)->aBuilded[] = $file;
 
     $this->setDirectory(__FILE__);
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);

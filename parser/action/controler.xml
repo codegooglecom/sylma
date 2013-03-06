@@ -1,0 +1,45 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/parser/action"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:target="[current()]"
+>
+  <debug>
+    <show>0</show>
+    <run>1</run>
+    <update>1</update>
+  </debug>
+  <cache>
+    <elements>
+      <directory>getDirectory</directory>
+      <file>getFile</file>
+      <document>getDocument</document>
+      <template>getTemplate</template>
+      <argument>createArgument</argument>
+    </elements>
+    <namespace>http://www.sylma.org/parser/action/basic</namespace>
+    <class>\sylma\parser\action\cached\Document</class>
+  </cache>
+  <template>
+    <indent>0</indent>
+  </template>
+  <extensions>
+    <eml/>
+    <iml/>
+  </extensions>
+  <php>
+    <arg:import static="static">/#sylma/parser/languages/php/window.xml</arg:import>
+  </php>
+  <cls:classes>
+    <cls:base>\sylma\parser\action</cls:base>
+    <cls:class alias="window" name="compiler\Window"/>
+    <cls:class alias="cached" name="cached\Document"/>
+    <cls:class alias="compiler" name="compiler\Main"/>
+    <cls:class alias="reflector" name="compiler\Reflector"/>
+    <cls:class alias="document" name="\sylma\dom\basic\handler\Rooted"/>
+    <cls:class alias="path" name="Path"/>
+    <cls:class alias="context" name="\sylma\parser\context\Basic"/>
+  </cls:classes>
+</arg:argument>

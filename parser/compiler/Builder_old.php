@@ -3,7 +3,7 @@
 namespace sylma\parser\compiler;
 use sylma\core, sylma\parser\reflector, sylma\storage\fs, sylma\dom;
 
-class Builder extends Manager {
+class Builder_old extends Manager {
 
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
   const WINDOW_ARGS = 'php';

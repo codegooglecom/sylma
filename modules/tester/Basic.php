@@ -8,6 +8,8 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
 
   const NS = 'http://www.sylma.org/modules/tester';
+  const PREFIX = 'self';
+
   protected $sTitle;
   protected $aFiles = array();
 
@@ -170,7 +172,7 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     else {
 
       $e->addPath($file->asToken());
-      $e->addPath($test->readAttribute('name'));
+      $e->addPath('Test ID : ' . $test->readAttribute('name'));
 
       if ($sCatch) $e->addPath(sprintf('Exception of type %s expected', $sCatch));
       //$e->addPath($test->asString());
@@ -212,7 +214,7 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     if ($el->compare($this->loadDomElement($node2)) !== $el::COMPARE_SUCCESS) {
 
       //$this->throwException(sprintf('Node %s not equals with node %s', $el->asToken(), $node2->asToken()));
-      $this->throwException(sprintf('Nodes not equals'), array($this->show($el), $this->show($node2)));
+      $this->launchException(sprintf('Nodes not equals'), array($this->show($el), $this->show($node2)), get_defined_vars());
     }
 
     return true;

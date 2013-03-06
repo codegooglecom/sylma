@@ -9,32 +9,96 @@ class Documented extends core\module\Domed implements reflector\documented {
    *
    * @var common\_window
    */
-  private $window;
-  private $reflector;
+  protected $reflector;
   protected $sourceDir;
+  protected $window;
 
-  public function __construct($manager, dom\handler $doc, fs\directory $dir) {
+  const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
+  const WINDOW_ARGS = 'php';
+  const BUILD_NS = 'http://2013.sylma.org/parser/reflector/builder';
+
+  protected $bThrow = true;
+
+  public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null) {
 
     $this->setManager($manager);
-    $this->setDocument($doc);
 
+    $this->setFile($file);
+    $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
+
+    $this->loadDefaultArguments();
+    if ($args) $this->setArguments($args);
+    $this->loadArguments($args);
+
+    $this->setDirectory(__FILE__);
     $this->setSourceDirectory($dir);
   }
 
-  public function setReflector(reflector\elemented $reflector) {
+  protected function loadArguments(core\argument $arg = null) {
 
-    $this->reflector = $reflector;
+    if ($arg and $sArguments = $arg->read('arguments', null, false)) {
+
+       $this->setArguments($sArguments);
+    }
   }
 
-  public function getReflector() {
+  protected function setDocument(dom\handler $doc) {
 
-    return $this->reflector;
+    //$doc->registerNamespaces($this->getNS());
+
+    $result = parent::setDocument($doc);
+
+    if ($this->getDocument()->isEmpty()) {
+
+      $this->throwException('Empty document');
+    }
+
+    return $result;
+  }
+
+  protected function setSourceDirectory(fs\directory $sourceDirectory) {
+
+    $this->sourceDir = $sourceDirectory;
+  }
+
+  /**
+   * Get the source file's directory
+   * @return fs\directory
+   */
+  public function getSourceDirectory($sPath = '') {
+
+    if (!$this->sourceDir) {
+
+      $this->throwException('No source directory defined');
+    }
+
+    return $sPath ? $this->sourceDir->getDirectory($sPath) : $this->sourceDir;
+  }
+
+  /**
+   * Get a file relative to the source file's directory
+   * @param string $sPath
+   * @return fs\file
+   */
+  public function getSourceFile($sPath = '') {
+
+    return $this->getManager(static::FILE_MANAGER)->getFile($sPath, $this->getSourceDirectory());
+  }
+
+  protected function getClass(dom\handler $doc) {
+
+    if (!$sResult = $doc->getRoot()->readAttribute('class', null, false)) {
+
+      $sResult = $this->readArgument('cache/class');
+    }
+
+    return $sResult;
   }
 
   /**
    * @param common\_window $window
    */
-  public function setWindow(common\_window $window) {
+  protected function setWindow(common\_window $window) {
 
     $this->window = $window;
   }
@@ -53,52 +117,116 @@ class Documented extends core\module\Domed implements reflector\documented {
     return $this->window;
   }
 
-  /**
-   *
-   * @param $doc
-   * @return array
-   */
-  protected function parseDocument(dom\document $doc) {
+  protected function getTemplatePath() {
 
-    //$reflector = $this->getManager()->create('elemented', array());
-    //$this->setReflector($reflector);
+    if (!$sResult = $this->readArgument('template')) {
 
-    $reflector = $this->getReflector();
-
-    return $reflector->parseRoot($doc->getRoot());
-  }
-
-/*
-  protected function buildContainer(php\window $window) {
-
-    $switch = $window->createSwitch();
-    $switch->setCase(self::MODE_DEFAULT);
-
-    $window->add($switch);
-    $window->setScope($switch);
-  }
-*/
-
-  /**
-   *
-   * @return array
-   */
-  protected function build() {
-
-    $doc = $this->getDocument();
-
-    if ($doc->isEmpty()) {
-
-      $this->throwException('Empty document');
+      $sResult = static::PHP_TEMPLATE;
     }
 
-    $doc->registerNamespaces($this->getNS());
+    return $sResult;
+  }
+
+  public function build() {
+//$this->dsp($this->getArguments());
+    $file = $this->getFile();
+    $doc = $this->getDocument();
+
+    $result = null;
+
+    $reflector = $this->buildReflector($doc, $file);
 
     $window = $this->getWindow();
-    //$this->buildContainer($window);
+    $mContent = $this->parseReflector($reflector, $doc);
 
-    $mContent = $this->parseDocument($doc);
     $this->buildInstanciation($window, array($mContent));
+    $arg = $window->asArgument();
+      //echo $this->show($arg, false);
+
+    $content = $arg->asDOM();
+
+    if ($content) {
+
+      if ($this->readArgument('debug/show')) {
+
+        dsp($file->asToken());
+        dsp($content);
+      }
+
+      $result = $this->loadTarget($doc, $file);
+
+      $template = $this->getTemplate($this->getTemplatePath());
+
+      $sContent = $template->parseDocument($content, false);
+      $result->saveText($sContent);
+    }
+
+    return $result;
+  }
+
+  protected function loadTarget(dom\document $doc, fs\file $file) {
+
+    if ($sTarget = $doc->getRoot()->readx('@build:target', array('build' => self::BUILD_NS), false)) {
+
+      if ($sTarget{0} == '[') {
+
+        switch (substr($sTarget, 1, -1)) {
+
+          case 'current()' : $sTarget = (string) $file->getParent(); break;
+          default : $this->throwException(sprintf('Cannot handler build option %s', $sTarget));
+        }
+      }
+
+      $dir = $this->getControler('fs/editable')->getDirectory($sTarget);
+      $result = $dir->getFile($file->getName() . '.php', fs\resource::DEBUG_EXIST);
+    }
+    else {
+
+      $result = $this->getManager()->getCachedFile($file);
+    }
+
+    return $result;
+  }
+
+  protected function buildReflector(dom\document $doc, fs\file $file, common\_window $window = null) {
+
+    try {
+
+      $result = $this->createReflector();
+      //$this->setReflector($reflector);
+
+      $sInstance = $this->getClass($doc);
+
+      if (!$window) {
+
+        $window = $this->create('window', array($this, $this->getArgument(static::WINDOW_ARGS), $sInstance));
+      }
+
+      $this->setWindow($window);
+    }
+    catch (core\exception $e) {
+
+      $e->addPath($file->asToken());
+
+      if ($this->throwExceptions()) throw $e;
+      else $e->save(false);
+
+      $result = null;
+    }
+
+    return $result;
+  }
+
+  protected function createReflector() {
+
+    $class = $this->getFactory()->findClass('elemented');
+
+    return $this->create('elemented', array($this, null, $class));
+  }
+
+  protected function parseReflector(reflector\domed $reflector, dom\document $doc) {
+
+    return $reflector->parseRoot($doc->getRoot());
   }
 
   protected function buildInstanciation(common\_window $window, array $aArguments) {
@@ -108,32 +236,10 @@ class Documented extends core\module\Domed implements reflector\documented {
     $window->setReturn($new);
   }
 
-  protected function setSourceDirectory(fs\directory $sourceDirectory) {
+  public function throwExceptions($mValue = null) {
 
-    $this->sourceDir = $sourceDirectory;
-  }
+    if (!is_null($mValue)) $this->bThrow = $mValue;
 
-  /**
-   * Get the source file's directory
-   * @return fs\directory
-   */
-  public function getSourceDirectory() {
-
-    return $this->sourceDir;
-  }
-
-  public function getNamespace($sPrefix = null) {
-
-    return $this->getReflector()->getNamespace($sPrefix);
-  }
-
-  public function asDOM() {
-
-    $this->build();
-
-    $arg = $this->getWindow()->asArgument();
-    //echo $this->show($arg, false);
-
-    return $arg->asDOM();
+    return $this->bThrow;
   }
 }

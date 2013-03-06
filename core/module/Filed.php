@@ -8,7 +8,7 @@ abstract class Filed extends Sessioned {
   protected $directory = null;
   protected $file = null;
 
-  const ARGUMENT_MANAGER = 'argument/parser';
+  const PARSER_MANAGER = 'parser';
   const FILE_MANAGER = 'fs';
 
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
@@ -36,10 +36,8 @@ abstract class Filed extends Sessioned {
 
     if ($file->getExtension() === 'xml') {
 
-      static::$sFactoryClass = '\sylma\core\factory\Cached';
-
-      $manager = $this->getManager(self::ARGUMENT_MANAGER);
-      $result = $manager->createArguments($file);
+      //static::$sFactoryClass = '\sylma\core\factory\Cached';
+      $result = $this->getManager(self::PARSER_MANAGER)->load($file);
     }
     else {
 

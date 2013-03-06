@@ -11,12 +11,12 @@ class _Interface extends core\module\Argumented {
 
   protected $aMethods = array();
 
-  public function __construct(reflector\documented $reflector, $sInterface, fs\file $file = null) {
+  public function __construct(reflector\documented $reflector, $sInterface, $sNamespace, fs\file $file = null) {
 
     $this->setManager($reflector);
     $this->setName($sInterface);
 
-    $this->setNamespace($this->getManager()->getNamespace());
+    if ($sNamespace) $this->setNamespace($sNamespace);
 
     if ($file) $this->setFile($file);
 
@@ -88,7 +88,7 @@ class _Interface extends core\module\Argumented {
     if (!$this->reflection) {
 
       $factory = $this->getFactory();
-      $factory::includeClass($this->getName(), $this->getFile());
+      $factory::includeClass($this->getName(), $this->getFile(), false);
 
       $this->reflection = new \ReflectionClass($this->getName());
     }

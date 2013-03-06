@@ -57,6 +57,8 @@ class Readable extends Domed implements core\argument {
     do {
 
       $sKey = current($aPath);
+
+      if (!array_key_exists($sKey, $mCurrent)) $mCurrent[$sKey] = array();
       $mCurrent =& $mCurrent[$sKey];
 
     } while(next($aPath));
@@ -109,7 +111,7 @@ class Readable extends Domed implements core\argument {
       }
       else {
 
-        if (is_null($mCurrent) || $bArray) {
+        if (key($aPath) !== false && (is_null($mCurrent) || $bArray)) {
 
           if ($bDebug) {
 

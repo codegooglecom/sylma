@@ -81,7 +81,12 @@ class Sylma {
 
   public static function autoload($sClass) {
 
-    include_once(str_replace('\\', '/', $sClass . '.php'));
+    include_once(self::classToFile($sClass));
+  }
+
+  public static function classToFile($sClass) {
+
+    return str_replace('\\', '/', $sClass . '.php');
   }
 
   public static function setControler($sName, $controler) {
@@ -195,13 +200,13 @@ class Sylma {
         $result = $init->loadRedirect();
 
       break;
-
+/*
       case 'argument/parser' :
 
         $result = new core\argument\parser\Manager;
 
       break;
-
+*/
       case 'timer' :
 
         $timer = new modules\timer\Controler;
@@ -323,11 +328,12 @@ class Sylma {
     return $newException;
   }
 
-  public static function throwException($sMessage, array $aPath = array(), $iOffset = 1) {
+  public static function throwException($sMessage, array $aPath = array(), $iOffset = 1, array $aVars = array()) {
 
     $e = new Sylma::$sExceptionClass($sMessage);
 
     $e->setPath($aPath);
+    $e->setVariables($aVars);
     $e->load($iOffset);
 
     throw $e;
@@ -340,6 +346,7 @@ class Sylma {
 
   public static function load($sFile, $sDirectory = '') {
 
+    $result = null;
     $bRoot = $sFile{0} == '/';
 
     if (!$sDirectory || $bRoot) {
@@ -368,7 +375,12 @@ class Sylma {
       $sPath = implode('/', $aDirectory);
     }
 
-    if (!array_key_exists($sPath, self::$aFiles)) require_once($sPath);
+    if (!array_key_exists($sPath, self::$aFiles)) {
+
+      $result = require_once($sPath);
+    }
+
+    return $result;
   }
 
   public static function render() {

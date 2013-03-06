@@ -18,11 +18,30 @@ class Cached extends core\argument\Readable {
     return $function(\Sylma::getControler(self::FILE_MANAGER_ALIAS));
   }
 
+  public function getValue($sPath = null, $bDebug = true) {
+
+    $result = parent::getValue($sPath, $bDebug);
+    $closure = $this->checkClosure($result);
+
+    return $closure ? $closure : $result;
+  }
+
+  protected function checkClosure($mValue) {
+
+    $result = null;
+
+    if ($mValue instanceof \Closure) {
+
+      $result = $this->callFunction($mValue);
+    }
+
+    return $result;
+  }
+
   public function parseValue(array &$aPath, $mValue, $bDebug) {
 
-    if (is_callable($mValue)) {
+    if ($mResult = $this->checkClosure($mValue)) {
 
-      $mResult = $this->callFunction($mValue);
       prev($aPath);
     }
     else {

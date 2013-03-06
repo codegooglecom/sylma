@@ -37,7 +37,7 @@ class CallMethod extends Called  {
     }
     else {
 
-      $this->getControler()->throwException(sprintf('Cannot call object of type %s', get_class($called)));
+      $this->getControler()->throwException(sprintf('Cannot call object of type %s', \Sylma::show($called)));
     }
   }
 

@@ -1,0 +1,10 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/parser/compiler/manager"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <cls:classes>
+    <cls:class alias="world" name="\sylma\core\factory\parser\test\samples\Sample2"/>
+  </cls:classes>
+</arg:argument>
+

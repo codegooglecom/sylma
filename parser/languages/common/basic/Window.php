@@ -135,9 +135,9 @@ abstract class Window extends core\module\Domed {
     return null;
   }
 
-  public function createAssign($to, $value) {
+  public function createAssign($to, $value, $sPrefix = '') {
 
-    return $this->create('assign', array($this, $to, $value));
+    return $this->create('assign', array($this, $to, $value, $sPrefix));
   }
 
   public function createString($mContent) {
@@ -156,7 +156,7 @@ abstract class Window extends core\module\Domed {
 
   protected function argToString($mValue) {
 
-    return $this->create('string', array($this, $mContent));
+    return $this->create('string', array($this, $mValue));
   }
 
   public function createInstruction(common\argumentable $content) {
@@ -167,6 +167,11 @@ abstract class Window extends core\module\Domed {
   public function createInstanciate(common\_instance $instance, array $aArguments = array()) {
 
     return $this->create('instanciate', array($this, $instance, $aArguments));
+  }
+
+  public function createLoop($looped, common\_var $var) {
+
+    return $this->create('loop', array($this, $looped, $var));
   }
 
   public function setVariable(common\_var $var) {

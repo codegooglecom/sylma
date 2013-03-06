@@ -47,6 +47,11 @@ class Grouped extends tester\Basic {
         $this->throwException(sprintf('Unknown action type : %s', $sType));
     }
 
+    if (is_null($result)) {
+
+      $this->throwException('No result');
+    }
+
     return $result;
   }
 

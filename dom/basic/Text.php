@@ -18,7 +18,16 @@ class Text extends \DOMText implements dom\text {
 
   public function getDocument() {
 
-    return $this->ownerDocument;
+    try {
+
+      $doc = $this->ownerDocument;
+
+    } catch (\Exception $e) {
+
+      $doc = null;
+    }
+
+    return $doc;
   }
 
   public function getParent() {

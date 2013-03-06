@@ -163,9 +163,9 @@ abstract class Main extends reflector\basic\Foreigner {
     $window->setReturn($new);
   }
 
-  public function getSourceDirectory() {
+  public function getSourceDirectory($sPath = '') {
 
-    return $this->getDirectory();
+    return $this->getDirectory($sPath);
   }
 
   public function useNamespace($sNamespace, $bParent = false) {
@@ -309,7 +309,7 @@ abstract class Main extends reflector\basic\Foreigner {
    * @param string $sPath
    * @return fs\file
    */
-  protected function getSourceFile($sPath) {
+  public function getSourceFile($sPath = '') {
 
     return $this->getControler(static::FILE_MANAGER)->getFile($sPath, $this->getParser()->getSourceDirectory());
   }

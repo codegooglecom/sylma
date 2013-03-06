@@ -48,9 +48,11 @@ class File extends Resource implements fs\file {
 
   public function getLastChange() {
 
-    if ($this->iChanged === null && $this->doExist()) $this->iChanged = filemtime($this->getRealPath());
+    //return filemtime($this->getRealPath());
+    if (is_null($this->iChanged) && $this->doExist()) $this->iChanged = filemtime($this->getRealPath());
 
     return $this->iChanged;
+
   }
 
   // public function getActionPath() {

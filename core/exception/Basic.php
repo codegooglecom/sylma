@@ -18,6 +18,7 @@ class Basic extends \Exception implements core\exception {
   protected $aPath = array();
   protected $aCall = array();
   protected static $bThrowError = true;
+  protected $aVariables = array();
 
   /**
    * Allow import of other classes, used class is showed in message
@@ -78,13 +79,14 @@ class Basic extends \Exception implements core\exception {
     $this->aPath = $aPath;
   }
 
-  protected function parsePath() {
+  protected function parsePath($aPath) {
 
-    $aResult = $aPath = array();
+    $aResult = array();
 
-    foreach ($this->aPath as $sPath) {
+    foreach ($aPath as $mPath) {
 
-      $aResult[] = $this->parseString($sPath);
+      if (is_array($mPath)) $aResult[] = $this->parsePath($mPath);
+      else $aResult[] = $this->parseString($mPath);
     }
 
     return $aResult;
@@ -130,7 +132,7 @@ class Basic extends \Exception implements core\exception {
     //$link = new \HTML_A('netbeans://' . $this->getFile() . ':' . $this->getLine(), $sCall . '()');
     $link = '<a href="netbeans://' . $this->getFile() . ':' . $this->getLine() . '">' . $sCall . '()' . '</a>';
     //$message = $this->parseString($this->getMessage());
-    $path = $this->parsePath();
+    $path = $this->parsePath($this->aPath);
 
     return array($link, $path);
   }
@@ -221,7 +223,7 @@ class Basic extends \Exception implements core\exception {
     $sDisplay = $this->strongLast(substr($sFile, strlen(\Sylma::PATH_SYSTEM)), '/');
     $sClass = $this->strongLast($sClass);
 
-    $bHTML = $bHTML ? \Sylma::read('debug/backtrace/html') && !\Sylma::read('dom/debug/token') : false;
+    $bHTML = $bHTML ? \Sylma::read('debug/backtrace/html') : false;
 
     if (array_key_exists('args', $aError)) { // TODO
 
@@ -245,29 +247,71 @@ class Basic extends \Exception implements core\exception {
     return "<li tabindex=\"1\"><a href=\"netbeans://$sFile:$sLine\">$iIndex. $sDisplay [$sLine]</a> <span>$sClass-></span><span class=\"sylma-function\">$sFunction($sFunctionArgs)</span>$sArgs</li>";
   }
 
+  public function setVariables($aVars) {
+
+    $this->aVariables = $aVars;
+  }
+
+  protected function getVariables() {
+
+    return $this->aVariables;
+  }
+
+  protected function loadVariables($bHTML = true) {
+
+    $sResult = '';
+
+    if ($this->getVariables()) {
+
+      $sResult .= '<ul class="sylma-variables" tabindex="1">';
+      $sResult .= '<h3>Variables</h3>';
+
+      foreach ($this->getVariables() as $sName => $mVar) {
+
+        $sResult .= '<li><strong>' . $sName . '</strong> :' . \Sylma::show($mVar, !$bHTML) . '</li>';
+      }
+
+      $sResult .= '</ul>';
+    }
+
+    return $sResult;
+  }
+
+  protected function loadTraces($bHTML = true) {
+
+    $sResult = '';
+
+    if (\Sylma::read('debug/backtrace/show')) {
+
+      $aTraces = $this->getTrace();
+
+      $sResult .= '<ul class="sylma-backtrace">';
+
+      foreach ($aTraces as $iTrace => $aTrace) {
+
+        $sResult .= $this->errorAsHTML($iTrace, $aTrace, $bHTML);
+      }
+
+      $sResult .= '</ul>';
+    }
+
+    return $sResult;
+  }
+
   public function save($bPrint = true, $bHTML = true) {
 
     $sResult = '';
 
     if (\Sylma::read('debug/enable')) {
 
-      $aTraces = $this->getTrace();
+
       $aPath = $this->getPath();
 
       $sResult .= $this->parseString( htmlspecialchars($this->getMessage())) . '<br/>';
       $sResult .= $this->readPaths($aPath);
-//echo $this->getMessage();
-      if (\Sylma::read('debug/backtrace/show')) {
 
-        $sResult .= '<ul class="sylma-backtrace">';
-
-        foreach ($aTraces as $iTrace => $aTrace) {
-
-          $sResult .= $this->errorAsHTML($iTrace, $aTrace, $bHTML);
-        }
-
-        $sResult .= '</ul>';
-      }
+      $sResult .= $this->loadVariables($bHTML);
+      $sResult .= $this->loadTraces($bHTML);
 
       if ($bPrint) {
 

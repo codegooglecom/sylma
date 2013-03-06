@@ -9,7 +9,7 @@ class Domed extends Main implements reflector\attributed {
 
   protected $element;
 
-  public function parseAttributes(dom\element $el, dom\element $resultElement, $result) {
+  public function parseAttributes(dom\element $el, $resultElement, $result) {
 
     if (!is_object($result)) {
 
@@ -34,7 +34,7 @@ class Domed extends Main implements reflector\attributed {
     return $result;
   }
 
-  public function onClose(dom\element $el, dom\element $newElement) {
+  public function onClose(dom\element $el, $newElement) {
 
 
   }

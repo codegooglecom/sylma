@@ -16,9 +16,8 @@ abstract class Elemented extends Parsed {
   protected $root;
   protected $parent;
 
-  public function __construct($manager, reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
+  public function __construct(reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
 
-    $this->setManager($manager);
     $this->setRoot($root);
     if ($parent) $this->setParent($parent);
 
@@ -69,6 +68,20 @@ abstract class Elemented extends Parsed {
     return parent::parseComponent($el);
   }
 
+  public function loadComponent($sName, dom\element $el, $manager = null) {
+
+    if (!$manager) $manager = $this;
+
+    return parent::loadComponent($sName, $el, $manager);
+  }
+
+  public function loadSimpleComponent($sName, $manager = null) {
+
+    if (!$manager) $manager = $this;
+
+    return parent::loadSimpleComponent($sName, $manager);
+  }
+
   protected function loadDirectory(core\argument $arg) {
 
     if ($arg and $sDirectory = $arg->read('directory', null, false)) {
@@ -93,6 +106,16 @@ abstract class Elemented extends Parsed {
        $this->setArguments($sArguments);
     }
 
+  }
+
+  public function getSourceDirectory($sPath = '') {
+
+    return $this->getRoot()->getSourceDirectory($sPath);
+  }
+
+  public function getSourceFile($sPath = '') {
+
+    return $this->getRoot()->getSourceFile($sPath);
   }
 
   public function getLastElement() {

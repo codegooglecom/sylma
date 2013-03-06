@@ -67,7 +67,7 @@ class Security extends tester\Prepare {
     $this->user = $user->create('user', array($user, $sName, $aGroups));
   }
 
-  public function onPrepared($mResult) {
+  public function onPrepared() {
 
     $this->getControler('fs/test')->setControler($this->getUser(), 'user');
   }

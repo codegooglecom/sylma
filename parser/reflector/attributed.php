@@ -5,7 +5,7 @@ use \sylma\core, \sylma\storage\fs, \sylma\dom;
 
 interface attributed extends domed {
 
-  function parseAttributes(dom\element $el, dom\element $resultElement, $result);
-  function onClose(dom\element $el, dom\element $newElement);
+  function parseAttributes(dom\element $el, $resultElement, $result);
+  function onClose(dom\element $el, $newElement);
 }
 

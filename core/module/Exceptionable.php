@@ -14,6 +14,20 @@ class Exceptionable {
    */
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
+    $mSender = (array) $mSender;
+    $mSender[] = '@class ' . get_class($this);
+
     \Sylma::throwException($sMessage, $mSender, $iOffset);
+  }
+
+  /**
+   * Tmp alias
+   */
+  protected function launchException($sMessage, $mSender = array(), array $aVars = array()) {
+
+    $mSender = (array) $mSender;
+    $mSender[] = '@class ' . get_class($this);
+
+    \Sylma::throwException($sMessage, $mSender, 3, $aVars);
   }
 }

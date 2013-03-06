@@ -18,7 +18,7 @@ class Standalone extends tester\Prepare {
     //if (!$controler) $controler = $this;
     //if (!$controler) $controler = \Sylma::getControler('action');
 
-    $this->setControler($this->getControler('argument/parser'));
+    $this->setControler($this->getControler('parser'));
     $this->setFiles(array($this->getFile('standalone.xml')));
   }
 

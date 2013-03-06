@@ -69,7 +69,7 @@ class Condition extends common\basic\Controled implements common\argumentable, c
 
     return $this->getControler()->createArgument(array(
        'condition' => array(
-          '@context' => $window->getContext(),
+          //'@context' => $window->getContext(),
           '@argument' => $sArgument,
           'test' => $this->test,
           'content' => $this->aContent,

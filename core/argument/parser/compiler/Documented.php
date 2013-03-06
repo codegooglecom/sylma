@@ -5,9 +5,15 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common
 
 class Documented extends reflector\handler\Documented implements reflector\documented {
 
-  protected function parseDocument(dom\document $doc) {
+  //const PHP_TEMPLATE = 'basic.xsl';
 
-    $reflector = $this->getReflector();
+  public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null) {
+
+    parent::__construct($manager, $file, $dir, include('builder.xml.php'));
+  }
+
+  protected function parseReflector(reflector\domed $reflector, dom\document $doc) {
+
     //$reflector->loadDefaultNamespace($doc->getRoot());
 
     $mArguments = $reflector->parseRoot($doc->getRoot());

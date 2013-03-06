@@ -3,9 +3,6 @@
 namespace sylma\storage\fs\basic\editable;
 use \sylma\dom, \sylma\storage\fs;
 
-require_once(dirname(__dir__) . '/tokened/Directory.php');
-require_once(dirname(dirname(__dir__)) . '/editable/directory.php');
-
 class Directory extends fs\basic\tokened\Directory implements fs\editable\directory {
 
   /**
@@ -45,15 +42,15 @@ class Directory extends fs\basic\tokened\Directory implements fs\editable\direct
 
   /**
    *
-   * @param string $sName
+   * @param string $sValue Either name, or extension if $bRandom is TRUE
    * @param boolean $bRandom
    * @return fs\file|null
    */
-  public function createFile($sName, $bRandom = false) {
+  public function createFile($sValue, $bRandom = false) {
 
-    if ($bRandom) $sName = 'tmp-' . uniqid() . '.' . $sName;
+    if ($bRandom) $sValue = 'tmp-' . uniqid() . '.' . $sValue;
 
-    return $this->getFile($sName, self::DEBUG_EXIST);
+    return $this->getFile($sValue, self::DEBUG_EXIST);
   }
 
   /**

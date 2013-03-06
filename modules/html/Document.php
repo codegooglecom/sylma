@@ -102,12 +102,19 @@ class Document extends action\handler\Basic {
     $body = $doc->getx('//html:body');
 
     require_once('core/functions/Numeric.php');
+    $aBuilded = $this->getManager('parser')->aBuilded;
 
     $content = $this->createArgument(array(
       'ul' => array(
         '#li' => array(
           'user : ' . $this->getControler('user')->getName(),
           'time : ' . functions\numeric\formatFloat($this->getControler('init')->getElapsedTime()),
+          'builded : ' . count($aBuilded),
+          array(
+            'ul' => array(
+              '#li' => array_map('strval', $aBuilded),
+            ),
+          ),
         ),
       ),
     ), $this->getNamespace('html'));
@@ -145,7 +152,12 @@ class Document extends action\handler\Basic {
       $this->result = $doc;
       $doc->registerNamespaces($this->getNS());
 
-      if ($this->getControler('user')->isPrivate()) $this->loadSystemInfos($doc);
+      if ($this->getControler('user')->isPrivate()) {
+
+        $this->loadSystemInfos($doc);
+      }
+
+      //$this->getContext('message')->add(core\factory\Cached::loadStats());
 
       $this->loadContexts();
 

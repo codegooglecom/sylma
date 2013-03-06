@@ -42,22 +42,13 @@ abstract class Componented extends Namespaced {
 
     if (!$class = $this->getFactory()->findClass($sAlias, '', false)) {
 
+      //dsp($this->getArguments());
       $this->throwException(sprintf('Class not found for component "%s"', $sAlias));
     }
 
     $result = $this->create($sAlias, array($manager, $class, $this->getUsedNamespaces()));
 
     return $result;
-  }
-
-  /**
-   * Get a file relative to the source file's directory
-   * @param string $sPath
-   * @return fs\file
-   */
-  protected function getSourceFile($sPath) {
-
-    return $this->getManager(static::FILE_MANAGER)->getFile($sPath, $this->getRoot()->getSourceDirectory());
   }
 }
 

@@ -3,20 +3,22 @@
 namespace sylma\parser;
 use sylma\core, sylma\storage\fs, sylma\parser\compiler, sylma\parser\reflector;
 
-class Manager extends compiler\Builder {
-
-  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+class Manager extends compiler\Manager {
 
   const MANAGER_PATH = 'manager';
   const REFLECTOR_PATH = 'reflector';
   const CACHED_PATH = 'cached';
 
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+
   protected $aNamespaces = array();
-
   protected $aParserManagers = array();
-  protected $aReflectors = array();
-
   protected $aContexts = array();
+
+  /**
+   * For stats
+   */
+  public $aBuilded = array();
 
   public function __construct() {
 
@@ -32,15 +34,31 @@ class Manager extends compiler\Builder {
     $this->aNamespaces = $namespaces->asArray();
   }
 
-  public function load(fs\file $file, array $aArguments = array()) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null) {
 
-    return parent::load($file, $aArguments);
+    return parent::load($file, $aArguments, $bUpdate);
   }
 
-  public function loadManager(fs\file $file) {
+  public function loadBuilder(fs\file $file, fs\directory $dir = null, core\argument $args = null) {
 
+    if (!$dir) $dir = $file->getParent();
     $doc = $file->getDocument();
-    return $this->getParserManager($doc->getRoot()->getNamespace());
+    $sNamespace = $doc->getRoot()->getNamespace();
+
+    if (!$result = $this->getParserManager($sNamespace)) {
+
+      if (array_key_exists($sNamespace, $this->aNamespaces[self::MANAGER_PATH])) {
+
+        $sClass = $this->aNamespaces[self::MANAGER_PATH][$sNamespace];
+        $result = $this->createBuilder($sClass, $file, $dir, $args);
+      }
+      else {
+
+        $this->throwException(sprintf('No builder associated to namespace %s', $sNamespace));
+      }
+    }
+
+    return $result;
   }
 
   public function build(fs\file $file, fs\directory $dir) {
@@ -50,9 +68,10 @@ class Manager extends compiler\Builder {
       $this->throwException('This function is low performance and must not be used in production environnement');
     }
 
-    $manager = $this->loadManager($file);
+    $builder = $this->loadBuilder($file, $dir);
+    $this->aBuilded[] = $file;
 
-    return $manager->build($file, $dir);
+    return $builder->build($dir);
   }
 
   /**
@@ -63,23 +82,7 @@ class Manager extends compiler\Builder {
    */
   public function getParserManager($sNamespace, $bDebug = true) {
 
-    $result = null;
-
-    if (array_key_exists($sNamespace, $this->aParserManagers)) {
-
-      $result = $this->aParserManagers[$sNamespace];
-    }
-    else if (array_key_exists($sNamespace, $this->aNamespaces[self::MANAGER_PATH])) {
-
-      $sClass = $this->aNamespaces[self::MANAGER_PATH][$sNamespace];
-      $result = $this->createParser($sClass, array($this->findClass($sClass)));
-    }
-    else if ($bDebug) {
-
-      $this->throwException(sprintf('No manager parser associated to namespace %s', $sNamespace));
-    }
-
-    return $result;
+    return array_key_exists($sNamespace, $this->aParserManagers) ? $this->aParserManagers[$sNamespace] : null;
   }
 
   public function getCachedParser($sNamespace, $parent, $bDebug = true) {
@@ -87,7 +90,7 @@ class Manager extends compiler\Builder {
     if (array_key_exists($sNamespace, $this->aNamespaces[self::CACHED_PATH])) {
 
       $sClass = $this->aNamespaces[self::CACHED_PATH][$sNamespace];
-      $result = $this->createParser($sClass, array($parent));
+      $result = $this->create($sClass, array($parent));
     }
     else if ($bDebug) {
 
@@ -108,14 +111,10 @@ class Manager extends compiler\Builder {
 
     $result = null;
 
-    if (0 && array_key_exists($sNamespace, $this->aReflectors)) {
-
-      $result = $this->aReflectors[$sNamespace];
-    }
-    else if (array_key_exists($sNamespace, $this->aNamespaces[self::REFLECTOR_PATH])) {
+    if (array_key_exists($sNamespace, $this->aNamespaces[self::REFLECTOR_PATH])) {
 
       $sClass = $this->aNamespaces[self::REFLECTOR_PATH][$sNamespace];
-      $result = $this->createParser($sClass, array($this, $documented, $parent, $this->findClass($sClass)));
+      $result = $this->create($sClass, array($documented, $parent, $this->findClass($sClass)));
     }
     else if ($bDebug) {
 
@@ -128,13 +127,6 @@ class Manager extends compiler\Builder {
   protected function findClass($sPath) {
 
     return $this->getFactory()->findClass($sPath);
-  }
-
-  protected function createParser($sAlias, array $aArguments = array()) {
-
-    $result = $this->create($sAlias, $aArguments);
-
-    return $result;
   }
 
   public function setContext($sName, $context) {

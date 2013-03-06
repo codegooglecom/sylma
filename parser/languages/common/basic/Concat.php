@@ -35,7 +35,7 @@ class Concat extends common\basic\Controled {
       }
       else if ($mContent instanceof common\stringable) {
 
-        $aResult[] = $mValue->asString();
+        $aResult[] = $mContent->asString();
         $bString = true;
       }
       else {
@@ -57,6 +57,7 @@ class Concat extends common\basic\Controled {
     else {
 
       $result = $this->getControler()->convertToString($mValue);
+      //$result = $mValue;
     }
 
     return $result;

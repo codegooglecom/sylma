@@ -18,6 +18,10 @@ abstract class Domed extends Componented {
    */
   protected $documentContainer;
 
+  /**
+   *
+   * @return dom\element
+   */
   public function getNode() {
 
     if ($this->elementDocument) {
@@ -158,7 +162,7 @@ abstract class Domed extends Componented {
 
   protected function parseText(dom\text $node) {
 
-    return $this->getWindow()->createString((string) $node);
+    return (string) $node;
   }
 
   /**

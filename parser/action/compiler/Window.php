@@ -3,7 +3,7 @@
 namespace sylma\parser\action\compiler;
 use sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\common;
 
-class Window extends php\basic\window\Domed {
+class Window extends php\basic\Window {
 
   const ACTION_ALIAS = 'action';
 
@@ -117,20 +117,6 @@ class Window extends php\basic\window\Domed {
     else {
 
       $result = $mValue; // TODO : is stringable
-    }
-
-    return $result;
-  }
-
-  protected function argToString($mValue) {
-
-    if ($mValue instanceof core\stringable) {
-
-      $result = $this->create('string', array($this, $mValue));
-    }
-    else {
-
-      $result = $this->create('concat', array($this, $mValue));
     }
 
     return $result;

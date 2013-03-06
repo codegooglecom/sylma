@@ -3,7 +3,7 @@
 namespace sylma\core\factory\parser;
 use sylma\core, sylma\dom, sylma\parser\reflector;
 
-class Main extends reflector\handler\Elemented implements reflector\elemented {
+class Main extends core\argument\parser\compiler\Elemented implements reflector\elemented {
 
   const NS = 'http://2013.sylma.org/core/factory';
 
@@ -95,6 +95,11 @@ class Main extends reflector\handler\Elemented implements reflector\elemented {
 
     $mResult = $this->parseElementSelf($el);
     if (!is_null($mResult)) $aResult[] = $mResult;
+  }
+
+  protected function parseChildrenElementForeign(dom\element $el, array &$aResult) {
+
+    $aResult[] = $el;
   }
 
   protected function reflectBase(dom\element $el) {

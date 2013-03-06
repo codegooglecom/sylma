@@ -165,6 +165,11 @@ abstract class Domed extends Main {
     return $attr;
   }
 
+  protected function parseText(dom\text $node) {
+
+    return $this->getWindow()->createString(parent::parseText($node));
+  }
+
   protected function parseString($sValue) {
 
     $window = $this->getWindow();

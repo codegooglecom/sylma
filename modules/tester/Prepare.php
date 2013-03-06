@@ -8,21 +8,41 @@ abstract class Prepare extends Basic {
   protected function test(dom\element $test, $sExpected, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = false;
+    $bReady = true;
 
-    $sPrepare = $test->readx('self:prepare');
-    $sExpected = $test->readx('self:expected');
+    $sPrepare = $test->readx('self:prepare', array(), false);
+    $sExpected = $test->readx('self:expected', array(), false);
 
     try {
 
-      if (eval('$closure = function($controler) { ' . $sPrepare . '; };') === null) {
+      if ($sPrepare) {
 
-        $mResult = $this->evaluate($closure, $controler);
+        if (is_null(eval('$closure = function($controler) { ' . $sPrepare . '; };'))) {
 
-        $this->onPrepared($mResult);
+          $this->evaluate($closure, $controler);
+          $this->onPrepared();
+        }
+        else {
 
-        if (eval('$closure = function($controler) { ' . $sExpected . '; };') === null) {
+          $bReady = false;
+        }
+      }
 
-          $bResult = $this->evaluate($closure, $controler);
+      if ($bReady) {
+
+        if ($sExpected) {
+
+          if (is_null(eval('$closure = function($controler) { ' . $sExpected . '; };'))) {
+
+            $bResult = $this->evaluate($closure, $controler);
+          }
+        }
+        else {
+
+          $result = $this->getArgument('result');
+          $node = $this->getArgument('node');
+
+          $bResult = $this->compareNodes($result, $node);
         }
       }
     }
@@ -34,7 +54,7 @@ abstract class Prepare extends Basic {
     return $bResult;
   }
 
-  protected function onPrepared($mResult) {
+  protected function onPrepared() {
 
 
   }

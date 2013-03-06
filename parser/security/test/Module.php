@@ -61,7 +61,7 @@ class Module extends tester\Prepare {
     return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
-  public function onPrepared($mResult) {
+  public function onPrepared() {
 
     if ($action = $this->getArgument('action')) {
 

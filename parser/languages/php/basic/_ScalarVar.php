@@ -3,9 +3,6 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-require_once('_Var.php');
-require_once('parser/languages/common/_scalar.php');
-
 class _ScalarVar extends _Var implements common\_scalar {
 
   public function useFormat($sFormat) {

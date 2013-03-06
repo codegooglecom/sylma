@@ -3,8 +3,6 @@
 namespace sylma\core\module;
 use sylma\core;
 
-require_once('Argumented.php');
-
 abstract class Sessioned extends Argumented {
 
   const CLASS_PREFIX = 'sylma-class-';

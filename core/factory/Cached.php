@@ -9,6 +9,22 @@ class Cached extends core\module\Argumented implements core\factory {
    * Classes to use within @method create() loaded in @settings /classes
    */
   public $aClasses = array();
+  protected static $aObjects = array();
+
+  public static function loadStats() {
+
+    $arg = new core\argument\advanced\Treed(self::$aObjects);
+    $aTree = $arg->parseTree();
+    $aResult = $arg->renderTree($aTree);
+
+    return $aResult[1];
+  }
+
+  protected function addStat($sClass) {
+
+    if (!array_key_exists($sClass, self::$aObjects)) self::$aObjects[$sClass] = 0;
+    self::$aObjects[$sClass]++;
+  }
 
   public function __construct(core\argument $classes = null) {
 
@@ -25,7 +41,12 @@ class Cached extends core\module\Argumented implements core\factory {
    */
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
 
-    return $this->createObject($this->getClass($sName, $sDirectory), $aArguments);;
+    $class = $this->getClass($sName, $sDirectory);
+    $result = $this->createObject($class, $aArguments);
+
+    //$this->addStat($class->read('name'));
+
+    return $result;
   }
 
   protected function getClass($sName, $sDirectory) {
@@ -162,12 +183,7 @@ class Cached extends core\module\Argumented implements core\factory {
         //$this->throwException(sprintf('Cannot load @class %s. @file %s not found !', $sClass, $sFile));
       }
     }
-/*
-    if (!class_exists($sClass, false)) {
 
-      \Sylma::throwException(sprintf('@class %s has not been loaded !', $sClass));
-    }
-*/
     return true;
   }
 
@@ -185,8 +201,20 @@ class Cached extends core\module\Argumented implements core\factory {
     // creation of object
 
     // caching classes improve performances
-    if (array_key_exists($sClass, $this->aClasses)) $reflected = $this->aClasses[$sClass];
-    else $reflected = $this->aClasses[$sClass] = new \ReflectionClass($sClass);
+
+    try {
+
+      if (array_key_exists($sClass, $this->aClasses)) $reflected = $this->aClasses[$sClass];
+      else $reflected = $this->aClasses[$sClass] = new \ReflectionClass($sClass);
+    }
+    catch (\ReflectionException $e) {
+
+      $this->throwException($e->getMessage());
+    }
+    catch (\Exception $e) {
+
+      $this->throwException(sprintf('Error when building class in @file %s : %s', \Sylma::classToFile($sClass), $e->getMessage()));
+    }
 
     if ($aArguments) $result = $reflected->newInstanceArgs($aArguments);
     else $result = $reflected->newInstance();

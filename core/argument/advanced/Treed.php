@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\core\argument;
+namespace sylma\core\argument\advanced;
 use \sylma\core, sylma\dom;
 
-class Treed extends Filed {
+class Treed extends core\argument\Filed {
 
   public function parseTree() {
 
@@ -162,7 +162,9 @@ class Treed extends Filed {
 
   public static function renderTree(array $aArray, $sPrefix = '', $iDepth = 0) {
 
-    $result = new HTML_Div;
+    $dom = \Sylma::getManager('dom');
+    $doc = $dom->createDocument();
+    $result = $doc->addElement('div', null, array(), \Sylma::read('namespaces/html'));
 
     $iCount = 0;
 
@@ -183,7 +185,7 @@ class Treed extends Filed {
         if ($result && !$iRealCount) {
 
           $count = '#'.$iSubCount;
-          $result->addNode('div', array(new HTML_Em($sPrefix . $sKey), $count), array('style' => 'border-bottom: 1px dotted #eee'));
+          $result->addElement('div', array($result->createElement('em', $sPrefix . $sKey), $count), array('style' => 'border-bottom: 1px dotted #eee'));
         }
 
         $result->add($children);
@@ -195,13 +197,13 @@ class Treed extends Filed {
 
           $iCount += $mValue;
 
-          if ($sPrefix) $prefix = new HTML_Em($sPrefix);
+          if ($sPrefix) $prefix = $result->createElement('em', $sPrefix);
           else $prefix = null;
 
-          if ($mValue > 1) $value = new HTML_Strong('#'.$mValue);
+          if ($mValue > 1) $value = $result->createElement('strong', '#'.$mValue);
           else $value = null;
 
-          $result->addNode('div', array($prefix , $sKey, $value));
+          $result->addElement('div', array($prefix , $sKey, $value));
         }
       }
     }
