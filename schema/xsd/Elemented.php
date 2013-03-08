@@ -38,50 +38,100 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
     $this->loadTargetNamespace($doc);
     $this->loadDefaultNamespace($doc);
 
-    $this->setDocument($this->createDocument('schema'));
+    $this->setDocument($this->createDocument($doc));
+    $this->getDocument()->getRoot()->set();
     $this->addSchema($doc);
 
     parent::parseRoot($el);
   }
 
-  protected function loadTargetNamespace(dom\document $doc) {
+  protected function lookupNamespace($sPrefix, dom\element $context = null) {
 
-    $sNamespace = $doc->readx('@targetNamespace');
-    $this->setNamespace($sNamespace, 'target');
+    $sNamespace = '';
+
+    if ($context) {
+
+      if (!$sNamespace = $context->lookupNamespace($sPrefix)) {
+
+        $sNamespace = $context->getHandler()->getRoot()->lookupNamespace($sPrefix);
+      }
+    }
+
+    if (!$sNamespace) {
+
+      $sNamespace = $this->getDocument()->getRoot()->lookupNamespace($sPrefix);
+    }
+
+    return $sNamespace ? $sNamespace : $this->getNamespace($sPrefix);
   }
 
-  protected function parseName($sName, dom\element $context = null) {
+  public function getTargetNamespace() {
 
-    if (!$context) $context = $this->getDocument()->getRoot();
+    return $this->getNamespace('target');
+  }
+
+  protected function loadTargetNamespace(dom\document $doc) {
+
+    $this->setNamespace($this->parseTargetNamespace($doc), 'target');
+  }
+
+  protected function parseTargetNamespace(dom\document $doc) {
+
+    return $doc->readx('@targetNamespace');
+  }
+
+  /**
+   *
+   * @param string $sName ([prefix]:)?[name]
+   * @param $source
+   * @param $context
+   * @return type
+   */
+  public function parseName($sName, parser\element $source = null, dom\element $context = null) {
 
     $iPrefix = strpos($sName, ':');
 
     if ($iPrefix !== false) {
 
-      $sNamespace = $context->getNamespace(substr($sName, 0, $iPrefix));
+      $sPrefix = substr($sName, 0, $iPrefix);
+      $sNamespace = $this->lookupNamespace($sPrefix, $context);
+//dsp($sName);
+//dsp($context);
+//dsp($context->getNamespace($sPrefix));
+//dsp($sPrefix);
+//dsp($this->getDocument());
+//if ($sPrefix == 'group') {
+//$this->throwException('test');
+//}
       $sName = substr($sName, $iPrefix + 1);
     }
     else {
 
-      $sNamespace = $this->getDefaultNamespace();
+      $sNamespace = $source ? $source->getNamespace() : $this->getTargetNamespace();
     }
 
     return array($sNamespace, $sName);
   }
+
   /**
    *
    * @param string $sName
    * @param boolean $bDebug
    * @return type\Basic
    */
-  public function getElement($sName = '', dom\element $context = null) {
+  public function getElement($sName = '', $sNamespace = '') {
 
-    list($sNamespace, $sName) = $this->parseName($sName, $context);
+    //list($sNamespace, $sName) = $this->parseName($sName, $context);
+    if (!$sNamespace) $sNamespace = $this->getTargetNamespace();
 
     if (!$sName or !$result = $this->loadElement($sName, $sNamespace)) {
 
       $el = $this->lookupElement($sName, $sNamespace);
-      $result = $this->addElement($this->parseComponent($el));
+
+      $result = $this->parseComponent($el);
+
+      $result->loadNamespace($sNamespace);
+      $this->addElement($result);
     }
 
     return $result;
@@ -113,9 +163,9 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
    * @param boolean $bDebug
    * @return type\Basic
    */
-  public function getType($sName, dom\element $context = null) {
+  public function getType($sName, $sNamespace) {
 
-    list($sNamespace, $sName) = $this->parseName($sName, $context);
+    //list($sNamespace, $sName) = $this->parseName($sName, $source, $context);
 
     if (!$result = $this->loadType($sName, $sNamespace)) {
 
@@ -130,7 +180,7 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
 
     if (!isset($this->aTypesNodes[$sNamespace][$sName])) {
 
-      $this->throwException(sprintf('Cannot find type %s', $sName));
+      $this->throwException(sprintf('Cannot find type %s:%s', $sNamespace, $sName));
     }
 
     return $this->aTypesNodes[$sNamespace][$sName];
@@ -143,26 +193,28 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
 
   public function addSchema(dom\document $doc) {
 
+    $sNamespace = $this->parseTargetNamespace($doc);
+
     foreach ($doc->getChildren() as $child) {
 
-      $this->addSchemaChild($child);
+      $this->addSchemaChild($child, $sNamespace);
     }
   }
 
-  protected function addSchemaChild(dom\element $el) {
+  protected function addSchemaChild(dom\element $el, $sNamespace) {
 
     switch ($el->getName()) {
 
       case 'element' :
       case 'table' :
 
-        $this->addSchemaElement($el);
+        $this->addSchemaElement($el, $sNamespace);
         break;
 
       case 'complexType' :
       case 'simpleType' :
 
-        $this->addSchemaType($el);
+        $this->addSchemaType($el, $sNamespace);
         break;
 
       default :
@@ -171,10 +223,9 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
     }
   }
 
-  protected function addSchemaElement(dom\element $el) {
+  protected function addSchemaElement(dom\element $el, $sNamespace) {
 
     $sName = $el->readx('@name');
-    $sNamespace = $el->lookupNamespace();
 
     if (!isset($this->aElementsNodes[$sNamespace])) {
 
@@ -189,9 +240,9 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
     $this->aElementsNodes[$sNamespace][$sName] = $this->getDocument()->add($el);
   }
 
-  protected function addSchemaType(dom\element $el) {
+  protected function addSchemaType(dom\element $el, $sNamespace) {
 
-    list($sNamespace, $sName) = $this->parseName($el->readx('@name'));
+    $sName = $el->readx('@name');
 
     if (!isset($this->aTypesNodes[$sNamespace])) {
 

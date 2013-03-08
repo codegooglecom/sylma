@@ -132,4 +132,12 @@ abstract class Elemented extends Parsed {
 
     return parent::getNamespace($sPrefix);
   }
+
+  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
+
+    $mSender = (array) $mSender;
+
+    $mSender[] = 'Parser : ' . $this->getNamespace();
+    return parent::throwException($sMessage, $mSender, $iOffset);
+  }
 }

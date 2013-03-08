@@ -10,6 +10,8 @@ interface element {
   /**
    * @return \sylma\schema\parser\element
    */
-  function getElement($sName);
+  function getElement($sName, $sNamespace);
+  function getName();
+  function getNamespace();
 }
 

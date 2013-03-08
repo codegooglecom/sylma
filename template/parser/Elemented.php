@@ -10,7 +10,11 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   protected $aTemplates = array();
   protected $result;
 
+  protected static $aParsed = array();
+
   public function parseRoot(dom\element $el) {
+
+    $this->setNode($el, false);
 
     if ($el->getName() !== 'stylesheet') {
 
@@ -23,6 +27,11 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     //$content = $this->parseChildren($el->getChildren());
     //$this->setContent($content);
     //parent::parseRoot($el->getFirst());
+  }
+
+  public function lookupNamespace($sPrefix = '') {
+
+    return $this->getNode()->lookupNamespace($sPrefix);
   }
 
   protected function loadResult() {
@@ -46,16 +55,26 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     }
   }
 
-  protected function addTemplate(parser_ns\component\Template $template) {
+  protected function getTemplates() {
 
-    $this->aTemplates[$template->getMatch()] = $template;
+    return $this->aTemplates;
   }
 
-  protected function getTemplate($sMatch = '') {
+  protected function addTemplate(parser_ns\component\Template $template) {
 
-    if (!$sMatch) $sMatch = parser_ns\component\Template::MATCH_DEFAULT;
+    $this->aTemplates[] = $template;
+  }
 
-    return array_key_exists($sMatch, $this->aTemplates) ? $this->aTemplates[$sMatch] : null;
+  protected function getTemplate($sPath = '') {
+
+    if ($sPath) {
+
+      $this->throwException('Feature not available');
+    }
+
+    //if (!$sMatch) $sMatch = parser_ns\component\Template::MATCH_DEFAULT;
+
+    return current($this->aTemplates);
   }
 
   protected function parseElementSelf(dom\element $el) {
@@ -123,7 +142,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
       }
       else if ($mVal instanceof common\arrayable) {
 
-        $aResult[] = $this->parseArrayables($mVal->asArray());
+        $aResult[] = $this->parseArrayable($mVal);
       }
       else {
 
@@ -132,6 +151,13 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     }
 
     return $this->getWindow()->flattenArray($aResult);
+  }
+
+  protected function parseArrayable(common\arrayable $val) {
+
+    $aResult = $val->asArray();
+
+    return $this->parseArrayables($aResult);
   }
 
   public function toString($mContent) {

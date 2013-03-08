@@ -10,9 +10,9 @@ class Stringed extends reflector\component\Foreigner {
     return $this->getParser()->toString($mContent);
   }
 
-  protected function addToResult($mContent) {
+  protected function addToResult($mContent, $bAdd = true) {
 
-    return $this->getParser()->addToResult($mContent);
+    return $this->getParser()->addToResult($mContent, $bAdd);
   }
 }
 

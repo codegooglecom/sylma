@@ -137,12 +137,13 @@ class Basic extends \Exception implements core\exception {
     return array($link, $path);
   }
 
-  public static function loadError($iNo, $sMessage, $sFile, $iLine) {
+  public static function loadError($iNo, $sMessage, $sFile, $iLine, $aContext) {
 
     //if ($iNo & \Sylma::read('users/root/error-level')) {
 
       $exception = new \Sylma::$sExceptionClass($sMessage);
       $exception->importError($iNo, $sMessage, $sFile, $iLine);
+      $exception->setVariables($aContext);
 
       if (self::throwError()) throw $exception;
     //}

@@ -17,7 +17,12 @@ class Element extends Basic implements parser\element, common\stringable {
     $this->parent = $parent;
   }
 
-  public function getParent() {
+  public function getParent($bDebug = true) {
+
+    if (!$this->parent && $bDebug) {
+
+      $this->throwException('No parent');
+    }
 
     return $this->parent;
   }
@@ -30,6 +35,14 @@ class Element extends Basic implements parser\element, common\stringable {
   public function getName() {
 
     return $this->sName;
+  }
+
+  /**
+   * @TODO Bad mix with module\Namespaced
+   */
+  public function getNamespace($sPrefix = 'element') {
+
+    return parent::getNamespace($sPrefix);
   }
 
   public function getType() {
@@ -47,9 +60,9 @@ class Element extends Basic implements parser\element, common\stringable {
     $this->type = $type;
   }
 
-  public function getElement($sName) {
+  public function getElement($sName, $sNamespace) {
 
-    $result = $this->getType()->getElement($sName);
+    $result = $this->getType()->getElement($sName, $sNamespace);
     $result->setParent($this);
 
     return $result;
@@ -71,14 +84,14 @@ class Element extends Basic implements parser\element, common\stringable {
     return $this->iMinOccurs;
   }
 
-  protected function getMaxOccurs() {
+  protected function getMaxOccurs($bBool) {
 
-    return $this->iMaxOccurs;
+    return $bBool ? $this->iMaxOccurs == 'n' || $this->iMaxOccurs > 1 : $this->iMaxOccurs;
   }
 
   public function asString() {
 
-    return $this->getName();
+    return $this->getParent()->asString() . '.`' . $this->getName() . "`";
   }
 }
 

@@ -12,16 +12,15 @@ class Apply extends template\parser\component\Apply implements common\arrayable 
 
   public function asArray() {
 
-    $sValue = $this->getNode()->readx('@select');
+    if ($sValue = $this->getNode()->readx('@select', array(), false)) {
 
-    if ($sValue{0} === '$') {
+      if ($sValue{0} === '$') {
 
-      $this->throwException('Not yet implemented');
+        $this->throwException('Not yet implemented');
+      }
     }
-    else {
 
-      $result = $this->getTree()->reflectApply($sValue);
-    }
+    $result = $this->getTree()->reflectApply($sValue);
 //dsp($result);
     return array($result);
   }

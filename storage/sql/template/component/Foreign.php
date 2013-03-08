@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\storage\sql, sylma\template;
+use sylma\core, sylma\storage\sql, sylma\parser\languages\common, sylma\schema\parser;
 
 class Foreign extends sql\schema\component\Foreign implements sql\template\field {
 
@@ -28,13 +28,17 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
     return $this->var;
   }
 
-  public function reflectApplyPath(array $aPath) {
+  protected function setVar(common\_var $var) {
+
+    $this->var = $var;
+  }
+
+  public function reflectApplyPath(array $aPath, $sMode) {
 
     if (!$aPath) {
 
       $element = $this->getElementRef();
-
-      $result = $this->applyElement($element);
+      $result = $this->applyElement($element, $sMode);
     }
     else {
 
@@ -44,51 +48,110 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
     return $result;
   }
 
-  public function reflectApply($sPath) {
+  public function reflectApply($sPath, $sMode = '') {
 
-    return $this->reflectApplyPath($this->getParser()->parsePath($sPath));
+    return $this->reflectApplyPath($this->getParser()->parsePath($sPath), $sMode);
   }
 
-  protected function applyElement(Table $element) {
+  protected function loadJunction($sName, parser\element $target) {
 
-    $sName = $element->getName();
+    $parent = $this->getParent();
+    $sNamespace = $this->getNamespace();
+
+    $result = $this->loadSimpleComponent('component/table');
+    $result->setName($sName);
+    $result->loadNamespace($sNamespace);
+
+    $type = $this->loadSimpleComponent('component/complexType');
+    //$type->loadNamespace($sNamespace);
+
+    $result->setType($type);
+
+    $particle = $this->loadSimpleComponent('component/particle');
+    $type->addParticle($particle);
+
+    $el1 = $this->loadSimpleComponent('component/field');
+    $el1->setName('id_' . $parent->getName());
+    $el1->setParent($result);
+    $el1->loadNamespace($sNamespace);
+
+    $el2 = $this->loadSimpleComponent('component/field');
+    $el2->setName('id_' . $target->getName());
+    $el2->setParent($result);
+    $el2->loadNamespace($sNamespace);
+
+    $particle->addElement($el1);
+    $particle->addElement($el2);
+
+    return array($result, $el1, $el2);
+  }
+
+  protected function applyElement(Table $element, $sMode) {
+
+    //$sName = $element->getName();
 
     $window = $this->getWindow();
-    $sub = $element->getQuery();
-    $res = $element->getVar();
-    $this->query = $sub;
+    $parent = $this->getParent();
 
-    $id = $this->getParent()->reflectApply('id');
+    if ($this->getMaxOccurs(true)) {
 
-    $sub->setWhere($this->getParent()->getElement('id'), '=', $id);
+      $id = $parent->getElement('id', $element->getNamespace());
+      //$id->reflectRead();
 
-    if ($this->getMaxOccurs()) {
+      list($junction, $source, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
+
+      $select1 = $this->loadSimpleComponent('template/select');
+      $select1->setTable($junction);
+      $select1->setWhere($source, '=', $id->reflectRead());
+      $select1->isMultiple(true);
+
+      $element->setQuery($select1);
+      $select1->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
+      //$select1->setTable($element);
 
       //$call = $window->createCall($element->getVar(), 'get', 'php-string', array($sName));
       $var = $window->createVariable('item', '\\sylma\\core\\argument');
 
-      $this->var = $var;
-      $looped = $res;
+      //$select2 = $element->getQuery();
+      //$this->query = $select2;
+      $this->setVar($var);
 
-      $loop = $window->createLoop($looped, $var);
-
-      $name = $element->reflectApply('name');
-      //$call = $window->createCall($var, 'read', 'php-string', array('name'));
+      $loop = $window->createLoop($select1->getVar(), $var);
+      $val = $element->reflectApply('', $sMode);
 
       $window->setScope($loop);
-      $loop->addContent($this->getView()->addToResult($var, false));
+      //$call = $window->createCall($var, 'read', 'php-string', array('name'));
+      $loop->addContent($this->getView()->addToResult($val, false));
       $window->stopScope();
 
       $result = array($loop);
     }
     else {
 
+      $query = $parent->getQuery();
+      $element->setQuery($query);
+
+      $id = $element->getElement('id', $element->getNamespace());
+      //$id->reflectRead();
+
+      $query->addJoin($element, $id, $this);
+      $this->setVar($this->getParent()->getVar());
+
+      //$query->setColumn($this->getName());
+
+      //$sub->setWhere($this, '=', $id);
+
+      $result = $element->reflectApply('', $sMode);
+
+      /*
       $query = $this->getParent()->getQuery();
 
       $query->setColumn($sName);
       $var = $this->getVar();
 
       $result = $window->createCall($var, 'get', 'php-string', array($sName));
+       *
+       */
     }
 
     return $result;

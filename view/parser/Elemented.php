@@ -34,10 +34,10 @@ class Elemented extends template\parser\Elemented {
     $this->loadResult();
 
     $resource = $this->parseElement($el->getx('*[local-name() = "resource"]'));
-    $schema = $this->loadSchema();
-    $resource->setSchema($schema);
+    $schema = $resource->setSchema($this->loadSchema());
 
     $this->loadTemplates();
+    $schema->loadTemplates($this->getTemplates());
 
     $tpl = $this->getTemplate();
     $tpl->setTree($resource->getTree());

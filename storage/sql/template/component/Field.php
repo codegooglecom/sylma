@@ -9,21 +9,21 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
   protected $query;
   protected $var;
 
-  public function getQuery() {
+  protected function getQuery() {
 
     return $this->getParent()->getQuery();
   }
 
-  public function getVar() {
+  protected function getVar() {
 
     return $this->getParent()->getVar();
   }
 
-  public function reflectApplyPath(array $aPath) {
+  public function reflectApplyPath(array $aPath, $sMode = '') {
 
     if (!$aPath) {
 
-      $result = $this->reflectApplySimple();
+      $result = $this->reflectApplySelf();
     }
     else {
 
@@ -34,19 +34,57 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
     return $result;
   }
 
-  public function reflectApply($sPath) {
+  public function reflectApply($sPath, $sMode = '') {
 
-    return $this->reflectApplyPath($this->getParser()->parsePath($sPath));
+    if ($sPath) {
+
+      $result = $this->reflectApplyPath($this->getParser()->parsePath($sPath));
+    }
+    else {
+
+      $result = $this->reflectRead();
+    }
+
+    return $result;
   }
 
-  protected function reflectApplySimple() {
+  protected function lookupTemplate($sMode) {
+
+    if ($template = $this->getParser()->lookupTemplate($this, 'element', $sMode)) {
+
+      $result = clone $template;
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
+  }
+
+  protected function reflectApplySelf($sMode = '') {
+
+    if ($result = $this->lookupTemplate($sMode)) {
+
+      $result->setTree($this);
+    }
+    else {
+
+      $result = $this->reflectRead();
+    }
+
+    return $result;
+  }
+
+  public function reflectRead() {
 
     $window = $this->getWindow();
     $query = $this->getQuery();
 
     $sName = $this->getName();
 
-    $query->setColumn($sName);
+    $query->setColumn($this);
+
     $var = $this->getVar();
 
     return $window->createCall($var, 'read', 'php-string', array($sName));

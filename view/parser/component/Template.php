@@ -5,15 +5,6 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 
 class Template extends ns_template\Container {
 
-  public function parseRoot(dom\element $el) {
-
-    if (!$el->readx('@match', array(), false)) {
-
-      $this->setMatch(self::MATCH_DEFAULT);
-    }
-
-    return parent::parseRoot($el);
-  }
 
 }
 

@@ -10,7 +10,26 @@ class Argument extends core\argument\Readable {
     $this->setNamespaces($aNS);
     if ($parent) $this->setParent($parent);
 
-    $this->aArray = $content;
+    $this->aArray = $this->loadContent($content);
+  }
+
+  protected function loadContent($val) {
+
+    if ($val instanceof \PDOStatement) {
+
+      $aResult = array();
+
+      foreach ($val as $sKey => $row) {
+
+        $aResult[$sKey] = $row;
+      }
+    }
+    else {
+
+      $aResult = $val;
+    }
+
+    return $aResult;
   }
 
   public function read($sPath = '', $bDebug = true) {

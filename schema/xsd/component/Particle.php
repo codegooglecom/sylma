@@ -12,13 +12,14 @@ class Particle extends parser\component\Particle  {
     $this->setNode($el);
   }
 
-  public function getElement($sName) {
+  public function getElement($sName, $sNamespace) {
 
     $result = null;
-    
+
     if ($el = $this->getNode()->getx("self:element[@name='$sName']")) {
 
       $result = $this->getParser()->parseComponent($el);
+      $result->loadNamespace($sNamespace);
     }
 
     return $result;

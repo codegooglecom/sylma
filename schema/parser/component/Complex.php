@@ -18,7 +18,7 @@ class Complex extends Basic implements parser\type {
     $this->sName = $sName;
   }
 
-  protected function getName() {
+  public function getName() {
 
     return $this->sName;
   }
@@ -37,13 +37,13 @@ class Complex extends Basic implements parser\type {
    *
    * @param parser\element
    */
-  public function getElement($sName) {
+  public function getElement($sName, $sNamespace) {
 
     $result = null;
 
     foreach ($this->getParticles() as $particle) {
 
-      if ($result = $particle->getElement($sName)) break;
+      if ($result = $particle->getElement($sName, $sNamespace)) break;
     }
 
     return $result;

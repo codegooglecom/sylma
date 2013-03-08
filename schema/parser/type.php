@@ -9,6 +9,7 @@ use sylma\core;
 interface type {
 
   function isComplex();
+  function getName();
   function getNamespace();
 }
 

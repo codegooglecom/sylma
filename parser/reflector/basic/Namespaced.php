@@ -34,10 +34,4 @@ abstract class Namespaced extends core\module\Domed {
 
     return parent::setNamespace($sNamespace, $sPrefix, $bDefault);
   }
-
-  protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
-
-    $mSender[] = 'Parser : ' . $this->getNamespace();
-    return parent::throwException($sMessage, $mSender, $iOffset);
-  }
 }

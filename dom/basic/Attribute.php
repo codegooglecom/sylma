@@ -58,6 +58,8 @@ class Attribute extends \DOMAttr implements dom\attribute {
 
   public function asString($iMode = 0) {
 
+    \Sylma::load('/dom/functions.php');
+
     return $this->getName(true).'="'.dom\xmlize($this->value).'"';
   }
 

@@ -12,9 +12,5 @@ interface template {
 
   function setTree(tree $tree);
 
-  /**
-   * @return string
-   */
-  function getMatch();
 }
 

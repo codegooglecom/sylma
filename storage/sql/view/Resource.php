@@ -31,7 +31,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
       $select = $row->getQuery();
 
       $this->parseID($id);
-      $select->setWhere($row->getElement('id')->getName(), '=', $this->getID());
+      $select->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
     }
     else {
 
@@ -39,10 +39,15 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     }
   }
 
+  /**
+   *
+   * @param \sylma\storage\fs\file $file
+   * @return \sylma\schema\parser\schema
+   */
   public function setSchema(fs\file $file) {
 
     $builder = $this->getManager('parser')->loadBuilder($file, null, $this->getArguments());
-    
+
     $schema = $builder->getSchema($file, $this->getWindow());
     $schema->setView($this->getParent());
 
@@ -50,6 +55,8 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     $this->setTree($field);
     $this->addID();
+
+    return $schema;
   }
 
   protected function setTree(template\parser\tree $tree) {

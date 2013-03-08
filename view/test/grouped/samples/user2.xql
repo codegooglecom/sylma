@@ -10,7 +10,7 @@
   <table name="user">
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
-    <foreign occurs="0..n" name="group" table="group:group" import="group.xql" linker="user_group"/>
+    <foreign occurs="0..1" name="group_id" table="group:group" import="group.xql"/>
   </table>
 
 </schema>

@@ -9,28 +9,17 @@ class Table extends sql\schema\component\Table implements sql\template\field {
   protected $aElements = array();
 
   protected $query;
-  protected $var;
 
   public function parseRoot(\sylma\dom\element $el) {
 
     parent::parseRoot($el);
-
-    $select = $this->loadSimpleComponent('template/select', $this);
-    $select->setTable($this->getName());
-
-    $this->setQuery($select);
   }
 
   protected function build() {
 
     if (!$this->bBuilded) {
 
-      $window = $this->getWindow();
-
-      $manager = $window->addControler('mysql');
-      $var = $window->addVar($window->createCall($manager, 'get', '\\sylma\\core\\argument', array($this->getQuery())));
-
-      $this->setVar($var);
+      //$this->getQuery()->addTo($this->getWindow());
 
       $this->bBuilded = true;
     }
@@ -38,10 +27,19 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
   public function getQuery() {
 
+    if (!$this->query) {
+
+      $select = $this->loadSimpleComponent('template/select', $this);
+      $select->setTable($this);
+      $select->isMultiple(false);
+
+      $this->setQuery($select);
+    }
+
     return $this->query;
   }
 
-  protected function setQuery(sql\query\parser\Select $query) {
+  public function setQuery(sql\query\parser\Select $query) {
 
     $this->query = $query;
   }
@@ -50,15 +48,10 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
     $this->build();
 
-    return $this->var;
+    return $this->getParent(false) ? $this->getParent()->getVar() : $this->getQuery()->getVar();
   }
 
-  protected function setVar(common\_object $var) {
-
-    $this->var = $var;
-  }
-
-  public function reflectApplyPath(array $aPath) {
+  public function reflectApplyPath(array $aPath, $sMode) {
 
     if (!$aPath) {
 
@@ -66,8 +59,11 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     }
     else if (count($aPath) == 1) {
 
-      $field = $this->getElement(array_shift($aPath));
-      $result = $field->reflectApplyPath($aPath);
+      $parser = $this->getParser();
+      list($sNamespace, $sName) = $parser->parseName(array_shift($aPath), $this, $this->getNode());
+
+      $field = $this->getElement($sName, $sNamespace);
+      $result = $field->reflectApplyPath($aPath, $sMode);
     }
     else {
 
@@ -77,12 +73,42 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     return $result;
   }
 
-  public function reflectApply($sPath) {
+  protected function lookupTemplate($sMode) {
+
+    if ($template = $this->getParser()->lookupTemplate($this, 'element', $sMode)) {
+
+      $result = clone $template;
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
+  }
+
+  public function reflectApply($sPath, $sMode = '') {
 
     $this->build();
-    $aPath = $this->getParser()->parsePath($sPath);
 
-    return $this->reflectApplyPath($aPath);
+    if (!$sPath) {
+
+      if (!$template = $this->lookupTemplate($sMode)) {
+
+        $this->launchException('Cannot apply directly table without template', array(), array($this->getNode()));
+      }
+
+      $template->setTree($this);
+
+      return $template;
+    }
+    else {
+
+      $aPath = $this->getParser()->parsePath($sPath);
+
+      return $this->reflectApplyPath($aPath, $sMode);
+    }
+
   }
 }
 

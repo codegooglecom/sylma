@@ -65,7 +65,7 @@ class Readable extends Domed implements core\argument {
 
     if (each($aPath)) {
 
-      $this->throwException(sprintf('Cannot find path "%s" to set value'));
+      $this->throwException(sprintf('Cannot find path "%s" to set value', $sPath));
     }
 
     $mCurrent = $mValue;

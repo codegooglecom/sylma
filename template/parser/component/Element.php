@@ -5,6 +5,10 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 
 class Element extends Unknowned implements common\arrayable, common\argumentable {
 
+  //protected $aAttributes = array();
+  protected $aContent = array();
+  protected $bBuilded = false;
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, true, false);
@@ -41,18 +45,37 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $sValue;
   }
 
+  protected function build() {
+
+    if (!$this->bBuilded) {
+
+      $el = $this->getNode();
+
+      if ($el->countChildren()) {
+
+        if ($el->countChildren() > 1) {
+
+          $aContent = $this->parseComponentRoot($el);
+        }
+        else {
+
+          $aContent = array($this->parseComponentRoot($el));
+        }
+
+        $this->aContent = $aContent;
+      }
+
+      $this->bBuilded = true;
+    }
+
+    return $this->aContent;
+  }
+
   protected function complexAsArray(dom\element $el) {
 
     $aResult = array();
 
-    if ($el->countChildren() > 1) {
-
-      $aChildren = $this->parseComponentRoot($el);
-    }
-    else {
-
-      $aChildren = array($this->parseComponentRoot($el));
-    }
+    $aChildren = $this->build();
 
     $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
     $aResult[] = $this->parseAttributes($el);
@@ -68,6 +91,16 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $aResult;
   }
 
+  protected function simpleAsArray(dom\element $el) {
+
+    $this->build();
+
+    $aResult = array();
+    $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
+    $aResult[] = $this->parseAttributes($el);
+    $aResult[] = '/>';
+  }
+
   public function asArray() {
 
     $el = $this->getNode();
@@ -78,10 +111,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     }
     else {
 
-      $aResult = array();
-      $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
-      $aResult[] = $this->parseAttributes($el);
-      $aResult[] = '/>';
+      $aResult = $this->simpleAsArray($el);
     }
 
     return $aResult;

@@ -4,13 +4,15 @@
   xmlns="http://2013.sylma.org/storage/sql/schema"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:ssd="http://2013.sylma.org/schema"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
 
   <table name="user">
     <field name="id" type="sql:id"/>
-    <field name="name" type="xs:string"/>
-    <field name="email" type="xs:string"/>
+    <field name="name" type="name"/>
   </table>
+
+  <xs:simpleType name="name" type="xs:string"/>
 
 </schema>
 

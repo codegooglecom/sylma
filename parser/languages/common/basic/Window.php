@@ -171,6 +171,11 @@ abstract class Window extends core\module\Domed {
 
   public function createLoop($looped, common\_var $var) {
 
+    if (!$looped) {
+
+      $this->throwException('Looped object required');
+    }
+
     return $this->create('loop', array($this, $looped, $var));
   }
 

@@ -23,7 +23,7 @@ class Exceptionable {
   /**
    * Tmp alias
    */
-  protected function launchException($sMessage, $mSender = array(), array $aVars = array()) {
+  protected function launchException($sMessage, array $mSender = array(), array $aVars = array()) {
 
     $mSender = (array) $mSender;
     $mSender[] = '@class ' . get_class($this);

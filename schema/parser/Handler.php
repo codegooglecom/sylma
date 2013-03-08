@@ -40,7 +40,7 @@ class Handler extends reflector\handler\Elemented {
 
   protected function addElement(parser\element $element) {
 
-    $this->aElements[$element->getName()] = $element;
+    $this->aElements[$element->getNamespace()][$element->getName()] = $element;
 
     return $element;
   }

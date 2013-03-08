@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:li="http://www.sylma.org/parser/caller" xmlns:test="http://www.sylma.org/modules/tester">
+<le:action
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+  xmlns:test="http://www.sylma.org/modules/tester"
+>
   <le:settings>
     <le:document le:set-variable="doc">
       <test:tests>
@@ -7,6 +12,7 @@
         <le:action path="/#sylma/core/factory/test/group"/>
         <le:action path="/#sylma/storage/fs/test/group"/>
         <le:action path="/#sylma/parser/action/test/group"/>
+        <le:action path="/#sylma/view/test/group"/>
         <le:object class="\sylma\parser\security\test\Module"/>
         <le:object class="\sylma\core\module\test\Basic"/>
         <le:object class="\sylma\dom\test\Basic"/>

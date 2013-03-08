@@ -7,9 +7,10 @@
   xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql/view"
   xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
 >
   <tst:description>Basic</tst:description>
-  <tst:datas name="mysql://test">
+  <tst:datas name="mysql://user">
     id;name;email
     1;root;root@sylma.org
     2;admin;admin@sylma.org
@@ -17,7 +18,7 @@
   </tst:datas>
   <tst:test name="XSD Schema" disabled="true">
     <tst:document>
-      <view:view>
+      <view:view sql:ns="ns">
         <sql:resource>
           <sql:source>test</sql:source>
           <sql:id>2</sql:id>
@@ -37,7 +38,7 @@
   </tst:test>
   <tst:test name="XQL Schema">
     <tst:document>
-      <view:view>
+      <view:view sql:ns="ns">
         <sql:resource>
           <sql:source>test</sql:source>
           <sql:id>2</sql:id>
@@ -55,79 +56,53 @@
       <div><h3>admin</h3><a href="mailto:email">test</a></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Two templates" disabled="true">
+  <tst:test name="Two templates">
     <tst:document>
-      <view:view>
+      <view:view user:ns="ns" sql:ns="ns">
         <sql:resource>
           <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
-        <view:schema>samples/user.xsd</view:schema>
+        <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
             <stp:apply select="email"/>
           </div>
         </view:template>
-        <view:template match="email">
-          <li>
-            <a href="mailto:email"><tpl:apply/></a>
-          </li>
+        <view:template match="user:email">
+          <a href="mailto:email"><tpl:apply/></a>
         </view:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <div><li><a href="mailto:email">hello@hello</a></li></div>
+      <div><a href="mailto:email">admin@sylma.org</a></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Foreign key">
+  <tst:test name="Type template with apply">
     <tst:document>
-      <view:view>
+      <view:view user:ns="ns" sql:ns="ns">
         <sql:resource>
           <sql:source>test</sql:source>
-          <sql:id>1</sql:id>
-        </sql:resource>
-        <view:schema>samples/user2.xql</view:schema>
-        <view:template>
-          <div>
-            <h3><stp:apply select="name"/></h3>
-            <tpl:apply select="group"/>
-          </div>
-        </view:template>
-        <view:template match="group">
-          <li><tpl:apply/></li>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div><h3>root</h3>group01</div>
-    </tst:node>
-  </tst:test>
-  <tst:test name="Foreign key with abstract group" disabled="true">
-    <tst:document>
-      <view:view>
-        <sql:resource>
-          <sql:source>test</sql:source>
-          <sql:id>1</sql:id>
+          <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user3.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
-            <tpl:apply select="groups/group"/>
+            <stp:apply select="name"/>
           </div>
         </view:template>
-        <view:template match="group">
-          <li><tpl:apply/></li>
+        <view:template match="#type#user:name" apply="element">
+          <h3><tpl:apply/></h3>
         </view:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <div><h3>def</h3><a href="mailto:{$email}">test</a></div>
+      <div><h3>admin</h3></div>
     </tst:node>
   </tst:test>
   <tst:test name="External parser">
     <tst:document>
-      <view:view>
+      <view:view sql:ns="ns">
         <sql:resource>
           <sql:source>test</sql:source>
           <sql:id>2</sql:id>

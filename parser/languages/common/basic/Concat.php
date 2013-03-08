@@ -35,7 +35,15 @@ class Concat extends common\basic\Controled {
       }
       else if ($mContent instanceof common\stringable) {
 
-        $aResult[] = $mContent->asString();
+        if ($bString) {
+
+          $aResult[count($aResult) - 1] .= $mContent->asString();
+        }
+        else {
+
+          $aResult[] = $mContent->asString();
+        }
+        
         $bString = true;
       }
       else {

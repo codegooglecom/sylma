@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+>
+  <tst:description>Basic</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email;group_id
+    1;root;root@sylma.org;2
+    2;admin;admin@sylma.org;1
+    3;webmaster;webmaster@sylma.org;0
+  </tst:datas>
+  <tst:datas name="mysql://group">
+    id;name
+    1;group01
+    2;group02
+  </tst:datas>
+  <tst:datas name="mysql://user_group">
+    user;group
+    1;1
+    1;2
+    2;1
+  </tst:datas>
+  <tst:test name="Foreign single key" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <tpl:apply select="group/name"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>root</h3>group01</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign single key with template">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="group_id"/>
+          </div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign multiple key">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <tpl:apply select="group"/>
+          </div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>root</h3><li>group01</li><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign key with abstract group" disabled="true">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user3.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <tpl:apply select="groups/group"/>
+          </div>
+        </view:template>
+        <view:template match="group">
+          <li><tpl:apply/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>def</h3><a href="mailto:{$email}">test</a></div>
+    </tst:node>
+  </tst:test>
+</tst:tests>

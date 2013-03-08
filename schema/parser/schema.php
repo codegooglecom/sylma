@@ -6,5 +6,6 @@ use sylma\core;
 interface schema {
 
   function getElement($sName);
+  function getTargetNamespace();
 }
 

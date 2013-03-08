@@ -7,6 +7,29 @@ class Foreign extends schema\xsd\component\Element {
 
   protected $elementRef;
 
+  public function parseRoot(dom\element $el) {
+
+    $this->setNode($el, false);
+    $this->setName($el->readx('@name'));
+    //$this->loadNamespace();
+
+    if ($sImport = $el->readx('@import', array(), false)) {
+
+      $file = $this->getSourceFile($sImport);
+      $this->getParser()->addSchema($file->getDocument());
+    }
+
+    if ($sElement = $el->readx('@table', array(), false)) {
+
+      $parser = $this->getParser();
+      list($sNamespace, $sName) = $parser->parseName($sElement, $this, $el);
+
+      $this->setElementRef($this->getParser()->getElement($sName, $sNamespace));
+    }
+
+    $this->reflectOccurs($el);
+  }
+
   public function getElementRef() {
 
     if (!$this->elementRef) {
@@ -21,24 +44,6 @@ class Foreign extends schema\xsd\component\Element {
 
     $element->setParent($this);
     $this->elementRef = $element;
-  }
-
-  public function parseRoot(dom\element $el) {
-
-    $this->setName($el->readx('@name'));
-
-    if ($sImport = $el->readx('@import', array(), false)) {
-
-      $file = $this->getSourceFile($sImport);
-      $this->getParser()->addSchema($file->getDocument());
-    }
-
-    if ($sElement = $el->readx('@table', array(), false)) {
-
-      $this->setElementRef($this->getParser()->getElement($sElement, $el));
-    }
-
-    $this->reflectOccurs($el);
   }
 
   protected function reflectOccurs(dom\element $el) {

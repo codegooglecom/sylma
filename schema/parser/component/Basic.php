@@ -7,8 +7,8 @@ class Basic extends reflector\component\Foreigner {
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
-    
+    $this->setNode($el, false);
+
     // do nothing
   }
 }

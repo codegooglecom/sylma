@@ -5,7 +5,7 @@ use sylma\core, sylma\template, sylma\schema;
 
 interface field extends schema\parser\element, template\parser\tree {
 
-  function reflectApplyPath(array $aPath);
+  function reflectApplyPath(array $aPath, $sMode);
 
   function getParent();
   function getQuery();

@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <sql:schema version="1.0"
-  xmlns:sql="http://www.sylma.org/storage/sql"
-  xmlns="http://www.sylma.org/storage/sql"
+  xmlns:sql="http://2013.sylma.org/storage/sql/schema"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:ssd="http://www.sylma.org/schema/ssd"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
 
-  targetNamespace="http://www.sylma.org/storage/sql"
+  targetNamespace="http://2013.sylma.org/storage/sql/schema"
   elementFormDefault="qualified"
 >
 

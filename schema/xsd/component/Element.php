@@ -8,10 +8,14 @@ class Element extends parser\component\Element {
   public function parseRoot(dom\element $el) {
 
     $this->setName($el->readx('@name'));
+    //$this->loadNamespace();
 
     if ($sType = $el->readx('@type', array(), false)) {
 
-      $this->setType($this->getParser()->getType($sType, $el));
+      $parser = $this->getParser();
+      list($sNamespace, $sName) = $parser->parseName($sType, null, $el);
+
+      $this->setType($this->getParser()->getType($sName, $sNamespace));
     }
     else {
 
@@ -19,5 +23,9 @@ class Element extends parser\component\Element {
     }
   }
 
+  public function loadNamespace($sNamespace) {
+
+    $this->setNamespace($sNamespace, 'element');
+  }
 }
 

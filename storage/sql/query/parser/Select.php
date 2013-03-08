@@ -8,8 +8,12 @@ class Select extends reflector\component\Foreigner implements common\argumentabl
   protected $aColumns = array();
   protected $aTables = array();
   protected $aWheres = array();
+  protected $aJoins = array();
 
-  protected function implode($aArray, $sGlue = ', ', $bQuote = true) {
+  protected $var;
+  protected $bMultiple = true;
+
+  protected function implode($aArray, $sGlue = ', ') {
 
     $aResult = array();
     $iLast = count($aArray) - 1;
@@ -17,9 +21,7 @@ class Select extends reflector\component\Foreigner implements common\argumentabl
 
     foreach ($aArray as $mVal) {
 
-      if ($bQuote) $aResult[] = '`';
       $aResult[] = $mVal;
-      if ($bQuote) $aResult[] = '`';
       if ($iCurrent !== $iLast) $aResult[] = $sGlue;
 
       $iCurrent++;
@@ -31,6 +33,23 @@ class Select extends reflector\component\Foreigner implements common\argumentabl
   public function setColumn($val) {
 
     $this->aColumns[] = $val;
+  }
+
+  public function addJoin($table, $field, $val) {
+
+    $this->aJoins[] = array($table, $field, $val);
+  }
+
+  protected function getJoins() {
+
+    $aResult = array();
+
+    foreach ($this->aJoins as $iCurrent => $aJoin) {
+
+      $aResult[] = array(' LEFT JOIN ', $aJoin[0], ' ON ', $aJoin[1], ' = ', $aJoin[2], ' ');
+    }
+
+    return $aResult;
   }
 
   protected function getColumns() {
@@ -81,11 +100,42 @@ class Select extends reflector\component\Foreigner implements common\argumentabl
     return $aResult ? array(' WHERE', $aResult) : null;
   }
 
+  public function isMultiple($mValue = null) {
+
+    if (!is_null($mValue)) $this->bMultiple = $mValue;
+    return $this->bMultiple;
+  }
+
   public function asArgument() {
 
-    $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getWheres());
+    $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres());
 
-    return $this->getWindow()->createString($aQuery)->asArgument();
+    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery))->asArgument();
+  }
+
+  public function getVar() {
+
+    $this->addTo();
+
+    return $this->var;
+  }
+
+  protected function setVar(common\_object $var) {
+
+    $this->var = $var;
+  }
+
+  public function addTo() {
+
+    $window = $this->getWindow();
+
+    if (!$this->var) {
+
+      $manager = $window->addControler('mysql');
+      $var = $window->addVar($window->createCall($manager, $this->isMultiple() ? 'query' : 'get', '\\sylma\\core\\argument', array($this)));
+
+      $this->setVar($var);
+    }
   }
 }
 
