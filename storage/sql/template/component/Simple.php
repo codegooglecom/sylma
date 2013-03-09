@@ -1,27 +1,20 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\storage\sql, sylma\template, sylma\schema\parser;
+use sylma\core, sylma\storage\sql, sylma\template, sylma\schema\xsd, sylma\schema\parser;
 
-class Field extends sql\schema\component\Field implements template\parser\tree {
+class Simple extends xsd\component\SimpleType implements template\parser\tree {
 
-  protected $parent;
-  protected $query;
-  protected $var;
+  protected $elementRef;
 
-  public function setParent(parser\element $parent) {
+  public function setElementRef(parser\element $element) {
 
-    $this->parent = $parent;
+    $this->elementRef = $element;
   }
 
-  public function getParent($bDebug = true) {
+  protected function getElementRef() {
 
-    if (!$this->parent && $bDebug) {
-
-      $this->throwException('No parent');
-    }
-
-    return $this->parent;
+    return $this->elementRef;
   }
 
   protected function getQuery() {
@@ -62,6 +55,20 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
     return $result;
   }
 
+  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+
+    switch ($sName) {
+
+      case 'name' : $result = $this->getName(); break;
+
+      default :
+
+        $this->launchException('Unknown function', get_defined_vars());
+    }
+
+    return $result;
+  }
+
   protected function parsePathToken($aPath, $sMode) {
 
     return $this->getParser()->parsePathToken($this, $aPath, $sMode);
@@ -69,7 +76,7 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
 
   protected function lookupTemplate($sMode) {
 
-    if ($template = $this->getParser()->lookupTemplate($this, 'element', $sMode)) {
+    if ($template = $this->getParser()->lookupTemplate($this->getElementRef(), 'type', $sMode)) {
 
       $result = clone $template;
     }
@@ -97,16 +104,7 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
 
   public function reflectRead() {
 
-    $window = $this->getWindow();
-    $query = $this->getQuery();
-
-    $sName = $this->getName();
-
-    $query->setColumn($this);
-
-    $var = $this->getVar();
-
-    return $window->createCall($var, 'read', 'php-string', array($sName));
+    $this->launchException('Cannot simply read type');
   }
 }
 

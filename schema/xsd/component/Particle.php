@@ -16,7 +16,7 @@ class Particle extends parser\component\Particle  {
 
     $result = null;
 
-    if ($el = $this->getNode()->getx("self:element[@name='$sName']")) {
+    if ($el = $this->getx("self:element[@name='$sName']")) {
 
       $result = $this->getParser()->parseComponent($el);
       $result->loadNamespace($sNamespace);

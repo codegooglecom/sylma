@@ -12,21 +12,6 @@ class Element extends Basic implements parser\element, common\stringable {
   protected $iMinOccurs;
   protected $iMaxOccurs;
 
-  public function setParent(parser\element $parent) {
-
-    $this->parent = $parent;
-  }
-
-  public function getParent($bDebug = true) {
-
-    if (!$this->parent && $bDebug) {
-
-      $this->throwException('No parent');
-    }
-
-    return $this->parent;
-  }
-
   protected function setName($sName) {
 
     $this->sName = $sName;
@@ -62,10 +47,25 @@ class Element extends Basic implements parser\element, common\stringable {
 
   public function getElement($sName, $sNamespace) {
 
+    if (!$this->isComplex()) {
+
+      $this->launchException('Cannot get sub element of complex type', get_defined_vars());
+    }
+
     $result = $this->getType()->getElement($sName, $sNamespace);
     $result->setParent($this);
 
     return $result;
+  }
+
+  public function getElements() {
+
+    if (!$this->isComplex()) {
+
+      $this->launchException('Cannot get sub elements of complex type');
+    }
+
+    return $this->getType()->getElements();
   }
 
   public function isComplex() {

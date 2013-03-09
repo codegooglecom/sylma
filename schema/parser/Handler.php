@@ -53,6 +53,7 @@ class Handler extends reflector\handler\Elemented {
 
       $aResult[$sType] = $type = $this->loadSimpleComponent('component/baseType', $this);
       $type->setName($sType);
+      $type->setNamespace($this->getNamespace(self::PREFIX));
     }
 
     $this->aBaseTypes = $aResult;

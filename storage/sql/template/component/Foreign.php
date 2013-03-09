@@ -9,6 +9,21 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
   protected $query;
   protected $var;
 
+  public function setParent(parser\element $parent) {
+
+    $this->parent = $parent;
+  }
+
+  public function getParent($bDebug = true) {
+
+    if (!$this->parent && $bDebug) {
+
+      $this->throwException('No parent');
+    }
+
+    return $this->parent;
+  }
+
   protected function getView() {
 
     return $this->getParser()->getView();
@@ -42,10 +57,15 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
     }
     else {
 
-      $this->throwException('Not yet implemented');
+      $result = $this->parsePathToken($aPath, $sMode);
     }
 
     return $result;
+  }
+
+  protected function parsePathToken($aPath, $sMode) {
+
+    return $this->getParser()->parsePathToken($this->getElementRef(), $aPath, $sMode);
   }
 
   public function reflectApply($sPath, $sMode = '') {
@@ -96,7 +116,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
     if ($this->getMaxOccurs(true)) {
 
       $id = $parent->getElement('id', $element->getNamespace());
-      //$id->reflectRead();
 
       list($junction, $source, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
 
@@ -107,20 +126,15 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
 
       $element->setQuery($select1);
       $select1->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
-      //$select1->setTable($element);
 
-      //$call = $window->createCall($element->getVar(), 'get', 'php-string', array($sName));
       $var = $window->createVariable('item', '\\sylma\\core\\argument');
 
-      //$select2 = $element->getQuery();
-      //$this->query = $select2;
       $this->setVar($var);
 
       $loop = $window->createLoop($select1->getVar(), $var);
       $val = $element->reflectApply('', $sMode);
 
       $window->setScope($loop);
-      //$call = $window->createCall($var, 'read', 'php-string', array('name'));
       $loop->addContent($this->getView()->addToResult($val, false));
       $window->stopScope();
 
@@ -132,26 +146,11 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
       $element->setQuery($query);
 
       $id = $element->getElement('id', $element->getNamespace());
-      //$id->reflectRead();
 
       $query->addJoin($element, $id, $this);
       $this->setVar($this->getParent()->getVar());
 
-      //$query->setColumn($this->getName());
-
-      //$sub->setWhere($this, '=', $id);
-
       $result = $element->reflectApply('', $sMode);
-
-      /*
-      $query = $this->getParent()->getQuery();
-
-      $query->setColumn($sName);
-      $var = $this->getVar();
-
-      $result = $window->createCall($var, 'get', 'php-string', array($sName));
-       *
-       */
     }
 
     return $result;

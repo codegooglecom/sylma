@@ -757,7 +757,7 @@ class Element extends \DOMElement implements dom\element {
    *
    * @return integer @const self::COMPARE_SUCCESS, @const self::COMPARE_BAD_ELEMENT, @const self::COMPARE_BAD_CHILD, @const self::COMPARE_BAD_ATTRIBUTE
    */
-  public function compare(dom\element $element, $aPath = array()) {
+  public function compare(dom\node $element, $aPath = array()) {
 
     $aPath[] = $this->getName();
 

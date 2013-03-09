@@ -34,7 +34,7 @@ class Manager extends core\module\Argumented {
   protected function catchError(array $aVars = array()) {
 
     $aError = $this->getDatabase()->errorInfo();
-    $this->launchException(sprintf('SQL Error : %s', "$aError[2] ({$aError[0]}, {$aError[1]})"), array(), $aVars);
+    $this->launchException(sprintf('SQL Error : %s', "$aError[2] ({$aError[0]}, {$aError[1]})"), $aVars);
   }
 
   public function query($sQuery) {

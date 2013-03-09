@@ -59,6 +59,21 @@ abstract class Domed extends Componented {
     return $result;
   }
 
+  protected function queryx($sPath, array $aNS = array(), $bDebug = false) {
+
+    return $this->getNode()->queryx($sPath, $aNS, $bDebug);
+  }
+
+  protected function getx($sPath, array $aNS = array(), $bDebug = false) {
+
+    return $this->getNode()->getx($sPath, $aNS, $bDebug);
+  }
+
+  protected function readx($sPath, array $aNS = array(), $bDebug = false) {
+
+    return $this->getNode()->readx($sPath, $aNS, $bDebug);
+  }
+
   protected function getDocumentContainer() {
 
     if (!$this->documentContainer) {

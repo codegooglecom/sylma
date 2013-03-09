@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser as parser;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
 
 class Template extends Stringed implements common\arrayable, common\argumentable, parser\template {
 
@@ -204,12 +204,12 @@ class Template extends Stringed implements common\arrayable, common\argumentable
     return $this->addToResult($this->asArray(), false);
   }
 
-  protected function launchException($sMessage, array $mSender = array(), array $aVars = array()) {
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
 
     $mSender[] = $this->getNode()->asToken();
     $aVars[] = $this->getNode();
 
-    parent::launchException($sMessage, $mSender, $aVars);
+    parent::launchException($sMessage, $aVars, $mSender);
   }
 }
 

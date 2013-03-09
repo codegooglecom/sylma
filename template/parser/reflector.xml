@@ -1,0 +1,24 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/template/parser"
+  xmlns:cmp="http://2013.sylma.org/parser/compiler/manager"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>/#sylma/parser/reflector/builder.xml</arg:import>
+  <cls:classes>
+    <component>
+      <cls:classes>
+        <cls:base>\sylma\template\parser\component</cls:base>
+        <cls:class alias="template" name="Template">
+          <cls:classes>
+            <cls:class alias="browse" name="Browse"/>
+            <cls:class alias="if" name="Condition"/>
+            <cls:class alias="element" name="Element"/>
+            <cls:class alias="variable" name="Variable"/>
+            <cls:class alias="apply" name="Apply"/>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </component>
+  </cls:classes>
+</arg:argument>

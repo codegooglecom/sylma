@@ -51,7 +51,7 @@ class Container extends template_ns\parser\component\Template {
       $this->throwException('No match defined');
     }
 
-    preg_match('`(?:#(\w+)#)?(?:(\w+):)?(\w+)`', $sMatch, $aMatches);
+    preg_match('`(?:#(\w+)/)?(?:([\w-_]+):)?([\w-_]+)`', $sMatch, $aMatches);
 
     $sContext = $aMatches[1];
     $sPrefix = $aMatches[2];
@@ -61,12 +61,12 @@ class Container extends template_ns\parser\component\Template {
 
     if (!$sNamespace) {
 
-      $this->launchException('No namespace defined', array(), get_defined_vars());
+      $this->launchException('No namespace defined', get_defined_vars());
     }
 
     if (!$sName) {
 
-      $this->launchException('No name defined', array(), get_defined_vars());
+      $this->launchException('No name defined', get_defined_vars());
     }
 
     if (!$sContext) $sContext = self::CONTEXT_DEFAULT;
@@ -129,11 +129,11 @@ class Container extends template_ns\parser\component\Template {
 
       if ($element->getName() === $this->getMatch('name')) {
 
-        $iResult = 10;
+        $iResult = 25;
       }
       else if ($this->getMatch('name') === self::NAME_DEFAULT) {
 
-        $iResult = 5;
+        $iResult = 20;
       }
     }
 
@@ -148,11 +148,11 @@ class Container extends template_ns\parser\component\Template {
 
       if ($type->getName() === $this->getMatch('name')) {
 
-        $iResult = 9;
+        $iResult = 15;
       }
       else if ($this->getMatch('name') === self::NAME_DEFAULT) {
 
-        $iResult = 4;
+        $iResult = 10;
       }
     }
 

@@ -23,8 +23,10 @@ class Element extends parser\component\Element {
     }
   }
 
-  public function loadNamespace($sNamespace) {
+  public function loadNamespace($sNamespace = '') {
 
+    if (!$sNamespace) $sNamespace = $this->getParser()->getTargetNamespace();
+    
     $this->setNamespace($sNamespace, 'element');
   }
 }

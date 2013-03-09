@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\schema\parser;
+namespace sylma\schema\parser\type;
 use sylma\core;
 
-interface type {
+interface simple {
 
   function isComplex();
   function getName();

@@ -12,9 +12,21 @@ abstract class Particle extends Basic implements parser\particle {
     $this->aElements[$element->getNamespace()][$element->getName()] = $element;
   }
 
-  protected function getElement($sName, $sNamespace) {
+  public function getElement($sName, $sNamespace) {
 
     return isset($this->aElements[$sNamespace][$sName]) ? $this->aElements[$sNamespace][$sName] : null;
+  }
+
+  public function getElements() {
+
+    $aResult = array();
+
+    foreach ($this->aElements as $aElements) {
+
+      $aResult = array_merge($aResult, $aElements);
+    }
+
+    return $aResult;
   }
 }
 

@@ -15,6 +15,9 @@
             <cls:class alias="field" name="Field"/>
             <cls:class alias="element" name="Element"/>
             <cls:class alias="foreign" name="Foreign"/>
+            <cls:class alias="complexType" name="Complex"/>
+            <cls:class alias="simpleType" name="Simple"/>
+            <cls:class alias="baseType" name="Simple"/>
           </cls:classes>
         </component>
         <template>

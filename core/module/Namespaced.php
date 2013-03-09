@@ -27,13 +27,13 @@ abstract class Namespaced extends Exceptionable {
   protected function getNamespace($sPrefix = null) {
 
     if ($sPrefix) {
-
+/*
       if (!array_key_exists($sPrefix, $this->aNamespaces)) {
 
         $this->throwException(sprintf('Unknown prefix : %s', $sPrefix));
       }
-
-      $sResult = $this->aNamespaces[$sPrefix];
+*/
+      $sResult = array_key_exists($sPrefix, $this->aNamespaces) ? $this->aNamespaces[$sPrefix] : null;
     }
     else {
 

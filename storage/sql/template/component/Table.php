@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\storage\sql, sylma\parser\languages\common;
+use sylma\core, sylma\storage\sql, sylma\schema\parser;
 
 class Table extends sql\schema\component\Table implements sql\template\field {
 
@@ -9,6 +9,21 @@ class Table extends sql\schema\component\Table implements sql\template\field {
   protected $aElements = array();
 
   protected $query;
+
+  public function setParent(parser\element $parent) {
+
+    $this->parent = $parent;
+  }
+
+  public function getParent($bDebug = true) {
+
+    if (!$this->parent && $bDebug) {
+
+      $this->throwException('No parent');
+    }
+
+    return $this->parent;
+  }
 
   public function parseRoot(\sylma\dom\element $el) {
 
@@ -55,22 +70,15 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
     if (!$aPath) {
 
-      $this->throwException('Not yet implemented');
-    }
-    else if (count($aPath) == 1) {
-
-      $parser = $this->getParser();
-      list($sNamespace, $sName) = $parser->parseName(array_shift($aPath), $this, $this->getNode());
-
-      $field = $this->getElement($sName, $sNamespace);
-      $result = $field->reflectApplyPath($aPath, $sMode);
-    }
-    else {
-
-      $this->throwException('Not yet implemented');
+      $this->launchException('Table must not be applied (internally) without path neither template, reflectApply() should be called instead');
     }
 
-    return $result;
+    return $this->parsePathToken($aPath, $sMode);
+  }
+
+  protected function parsePathToken($aPath, $sMode) {
+
+    return $this->getParser()->parsePathToken($this, $aPath, $sMode);
   }
 
   protected function lookupTemplate($sMode) {
@@ -87,7 +95,14 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     return $result;
   }
 
-  public function reflectApply($sPath, $sMode = '') {
+  protected function parsePath($sPath) {
+
+    $aResult = $this->getParser()->parsePath($sPath);
+
+    return $aResult;
+  }
+
+  public function reflectApply($sPath, $sMode = '*') {
 
     $this->build();
 
@@ -95,20 +110,19 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
       if (!$template = $this->lookupTemplate($sMode)) {
 
-        $this->launchException('Cannot apply directly table without template', array(), array($this->getNode()));
+        $this->launchException('Cannot apply table without template', array($this->getNode()));
       }
 
       $template->setTree($this);
 
-      return $template;
+      $result = $template;
     }
     else {
 
-      $aPath = $this->getParser()->parsePath($sPath);
-
-      return $this->reflectApplyPath($aPath, $sMode);
+      $result = $this->reflectApplyPath($this->parsePath($sPath), $sMode);
     }
 
+    return $result;
   }
 }
 

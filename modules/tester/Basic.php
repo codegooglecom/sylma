@@ -214,7 +214,7 @@ abstract class Basic extends core\module\Domed implements core\argumentable {
     if ($el->compare($this->loadDomElement($node2)) !== $el::COMPARE_SUCCESS) {
 
       //$this->throwException(sprintf('Node %s not equals with node %s', $el->asToken(), $node2->asToken()));
-      $this->launchException(sprintf('Nodes not equals'), array($this->show($el), $this->show($node2)), get_defined_vars());
+      $this->launchException(sprintf('Nodes not equals'), get_defined_vars());
     }
 
     return true;

@@ -12,7 +12,7 @@ class Apply extends template\parser\component\Apply implements common\arrayable 
 
   public function asArray() {
 
-    if ($sValue = $this->getNode()->readx('@select', array(), false)) {
+    if ($sValue = $this->readx('@select')) {
 
       if ($sValue{0} === '$') {
 
@@ -20,7 +20,9 @@ class Apply extends template\parser\component\Apply implements common\arrayable 
       }
     }
 
-    $result = $this->getTree()->reflectApply($sValue);
+    if (!$sMode = $this->readx('@mode')) $sMode = '*';
+
+    $result = $this->getTree()->reflectApply($sValue, $sMode);
 //dsp($result);
     return array($result);
   }

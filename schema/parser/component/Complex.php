@@ -3,7 +3,7 @@
 namespace sylma\schema\parser\component;
 use sylma\core, sylma\schema\parser, sylma\parser\reflector;
 
-class Complex extends Basic implements parser\type {
+class Complex extends Basic implements parser\type, parser\type\complex {
 
   protected $aParticles = array();
   protected $sName = '';
@@ -47,6 +47,18 @@ class Complex extends Basic implements parser\type {
     }
 
     return $result;
+  }
+
+  public function getElements() {
+
+    $aResult = array();
+
+    foreach ($this->getParticles() as $particle) {
+
+      $aResult = array_merge($aResult, $particle->getElements());
+    }
+
+    return $aResult;
   }
 
   public function getNamespace($sPrefix = '') {
