@@ -27,6 +27,7 @@ interface _window extends scope {
   function stopScope();
 
   function createVariable($sName, $mReturn);
+  function setVariable(common\_var $var);
   function addVar(common\argumentable $val, $sName = '');
   function createString($mContent);
   function createAssign($to, $value, $sPrefix = '');

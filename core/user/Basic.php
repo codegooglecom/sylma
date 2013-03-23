@@ -43,9 +43,9 @@ class Basic extends core\module\Argumented implements core\user {
     $this->setPrivate($bPrivate);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   protected function setName($sName) {

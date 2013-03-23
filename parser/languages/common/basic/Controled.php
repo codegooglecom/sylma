@@ -27,11 +27,11 @@ class Controled {
    * @param boolean $bInsert
    * @return common\_var
    */
-  public function getVar($bInsert = true) {
+  public function getVar($bInsert = true, $sName = '') {
 
     if (!$this->var) {
 
-      $this->var = $this->getControler()->createVar($this);
+      $this->var = $this->getControler()->createVar($this, $sName);
     }
 
     if ($bInsert) $this->var->insert();
@@ -39,4 +39,17 @@ class Controled {
     return $this->var;
   }
 
+  protected function loadVarable($content) {
+
+    if ($content instanceof common\varable) {
+
+      $result = $content->getVar();
+    }
+    else {
+
+      $result = $content;
+    }
+
+    return $result;
+  }
 }

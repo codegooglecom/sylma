@@ -8,7 +8,7 @@ class Instanciate extends common\basic\Controled implements common\_object, comm
   protected $instance;
   protected $aArguments = array();
 
-  public function __construct(common\_window $controler, common\_instance $instance, array $aArguments = array()) {
+  public function __construct(common\_window $controler, common\_object $instance, array $aArguments = array()) {
 
     $this->setControler($controler);
 

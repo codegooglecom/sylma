@@ -24,11 +24,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
     return $this->parent;
   }
 
-  protected function getView() {
-
-    return $this->getParser()->getView();
-  }
-
   /**
    *
    * @return sql\query\parser\Select
@@ -52,8 +47,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
 
     if (!$aPath) {
 
-      $element = $this->getElementRef();
-      $result = $this->applyElement($element, $sMode);
+      $result = $this->reflectApplySelf($sMode);
     }
     else {
 
@@ -63,14 +57,78 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
     return $result;
   }
 
-  protected function parsePathToken($aPath, $sMode) {
+  public function parsePathToken(array $aPath, $sMode) {
 
-    return $this->getParser()->parsePathToken($this->getElementRef(), $aPath, $sMode);
+    $sPath = array_shift($aPath);
+
+    if ($aMatch = $this->getParser()->matchFunction($sPath)) {
+
+      $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode);
+    }
+    else {
+
+      $aResult = $this->getParser()->parsePathToken($this, $aPath, $sMode);
+    }
+
+    return $aResult;
+  }
+
+  protected function parsePathFunction(array $aMatch, array $aPath, $sMode) {
+
+    switch ($aMatch[1]) {
+
+      case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode); break;
+      case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode); break;
+
+      default :
+
+        $result = $this->getParser()->parsePathFunction($this, $aMatch, $aPath, $sMode);
+    }
+
+    return $result;
+  }
+
+  protected function reflectFunctionRef(array $aPath, $sMode) {
+
+    $element = $this->getElementRef();
+    $result = $this->applyElement($element, $sMode);
+
+    return $result;
+  }
+
+  protected function reflectFunctionAll(array $aPath, $sMode) {
+
+    if ($aPath) {
+
+      $this->throwException('Not yet implemented');
+    }
+
+    return $this->getElementRef()->reflectApply('', $sMode);
   }
 
   public function reflectApply($sPath, $sMode = '') {
 
     return $this->reflectApplyPath($this->getParser()->parsePath($sPath), $sMode);
+  }
+
+  protected function lookupTemplate($sMode) {
+
+    return $this->getParser()->lookupTemplate($this, 'element', $sMode);
+  }
+
+  protected function reflectApplySelf($sMode) {
+
+    if ($result = $this->lookupTemplate($sMode)) {
+
+      $result->setTree($this);
+    }
+    else {
+
+      $this->launchException('No template found', get_defined_vars());
+      //$result = $this->reflectRead();
+    }
+
+    return $result;
   }
 
   protected function loadJunction($sName, parser\element $target) {
@@ -122,23 +180,13 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
       $select1 = $this->loadSimpleComponent('template/select');
       $select1->setTable($junction);
       $select1->setWhere($source, '=', $id->reflectRead());
-      $select1->isMultiple(true);
+      //$select1->isMultiple(true);
 
       $element->setQuery($select1);
       $select1->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
 
-      $var = $window->createVariable('item', '\\sylma\\core\\argument');
-
-      $this->setVar($var);
-
-      $loop = $window->createLoop($select1->getVar(), $var);
-      $val = $element->reflectApply('', $sMode);
-
-      $window->setScope($loop);
-      $loop->addContent($this->getView()->addToResult($val, false));
-      $window->stopScope();
-
-      $result = array($loop);
+      $result = $element->reflectApply('', $sMode);
+      //$result = array($loop);
     }
     else {
 

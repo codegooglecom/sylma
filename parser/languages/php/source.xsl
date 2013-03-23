@@ -42,8 +42,28 @@
     <xsl:text>) {</xsl:text>
     <xsl:value-of select="$break"/>
     <xsl:apply-templates select="php:content/*"/>
-    <xsl:value-of select="$break"/>
     <xsl:text>}</xsl:text>
+    <xsl:apply-templates select="php:elseif"/>
+    <xsl:apply-templates select="php:else"/>
+    <xsl:value-of select="$break"/>
+  </xsl:template>
+
+  <xsl:template match="php:elseif">
+    <xsl:text>else if (</xsl:text>
+    <xsl:apply-templates select="php:test/*"/>
+    <xsl:text>) {</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates select="php:content/*"/>
+    <xsl:text>}</xsl:text>
+    <xsl:value-of select="$break"/>
+  </xsl:template>
+
+  <xsl:template match="php:else">
+    <xsl:text>else {</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates/>
+    <xsl:text>}</xsl:text>
+    <xsl:value-of select="$break"/>
   </xsl:template>
 
   <xsl:template match="php:foreach">
@@ -53,6 +73,25 @@
     <xsl:value-of select="$break"/>
     <xsl:apply-templates select="php:content/*"/>
     <xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="php:switch">
+    <xsl:text>switch (</xsl:text>
+    <xsl:apply-templates select="php:test/*"/>
+    <xsl:text>) {</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates select="php:case"/>
+    <xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="php:case">
+    <xsl:text>case </xsl:text>
+    <xsl:apply-templates select="php:test/*"/>
+    <xsl:text> :</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates select="php:content/*"/>
+    <xsl:text>break;</xsl:text>
+    <xsl:value-of select="$break"/>
   </xsl:template>
 
   <xsl:template name="php:call">

@@ -6,19 +6,25 @@
 >
   <arg:import>/#sylma/parser/reflector/builder.xml</arg:import>
   <cls:classes>
-    <component>
+    <cls:base>\sylma\template\parser</cls:base>
+    <cls:class alias="elemented" name="Elemented">
       <cls:classes>
-        <cls:base>\sylma\template\parser\component</cls:base>
-        <cls:class alias="template" name="Template">
+        <component>
           <cls:classes>
-            <cls:class alias="browse" name="Browse"/>
-            <cls:class alias="if" name="Condition"/>
-            <cls:class alias="element" name="Element"/>
-            <cls:class alias="variable" name="Variable"/>
-            <cls:class alias="apply" name="Apply"/>
+            <cls:base>\sylma\template\parser\component</cls:base>
+            <cls:class alias="template" name="Template">
+              <cls:classes>
+                <!--<cls:class alias="browse" name="Browse"/>-->
+                <!--<cls:class alias="if" name="Condition"/>-->
+                <cls:class alias="element" name="Element"/>
+                <!--<cls:class alias="variable" name="Variable"/>-->
+                <cls:class alias="apply" name="Apply"/>
+                <cls:class alias="register" name="Register"/>
+              </cls:classes>
+            </cls:class>
           </cls:classes>
-        </cls:class>
+        </component>
       </cls:classes>
-    </component>
+    </cls:class>
   </cls:classes>
 </arg:argument>

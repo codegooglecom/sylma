@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
 
-class Element extends Unknowned implements common\arrayable, common\argumentable {
+class Element extends Unknowned implements common\arrayable, common\argumentable, parser\component {
 
   //protected $aAttributes = array();
   protected $aContent = array();
@@ -12,6 +12,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, true, false);
+    $this->build();
   }
 
   protected function parseAttributes(dom\element $el) {
@@ -42,7 +43,29 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   protected function parseAttributeValue($sValue) {
 
-    return $sValue;
+    preg_match_all('/{([^}]+)}/', $sValue, $aMatches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+
+    if ($aMatches) {
+
+      $mResult = array();
+
+      foreach ($aMatches as $aResult) {
+
+        $iVarLength = strlen($aResult[0][0]);
+        $val = $this->getTree()->reflectApply($aResult[1][0]);
+
+        $sStart = substr($sValue, 0, $aResult[0][1]);
+        $sEnd = substr($sValue, $aResult[0][1] + $iVarLength);
+
+        $mResult[] = array($sStart, $val, $sEnd);
+      }
+    }
+    else {
+
+      $mResult = $sValue;
+    }
+
+    return $mResult;
   }
 
   protected function build() {
@@ -99,6 +122,8 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
     $aResult[] = $this->parseAttributes($el);
     $aResult[] = '/>';
+
+    return $aResult;
   }
 
   public function asArray() {

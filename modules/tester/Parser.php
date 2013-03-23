@@ -95,9 +95,9 @@ class Parser extends tester\Prepare {
     return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   public function setArgument($sPath, $mValue) {

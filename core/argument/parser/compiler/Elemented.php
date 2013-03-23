@@ -258,7 +258,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     $window = $this->getWindow();
 
     //$self = $window->createVariable('self', $this->getHandlerInstance());
-    $closure = $window->create('closure', array($window));
+    $closure = $window->createClosure();
 
     $bChildren = false;
     $window->setScope($closure);

@@ -55,6 +55,13 @@ class Collection implements \Iterator, dom\collection {
     return ($this->iIndex < count($this->aNodes));
   }
 
+  public function add($content) {
+
+    if ($content instanceof \DOMNodeList) $this->addList($content);
+    else if ($content instanceof dom\collection) $this->addCollection($content);
+    else $this->addNode($content);
+  }
+
   public function addList(\DOMNodeList $list) {
 
     return $this->addArray($list);

@@ -71,6 +71,13 @@ class Readable extends Domed implements core\argument {
     $mCurrent = $mValue;
   }
 
+  public function shift() {
+
+    $mVal = array_shift($this->aArray);
+
+    return $mVal;
+  }
+
   /**
    * Calls getter's related method, it's an interface between @method get() and @method locateValue()
    *

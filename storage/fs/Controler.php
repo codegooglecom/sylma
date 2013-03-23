@@ -108,9 +108,9 @@ class Controler extends core\module\Argumented {
     return parent::readArgument($sPath, $mDefault, $bDebug);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   public function getDirectory($sPath = '', $mSource = null, $bDebug = true) {

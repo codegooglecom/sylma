@@ -9,12 +9,8 @@ class Handler extends reflector\handler\Elemented {
 
   protected $aElements = array();
   protected $aTypes = array();
+
   protected $aBaseTypes = array();
-
-  public function parseRoot(dom\element $el) {
-
-    $this->loadBaseTypes(array('string', 'integer'));
-  }
 
   protected function setDefaultNamespace($sNamespace) {
 
@@ -49,26 +45,25 @@ class Handler extends reflector\handler\Elemented {
 
     $aResult = array();
 
-    foreach ($aTypes as $sType) {
+    foreach ($aTypes as $sType => $sNamespace) {
 
-      $aResult[$sType] = $type = $this->loadSimpleComponent('component/baseType', $this);
+      $aResult[$sNamespace][$sType] = $type = $this->loadSimpleComponent('component/baseType', $this);
       $type->setName($sType);
-      $type->setNamespace($this->getNamespace(self::PREFIX));
+      $type->setNamespace($sNamespace);
     }
 
-    $this->aBaseTypes = $aResult;
+    $this->aBaseTypes = $this->aBaseTypes + $aResult;
   }
 
   protected function loadType($sName, $sNamespace) {
 
     $result = null;
 
-    if ($sNamespace == $this->getNamespace(self::PREFIX)) {
+    if (isset($this->aBaseTypes[$sNamespace][$sName])) {
 
-      $result = $this->aBaseTypes[$sName];
+      $result = $this->aBaseTypes[$sNamespace][$sName];
     }
-
-    if (isset($this->aTypes[$sNamespace][$sName])) {
+    else if (isset($this->aTypes[$sNamespace][$sName])) {
 
       $result = $this->aTypes[$sNamespace][$sName];
     }

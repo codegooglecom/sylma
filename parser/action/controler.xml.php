@@ -15,9 +15,6 @@
   'class' => '\sylma\parser\action\cached\Document'),
 'template' => array(
   'indent' => '0'),
-'extensions' => array(
-  'eml',
-  'iml'),
 'php' => array(
   'classes' => array(
     'string' => array(
@@ -89,6 +86,12 @@
     'condition' => array(
       'file' => '\sylma\parser\languages\php\basic\Condition.php',
       'name' => '\sylma\parser\languages\php\basic\Condition'),
+    'switch' => array(
+      'file' => '\sylma\parser\languages\php\basic\_Switch.php',
+      'name' => '\sylma\parser\languages\php\basic\_Switch'),
+    'case' => array(
+      'file' => '\sylma\parser\languages\php\basic\_Case.php',
+      'name' => '\sylma\parser\languages\php\basic\_Case'),
     'test' => array(
       'file' => '\sylma\parser\languages\php\basic\Test.php',
       'name' => '\sylma\parser\languages\php\basic\Test'),
@@ -112,8 +115,8 @@
     'file' => '\sylma\dom\basic\handler\Rooted.php',
     'name' => '\sylma\dom\basic\handler\Rooted'),
   'path' => array(
-    'file' => '\sylma\parser\action\Path.php',
-    'name' => '\sylma\parser\action\Path'),
+    'file' => '\sylma\core\request\Basic.php',
+    'name' => '\sylma\core\request\Basic'),
   'context' => array(
     'file' => '\sylma\parser\context\Basic.php',
     'name' => '\sylma\parser\context\Basic'))));

@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\schema;
 
 class Foreign extends schema\xsd\component\Element {
 
+  const PREFIX = 'sql';
+
   protected $elementRef;
 
   public function parseRoot(dom\element $el) {
@@ -26,6 +28,8 @@ class Foreign extends schema\xsd\component\Element {
 
       $this->setElementRef($this->getParser()->getElement($sName, $sNamespace));
     }
+
+    $this->setType($this->getParser()->getType('foreign', $this->getParser()->getNamespace(self::PREFIX)));
 
     $this->reflectOccurs($el);
   }

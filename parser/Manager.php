@@ -36,7 +36,14 @@ class Manager extends compiler\Manager {
 
   public function load(fs\file $file, array $aArguments = array(), $bUpdate = null) {
 
-    return parent::load($file, $aArguments, $bUpdate);
+    $result = parent::load($file, $aArguments, $bUpdate);
+
+    if (!$result) {
+
+      $this->launchException('No result on parsing', get_defined_vars());
+    }
+
+    return $result;
   }
 
   public function loadBuilder(fs\file $file, fs\directory $dir = null, core\argument $args = null) {

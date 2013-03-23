@@ -1,0 +1,24 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/sql/template"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>builder.xml</arg:import>
+  <cls:classes>
+    <cls:base>\sylma\storage\sql</cls:base>
+    <cls:class alias="elemented" name="template\Handler">
+      <cls:classes>
+        <component>
+          <cls:classes>
+            <cls:base>\sylma\storage\sql\template\insert</cls:base>
+            <cls:class alias="table" name="Table"/>
+            <cls:class alias="field" name="Field"/>
+            <cls:class alias="foreign" name="Foreign"/>
+            <cls:class alias="register" name="Register"/>
+          </cls:classes>
+        </component>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>
+

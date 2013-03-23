@@ -59,17 +59,17 @@ abstract class Domed extends Componented {
     return $result;
   }
 
-  protected function queryx($sPath, array $aNS = array(), $bDebug = false) {
+  protected function queryx($sPath, $bDebug = false, array $aNS = array()) {
 
     return $this->getNode()->queryx($sPath, $aNS, $bDebug);
   }
 
-  protected function getx($sPath, array $aNS = array(), $bDebug = false) {
+  protected function getx($sPath, $bDebug = false, array $aNS = array()) {
 
     return $this->getNode()->getx($sPath, $aNS, $bDebug);
   }
 
-  protected function readx($sPath, array $aNS = array(), $bDebug = false) {
+  protected function readx($sPath, $bDebug = false, array $aNS = array()) {
 
     return $this->getNode()->readx($sPath, $aNS, $bDebug);
   }
@@ -219,6 +219,8 @@ abstract class Domed extends Componented {
           $this->parseChildrenText($child, $aResult);
 
           break;
+
+        case $child::COMMENT : break;
 
         default :
 

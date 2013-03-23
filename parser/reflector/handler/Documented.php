@@ -19,12 +19,14 @@ class Documented extends core\module\Domed implements reflector\documented {
 
   protected $bThrow = true;
 
-  public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null) {
+  public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null, dom\document $doc = null) {
 
     $this->setManager($manager);
 
     $this->setFile($file);
-    $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
+
+    if ($doc) $this->setDocument($doc);
+    else $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
 
     $this->loadDefaultArguments();
     if ($args) $this->setArguments($args);
@@ -119,7 +121,7 @@ class Documented extends core\module\Domed implements reflector\documented {
 
   protected function getTemplatePath() {
 
-    if (!$sResult = $this->readArgument('template')) {
+    if (!$sResult = $this->readArgument('template', null, false)) {
 
       $sResult = static::PHP_TEMPLATE;
     }
@@ -128,38 +130,97 @@ class Documented extends core\module\Domed implements reflector\documented {
   }
 
   public function build() {
-//$this->dsp($this->getArguments());
+
+    return $this->buildDefault();
+  }
+
+  protected function buildDefault() {
+
     $file = $this->getFile();
     $doc = $this->getDocument();
 
-    $result = null;
+    $mContent = $this->reflectMain($file, $doc);
+    $content = $this->buildInstanciation($mContent);
+    $cached = $this->loadTarget($doc, $file);
 
-    $reflector = $this->buildReflector($doc, $file);
+    return $this->createFile($cached, $content);
+  }
 
-    $window = $this->getWindow();
-    $mContent = $this->parseReflector($reflector, $doc);
+  /**
+   *
+   * @param \sylma\storage\fs\file $file
+   * @param \sylma\dom\document $doc
+   * @return dom\handler
+   */
+  protected function buildSimple($mContent, common\_window $window = null) {
 
-    $this->buildInstanciation($window, array($mContent));
+    if (!$window) $window = $this->getWindow();
+
+    $window->setReturn($mContent);
+
+    return $this->buildWindow($window);
+  }
+
+    /**
+   *
+   * @param \sylma\storage\fs\file $file
+   * @param \sylma\dom\document $doc
+   * @return dom\handler
+   */
+  protected function buildInstanciation($mContent, common\_window $window = null) {
+
+    if (!$window) $window = $this->getWindow();
+
+    $this->createInstanciation($window, array($mContent));
+
+    return $this->buildWindow($window);
+  }
+
+  protected function buildWindow(common\_window $window) {
+
     $arg = $window->asArgument();
-      //echo $this->show($arg, false);
+    //echo $this->show($arg, false);
 
-    $content = $arg->asDOM();
+    return $arg->asDOM();
+    //return $window->asDOM();
+  }
 
-    if ($content) {
+  protected function reflectMain(fs\file $file, dom\document $doc, common\_window $window = null) {
 
-      if ($this->readArgument('debug/show')) {
+    try {
 
-        dsp($file->asToken());
-        dsp($content);
-      }
-
-      $result = $this->loadTarget($doc, $file);
-
-      $template = $this->getTemplate($this->getTemplatePath());
-
-      $sContent = $template->parseDocument($content, false);
-      $result->saveText($sContent);
+      $reflector = $this->buildReflector($window);
+      $mContent = $this->parseReflector($reflector, $doc);
     }
+    catch (core\exception $e) {
+
+      $this->catchException($file, $e);
+      $mContent = null;
+    }
+
+    return $mContent;
+  }
+
+  protected function catchException(fs\file $file, core\exception $e) {
+
+    $e->addPath($file->asToken());
+
+    if ($this->throwExceptions()) throw $e;
+    else $e->save(false);
+  }
+
+  protected function createFile(fs\file $result, $content) {
+
+    if ($this->readArgument('debug/show')) {
+
+      dsp($this->getFile()->asToken());
+      dsp($content);
+    }
+
+    $template = $this->getTemplate($this->getTemplatePath());
+
+    $sContent = $template->parseDocument($content, false);
+    $result->saveText($sContent);
 
     return $result;
   }
@@ -182,39 +243,36 @@ class Documented extends core\module\Domed implements reflector\documented {
     }
     else {
 
-      $result = $this->getManager()->getCachedFile($file);
+      $result = $this->loadSelfTarget($file);
     }
 
     return $result;
   }
 
-  protected function buildReflector(dom\document $doc, fs\file $file, common\_window $window = null) {
+  protected function loadSelfTarget(fs\file $file) {
 
-    try {
+    return $this->getManager()->getCachedFile($file);
+  }
 
-      $result = $this->createReflector();
-      //$this->setReflector($reflector);
+  protected function buildReflector(common\_window $window = null) {
 
-      $sInstance = $this->getClass($doc);
+    $result = $this->createReflector();
+    //$this->setReflector($reflector);
 
-      if (!$window) {
-
-        $window = $this->create('window', array($this, $this->getArgument(static::WINDOW_ARGS), $sInstance));
-      }
-
-      $this->setWindow($window);
-    }
-    catch (core\exception $e) {
-
-      $e->addPath($file->asToken());
-
-      if ($this->throwExceptions()) throw $e;
-      else $e->save(false);
-
-      $result = null;
-    }
+    if (!$window) $window = $this->createWindow();
+    $this->setWindow($window);
 
     return $result;
+  }
+
+  /**
+   *
+   * @return common\_window
+   */
+  protected function createWindow() {
+
+    $sInstance = $this->getClass($this->getDocument());
+    return $this->create('window', array($this, $this->getArgument(static::WINDOW_ARGS), $sInstance));
   }
 
   protected function createReflector() {
@@ -229,7 +287,7 @@ class Documented extends core\module\Domed implements reflector\documented {
     return $reflector->parseRoot($doc->getRoot());
   }
 
-  protected function buildInstanciation(common\_window $window, array $aArguments) {
+  protected function createInstanciation(common\_window $window, array $aArguments) {
 
     $new = $window->createInstanciate($window->getSelf()->getInstance(), $aArguments);
     //$window->add($new);

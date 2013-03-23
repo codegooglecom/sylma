@@ -13,7 +13,6 @@
             <cls:base>\sylma\storage\sql\template\component</cls:base>
             <cls:class alias="table" name="Table"/>
             <cls:class alias="field" name="Field"/>
-            <cls:class alias="element" name="Element"/>
             <cls:class alias="foreign" name="Foreign"/>
             <cls:class alias="complexType" name="Complex"/>
             <cls:class alias="simpleType" name="Simple"/>
@@ -24,6 +23,8 @@
           <cls:classes>
             <cls:base>\sylma\storage\sql</cls:base>
             <cls:class alias="select" name="query\parser\Select"/>
+            <cls:class alias="update" name="query\parser\Update"/>
+            <cls:class alias="insert" name="query\parser\Insert"/>
           </cls:classes>
         </template>
       </cls:classes>

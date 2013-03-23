@@ -49,11 +49,17 @@ class Element extends Basic implements parser\element, common\stringable {
 
     if (!$this->isComplex()) {
 
-      $this->launchException('Cannot get sub element of complex type', get_defined_vars());
+      $this->launchException("Cannot get sub element of simple typed element $sNamespace:$sName", get_defined_vars());
     }
 
-    $result = $this->getType()->getElement($sName, $sNamespace);
-    $result->setParent($this);
+    if ($result = $this->getType()->getElement($sName, $sNamespace)) {
+
+      $result->setParent($this);
+    }
+    else {
+
+      $this->launchException("Cannot find element $sNamespace:$sName", get_defined_vars());
+    }
 
     return $result;
   }

@@ -344,6 +344,13 @@ class Sylma {
     return PHP_OS == 'WINNT';
   }
 
+  public static function includeFile($sFile, array $aSylmaArguments = array()) {
+
+    extract($aSylmaArguments);
+
+    return include($sFile);
+  }
+
   public static function load($sFile, $sDirectory = '') {
 
     $result = null;

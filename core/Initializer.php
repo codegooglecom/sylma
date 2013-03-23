@@ -152,7 +152,12 @@ class Initializer extends module\Filed {
     return $sResult;
   }
 
-  protected function loadAction(action\path $path) {
+  public function getExtensions() {
+
+    return $this->getArgument('extensions')->query();
+  }
+
+  protected function loadAction(core\request $path) {
 
     $path->parse();
 
@@ -169,7 +174,7 @@ class Initializer extends module\Filed {
     $sExtension = strtolower($sExtension);
     if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
 
-    $settings = $this->getArgument('window/' . $sExtension, null, true);
+    $settings = $this->getArgument('window/' . $sExtension);
 
     $sAlias = $sExtension;
     $sPath = $settings->read('action');
@@ -179,7 +184,7 @@ class Initializer extends module\Filed {
     return $window;
   }
 
-  protected function loadWindowAction(action\path $path, action\handler $window) {
+  protected function loadWindowAction(core\request $path, action\handler $window) {
 
     $action = $this->loadAction($path);
     $action->setContexts($window->getContexts());
@@ -292,7 +297,7 @@ class Initializer extends module\Filed {
 
     $sResult = '';
 
-    if ($this->getArgument('maintenance/enable')) $sResult = 'site en maintenance';
+    if ($this->readArgument('maintenance/enable')) $sResult = 'site en maintenance';
 
     return $sResult;
   }

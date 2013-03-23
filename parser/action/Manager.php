@@ -96,15 +96,19 @@ class Manager extends compiler\Builder_old {
     return parent::load($file, $aArguments, $bUpdate);
   }
 
-  protected function createCache(fs\file $file, array $aArguments = array()) {
+  protected function createCache(fs\file $file, array $aArguments) {
 
+    //$aArguments = $arguments->query();
     array_unshift($aArguments, $file);
     return $this->create('cached', $aArguments);
   }
 
   public function build(fs\file $file, fs\directory $base = null) {
 
-    $this->getManager(self::PARSER_MANAGER)->aBuilded[] = $file;
+    if (\Sylma::read('debug/enable')) {
+
+      $this->getManager(self::PARSER_MANAGER)->aBuilded[] = $file;
+    }
 
     $this->setDirectory(__FILE__);
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);

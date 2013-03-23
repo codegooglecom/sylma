@@ -76,16 +76,7 @@ class Simple extends xsd\component\SimpleType implements template\parser\tree {
 
   protected function lookupTemplate($sMode) {
 
-    if ($template = $this->getParser()->lookupTemplate($this->getElementRef(), 'type', $sMode)) {
-
-      $result = clone $template;
-    }
-    else {
-
-      $result = null;
-    }
-
-    return $result;
+    return $this->getParser()->lookupTemplate($this->getElementRef(), 'type', $sMode);
   }
 
   protected function reflectApplySelf($sMode = '') {

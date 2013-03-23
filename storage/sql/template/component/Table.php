@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\storage\sql, sylma\schema\parser;
+use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
 
 class Table extends sql\schema\component\Table implements sql\template\field {
 
@@ -9,6 +9,8 @@ class Table extends sql\schema\component\Table implements sql\template\field {
   protected $aElements = array();
 
   protected $query;
+  protected $var;
+  protected $loop;
 
   public function setParent(parser\element $parent) {
 
@@ -30,40 +32,71 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     parent::parseRoot($el);
   }
 
-  protected function build() {
+  protected function preBuild() {
 
-    if (!$this->bBuilded) {
+    //if (!$this->bBuilded) {
 
-      //$this->getQuery()->addTo($this->getWindow());
+      if ($this->getQuery()->isMultiple()) {
 
-      $this->bBuilded = true;
+        $window = $this->getWindow();
+
+        $var = $window->createVariable('item', '\\sylma\\core\\argument');
+        $this->setVar($var);
+
+        $this->loop = $window->createLoop($this->getQuery()->getVar(), $var);
+      }
+
+      //$this->bBuilded = true;
+    //}
+  }
+
+  protected function postBuild($result) {
+
+    if ($loop = $this->loop) {
+
+      $window = $this->getWindow();
+      $window->setScope($loop);
+
+      $loop->addContent($this->getParser()->getView()->addToResult($result, false));
+      $window->stopScope();
+
+      $result = $loop;
     }
+
+    return $result;
   }
 
   public function getQuery() {
 
     if (!$this->query) {
 
-      $select = $this->loadSimpleComponent('template/select', $this);
-      $select->setTable($this);
-      $select->isMultiple(false);
-
-      $this->setQuery($select);
+      $this->setQuery($this->createQuery('select'));
     }
 
     return $this->query;
   }
 
-  public function setQuery(sql\query\parser\Select $query) {
+  protected function createQuery($sName) {
+
+    $query = $this->loadSimpleComponent("template/$sName", $this);
+    $query->setTable($this);
+
+    return $query;
+  }
+
+  public function setQuery(sql\query\parser\Basic $query) {
 
     $this->query = $query;
   }
 
+  protected function setVar(common\_var $var) {
+
+    $this->var = $var;
+  }
+
   public function getVar() {
 
-    $this->build();
-
-    return $this->getParent(false) ? $this->getParent()->getVar() : $this->getQuery()->getVar();
+    return $this->var ? $this->var : $this->getQuery()->getVar();
   }
 
   public function reflectApplyPath(array $aPath, $sMode) {
@@ -73,38 +106,27 @@ class Table extends sql\schema\component\Table implements sql\template\field {
       $this->launchException('Table must not be applied (internally) without path neither template, reflectApply() should be called instead');
     }
 
-    return $this->parsePathToken($aPath, $sMode);
+    return $this->parsePathTokens($aPath, $sMode);
   }
 
-  protected function parsePathToken($aPath, $sMode) {
+  protected function parsePathTokens($aPath, $sMode) {
 
-    return $this->getParser()->parsePathToken($this, $aPath, $sMode);
+    return $this->getParser()->parsePathTokens($this, $aPath, $sMode);
   }
 
   protected function lookupTemplate($sMode) {
 
-    if ($template = $this->getParser()->lookupTemplate($this, 'element', $sMode)) {
-
-      $result = clone $template;
-    }
-    else {
-
-      $result = null;
-    }
-
-    return $result;
+    return $this->getParser()->lookupTemplate($this, 'element', $sMode);
   }
 
-  protected function parsePath($sPath) {
+  protected function parsePaths($sPath) {
 
-    $aResult = $this->getParser()->parsePath($sPath);
+    $aResult = $this->getParser()->parsePaths($sPath);
 
     return $aResult;
   }
 
   public function reflectApply($sPath, $sMode = '*') {
-
-    $this->build();
 
     if (!$sPath) {
 
@@ -113,13 +135,14 @@ class Table extends sql\schema\component\Table implements sql\template\field {
         $this->launchException('Cannot apply table without template', array($this->getNode()));
       }
 
+      $this->preBuild();
       $template->setTree($this);
 
-      $result = $template;
+      $result = $this->postBuild($template);
     }
     else {
 
-      $result = $this->reflectApplyPath($this->parsePath($sPath), $sMode);
+      $result = $this->reflectApplyPath($this->parsePaths($sPath), $sMode);
     }
 
     return $result;

@@ -74,7 +74,7 @@ class Grouped extends tester\Basic {
 
     $aResult = array();
 
-    if ($args = $this->getArgument('arguments')) {
+    if ($args = $this->getArgument('arguments', false)) {
 
       $this->setArgument('arguments', array());
       $aResult = $args->query();
@@ -158,9 +158,9 @@ class Grouped extends tester\Basic {
     return parent::getFile($sPath, $bDebug);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   public function setArgument($sPath, $mValue) {

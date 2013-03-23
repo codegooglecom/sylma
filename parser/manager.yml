@@ -11,13 +11,15 @@ namespaces :
     'http://2013.sylma.org/schema/ssd' : schema/ssd
     'http://2013.sylma.org/schema/xsd' : schema/xsd/elemented
     #'http://2013.sylma.org/schema/template' : schema/template
-    'http://2013.sylma.org/view' : view/elemented
-    'http://2013.sylma.org/storage/sql/view' : sql/resource
+    #'http://2013.sylma.org/view' : view/elemented
+    'http://2013.sylma.org/storage/sql/view' : sql/view
+    'http://2013.sylma.org/storage/sql/form' : sql/form
   manager :
     'http://2013.sylma.org/template' : template
     'http://www.sylma.org/parser/action' : action
     'http://2013.sylma.org/core/argument' : argument
     'http://2013.sylma.org/view' : view
+    'http://2013.sylma.org/view/crud' : view/crud
     'http://www.w3.org/2001/XMLSchema' : schema/xsd
     'http://2013.sylma.org/storage/sql/schema' : sql/schema
   cached :
@@ -26,13 +28,12 @@ classes :
   argument :
     name : \sylma\core\argument\parser\compiler\Documented
   view :
-    name : \sylma\view\parser\Builder
-    directory : /#sylma/view/parser
-    arguments : /#sylma/view/parser/manager.xml
+    name : \sylma\view\parser\Router
+    arguments : /#sylma/view/parser/view.xml
     classes :
-      elemented :
-        name : \sylma\view\parser\Elemented
-        arguments : /#sylma/view/parser/manager.xml
+      crud :
+        name : \sylma\view\parser\Router
+        arguments : /#sylma/view/parser/view.xml
   schema :
     classes :
       ssd :
@@ -42,9 +43,13 @@ classes :
         arguments : /#sylma/schema/xsd/builder.xml
   sql :
     classes :
-      resource :
+      view :
         name : \sylma\storage\sql\view\Resource
-        arguments : /#sylma/storage/sql/template/builder.xml
+        argument :
+          view : /#sylma/storage/sql/template/view.xml
+          update : /#sylma/storage/sql/template/update.xml
+          insert : /#sylma/storage/sql/template/insert.xml
+          hollow : /#sylma/storage/sql/template/hollow.xml
       schema :
         name : \sylma\schema\Builder
         arguments : /#sylma/storage/sql/schema/builder.xml

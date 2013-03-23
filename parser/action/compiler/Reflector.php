@@ -245,13 +245,13 @@ class Reflector extends Argumented {
     return $result;
   }
 
-  protected function createActionCall(action\path $path, dom\collection $children) {
+  protected function createActionCall(core\request $path, dom\collection $children) {
 
     $window = $this->getWindow();
 
     $aArguments = array(
       'file' => (string) $path->getFile(),
-      'arguments' => $path->getArgumentsArray(),
+      'arguments' => $path->asArray(),
     );
 
     $iKey = 0;

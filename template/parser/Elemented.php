@@ -7,6 +7,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   const NS = 'http://2013.sylma.org/template';
 
+  protected $aRegistered = array();
   protected $aTemplates = array();
   protected $result;
 
@@ -74,7 +75,40 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     //if (!$sMatch) $sMatch = parser_ns\component\Template::MATCH_DEFAULT;
 
-    return current($this->aTemplates);
+    $result = $this->getDefaultTemplate();
+
+    if (!$result) {
+
+      $this->launchException('No root template found', get_defined_vars());
+    }
+
+    return $result;
+  }
+
+  protected function getDefaultTemplate() {
+
+    $result = null;
+
+    foreach ($this->aTemplates as $template) {
+
+      if (!$template->getMatch()) {
+
+        $result = $template;
+        break;
+      }
+    }
+
+    return $result;
+  }
+
+  public function register($obj) {
+
+    $this->aRegistered[] = $obj;
+  }
+
+  public function getRegistered() {
+
+    return $this->aRegistered;
   }
 
   protected function parseElementSelf(dom\element $el) {
@@ -182,7 +216,8 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
         }
       }
 
-      $result = $this->getWindow()->createString($aResult);
+      if ($aResult) $result = $this->getWindow()->createString($aResult);
+      else $result = null;
     }
     else if ($mContent instanceof common\argumentable) {
 
@@ -206,10 +241,17 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     $window = $this->getWindow();
 
     $content = $this->toString(array($mContent));
-    //dsp($content);
-    $assign = $window->createAssign($this->getResult(), $content, '.');
-    if ($bAdd) $window->add($assign);
 
-    return $assign;
+    if ($content) {
+
+      $result = $window->createAssign($this->getResult(), $content, '.');
+      if ($bAdd) $window->add($result);
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
   }
 }

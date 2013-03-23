@@ -31,9 +31,9 @@ abstract class Argumented extends Managed {
    *
    * @return \sylma\core\factory
    */
-  protected function getFactory() {
+  protected function getFactory($bCreate = true) {
 
-    if (!$this->factory) {
+    if (!$this->factory && $bCreate) {
 
       $this->factory = $this->createFactory($this->getArguments());
     }
@@ -95,6 +95,8 @@ abstract class Argumented extends Managed {
       }
     }
 
+    if ($factory = $this->getFactory(false)) $factory->setArguments($this->getArguments());
+
     return $this->getArguments();
   }
 
@@ -107,7 +109,7 @@ abstract class Argumented extends Managed {
     return $this->arguments;
   }
 
-  protected function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  protected function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
     $mResult = $mDefault;
 
@@ -119,7 +121,7 @@ abstract class Argumented extends Managed {
     return $mResult;
   }
 
-  protected function readArgument($sPath, $mDefault = null, $bDebug = false) {
+  protected function readArgument($sPath, $bDebug = true, $mDefault = null) {
 
     $mResult = $mDefault;
 

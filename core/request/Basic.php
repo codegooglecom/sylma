@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\parser\action;
+namespace sylma\core\request;
 use sylma\core, sylma\storage\fs, sylma\core\functions;
 
-class Path extends core\module\Argumented {
+class Basic extends core\module\Argumented implements core\request {
 
   const FILE_MANAGER = 'fs';
 
@@ -22,9 +22,7 @@ class Path extends core\module\Argumented {
    * @param $bDebug throw exceptions on error
    */
 
-  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, $bDebug = true) {
-
-    $this->setControler($this->getControler('action'));
+  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, array $aExtensions = array()) {
 
     if ($directory) {
 
@@ -36,12 +34,14 @@ class Path extends core\module\Argumented {
     $this->setNamespace(self::NS);
 
     $this->setArguments($aArguments);
-    $this->setExtensions($this->getControler()->getArgument('extensions')->asArray());
+
+    if (!$aExtensions) $aExtensions = $this->getManager('init')->getExtensions();
+    $this->setExtensions($aExtensions);
 
     // Remove arguments following '?' of type ..?arg1=val&arg2=val..
     //$this->getArguments()->mergeArray($this->extractArguments($sPath));
 
-    if ($bParse) $this->parse($bDebug);
+    if ($bParse) $this->parse();
   }
 
   public function getExtensions() {
@@ -77,10 +77,10 @@ class Path extends core\module\Argumented {
     return $aResult;
   }
 */
-  public function parse($bDebug = true) {
+  public function parse() {
 
     $file = null;
-    $dir = $this->getControler(static::FILE_MANAGER)->getDirectory('/');
+    $dir = $this->getManager(self::FILE_MANAGER)->getDirectory('/');
 
     $aPath = $this->getPath(true);
 
@@ -217,16 +217,9 @@ class Path extends core\module\Argumented {
     return $this->file;
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
-  }
-
-  public function getArgumentsArray() {
-
-    $args = $this->getArguments();
-
-    return $args->asArray();
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   protected function setFile(fs\file $file) {
@@ -274,7 +267,14 @@ class Path extends core\module\Argumented {
 
     $mSender[] = '@path ' . $this->getPath();
 
-    return $this->getControler()->throwException($sMessage, $mSender);
+    return parent::throwException($sMessage, $mSender);
+  }
+
+  public function asArray() {
+
+    $args = $this->getArguments();
+
+    return $args->asArray();
   }
 
   public function __toString() {

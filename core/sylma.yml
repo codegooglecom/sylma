@@ -30,6 +30,7 @@ initializer :
     xhtml : application/xhtml+xml
     json : application/json
   executables : [json]
+  extensions : [eml, vml]
   error :
     action : error.eml
     html : error.html
@@ -44,15 +45,17 @@ initializer :
     redirect :
       name : \sylma\core\Redirect
     path :
-      name : \sylma\parser\action\Path
+      name : \sylma\core\request\Basic
     action :
       name : \sylma\parser\action\handler\Basic
     window :
       name : \sylma\core\window\classes\File
     json :
       name : \sylma\core\window\classes\Context
-    session :
-      lifetime : 403200
+  session :
+    lifetime : 403200
+  maintenance :
+    enable : false
 users:
   root:
     # E_ALL | E_STRICT | E_NOTICE = 32767

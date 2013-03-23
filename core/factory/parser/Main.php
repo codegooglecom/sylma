@@ -68,21 +68,24 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
 
     while ($child = $children->current()) {
 
-      if ($this->useNamespace($child->getNamespace())) {
+      if ($child->getType() == $child::ELEMENT) {
 
-        if ($child->getName() == 'class') {
+        if ($this->useNamespace($child->getNamespace())) {
 
-          $aResult[] = $this->reflectClass($child);
+          if ($child->getName() == 'class') {
+
+            $aResult[] = $this->reflectClass($child);
+          }
+          else {
+
+            $this->parseChildrenElementSelf($child, $aResult);
+          }
+
         }
         else {
 
-          $this->parseChildrenElementSelf($child, $aResult);
+          $this->parseChildrenElementForeign($child, $aResult);
         }
-
-      }
-      else {
-
-        $this->parseChildrenElementForeign($child, $aResult);
       }
 
       $children->next();
@@ -115,9 +118,9 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
   protected function reflectClass(dom\element $el) {
 
     $content = null;
-    if ($el->hasChildren()) $content = $this->parseChildren($el->getChildren());
-
     $sClass = $this->getClassName($el);
+    
+    if ($el->hasChildren()) $content = $this->parseChildren($el->getChildren());
 
     return array($el->readAttribute('alias') => array(
       'file' => $this->getFileName($el, $sClass),
@@ -146,7 +149,7 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
     $sName = $el->readAttribute('name');
 
     if ($sName{0} == '\\') $sResult = $sName;
-    else $sResult = $this->sClassBase . '\\' . $sName;
+    else $sResult = $this->getClassBase() . '\\' . $sName;
 
     return $sResult;
   }

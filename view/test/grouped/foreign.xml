@@ -58,7 +58,7 @@
         <view:schema>samples/user2.xql</view:schema>
         <view:template>
           <div>
-            <tpl:apply select="group_id"/>
+            <tpl:apply select="group_id/ref()"/>
           </div>
         </view:template>
         <view:template match="group:group">
@@ -70,29 +70,47 @@
       <div><li>group02</li></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Get type values" disabled="true">
+  <tst:test name="Get ref values">
     <tst:document>
-      <view:view>
+      <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
           <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
         <view:template>
-          <div>
-            <h3><stp:apply select="group_id/#type"/></h3>
-          </div>
+          <div><stp:apply select="group_id"/></div>
         </view:template>
-        <view:template match="user:group_id" apply="type">
-          <tpl:browse select="table()/*">
-            <li><tpl:apply select="group:name"/></li>
-            <!--<li><tpl:apply mode="text"/></li>-->
-          </tpl:browse>
+        <view:template match="user:group_id">
+          <ul><tpl:apply select="all()"/></ul>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="group:name"/></li>
         </view:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <div><h3>string-short</h3></div>
+      <div><ul><li>group01</li><li>group02</li></ul></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Get ref values with path">
+    <tst:document>
+      <view:view group:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div><stp:apply select="group_id/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="group:name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><li>group01</li><li>group02</li></div>
     </tst:node>
   </tst:test>
   <tst:test name="Foreign multiple key">
@@ -106,7 +124,7 @@
         <view:template>
           <div>
             <h3><stp:apply select="name"/></h3>
-            <tpl:apply select="group"/>
+            <tpl:apply select="group/ref()"/>
           </div>
         </view:template>
         <view:template match="group:group">
@@ -116,6 +134,26 @@
     </tst:document>
     <tst:node>
       <div><h3>root</h3><li>group01</li><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign multiple values">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div><tpl:apply select="group/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><li>group01</li><li>group02</li></div>
     </tst:node>
   </tst:test>
   <tst:test name="Foreign key path access" disabled="true">

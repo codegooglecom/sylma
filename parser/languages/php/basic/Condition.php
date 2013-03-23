@@ -3,12 +3,10 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom;
 
-class Condition extends common\basic\Controled implements common\argumentable, common\scope, common\structure {
+class Condition extends common\basic\Structured implements common\argumentable, common\scope, common\structure {
 
-  protected $aContent = array();
+  protected $aElse = array();
   protected $test;
-
-  protected $bTemplate = false;
 
   public function __construct(common\_window $controler, $test, $content = null) {
 
@@ -18,7 +16,7 @@ class Condition extends common\basic\Controled implements common\argumentable, c
     if ($content) $this->addContent($content);
   }
 
-  public function addContent($mVal) {
+  public function _addContent($mVal) {
 
     if (is_array($mVal)) {
 
@@ -34,9 +32,13 @@ class Condition extends common\basic\Controled implements common\argumentable, c
         }
       }
 
-      $this->aContent[] = $this->getControler()->create('line', array($this->getControler(), $mVal));
-
+      $this->aContent[] = $this->createLine($mVal);
     }
+  }
+
+  public function addElse($mVal) {
+
+    $this->aElse[] = $this->createLine($mVal);
   }
 
   public function getTest() {
@@ -47,11 +49,6 @@ class Condition extends common\basic\Controled implements common\argumentable, c
   public function setTest($test) {
 
     $this->test = $test;
-  }
-
-  protected function useTemplate() {
-
-    return $this->bTemplate;
   }
 
   public function asArgument() {
@@ -69,10 +66,11 @@ class Condition extends common\basic\Controled implements common\argumentable, c
 
     return $this->getControler()->createArgument(array(
        'condition' => array(
-          //'@context' => $window->getContext(),
-          '@argument' => $sArgument,
-          'test' => $this->test,
-          'content' => $this->aContent,
+         //'@context' => $window->getContext(),
+         '@argument' => $sArgument,
+         'test' => $this->test,
+         'content' => $this->getContent(),
+         'else' => $this->aElse,
        )
     ));
   }

@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template\component;
 use sylma\core, sylma\storage\sql, sylma\template, sylma\schema\parser;
 
-class Field extends sql\schema\component\Field implements template\parser\tree {
+abstract class Field extends sql\schema\component\Field implements template\parser\tree {
 
   protected $parent;
   protected $query;
@@ -56,7 +56,7 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
     }
     else {
 
-      $result = $this->reflectRead();
+      $result = $this->reflectSelf();
     }
 
     return $result;
@@ -69,16 +69,7 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
 
   protected function lookupTemplate($sMode) {
 
-    if ($template = $this->getParser()->lookupTemplate($this, 'element', $sMode)) {
-
-      $result = clone $template;
-    }
-    else {
-
-      $result = null;
-    }
-
-    return $result;
+    return $this->getParser()->lookupTemplate($this, 'element', $sMode);
   }
 
   protected function reflectApplySelf($sMode = '') {
@@ -87,26 +78,30 @@ class Field extends sql\schema\component\Field implements template\parser\tree {
 
       $result->setTree($this);
     }
-    else {
 
-      $result = $this->reflectRead();
+    return $result;
+  }
+
+  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+
+    switch ($sName) {
+
+      case 'name' : $result = $this->getName(); break;
+      case 'apply' : $result = $this->reflectApply(''); break;
+
+      default :
+
+        $this->launchException(sprintf('Uknown function "%s()"', $sName), get_defined_vars());
     }
 
     return $result;
   }
 
-  public function reflectRead() {
+  protected function reflectSelf() {
 
-    $window = $this->getWindow();
-    $query = $this->getQuery();
-
-    $sName = $this->getName();
-
-    $query->setColumn($this);
-
-    $var = $this->getVar();
-
-    return $window->createCall($var, 'read', 'php-string', array($sName));
+    return $this->getWindow()->createCall($this->getVar(), 'read', 'php-string', array($this->getName()));
   }
+
+  //public abstract function reflectRead();
 }
 

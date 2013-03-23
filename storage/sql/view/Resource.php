@@ -13,6 +13,8 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
   public function parseRoot(dom\element $el) {
 
+    $this->setDirectory(__FILE__);
+
     $el = $this->setNode($el);
     $this->allowForeign(true);
 
@@ -26,17 +28,28 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     $row = $this->getTree();
 
-    if ($id = $this->getNode()->getx('self:id')) {
+    if ($id = $this->getx('self:id')) {
 
-      $select = $row->getQuery();
+      $query = $row->getQuery();
 
       $this->parseID($id);
-      $select->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
+      $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
+      $query->isMultiple(false);
     }
     else {
 
-      $this->throwException('Not implemented');
+      $query = $row->getQuery();
+      $window = $this->getWindow();
+
+      $id = $window->createCall($window->getVariable('arguments'), 'read', 'php-string', array('id'));
+      $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $id);
+      //$select->isMultiple(false);
     }
+  }
+
+  public function setMode($sMode) {
+
+    $this->setArguments($this->readArgument("argument/$sMode"));
   }
 
   /**

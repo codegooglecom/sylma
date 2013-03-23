@@ -17,7 +17,7 @@ class Comment extends \DOMComment implements dom\node {
 
   public function getParent() {
 
-    return $this->ownerElement;
+    return $this->ownerDocument;
   }
 
   public function getValue() {
@@ -37,7 +37,7 @@ class Comment extends \DOMComment implements dom\node {
 
   public function asToken() {
 
-    return $this->getParent()->asToken() . ' @comment ' . $this->getValue();
+    return $this->getParent()->asToken() . ' @comment ' . htmlentities($this->getValue());
   }
 
   public function __toString() {

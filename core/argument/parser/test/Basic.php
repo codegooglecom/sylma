@@ -74,9 +74,9 @@ class Basic extends tester\Basic {
     return parent::test($test, $expected->read(), $this, $doc, $file);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 }
 

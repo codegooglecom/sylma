@@ -187,7 +187,7 @@ abstract class Basic extends core\module\Managed {
 
       $bResult = $this->document->loadXML($sContent);
     }
-    catch (core\exception $e) {
+    catch (\DOMException $e) {
 
       $this->throwException($e->getMessage());
     }

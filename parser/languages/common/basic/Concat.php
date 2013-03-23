@@ -11,6 +11,11 @@ class Concat extends common\basic\Controled {
 
     $this->setControler($controler);
     $this->setValues($aContent);
+
+    if (!$aContent) {
+
+      $this->getControler()->throwException('No value defined for string');
+    }
   }
 
   protected function fusionStrings(array $aContent) {
@@ -43,7 +48,7 @@ class Concat extends common\basic\Controled {
 
           $aResult[] = $mContent->asString();
         }
-        
+
         $bString = true;
       }
       else {
@@ -93,10 +98,7 @@ class Concat extends common\basic\Controled {
 
   public function asArgument() {
 
-    if (!$aValues = $this->aValues) {
-
-      $this->getControler()->throwException('No value defined for string');
-    }
+    $aValues = $this->aValues;
 
     if (count($aValues) === 1) {
 

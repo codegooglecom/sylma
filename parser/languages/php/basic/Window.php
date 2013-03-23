@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\languages\php, sylma\parser\languages\co
 
 class Window extends common\basic\Window implements php\window {
 
+  protected $aManagers = array();
+
   protected static $sArgumentClass = '\sylma\parser\languages\php\Argument';
   protected static $sArgumentFile = 'parser/languages/php/Argument.php';
 
@@ -53,16 +55,16 @@ class Window extends common\basic\Window implements php\window {
 
     if (!$from) $from = $this->getSylma();
 
-    if (!array_key_exists($sName, $this->aControlers)) {
+    if (!array_key_exists($sName, $this->aManagers)) {
 
       $controler = $this->getControler($sName);
       $return = $this->tokenToInstance(get_class($controler));
 
-      $call = $this->createCall($from, 'getControler', $return, array($sName));
-      $this->aControlers[$sName] = $call->getVar();
+      $call = $this->createCall($from, 'getManager', $return, array($sName));
+      $this->aManagers[$sName] = $call->getVar();
     }
 
-    return $this->aControlers[$sName];
+    return $this->aManagers[$sName];
   }
 
   public function getSylma() {
@@ -84,12 +86,14 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
-  public function createCall($obj, $sMethod, $mReturn, array $aArguments = array()) {
+  public function createCall($obj, $sMethod, $mReturn = null, array $aArguments = array()) {
 
     if (is_null($obj)) {
 
       $this->throwException('NULL sent instead of callable object');
     }
+
+    if (is_null($mReturn)) $mReturn = $this->argToInstance(null);
 
     $result = $this->create('call-method', array($this, $obj, $sMethod, $this->loadReturn($mReturn), $aArguments));
 
@@ -108,6 +112,14 @@ class Window extends common\basic\Window implements php\window {
   public function callFunction($sName, common\_instance $return = null, array $aArguments = array()) {
 
     return $this->create('function', array($this, $sName, $return, $aArguments));
+  }
+
+  /**
+   * @return
+   */
+  public function createClosure(array $aArguments = array()) {
+
+    return $this->create('closure', array($this, $aArguments));
   }
 
   public function callClosure($closure, common\_instance $return, array $aArguments = array()) {
@@ -153,6 +165,16 @@ class Window extends common\basic\Window implements php\window {
     return $this->create('condition', array($this, $test, $content));
   }
 
+  public function createSwitch($test) {
+
+    return $this->create('switch', array($this, $test));
+  }
+
+  public function createCase($test, $content = null) {
+
+    return $this->create('case', array($this, $test, $content));
+  }
+
   public function createVar(common\argumentable $val, $sName = '') {
 
     if ($val instanceof php\basic\Called) {
@@ -175,9 +197,18 @@ class Window extends common\basic\Window implements php\window {
     if ($return instanceof common\_object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
 
-    if (!$sName) $sName = $this->getVarName();
+    if (!$sName) {
 
-    return $this->create($sAlias, array($this, $return, $sName, $val));
+      $sName = $this->getVarName();
+      $result = $this->create($sAlias, array($this, $return, $sName, $val));
+    }
+    else {
+
+      $result = $this->create($sAlias, array($this, $return, $sName, $val));
+      $this->setVariable($result);
+    }
+
+    return $result;
   }
 
   protected function getReturn() {
@@ -200,7 +231,7 @@ class Window extends common\basic\Window implements php\window {
     }
     else if ($val instanceof common\_call) {
 
-      $result = $val->getVar();
+      $result = $val->getVar(true, $sName);
     }
     else {
 
@@ -212,6 +243,8 @@ class Window extends common\basic\Window implements php\window {
   }
 
   public function createVariable($sName, $mReturn) {
+
+    if (!$sName) $sName = $this->getVarName();
 
     return $this->create('object-var', array($this, $this->loadReturn($mReturn), $sName));
   }

@@ -9,7 +9,8 @@ class Template extends Stringed implements common\arrayable, common\argumentable
   const CHECK_RECURSION = false; // if TRUE, disable concat optimization
 
   protected $aContent;
-  protected $bBuilded;
+  protected $aComponents = array();
+  protected $bBuilded = false;
   protected $sMatch;
 
   protected $tree;
@@ -48,6 +49,8 @@ class Template extends Stringed implements common\arrayable, common\argumentable
   protected function loadElementUnknown(dom\element $el) {
 
     $component = $this->loadSimpleComponent('element', $this->getParser());
+    $this->addComponent($component);
+    
     $result = $this->loadAttributes($el, $component);
 
     $component->setTemplate($this);
@@ -59,7 +62,7 @@ class Template extends Stringed implements common\arrayable, common\argumentable
   public function parseComponent(dom\element $el) {
 
     $result = parent::parseComponent($el);
-    $result->setTemplate($this);
+    $this->addComponent($result);
 
     return $result;
   }
@@ -98,17 +101,34 @@ class Template extends Stringed implements common\arrayable, common\argumentable
     $this->sMatch = $sMatch;
   }
 
-  protected function getMatch() {
+  public function getMatch() {
 
     return $this->sMatch;
   }
 
   public function setTree(parser\tree $tree) {
 
+    if (!$this->bCloned && $this->getMatch()) {
+
+      $this->launchException('Template must be cloned');
+    }
+
+    if ($this->tree) {
+
+      $this->launchException('Tree ever assigned');
+    }
+
+    //$this->initComponents();
+
     $this->tree = $tree;
   }
 
   public function getTree() {
+
+    if (!$this->tree) {
+
+      $this->launchException('No tree defined');
+    }
 
     return $this->tree;
   }
@@ -126,35 +146,6 @@ class Template extends Stringed implements common\arrayable, common\argumentable
     return $result;
   }
 
-  protected function reflectUse(dom\element $el) {
-
-    if (!$el->hasChildren() || !$el->isComplex()) {
-
-      $this->launchException(sprintf('%s is not valid', $el->asToken()));
-    }
-
-    $child = $el->getFirst();
-    $parser = $this->getParser($child->getNamespace());
-    $tree = $parser->parseRoot($child);
-
-    // This allow use of unknown parser (like action) with generic argument return
-    // There are converted to template\tree
-
-    if ($tree instanceof common\_object) {
-
-      $interface = $tree->getInterface();
-
-      if (!$interface->isInstance('\sylma\core\argument')) {
-
-        $this->launchException(sprintf('Parser object of @class %s must be instance of core\\argument', $interface->getName()));
-      }
-
-      $tree = $this->create('tree/argument', array($this->getManager(), $tree));
-    }
-
-    $this->getManager()->setTree($tree);
-  }
-
   protected function getMode() {
 
     return $this->getNode()->readx('@mode', array(), false);
@@ -167,18 +158,42 @@ class Template extends Stringed implements common\arrayable, common\argumentable
       $mContent = $this->parseComponentRoot($this->getNode());
 
       $this->aContent = is_array($mContent) ? $mContent : array($mContent);
+      $this->bBuilded = true;
     }
 
     return $this->aContent;
   }
 
+  protected function initComponents() {
+
+    foreach ($this->aComponents as $component) {
+
+      $component->setTemplate($this);
+    }
+  }
+
+  protected function addComponent(parser\component $sub) {
+
+    $sub->setTemplate($this); // first set for component build
+
+    $this->aComponents[] = $sub;
+  }
+
+  public function isCloned() {
+
+    return $this->bCloned;
+  }
+
   public function asArray() {
 
-    if (!$this->bCloned && $this->getMatch()) {
+    if (!$this->isCloned() && $this->getMatch()) {
 
       $this->launchException('Template must be cloned');
     }
 
+    $this->getTree(); // exists
+    $this->initComponents();
+//dsp($this->aComponents);
     if (in_array($this->getID(), self::$aCall)) {
 
       $this->launchException('Recursive template call');
@@ -206,7 +221,7 @@ class Template extends Stringed implements common\arrayable, common\argumentable
 
   protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
 
-    $mSender[] = $this->getNode()->asToken();
+    $mSender[] = $this->getNode()->asToken() . ' @match ' . $this->getMatch();
     $aVars[] = $this->getNode();
 
     parent::launchException($sMessage, $aVars, $mSender);

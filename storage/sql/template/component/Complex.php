@@ -76,16 +76,7 @@ class Complex extends sql\schema\component\ComplexType implements template\parse
 
   protected function lookupTemplate($sMode) {
 
-    if ($template = $this->getParser()->lookupTemplate($this, 'type', $sMode)) {
-
-      $result = clone $template;
-    }
-    else {
-
-      $result = null;
-    }
-
-    return $result;
+    return $this->getParser()->lookupTemplate($this, 'type', $sMode);
   }
 
   protected function reflectApplySelf($sMode = '') {

@@ -27,6 +27,8 @@
     <cls:class alias="boolean" name="instance\_Boolean"/>
     <cls:class alias="concat" name="Concat"/>
     <cls:class alias="condition" name="Condition"/>
+    <cls:class alias="switch" name="_Switch"/>
+    <cls:class alias="case" name="_Case"/>
     <cls:class alias="test" name="Test"/>
     <cls:class alias="loop" name="_Foreach"/>
   </cls:classes>

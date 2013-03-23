@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-class CallMethod extends Called  {
+class CallMethod extends Called implements common\varable  {
 
   private $called;
   protected $bStatic = false;
@@ -25,6 +25,10 @@ class CallMethod extends Called  {
     if ($called instanceof self) {
 
       $this->called = $called;
+    }
+    else if ($called instanceof common\varable) {
+
+      $this->called = $this->loadVarable($called);
     }
     else if ($called instanceof common\_object) {
 

@@ -123,6 +123,29 @@
       <div><h3>admin</h3><span>admin</span></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Match all namespace">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <stp:apply select="name"/>
+            <stp:apply select="email"/>
+          </div>
+        </view:template>
+        <view:template match="user:*">
+          <span><tpl:apply/></span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><span>admin</span><span>admin@sylma.org</span></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Using mode">
     <tst:document>
       <view:view user:ns="ns">
@@ -212,6 +235,25 @@
     </tst:document>
     <tst:node>
       <div><h3>def</h3><a href="mailto:world@world">world@world</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Value in attribute">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <a href="mailto:{email}">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><a href="mailto:admin@sylma.org">test</a></div>
     </tst:node>
   </tst:test>
 </tst:tests>

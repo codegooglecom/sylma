@@ -4,7 +4,7 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
 >
   <tst:description>Basic</tst:description>
-  <tst:test name="Multiple nodes">
+  <tst:test name="Multiple nodes" disabled="true">
     <tst:datas name="mysql://user">
       id;name
       1;abc

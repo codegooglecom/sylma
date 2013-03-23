@@ -10,6 +10,7 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\schema\parser;
 class Elemented extends parser\Handler implements reflector\elemented, parser\schema {
 
   const NS = 'http://www.w3.org/2001/XMLSchema';
+  const TARGET_PREFIX = 'target';
 
   /**
    * These two vars are use for dom cache and namespaced names
@@ -42,7 +43,7 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
     $this->getDocument()->getRoot()->set();
     $this->addSchema($doc);
 
-    parent::parseRoot($el);
+    $this->loadBaseTypes(array('string' => self::NS, 'integer' => self::NS));
   }
 
   protected function lookupNamespace($sPrefix, dom\element $context = null) {
@@ -72,7 +73,8 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
 
   protected function loadTargetNamespace(dom\document $doc) {
 
-    $this->setNamespace($this->parseTargetNamespace($doc), 'target');
+    $this->setNamespace($this->parseTargetNamespace($doc), self::TARGET_PREFIX);
+
   }
 
   protected function parseTargetNamespace(dom\document $doc) {

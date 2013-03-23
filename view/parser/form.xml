@@ -1,0 +1,32 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/view"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>manager.xml</arg:import>
+  <debug>
+    <show>0</show>
+  </debug>
+  <cache>
+    <class>\sylma\dom\basic\handler\Rooted</class>
+  </cache>
+  <cls:classes>
+    <cls:base>\sylma\view\parser</cls:base>
+    <cls:class alias="elemented" name="Elemented">
+      <cls:classes>
+        <cls:base>\sylma\view\parser\component</cls:base>
+        <component>
+          <cls:classes>
+            <cls:class alias="template" name="Traverser">
+              <cls:classes>
+                <!--<cls:class alias="browse" name="Browse"/>-->
+                <cls:class alias="apply" name="ApplyForm"/>
+                <cls:class alias="register" name="Register"/>
+              </cls:classes>
+            </cls:class>
+          </cls:classes>
+        </component>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>

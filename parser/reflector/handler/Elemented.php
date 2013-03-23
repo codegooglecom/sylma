@@ -7,6 +7,7 @@ abstract class Elemented extends Parsed {
 
   const ARGUMENTS = '';
   const PREFIX = 'self';
+  const NS = '';
 
   protected static $sFactoryFile = '/core/factory/Cached.php';
   protected static $sFactoryClass = '\sylma\core\factory\Cached';
@@ -59,7 +60,7 @@ abstract class Elemented extends Parsed {
 
     if (!$this->getNamespace()) {
 
-      $this->setNamespace(static::NS, static::PREFIX);
+      if ($sNamespace = static::NS) $this->setNamespace($sNamespace, static::PREFIX);
     }
   }
 
@@ -131,6 +132,14 @@ abstract class Elemented extends Parsed {
   public function getNamespace($sPrefix = null) {
 
     return parent::getNamespace($sPrefix);
+  }
+
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
+
+    $aVars['reflector/element'] = $this->getNode();
+    $mSender[] = 'Parser : ' . $this->getNamespace();
+
+    return parent::launchException($sMessage, $aVars, $mSender);
   }
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {

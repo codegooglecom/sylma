@@ -9,6 +9,7 @@ abstract class Manager extends core\module\Domed {
   const ARGUMENTS = 'manager.xml';
 
   protected $baseDirectory = null;
+  public static $aLoaded = array();
 
   /**
    * order of arguments merge : domed, argument, directory
@@ -67,6 +68,13 @@ abstract class Manager extends core\module\Domed {
       if ($cache) {
 
         $result = $this->createCache($cache, $aArguments);
+
+        if (\Sylma::read('debug/enable')) {
+
+          $sPath = (string) $cache;
+          if (isset(self::$aLoaded[$sPath])) self::$aLoaded[$sPath]++;
+          else self::$aLoaded[$sPath] = 1;
+        }
       }
     }
     else {
@@ -153,8 +161,8 @@ abstract class Manager extends core\module\Domed {
    * @param array $aArguments
    * @return \sylma\parser\cached\documented
    */
-  protected function createCache(fs\file $file, array $aArguments = array()) {
+  protected function createCache(fs\file $file, array $aArguments) {
 
-    return include($file->getRealPath());
+    return \Sylma::includeFile($file->getRealPath(), $aArguments);
   }
 }

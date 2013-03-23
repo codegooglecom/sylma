@@ -25,10 +25,6 @@
   <template>
     <indent>0</indent>
   </template>
-  <extensions>
-    <eml/>
-    <iml/>
-  </extensions>
   <php>
     <arg:import static="static">/#sylma/parser/languages/php/window.xml</arg:import>
   </php>
@@ -39,7 +35,7 @@
     <cls:class alias="compiler" name="compiler\Main"/>
     <cls:class alias="reflector" name="compiler\Reflector"/>
     <cls:class alias="document" name="\sylma\dom\basic\handler\Rooted"/>
-    <cls:class alias="path" name="Path"/>
+    <cls:class alias="path" name="\sylma\core\request\Basic"/>
     <cls:class alias="context" name="\sylma\parser\context\Basic"/>
   </cls:classes>
 </arg:argument>

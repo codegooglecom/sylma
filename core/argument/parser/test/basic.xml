@@ -17,5 +17,16 @@
         $arg->read('abc') === '123'
     </tst:expected>
   </tst:test>
+  <tst:test name="Get string as object" catch="\sylma\core\exception">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>123</abc>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+      $arg->get('abc') === '123';
+      
+      return false;
+    </tst:expected>
+  </tst:test>
 </tst:tests>
 

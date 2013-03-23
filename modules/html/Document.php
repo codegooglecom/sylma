@@ -102,7 +102,15 @@ class Document extends action\handler\Basic {
     $body = $doc->getx('//html:body');
 
     require_once('core/functions/Numeric.php');
-    $aBuilded = $this->getManager('parser')->aBuilded;
+    $parser = $this->getManager('parser');
+    $aBuilded = $parser->aBuilded;
+    $aLoaded = $parser::$aLoaded;
+
+    $iLoaded = 0;
+    array_walk($aLoaded, function (&$item, $key) use (&$iLoaded) {
+      $iLoaded += $item;
+      $item = "$key : ($item)";
+    });
 
     $content = $this->createArgument(array(
       'ul' => array(
@@ -113,6 +121,12 @@ class Document extends action\handler\Basic {
           array(
             'ul' => array(
               '#li' => array_map('strval', $aBuilded),
+            ),
+          ),
+          'loaded : ' . $iLoaded,
+          array(
+            'ul' => array(
+              '#li' => $aLoaded,
             ),
           ),
         ),

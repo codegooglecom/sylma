@@ -56,7 +56,7 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $result;
   }
 
-  protected function loadComponent($sName, dom\element $el, $manager) {
+  protected function loadComponent($sName, dom\element $el, $manager = null) {
 
     if (!$this->allowComponent()) {
 
@@ -100,7 +100,7 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
 
     if (!$children->length) {
 
-      $this->throwException('Empty component not allowed');
+      $this->launchException('Empty component not allowed', get_defined_vars());
     }
 
     if ($children->length > 1) {

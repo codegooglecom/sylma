@@ -36,7 +36,7 @@ class _Call extends Called {
 
     if (!$instance instanceof _Closure) {
 
-      $this->getControler()->throwException(sprintf('Cannot call %s', $this->show($called)));
+      $this->getControler()->throwException(sprintf('Cannot call %s', \Sylma::show($called)));
     }
 
     $this->called = $called;

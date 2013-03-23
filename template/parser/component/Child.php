@@ -9,6 +9,11 @@ class Child extends Stringed {
 
   protected function getTemplate($sPath = '') {
 
+    if (!$this->template) {
+
+      $this->launchException('No template defined');
+    }
+
     return $this->template;
   }
 
@@ -28,6 +33,13 @@ class Child extends Stringed {
 
   public function setTemplate(parser_ns\template $template) {
 
+    /*
+    if (!$template->isCloned()) {
+
+      $this->launchException('Template must be cloned');
+    }
+    */
+    
     $this->template = $template;
   }
 
