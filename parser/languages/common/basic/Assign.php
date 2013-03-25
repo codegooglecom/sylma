@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\common\basic;
 use sylma\core, sylma\parser\languages\common;
 
-class Assign extends Controled implements common\argumentable {
+class Assign extends Controled implements common\argumentable, common\addable {
 
   protected $to;
   protected $value;
@@ -21,6 +21,16 @@ class Assign extends Controled implements common\argumentable {
   protected function getPrefix() {
 
     return $this->sPrefix;
+  }
+
+  public function onAdd() {
+
+    $this->getControler()->loadContent($this->getValue());
+  }
+
+  protected function getValue() {
+
+    return $this->value;
   }
 
   public function asArgument() {

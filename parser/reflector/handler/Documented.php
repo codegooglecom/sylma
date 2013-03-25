@@ -178,11 +178,7 @@ class Documented extends core\module\Domed implements reflector\documented {
 
   protected function buildWindow(common\_window $window) {
 
-    $arg = $window->asArgument();
-    //echo $this->show($arg, false);
-
-    return $arg->asDOM();
-    //return $window->asDOM();
+    return $window->asDOM();
   }
 
   protected function reflectMain(fs\file $file, dom\document $doc, common\_window $window = null) {

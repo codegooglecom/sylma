@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-abstract class _Var extends common\basic\Controled implements common\_var {
+abstract class _Var extends common\basic\Controled implements common\_var, common\addable {
 
   private $sName = '';
   protected $instance;
@@ -36,23 +36,35 @@ abstract class _Var extends common\basic\Controled implements common\_var {
     return $this->content;
   }
 
-  public function insert(common\argumentable $content = null) {
+  public function insert(common\argumentable $content = null, $bDebug = true) {
 
     $window = $this->getControler();
 
-    if (!$content && !$this->getContent()) {
+    if (!$this->bInserted && !$content && !$this->getContent()) {
 
-      $window->throwException(sprintf('Variable "%s" cannot be inserted, no content defined', $this->getName()));
-    }
-
-    if (!$this->bInserted || $content) {
-
-      if (!$content) $content = $this->getContent();
-
-      $assign = $window->createAssign($this, $content);
-      $window->add($assign);
+      if ($bDebug) $window->throwException(sprintf('Variable "%s" cannot be inserted, no content defined', $this->getName()));
 
       $this->bInserted = true;
+    }
+    else {
+
+      if (!$this->bInserted || $content) {
+
+        $this->bInserted = true;
+
+        if (!$content) $content = $this->getContent();
+
+        $assign = $window->createAssign($this, $content);
+        $window->add($assign);
+      }
+    }
+  }
+
+  public function onAdd() {
+
+    if ($this->getContent()) {
+
+      $this->getControler()->loadContent($this->getContent());
     }
   }
 

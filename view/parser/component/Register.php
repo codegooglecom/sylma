@@ -13,7 +13,7 @@ class Register extends template\parser\component\Register {
   public function asArray() {
 
     $tree = $this->getTemplate()->getTree();
-    $tree->applyRegister();
+    $tree->reflectRegister();
 
     return parent::asArray();
   }

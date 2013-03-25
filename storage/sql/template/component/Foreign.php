@@ -168,7 +168,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
 
     //$sName = $element->getName();
 
-    $window = $this->getWindow();
     $parent = $this->getParent();
 
     if ($this->getMaxOccurs(true)) {
@@ -196,7 +195,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
       $id = $element->getElement('id', $element->getNamespace());
 
       $query->addJoin($element, $id, $this);
-      $this->setVar($this->getParent()->getVar());
+      //$this->setVar($this->getParent()->getSource());
 
       $result = $element->reflectApply('', $sMode);
     }

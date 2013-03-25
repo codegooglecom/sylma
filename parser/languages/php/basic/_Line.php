@@ -3,10 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-require_once('core/argumentable.php');
-\Sylma::load('/parser/languages/common/basic/Controled.php');
-
-class _Line extends common\basic\Controled implements core\argumentable {
+class _Line extends common\basic\Controled implements core\argumentable, common\addable {
 
   private $content;
 
@@ -15,6 +12,16 @@ class _Line extends common\basic\Controled implements core\argumentable {
     $this->setControler($controler);
     $controler->checkContent($content);
     $this->content = $content;
+  }
+
+  protected function getContent() {
+
+    return $this->content;
+  }
+
+  public function onAdd() {
+
+    $this->getControler()->loadContent($this->getContent());
   }
 
   public function asArgument() {

@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-class CallMethod extends Called implements common\varable  {
+class CallMethod extends Called implements common\addable  {
 
   private $called;
   protected $bStatic = false;
@@ -16,28 +16,30 @@ class CallMethod extends Called implements common\varable  {
     $this->setName($sMethod);
 
     $this->setReturn($return);
-//dspf($aArguments, 'error');
+
     $this->setArguments($this->parseArguments($aArguments));
+  }
+
+  protected function getCalled() {
+
+    return $this->called;
   }
 
   protected function setCalled($called) {
 
-    if ($called instanceof self) {
+    $this->called = $called;
+  }
 
-      $this->called = $called;
-    }
-    else if ($called instanceof common\varable) {
+  protected function checkCalled() {
 
-      $this->called = $this->loadVarable($called);
-    }
-    else if ($called instanceof common\_object) {
+    $called = $this->getCalled();
+
+    if ($called instanceof self || $called instanceof common\_object) {
 
       if ($called instanceof php\basic\instance\_Class) {
 
         $this->isStatic(true);
       }
-
-      $this->called = $called;
     }
     else {
 
@@ -51,13 +53,23 @@ class CallMethod extends Called implements common\varable  {
     return $this->bStatic;
   }
 
+  public function onAdd() {
+
+    $window = $this->getControler();
+
+    $this->checkCalled();
+
+    $window->loadContent($this->getCalled());
+    $window->loadContent($this->getArguments());
+  }
+
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
       'call-method' => array(
           '@name' => $this->getName(),
           '@static' => $this->isStatic() ? true : null,
-          'called' => $this->called,
+          'called' => $this->getCalled(),
           '#argument' => $this->getArguments(),
       ),
     ));

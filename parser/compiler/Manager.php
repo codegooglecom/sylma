@@ -58,12 +58,12 @@ abstract class Manager extends core\module\Domed {
     return $this->getCachedDirectory($file)->getFile($sName, $iDebug);
   }
 
-  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true) {
 
     $result = null;
     $cache = $this->loadCache($file, $bUpdate);
 
-    if ($this->readArgument('debug/run')) {
+    if ($this->readArgument('debug/run') && $bRun) {
 
       if ($cache) {
 
@@ -79,7 +79,7 @@ abstract class Manager extends core\module\Domed {
     }
     else {
 
-      $this->throwException('No result, DEBUG_RUN set to TRUE');
+      $this->throwException(sprintf('No result, DEBUG_RUN set to TRUE for %s', $file->asToken()));
     }
 
     return $result;

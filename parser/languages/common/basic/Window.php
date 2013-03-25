@@ -19,7 +19,15 @@ abstract class Window extends core\module\Domed {
   // $this reference object
   protected $self;
 
+  /**
+   * Scope variables
+   */
   protected $aVariables = array();
+
+  /**
+   * Set to TRUE when rendering
+   */
+  protected $bRender = false;
 
   public function getSelf() {
 
@@ -53,7 +61,43 @@ abstract class Window extends core\module\Domed {
     return $aResult;
   }
 
+  public function parseArrayables(array $aContent) {
+
+    //$aContent =
+    $aResult = array();
+
+    foreach ($aContent as $mVal) {
+
+      if (is_array($mVal)) {
+
+        $aResult[] = $this->parseArrayables($mVal);
+      }
+      else if ($mVal instanceof common\arrayable) {
+
+        $aResult[] = $this->parseArrayable($mVal);
+      }
+      else {
+
+        $aResult[] = $mVal;
+      }
+    }
+
+    return $this->flattenArray($aResult);
+  }
+
+  protected function parseArrayable(common\arrayable $val) {
+
+    $aResult = $val->asArray();
+
+    return $this->parseArrayables($aResult);
+  }
+
   public function add($mVal) {
+
+    if ($this->isRendering()) {
+
+      $this->launchException('Too late to add content, window is rendering', get_defined_vars());
+    }
 
     return $this->getScope()->addContent($mVal);
   }
@@ -94,10 +138,25 @@ abstract class Window extends core\module\Domed {
 
     return $mVal;
   }
-
+/*
   protected function addContentUnknown($mVal) {
 
     $this->aContent[] = $this->createInstruction($this->checkContent($mVal));
+  }
+*/
+  public function loadContent($content) {
+
+    if (is_array($content)) {
+
+      foreach ($content as $item) {
+
+        $this->loadContent($item);
+      }
+    }
+    else if ($content instanceof common\addable) {
+
+      $content->onAdd();
+    }
   }
 
   protected function loadReturn($mReturn) {
@@ -342,10 +401,29 @@ abstract class Window extends core\module\Domed {
     return parent::throwException($sMessage, $mSender, $iOffset);
   }
 
+  protected function isRendering($bValue = null) {
+
+    if (!is_null($bValue)) $this->bRender = $bValue;
+
+    return $this->bRender;
+  }
+
   public function asArgument() {
 
     $result = $this->createArgument(array('window' => array()));
     $result->get('window')->mergeArray($this->aContent);
+
+    return $result;
+  }
+
+  public function asDOM() {
+
+    $this->isRendering(true);
+
+    $arg = $this->asArgument();
+    $result = $arg->asDOM();
+
+    $this->isRendering(false);
 
     return $result;
   }

@@ -120,4 +120,3 @@
   'context' => array(
     'file' => '\sylma\parser\context\Basic.php',
     'name' => '\sylma\parser\context\Basic'))));
-  

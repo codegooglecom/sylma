@@ -3,7 +3,9 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 
-abstract class Basic extends reflector\component\Foreigner implements common\varable {
+abstract class Basic extends reflector\component\Foreigner implements common\addable {
+
+  protected $bAdded = false;
 
   protected $aColumns = array();
   protected $aTables = array();
@@ -74,7 +76,10 @@ abstract class Basic extends reflector\component\Foreigner implements common\var
 
   public function getVar() {
 
-    $this->addTo();
+    if (!$this->var) {
+
+      $this->build();
+    }
 
     return $this->var;
   }
@@ -84,19 +89,26 @@ abstract class Basic extends reflector\component\Foreigner implements common\var
     $this->var = $var;
   }
 
-  protected function addToWindow($sMethod) {
+  protected function build($sMethod) {
 
     $window = $this->getWindow();
 
-    if (!$this->var) {
+    $manager = $window->addControler('mysql');
+    $var = $window->createVar($window->createCall($manager, $sMethod, '\\sylma\\core\\argument', array($this)));
 
-      $manager = $window->addControler('mysql');
-      $var = $window->addVar($window->createCall($manager, $sMethod, '\\sylma\\core\\argument', array($this)));
-
-      $this->setVar($var);
-    }
+    $this->setVar($var);
   }
 
-  abstract protected function addTo();
+  public function onAdd() {
+
+    $this->getVar()->insert();
+  }
+
+  public function asArgument() {
+
+    $content = $this->getString();
+
+    return $content->asArgument();
+  }
 }
 

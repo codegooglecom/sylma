@@ -12,18 +12,18 @@ class Field extends sql\template\component\Field {
     $this->launchException('Should not be used');
   }
 
-  public function applyRegister() {
+  public function reflectRegister() {
 
     $query = $this->getQuery();
     $window = $this->getWindow();
     $arguments = $window->getVariable('arguments');
 
-    $var = $window->addVar($window->createCall($arguments, 'read'));
+    $var = $window->addVar($window->createCall($arguments, 'read', 'php-string', array($this->getFormAlias())));
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
     //$test = $window->createCondition($window->createNot($var), $content);
     //$window->add($test);
-//dsp('ok');
+
     $query->addSet($this, $var);
 
     //return $this->reflectSelf();

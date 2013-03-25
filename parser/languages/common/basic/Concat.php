@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\common\basic;
 use sylma\core, sylma\parser\languages\common;
 
-class Concat extends common\basic\Controled {
+class Concat extends common\basic\Controled implements common\addable {
 
   protected $aValues = array();
 
@@ -93,12 +93,17 @@ class Concat extends common\basic\Controled {
 
   protected function setValues($aValues) {
 
-    $this->aValues = $this->convertContent($aValues);
+    $this->aValues = $aValues;
+  }
+
+  public function onAdd() {
+
+    $this->getControler()->loadContent($this->aValues);
   }
 
   public function asArgument() {
 
-    $aValues = $this->aValues;
+    $aValues = $this->convertContent($this->aValues);
 
     if (count($aValues) === 1) {
 

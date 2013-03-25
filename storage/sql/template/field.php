@@ -9,6 +9,6 @@ interface field extends schema\parser\element, template\parser\tree {
 
   function getParent();
   function getQuery();
-  function getVar();
+  //function getVar();
 }
 

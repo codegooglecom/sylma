@@ -91,9 +91,9 @@ class Manager extends compiler\Builder_old {
   /**
    * Made public to allow use of an handler
    */
-  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true) {
 
-    return parent::load($file, $aArguments, $bUpdate);
+    return parent::load($file, $aArguments, $bUpdate, $bRun);
   }
 
   protected function createCache(fs\file $file, array $aArguments) {

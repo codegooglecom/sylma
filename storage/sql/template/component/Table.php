@@ -11,6 +11,7 @@ class Table extends sql\schema\component\Table implements sql\template\field {
   protected $query;
   protected $var;
   protected $loop;
+  protected $source;
 
   public function setParent(parser\element $parent) {
 
@@ -41,13 +42,23 @@ class Table extends sql\schema\component\Table implements sql\template\field {
         $window = $this->getWindow();
 
         $var = $window->createVariable('item', '\\sylma\\core\\argument');
-        $this->setVar($var);
+        $this->setSource($var);
 
         $this->loop = $window->createLoop($this->getQuery()->getVar(), $var);
       }
 
       //$this->bBuilded = true;
     //}
+  }
+
+  public function getSource() {
+
+    return $this->source ? $this->source : $this->getQuery()->getVar();
+  }
+
+  protected function setSource($source) {
+
+    $this->source = $source;
   }
 
   protected function postBuild($result) {
@@ -92,11 +103,6 @@ class Table extends sql\schema\component\Table implements sql\template\field {
   protected function setVar(common\_var $var) {
 
     $this->var = $var;
-  }
-
-  public function getVar() {
-
-    return $this->var ? $this->var : $this->getQuery()->getVar();
   }
 
   public function reflectApplyPath(array $aPath, $sMode) {

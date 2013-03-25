@@ -7,7 +7,16 @@ class Field extends sql\template\component\Field {
 
   public function reflectApply($sPath, $sMode = '') {
 
-    return null;
+    if ($sPath) {
+
+      $result = parent::reflectApply($sPath, $sMode);
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
   }
 
   public function reflectRead() {

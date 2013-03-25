@@ -38,18 +38,4 @@ class Controled {
 
     return $this->var;
   }
-
-  protected function loadVarable($content) {
-
-    if ($content instanceof common\varable) {
-
-      $result = $content->getVar();
-    }
-    else {
-
-      $result = $content;
-    }
-
-    return $result;
-  }
 }

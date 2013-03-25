@@ -52,16 +52,16 @@ class Select extends Basic implements common\argumentable {
     return $this->bMultiple;
   }
 
-  public function asArgument() {
+  protected function getString() {
 
     $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres());
 
-    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery))->asArgument();
+    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }
 
-  public function addTo() {
+  protected function build($sMethod = '') {
 
-    return $this->addToWindow($this->isMultiple() ? 'query' : 'get');
+    parent::build(($this->isMultiple() ? 'query' : 'get'));
   }
 }
 

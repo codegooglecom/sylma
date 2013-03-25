@@ -29,9 +29,9 @@ abstract class Field extends sql\schema\component\Field implements template\pars
     return $this->getParent()->getQuery();
   }
 
-  protected function getVar() {
+  protected function getSource() {
 
-    return $this->getParent()->getVar();
+    return $this->getParent()->getSource();
   }
 
   public function reflectApplyPath(array $aPath, $sMode = '') {
@@ -86,7 +86,7 @@ abstract class Field extends sql\schema\component\Field implements template\pars
 
     switch ($sName) {
 
-      case 'name' : $result = $this->getName(); break;
+      case 'alias' : $result = $this->getFormAlias(); break;
       case 'apply' : $result = $this->reflectApply(''); break;
 
       default :
@@ -97,9 +97,14 @@ abstract class Field extends sql\schema\component\Field implements template\pars
     return $result;
   }
 
+  public function getFormAlias() {
+
+    return $this->getName();
+  }
+
   protected function reflectSelf() {
 
-    return $this->getWindow()->createCall($this->getVar(), 'read', 'php-string', array($this->getName()));
+    return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getName()));
   }
 
   //public abstract function reflectRead();

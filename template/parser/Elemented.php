@@ -165,33 +165,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   protected function parseArrayables(array $aContent) {
 
-    //$aContent =
-    $aResult = array();
-
-    foreach ($aContent as $mVal) {
-
-      if (is_array($mVal)) {
-
-        $aResult[] = $this->parseArrayables($mVal);
-      }
-      else if ($mVal instanceof common\arrayable) {
-
-        $aResult[] = $this->parseArrayable($mVal);
-      }
-      else {
-
-        $aResult[] = $mVal;
-      }
-    }
-
-    return $this->getWindow()->flattenArray($aResult);
-  }
-
-  protected function parseArrayable(common\arrayable $val) {
-
-    $aResult = $val->asArray();
-
-    return $this->parseArrayables($aResult);
+    return $this->getWindow()->parseArrayables($aContent);
   }
 
   public function toString($mContent) {

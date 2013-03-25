@@ -28,6 +28,10 @@
     <xsl:apply-templates/>;
   </xsl:template>
 
+  <xsl:template match="php:instruction">
+    <xsl:apply-templates/>;
+  </xsl:template>
+
   <xsl:template match="php:instanciate">
     <xsl:text>new </xsl:text>
     <xsl:value-of select="@class"/>

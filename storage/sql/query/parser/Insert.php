@@ -29,18 +29,18 @@ class Insert extends Basic implements common\argumentable {
     return parent::setTable($val);
   }
 
-  public function asArgument() {
+  protected function getString() {
 
     $sTable = current($this->getTables());
 
     $aQuery = array('INSERT INTO ', $sTable, ' (', $this->getColumns() , ') VALUES (', $this->getValues(), ')');
 
-    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery))->asArgument();
+    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }
 
-  public function addTo() {
+  protected function build($sMethod = '') {
 
-    return $this->addToWindow('get');
+    parent::build();
   }
 }
 

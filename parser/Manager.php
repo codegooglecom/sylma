@@ -34,9 +34,9 @@ class Manager extends compiler\Manager {
     $this->aNamespaces = $namespaces->asArray();
   }
 
-  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true) {
 
-    $result = parent::load($file, $aArguments, $bUpdate);
+    $result = parent::load($file, $aArguments, $bUpdate, $bRun);
 
     if (!$result) {
 
