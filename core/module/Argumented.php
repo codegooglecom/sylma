@@ -74,7 +74,7 @@ abstract class Argumented extends Managed {
     }
     else {
 
-      if ($this->getArguments()) {
+      if ($this->getArguments() && $bMerge) {
 
         $this->getArguments()->merge($mArguments);
       }

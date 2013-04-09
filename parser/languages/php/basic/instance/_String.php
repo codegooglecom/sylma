@@ -43,14 +43,10 @@ class _String extends _Scalar implements common\_instance {
   public function asArgument() {
 
     $mVal = $this->mValue;
-
-    $sValue =
-      $mVal instanceof core\stringable ?
-        $mVal->asString() :
-        $mVal;
+    $mVal = $mVal instanceof core\stringable ? $mVal->asString() : $mVal;
 
     return $this->getControler()->createArgument(array(
-      'string' => str_replace('\'', '\\\'', $sValue),
+      'string' => is_string($mVal) ? str_replace('\'', '\\\'', $mVal) : $mVal,
     ));
   }
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\reflector;
-use sylma\core, sylma\dom;
+use sylma\core, sylma\dom, sylma\parser\reflector;
 
 /**
  * All domed objects (elemented, attributed)

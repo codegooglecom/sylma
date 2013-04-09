@@ -1,9 +1,7 @@
 <?php
 
 namespace sylma\storage\fs;
-use \sylma\dom, \sylma\storage\fs, \sylma\storage\fs\controler, \sylma\core;
-
-require_once('resource.php');
+use sylma\core, sylma\storage\fs;
 
 interface directory extends fs\resource {
 
@@ -25,4 +23,10 @@ interface directory extends fs\resource {
    * @return \sylma\storage\fs\file
    */
   function getFile($sName, $iDebug = self::DEBUG_LOG);
+
+  /**
+   * @param $arg
+   * @return \sylma\core\argument
+   */
+  function browse(core\argument $arg = null);
 }

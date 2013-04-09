@@ -181,7 +181,7 @@
 
   <xsl:template match="php:string">
     <xsl:text>'</xsl:text>
-    <xsl:value-of select="."/>
+    <xsl:apply-templates/>
     <xsl:text>'</xsl:text>
   </xsl:template>
 
@@ -207,7 +207,7 @@
   </xsl:template>
 
   <xsl:template match="php:cast">
-    <xsl:value-of select="concat('(', @type, ')')"/>
+    <xsl:value-of select="concat('(', @type, ')', ' ')"/>
     <xsl:apply-templates/>
   </xsl:template>
 

@@ -1,0 +1,14 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/action"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <cls:classes>
+    <component>
+      <cls:classes>
+        <cls:base>\sylma\action\component</cls:base>
+        <cls:class alias="directory" name="Directory"/>
+      </cls:classes>
+    </component>
+  </cls:classes>
+</arg:argument>

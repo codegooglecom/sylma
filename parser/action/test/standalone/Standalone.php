@@ -3,9 +3,7 @@
 namespace sylma\parser\action\test\standalone;
 use sylma\modules\tester, sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\action;
 
-require_once('modules/tester/Prepare.php');
-
-class Standalone extends tester\Prepare {
+class Standalone extends tester\Prepare implements core\argumentable {
 
   const NS = 'http://www.sylma.org/parser/action/test/standalone';
 

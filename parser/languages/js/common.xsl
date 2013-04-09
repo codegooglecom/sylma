@@ -122,7 +122,7 @@
 
   <xsl:template match="js:string">
     <xsl:text>'</xsl:text>
-    <xsl:value-of select="."/>
+    <xsl:apply-templates/>
     <xsl:text>'</xsl:text>
   </xsl:template>
 

@@ -3,10 +3,7 @@
 namespace sylma\dom\argument;
 use sylma\core, sylma\dom;
 
-require_once('core/module/Controled.php');
-require_once('core/argument.php');
-
-abstract class Basic extends core\module\Controled implements core\argument {
+abstract class Basic extends core\module\Controled {
 
   const NS = 'http://www.sylma.org/dom/argument';
   //const PREFIX_DEFAULT = 'self';

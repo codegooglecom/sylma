@@ -3,9 +3,6 @@
 namespace sylma\dom;
 use \sylma\dom;
 
-require_once('complex.php');
-require_once('namespaced.php');
-
 interface element extends complex, namespaced {
 
   const NS = 'http://www.sylma.org/dom/element';
@@ -17,6 +14,10 @@ interface element extends complex, namespaced {
    * @return dom\element|null The element getted by its name and optionnaly its URI
    */
   function getByName($sName, $sNamespace = null);
+
+  function setAttribute($sName, $sValue);
+
+  function setAttributes(array $aAttributes = array());
 
   /**
    * Getter of $this->attributes

@@ -3,7 +3,7 @@
 namespace sylma\parser\reflector\handler;
 use \sylma\core, sylma\dom, sylma\parser\reflector;
 
-abstract class Elemented extends Parsed {
+class Elemented extends Parsed implements reflector\elemented {
 
   const ARGUMENTS = '';
   const PREFIX = 'self';
@@ -15,7 +15,6 @@ abstract class Elemented extends Parsed {
   protected $allowComponent = true;
 
   protected $root;
-  protected $parent;
 
   public function __construct(reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
 
@@ -27,23 +26,6 @@ abstract class Elemented extends Parsed {
     $this->loadArguments($arg);
 
     if ($arg) $this->setArguments($arg);
-  }
-
-  protected function setParent(reflector\elemented $parent) {
-
-    if ($parent === $this) {
-
-      $this->throwException('Cannot set itself as parent');
-    }
-
-    //if ($this->getParent()) $this->throwException('Cannot set parent twice');
-
-    $this->parent = $parent;
-  }
-
-  protected function getParent() {
-
-    return $this->parent;
   }
 
   protected function setRoot(reflector\documented $root) {
@@ -136,7 +118,7 @@ abstract class Elemented extends Parsed {
 
   protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
 
-    $aVars['reflector/element'] = $this->getNode();
+    $aVars['reflector/element'] = $this->getNode(false);
     $mSender[] = 'Parser : ' . $this->getNamespace();
 
     return parent::launchException($sMessage, $aVars, $mSender);

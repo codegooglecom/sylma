@@ -48,13 +48,15 @@ class Template extends Stringed implements common\arrayable, common\argumentable
 
   protected function loadElementUnknown(dom\element $el) {
 
-    $component = $this->loadSimpleComponent('element', $this->getParser());
-    $this->addComponent($component);
-    
-    $result = $this->loadAttributes($el, $component);
+    $element = $this->loadSimpleComponent('element', $this->getParser());
+    $element->setTemplate($this);
 
-    $component->setTemplate($this);
-    $component->parseRoot($el);
+    $this->addComponent($element);
+
+    $result = $this->loadAttributes($el, $element);
+    $element->parseRoot($el);
+
+    //$element->build();
 
     return $result;
   }
@@ -90,7 +92,7 @@ class Template extends Stringed implements common\arrayable, common\argumentable
 
     foreach ($aParsers as $parser) {
 
-      $parser->onClose($el, $component);
+      $parser->onClose($el, $mResult);
     }
 
     return $mResult;

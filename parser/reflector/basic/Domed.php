@@ -10,7 +10,7 @@ abstract class Domed extends Componented {
   protected $allowForeign = false;
   protected $allowUnknown = false;
 
-  protected $element;
+  protected $node;
   protected $elementDocument;
 
   /**
@@ -22,7 +22,7 @@ abstract class Domed extends Componented {
    *
    * @return dom\element
    */
-  public function getNode() {
+  public function getNode($bDebug = true) {
 
     if ($this->elementDocument) {
 
@@ -30,7 +30,12 @@ abstract class Domed extends Componented {
     }
     else {
 
-      $result = $this->element;
+      $result = $this->node;
+    }
+
+    if ($bDebug && !$result) {
+
+      $this->launchException('No node defined');
     }
 
     return $result;
@@ -49,11 +54,11 @@ abstract class Domed extends Componented {
       $result = $doc->getRoot();
 
       $this->elementDocument = $doc;
-      $this->element = $result;
+      $this->node = $result;
     }
     else {
 
-      $result = $this->element = $el;
+      $result = $this->node = $el;
     }
 
     return $result;

@@ -55,5 +55,10 @@ interface argument extends \Iterator {
    * @param type $bEmpty
    */
   function asArray($bEmpty = false);
+
+  /**
+   * @return string
+   */
+  function asJSON();
 }
 

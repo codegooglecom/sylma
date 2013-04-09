@@ -1,0 +1,26 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/template/binder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>/#sylma/parser/languages/js/window.xml</arg:import>
+  <debug>
+    <show>0</show>
+  </debug>
+  <cls:classes>
+    <cls:base>\sylma\template\binder</cls:base>
+    <cls:class alias="class" name="_Class">
+      <cls:classes>
+        <cls:class alias="object" name="_Object"/>
+      </cls:classes>
+    </cls:class>
+    <component>
+      <cls:classes>
+        <cls:class alias="event" name="component\Event"/>
+        <cls:class alias="option" name="component\Option"/>
+        <cls:class alias="node" name="component\Node"/>
+      </cls:classes>
+    </component>
+    <cls:class alias="cached" name="Cached"/>
+  </cls:classes>
+</arg:argument>

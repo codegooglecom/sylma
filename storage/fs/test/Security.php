@@ -3,9 +3,7 @@
 namespace sylma\storage\fs\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('modules/tester/Prepare.php');
-
-class Security extends tester\Prepare {
+class Security extends tester\Prepare implements core\argumentable {
 
   const NS = 'http://www.sylma.org/storage/fs/test';
   protected $sTitle = 'Security';

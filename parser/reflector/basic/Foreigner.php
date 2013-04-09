@@ -175,6 +175,30 @@ abstract class Foreigner extends Domed {
   }
 
   /**
+   * Clone then clean the element from self namespaced attributes
+   *
+   * @param $el
+   * @return dom\element
+   */
+  protected function cleanAttributes(dom\element $el) {
+
+    $doc = $this->createDocument($el);
+    $root = $doc->getRoot();
+
+    foreach ($root->getAttributes() as $attr) {
+
+      $sNamespace = $attr->getNamespace();
+
+      if ($sNamespace && $this->useNamespace($sNamespace)) {
+
+        $attr->remove();
+      }
+    }
+
+    return $root;
+  }
+
+  /**
    * @param dom\element $el
    * @return dom\element|common\_scope
    */
@@ -189,6 +213,8 @@ abstract class Foreigner extends Domed {
       if ($parser) {
 
         $aParsers[] = $parser;
+        $parser->init();
+        //$parser->setParent($this);
         $content = $parser->parseAttributes($el, $content, $content);
       }
       else {

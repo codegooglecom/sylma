@@ -6,6 +6,7 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 class Unknowned extends Child {
 
   protected $allowUnknown = true;
+  protected $allowForeign = true;
 
   protected function loadElementUnknown(dom\element $el) {
 

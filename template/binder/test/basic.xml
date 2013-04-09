@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:lm="none"
+  xmlns:la="http://2013.sylma.org/template/binder"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+>
+  <tst:description>JS</tst:description>
+  <tst:test name="Base object">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">world</div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var node = test.getNode();
+
+      return node.get('text') === 'world';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple event">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <la:event name="click">return %object%.getNode();</la:event>
+            <p>hello</p>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var node = test.node.fireEvent('click');
+
+      return node.getChildren()[0].get('text') === 'hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Sub object">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <div>Hello world</div>
+            <div la:class="sylma.ui.Base" la:name="sub">yup</div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+
+      var node = test.sub.node;
+
+      return node.get('text') === 'yup';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Sub object without name">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <div>Hello world</div>
+            <div la:class="sylma.ui.Base">
+              <la:event name="mouseover">return %object%.getNode();</la:event>
+              <span>bonsoir</span>
+            </div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var tmp = example.test.tmp;
+      var node = tmp[0].node.fireEvent('mouseover');
+
+      return node.getChildren()[0].get('text') === 'bonsoir';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple property">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <la:option name="directory"><le:directory/></la:option>
+            <div>Hello world</div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+
+      return test.directory === '/sylma/template/binder/test';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple sub node" disabled="true">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <div la:node="hello">Hello</div>
+            <div>World</div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+
+      return test.getNode('hello').get('text') === 'Hello';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple sub nodes">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <p>Bla bla bla</p>
+            <div la:node="hello">Hello</div>
+            <div la:node="world">World</div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+
+      return test.getNode('hello').get('text') === 'Hello' &amp;&amp; test.getNode('world').get('text') === 'World';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

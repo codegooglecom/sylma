@@ -12,6 +12,14 @@ class Field extends sql\template\component\Field {
     $this->launchException('Should not be used');
   }
 
+  public function reflectApply($sPath, $sMode = '') {
+
+    if ($sPath) parent::reflectApply($sPath, $sMode);
+    //$this->getSource()->insert();
+
+    return null;
+  }
+
   public function reflectRegister() {
 
     $query = $this->getQuery();
@@ -27,6 +35,12 @@ class Field extends sql\template\component\Field {
     $query->addSet($this, $var);
 
     //return $this->reflectSelf();
+  }
+
+  protected function reflectSelf() {
+
+    //return null;
+    $this->launchException('No self reflect');
   }
 }
 

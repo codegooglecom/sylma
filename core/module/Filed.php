@@ -56,7 +56,7 @@ abstract class Filed extends Sessioned {
         $mArguments = $this->createArgumentFromString($mArguments, $this->getNamespace());
       }
 
-      parent::setArguments($mArguments);
+      parent::setArguments($mArguments, $bMerge);
     }
     else {
 

@@ -45,7 +45,7 @@ class Readable extends Domed implements core\argument {
     return $this->getValue($sPath, $bDebug);
   }
 
-  public function set($sPath, $mValue) {
+  public function set($sPath, $mValue, $bRef = false) {
 
     if (!$aPath = $this->parsePath($sPath)) {
 
@@ -68,7 +68,9 @@ class Readable extends Domed implements core\argument {
       $this->throwException(sprintf('Cannot find path "%s" to set value', $sPath));
     }
 
-    $mCurrent = $mValue;
+    $mCurrent = $bRef && is_array($mValue) ? $this->createInstance($mValue) : $mValue;
+
+    return $mCurrent;
   }
 
   public function shift() {

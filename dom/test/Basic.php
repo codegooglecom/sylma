@@ -3,9 +3,7 @@
 namespace sylma\dom\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('modules/tester/Basic.php');
-
-class Basic extends tester\Basic {
+class Basic extends tester\Basic implements core\argumentable {
 
   const NS = 'http://www.sylma.org/dom/test';
   protected $sTitle = 'DOM';

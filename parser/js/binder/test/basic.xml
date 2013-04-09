@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/parser/js/binder/test" xmlns="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:la="http://www.sylma.org/parser/js/binder">
+<tst:tests
+  xmlns:tst="http://www.sylma.org/parser/js/binder/test"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+  xmlns:la="http://www.sylma.org/parser/js/binder"
+>
   <tst:description>JS</tst:description>
   <tst:test name="Base object">
     <le:action>

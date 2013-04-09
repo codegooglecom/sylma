@@ -3,7 +3,7 @@
 namespace sylma\view\test\standalone;
 use sylma\modules\tester, sylma\core, sylma\dom, sylma\storage\fs;
 
-class Standalone extends tester\Prepare {
+class Standalone extends tester\Prepare implements core\argumentable {
 
   protected $sTitle = 'Standalone';
 

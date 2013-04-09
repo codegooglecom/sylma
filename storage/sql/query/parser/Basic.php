@@ -101,6 +101,10 @@ abstract class Basic extends reflector\component\Foreigner implements common\add
 
   public function onAdd() {
 
+    $this->getWindow()->loadContent($this->aTables);
+    $this->getWindow()->loadContent($this->aColumns);
+    $this->getWindow()->loadContent($this->aWheres);
+
     $this->getVar()->insert();
   }
 

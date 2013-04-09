@@ -3,7 +3,7 @@
 namespace sylma\core\argument\parser\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-class Basic extends tester\Basic {
+class Basic extends tester\Basic implements core\argumentable {
 
   const NS = 'http://www.sylma.org/modules/tester';
 
@@ -11,7 +11,7 @@ class Basic extends tester\Basic {
   const PARSER_PREFIX = 'arg';
 
   protected static $sArgumentClass = 'sylma\core\argument\Readable';
-  
+
   protected $sTitle = 'Grouped';
   protected $exportDirectory;
 

@@ -13,6 +13,8 @@ class CallMethod extends Called implements common\addable  {
     $this->setControler($controler);
 
     $this->setCalled($called);
+    $this->checkCalled();
+
     $this->setName($sMethod);
 
     $this->setReturn($return);
@@ -56,8 +58,6 @@ class CallMethod extends Called implements common\addable  {
   public function onAdd() {
 
     $window = $this->getControler();
-
-    $this->checkCalled();
 
     $window->loadContent($this->getCalled());
     $window->loadContent($this->getArguments());

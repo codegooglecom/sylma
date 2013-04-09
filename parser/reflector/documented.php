@@ -16,6 +16,10 @@ interface documented {
   function getSourceFile($sPath = '');
   //function getReflector();
 
+  /**
+   * @return common\_window
+   */
+  function getWindow();
   //function build();
 }
 

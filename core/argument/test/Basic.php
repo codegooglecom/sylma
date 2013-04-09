@@ -3,7 +3,7 @@
 namespace sylma\core\argument\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-class Basic extends tester\Prepare {
+class Basic extends tester\Prepare implements core\argumentable {
 
   const NS = 'http://www.sylma.org/core/argument/test';
   protected $sTitle = 'Basic';

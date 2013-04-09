@@ -123,7 +123,7 @@ class Router extends Builder {
 
     $arguments = $window->getVariable('arguments');
 
-    $getArgument = $window->createCall($arguments, 'read', 'php-string', array('do'));
+    $getArgument = $window->createCall($arguments, 'read', 'php-string', array('do', false));
     $result = $window->createCondition($getArgument);
 
     $result->addContent($this->createCall($form, $window));

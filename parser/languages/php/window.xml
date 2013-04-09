@@ -31,5 +31,6 @@
     <cls:class alias="case" name="_Case"/>
     <cls:class alias="test" name="Test"/>
     <cls:class alias="loop" name="_Foreach"/>
+    <cls:class alias="cast" name="Cast"/>
   </cls:classes>
 </arg:argument>

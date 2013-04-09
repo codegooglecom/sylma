@@ -38,13 +38,13 @@ class Window extends common\basic\Window implements php\window {
 
   protected function addContentUnknown($mVal) {
 
-    if (!$mVal instanceof dom\node && !$mVal instanceof php\basic\Condition) {
+    if (!$mVal instanceof dom\node && !$mVal instanceof common\structure) {
 
       $mVal = $this->create('line', array($this, $mVal));
     }
 
     $this->loadContent($mVal);
-    
+
     $this->aContent[] = $mVal;
   }
 
@@ -145,7 +145,7 @@ class Window extends common\basic\Window implements php\window {
 
   protected function argToString($mValue) {
 
-    if ($mValue instanceof core\stringable) {
+    if ($mValue instanceof core\stringable || $mValue instanceof Cast) {
 
       $result = $this->create('string', array($this, $mValue));
     }

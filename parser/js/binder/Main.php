@@ -49,6 +49,10 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
     $this->prepareParent();
   }
 
+  public function init() {
+
+  }
+
   /**
    * Add this parser to parent PHP window
    * @param common\_window $window Window to add the parsers to
@@ -248,7 +252,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
       else $aResult[] = $child;
     }
 
-    $this->getContext()->call('add', array($window->createString($aResult)), '\sylma\parser\context', false);
+    $window->add($this->getContext()->call('add', array($window->createString($aResult)), '\sylma\parser\context', false));
   }
 
   protected function reflectEvent(dom\element $el) {
@@ -323,6 +327,7 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
       'parent' => $sParent,
     );
 
+    //$resultElement->setAttributes($aAttributes);
     $result = $resultElement->createElement('object', $resultElement, $aAttributes, $this->getNamespace('cached'));
 
     return $result;
@@ -330,9 +335,8 @@ class Main extends reflector\handler\Elemented implements reflector\elemented, r
 
   protected function reflectStatic(dom\element $el) {
 
-    $content = $this->getParent()->parse($el->getFirst());
+    $content = $this->getParent()->parseFromChild($el->getFirst());
     $this->getObject()->setProperty($el->readAttribute('name'), $content);
-
   }
 
   protected function reflectNode(dom\element $el, dom\element $resultElement) {

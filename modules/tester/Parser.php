@@ -16,11 +16,18 @@ class Parser extends tester\Prepare {
 
     $this->setControler($this);
 
-    $cache = $this->getManager('fs/cache');
-    $this->exportDirectory = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
+    $this->exportDirectory = $this->loadCacheDirectory($this->getDirectory());
 
     $this->setArguments(array());
     //$this->setFiles(array($this->getFile('basic.xml')));
+  }
+
+  protected function loadCacheDirectory(fs\directory $dir) {
+
+    $cache = $this->getManager('fs/cache');
+    $result = $cache->getDirectory()->addDirectory((string) $dir);
+
+    return $result;
   }
 
   public function getExportDirectory() {
@@ -38,7 +45,7 @@ class Parser extends tester\Prepare {
     $this->exportDirectory = $exportDirectory;
   }
 
-  protected function parseResult(dom\element $test, fs\file $file) {
+  protected function parseResult(dom\element $test, fs\file $file, array $aArguments = array()) {
 
     $document = $test->getx('self:document');
 
@@ -49,21 +56,23 @@ class Parser extends tester\Prepare {
     $cache->saveText((string) $this->createDocument($document->getFirst()));
 
     $manager = $this->getManager(self::PARSER_MANAGER);
-    $result = $this->buildResult($manager, $cache);
+    $result = $this->buildResult($manager, $cache, $aArguments);
 
     $this->setArgument('result', $result);
+
+    return $result;
   }
 
-  protected function buildResult($manager, fs\file $file) {
+  protected function buildResult($manager, fs\file $file, array $aArguments) {
 
     $manager->build($file, $this->getDirectory());
 
-    return $this->loadResult($manager, $file);
+    return $this->loadResult($manager, $file, $aArguments);
   }
 
-  protected function loadResult($manager, fs\file $file) {
+  protected function loadResult($manager, fs\file $file, array $aArguments) {
 
-    $result = $manager->load($file, array(), false);
+    $result = $manager->load($file, $aArguments, false);
     $file->delete();
 
     return $result;

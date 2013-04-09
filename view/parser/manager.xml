@@ -23,8 +23,14 @@
       <cls:classes>
         <component>
           <cls:classes>
-            <cls:base>\sylma\view\parser</cls:base>
-            <cls:class alias="schema" name="component\Schema"/>
+            <cls:base>\sylma\view\parser\component</cls:base>
+            <cls:class alias="schema" name="Schema"/>
+            <cls:class alias="template" name="xxx">
+              <cls:classes>
+                <cls:class alias="path-do" name="Path"/>
+                <cls:class alias="token" name="Token"/>
+              </cls:classes>
+            </cls:class>
           </cls:classes>
         </component>
       </cls:classes>

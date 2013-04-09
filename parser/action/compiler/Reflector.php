@@ -1,9 +1,57 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use sylma\core, sylma\dom, sylma\parser\action, sylma\parser\languages\common, sylma\parser\languages\php;
+use sylma\core, sylma\dom, sylma\parser\action, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser\reflector as reflector_ns;
 
-class Reflector extends Argumented {
+class Reflector extends Argumented implements reflector_ns\elemented {
+
+  // Following function are here only for elemented interface compatibility
+  // Used when setting action as new parser's parent
+  // TODO : remove when refactoring actions
+
+  // STARTBLOCK
+
+  public function parseRoot(dom\element $el) {
+
+    return parent::parseRoot($el);
+  }
+
+  public function parseComponent(dom\element $el) {
+
+    return parent::parseComponent($el);
+  }
+
+  public function loadComponent($sName, dom\element $el, $manager = null) {
+
+    return parent::loadComponent($sName, $el, $manager);
+  }
+
+  public function loadSimpleComponent($sName, $manager = null) {
+
+    return parent::loadSimpleComponent($sName, $manager);
+  }
+
+  public function createParser($sNamespace) {
+
+    return parent::createParser($sNamespace);
+  }
+
+  public function getNamespace($sPrefix = null) {
+
+    return parent::getNamespace($sPrefix);
+  }
+
+  public function getRoot() {
+
+    $this->throwException('Not implemented');
+  }
+
+  public function parseFromParent(dom\element $el) {
+
+    $this->throwException('Not implemented');
+  }
+
+  // ENDBLOCK
 
   /**
    *

@@ -17,6 +17,8 @@ class Document extends action\handler\Basic {
     $this->setContexts(array(
       'css' => new context\CSS,
       'js' => new context\JS,
+      'js-classes' => new \sylma\template\binder\Context,
+      'js-load' => new js\context\Load,
       'js/load' => new js\context\Load,
       'message' =>  $messages,
       //'title' =>  new parser\context\Basic,

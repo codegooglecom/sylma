@@ -22,6 +22,16 @@ class Controled {
     return $this->controler;
   }
 
+  protected function setWindow(common\_window $window) {
+
+    $this->setControler($window);
+  }
+
+  protected function getWindow() {
+
+    return $this->getControler();
+  }
+
   /**
    * Build an (optionnaly temporary) variable assigned with this call
    * @param boolean $bInsert

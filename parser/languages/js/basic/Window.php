@@ -44,6 +44,11 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     }
   }
 
+  protected function addContentUnknown($mVal) {
+
+    $this->launchException('Not yet implemented');
+  }
+
   public function createGhost($sInterface) {
 
     $result = $this->create('ghost', array($this, $sInterface));
@@ -86,6 +91,11 @@ class Window extends common\basic\Window implements js\window, core\stringable {
   public function createVariable($sName, $mReturn) {
 
     return $this->create('variable', array($this, $sName, $this->loadReturn($mReturn)));
+  }
+
+  public function createCondition($test, $content = null) {
+
+    $this->launchException('Not yet implemented');
   }
 
   public function addVar(common\argumentable $val, $sName = '') {

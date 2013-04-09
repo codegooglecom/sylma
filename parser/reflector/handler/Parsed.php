@@ -10,6 +10,29 @@ abstract class Parsed extends reflector\basic\Foreigner {
    * @var array
    */
   protected $aParsers = array();
+  protected $parent;
+
+  protected function setParent(reflector\elemented $parent) {
+
+    if ($parent === $this) {
+
+      $this->throwException('Cannot set itself as parent');
+    }
+
+    //if ($this->getParent()) $this->throwException('Cannot set parent twice');
+
+    $this->parent = $parent;
+  }
+
+  protected function getParent($bDebug = true) {
+
+    if ($bDebug && !$this->parent) {
+
+      $this->launchException('No parent defined');
+    }
+
+    return $this->parent;
+  }
 
   protected function loadElementForeign(dom\element $el) {
 
@@ -52,7 +75,7 @@ abstract class Parsed extends reflector\basic\Foreigner {
 
     $result = null;
 
-    if ($this->getParent()) {
+    if ($this->getParent(false)) {
 
       $result = $this->getParent()->lookupParser($sNamespace);
     }
@@ -68,9 +91,14 @@ abstract class Parsed extends reflector\basic\Foreigner {
 
       $result = $this;
     }
-    else {
+    else if (!$result = $this->getParser($sNamespace)) {
 
       $result = $this->lookupParserForeign($sNamespace);
+
+      if ($result) {
+
+        $result->setParent($this);
+      }
     }
 
     return $result;

@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template as template_ns;
 
-class Element extends Unknowned implements common\arrayable, common\argumentable, parser\component {
+class Element extends Unknowned implements common\arrayable, common\argumentable, template_ns\parser\component, template_ns\element, common\addable {
 
   //protected $aAttributes = array();
   protected $aContent = array();
@@ -11,8 +11,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el, true, false);
-    $this->build();
+    $this->build($el);
   }
 
   protected function parseAttributes(dom\element $el) {
@@ -68,9 +67,11 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $mResult;
   }
 
-  protected function build() {
+  public function build(dom\element $el = null) {
 
     if (!$this->bBuilded) {
+
+      $this->setNode($el, true, false);
 
       $el = $this->getNode();
 
@@ -92,6 +93,11 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     }
 
     return $this->aContent;
+  }
+
+  public function onAdd() {
+
+
   }
 
   protected function complexAsArray(dom\element $el) {
@@ -116,7 +122,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   protected function simpleAsArray(dom\element $el) {
 
-    $this->build();
+    //$this->build();
 
     $aResult = array();
     $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
@@ -124,6 +130,26 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     $aResult[] = '/>';
 
     return $aResult;
+  }
+
+  public function setAttributes(array $aAttrs) {
+
+    return $this->getNode()->setAttributes($aAttrs);
+  }
+
+  public function setAttribute($sName, $sValue) {
+
+    return $this->getNode()->setAttribute($sName, $sValue);
+  }
+
+  public function readAttribute($sName) {
+
+    return $this->getNode()->readAttribute($sName);
+  }
+
+  public function addToken($sAttribute, $sValue) {
+
+    return $this->getNode()->addToken($sAttribute, $sValue);
   }
 
   public function asArray() {

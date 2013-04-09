@@ -125,6 +125,8 @@ abstract class Window extends core\module\Domed {
     return $mResult;
   }
 
+  abstract protected function addContentUnknown($mVal);
+
   public function checkContent($mVal) {
 
     if ($mVal instanceof common\ghost) {
@@ -211,6 +213,11 @@ abstract class Window extends core\module\Domed {
     }
 
     return $result;
+  }
+
+  public function createCast($content, $sType = 'string') {
+
+    return $this->create('cast', array($this, $content, $sType));
   }
 
   protected function argToString($mValue) {

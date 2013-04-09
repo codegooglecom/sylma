@@ -3,9 +3,7 @@
 namespace sylma\dom\argument;
 use sylma\core, sylma\dom;
 
-require_once('Basic.php');
-
-class Iterator extends Basic {
+class Iterator extends Basic implements core\argument {
 
   protected $collection;
 
@@ -44,5 +42,10 @@ class Iterator extends Basic {
   public function valid() {
 
     return $this->getChildren()->valid();
+  }
+
+  public function asJSON() {
+
+    $this->throwException('Not implemented');
   }
 }

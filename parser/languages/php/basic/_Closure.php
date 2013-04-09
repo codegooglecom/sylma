@@ -14,6 +14,11 @@ class _Closure extends common\basic\Window implements common\scope, common\argum
     $this->loadArguments($aArguments);
   }
 
+  public function addContentUnknown($mVal) {
+
+    $this->launchException('Not yet implemented');
+  }
+
   protected function loadArguments(array $aArguments) {
 
     foreach ($aArguments as $var) {

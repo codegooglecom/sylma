@@ -25,7 +25,7 @@
     <lm:file path="index.css"/>
   </le:context>
   <div class="sylma-tests">
-    <le:action path="/#sylma/parser/js/binder/test"/>
+    <le:action path="/#sylma/template/binder/test"/>
     <lm:template path="index.xsl">
       <le:call name="parse-document">
         <le:get-variable name="doc"/>

@@ -9,6 +9,11 @@ class Domed extends Main implements reflector\attributed {
 
   protected $element;
 
+  public function init() {
+
+
+  }
+
   public function parseAttributes(dom\element $el, $resultElement, $result) {
 
     if (!is_object($result)) {

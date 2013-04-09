@@ -11,7 +11,7 @@ class _Interface extends core\module\Argumented {
 
   protected $aMethods = array();
 
-  public function __construct(reflector\documented $reflector, $sInterface, $sNamespace, fs\file $file = null) {
+  public function __construct(reflector\documented $reflector, $sInterface, $sNamespace = '', fs\file $file = null) {
 
     $this->setManager($reflector);
     $this->setName($sInterface);

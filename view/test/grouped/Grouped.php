@@ -3,7 +3,7 @@
 namespace sylma\view\test\grouped;
 use sylma\core, sylma\modules\tester;
 
-class Grouped extends tester\Parser {
+class Grouped extends tester\Parser implements core\argumentable {
 
   protected $sTitle = 'Grouped';
 

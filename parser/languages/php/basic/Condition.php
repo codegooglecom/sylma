@@ -70,7 +70,7 @@ class Condition extends common\basic\Structured implements common\argumentable, 
          '@argument' => $sArgument,
          'test' => $this->test,
          'content' => $this->getContent(),
-         'else' => $this->aElse,
+         'else' => $this->aElse ? $this->aElse : null,
        )
     ));
   }

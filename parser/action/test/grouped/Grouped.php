@@ -3,7 +3,7 @@
 namespace sylma\parser\action\test\grouped;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
 
-class Grouped extends tester\Basic {
+class Grouped extends tester\Basic implements core\argumentable {
 
   const NS = 'http://www.sylma.org/parser/action/test/grouped';
 

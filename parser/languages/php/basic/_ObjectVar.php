@@ -3,10 +3,6 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-require_once('parser/languages/common/_object.php');
-
-require_once('_Var.php');
-
 class _ObjectVar extends _Var implements common\_object, common\scope {
 
   protected $object;
@@ -30,11 +26,11 @@ class _ObjectVar extends _Var implements common\_object, common\scope {
     return $this->getControler()->add($mVar);
   }
 
-  public function call($sMethod, array $aArguments = array(), $mReturn = null, $bReturn = true) {
+  public function call($sMethod, array $aArguments = array(), $mReturn = null, $bVar = false) {
 
     $call = $this->getControler()->createCall($this, $sMethod, $mReturn, $aArguments);
 
-    return $bReturn ? $call->getVar() : $this->getControler()->add($call);
+    return $bVar ? $call->getVar() : $call;
   }
 
   public function asArgument() {

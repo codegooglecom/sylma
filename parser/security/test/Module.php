@@ -3,9 +3,7 @@
 namespace sylma\parser\security\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
 
-require_once('modules/tester/Prepare.php');
-
-class Module extends tester\Prepare {
+class Module extends tester\Prepare implements core\argumentable {
 
   const NS = 'http://2013.sylma.org/parser/security/test';
 
