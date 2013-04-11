@@ -30,11 +30,6 @@ interface domed {
    */
   function getRoot();
 
-  /**
-   * @return \sylma\parser\languages\common\_window
-   */
-  function getWindow();
-
   function getNamespace();
   function getUsedNamespaces();
 }

@@ -138,39 +138,43 @@ class Reflector extends Argumented implements reflector_ns\elemented {
 
     foreach ($settings->getChildren() as $el) {
 
-      if ($el->getType() === $el::TEXT) {
+      if ($el->getType() == $el::COMMENT) continue;
 
-        $this->throwException((sprintf('Invalid %s, element expected', $el->asToken())));
-      }
-
-      if ($el->getNamespace() == $this->getNamespace()) {
-
-        switch ($el->getName()) {
-
-          case 'argument' :
-
-            $aResult[] = $this->reflectArgument($el);
-
-          break;
-          case 'name' :
-
-            //$this->setName($el->read());
-          break;
-
-          case 'return' : $this->setReturn($el); break;
-
-          default :
-
-            $aResult[] = $this->parseElement($el);
-        }
-      }
-      else {
-
-        $aResult[] = $this->parseElement($el);
-      }
+      $aResult[] = $this->reflectSettingsElement($el);
     }
 
     return $aResult;
+  }
+
+  protected function reflectSettingsElement(dom\element $el) {
+
+    if ($el->getNamespace() == $this->getNamespace()) {
+
+      switch ($el->getName()) {
+
+        case 'argument' :
+
+          $result = $this->reflectArgument($el);
+
+        break;
+        case 'name' :
+
+          //$this->setName($el->read());
+        break;
+
+        case 'return' : $this->setReturn($el); break;
+
+        default :
+
+          $result = $this->parseElement($el);
+      }
+    }
+    else {
+
+      $result = $this->parseElement($el);
+    }
+
+    return $result;
   }
 
   protected function reflectBoolean(dom\element $el) {

@@ -15,5 +15,4 @@ interface reflector extends reflector_ns\documented {
    */
   //function runVar(common\_var $call, dom\collection $children);
   //function getNamespace($sPrefix = '');
-  function getLastElement();
 }

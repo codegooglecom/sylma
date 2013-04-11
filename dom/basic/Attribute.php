@@ -48,7 +48,7 @@ class Attribute extends \DOMAttr implements dom\attribute {
 
   public function setValue($mValue) {
 
-    $this->value = (string) $mValue;
+    $this->value = (string) htmlentities($mValue);
   }
 
   public function remove() {
