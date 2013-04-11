@@ -38,20 +38,6 @@ class Standalone extends tester\Parser implements dom\domable {
     return $result;
   }
 
-  protected function loadAction(dom\element $test) {
-
-    $cache = $this->getControler('fs/cache');
-    $target = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
-
-    require_once('core/functions/Path.php');
-    $sName = core\functions\path\urlize($this->getFile()->getName() . '-' . $test->readAttribute('name'));
-
-    $el = $test->getFirst();
-    $result = $this->getControler('action')->buildAction($this->createDocument($el), array(), $target, $this->getDirectory(), $sName);
-
-    return $result;
-  }
-
   public function asDOM() {
 
     $doc = $this->getFile()->getDocument($this->getNS());

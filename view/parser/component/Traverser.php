@@ -10,6 +10,11 @@ class Traverser extends Container {
     return $this->parseChildren($el->getChildren());
   }
 
+  protected function parseChildrenText(dom\text $node, array &$aResult) {
+
+    $aResult[] = $node->getValue();
+  }
+
   public function asArgument() {
 
     return $this->asArray();

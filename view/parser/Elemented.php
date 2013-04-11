@@ -31,10 +31,26 @@ class Elemented extends template\parser\Elemented {
 
   public function parseRoot(dom\element $el, $sMode = '') {
 
-    $this->build($el, $sMode); // parseRoot()
+    $this->build($el, $sMode); // parseRoot(), onAdd()
 
     $this->addToResult(array($this->getTemplate())); // asArray()
-    $result = $this->getResult();
+
+
+    switch ($sMode) {
+
+      case 'insert' :
+
+        $var = $this->getTemplate()->getTree()->getSource();
+        $var->insert();
+
+        $result = $var;
+
+        break;
+
+      default :
+
+        $result = $this->getResult();
+    }
 
     return $result;
   }

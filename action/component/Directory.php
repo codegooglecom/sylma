@@ -13,11 +13,9 @@ class Directory extends reflector\component\Foreigner implements common\argument
 
   public function asArgument() {
 
-    $window = $this->getWindow();
-    $fs = $window->addControler('fs');
+    $fs = $this->getWindow()->addControler('fs');
     $dir = $this->getDirectory($this->readx(''));
 
-    //return new Test;
     return $fs->call('getDirectory', array((string) $dir))->asArgument();
   }
 }

@@ -77,6 +77,7 @@
     <xsl:value-of select="$break"/>
     <xsl:apply-templates select="php:content/*"/>
     <xsl:text>}</xsl:text>
+    <xsl:value-of select="$break"/>
   </xsl:template>
 
   <xsl:template match="php:switch">
@@ -86,6 +87,7 @@
     <xsl:value-of select="$break"/>
     <xsl:apply-templates select="php:case"/>
     <xsl:text>}</xsl:text>
+    <xsl:value-of select="$break"/>
   </xsl:template>
 
   <xsl:template match="php:case">

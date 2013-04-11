@@ -170,89 +170,18 @@ class Router extends Builder {
     }
   }
 
-  protected function loadSelfTarget(fs\file $file, $sMode = '') {
-
-    if ($sMode) {
-
-      $result = $this->getManager()->getCachedFile($file, ".{$sMode}.php");
-    }
-    else {
-
-      $result = parent::loadSelfTarget($file);
-    }
-
-    return $result;
-  }
-
   protected function prepareArgumented() {
 
-    $result = $this->createWindow();
-    $result->setVariable($result->createVariable('arguments', '\sylma\core\argument'));
-
-    return $result;
-  }
-
-  protected function _createRouter(fs\file $viewFile) {
-
     $window = $this->createWindow();
-
-    $return = $window->tokenToInstance('\sylma\dom\handler');
-
     $arguments = $window->createVariable('arguments', '\sylma\core\argument');
-    $result = $window->addVar($window->argToInstance(''));
+    $window->setVariable($arguments);
+
     $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($arguments));
-    //$init = $window->createCall($window->getSelf(), 'getManager', '\sylma\core\Initializer', array('init'));
-    $getArguments = $window->createInstanciate($window->tokenToInstance(get_class($this->create('argument'))));
+    $new = $window->createInstanciate($window->tokenToInstance(get_class($this->create('argument'))));
 
-    $window->add($window->createCondition($window->createNot($isset), $window->createAssign($arguments, $getArguments)));
-
-
-    $getArgument = $window->createCall($arguments, 'read', 'php-string', array(0));
-
-    $callView = $window->createClosure(array($arguments));
-    $callView->addContent($window->callFunction('include', $return, array($viewFile->getName())));
-    $assign = $window->createAssign($result, $window->callClosure($callView, $return, array($arguments)));
-    $window->add($assign);
-    $window->createCondition($getArgument, $assign);
-
-    $window->setReturn($result);
+    $window->add($window->createCondition($window->createNot($isset), $window->createAssign($arguments, $new)));
 
     return $window;
   }
-
-  public function _build($sMode = '') {
-
-    return $this->buildRoot($sMode);
-
-    $file = $this->getFile();
-    $doc = $this->getDocument();
-
-    $this->setMode('view');
-
-    $view = $this->reflectMain($file, $doc, $this->prepareArgumented());
-    $reflector = $this->getReflector();
-
-    if ($reflector->getRegistered()) {
-
-      $view = $this->createFile($this->loadSelfTarget($file, 'view'), $this->buildInstanciation($view));
-
-      $this->setDirectory(__FILE__);
-
-      $this->setMode('insert');
-      $this->setArguments(self::FORM_ARGUMENTS);
-
-      $form = $this->createFile($this->loadSelfTarget($file, 'insert'), $this->buildSimple($file, $doc, $this->prepareArgumented()));
-      $router = $this->createRouter($view, $form);
-
-      $result = $this->createFile($this->loadSelfTarget($file), $this->buildWindow($router));
-    }
-    else {
-
-      $result = $this->createFile($this->loadSelfTarget($file), $this->buildInstanciation($view));
-    }
-
-    return $result;
-  }
-
 }
 

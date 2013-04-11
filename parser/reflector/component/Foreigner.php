@@ -94,6 +94,11 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $this->parser;
   }
 
+  protected function getRoot() {
+
+    return $this->getParser()->getRoot();
+  }
+
   protected function parseComponentRoot(dom\element $el) {
 
     $children = $el->getChildren();

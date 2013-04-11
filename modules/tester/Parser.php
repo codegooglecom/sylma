@@ -101,6 +101,7 @@ class Parser extends tester\Prepare {
     }
 
     $this->loadResultNode($test);
+
     return parent::test($test, $sContent, $controler, $doc, $file);
   }
 

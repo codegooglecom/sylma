@@ -50,6 +50,12 @@ class Builder extends reflector\handler\Documented {
     return $result;
   }
 
+  public function getResultFile($sMode = '') {
+
+    // TODO : TMP
+    return $this->loadSelfTarget($this->getFile(), $sMode);
+  }
+
   protected function createReflector() {
 
     $result = parent::createReflector();

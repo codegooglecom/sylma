@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+>
+  <tst:description>Basic</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="Simple view">
+    <tst:document>
+      <crud:crud>
+        <view:view mode="view">
+          <sql:resource>
+            <sql:source>test</sql:source>
+            <sql:id>1</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <div>
+              <h3><tpl:apply select="name"/></h3>
+              <span><tpl:apply select="email"/></span>
+            </div>
+          </view:template>
+        </view:view>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <span>root@sylma.org</span>
+      </div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->loadScript();
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Using global">
+    <tst:document>
+      <crud:crud>
+        <view:view mode="view"/>
+        <crud:global>
+          <sql:resource>
+            <sql:source>test</sql:source>
+            <sql:id>1</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <div>
+              <h3><tpl:apply select="name"/></h3>
+              <span><tpl:apply select="email"/></span>
+            </div>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <span>root@sylma.org</span>
+      </div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->loadScript();
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+</tst:tests>
