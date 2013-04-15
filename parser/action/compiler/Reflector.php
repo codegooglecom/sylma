@@ -148,6 +148,8 @@ class Reflector extends Argumented implements reflector_ns\elemented {
 
   protected function reflectSettingsElement(dom\element $el) {
 
+    $result = null;
+    
     if ($el->getNamespace() == $this->getNamespace()) {
 
       switch ($el->getName()) {

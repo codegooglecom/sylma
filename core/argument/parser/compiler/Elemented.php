@@ -14,6 +14,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   public function parseRoot(dom\element $el) {
 
+    //$el = $this->setNode($el);
     $this->setNamespace(self::loadDefaultNamespace($el));
 
     if ($el->getName() !== 'argument') {
@@ -91,7 +92,22 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     // TODO : get schema to convert
 
-    return $sValue;
+    if ($sType = $el->readx('@self:type', $this->getNS(), false)) {
+
+      switch ($sType) {
+
+        case 'token' : $mResult = array_map('trim', explode(',', $el->read())); break;
+        default :
+
+          $this->launchException(sprintf('Unknown argument type : %s', $sType), get_defined_vars());
+      }
+    }
+    else {
+
+      $mResult = $sValue;
+    }
+
+    return $mResult;
   }
 
   protected function parseChildrenElementSelf(dom\element $el, array &$aResult) {

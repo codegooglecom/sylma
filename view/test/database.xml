@@ -1,0 +1,9 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/view/test"
+>
+  <database>test</database>
+  <host>localhost</host>
+  <user>test</user>
+  <password>test</password>
+</arg:argument>

@@ -3,15 +3,16 @@
 namespace sylma\core\request;
 use sylma\core, sylma\storage\fs, sylma\core\functions;
 
-class Basic extends core\module\Argumented implements core\request {
+class Basic extends core\module\Filed implements core\request {
 
   const FILE_MANAGER = 'fs';
 
   private $sPath = '';
-  private $file = null;
 
   protected $sExtension = '';
   protected $aExtensions = array();
+
+  protected $config;
 
   const NS = 'http://www.sylma.org/parser/action/path';
   /**
@@ -33,10 +34,11 @@ class Basic extends core\module\Argumented implements core\request {
     $this->setPath($sPath);
     $this->setNamespace(self::NS);
 
+    $this->setSettings(include('arguments.xml.php'));
     $this->setArguments($aArguments);
 
-    if (!$aExtensions) $aExtensions = $this->getManager('init')->getExtensions();
-    $this->setExtensions($aExtensions);
+    //if (!$aExtensions) $aExtensions = $this->getManager('init')->getExtensions();
+    //$this->setExtensions($aExtensions);
 
     // Remove arguments following '?' of type ..?arg1=val&arg2=val..
     //$this->getArguments()->mergeArray($this->extractArguments($sPath));
@@ -44,6 +46,39 @@ class Basic extends core\module\Argumented implements core\request {
     if ($bParse) $this->parse();
   }
 
+  protected function setSettings(core\argument $arg) {
+
+    $this->settings = $arg;
+  }
+
+  protected function getSettings() {
+
+    return $this->settings;
+  }
+
+  protected function query($sPath) {
+
+    return $this->settings->query($sPath);
+  }
+
+  public function asFile() {
+
+    $this->setDirectory(__FILE__);
+
+    if ($result = $this->getFile($this->getPath(), false)) {
+
+      if (!in_array($result->getExtension(), $this->query('extensions/readable'))) {
+
+        $this->throwException('Unauthorized extension type');
+      }
+    }
+
+    return $result;
+  }
+
+  /**
+   * Used for quicker access to extensions
+   */
   public function getExtensions() {
 
     return $this->aExtensions;
@@ -81,6 +116,7 @@ class Basic extends core\module\Argumented implements core\request {
 
     $file = null;
     $dir = $this->getManager(self::FILE_MANAGER)->getDirectory('/');
+    $this->setExtensions($this->query('extensions/executable'));
 
     $aPath = $this->getPath(true);
 
@@ -212,19 +248,9 @@ class Basic extends core\module\Argumented implements core\request {
     return $this->sExtension;
   }
 
-  public function getFile() {
-
-    return $this->file;
-  }
-
   public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
     return parent::getArgument($sPath, $bDebug, $mDefault);
-  }
-
-  protected function setFile(fs\file $file) {
-
-    $this->file = $file;
   }
 
   protected function setPath($sPath) {

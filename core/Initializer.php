@@ -105,7 +105,7 @@ class Initializer extends module\Filed {
 
     $sResult = '';
 
-    if ($file = $this->getFile((string) $path, false)) {
+    if ($file = $path->asFile()) {
 
       // A file
       $sResult = $this->createWindowFile($file);

@@ -30,7 +30,6 @@ initializer :
     xhtml : application/xhtml+xml
     json : application/json
   executables : [json]
-  extensions : [eml, vml]
   error :
     action : error.eml
     html : error.html

@@ -86,6 +86,10 @@ class Document extends action\handler\Basic {
 
             $messages->add($context->asDOM());
           }
+          else if (\Sylma::read('debug/enable')) {
+
+            echo '<h1>No container for messages</h1>';
+          }
 
           break;
 
