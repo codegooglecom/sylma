@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+  xmlns:tst="http://www.sylma.org/modules/tester"
+>
+  <le:context name="title">Test Schema</le:context>
+  <tst:group>
+    <tst:description>Schema</tst:description>
+    <le:object class="grouped\Grouped"/>
+    <!--<le:object class="standalone\Standalone"/>-->
+  </tst:group>
+</le:action>
+

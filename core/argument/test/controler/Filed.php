@@ -46,12 +46,12 @@ class Filed extends core\module\Filed implements test\controler {
     return parent::getArguments();
   }
 
-  public function get($sPath) {
+  public function get($sPath, $bDebug = true) {
 
     return $this->getArguments()->get($sPath);
   }
 
-  public function set($sPath, $mVar) {
+  public function set($sPath, $mVar = null) {
 
     return $this->getArguments()->set($sPath, $mVar);
   }

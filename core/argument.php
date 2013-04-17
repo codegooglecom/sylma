@@ -20,8 +20,8 @@ interface argument extends \Iterator {
    */
   function get($sPath = '', $bDebug = true);
   function read($sPath = '', $bDebug = true);
-  //function query($sPath = '', $bDebug = true);
-  //function set($sPath = '', $mValue = null);
+  function query($sPath = '', $bDebug = true);
+  function set($sPath, $mValue = '');
   //function add($mValue);
   //function shift($mValue);
   function setParent(core\argument $parent);

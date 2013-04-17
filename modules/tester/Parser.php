@@ -18,7 +18,7 @@ class Parser extends tester\Prepare {
 
     $this->exportDirectory = $this->loadCacheDirectory($this->getDirectory());
 
-    $this->setArguments(array());
+    $this->setSettings(array());
     //$this->setFiles(array($this->getFile('basic.xml')));
   }
 
@@ -58,7 +58,7 @@ class Parser extends tester\Prepare {
     $manager = $this->getManager(self::PARSER_MANAGER);
     $result = $this->buildResult($manager, $cache, $aArguments);
 
-    $this->setArgument('result', $result);
+    $this->set('result', $result);
 
     return $result;
   }
@@ -81,7 +81,7 @@ class Parser extends tester\Prepare {
   protected function loadResultNode(dom\element $test) {
 
     $el = $test->getx('self:node', array(), false);
-    $this->setArgument('node', $el->getFirst());
+    if ($el) $this->set('node', $el->getFirst());
   }
 
   protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
@@ -105,14 +105,19 @@ class Parser extends tester\Prepare {
     return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
+  public function get($sPath, $bDebug = true) {
+
+    return parent::get($sPath, $bDebug);
+  }
+
   public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $bDebug, $mDefault);
+    return $this->get($sPath, $bDebug);
   }
 
   public function setArgument($sPath, $mValue) {
 
-    return parent::setArgument($sPath, $mValue);
+    return $this->set($sPath, $mValue);
   }
 }
 

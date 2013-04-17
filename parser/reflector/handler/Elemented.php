@@ -25,7 +25,11 @@ class Elemented extends Parsed implements reflector\elemented {
     if ($arg) $this->loadDirectory($arg);
     $this->loadArguments($arg);
 
-    if ($arg) $this->setArguments($arg);
+    if ($arg) {
+
+      $this->setArguments($arg);
+      $this->setSettings($arg);
+    }
   }
 
   protected function setRoot(reflector\documented $root) {
@@ -87,8 +91,8 @@ class Elemented extends Parsed implements reflector\elemented {
     else if ($arg and $sArguments = $arg->read('arguments', null, false)) {
 
        $this->setArguments($sArguments);
+       $this->setSettings($this->getArguments(false)); // TODO : settings will replace arguments
     }
-
   }
 
   public function getSourceDirectory($sPath = '') {

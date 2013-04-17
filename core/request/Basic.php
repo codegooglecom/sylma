@@ -12,9 +12,8 @@ class Basic extends core\module\Filed implements core\request {
   protected $sExtension = '';
   protected $aExtensions = array();
 
-  protected $config;
-
   const NS = 'http://www.sylma.org/parser/action/path';
+
   /**
    * @param string $sPath Path to look for an action
    * @param array $aArguments List of any arguments to add to the path
@@ -22,8 +21,7 @@ class Basic extends core\module\Filed implements core\request {
    * @param $bArguments Use of indexed arguments (file/argument1/argument2)
    * @param $bDebug throw exceptions on error
    */
-
-  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, array $aExtensions = array()) {
+  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, core\argument $arg = null) {
 
     if ($directory) {
 
@@ -34,6 +32,7 @@ class Basic extends core\module\Filed implements core\request {
     $this->setPath($sPath);
     $this->setNamespace(self::NS);
 
+    //$this->setSettings($arg);
     $this->setSettings(include('arguments.xml.php'));
     $this->setArguments($aArguments);
 
@@ -44,21 +43,6 @@ class Basic extends core\module\Filed implements core\request {
     //$this->getArguments()->mergeArray($this->extractArguments($sPath));
 
     if ($bParse) $this->parse();
-  }
-
-  protected function setSettings(core\argument $arg) {
-
-    $this->settings = $arg;
-  }
-
-  protected function getSettings() {
-
-    return $this->settings;
-  }
-
-  protected function query($sPath) {
-
-    return $this->settings->query($sPath);
   }
 
   public function asFile() {
@@ -146,7 +130,10 @@ class Basic extends core\module\Filed implements core\request {
 
           if (!$file) {
 
-            $this->throwException(sprintf("No index file or no '%s' directory in %s", $sSubPath, $dir->asToken()));
+            if ($sSubPath) $sMessage = sprintf("No '%s' directory in %s", $sSubPath, $dir->asToken());
+            else $sMessage = sprintf("No index file in %s", $dir->asToken());
+
+            $this->launchException($sMessage, get_defined_vars());
           }
         }
         else {

@@ -1,23 +1,36 @@
-<arg:argument xmlns:arg="http://www.sylma.org/core/argument" xmlns="http://www.sylma.org/core/sylma" xmlns:cls="http://www.sylma.org/core/factory">
+<?xml version="1.0" encoding="utf-8"?>
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/core/sylma"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:target="[current()]"
+>
   <debug>
-    <enable>1</enable>
-    <rights>0</rights>
-    <backtrace>1</backtrace>
-    <html>1</html>
+    <enable arg:type="bool">1</enable>
+    <rights arg:type="bool">0</rights>
+    <backtrace>
+      <show arg:type="bool">1</show>
+      <html arg:type="bool">1</html>
+    </backtrace>
+    <html arg:type="bool">1</html>
     <xml>
-      <import>0</import>
+      <import arg:type="bool">0</import>
     </xml>
+    <action arg:type="bool">0</action>
   </debug>
   <namespaces>
     <html>http://www.w3.org/1999/xhtml</html>
   </namespaces>
   <render>
-    <gzip>1</gzip>
+    <gzip arg:type="bool">1</gzip>
   </render>
   <initializer>
     <ouput>
-      <indent>1</indent>
+      <indent arg:type="bool">1</indent>
     </ouput>
+    <arg:element name="mime" key="@name" extend="name()"/>
     <mime name="default">plain/text</mime>
     <mime name="jpg">image/jpeg</mime>
     <mime name="jpeg">image/jpeg</mime>
@@ -31,11 +44,12 @@
     <mime name="html">text/html</mime>
     <mime name="xhtml">application/xhtml+xml</mime>
     <mime name="json">application/json</mime>
-    <executables>json</executables>
+    <executables arg:type="token">json</executables>
     <error>
       <action>error.eml</action>
       <html>error.html</html>
     </error>
+    <arg:element name="window" key="@name" extend="name()"/>
     <window name="html">
       <action>/sylma/modules/html/backend.eml</action>
     </window>
@@ -45,38 +59,45 @@
     <cls:classes>
       <cls:class alias="html" name="\sylma\modules\html\Document"/>
       <cls:class alias="redirect" name="\sylma\core\Redirect"/>
-      <cls:class alias="path" name="\sylma\parser\action\Path"/>
+      <cls:class alias="path" name="\sylma\core\request\Basic"/>
       <cls:class alias="action" name="\sylma\parser\action\handler\Basic"/>
       <cls:class alias="window" name="\sylma\core\window\classes\File"/>
       <cls:class alias="json" name="\sylma\core\window\classes\Context"/>
     </cls:classes>
     <session>
-      <lifetime>403200</lifetime>
+      <lifetime arg:type="int">403200</lifetime>
     </session>
+    <maintenance>
+      <enable arg:type="bool">0</enable>
+    </maintenance>
   </initializer>
   <users>
+    <arg:element name="user" key="@name"/>
     <user name="root">
-      <error-level>32767</error-level>
-      <group name="0"/>
+      <!-- E_ALL | E_STRICT | E_NOTICE = 32767 -->
+      <error-level arg:type="int">32767</error-level>
+      <group arg:type="token">0</group>
     </user>
     <user name="server">
+      <!-- server user for cron jobs -->
       <ip>0</ip>
-      <group name="famous"/>
-      <group name="server"/>
+      <group arg:type="token">famous,server</group>
     </user>
     <user name="anonymouse">
-      <group name="famous"/>
+      <group arg:type="token">famous</group>
     </user>
     <user name="authenticated">
-      <group name="users"/>
+      <group arg:type="token">users</group>
     </user>
   </users>
   <dom>
     <debug>
-      <show-queries>0</show-queries>
+      <!-- display all xpath queries in a formatted table containing paths grouped by count -->
+      <show-queries arg:type="bool">0</show-queries>
+      <token arg:type="bool">0</token>
     </debug>
     <encoding>
-      <check>0</check>
+      <check arg:type="bool">0</check>
     </encoding>
   </dom>
 </arg:argument>

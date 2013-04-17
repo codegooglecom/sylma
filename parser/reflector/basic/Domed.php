@@ -48,10 +48,10 @@ abstract class Domed extends Componented {
       if ($bNamespace) $this->setNamespace($el->getNamespace(), static::PREFIX);
 
       $doc = $this->createDocument($el);
-      $doc->registerNamespaces($el->getHandler()->getNS());
-      $doc->registerNamespaces($this->getNS());
-
       $result = $doc->getRoot();
+
+      $doc->registerNamespaces($el->getHandler()->getNS());
+      $this->registerNamespaces($result);
 
       $this->elementDocument = $doc;
       $this->node = $result;
@@ -62,6 +62,11 @@ abstract class Domed extends Componented {
     }
 
     return $result;
+  }
+
+  protected function registerNamespaces(dom\element $el) {
+
+    $el->getHandler()->registerNamespaces($this->getNS());
   }
 
   protected function queryx($sPath, $bDebug = false, array $aNS = array()) {

@@ -21,6 +21,7 @@ abstract class Argumented extends Managed {
    * @var core\argument
    */
   protected $arguments = null;
+  protected $settings;
 
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
 
@@ -141,6 +142,49 @@ abstract class Argumented extends Managed {
     }
 
     return $this->getArguments()->set($sPath, $mValue);
+  }
+
+  protected function setSettings($arg) {
+
+    if (!is_object($arg)) {
+
+      $arg = $this->createArgument($arg);
+    }
+
+    $this->settings = $arg;
+  }
+
+  /**
+   * @return core\argument
+   */
+  protected function getSettings($bDebug = true) {
+
+    if (!$this->settings && $bDebug) {
+
+      $this->launchException('No settings defined');
+    }
+
+    return $this->settings;
+  }
+
+  protected function get($sPath, $bDebug = true) {
+
+    return $this->getSettings()->get($sPath, $bDebug);
+  }
+
+  protected function read($sPath, $bDebug = true) {
+
+    return $this->getSettings()->read($sPath, $bDebug);
+  }
+
+  protected function query($sPath, $bDebug = true) {
+
+    return $this->getSettings()->query($sPath, $bDebug);
+  }
+
+  protected function set($sPath, $mValue = null) {
+
+    return $this->getSettings()->set($sPath, $mValue);
   }
 
   protected function dsp() {

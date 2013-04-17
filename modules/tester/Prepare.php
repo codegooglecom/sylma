@@ -17,7 +17,7 @@ abstract class Prepare extends Basic {
 
       if ($sPrepare) {
 
-        if (is_null(eval('$closure = function($controler) { ' . $sPrepare . '; };'))) {
+        if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $sPrepare . '; };'))) {
 
           $this->evaluate($closure, $controler);
           $this->onPrepared();
@@ -32,7 +32,7 @@ abstract class Prepare extends Basic {
 
         if ($sExpected) {
 
-          if (is_null(eval('$closure = function($controler) { ' . $sExpected . '; };'))) {
+          if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $sExpected . '; };'))) {
 
             $bResult = $this->evaluate($closure, $controler);
           }

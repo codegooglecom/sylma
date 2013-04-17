@@ -45,7 +45,7 @@ class Readable extends Domed implements core\argument {
     return $this->getValue($sPath, $bDebug);
   }
 
-  public function set($sPath, $mValue, $bRef = false) {
+  public function set($sPath, $mValue = '', $bRef = false) {
 
     if (!$aPath = $this->parsePath($sPath)) {
 

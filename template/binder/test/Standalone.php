@@ -16,6 +16,7 @@ class Standalone extends tester\Parser implements dom\domable {
 
     $this->setFile($file);
     $this->setTestKey($iTest);
+    $this->setSettings(array());
 
     $this->exportDirectory = $this->loadCacheDirectory($this->getDirectory());
   }

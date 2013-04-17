@@ -8,7 +8,14 @@
 'classes' => array(
   'elemented' => array(
     'file' => '\sylma\core\argument\parser\compiler\Elemented.php',
-    'name' => '\sylma\core\argument\parser\compiler\Elemented'),
+    'name' => '\sylma\core\argument\parser\compiler\Elemented',
+    'importer' => '\sylma\core\argument\Importer',
+    'classes' => array(
+      'component' => array(
+        'classes' => array(
+          'import' => array(
+            'file' => '\sylma\core\argument\parser\compiler\component\Import.php',
+            'name' => '\sylma\core\argument\parser\compiler\component\Import'))))),
   'window' => array(
     'file' => '\sylma\parser\languages\php\basic\Window.php',
     'name' => '\sylma\parser\languages\php\basic\Window')),
@@ -83,7 +90,19 @@
     'condition' => array(
       'file' => '\sylma\parser\languages\php\basic\Condition.php',
       'name' => '\sylma\parser\languages\php\basic\Condition'),
+    'switch' => array(
+      'file' => '\sylma\parser\languages\php\basic\_Switch.php',
+      'name' => '\sylma\parser\languages\php\basic\_Switch'),
+    'case' => array(
+      'file' => '\sylma\parser\languages\php\basic\_Case.php',
+      'name' => '\sylma\parser\languages\php\basic\_Case'),
     'test' => array(
       'file' => '\sylma\parser\languages\php\basic\Test.php',
-      'name' => '\sylma\parser\languages\php\basic\Test')))));
+      'name' => '\sylma\parser\languages\php\basic\Test'),
+    'loop' => array(
+      'file' => '\sylma\parser\languages\php\basic\_Foreach.php',
+      'name' => '\sylma\parser\languages\php\basic\_Foreach'),
+    'cast' => array(
+      'file' => '\sylma\parser\languages\php\basic\Cast.php',
+      'name' => '\sylma\parser\languages\php\basic\Cast')))));
   

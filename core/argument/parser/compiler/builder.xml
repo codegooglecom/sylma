@@ -14,8 +14,17 @@
   </cache>
   <template>/#sylma/core/argument/parser/compiler/basic.xsl</template>
   <cls:classes>
-    <cls:base>\sylma\core\argument\parser</cls:base>
-    <cls:class alias="elemented" name="compiler\Elemented"/>
+    <cls:base>\sylma\core\argument\parser\compiler</cls:base>
+    <cls:class alias="elemented" name="Elemented">
+      <importer>\sylma\core\argument\Importer</importer>
+      <cls:classes>
+        <component>
+          <cls:classes>
+            <cls:class alias="import" name="component\Import"/>
+          </cls:classes>
+        </component>
+      </cls:classes>
+    </cls:class>
     <cls:class alias="window" name="\sylma\parser\languages\php\basic\Window"/>
   </cls:classes>
   <php>

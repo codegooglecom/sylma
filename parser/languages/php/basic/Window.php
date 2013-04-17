@@ -97,15 +97,6 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
-  public function getStatic($sName) {
-
-    return $this->createArgument(array(
-      'class-static' => array(
-        '@name' => $sName,
-      )
-    ));
-  }
-
   public function callFunction($sName, common\_instance $return = null, array $aArguments = array()) {
 
     return $this->create('function', array($this, $sName, $return, $aArguments));

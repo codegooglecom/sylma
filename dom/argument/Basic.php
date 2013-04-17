@@ -169,6 +169,11 @@ abstract class Basic extends core\module\Controled {
     return $result;
   }
 
+  public function query($sPath = '', $bDebug = true) {
+
+    $this->launchException('Not implemented');
+  }
+
   public function read($sPath = '', $bDebug = true) {
 
     if ($sPath) {

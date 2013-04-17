@@ -261,6 +261,13 @@ class Documented extends core\module\Domed implements reflector\documented {
     return $result;
   }
 
+  public function getResultRequest() {
+
+    $result = $this->create('request', array((string) $this->getFile()));
+
+    return $result;
+  }
+
   /**
    *
    * @return common\_window

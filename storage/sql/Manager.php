@@ -37,7 +37,7 @@ class Manager extends core\module\Argumented {
     $this->launchException(sprintf('SQL Error : %s', "$aError[2] ({$aError[0]}, {$aError[1]})"), $aVars);
   }
 
-  public function query($sQuery) {
+  public function query($sQuery, $bDebug = true) {
 
     if (!$result = $this->getDatabase()->query($sQuery)) {
 
@@ -47,9 +47,9 @@ class Manager extends core\module\Argumented {
     return new Argument($result);
   }
 
-  public function get($sQuery) {
+  public function get($sQuery, $bDebug = true) {
 
-    if (!$result = $this->getDatabase()->query($sQuery)) {
+    if (!$result = $this->getDatabase()->query($sQuery) and $bDebug) {
 
       $this->catchError(get_defined_vars());
     }

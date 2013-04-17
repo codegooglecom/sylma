@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+  xmlns:tst="http://www.sylma.org/modules/tester"
+>
+  <le:context name="title">Test argument parser</le:context>
+  <le:action path="/sylma/modules/tester/class">
+    <tst:group>
+      <tst:description>Argument parser</tst:description>
+      <le:object class="Basic"/>
+      <le:object class="Standalone"/>
+    </tst:group>
+  </le:action>
+</le:action>
+

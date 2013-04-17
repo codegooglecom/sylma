@@ -46,7 +46,7 @@ class Standalone extends tester\Prepare implements core\argumentable {
 
     $file = $this->getControler('fs')->getFile($sPath, $this->getDirectory('samples'));
 
-    return $this->getControler()->load($file);
+    return $this->getControler()->load($file, array(), true);
   }
 }
 

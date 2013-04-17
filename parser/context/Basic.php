@@ -33,7 +33,7 @@ class Basic extends core\module\Domed implements context {
     }
   }
 
-  public function set($sPath, $mValue) {
+  public function set($sPath, $mValue = null) {
 
     return $this->setArgument($sPath, $mValue);
   }

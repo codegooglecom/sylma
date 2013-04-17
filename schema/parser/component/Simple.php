@@ -22,6 +22,11 @@ class Simple extends Basic implements schema\parser\type {
     return false;
   }
 
+  public function isSimple() {
+
+    return true;
+  }
+
   public function validate($sValue) {
 
 

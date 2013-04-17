@@ -11,10 +11,11 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   //const PREFIX = 'arg';
 
   protected $allowForeign = true;
+  protected $importer;
 
   public function parseRoot(dom\element $el) {
 
-    //$el = $this->setNode($el);
+    $this->registerNamespaces($el);
     $this->setNamespace(self::loadDefaultNamespace($el));
 
     if ($el->getName() !== 'argument') {
@@ -30,6 +31,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   public function parseFromParent(dom\element $el) {
 
     $aResult = array();
+    $this->registerNamespaces($el);
     $this->parseChildrenElementSelf($el, $aResult);
 
     return $aResult;
@@ -38,6 +40,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   public function parseFromChild(dom\element $el) {
 
     $aResult = array();
+    $this->registerNamespaces($el);
     $this->parseChildrenElementSelf($el, $aResult);
 
     return $aResult;
@@ -90,24 +93,93 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   protected function parseElementType(dom\element $el, $sValue) {
 
-    // TODO : get schema to convert
+    $sType = $this->getType($el);
 
-    if ($sType = $el->readx('@self:type', $this->getNS(), false)) {
+    switch ($sType) {
 
-      switch ($sType) {
+      case 'bool' :
+      case 'boolean' :
 
-        case 'token' : $mResult = array_map('trim', explode(',', $el->read())); break;
-        default :
+        if (in_array($sValue, array('false'))) {
 
-          $this->launchException(sprintf('Unknown argument type : %s', $sType), get_defined_vars());
-      }
-    }
-    else {
+          $mResult = false;
+        }
+        else {
 
-      $mResult = $sValue;
+          $mResult = (bool) $sValue;
+        }
+
+        break;
+
+      case 'int' :
+      case 'integer' :
+
+        $mResult = (int) $sValue;
+        break;
+
+      case 'numeric' :
+
+        $mResult = $sValue + 0;
+        break;
+
+      case 'float' :
+
+        $mResult = (float) $sValue;
+        break;
+
+      case 'token' :
+
+        $mResult = array_map('trim', explode(',', $sValue));
+        break;
+
+      case '' :
+
+        $mResult = $sValue;
+        break;
+
+      default :
+
+        $this->launchException(sprintf('Unknown argument type : %s', $sType), get_defined_vars());
     }
 
     return $mResult;
+  }
+
+  protected function getType(dom\element $el) {
+
+    if (!$sResult = $el->readx('@self:type', $this->getNS(), false)) {
+
+      if ($element = $this->getElement($el)) {
+
+        $sResult = $element->readx('@self:type', array(), false);
+      }
+    }
+
+    return $sResult;
+  }
+
+  /**
+   * Return corresponding argument schema element (arg:element)
+   *
+   * @param $el
+   * @return \sylma\dom\element
+   */
+  protected function getElement(dom\element $el) {
+
+    return !$el->isRoot() ? $el->getParent()->getx("self:element[@name='{$el->getName()}']", array(), false) : null;
+  }
+
+  protected function listTokenAttribute(dom\element $el) {
+
+    $sAttribute = $sExtend = '';
+
+    if ($element = $this->getElement($el)) {
+
+      $sAttribute = $element->readx('@key', array(), false);
+      $sExtend = $element->readx('@extend', array(), false);
+    }
+
+    return array($sAttribute, $sExtend);
   }
 
   protected function parseChildrenElementSelf(dom\element $el, array &$aResult) {
@@ -116,7 +188,33 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     if (!is_null($mResult)) {
 
-      if ($el->hasChildren() || $el->read() !== '') {
+      list($sAttribute, $sExtend) = $this->listTokenAttribute($el);
+
+      if ($sAttribute) {
+
+        $sAttribute = $el->readx($sAttribute);
+
+        if ($sExtend) {
+
+          $sExtend = $el->readx($sExtend);
+
+          if (!isset($aResult[$sExtend])) {
+
+            $aResult[$sExtend] = array();
+          }
+          else if (!is_array($aResult[$sExtend])) {
+
+            $this->launchException('Cannot extend a key already used by simple value');
+          }
+
+          $aResult[$sExtend][$sAttribute] = $mResult;
+        }
+        else {
+
+          $aResult[$sAttribute] = $mResult;
+        }
+      }
+      else if ($el->hasChildren() || $el->read() !== '') {
 
         $aResult[$el->getName()] = $mResult;
       }
@@ -149,6 +247,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     switch ($el->getName()) {
 
       case 'import' : break;
+      case 'element' :  break;
       //case 'item' : $result = $this->reflectItem($el); break;
 
       default :
@@ -171,7 +270,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
     $children = $el->getChildren();
     $imports = $this->loadImports($children);
 
-    if ($imports->length) {
+    if ($imports && $imports->length) {
 
       $mResult = $this->reflectImportsDynamic($imports, $this->parseChildren($children));
     }
@@ -186,9 +285,18 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   protected function loadImports(dom\collection $children, $bStatic = false) {
 
+    $result = null;
     $sQuery = $bStatic ? '@static' : 'not(@static)';
 
-    $result = $children->length && $children->current() ? $children->current()->getParent()->queryx("self:import[$sQuery]", $this->getNS(), false) : $children;
+    if ($children->length && $children->current()) {
+
+      $parent = $children->current()->getParent();
+
+      if ($parent->getType() == $parent::ELEMENT) {
+
+        $result = $parent->queryx("self:import[$sQuery]", $this->getNS(), false);
+      }
+    }
 
     return $result;
   }
@@ -197,7 +305,13 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     $imports = $this->loadImports($el->getChildren(), true);
 
-    foreach ($imports as $import) $this->reflectImportStatic($el, $import);
+    if ($imports) {
+
+      foreach ($imports as $import) {
+
+        $this->reflectImportStatic($el, $import);
+      }
+    }
   }
 
   protected function reflectImportStatic(dom\element $parent, dom\element $import) {
@@ -329,16 +443,26 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   protected function reflectImportDynamic(dom\element $el) {
 
-    $window = $this->getWindow();
-    $sFile = (string) $this->getSourceFile($el->read());
-
-    $file = $window->createCall($window->addControler(static::FILE_MANAGER), 'getFile', '\sylma\storage\fs\file', array($sFile));
-
-    $manager = $this->getWindow()->addControler(static::PARSER_MANAGER);
-    $result = $this->getWindow()->createCall($manager, 'load', '\sylma\core\argument', array($file));
-
-    return $result;
+    return $this->parseComponent($el);
   }
 
+  protected function loadImporter() {
+
+    $window = $this->getWindow();
+    $instance = $window->tokenToInstance($this->read('importer'));
+    $result = $window->create('class', array($window, $instance->getInterface()));
+
+    $this->importer = $result;
+  }
+
+  public function getImporter() {
+
+    if (!$this->importer) {
+
+      $this->loadImporter();
+    }
+
+    return $this->importer;
+  }
 }
 

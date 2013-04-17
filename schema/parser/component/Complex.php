@@ -13,6 +13,11 @@ class Complex extends Basic implements parser\type, parser\type\complex {
     return true;
   }
 
+  public function isSimple() {
+
+    return false;
+  }
+
   protected function setName($sName) {
 
     $this->sName = $sName;
