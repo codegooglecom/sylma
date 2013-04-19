@@ -49,17 +49,25 @@ class Option extends reflector\component\Foreigner implements common\arrayable {
     $this->setValue($content);
   }
 
-  protected function setToParser($val) {
+  protected function parseChildrenText(dom\text $node, array &$aResult) {
 
-    $this->getParser()->getObject()->setOption($this->getName(), $val);
+    $aResult[] = $node->getValue();
+  }
+
+  protected function setToObject($val) {
+
+    $parser = $this->getParser();
+
+    $val = $this->getParser()->getPHPWindow()->toString($val);
+
+    $parser->getObject()->setOption($this->getName(), $val);
   }
 
   public function asArray() {
 
     $this->build();
 
-    $window = $this->getParser()->getPHPWindow();
-    $this->setToParser($window->createCast($this->getValue()));
+    $this->setToObject($this->getValue());
 
     return array();
   }

@@ -3,7 +3,7 @@
 namespace sylma\core\argument;
 use \sylma\core;
 
-abstract class Iterator extends Basic implements \ArrayAccess {
+abstract class Iterator extends Normalizer implements \ArrayAccess {
 
   function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
 

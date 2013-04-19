@@ -3,7 +3,7 @@
 namespace sylma\action\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
 
-class Directory extends reflector\component\Foreigner implements common\argumentable {
+class Directory extends reflector\component\Foreigner implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
@@ -11,12 +11,12 @@ class Directory extends reflector\component\Foreigner implements common\argument
     $this->setDirectory($this->getParser()->getSourceDirectory());
   }
 
-  public function asArgument() {
+  public function asArray() {
 
     $fs = $this->getWindow()->addControler('fs');
     $dir = $this->getDirectory($this->readx(''));
 
-    return $fs->call('getDirectory', array((string) $dir))->asArgument();
+    return array($fs->call('getDirectory', array((string) $dir), '\sylma\storage\fs\directory'));
   }
 }
 

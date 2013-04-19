@@ -163,24 +163,9 @@ class Window extends common\basic\Window implements php\window {
     return $this->create('case', array($this, $test, $content));
   }
 
-  public function createVar(common\argumentable $val, $sName = '') {
+  public function createVar(common\usable $val, $sName = '') {
 
-    if ($val instanceof php\basic\Called) {
-
-      $return = $val->getReturn();
-    }
-    else if ($val instanceof common\_var) {
-
-      $return = $val->getInstance();
-    }
-    else if ($val instanceof dom\node) {
-
-      $return = $this->getInterface('\sylma\dom\node');
-    }
-    else {
-
-      $return = $val;
-    }
+    $return = $this->lookupInstance($val);
 
     if ($return instanceof common\_object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
@@ -312,6 +297,14 @@ class Window extends common\basic\Window implements php\window {
 
       $result = $this->createTemplate($node);
     }
+
+    return $result;
+  }
+
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    $result = parent::createArgument($mArguments, $sNamespace);
+    $result->setWindow($this);
 
     return $result;
   }

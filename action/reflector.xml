@@ -8,6 +8,11 @@
       <cls:classes>
         <cls:base>\sylma\action\component</cls:base>
         <cls:class alias="directory" name="Directory"/>
+        <cls:class alias="path" name="Path">
+          <cls:classes>
+            <cls:class alias="request" name="\sylma\core\request\Builder"/>
+          </cls:classes>
+        </cls:class>
       </cls:classes>
     </component>
   </cls:classes>

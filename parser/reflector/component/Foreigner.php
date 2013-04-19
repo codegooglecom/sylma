@@ -32,6 +32,11 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     //return $this->parseComponentRoot($el);
   }
 
+  protected function loadElementForeignKnown(dom\element $el, reflector\elemented $parser) {
+
+    return $this->getParser()->loadElementForeignKnown($el, $parser);
+  }
+
   protected function lookupParserForeign($sNamespace) {
 
     if (!$result = $this->getParser()->lookupParser($sNamespace)) {

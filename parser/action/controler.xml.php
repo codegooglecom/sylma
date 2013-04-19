@@ -97,7 +97,10 @@
       'name' => '\sylma\parser\languages\php\basic\Test'),
     'loop' => array(
       'file' => '\sylma\parser\languages\php\basic\_Foreach.php',
-      'name' => '\sylma\parser\languages\php\basic\_Foreach'))),
+      'name' => '\sylma\parser\languages\php\basic\_Foreach'),
+    'cast' => array(
+      'file' => '\sylma\parser\languages\php\basic\Cast.php',
+      'name' => '\sylma\parser\languages\php\basic\Cast'))),
 'classes' => array(
   'window' => array(
     'file' => '\sylma\parser\action\compiler\Window.php',
@@ -120,3 +123,4 @@
   'context' => array(
     'file' => '\sylma\parser\context\Basic.php',
     'name' => '\sylma\parser\context\Basic'))));
+  

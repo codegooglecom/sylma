@@ -61,37 +61,6 @@ abstract class Window extends core\module\Domed {
     return $aResult;
   }
 
-  public function parseArrayables(array $aContent) {
-
-    //$aContent =
-    $aResult = array();
-
-    foreach ($aContent as $mVal) {
-
-      if (is_array($mVal)) {
-
-        $aResult[] = $this->parseArrayables($mVal);
-      }
-      else if ($mVal instanceof common\arrayable) {
-
-        $aResult[] = $this->parseArrayable($mVal);
-      }
-      else {
-
-        $aResult[] = $mVal;
-      }
-    }
-
-    return $this->flattenArray($aResult);
-  }
-
-  protected function parseArrayable(common\arrayable $val) {
-
-    $aResult = $val->asArray();
-
-    return $this->parseArrayables($aResult);
-  }
-
   public function add($mVal) {
 
     if ($this->isRendering()) {
@@ -133,7 +102,7 @@ abstract class Window extends core\module\Domed {
 
       $this->throwException('Cannot add ghost to content');
     }
-    else if (is_object($mVal) && !$mVal instanceof common\argumentable) {
+    else if (is_object($mVal) && !$mVal instanceof common\usable) {
 
       $this->throwException(sprintf('Cannot add %s to content', $this->show($mVal)));
     }
@@ -220,9 +189,169 @@ abstract class Window extends core\module\Domed {
     return $this->create('cast', array($this, $content, $sType));
   }
 
+  protected function lookupInstance(common\usable $val) {
+
+    if ($val instanceof common\_call) {
+
+      $result = $val->getReturn();
+    }
+    else if ($val instanceof common\_closure) {
+
+      $result = $this->lookupInstance($val->getReturn());
+    }
+    else if ($val instanceof common\_var) {
+
+      $result = $val->getInstance();
+    }
+    else if ($val instanceof dom\node) {
+
+      $result = $this->getInterface('\sylma\dom\node');
+    }
+    else {
+
+      $result = $val;
+    }
+
+    return $result;
+  }
+
+  public function parseArrayables(array $aContent) {
+
+    //$aContent =
+    $aResult = array();
+
+    foreach ($aContent as $mVal) {
+
+      if (is_array($mVal)) {
+
+        $aResult[] = $this->parseArrayables($mVal);
+      }
+      else if ($mVal instanceof common\arrayable) {
+
+        $aResult[] = $this->parseArrayable($mVal);
+      }
+      else {
+
+        $aResult[] = $mVal;
+      }
+    }
+
+    return $this->flattenArray($aResult);
+  }
+
+  protected function parseArrayable(common\arrayable $val) {
+
+    $aResult = $val->asArray();
+
+    return $this->parseArrayables($aResult);
+  }
+
   protected function argToString($mValue) {
 
     return $this->create('string', array($this, $mValue));
+  }
+
+  protected function arrayToString(array $mContent, common\_var $target = null) {
+
+    $aContent = $this->parseArrayables($mContent);
+    $aResult = array();
+
+    foreach ($aContent as $mVal) {
+
+      if ($mVal instanceof common\structure) {
+
+        $this->addToResult($aResult, $target);
+        $this->add($mVal);
+
+        $aResult = array();
+      }
+      else {
+
+        $aResult[] = $this->prepareToString($mVal);
+      }
+    }
+
+    if ($aResult) $result = $this->createString($aResult);
+    else $result = null;
+
+    return $result;
+  }
+
+  protected function prepareToString($val) {
+
+    if ($val instanceof common\usable) {
+
+      $instance = $this->lookupInstance($val);
+
+      if ($instance instanceof common\_object && $instance->getInterface()->isInstance('\sylma\core\stringable')) {
+
+        $result = $this->createCast($val);
+      }
+      else {
+
+        $result = $val;
+      }
+    }
+    else {
+
+      $result = $val;
+    }
+
+    return $result;
+  }
+
+  public function toString($mContent, common\_var $target = null) {
+
+    if (is_array($mContent)) {
+
+      $result = $this->arrayToString($mContent, $target);
+    }
+    else if (is_object($mContent)) {
+
+      $result = $this->objectToString($mContent);
+      //$result = $mContent;
+    }
+    else {
+
+      $result = $this->arrayToString(array($mContent));
+    }
+
+    return $result;
+  }
+
+  protected function objectToString($val) {
+
+    if ($val instanceof common\arrayable) {
+
+      $result = $this->arrayToString($this->parseArrayable($val));
+    }
+    else if ($val instanceof core\argument) {
+
+      $result = $val;
+    }
+    else {
+
+      $this->throwException(sprintf('Cannot add %s to result', $this->show($val)));
+    }
+
+    return $result;
+  }
+
+  public function addToResult($mContent, common\_var $target, $bAdd = true) {
+
+    $content = $this->toString($mContent, $target);
+
+    if ($content) {
+
+      $result = $this->createAssign($target, $content, '.');
+      if ($bAdd) $this->add($result);
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
   }
 
   public function createInstruction(common\argumentable $content) {
@@ -377,7 +506,7 @@ abstract class Window extends core\module\Domed {
 
   protected function objectToInstance($obj) {
 
-    if ($obj instanceof common\argumentable) {
+    if ($obj instanceof common\usable) {
 
       $result = $obj;
     }

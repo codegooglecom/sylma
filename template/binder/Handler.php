@@ -179,7 +179,12 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $this->aObjects[] = $object;
   }
 
-  public function getObject() {
+  public function getObject($bDebug = true) {
+
+    if (!$this->aObjects && $bDebug) {
+
+      $this->launchException('No object in stack');
+    }
 
     return end($this->aObjects);
   }

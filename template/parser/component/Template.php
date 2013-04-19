@@ -3,7 +3,7 @@
 namespace sylma\template\parser\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
 
-class Template extends Stringed implements common\arrayable, common\argumentable, parser\template {
+class Template extends Child implements common\arrayable, parser\template {
 
   const MATCH_DEFAULT = '[root]';
   const CHECK_RECURSION = false; // if TRUE, disable concat optimization
@@ -46,11 +46,15 @@ class Template extends Stringed implements common\arrayable, common\argumentable
     return $this->sID;
   }
 
+  public function loadElement(dom\element $el) {
+
+    return $this->loadElementUnknown($el);
+  }
+
   protected function loadElementUnknown(dom\element $el) {
 
-    $element = $this->loadSimpleComponent('element', $this->getParser());
+    $element = $this->loadSimpleComponent('element');
     $element->setTemplate($this);
-
     $this->addComponent($element);
 
     $result = $this->loadAttributes($el, $element);
@@ -67,11 +71,6 @@ class Template extends Stringed implements common\arrayable, common\argumentable
     $this->addComponent($result);
 
     return $result;
-  }
-
-  public function loadElement(dom\element $el) {
-
-    return $this->loadElementUnknown($el);
   }
 
   protected function loadAttributes(dom\element $el, Element $component) {
@@ -218,7 +217,9 @@ class Template extends Stringed implements common\arrayable, common\argumentable
 
   public function asArgument() {
 
-    return $this->addToResult($this->asArray(), false);
+    $this->launchException('Should not be called');
+
+    return $this->getParser()->addToResult($this->asArray(), false);
   }
 
   protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {

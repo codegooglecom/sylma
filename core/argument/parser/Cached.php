@@ -13,7 +13,7 @@ class Cached extends core\argument\Readable {
     parent::__construct($aContent, array(), $parent);
   }
 
-  protected static function callFunction(\Closure $function) {
+  protected function callFunction(\Closure $function) {
 
     return $function(\Sylma::getControler(self::FILE_MANAGER_ALIAS));
   }
@@ -52,17 +52,17 @@ class Cached extends core\argument\Readable {
     return $mResult;
   }
 
-  protected static function normalizeObjectUnknown($mVar, $iMode) {
+  protected function normalizeObjectUnknown($mVar, $iMode) {
 
     $mResult = null;
 
     if (is_callable($mVar)) {
 
-      $mResult = self::normalizeValue(self::callFunction($mVar), $iMode);
+      $mResult = $this->normalizeValue($this->callFunction($mVar), $iMode);
     }
     else {
 
-      $mResult = parent::normalizeUnknown($mVar);
+      $mResult = $this->normalizeUnknown($mVar);
     }
 
     return $mResult;

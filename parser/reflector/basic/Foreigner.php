@@ -52,7 +52,7 @@ abstract class Foreigner extends Domed {
 
     if ($parser = $this->lookupParserForeign($el->getNamespace())) {
 
-      $mResult = $parser->parseFromChild($el);
+      $mResult = $this->loadElementForeignKnown($el, $parser);
     }
     else {
 
@@ -62,6 +62,8 @@ abstract class Foreigner extends Domed {
     return $mResult;
   }
 
+  abstract protected function loadElementForeignKnown(dom\element $el, reflector\elemented $parser);
+  
   protected function validateParser($sNamespace, $sParser = 'element') {
 
     $result = $this->lookupParserForeign($sNamespace);

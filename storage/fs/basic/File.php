@@ -61,11 +61,6 @@ class File extends Resource implements fs\file {
     // return $this->getName() == 'index.eml' ? substr($sPath, 0, -6) : $sPath;
   // }
 
-  // public function getSimpleName() {
-
-    // return substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1);
-  // }
-
   // public function getDisplayName() {
 
     // return str_replace('_', ' ', substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1));

@@ -3,7 +3,7 @@
 namespace sylma\view\parser;
 use sylma\core, sylma\dom, sylma\template, sylma\parser\reflector, sylma\schema;
 
-class Elemented extends template\parser\Elemented {
+class Elemented extends template\parser\handler\Elemented {
 
   const NS = 'http://2013.sylma.org/view';
   const NS_SCHEMA = 'http://2013.sylma.org/schema/template';
@@ -15,6 +15,7 @@ class Elemented extends template\parser\Elemented {
   protected $schema;
   protected $resource;
   protected $aEntries = array();
+  protected $sMode;
 
   public function __construct(reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
 
@@ -29,12 +30,26 @@ class Elemented extends template\parser\Elemented {
     parent::__construct($root, $parent, $arg);
   }
 
+  protected function getMode() {
+
+    return $this->sMode;
+  }
+
+  protected function setMode($sMode) {
+
+    $this->sMode = $sMode;
+  }
+
   public function parseRoot(dom\element $el, $sMode = '') {
+
+    $this->allowUnknown(true);
+    $this->allowForeign(true);
+
+    $this->setMode($sMode);
 
     $this->build($el, $sMode); // parseRoot(), onAdd()
 
     $this->addToResult(array($this->getTemplate())); // asArray()
-
 
     switch ($sMode) {
 
@@ -52,6 +67,23 @@ class Elemented extends template\parser\Elemented {
         $result = $this->getResult();
     }
 
+    return $result;
+  }
+
+  public function loadElementForeignKnown(dom\element $el, reflector\elemented $parser) {
+
+    switch ($this->getMode()) {
+
+      case 'insert' :
+
+        $result = null;
+        break;
+
+      default :
+
+        $result = parent::loadElementForeignKnown($el, $parser);
+    }
+    
     return $result;
   }
 

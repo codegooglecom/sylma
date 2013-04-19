@@ -3,7 +3,7 @@
 namespace sylma\template\parser\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser as parser_ns;
 
-class Child extends Stringed {
+class Child extends reflector\component\Foreigner {
 
   protected $template;
 
@@ -39,7 +39,7 @@ class Child extends Stringed {
       $this->launchException('Template must be cloned');
     }
     */
-    
+
     $this->template = $template;
   }
 

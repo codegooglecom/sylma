@@ -138,10 +138,12 @@ class Documented extends core\module\Domed implements reflector\documented {
 
     $file = $this->getFile();
     $doc = $this->getDocument();
+    $cached = $this->loadTarget($doc, $file);
+
+    $this->setResultFile($cached); // result file is define first to get it from parsers
 
     $mContent = $this->reflectMain($file, $doc);
     $content = $this->buildInstanciation($mContent);
-    $cached = $this->loadTarget($doc, $file);
 
     return $this->createFile($cached, $content);
   }
@@ -257,13 +259,6 @@ class Documented extends core\module\Domed implements reflector\documented {
 
     if (!$window) $window = $this->createWindow();
     $this->setWindow($window);
-
-    return $result;
-  }
-
-  public function getResultRequest() {
-
-    $result = $this->create('request', array((string) $this->getFile()));
 
     return $result;
   }

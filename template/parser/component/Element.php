@@ -170,9 +170,9 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   public function asArgument() {
 
-    $var = $this->addToResult($this->toString($this->asArray()), false);
+    $assign = $this->getParser()->addToResult($this->asArray(), false);
 
-    return $var->asArgument();
+    return $assign->asArgument();
   }
 }
 

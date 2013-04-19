@@ -182,7 +182,7 @@ abstract class Domed extends Componented {
 
   protected function parseElementUnknown(dom\element $el) {
 
-    $this->throwException(sprintf('Uknown %s not recognized', $el->asToken()));
+    $this->throwException(sprintf('Uknown %s not allowed', $el->asToken()));
   }
 
   protected function parseText(dom\text $node) {

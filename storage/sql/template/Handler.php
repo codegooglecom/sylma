@@ -19,7 +19,7 @@ class Handler extends sql\schema\Handler {
     return $this->view;
   }
 
-  public function setView(template\parser\Elemented $view) {
+  public function setView(template\parser\handler\Elemented $view) {
 
     $this->view = $view;
   }

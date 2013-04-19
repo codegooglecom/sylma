@@ -26,14 +26,14 @@ abstract class Domed extends Iterator implements dom\domable {
     return new dom\Argument($doc, $schema);
   }
 
-  public static function buildDocument(array $aArray, $sNamespace) {
+  public function buildDocument(array $aArray, $sNamespace) {
 
     $dom = \Sylma::getControler('dom');
     $doc = $dom->create('handler');
     $fragment = $doc->createFragment();
     $root = $fragment->add($doc->createElement('root'));
 
-    self::buildNode($root, $aArray, $sNamespace);
+    $this->buildNode($root, $aArray, $sNamespace);
 
     $doc->set($root->getFirst());
 
@@ -48,7 +48,7 @@ abstract class Domed extends Iterator implements dom\domable {
     return self::buildNode($parent, $aArray);
   }
 
-  private static function buildNode(dom\complex $parent, array $aArray, $sNamespace) {
+  private function buildNode(dom\complex $parent, array $aArray, $sNamespace) {
 
     foreach ($aArray as $sKey => $mValue) {
 
@@ -111,7 +111,7 @@ abstract class Domed extends Iterator implements dom\domable {
     }
   }
 
-  protected static function normalizeObject($val, $iMode = self::NORMALIZE_DEFAULT) {
+  protected function normalizeObject($val, $iMode = self::NORMALIZE_DEFAULT) {
 
     if ($val instanceof dom\node ||
         $val instanceof dom\collection) {
@@ -126,7 +126,7 @@ abstract class Domed extends Iterator implements dom\domable {
     return $mResult;
   }
 
-  protected static function normalizeArgument(core\argument $arg, $bEmpty = false) {
+  protected function normalizeArgument(core\argument $arg, $bEmpty = false) {
 
     if ($bEmpty) $result = $arg->asArray($bEmpty);
     else $result = $arg->asDOM();
@@ -160,7 +160,7 @@ abstract class Domed extends Iterator implements dom\domable {
       $aValues = $this->aArray;
     }
 
-    $result = self::buildDocument($aValues, $sNamespace);
+    $result = $this->buildDocument($aValues, $sNamespace);
 
     if (!$result || $result->isEmpty()) {
 

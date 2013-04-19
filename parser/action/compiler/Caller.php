@@ -65,6 +65,11 @@ class Caller extends Domed implements action\reflector {
     return $result;
   }
 
+  public function loadElementForeignKnown(dom\element $el, reflector\elemented $parser) {
+
+    return $parser->parseFromChild($el);
+  }
+  
   /**
    * Shortcut
    * @return php\basic\_Interface
