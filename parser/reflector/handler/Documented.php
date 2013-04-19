@@ -140,8 +140,6 @@ class Documented extends core\module\Domed implements reflector\documented {
     $doc = $this->getDocument();
     $cached = $this->loadTarget($doc, $file);
 
-    $this->setResultFile($cached); // result file is define first to get it from parsers
-
     $mContent = $this->reflectMain($file, $doc);
     $content = $this->buildInstanciation($mContent);
 

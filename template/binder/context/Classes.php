@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\template\binder;
+namespace sylma\template\binder\context;
 use sylma\core, sylma\dom, sylma\modules;
 
-class Context extends modules\html\context\JS {
+class Classes extends modules\html\context\JS {
 
   const PARENT_PATH = 'sylma.binder.classes';
 

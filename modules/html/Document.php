@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\parser\action, sylma\parser\js, sylma\dom, sylma\storage\fs, sylma\core\functions;
+use sylma\core, sylma\parser\action, sylma\template\binder, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
 class Document extends action\handler\Basic {
 
@@ -17,9 +17,9 @@ class Document extends action\handler\Basic {
     $this->setContexts(array(
       'css' => new context\CSS,
       'js' => new context\JS,
-      'js-classes' => new \sylma\template\binder\Context,
-      'js-load' => new js\context\Load,
-      'js/load' => new js\context\Load,
+      'js-classes' => new binder\context\Classes,
+      'js-load' => new binder\context\Load,
+      //'js/load' => new js\context\Load,
       'message' =>  $messages,
       //'title' =>  new parser\context\Basic,
     ));
