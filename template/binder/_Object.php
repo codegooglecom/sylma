@@ -18,7 +18,7 @@ class _Object extends Basic implements common\arrayable {
 
     $this->setNode($el);
 
-    $this->loadID();
+    //$this->loadID();
     $this->loadName();
     $this->loadParentName();
   }
@@ -170,9 +170,9 @@ class _Object extends Basic implements common\arrayable {
   public function asArray() {
 
 //dsp('start');
+    $this->loadID();
     $this->buildObject();
     $this->getParser()->startObject($this);
-
 
     $element = $this->getClass()->getElement();
     $element->setAttribute('id', $this->getID());

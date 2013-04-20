@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action;
-use sylma\dom, sylma\storage\fs, sylma\parser\action;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\action;
 
 interface handler extends dom\domable {
 
@@ -22,7 +22,7 @@ interface handler extends dom\domable {
   public function setParentParser(action\handler $parent);
   public function getParentParser($bRoot = false);
 
-  public function setContexts(array $aContexts);
+  public function setContexts(core\argument $contexts);
   public function getContexts();
 
   function useExceptions($mValue = null);

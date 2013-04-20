@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\core\window\classes;
-use sylma\core, sylma\parser\action;
+use sylma\core, sylma\parser\action, sylma\core\window;
 
-class Context extends core\module\Controled implements core\window\action {
+class Context extends core\module\Argumented implements window\action {
 
   protected $action;
   protected $sContext;
@@ -19,9 +19,9 @@ class Context extends core\module\Controled implements core\window\action {
     $this->sContext = $sContext;
 
     $parser = $this->getControler('action');
-    $this->getAction()->setContexts(array(
+    $this->getAction()->setContexts($this->createArgument(array(
       $sContext => $parser->createContext(),
-    ));
+    )));
   }
 
   protected function getContext() {

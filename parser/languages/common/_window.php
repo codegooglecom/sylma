@@ -28,6 +28,7 @@ interface _window extends scope {
 
   function createVariable($sName, $mReturn);
   function setVariable(common\_var $var);
+  function getVariable($sName);
   function addVar(common\argumentable $val, $sName = '');
   function createString($mContent);
   function createAssign($to, $value, $sPrefix = '');

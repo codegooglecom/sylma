@@ -69,20 +69,6 @@ class Window extends common\basic\Window implements php\window {
     return $this->sylma;
   }
 
-  protected function loadReturn($mReturn) {
-
-    if (is_string($mReturn)) {
-
-      $result = $this->tokenToInstance($mReturn);
-    }
-    else {
-
-      $result = $mReturn;
-    }
-
-    return $result;
-  }
-
   public function createCall($obj, $sMethod, $mReturn = null, array $aArguments = array()) {
 
     if (is_null($obj)) {
@@ -163,9 +149,24 @@ class Window extends common\basic\Window implements php\window {
     return $this->create('case', array($this, $test, $content));
   }
 
-  public function createVar(common\usable $val, $sName = '') {
+  protected function lookupInstance($val) {
 
-    $return = $this->lookupInstance($val);
+    if ($val instanceof common\usable) {
+
+      $result = $this->lookupInstanceObject($val);
+    }
+    else {
+
+      $result = $this->tokenToInstance($val);
+    }
+
+    return $result;
+  }
+
+  public function createVar($mValue, $sName = '', $bContent = true) {
+
+    $return = $this->lookupInstance($mValue);
+    if (!$bContent) $mValue = null;
 
     if ($return instanceof common\_object) $sAlias = 'object-var';
     else $sAlias = 'simple-var';
@@ -173,12 +174,26 @@ class Window extends common\basic\Window implements php\window {
     if (!$sName) {
 
       $sName = $this->getVarName();
-      $result = $this->create($sAlias, array($this, $return, $sName, $val));
+      $result = $this->create($sAlias, array($this, $return, $sName, $mValue));
     }
     else {
 
-      $result = $this->create($sAlias, array($this, $return, $sName, $val));
+      $result = $this->create($sAlias, array($this, $return, $sName, $mValue));
       $this->setVariable($result);
+    }
+
+    return $result;
+  }
+
+  protected function loadReturn($mReturn) {
+
+    if (is_string($mReturn)) {
+
+      $result = $this->tokenToInstance($mReturn);
+    }
+    else {
+
+      $result = $mReturn;
     }
 
     return $result;
@@ -219,7 +234,7 @@ class Window extends common\basic\Window implements php\window {
 
     if (!$sName) $sName = $this->getVarName();
 
-    return $this->create('object-var', array($this, $this->loadReturn($mReturn), $sName));
+    return $this->createVar($mReturn, $sName, false);
   }
 
   public function createNot($mContent) {

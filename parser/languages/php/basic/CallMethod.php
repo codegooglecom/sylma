@@ -49,6 +49,13 @@ class CallMethod extends Called implements common\addable  {
     }
   }
 
+  public function call($sMethod, array $aArguments = array(), $mReturn = null, $bVar = false) {
+
+    $call = $this->getControler()->createCall($this, $sMethod, $mReturn, $aArguments);
+
+    return $bVar ? $call->getVar() : $call;
+  }
+
   public function isStatic($bStatic = null) {
 
     if (!is_null($bStatic)) $this->bStatic = $bStatic;

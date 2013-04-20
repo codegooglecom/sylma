@@ -20,6 +20,7 @@
                 <!--<cls:class alias="variable" name="Variable"/>-->
                 <cls:class alias="apply" name="Apply"/>
                 <cls:class alias="register" name="Register"/>
+                <cls:class alias="token" name="Token"/>
               </cls:classes>
             </cls:class>
           </cls:classes>

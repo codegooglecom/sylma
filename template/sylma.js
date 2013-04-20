@@ -32,8 +32,19 @@ sylma.classes = {
     loadPath : function(path) {
 
       var result = window;
+      var lastPath = 'window';
 
-      path.split('.').each(function(item) { result = result[item] });
+      path.split('.').each(function(item) {
+
+        result = result[item];
+
+        if (!result) {
+
+          throw 'No property named "' + item + '" in ' + lastPath;
+        }
+
+        lastPath += '.' + item;
+      });
 
       return result;
     },
@@ -63,6 +74,20 @@ sylma.classes = {
       var parent = this.loadPath(props.extend);
 
       return new parent(props);
+    },
+
+    parseResult : function(result) {
+
+      if (result.messages) {
+
+        var el = new Element('div', {
+          html : result.messages,
+        });
+
+        $('messages').adopt(el.getChildren());
+      }
+
+      return result.result;
     }
   })
 }

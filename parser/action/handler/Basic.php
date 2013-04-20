@@ -18,7 +18,7 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
   protected $controler;
 
   protected $aArguments = array();
-  protected $aContexts = array();
+  protected $contexts = array();
 
   protected $action = null;
   protected $parentParser;
@@ -50,12 +50,12 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
 
   public function getContexts() {
 
-    return $this->aContexts;
+    return $this->contexts;
   }
 
-  public function setContexts(array $aContexts) {
+  public function setContexts(core\argument $contexts) {
 
-    $this->aContexts = $aContexts;
+    $this->contexts = $contexts;
   }
 
   public function setParentParser(action\handler $parent) {

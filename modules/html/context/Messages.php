@@ -17,4 +17,24 @@ class Messages extends context\Basic implements dom\domable {
 
     return $doc->getChildren();
   }
+
+  public function asString() {
+
+    $sContent = '<div xmlns="' . \Sylma::read('namespaces/html') . '">';
+
+    foreach ($this->asArray() as $sMessage) {
+
+      $sContent .= $sMessage;
+    }
+
+    $sContent .= '</div>';
+
+    $doc = $this->createDocument($sContent);
+
+    $this->loadDefaultArguments();
+    $this->setDirectory(__FILE__);
+    $tpl = $this->getTemplate('/#sylma/modules/html/cleaner.xsl');
+
+    return $tpl->parseDocument($doc)->asString();
+  }
 }

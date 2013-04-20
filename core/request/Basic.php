@@ -12,6 +12,8 @@ class Basic extends core\module\Filed implements core\request {
   protected $sExtension = '';
   protected $aExtensions = array();
 
+  protected static $sArgumentClass = 'sylma\core\argument\Readable';
+
   const NS = 'http://www.sylma.org/parser/action/path';
 
   /**
@@ -45,11 +47,16 @@ class Basic extends core\module\Filed implements core\request {
     if ($bParse) $this->parse();
   }
 
-  public function asFile() {
+  public function getFile($sPath = '', $bDebug = true) {
+
+    return parent::getFile($sPath, $bDebug);
+  }
+
+  public function asFile($bDebug = false) {
 
     $this->setDirectory(__FILE__);
 
-    if ($result = $this->getFile($this->getPath(), false)) {
+    if ($result = $this->getFile($this->getPath(), $bDebug)) {
 
       if (!in_array($result->getExtension(), $this->query('extensions/readable'))) {
 
@@ -145,14 +152,16 @@ class Basic extends core\module\Filed implements core\request {
     } while (!$file && $sub);
 
     //$aPath = $this->loadIndexed($aPath);
+    /*
     if ($aPath) {
 
       $sFile = $file ? $file->asToken() : '[no file found]';
       $this->throwException(sprintf('Too much arguments sent to %s', $sFile));
     }
+    */
 
     $this->setFile($file);
-    //$this->getArguments()->mergeArray($aPath);
+    $this->getArguments()->mergeArray($aPath);
   }
 
   protected function loadIndexed(array $aPath) {

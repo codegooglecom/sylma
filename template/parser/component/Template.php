@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser, sylma\template as template_ns;
 
 class Template extends Child implements common\arrayable, parser\template {
 
@@ -10,6 +10,8 @@ class Template extends Child implements common\arrayable, parser\template {
 
   protected $aContent;
   protected $aComponents = array();
+  protected $aElements = array();
+  
   protected $bBuilded = false;
   protected $sMatch;
 
@@ -71,6 +73,26 @@ class Template extends Child implements common\arrayable, parser\template {
     $this->addComponent($result);
 
     return $result;
+  }
+
+  public function getElement() {
+
+    if (!$this->aElements) {
+
+      $this->launchException('No element defined');
+    }
+
+    return end($this->aElements);
+  }
+
+  public function startElement(template_ns\element $el) {
+
+    $this->aElements[] = $el;
+  }
+
+  public function stopElement() {
+
+    array_pop($this->aElements);
   }
 
   protected function loadAttributes(dom\element $el, Element $component) {

@@ -21,7 +21,7 @@ interface cached {
    * @param array $aArguments Arguments
    * @param array $aManagers
    */
-  function __construct(fs\file $file, fs\directory $dir, action\handler $manager, array $aContexts, array $aArguments = array(), array $aManagers = array());
+  function __construct(fs\file $file, fs\directory $dir, action\handler $manager, core\argument $contexts, array $aArguments = array(), array $aManagers = array());
 
   /**
    * Get parent or root parser. If none return itself

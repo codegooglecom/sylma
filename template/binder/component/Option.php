@@ -3,7 +3,7 @@
 namespace sylma\template\binder\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
 
-class Option extends reflector\component\Foreigner implements common\arrayable {
+class Option extends Basic implements common\arrayable {
 
   protected $sName;
   protected $value;
@@ -58,7 +58,7 @@ class Option extends reflector\component\Foreigner implements common\arrayable {
 
     $parser = $this->getParser();
 
-    $val = $this->getParser()->getPHPWindow()->toString($val);
+    $val = $this->getPHPWindow()->toString($val);
 
     $parser->getObject()->setOption($this->getName(), $val);
   }

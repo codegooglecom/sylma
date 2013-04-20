@@ -14,7 +14,7 @@ class Document extends action\handler\Basic {
     $messages = new context\Messages;
     $this->getManager('parser')->setContext('messages', $messages);
 
-    $this->setContexts(array(
+    $this->setContexts($this->createArgument(array(
       'css' => new context\CSS,
       'js' => new context\JS,
       'js-classes' => new binder\context\Classes,
@@ -22,7 +22,7 @@ class Document extends action\handler\Basic {
       //'js/load' => new js\context\Load,
       'message' =>  $messages,
       //'title' =>  new parser\context\Basic,
-    ));
+    )));
 
     $this->setNamespaces(array(
       'html' => \Sylma::read('namespaces/html'),

@@ -13,12 +13,12 @@ abstract class _Var extends common\basic\Controled implements common\_var, commo
 
   protected $content;
 
-  public function __construct(php\window $controler, common\_instance $instance, $sName, common\argumentable $content) {
+  public function __construct(php\window $controler, common\_instance $instance, $sName, common\argumentable $content = null) {
 
     $this->setName($sName);
     $this->setControler($controler);
     $this->setInstance($instance);
-    $this->setContent($content);
+    if ($content) $this->setContent($content);
   }
 
   public function getInstance() {

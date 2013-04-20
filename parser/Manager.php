@@ -40,7 +40,7 @@ class Manager extends compiler\Manager {
 
     if (!$result) {
 
-      $this->launchException('No result on parsing', get_defined_vars());
+      //$this->launchException('No result on parsing', get_defined_vars());
     }
 
     return $result;

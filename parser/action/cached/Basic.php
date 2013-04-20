@@ -11,23 +11,24 @@ abstract class Basic extends core\module\Domed implements action\cached {
   protected $aResults = array();
   protected $bRunned = false;
 
+  protected $contexts;
   protected $handler;
 
-  public function __construct(fs\file $file, fs\directory $dir, action\handler $handler, array $aContexts, array $aArguments = array(), array $aManagers = array()) {
+  public function __construct(fs\file $file, fs\directory $dir, action\handler $handler, core\argument $contexts, array $aArguments = array(), array $aManagers = array()) {
 
     foreach ($aManagers as $sName => $manager) {
 
       $this->setControler($manager, $sName);
     }
 
-    if (!array_key_exists(self::CONTEXT_DEFAULT, $aContexts)) {
+    if (!array_key_exists(self::CONTEXT_DEFAULT, $contexts)) {
 
-      $aContexts[self::CONTEXT_DEFAULT] = $handler->getControler()->createContext();
+      $contexts[self::CONTEXT_DEFAULT] = $handler->getControler()->createContext();
     }
 
     $this->setFile($file);
 
-    $this->setContexts($aContexts);
+    $this->setContexts($contexts);
     $this->setHandler($handler);
 
     $this->setDirectory($dir);
@@ -103,7 +104,7 @@ abstract class Basic extends core\module\Domed implements action\cached {
 
   protected function getContexts() {
 
-    return $this->aResults;
+    return $this->contexts;
   }
 
   public function getParentParser($bRoot = false) {
@@ -111,9 +112,10 @@ abstract class Basic extends core\module\Domed implements action\cached {
     return $this->getHandler()->getParentParser($bRoot);
   }
 
-  public function setContexts(array $aContexts) {
+  public function setContexts(core\argument $contexts) {
 
-    $this->aResults = $aContexts;
+    $this->contexts = $contexts;
+    $this->aResults = $contexts->query();
   }
 
   /**

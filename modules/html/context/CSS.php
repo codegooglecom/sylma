@@ -9,17 +9,29 @@ class CSS extends context\Basic implements dom\domable {
 
     $result = null;
     $aStyles = array();
+    $aFiles = array();
 
     foreach ($this->asArray() as $mValue) {
 
       if ($mValue instanceof fs\file) {
 
-        $aStyle = array('link' => array(
-          '@href' => (string) $mValue,
-          '@rel' => 'stylesheet',
-          '@type' => 'text/css',
-          '@media' => 'all',
-        ));
+        $sFile = (string) $mValue;
+
+        if (!array_key_exists($sFile, $aFiles)) {
+
+          $aStyle = array('link' => array(
+            '@href' => $sFile,
+            '@rel' => 'stylesheet',
+            '@type' => 'text/css',
+            '@media' => 'all',
+          ));
+
+          $aFiles[$sFile] = true;
+        }
+        else {
+
+          $aStyle = array();
+        }
       }
       else {
 
@@ -29,7 +41,7 @@ class CSS extends context\Basic implements dom\domable {
         ));
       }
 
-      $aStyles[] = $aStyle;
+      if ($aStyle) $aStyles[] = $aStyle;
     }
 
     if ($aStyles) $result = $this->createArgument($aStyles, \Sylma::read('namespaces/html'))->asDOM();

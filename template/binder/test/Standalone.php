@@ -46,7 +46,7 @@ class Standalone extends tester\Parser implements dom\domable {
     $test = $this->loadTest($doc);
 
     $contexts = $this->getManager('parser')->getContext('action/current')->getContexts();
-    $action = $this->parseResult($test, $this->getFile(), array('contexts' => $this->createArgument($contexts)));
+    $action = $this->parseResult($test, $this->getFile(), array('contexts' => $contexts));
 
     $expected = $test->getx('self:expected');
     $sExpected = $expected->readx();

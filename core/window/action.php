@@ -1,11 +1,9 @@
 <?php
 
 namespace sylma\core\window;
-use sylma\core, sylma\parser\action;
-
-require_once('core/stringable.php');
+use sylma\core, sylma\parser;
 
 interface action extends core\stringable {
 
-  public function setAction(action\handler $action);
+  public function setAction(parser\action\handler $action);
 }

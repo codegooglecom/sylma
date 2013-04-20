@@ -133,7 +133,7 @@ class Initializer extends module\Filed {
         $window = $this->create($sExtension, array($this));
         \Sylma::setManager('window', $window);
 
-        $sResult = $this->loadWindowObject($path, $window);
+        $sResult = $this->loadObject($path, $window);
       }
       else if (!$path->getExtension()) {
 
@@ -150,6 +150,24 @@ class Initializer extends module\Filed {
     }
 
     return $sResult;
+  }
+
+  protected function loadObject(core\request $path, $window) {
+
+    $path->parse();
+    $file = $path->getFile();
+
+    switch ($file->getExtension()) {
+
+      case 'eml' : $result = $this->loadObjectAction($path, $window); break;
+      case 'vml' : $result = $this->loadObjectScript($path, $window); break;
+
+      default :
+
+        $this->launchException(sprintf('Unknown exectuable extension : %s', $file->getExtension()));
+    }
+
+    return $result;
   }
 
   public function getExtensions() {
@@ -253,11 +271,18 @@ class Initializer extends module\Filed {
     return $window->asString();
   }
 
-  protected function loadWindowObject(action\path $path, core\window\action $window) {
+  protected function loadObjectAction(core\request $path, core\window\action $window) {
 
     $action = $this->loadAction($path);
 
     $window->setAction($action, $path->getExtension());
+
+    return $window->asString();
+  }
+
+  protected function loadObjectScript(core\request $path, core\window\scripted $window) {
+
+    $window->setScript($path);
 
     return $window->asString();
   }

@@ -48,6 +48,11 @@ class Standalone extends tester\Prepare implements core\argumentable {
     return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
+  }
+
   public function getAction($sPath, array $aArguments = array()) {
 
     return parent::readAction($sPath, $aArguments);

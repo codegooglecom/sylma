@@ -1,6 +1,7 @@
 debug :
   enable : false
   rights: false
+  show : false
   backtrace :
     show : false
     html : true
@@ -50,7 +51,7 @@ initializer :
     window :
       name : \sylma\core\window\classes\File
     json :
-      name : \sylma\core\window\classes\Context
+      name : \sylma\template\binder\context\JSON
   session :
     lifetime : 403200
   maintenance :

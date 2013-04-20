@@ -54,7 +54,7 @@ class Router extends Builder {
     $window = $this->prepareArgumented();
     //$this->setWindow($window);
 
-    $window->createVariable('arguments', '\sylma\core\argument');
+    //$window->createVariable('arguments', '\sylma\core\argument');
     $result = $window->addVar($window->createVar($window->argToInstance(null), 'result'));
 
     $switch = $this->createSwitch($window);
@@ -83,17 +83,17 @@ class Router extends Builder {
     $content = $this->reflectView($view->asDocument(), $this->prepareArgumented(), false, $view->getMode());
     $file = $this->createFile($this->loadSelfTarget($this->getFile(), $view->getName()), $this->buildInstanciation($content));
 
-    return $this->createCall($file, $window, $window->tokenToInstance('\sylma\dom\handler'));
+    return $this->callScript($file, $window, $window->tokenToInstance('\sylma\dom\handler'));
   }
 
-  protected function createCall(fs\file $file, common\_window $window, $return = null) {
+  protected function callScript(fs\file $file, common\_window $window, $return = null) {
 
-    $arguments = $window->getVariable('arguments');
+    $arguments = $window->getVariable('aSylmaArguments');
 
     //$closure = $window->createClosure(array($arguments));
     //$closure->addContent($window->callFunction('include', $return, array($file->getName())));
 
-    $call = $window->createCall($window->getSylma(), 'includeFile', $return, array($file->getRealPath(), array('arguments' => $arguments)));
+    $call = $window->createCall($window->getSylma(), 'includeFile', $return, array($file->getRealPath(), $arguments));
 
     if ($return) {
 
@@ -123,11 +123,11 @@ class Router extends Builder {
 
     $arguments = $window->getVariable('arguments');
 
-    $getArgument = $window->createCall($arguments, 'read', 'php-string', array('do', false));
-    $result = $window->createCondition($getArgument);
+    $getArgument = $arguments->call('shift');
+    $result = $window->createCondition($window->createTest($getArgument, 'do', '=='));
 
-    $result->addContent($this->createCall($form, $window));
-    $result->addElse($this->createCall($view, $window, $window->tokenToInstance('\sylma\dom\handler')));
+    $result->addContent($this->callScript($form, $window, $window->tokenToInstance('php-integer')));
+    $result->addElse($this->callScript($view, $window, $window->tokenToInstance('\sylma\dom\handler')));
 
     return $result;
   }
@@ -173,8 +173,9 @@ class Router extends Builder {
   protected function prepareArgumented() {
 
     $window = $this->createWindow();
+    $window->createVariable('aSylmaArguments', 'php-array');
     $arguments = $window->createVariable('arguments', '\sylma\core\argument');
-    $window->setVariable($arguments);
+    //$window->setVariable($arguments);
 
     $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($arguments));
     $new = $window->createInstanciate($window->tokenToInstance(get_class($this->create('argument'))));

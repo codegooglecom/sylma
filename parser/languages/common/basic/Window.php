@@ -189,7 +189,7 @@ abstract class Window extends core\module\Domed {
     return $this->create('cast', array($this, $content, $sType));
   }
 
-  protected function lookupInstance(common\usable $val) {
+  protected function lookupInstanceObject(common\usable $val) {
 
     if ($val instanceof common\_call) {
 
@@ -197,7 +197,7 @@ abstract class Window extends core\module\Domed {
     }
     else if ($val instanceof common\_closure) {
 
-      $result = $this->lookupInstance($val->getReturn());
+      $result = $this->lookupInstanceObject($val->getReturn());
     }
     else if ($val instanceof common\_var) {
 
@@ -281,7 +281,7 @@ abstract class Window extends core\module\Domed {
 
     if ($val instanceof common\usable) {
 
-      $instance = $this->lookupInstance($val);
+      $instance = $this->lookupInstanceObject($val);
 
       if ($instance instanceof common\_object && $instance->getInterface()->isInstance('\sylma\core\stringable')) {
 
@@ -372,6 +372,11 @@ abstract class Window extends core\module\Domed {
     }
 
     return $this->create('loop', array($this, $looped, $var));
+  }
+
+  public function createTest($val1, $val2, $op = '==') {
+
+    return $this->create('test', array($this, $val1, $val2, $op));
   }
 
   public function setVariable(common\_var $var) {

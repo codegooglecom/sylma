@@ -15,7 +15,7 @@ abstract class Main extends reflector\handler\Elemented {
     $call = $window->createCall($user, 'getMode', 'php-boolean', array($aRights['user'], $aRights['group'], $aRights['mode']));
 
     $mode = $window->argToInstance(\Sylma::MODE_EXECUTE);
-    $test = $window->create('test', array($window, $call, $mode, '&'));
+    $test = $window->createTest($call, $mode, '&');
 
     return $test;
   }

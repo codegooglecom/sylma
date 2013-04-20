@@ -22,24 +22,33 @@ class JS extends context\Basic implements dom\domable {
   public function asDOM() {
 
     $doc = $this->createDocument('root');
-    $sNamespace = \Sylma::read('namespaces/html');
+    $aFiles = array();
 
     foreach ($this->asArray() as $mValue) {
 
-      $el = $doc->addElement('script', null, array('type' => 'text/javascript'), $sNamespace);
-
       if ($mValue instanceof fs\file) {
 
-        $el->setAttribute('src', (string) $mValue);
+        $sFile = (string) $mValue;
+
+        if (!array_key_exists($sFile, $aFiles)) {
+
+          $this->buildElement($doc)->setAttribute('src', $sFile);
+          $aFiles[$sFile] = true;
+        }
       }
       else {
 
-        $el->set($this->loadString($mValue));
+        $this->buildElement($doc)->set($this->loadString($mValue));
         //$el->set($doc->createCData($this->loadString($mValue)));
       }
     }
 
     return $doc->getChildren();
+  }
+
+  protected function buildElement(dom\document $doc) {
+
+    return $doc->addElement('script', null, array('type' => 'text/javascript'), \Sylma::read('namespaces/html'));
   }
 }
 

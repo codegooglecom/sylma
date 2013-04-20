@@ -299,7 +299,7 @@ class Basic extends \Exception implements core\exception {
     return $sResult;
   }
 
-  public function save($bPrint = true, $bHTML = true) {
+  public function save($bPrint = true, $bHTML = true, $bTrace = true) {
 
     $sResult = '';
 
@@ -312,7 +312,7 @@ class Basic extends \Exception implements core\exception {
       $sResult .= $this->readPaths($aPath);
 
       $sResult .= $this->loadVariables($bHTML);
-      $sResult .= $this->loadTraces($bHTML);
+      if ($bTrace) $sResult .= $this->loadTraces($bHTML);
 
       if ($bPrint) {
 

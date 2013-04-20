@@ -28,7 +28,7 @@ class Domed extends Main implements reflector\attributed {
       $resultTest = $result->getTest();
       $test = $this->reflectTest($this->parseElement($el));
 
-      $result->setTest($window->create('test', array($window, $resultTest, $test, '&&')));
+      $result->setTest($window->createTest($resultTest, $test, '&&'));
     }
     else {
 

@@ -9,32 +9,40 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
   protected $aContent = array();
   protected $bBuilded = false;
 
+  protected $aDefaultAttributes = array();
+  protected $aAttributes = array();
+
   public function parseRoot(dom\element $el) {
 
     $this->build($el);
   }
 
-  protected function parseAttributes(dom\element $el) {
+  protected function parseAttributes() {
 
     $aResult = array();
-    $attrs = $el->getAttributes();
 
-    foreach ($attrs as $attr) {
+    foreach ($this->getAttributes() as $sName => $aValue) {
 
       $aResult[] = ' ';
-      $aResult[] = $this->parseAttribute($attr);
+      $aResult[] = $this->parseAttributeArray($sName, $aValue);
     }
 
     return $aResult;
   }
 
-  protected function parseAttribute(dom\attribute $attr) {
+  protected function parseAttributeArray($sName, array $aValue) {
 
     $aResult = array();
 
-    $aResult[] = $attr->getName();
+    $aResult[] = $sName;
     $aResult[] = '="';
-    $aResult[] = $this->parseAttributeValue($attr->getValue());
+
+    foreach ($this->getWindow()->parseArrayables($aValue) as $mVal) {
+
+      if (is_string($mVal)) $aResult[] = $this->parseAttributeValue($mVal);
+      else $aResult[] = $mVal;
+    }
+
     $aResult[] = '"';
 
     return $aResult;
@@ -75,6 +83,13 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
       $el = $this->getNode();
 
+      foreach ($el->getAttributes() as $attr) {
+
+        $this->setDefaultAttribute($attr->getName(), $attr->getValue());
+      }
+
+      $this->resetAttributes();
+
       if ($el->countChildren()) {
 
         if ($el->countChildren() > 1) {
@@ -102,20 +117,26 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   protected function complexAsArray(dom\element $el) {
 
-    $aResult = array();
+    $aResult = $aContent = array();
 
     $aChildren = $this->build();
 
-    $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
-    $aResult[] = $this->parseAttributes($el);
-    $aResult[] = '>';
+    $this->getTemplate()->startElement($this);
 
     foreach ($aChildren as $child) {
 
-      $aResult[] = $child;
+      $aContent[] = $this->getWindow()->parseArrayables(array($child));
     }
 
+    $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
+    $aResult[] = $this->parseAttributes();
+    $aResult[] = '>';
+
+    $aResult[] = $aContent;
+
     $aResult[] = '</' . $el->getName() . '>';
+
+    $this->getTemplate()->stopElement();
 
     return $aResult;
   }
@@ -126,7 +147,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
     $aResult = array();
     $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
-    $aResult[] = $this->parseAttributes($el);
+    $aResult[] = $this->parseAttributes();
     $aResult[] = '/>';
 
     return $aResult;
@@ -134,22 +155,41 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   public function setAttributes(array $aAttrs) {
 
-    return $this->getNode()->setAttributes($aAttrs);
+    $this->aAttributes = $aAttrs;
   }
 
-  public function setAttribute($sName, $sValue) {
+  public function setDefaultAttribute($sName, $mVal) {
 
-    return $this->getNode()->setAttribute($sName, $sValue);
+    if (!is_array($mVal)) $mVal = array($mVal);
+
+    $this->aDefaultAttributes[$sName] = $mVal;
+  }
+
+  protected function resetAttributes() {
+
+    $this->aAttributes = $this->aDefaultAttributes;
+  }
+
+  public function setAttribute($sName, $mVal) {
+
+    if (!is_array($mVal)) $mVal = array($mVal);
+
+    $this->aAttributes[$sName] = $mVal;
+  }
+
+  protected function getAttributes() {
+
+    return $this->aAttributes;
   }
 
   public function readAttribute($sName) {
 
-    return $this->getNode()->readAttribute($sName);
+    return $this->aAttributes[$sName];
   }
 
-  public function addToken($sAttribute, $sValue) {
+  public function addToken($sAttribute, $mVal) {
 
-    return $this->getNode()->addToken($sAttribute, $sValue);
+    $this->aAttributes[$sAttribute][] = $mVal;
   }
 
   public function asArray() {
@@ -164,6 +204,8 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
       $aResult = $this->simpleAsArray($el);
     }
+
+    $this->resetAttributes();
 
     return $aResult;
   }

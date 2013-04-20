@@ -77,7 +77,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $content = $window->createCall($window->getSylma(), 'throwException', 'php-boolean', array('No context sent'));
     $window->add($window->createCondition($window->createNot($isset), $content));
 
-    $window->setVariable($contexts);
+    //$window->setVariable($contexts);
 
     $call = $contexts->call('get', array(self::CONTEXT_CLASSES), '\\sylma\\parser\\context');
     $this->setContext($call->getVar());

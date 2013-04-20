@@ -4,7 +4,7 @@
   <tst:test name="one context">
     <tst:prepare>
       $action = $controler->getAction('samples/context01');
-      $action->setContexts(array('css' => new \sylma\parser\context\Basic));
+      $action->setContexts($controler->createArgument(array('css' => new \sylma\parser\context\Basic)));
 
       $controler->setArgument('action', $action);
     </tst:prepare>
@@ -23,7 +23,7 @@
   <tst:test name="two contexts">
     <tst:prepare>
       $action = $controler->getAction('samples/context02');
-      $action->setContexts(array('css' =>  new \sylma\parser\context\Basic, 'js' => new \sylma\parser\context\Basic));
+      $action->setContexts($controler->createArgument(array('css' =>  new \sylma\parser\context\Basic, 'js' => new \sylma\parser\context\Basic)));
 
       $controler->setArgument('action', $action);
     </tst:prepare>
@@ -44,7 +44,7 @@
   <tst:test name="using short call" disabled="true">
     <tst:prepare>
       $action = $controler->getAction('samples/context03');
-      $action->setContexts(array('css' =>  new \sylma\parser\context\Basic));
+      $action->setContexts($controler->createArgument(array('css' =>  new \sylma\parser\context\Basic)));
 
       $controler->setArgument('action', $action);
     </tst:prepare>

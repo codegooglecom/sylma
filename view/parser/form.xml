@@ -22,6 +22,7 @@
                 <!--<cls:class alias="browse" name="Browse"/>-->
                 <cls:class alias="apply" name="ApplyForm"/>
                 <cls:class alias="register" name="Register"/>
+                <cls:class alias="token" name="Token"/>
               </cls:classes>
             </cls:class>
           </cls:classes>
