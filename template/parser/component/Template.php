@@ -3,7 +3,7 @@
 namespace sylma\template\parser\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser, sylma\template as template_ns;
 
-class Template extends Child implements common\arrayable, parser\template {
+class Template extends Child implements common\arrayable, parser\template, core\tokenable {
 
   const MATCH_DEFAULT = '[root]';
   const CHECK_RECURSION = false; // if TRUE, disable concat optimization
@@ -11,7 +11,7 @@ class Template extends Child implements common\arrayable, parser\template {
   protected $aContent;
   protected $aComponents = array();
   protected $aElements = array();
-  
+
   protected $bBuilded = false;
   protected $sMatch;
 
@@ -224,12 +224,24 @@ class Template extends Child implements common\arrayable, parser\template {
 
     self::$aCall[] = $this->getID();
 
-    if (self::CHECK_RECURSION) $result = array($this->toString($this->build()));
-    else $result = $this->build();
+    $this->startLog();
+
+    if (self::CHECK_RECURSION) $result = array($this->getWindow()->toString($this->build()));
+    else $result = $this->getWindow()->parseArrayables($this->build());
+
+    $this->stopLog();
 
     array_pop(self::$aCall);
 
     return $result;
+  }
+
+  protected function startLog($sMessage = '', array $aVars = array()) {
+
+    parent::startLog(
+      $this->asToken(),
+      array_merge(array(), $aVars)
+    );
   }
 
   public function __clone() {
@@ -250,6 +262,11 @@ class Template extends Child implements common\arrayable, parser\template {
     $aVars[] = $this->getNode();
 
     parent::launchException($sMessage, $aVars, $mSender);
+  }
+
+  public function asToken() {
+
+    return 'Template ' . ($this->getMatch() ? "({$this->getMatch()})" : 'root') . ($this->getMode() ? " [mode={$this->getMode()}]" : "");
   }
 }
 

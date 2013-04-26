@@ -20,14 +20,19 @@ class Messages extends context\Basic implements dom\domable {
 
   public function asString() {
 
-    $sContent = '<div xmlns="' . \Sylma::read('namespaces/html') . '">';
+    $sContent = '';
 
-    foreach ($this->asArray() as $sMessage) {
+    if ($aContent = $this->asArray()) {
 
-      $sContent .= $sMessage;
+      $sContent = '<div xmlns="' . \Sylma::read('namespaces/html') . '">';
+
+      foreach ($aContent as $sMessage) {
+
+        $sContent .= $sMessage;
+      }
+
+      $sContent .= '</div>';
     }
-
-    $sContent .= '</div>';
 
     $doc = $this->createDocument($sContent);
 

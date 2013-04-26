@@ -17,11 +17,11 @@ class Readable extends Domed implements core\argument {
 
   public function get($sPath = '', $bDebug = true) {
 
-    $mValue = $this->getValue($sPath, $bDebug);
+    $mValue =& $this->getValue($sPath, $bDebug);
 
     if (is_array($mValue)) {
 
-      $mResult = $this->createInstance($mValue);
+      $mResult = $mValue = $this->createInstance($mValue);
     }
     else if (is_object($mValue)) {
 
@@ -40,12 +40,18 @@ class Readable extends Domed implements core\argument {
     return $mResult;
   }
 
+  protected function parseResult(&$mValue, $bDebug = true, $bNullize = false, $sPath = '') {
+
+
+    //return $mResult;
+  }
+
   public function read($sPath = '', $bDebug = true) {
 
     return $this->getValue($sPath, $bDebug);
   }
 
-  public function set($sPath, $mValue = '', $bRef = false) {
+  public function set($sPath, $mValue = null, $bRef = false) {
 
     if (!$aPath = $this->parsePath($sPath)) {
 
@@ -53,12 +59,14 @@ class Readable extends Domed implements core\argument {
     }
 
     $mCurrent =& $this->aArray;
+    $bNULL = is_null($mValue);
 
     do {
 
       $sKey = current($aPath);
 
       if (!array_key_exists($sKey, $mCurrent)) $mCurrent[$sKey] = array();
+      $mPrevious =& $mCurrent;
       $mCurrent =& $mCurrent[$sKey];
 
     } while(next($aPath));
@@ -68,7 +76,14 @@ class Readable extends Domed implements core\argument {
       $this->throwException(sprintf('Cannot find path "%s" to set value', $sPath));
     }
 
-    $mCurrent = $bRef && is_array($mValue) ? $this->createInstance($mValue) : $mValue;
+    if ($bNULL) {
+
+      unset($mPrevious[$sKey]);
+    }
+    else {
+
+      $mCurrent = $bRef && is_array($mValue) ? $this->createInstance($mValue) : $mValue;
+    }
 
     return $mCurrent;
   }
@@ -80,6 +95,18 @@ class Readable extends Domed implements core\argument {
     return $mVal;
   }
 
+  public function add($mValue, $bRef = false) {
+
+    if ($bRef && is_array($mValue)) {
+
+      $mValue = $this->createInstance($mValue);
+    }
+
+    $this->aArray[] = $mValue;
+
+    return $mValue;
+  }
+
   /**
    * Calls getter's related method, it's an interface between @method get() and @method locateValue()
    *
@@ -88,35 +115,36 @@ class Readable extends Domed implements core\argument {
    *
    * @return null|mixed The value localized by path, or NULL
    */
-  protected function getValue($sPath = null, $bDebug = true) {
+  protected function &getValue($sPath = null, $bDebug = true) {
 
     if (is_null($sPath)) {
 
-      $mResult = $this->aArray;
+      $mResult =& $this->aArray;
     }
     else {
 
       $aPath = $this->parsePath($sPath);
-      $mResult = $this->locateValue($aPath, $bDebug);
+      $mResult =& $this->locateValue($aPath, $bDebug);
     }
 
     return $mResult;
   }
 
-  public function locateValue(array &$aPath, $bDebug) {
+  public function &locateValue(array &$aPath, $bDebug) {
 
-    $mCurrent = $this->aArray;
+    $mCurrent =& $this->aArray;
     $mResult = null;
 
     do {
 
       $sKey = current($aPath);
-      $mCurrent = $this->parseValue($aPath, $mCurrent, $bDebug);
+      $mCurrent =& $this->parseValue($aPath, $mCurrent, $bDebug);
       $bArray = is_array($mCurrent);
 
       if ($bArray && array_key_exists($sKey, $mCurrent)) {
 
-        $mResult = $mCurrent = $mCurrent[$sKey];
+        $mCurrent =& $mCurrent[$sKey];
+        $mResult =& $mCurrent;
       }
       else {
 
@@ -132,7 +160,7 @@ class Readable extends Domed implements core\argument {
         }
         else {
 
-          $mResult = $mCurrent;
+          $mResult =& $mCurrent;
         }
       }
 
@@ -154,15 +182,15 @@ class Readable extends Domed implements core\argument {
     return $aResult;
   }
 
-  protected function parseValue(array &$aPath, $mValue, $bDebug) {
+  protected function &parseValue(array &$aPath, &$mValue, $bDebug) {
 
     if ($mValue instanceof core\argument) {
 
-      $mResult = $mValue->locateValue($aPath, $bDebug);
+      $mResult =& $mValue->locateValue($aPath, $bDebug);
     }
     else {
 
-      $mResult = $mValue;
+      $mResult =& $mValue;
     }
 
     return $mResult;

@@ -7,7 +7,7 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
 
   //const PARSER_MANAGER = 'parser';
 
-  public function setScript(core\request $path, $sContext = '') {
+  public function setScript(core\request $path, core\argument $post, $sContext = '') {
 
     $parser = $this->getManager(self::PARSER_MANAGER);
     $messages = new \sylma\modules\html\context\Messages;
@@ -22,6 +22,7 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
       $sResult = $parser->load($path->getFile(), array(
         'arguments' => $path->getArguments(),
         'contexts' => $contexts,
+        'post' => $post,
       ));
     }
     catch (core\exception $e) {

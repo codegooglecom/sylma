@@ -9,6 +9,7 @@ class Elemented extends template\parser\handler\Elemented {
   const NS_SCHEMA = 'http://2013.sylma.org/schema/template';
 
   const TMP_ARGUMENTS = 'view.xml';
+  const LOG_RESULT = false;
 
   protected $allowForeign = true;
 
@@ -30,26 +31,29 @@ class Elemented extends template\parser\handler\Elemented {
     parent::__construct($root, $parent, $arg);
   }
 
-  protected function getMode() {
-
-    return $this->sMode;
-  }
-
-  protected function setMode($sMode) {
-
-    $this->sMode = $sMode;
-  }
-
   public function parseRoot(dom\element $el, $sMode = '') {
 
     $this->allowUnknown(true);
     $this->allowForeign(true);
 
     $this->setMode($sMode);
+    $this->loadLogger();
 
-    $this->build($el, $sMode); // parseRoot(), onAdd()
+    try {
 
-    $this->addToResult(array($this->getTemplate())); // asArray()
+      $this->build($el, $sMode); // parseRoot(), onAdd()
+      $this->addToResult(array($this->getTemplate())); // asArray()
+    }
+    catch (core\exception $e) {
+
+      $this->getLogger()->addException($e->getMessage());
+      $this->loadLog();
+
+      throw $e;
+      //return null;
+    }
+
+    if (self::LOG_RESULT) $this->loadLog();
 
     switch ($sMode) {
 
@@ -70,10 +74,21 @@ class Elemented extends template\parser\handler\Elemented {
     return $result;
   }
 
+  protected function setMode($sMode) {
+
+    $this->sMode = $sMode;
+  }
+
+  protected function getMode() {
+
+    return $this->sMode;
+  }
+
   public function loadElementForeignKnown(dom\element $el, reflector\elemented $parser) {
 
     switch ($this->getMode()) {
 
+      case 'update' :
       case 'insert' :
 
         $result = null;
@@ -83,7 +98,7 @@ class Elemented extends template\parser\handler\Elemented {
 
         $result = parent::loadElementForeignKnown($el, $parser);
     }
-    
+
     return $result;
   }
 

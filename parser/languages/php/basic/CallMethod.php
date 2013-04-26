@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-class CallMethod extends Called implements common\addable  {
+class CallMethod extends Called implements common\addable, common\callable  {
 
   private $called;
   protected $bStatic = false;

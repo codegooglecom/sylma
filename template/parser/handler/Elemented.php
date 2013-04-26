@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser\handler;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
 
 class Elemented extends Templated implements reflector\elemented {
 
@@ -11,7 +11,7 @@ class Elemented extends Templated implements reflector\elemented {
   protected $aTemplates = array();
   protected $result;
 
-  protected static $aParsed = array();
+  protected $logger;
 
   public function parseRoot(dom\element $el) {
 
@@ -26,6 +26,11 @@ class Elemented extends Templated implements reflector\elemented {
     $this->loadResult();
   }
 
+  protected function loadLogger() {
+
+    $this->logger = $this->create('logger');
+  }
+  
   public function lookupNamespace($sPrefix = '') {
 
     return $this->getNode()->lookupNamespace($sPrefix);
@@ -103,5 +108,15 @@ class Elemented extends Templated implements reflector\elemented {
     }
 
     $this->getManager()->setTree($tree);
+  }
+
+  protected function loadLog() {
+
+    $this->getLogger()->asMessage();
+  }
+
+  public function getLogger() {
+
+    return $this->logger;
   }
 }

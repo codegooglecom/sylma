@@ -1,11 +1,11 @@
 <?php
 
 namespace sylma\storage\sql\schema\component;
-use sylma\core, sylma\schema;
+use sylma\core, sylma\dom, sylma\schema;
 
 class Table extends schema\xsd\component\Element {
 
-  public function parseRoot(\sylma\dom\element $el) {
+  public function parseRoot(dom\element $el) {
 
     $this->setNode($el, false);
     $this->setName($el->readx('@name'));

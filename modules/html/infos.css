@@ -173,3 +173,18 @@
 .sylma-variables:focus h3 {
   margin: 0.5em;
 }
+
+.sylma-debug-mask {
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: max-height 0.5s ease, opacity 0.5s;
+}
+
+.sylma-debug-focused:focus .sylma-debug-mask,
+.sylma-debug-hovered:hover .sylma-debug-mask
+{
+  visibility: visible;
+  max-height: 450px;
+  opacity: 1;
+}

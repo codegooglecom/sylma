@@ -73,7 +73,6 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
 
   public function getFile($sName) {
 
-
     $el = null;
     $spName = $this->escape($sName);
 
@@ -82,6 +81,11 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
     return $this->extractRights($el);
   }
 
+  protected function escape($sValue) {
+
+    return "'".addslashes($sValue)."'";
+  }
+  
   /*
    * Extract and check validity of security datas in element
    *

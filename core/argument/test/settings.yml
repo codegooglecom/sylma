@@ -6,7 +6,7 @@ classes :
   basic :
     name : Readable
   setable :
-    name : Setable
+    name : Readable
   domed :
     name : Readable
   filed :

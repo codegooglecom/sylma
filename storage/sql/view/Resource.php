@@ -64,9 +64,10 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $schema = $builder->getSchema($file, $this->getWindow());
     $schema->setView($this->getParent());
 
-    $field = $schema->getElement();
+    $root = $schema->getElement();
+    $root->isRoot(true);
 
-    $this->setTree($field);
+    $this->setTree($root);
     $this->addID();
 
     return $schema;

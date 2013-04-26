@@ -117,7 +117,7 @@ class Router extends Builder {
     $view = $this->createFile($this->loadSelfTarget($file, $main->getName()), $this->buildInstanciation($content, $winView));
 
     $sub = $route->getSub();
-    $winForm = $this->prepareArgumented();
+    $winForm = $this->prepareFormed();
     $content = $this->reflectView($sub->asDocument(), $winForm, true, $sub->getMode());
     $form = $this->createFile($this->loadSelfTarget($file, $sub->getName()), $this->buildSimple($content, $winForm));
 
@@ -170,19 +170,31 @@ class Router extends Builder {
     }
   }
 
+  protected function prepareFormed() {
+
+    $window = $this->prepareArgumented();
+
+    $this->checkVariable($window, $window->createVariable('post', '\sylma\core\argument'));
+
+    return $window;
+  }
+
   protected function prepareArgumented() {
 
     $window = $this->createWindow();
     $window->createVariable('aSylmaArguments', 'php-array');
-    $arguments = $window->createVariable('arguments', '\sylma\core\argument');
-    //$window->setVariable($arguments);
 
-    $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($arguments));
-    $new = $window->createInstanciate($window->tokenToInstance(get_class($this->create('argument'))));
-
-    $window->add($window->createCondition($window->createNot($isset), $window->createAssign($arguments, $new)));
+    $this->checkVariable($window, $window->createVariable('arguments', '\sylma\core\argument'));
 
     return $window;
+  }
+
+  protected function checkVariable(common\_window $window, common\_var $var) {
+
+    $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($var));
+    $new = $window->createInstanciate($window->tokenToInstance(get_class($this->create('argument'))));
+
+    $window->add($window->createCondition($window->createNot($isset), $window->createAssign($var, $new)));
   }
 }
 

@@ -282,7 +282,7 @@ class Initializer extends module\Filed {
 
   protected function loadObjectScript(core\request $path, core\window\scripted $window) {
 
-    $window->setScript($path);
+    $window->setScript($path, $this->createArgument($this->loadPOST()));
 
     return $window->asString();
   }

@@ -24,14 +24,14 @@ class Handler extends sql\schema\Handler {
     $this->view = $view;
   }
 
-  public function lookupTemplate(schema\parser\element $element, $sContext, $sMode) {
+  public function lookupTemplate(schema\parser\element $element, $sContext, $sMode, $bRoot = false) {
 
     $iLast = 0;
     $result = null;
 
     foreach ($this->getTemplates() as $template) {
 
-      $iWeight = $template->getWeight($element, $sContext, $sMode);
+      $iWeight = $template->getWeight($element, $sContext, $sMode, $bRoot);
       if ($iWeight && $iWeight >= $iLast) {
 
         $result = $template;

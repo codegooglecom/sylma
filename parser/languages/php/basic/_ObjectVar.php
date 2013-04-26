@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-class _ObjectVar extends _Var implements common\_object, common\scope {
+class _ObjectVar extends _Var implements common\_object, common\scope, common\callable {
 
   protected $object;
 

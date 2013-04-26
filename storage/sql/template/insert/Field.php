@@ -24,9 +24,11 @@ class Field extends sql\template\component\Field {
 
     $query = $this->getQuery();
     $window = $this->getWindow();
-    $arguments = $window->getVariable('arguments');
+    $arguments = $window->getVariable('post');
 
-    $var = $window->addVar($window->createCall($arguments, 'read', 'php-string', array($this->getFormAlias())));
+    $type = $this->getType();
+    $arg = $arguments->call('read', array($this->getFormAlias()), 'php-string');
+    $var = $type->escape($arg);
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
     //$test = $window->createCondition($window->createNot($var), $content);

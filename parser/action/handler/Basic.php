@@ -18,7 +18,7 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
   protected $controler;
 
   protected $aArguments = array();
-  protected $contexts = array();
+  protected $contexts;
 
   protected $action = null;
   protected $parentParser;

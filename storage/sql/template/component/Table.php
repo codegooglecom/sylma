@@ -13,6 +13,20 @@ class Table extends sql\schema\component\Table implements sql\template\field {
   protected $loop;
   protected $source;
 
+  protected $bRoot = false;
+
+  public function parseRoot(\sylma\dom\element $el) {
+
+    parent::parseRoot($el);
+  }
+
+  public function isRoot($bValue = null) {
+
+    if (is_bool($bValue)) $this->bRoot = $bValue;
+
+    return $this->bRoot;
+  }
+
   public function setParent(parser\element $parent) {
 
     $this->parent = $parent;
@@ -26,11 +40,6 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     }
 
     return $this->parent;
-  }
-
-  public function parseRoot(\sylma\dom\element $el) {
-
-    parent::parseRoot($el);
   }
 
   protected function preBuild() {
@@ -122,7 +131,7 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
   protected function lookupTemplate($sMode) {
 
-    return $this->getParser()->lookupTemplate($this, 'element', $sMode);
+    return $this->getParser()->lookupTemplate($this, 'element', $sMode, $this->isRoot());
   }
 
   protected function parsePaths($sPath) {

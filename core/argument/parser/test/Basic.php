@@ -42,7 +42,7 @@ class Basic extends tester\Basic implements core\argumentable {
 
     $doc->saveFile($tmp, true);
 
-    $result = $this->getManager()->load($tmp);
+    $result = $this->getManager()->load($tmp, array(), true);
     //$result->setBaseDirectory($file->getParent());
 
     return $result;

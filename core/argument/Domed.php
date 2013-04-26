@@ -26,7 +26,7 @@ abstract class Domed extends Iterator implements dom\domable {
     return new dom\Argument($doc, $schema);
   }
 
-  public function buildDocument(array $aArray, $sNamespace) {
+  public function buildDocument(array $aArray, $sNamespace, &$bChildren = false) {
 
     $dom = \Sylma::getControler('dom');
     $doc = $dom->create('handler');
@@ -35,7 +35,15 @@ abstract class Domed extends Iterator implements dom\domable {
 
     $this->buildNode($root, $aArray, $sNamespace);
 
-    $doc->set($root->getFirst());
+    if ($root->countChildren() > 1) {
+
+      $doc->set($root);
+      $bChildren = true;
+    }
+    else {
+
+      $doc->set($root->getFirst());
+    }
 
     return $doc;
   }
@@ -69,13 +77,7 @@ abstract class Domed extends Iterator implements dom\domable {
           }
           else if ($sKey[0] == '#') {
 
-            foreach ($mValue as $mSubValue) {
-
-              $node = $parent->addElement(substr($sKey, 1), null, array(), $sNamespace);
-
-              if (is_array($mSubValue)) self::buildNode($node, $mSubValue, $sNamespace);
-              else $node->add($mSubValue);
-            }
+            $this->buildChild($parent, substr($sKey, 1), $mValue, $sNamespace);
 
             continue;
           }
@@ -106,6 +108,34 @@ abstract class Domed extends Iterator implements dom\domable {
 
             $node->add($mValue); // TODO sometime value not added (encoding?)
           }
+        }
+      }
+    }
+  }
+
+  protected function buildChild(dom\element $parent, $sName, $mValue, $sNamespace) {
+
+    if ($mValue instanceof core\argument) {
+
+      self::buildChild($parent, $sName, $mValue->asArray(), $sNamespace);
+    }
+    else {
+
+      foreach ($mValue as $mSubValue) {
+
+        $el = $parent->addElement($sName, null, array(), $sNamespace);
+
+        if ($mSubValue instanceof core\argument) {
+
+          self::buildNode($el, $mSubValue->asArray(), $sNamespace);
+        }
+        else if (is_array($mSubValue)) {
+
+          self::buildNode($el, $mSubValue, $sNamespace);
+        }
+        else {
+
+          $el->add($mSubValue);
         }
       }
     }
@@ -160,9 +190,9 @@ abstract class Domed extends Iterator implements dom\domable {
       $aValues = $this->aArray;
     }
 
-    $result = $this->buildDocument($aValues, $sNamespace);
+    $result = $this->buildDocument($aValues, $sNamespace, $bChildren);
 
-    if (!$result || $result->isEmpty()) {
+    if (!$result || $result instanceof dom\handler && $result->isEmpty()) {
 
       $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
     }

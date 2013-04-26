@@ -14,12 +14,14 @@ abstract class Basic extends core\module\Domed implements action\cached {
   protected $contexts;
   protected $handler;
 
-  public function __construct(fs\file $file, fs\directory $dir, action\handler $handler, core\argument $contexts, array $aArguments = array(), array $aManagers = array()) {
+  public function __construct(fs\file $file, fs\directory $dir, action\handler $handler, core\argument $contexts = null, array $aArguments = array(), array $aManagers = array()) {
 
     foreach ($aManagers as $sName => $manager) {
 
       $this->setControler($manager, $sName);
     }
+
+    if (!$contexts) $contexts = $this->createArgument(array());
 
     if (!array_key_exists(self::CONTEXT_DEFAULT, $contexts)) {
 

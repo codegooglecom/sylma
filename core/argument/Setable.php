@@ -306,7 +306,7 @@ class Setable extends Domed implements core\argument {
 
       if ($bDebug) {
 
-        $this->throwException(sprintf('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)), count($aPath) + 5);
+        $this->throwException(sprintf('Unknown key %s in @path %s', $sKey, implode('/', $aParentPath + $aPath)));
       }
 
       $sKey = null;

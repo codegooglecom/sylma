@@ -18,6 +18,29 @@
       return $arg->read('abc') === '123'
     </tst:expected>
   </tst:test>
+  <tst:test name="A basic add()">
+    <tst:prepare>
+      $arg = $controler->createArgument();
+      $arg->add('123');
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      return $arg->query() === array('123')
+    </tst:expected>
+  </tst:test>
+  <tst:test name="An add() and a get()">
+    <tst:prepare>
+      $arg = $controler->createArgument(array('hello' => array()));
+      $arg->get('hello')->add('123');
+      $controler->set('arg', $arg);
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      
+      return $arg->asArray(true) === array('hello' => array('123'))
+    </tst:expected>
+  </tst:test>
   <tst:test name="A basic set on existing simple key">
     <tst:prepare>
       $arg = $controler->createArgument(array('abc' => 123));
@@ -66,8 +89,9 @@
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
+//\Sylma::dsp($arg->query());
       $arg->set('def');
-
+//\Sylma::dsp($arg->query());
       return
         $arg->query() === array(
           'abc' => 123,
@@ -142,7 +166,8 @@
   <tst:test name="A two levels depth set() with array and tmp object">
     <tst:prepare>
       $arg = $controler->createArgument();
-      $test = $arg->set('abc/def', array('ghi' => '123'));
+      $test = $arg->set('abc/def', array('ghi' => '123'), true);
+      if (!is_object($test)) \Sylma::throwException('Error in test, object missing');
       $test->set('lmn', '456');
       $arg->get('abc/def')->set('opq', 789);
       $controler->set('arg', $arg);

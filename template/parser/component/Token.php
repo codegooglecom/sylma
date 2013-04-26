@@ -19,6 +19,9 @@ class Token extends Child implements common\arrayable, parser\component {
   public function asArray() {
 
     $el = $this->getNode();
+    $sName = $this->readx('@name');
+
+    $this->startLog("Token ({$sName})");
 
     $content = $this->parseChildren($el->getChildren());
 
@@ -28,7 +31,9 @@ class Token extends Child implements common\arrayable, parser\component {
     }
 
     $element = $this->getTemplate()->getElement();
-    $element->addToken($this->readx('@name'), $content);
+    $element->addToken($sName, $content);
+
+    $this->stopLog();
 
     return array();
   }

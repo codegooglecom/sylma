@@ -24,5 +24,126 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Duplicated name">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'div' => array(
+          '#span' => array(
+            'hello',
+            'world',
+          ),
+        ),
+      ), 'http://www.w3.org/1999/xhtml'));
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.w3.org/1999/xhtml"><span>hello</span><span>world</span></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->get('arg')->asDOM();
+      $node = $controler->get('node');
+
+      return
+        $controler->compareNodes($result, $node);
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Duplicated name with argument 1" disabled="true">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'div' => array(
+          '#span' => array(
+             $controler->createArgument(array(
+               'hello',
+               'world',
+             ), 'http://www.w3.org/1999/xhtml'),
+           ),
+        ),
+      ), 'http://www.w3.org/1999/xhtml'));
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.w3.org/1999/xhtml"><span>hello</span><span>world</span></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->get('arg')->asDOM();
+      $node = $controler->get('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Duplicated name with argument 2">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'div' => array(
+          $controler->createArgument(array(
+            '#span' => array(
+              'hello',
+              'world',
+            ),
+          ), 'http://www.w3.org/1999/xhtml'),
+        ),
+      ), 'http://www.w3.org/1999/xhtml'));
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.w3.org/1999/xhtml"><span>hello</span><span>world</span></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->get('arg')->asDOM();
+      $node = $controler->get('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Duplicated name with argument 3">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'div' => array(
+          '#span' => $controler->createArgument(array(
+            'hello',
+            'world',
+          ), 'http://www.w3.org/1999/xhtml'),
+        ),
+      ), 'http://www.w3.org/1999/xhtml'));
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.w3.org/1999/xhtml"><span>hello</span><span>world</span></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->get('arg')->asDOM();
+      $node = $controler->get('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Duplicated name with argument 4">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'div' => array(
+          $controler->createArgument(array(
+            '#span' => $controler->createArgument(array(
+              $controler->createArgument(array(
+                'h1' => 'hello',
+              )),
+              $controler->createArgument(array(
+                'h2' => 'world',
+              )),
+            )),
+          ), 'http://www.w3.org/1999/xhtml'),
+        ),
+      ), 'http://www.w3.org/1999/xhtml'));
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.w3.org/1999/xhtml"><span><h1>hello</h1></span><span><h2>world</h2></span></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->get('arg')->asDOM();
+      $node = $controler->get('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
 </tst:tests>
 

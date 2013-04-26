@@ -13,6 +13,11 @@ class Container extends template_ns\parser\component\Template {
 
   const CONTEXT_DEFAULT = self::CONTEXT_ELEMENT;
 
+  const WEIGHT_ELEMENT = 25;
+  const WEIGHT_ELEMENT_ALL = 20;
+  const WEIGHT_TYPE = 15;
+  const WEIGHT_TYPE_ALL = 10;
+
   protected $aMatch = array();
   protected $context;
 
@@ -29,6 +34,10 @@ class Container extends template_ns\parser\component\Template {
     else if ($this->getMatch()) {
 
       $this->setContext($this->getMatch('context'));
+    }
+    else {
+
+      $this->setContext(self::CONTEXT_DEFAULT);
     }
   }
 
@@ -51,7 +60,7 @@ class Container extends template_ns\parser\component\Template {
       $this->throwException('No match defined');
     }
 
-    preg_match('`(?:#(\w+)/)?(?:([\w-_]+):)?([\*\w-_]+)`', $sMatch, $aMatches);
+    preg_match('`(?:#(\w+)/)?(?:([\w\-_]+):)?([\*\w\-_]+)`', $sMatch, $aMatches);
 
     $sContext = $aMatches[1];
     $sPrefix = $aMatches[2];
@@ -99,11 +108,11 @@ class Container extends template_ns\parser\component\Template {
     else return parent::getMatch();
   }
 
-  public function getWeight(schema_ns\parser\element $element, $sContext, $sMode) {
+  public function getWeight(schema_ns\parser\element $element, $sContext, $sMode, $bRoot = false) {
 
     $iResult = 0;
 
-    if ($this->getMatch()) {
+    if ($this->getMatch() || $bRoot) {
 
       if (!$sContext) $sContext = self::CONTEXT_DEFAULT;
 
@@ -111,7 +120,11 @@ class Container extends template_ns\parser\component\Template {
 
         if (!$sMode) $sMode = self::MODE_DEFAULT;
 
-        if ($sMode === $this->getMatch('mode')) {
+        if ($bRoot) {
+
+          $iResult = self::WEIGHT_ELEMENT_ALL;
+        }
+        else if ($sMode === $this->getMatch('mode')) {
 
           if (!$iResult = $this->getWeightElement($element)) {
 
@@ -132,15 +145,22 @@ class Container extends template_ns\parser\component\Template {
 
       if ($element->getName() === $this->getMatch('name')) {
 
-        $iResult = 25;
+        $iResult = self::WEIGHT_ELEMENT;
       }
       else if ($this->getMatch('name') === self::NAME_DEFAULT) {
 
-        $iResult = 20;
+        $iResult = self::WEIGHT_ELEMENT_ALL;
       }
     }
 
     return $iResult;
+  }
+
+  protected function startLog($sMessage = 'Template', array $aVars = array()) {
+
+    parent::startLog($sMessage, array(
+      'element' => $this->getTree()->getName(),
+    ));
   }
 
   protected function getWeightType(schema_ns\parser\type $type) {
@@ -151,11 +171,11 @@ class Container extends template_ns\parser\component\Template {
 
       if ($type->getName() === $this->getMatch('name')) {
 
-        $iResult = 15;
+        $iResult = self::WEIGHT_TYPE;
       }
       else if ($this->getMatch('name') === self::NAME_DEFAULT) {
 
-        $iResult = 10;
+        $iResult = self::WEIGHT_TYPE_ALL;
       }
     }
 

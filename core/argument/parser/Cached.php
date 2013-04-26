@@ -18,12 +18,14 @@ class Cached extends core\argument\Readable {
     return $function(\Sylma::getControler(self::FILE_MANAGER_ALIAS));
   }
 
-  public function getValue($sPath = null, $bDebug = true) {
+  public function &getValue($sPath = null, $bDebug = true) {
 
-    $result = parent::getValue($sPath, $bDebug);
-    $closure = $this->checkClosure($result);
+    $val = parent::getValue($sPath, $bDebug);
+    $closure = $this->checkClosure($val);
 
-    return $closure ? $closure : $result;
+    $mResult = $closure ? $closure : $val;
+
+    return $mResult;
   }
 
   protected function checkClosure($mValue) {
@@ -38,7 +40,7 @@ class Cached extends core\argument\Readable {
     return $result;
   }
 
-  public function parseValue(array &$aPath, $mValue, $bDebug) {
+  public function &parseValue(array &$aPath, &$mValue, $bDebug) {
 
     if ($mResult = $this->checkClosure($mValue)) {
 
@@ -46,7 +48,7 @@ class Cached extends core\argument\Readable {
     }
     else {
 
-      $mResult = parent::parseValue($aPath, $mValue, $bDebug);
+      $mResult =& parent::parseValue($aPath, $mValue, $bDebug);
     }
 
     return $mResult;

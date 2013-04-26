@@ -17,7 +17,6 @@ sylma.ui.Form = new Class({
     var req = new Request.JSON({
 
       url : node.action,
-      data : { form: node },
       onSuccess: function(response) {
 
         var result = sylma.ui.parseResult(response);
@@ -25,7 +24,7 @@ sylma.ui.Form = new Class({
     });
     //this.getNode().set('send', {url: 'contact.php', method: 'get'});
 
-    req.send();
+    req.post(node);
 
     return false;
   }
