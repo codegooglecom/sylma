@@ -1,15 +1,13 @@
 <?php
 
-namespace sylma\view\parser;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
+namespace sylma\view\parser\builder;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\fs, sylma\view\parser\crud;
 
-class Router extends Builder {
-
-  const MODE_DEFAULT = 'view';
+class Router extends View {
 
   public function build() {
 
-    parent::build();
+    $this->setDirectory(__FILE__);
 
     $doc = $this->getDocument();
     $root = $doc->getRoot();
@@ -73,11 +71,6 @@ class Router extends Builder {
     return $this->createFile($this->loadTarget($this->getDocument(), $this->getFile()), $this->buildWindow($window));
   }
 
-  protected function addToResult() {
-
-
-  }
-
   protected function reflectViewComponent(crud\View $view, common\_window $window) {
 
     $content = $this->reflectView($view->asDocument(), $this->prepareArgumented(), false, $view->getMode());
@@ -115,17 +108,18 @@ class Router extends Builder {
     $winView = $this->prepareArgumented();
     $content = $this->reflectView($main->asDocument(), $winView, false, $main->getMode());
     $view = $this->createFile($this->loadSelfTarget($file, $main->getName()), $this->buildInstanciation($content, $winView));
-
+//dsp($view);
     $sub = $route->getSub();
     $winForm = $this->prepareFormed();
     $content = $this->reflectView($sub->asDocument(), $winForm, true, $sub->getMode());
     $form = $this->createFile($this->loadSelfTarget($file, $sub->getName()), $this->buildSimple($content, $winForm));
-
+//dsp($form);
     $arguments = $window->getVariable('arguments');
 
-    $getArgument = $arguments->call('shift');
+    $getArgument = $arguments->call(self::ARGUMENT_METHOD);
     $result = $window->createCondition($window->createTest($getArgument, 'do', '=='));
 
+    $result->addContent($arguments->call('shift'));
     $result->addContent($this->callScript($form, $window, $window->tokenToInstance('php-integer')));
     $result->addElse($this->callScript($view, $window, $window->tokenToInstance('\sylma\dom\handler')));
 
@@ -138,63 +132,6 @@ class Router extends Builder {
     $result = $window->createSwitch($call);
 
     return $result;
-  }
-
-  public function buildRoot($sMode) {
-
-    switch ($sMode) {
-
-      case '' :
-      case 'view' :
-
-        $view = $this->buildView();
-        $this->buildRegistered($view);
-        break;
-
-      case 'update' :
-
-        $view = $this->buildView();
-        $this->buildRegistered($view, 'update');
-        break;
-
-      case 'insert' :
-
-        $view = $this->buildInsert();
-        $this->buildRegistered($view, 'create');
-        break;
-
-      case 'delete' :
-
-        $this->buildDelete();
-        break;
-    }
-  }
-
-  protected function prepareFormed() {
-
-    $window = $this->prepareArgumented();
-
-    $this->checkVariable($window, $window->createVariable('post', '\sylma\core\argument'));
-
-    return $window;
-  }
-
-  protected function prepareArgumented() {
-
-    $window = $this->createWindow();
-    $window->createVariable('aSylmaArguments', 'php-array');
-
-    $this->checkVariable($window, $window->createVariable('arguments', '\sylma\core\argument'));
-
-    return $window;
-  }
-
-  protected function checkVariable(common\_window $window, common\_var $var) {
-
-    $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($var));
-    $new = $window->createInstanciate($window->tokenToInstance(get_class($this->create('argument'))));
-
-    $window->add($window->createCondition($window->createNot($isset), $window->createAssign($var, $new)));
   }
 }
 

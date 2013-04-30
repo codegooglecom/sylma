@@ -20,8 +20,6 @@ class Messages extends context\Basic implements dom\domable {
 
   public function asString() {
 
-    $sContent = '';
-
     if ($aContent = $this->asArray()) {
 
       $sContent = '<div xmlns="' . \Sylma::read('namespaces/html') . '">';
@@ -32,14 +30,20 @@ class Messages extends context\Basic implements dom\domable {
       }
 
       $sContent .= '</div>';
+
+      $doc = $this->createDocument($sContent);
+
+      $this->loadDefaultArguments();
+      $this->setDirectory(__FILE__);
+      $tpl = $this->getTemplate('/#sylma/modules/html/cleaner.xsl');
+
+      $sResult = $tpl->parseDocument($doc)->asString();
+    }
+    else {
+
+      $sResult = '';
     }
 
-    $doc = $this->createDocument($sContent);
-
-    $this->loadDefaultArguments();
-    $this->setDirectory(__FILE__);
-    $tpl = $this->getTemplate('/#sylma/modules/html/cleaner.xsl');
-
-    return $tpl->parseDocument($doc)->asString();
+    return $sResult;
   }
 }

@@ -33,11 +33,11 @@ classes :
   argument :
     name : \sylma\core\argument\parser\compiler\Documented
   view :
-    name : \sylma\view\parser\Router
+    name : \sylma\view\parser\builder\View
     arguments : /#sylma/view/parser/view.xml
     classes :
       crud :
-        name : \sylma\view\parser\Router
+        name : \sylma\view\parser\builder\Router
         arguments : /#sylma/view/parser/view.xml
   schema :
     classes :
@@ -50,15 +50,10 @@ classes :
     classes :
       view :
         name : \sylma\storage\sql\view\Resource
-        argument :
-          view : /#sylma/storage/sql/template/view.xml
-          update : /#sylma/storage/sql/template/update.xml
-          insert : /#sylma/storage/sql/template/insert.xml
-          hollow : /#sylma/storage/sql/template/hollow.xml
+        arguments : /#sylma/storage/sql/view/manager.xml
       schema :
         name : \sylma\schema\Builder
         arguments : /#sylma/storage/sql/schema/builder.xml
-
   security :
     name : \sylma\parser\security\Domed
   js :

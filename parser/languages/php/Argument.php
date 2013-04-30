@@ -33,7 +33,7 @@ class Argument extends core\argument\Setable {
     }
     else if ($val instanceof common\arrayable) {
 
-      $mResult = $this->getWindow()->arrayToString($val->asArray());
+      $mResult = $this->getWindow()->toString($val->asArray());
     }
     else {
 

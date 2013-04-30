@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template\update;
 use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
 
-class Table extends sql\template\component\Table {
+class Table extends sql\template\insert\Table {
 
   public function getQuery() {
 
@@ -13,11 +13,6 @@ class Table extends sql\template\component\Table {
     }
 
     return $this->query;
-  }
-
-  public function reflectApply($sPath, $sMode = '*') {
-
-    parent::reflectApply($sPath, $sMode);
   }
 }
 

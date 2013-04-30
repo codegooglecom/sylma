@@ -1,21 +1,38 @@
 <?php
 
 namespace sylma\template\parser\handler;
-use sylma\core, sylma\parser\reflector, sylma\template\parser;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template\parser;
 
 abstract class Templated extends reflector\handler\Elemented {
 
-  protected function loadTemplates() {
+  protected $aTemplates = array();
 
-    $el = $this->getNode();
+  public function getCurrentTemplate() {
 
-    foreach ($el->queryx('self:template', $this->getNS()) as $child) {
+    if (!$this->aElements) {
 
-      $template = $this->createComponent('component/template', $this);
-      $template->parseRoot($child);
-
-      $this->addTemplate($template);
+      $this->launchException('No element defined');
     }
+
+    return end($this->aElements);
+  }
+
+  public function startTemplate(parser\template $tpl) {
+
+    $this->aTemplates[] = $tpl;
+  }
+
+  public function stopTemplate() {
+
+    array_pop($this->aTemplates);
+  }
+
+  protected function loadTemplate(dom\element $el) {
+
+    $template = $this->createComponent('component/template', $this);
+    $template->parseRoot($el);
+
+    $this->addTemplate($template);
   }
 
   protected function getTemplates() {
@@ -53,7 +70,7 @@ abstract class Templated extends reflector\handler\Elemented {
 
     foreach ($this->aTemplates as $template) {
 
-      if (!$template->getMatch()) {
+      if (!$template->getMatch() && !$template->getMode()) {
 
         $result = $template;
         break;

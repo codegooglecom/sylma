@@ -194,6 +194,7 @@ abstract class Domed extends Iterator implements dom\domable {
 
     if (!$result || $result instanceof dom\handler && $result->isEmpty()) {
 
+      $result = null;
       $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
     }
 

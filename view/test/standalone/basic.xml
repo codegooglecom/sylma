@@ -11,7 +11,7 @@
       2;def
     </tst:datas>
     <tst:prepare>
-      $controler->setArgument('action', $controler->getAction('samples/row_user'));
+      $manager->setArgument('action', $controler->getAction('samples/row_user'));
     </tst:prepare>
     <tst:node>
       <div><h3>def</h3><a href="mailto:{$email}">test</a></div>
@@ -23,5 +23,23 @@
       return
         $controler->compareNodes($action->asDOM(), $node);
     </tst:expected>
+  </tst:test>
+  <tst:test name="Simple argument" disabled="true">
+    <tst:prepare>
+      $view = $manager->getView('samples/filter.vml', array('id' => 2));
+      $manager->setArgument('result', $view);
+    </tst:prepare>
+    <tst:node>
+      <div>admin</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Post argument" disabled="true">
+    <tst:prepare>
+      $view = $manager->getView('samples/filter_post.vml', array('id' => 2));
+      $manager->setArgument('result', $view);
+    </tst:prepare>
+    <tst:node>
+      <div>admin</div>
+    </tst:node>
   </tst:test>
 </tst:tests>

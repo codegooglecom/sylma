@@ -56,7 +56,7 @@ class Child extends reflector\component\Foreigner {
   protected function startLog($sMessage = '', array $aVars = array()) {
 
     $this->getParser()->getLogger()->startComponent($this, $sMessage, array_merge(array(
-      'node' => $this->getNode()
+      //'node' => $this->getNode(),
     ), $aVars));
   }
 

@@ -6,7 +6,7 @@
   <arg:import>builder.xml</arg:import>
   <cls:classes>
     <cls:base>\sylma\storage\sql</cls:base>
-    <cls:class alias="elemented" name="template\Handler">
+    <cls:class alias="elemented" name="template\handler\Basic">
       <cls:classes>
         <component>
           <cls:classes>

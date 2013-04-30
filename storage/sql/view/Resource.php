@@ -1,13 +1,18 @@
 <?php
 
 namespace sylma\storage\sql\view;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs, sylma\storage\sql;
 
+/**
+ * Load query
+ * Load schema by sending arguments
+ */
 class Resource extends reflector\handler\Elemented implements reflector\elemented {
 
   protected $ID;
   protected $tree;
   protected $sSource;
+  protected $query;
 
   const NS = 'http://2013.sylma.org/storage/sql/view';
 
@@ -20,31 +25,22 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     $this->parseSource();
 
-
     return $this;
   }
 
   protected function addID() {
 
     $row = $this->getTree();
+    $query = $row->getQuery();
 
     if ($id = $this->getx('self:id')) {
-
-      $query = $row->getQuery();
 
       $this->parseID($id);
       $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
       $query->isMultiple(false);
     }
-    else {
 
-      $query = $row->getQuery();
-      $window = $this->getWindow();
-
-      $id = $window->createCall($window->getVariable('arguments'), 'read', 'php-string', array('id'));
-      $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $id);
-      //$select->isMultiple(false);
-    }
+    //$this->setQuery($query);
   }
 
   public function setMode($sMode) {
@@ -52,12 +48,17 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $this->setArguments($this->readArgument("argument/$sMode"));
   }
 
-  /**
-   *
-   * @param \sylma\storage\fs\file $file
-   * @return \sylma\schema\parser\schema
-   */
-  public function setSchema(fs\file $file) {
+  protected function setQuery(sql\query\parser\Basic $query) {
+
+    $this->query = $query;
+  }
+
+  public function getQuery() {
+
+    return $this->query;
+  }
+
+  protected function build(fs\file $file) {
 
     $builder = $this->getManager('parser')->loadBuilder($file, null, $this->getArguments());
 
@@ -71,6 +72,16 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $this->addID();
 
     return $schema;
+  }
+
+  /**
+   *
+   * @param \sylma\storage\fs\file $file
+   * @return \sylma\schema\parser\schema
+   */
+  public function setSchema(fs\file $file) {
+
+    return $this->build($file);
   }
 
   protected function setTree(template\parser\tree $tree) {

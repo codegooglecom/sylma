@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\storage\sql\template\form;
+namespace sylma\storage\sql\template\handler;
 use sylma\core, sylma\dom, sylma\storage\sql\template;
 
-class Handler extends template\Handler {
+class Formed extends Basic {
 
   protected $reflector;
 

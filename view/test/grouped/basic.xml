@@ -8,6 +8,7 @@
   xmlns:sql="http://2013.sylma.org/storage/sql/view"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:le="http://2013.sylma.org/action"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -196,6 +197,28 @@
       <div><h3>root</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Multiple root template">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template mode="hello">
+          <h3>root</h3>
+        </view:template>
+        <view:template>
+          <div>
+            <stp:apply mode="hello"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>root</h3></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Type template with apply">
     <tst:document>
       <view:view user:ns="ns">
@@ -276,6 +299,85 @@
     </tst:document>
     <tst:node>
       <div><a href="mailto:admin@sylma.org">test</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Token in template">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply mode="test"/>
+          </div>
+        </view:template>
+        <view:template mode="test">
+          <tpl:token name="class">test</tpl:token>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="test"/>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple filter">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+        </sql:resource>
+        <sql:filter name="id" single="single">2</sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <h2><tpl:apply select="name"/></h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <h2>admin</h2>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Filter foreigner">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+        </sql:resource>
+        <sql:filter name="id" single="single"><le:argument name="id"/></sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <h2><tpl:apply select="name"/></h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array('arguments' => $manager->createArgument(array('id' => 2)));
+    </tst:load>
+    <tst:node>
+      <h2>admin</h2>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Filter with post">
+    <tst:document>
+      <view:view user:ns="ns" post="post">
+        <sql:resource>
+          <sql:source>test</sql:source>
+        </sql:resource>
+        <sql:filter name="id" single="single"><le:argument source="post" name="id"/></sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <h2><tpl:apply select="name"/></h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array('post' => $manager->createArgument(array('id' => 2)));
+    </tst:load>
+    <tst:node>
+      <h2>admin</h2>
     </tst:node>
   </tst:test>
 </tst:tests>

@@ -30,7 +30,7 @@ class Token extends Child implements common\arrayable, parser\component {
       $content = current($content);
     }
 
-    $element = $this->getTemplate()->getElement();
+    $element = $this->getParser()->getElement();
     $element->addToken($sName, $content);
 
     $this->stopLog();

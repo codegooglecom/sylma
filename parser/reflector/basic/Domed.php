@@ -79,7 +79,7 @@ abstract class Domed extends Componented {
     return $this->getNode()->getx($sPath, $aNS, $bDebug);
   }
 
-  protected function readx($sPath, $bDebug = false, array $aNS = array()) {
+  protected function readx($sPath = '', $bDebug = false, array $aNS = array()) {
 
     return $this->getNode()->readx($sPath, $aNS, $bDebug);
   }

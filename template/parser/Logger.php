@@ -54,7 +54,7 @@ class Logger extends core\module\Domed {
 
   public function addException($sMessage) {
 
-    end($this->aComponents)->set('exception', $sMessage);
+    if ($last = end($this->aComponents)) $last->set('exception', $sMessage);
   }
 
   public function asMessage() {

@@ -13,6 +13,7 @@
             <cls:class alias="request" name="\sylma\core\request\Builder"/>
           </cls:classes>
         </cls:class>
+        <cls:class alias="argument" name="Argument"/>
       </cls:classes>
     </component>
   </cls:classes>

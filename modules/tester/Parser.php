@@ -56,16 +56,24 @@ class Parser extends tester\Prepare {
     $cache->saveText((string) $this->createDocument($document->getFirst()));
 
     $manager = $this->getManager(self::PARSER_MANAGER);
-    $result = $this->buildResult($manager, $cache, $aArguments);
+    $result = $this->buildResult($test, $manager, $cache, $aArguments);
 
     $this->set('result', $result);
 
     return $result;
   }
 
-  protected function buildResult($manager, fs\file $file, array $aArguments) {
+  protected function buildResult(dom\element $test, $manager, fs\file $file, array $aArguments) {
 
     $manager->build($file, $this->getDirectory());
+
+    if ($sLoad = $test->readx('self:load', array(), false)) {
+
+      if (is_null(eval('$closure = function($manager) { ' . $sLoad . '; };'))) {
+
+        $aArguments = $this->evaluate($closure, $this);
+      }
+    }
 
     return $this->loadResult($manager, $file, $aArguments);
   }

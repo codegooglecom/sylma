@@ -6,7 +6,6 @@ use sylma\core, sylma\parser\languages\common;
 class Select extends Basic implements common\argumentable {
 
   protected $aJoins = array();
-  protected $bMultiple = true;
 
   public function setColumn($val) {
 
@@ -44,12 +43,6 @@ class Select extends Basic implements common\argumentable {
     }
 
     return $aResult;
-  }
-
-  public function isMultiple($mValue = null) {
-
-    if (!is_null($mValue)) $this->bMultiple = $mValue;
-    return $this->bMultiple;
   }
 
   protected function getString() {

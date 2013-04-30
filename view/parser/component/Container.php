@@ -6,7 +6,6 @@ use sylma\core, sylma\dom, sylma\schema as schema_ns, sylma\template as template
 class Container extends template_ns\parser\component\Template {
 
   const NAME_DEFAULT = '*';
-  const MODE_DEFAULT = '*';
 
   const CONTEXT_ELEMENT = 'element';
   const CONTEXT_TYPE = 'type';
@@ -77,11 +76,11 @@ class Container extends template_ns\parser\component\Template {
     }
 
     if (!$sContext) $sContext = self::CONTEXT_DEFAULT;
-    if (!$sMode) $sMode = self::MODE_DEFAULT;
+    //if (!$sMode) $sMode = self::MODE_DEFAULT;
 
     $this->aMatch = array(
       'context' => $sContext,
-      'mode' => $sMode,
+      //'mode' => $sMode,
       'namespace' => $sNamespace,
       'name' => $sName,
     );
@@ -118,13 +117,16 @@ class Container extends template_ns\parser\component\Template {
 
       if ($sContext === $this->getContext()) {
 
-        if (!$sMode) $sMode = self::MODE_DEFAULT;
+        //if (!$sMode) $sMode = self::MODE_DEFAULT;
 
         if ($bRoot) {
 
-          $iResult = self::WEIGHT_ELEMENT_ALL;
+          if (!$this->getMatch() && $sMode === $this->getMode()) {
+
+            $iResult = self::WEIGHT_ELEMENT_ALL;
+          }
         }
-        else if ($sMode === $this->getMatch('mode')) {
+        else if ($sMode === $this->getMode()) {
 
           if (!$iResult = $this->getWeightElement($element)) {
 

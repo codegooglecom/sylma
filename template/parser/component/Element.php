@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 
 class Element extends Unknowned implements common\arrayable, common\argumentable, template_ns\parser\component, template_ns\element, common\addable {
 
+  const TARGET_PREFIX = 'target';
+
   //protected $aAttributes = array();
   protected $aContent = array();
   protected $bBuilded = false;
@@ -15,6 +17,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
   public function parseRoot(dom\element $el) {
 
     $this->build($el);
+    //$this->setNamespace(\Sylma::read('namespaces/html'));
   }
 
   protected function parseAttributes() {
@@ -115,28 +118,50 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   }
 
+  protected function start() {
+
+    return $this->getParser()->startElement($this);
+  }
+
+  protected function stop() {
+
+    return $this->getParser()->stopElement();
+  }
+
+  protected function loadName(dom\element $el) {
+
+    //$sName = ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
+    //$sName = $this->getPrefix($el->getNamespace()) . $el->getName();
+    $sName = $el->getName();
+
+    return $sName;
+  }
+
   protected function complexAsArray(dom\element $el) {
 
     $aResult = $aContent = array();
 
     $aChildren = $this->build();
 
-    $this->getTemplate()->startElement($this);
+    $this->start();
 
     foreach ($aChildren as $child) {
 
       $aContent[] = $this->getWindow()->parseArrayables(array($child));
     }
 
-    $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
+    $sName = $this->loadName($el);
+
+
+    $aResult[] = '<' . $sName;
     $aResult[] = $this->parseAttributes();
     $aResult[] = '>';
 
     $aResult[] = $aContent;
 
-    $aResult[] = '</' . $el->getName() . '>';
+    $aResult[] = '</' . $sName . '>';
 
-    $this->getTemplate()->stopElement();
+    $this->stop();
 
     return $aResult;
   }

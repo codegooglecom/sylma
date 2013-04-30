@@ -316,6 +316,26 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
+  public function checkVariable($sName, $sToken) {
+
+    if (!$var = $this->getVariable($sName, false)) {
+
+      $var = $this->createVariable($sName, $sToken);
+    }
+
+    $this->buildVariable($var);
+
+    return $var;
+  }
+
+  protected function buildVariable(common\_var $var) {
+
+    $isset = $this->callFunction('isset', $this->tokenToInstance('php-boolean'), array($var));
+    $new = $this->createInstanciate($var->getInstance());
+
+    $this->add($this->createCondition($this->createNot($isset), $this->createAssign($var, $new)));
+  }
+
   public function createArgument($mArguments, $sNamespace = '') {
 
     $result = parent::createArgument($mArguments, $sNamespace);

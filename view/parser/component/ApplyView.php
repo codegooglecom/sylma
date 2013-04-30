@@ -20,9 +20,7 @@ class ApplyView extends parser\component\Apply implements common\arrayable {
       }
     }
 
-    if (!$sMode = $this->readx('@mode')) $sMode = '*';
-
-    $result = $this->getTree()->reflectApply($sValue, $sMode);
+    $result = $this->getTree()->reflectApply($sValue, $this->readx('@mode'));
 
     $this->startLog("Apply ({$sValue})");
     $aResult = $this->getWindow()->parseArrayables(array($result));

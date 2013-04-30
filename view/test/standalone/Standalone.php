@@ -54,7 +54,10 @@ class Standalone extends tester\Prepare implements core\argumentable {
     $manager = $this->getManager('parser');
     $file = $this->getFile($sPath);
 
-    return $manager->load($file, $aArguments, true);
+    return $manager->load($file, array(
+      'arguments' => $this->createArgument($aArguments),
+      //'post' =>
+    ), true);
   }
 }
 

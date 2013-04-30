@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
 
 class Table extends sql\schema\component\Table implements sql\template\field {
 
@@ -15,7 +15,7 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
   protected $bRoot = false;
 
-  public function parseRoot(\sylma\dom\element $el) {
+  public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
   }
@@ -42,18 +42,26 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     return $this->parent;
   }
 
+  protected function isApplied() {
+
+    return $this->getQuery()->isApplied();
+  }
+
+  protected function isMultiple() {
+
+    return $this->getQuery()->isMultiple();
+  }
+
   protected function preBuild() {
 
     //if (!$this->bBuilded) {
 
-      if ($this->getQuery()->isMultiple()) {
+      if ($this->isMultiple()) {
 
         $window = $this->getWindow();
 
         $var = $window->createVariable('item', '\\sylma\\core\\argument');
         $this->setSource($var);
-
-        $this->loop = $window->createLoop($this->getQuery()->getVar(), $var);
       }
 
       //$this->bBuilded = true;
@@ -72,9 +80,11 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
   protected function postBuild($result) {
 
-    if ($loop = $this->loop) {
+    if ($this->isMultiple()) {
 
       $window = $this->getWindow();
+
+      $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource());
       $window->setScope($loop);
 
       $loop->addContent($this->getParser()->getView()->addToResult($result, false));
@@ -145,19 +155,35 @@ class Table extends sql\schema\component\Table implements sql\template\field {
 
     if (!$sPath) {
 
-      if (!$template = $this->lookupTemplate($sMode)) {
+      if ($template = $this->lookupTemplate($sMode)) {
 
-        $this->launchException('Cannot apply table without template', array($this->getNode()));
+        $this->preBuild();
+        $template->setTree($this);
+
+        $result = $this->postBuild($template);
       }
+      else {
 
-      $this->preBuild();
-      $template->setTree($this);
-
-      $result = $this->postBuild($template);
+        $result = null;
+      }
     }
     else {
 
       $result = $this->reflectApplyPath($this->parsePaths($sPath), $sMode);
+    }
+
+    return $result;
+  }
+
+  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+
+    switch ($sName) {
+
+      //case 'apply' : $result = $this->reflectApply(''); break;
+
+      default :
+
+        $this->launchException(sprintf('Uknown function "%s()"', $sName), get_defined_vars());
     }
 
     return $result;

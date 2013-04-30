@@ -26,8 +26,19 @@ class _Line extends common\basic\Controled implements core\argumentable, common\
 
   public function asArgument() {
 
-    return $this->getControler()->createArgument(array(
-      'line' => $this->content,
-    ));
+    $content = $this->content;
+
+    if ($content) {
+
+      $result = $this->getControler()->createArgument(array(
+        'line' => $this->content,
+      ));
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
   }
 }

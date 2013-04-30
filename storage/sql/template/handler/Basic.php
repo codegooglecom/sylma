@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\storage\sql\template;
+namespace sylma\storage\sql\template\handler;
 use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template;
 
-class Handler extends sql\schema\Handler {
+class Basic extends sql\schema\Handler {
 
   const ALL_TOKEN = '*';
 

@@ -391,7 +391,7 @@ abstract class Window extends core\module\Domed {
     $this->aVariables[$sName] = $var;
   }
 
-  public function getVariable($sName) {
+  public function getVariable($sName, $bDebug = true) {
 
     if (array_key_exists($sName, $this->aVariables)) {
 
@@ -399,7 +399,12 @@ abstract class Window extends core\module\Domed {
     }
     else {
 
-      $this->throwException(sprintf('No variable with name %s', $sName));
+      if ($bDebug) {
+
+        $this->throwException(sprintf('No variable with name %s', $sName));
+      }
+
+      $result = null;
     }
 
     return $result;

@@ -1,19 +1,37 @@
 <?php
 
-namespace sylma\view\parser;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\parser\languages\common;
+namespace sylma\view\parser\builder;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\parser\languages\common, sylma\view\parser;
 
-class Builder extends reflector\handler\Documented {
+class View extends Variabled {
+
+  const MODE_DEFAULT = 'view';
+  const ARGUMENT_METHOD = 'getFirst';
+
+  const FORM_ARGUMENTS = '../form.xml';
+  const VIEW_ARGUMENTS = '../view.xml';
 
   protected $sMode;
   protected $reflector;
 
-  const FORM_ARGUMENTS = 'form.xml';
-  const VIEW_ARGUMENTS = 'view.xml';
-
   public function build() {
 
     $this->setDirectory(__FILE__);
+
+    $this->setMode(self::MODE_DEFAULT);
+
+    $doc = $this->getDocument();
+
+    if ($doc->readx('@post', array(), false)) {
+
+      $window = $this->prepareFormed();
+    }
+    else {
+
+      $window = $this->prepareArgumented();
+    }
+
+    return $this->buildDefault($window);
   }
 
   protected function getMode() {
@@ -31,7 +49,7 @@ class Builder extends reflector\handler\Documented {
     return $this->reflector;
   }
 
-  protected function setReflector(Elemented $reflector) {
+  protected function setReflector(parser\Elemented $reflector) {
 
     $this->reflector = $reflector;
   }

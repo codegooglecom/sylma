@@ -1,16 +1,17 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser, sylma\template as template_ns;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
 
 class Template extends Child implements common\arrayable, parser\template, core\tokenable {
 
   const MATCH_DEFAULT = '[root]';
+  const MODE_DEFAULT = '';
+
   const CHECK_RECURSION = false; // if TRUE, disable concat optimization
 
   protected $aContent;
   protected $aComponents = array();
-  protected $aElements = array();
 
   protected $bBuilded = false;
   protected $sMatch;
@@ -20,10 +21,12 @@ class Template extends Child implements common\arrayable, parser\template, core\
   protected $bCloned = false;
   protected static $aCall = array();
   protected $sID = '';
+  protected $sMode = self::MODE_DEFAULT;
 
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
+    $this->loadMode();
 
     $this->allowUnknown(true);
     $this->allowForeign(true);
@@ -73,26 +76,6 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->addComponent($result);
 
     return $result;
-  }
-
-  public function getElement() {
-
-    if (!$this->aElements) {
-
-      $this->launchException('No element defined');
-    }
-
-    return end($this->aElements);
-  }
-
-  public function startElement(template_ns\element $el) {
-
-    $this->aElements[] = $el;
-  }
-
-  public function stopElement() {
-
-    array_pop($this->aElements);
   }
 
   protected function loadAttributes(dom\element $el, Element $component) {
@@ -169,16 +152,38 @@ class Template extends Child implements common\arrayable, parser\template, core\
     return $result;
   }
 
-  protected function getMode() {
+  protected function loadMode() {
 
-    return $this->getNode()->readx('@mode', array(), false);
+    if ($sMode = $this->readx('@mode')) {
+
+      $this->sMode = $sMode;
+    }
+  }
+
+  protected function start() {
+
+    $this->getParser()->startTemplate($this);
+  }
+
+  protected function stop() {
+
+    $this->getParser()->stopTemplate();
+  }
+
+  public function getMode() {
+
+    return $this->sMode;
   }
 
   public function build() {
 
     if (!$this->bBuilded) {
 
+      $this->start();
+
       $mContent = $this->parseComponentRoot($this->getNode());
+
+      $this->stop();
 
       $this->aContent = is_array($mContent) ? $mContent : array($mContent);
       $this->bBuilded = true;

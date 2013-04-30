@@ -109,7 +109,15 @@ abstract class Basic extends core\module\Managed {
 
         $sName = $this->generateName($sName, $sNamespace);
       }
-      $el = $doc->createElementNS($sNamespace, $sName);
+
+      try {
+
+        $el = $doc->createElementNS($sNamespace, $sName);
+      }
+      catch (\DOMException $e) {
+
+        $this->launchException('DOM exception : ' . $e->getMessage(), get_defined_vars());
+      }
     }
     else {
 
@@ -280,14 +288,21 @@ abstract class Basic extends core\module\Managed {
 
     if ($iMode & dom\handler::STRING_INDENT) {
 
-      if (!$el) $el = $this->getRoot();
+      if (!$el) $el = $this->getRoot(false);
 
-      $doc = new static($el);
-      $doc->getRoot()->prepareHTML();
+      if ($el) {
 
-      $container = $doc->getContainer();
-      $sResult = $el ? $container->saveXML($doc->getRoot()) : $container->saveXML();
-      //echo $sResult;
+        $doc = new static($el);
+        $doc->getRoot()->prepareHTML();
+
+        $container = $doc->getContainer();
+        $sResult = $el ? $container->saveXML($doc->getRoot()) : $container->saveXML();
+        //echo $sResult;
+      }
+      else {
+
+        $sResult = '';
+      }
     }
     else {
 
@@ -308,7 +323,7 @@ abstract class Basic extends core\module\Managed {
   public function asString($iMode = 0) {
 
     if ($iMode & dom\handler::STRING_HEAD) $sResult = $this->elementAsString(null, $iMode);
-    else $sResult = $this->elementAsString($this->getRoot(), $iMode);
+    else $sResult = $this->elementAsString($this->getRoot(false), $iMode);
 
     return $sResult;
   }

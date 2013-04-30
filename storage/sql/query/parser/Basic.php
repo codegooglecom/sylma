@@ -6,7 +6,8 @@ use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 abstract class Basic extends reflector\component\Foreigner implements common\addable {
 
   protected $bAdded = false;
-
+  protected $bMultiple = true;
+  
   protected $aColumns = array();
   protected $aTables = array();
   protected $aWheres = array();
@@ -108,11 +109,24 @@ abstract class Basic extends reflector\component\Foreigner implements common\add
     $this->getVar()->insert();
   }
 
+  public function isMultiple($mValue = null) {
+
+    if (!is_null($mValue)) $this->bMultiple = $mValue;
+    return $this->bMultiple;
+  }
+
+  abstract protected function getString();
+
   public function asArgument() {
 
     $content = $this->getString();
 
     return $content->asArgument();
+  }
+
+  public function isApplied() {
+
+    return (bool) $this->var;
   }
 }
 

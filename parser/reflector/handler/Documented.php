@@ -134,13 +134,13 @@ class Documented extends core\module\Domed implements reflector\documented {
     return $this->buildDefault();
   }
 
-  protected function buildDefault() {
+  protected function buildDefault(common\_window $window = null) {
 
     $file = $this->getFile();
     $doc = $this->getDocument();
     $cached = $this->loadTarget($doc, $file);
 
-    $mContent = $this->reflectMain($file, $doc);
+    $mContent = $this->reflectMain($file, $doc, $window);
     $content = $this->buildInstanciation($mContent);
 
     return $this->createFile($cached, $content);

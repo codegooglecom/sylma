@@ -95,6 +95,11 @@ class Readable extends Domed implements core\argument {
     return $mVal;
   }
 
+  public function getFirst() {
+
+    return reset($this->aArray);
+  }
+
   public function add($mValue, $bRef = false) {
 
     if ($bRef && is_array($mValue)) {
@@ -152,7 +157,7 @@ class Readable extends Domed implements core\argument {
 
           if ($bDebug) {
 
-            $this->throwException(sprintf('No result for path "%s"', implode('/', $aPath)));
+            $this->launchException(sprintf('No result for path "%s"', implode('/', $aPath)), get_defined_vars());
           }
 
           $mResult = null;
@@ -168,7 +173,7 @@ class Readable extends Domed implements core\argument {
 
     if (each($aPath) && $bDebug) {
 
-      $this->throwException(sprintf('Path "%s" not found', implode('/', $aPath)));
+      $this->launchException(sprintf('Path "%s" not found', implode('/', $aPath)), get_defined_vars());
     }
 
     return $mResult;
@@ -194,5 +199,12 @@ class Readable extends Domed implements core\argument {
     }
 
     return $mResult;
+  }
+
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
+
+    $aVars[] = $this;
+
+    parent::launchException($sMessage, $aVars, $mSender);
   }
 }

@@ -5,28 +5,36 @@ use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
 abstract class Prepare extends Basic {
 
+  protected function prepareTest(dom\element $test, $controler) {
+
+    $bResult = true;
+
+    if ($sPrepare = $test->readx('self:prepare', array(), false)) {
+
+      if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $sPrepare . '; };'))) {
+
+        $this->evaluate($closure, $controler);
+        $this->onPrepared();
+      }
+      else {
+
+        $bResult = false;
+      }
+    }
+
+    return $bResult;
+  }
+
   protected function test(dom\element $test, $sExpected, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = false;
     $bReady = true;
 
-    $sPrepare = $test->readx('self:prepare', array(), false);
     $sExpected = $test->readx('self:expected', array(), false);
 
     try {
 
-      if ($sPrepare) {
-
-        if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $sPrepare . '; };'))) {
-
-          $this->evaluate($closure, $controler);
-          $this->onPrepared();
-        }
-        else {
-
-          $bReady = false;
-        }
-      }
+      $this->prepareTest($test, $controler);
 
       if ($bReady) {
 

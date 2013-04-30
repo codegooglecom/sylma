@@ -57,6 +57,7 @@ class Elemented extends template\parser\handler\Elemented {
 
     switch ($sMode) {
 
+      case 'update' :
       case 'insert' :
 
         $var = $this->getTemplate()->getTree()->getSource();
@@ -116,9 +117,18 @@ class Elemented extends template\parser\handler\Elemented {
     return $sResult;
   }
 
+  protected function parseElementSelf(dom\element $el) {
+
+    switch ($el->getName()) {
+
+      case 'template' : $result = $this->loadTemplate($el); break;
+      default : $result = parent::parseElementSelf($el);
+    }
+  }
+
   protected function build(dom\element $el, $sMode) {
 
-    $this->setNode($el);
+    $el = $this->setNode($el);
 
     if (!$el->getName() == 'view') {
 
@@ -127,13 +137,15 @@ class Elemented extends template\parser\handler\Elemented {
 
     $this->loadResult();
 
-    $resource = $this->parseElement($this->getx('*[local-name() = "resource"]'));
+    $resource = $this->parseElement($this->getx('*[local-name() = "resource"]')->remove());
     $resource->setMode($sMode);
 
     $schema = $resource->setSchema($this->loadSchema());
     $this->setSchema($schema);
 
-    $this->loadTemplates();
+    $this->parseChildren($el->getChildren());
+
+    //$this->loadTemplates();
     $schema->loadTemplates($this->getTemplates());
 
     $tpl = $this->getTemplate();
@@ -143,7 +155,7 @@ class Elemented extends template\parser\handler\Elemented {
   protected function loadSchema() {
 
     $component = $this->loadSimpleComponent('component/schema', $this);
-    $result = $component->parseRoot($this->getx('self:schema', true));
+    $result = $component->parseRoot($this->getx('self:schema', true)->remove());
 
     return $result;
   }

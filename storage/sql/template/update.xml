@@ -3,16 +3,15 @@
   xmlns="http://2013.sylma.org/sql/template"
   xmlns:cls="http://2013.sylma.org/core/factory"
 >
-  <arg:import>builder.xml</arg:import>
+  <arg:import>form.xml</arg:import>
   <cls:classes>
     <cls:base>\sylma\storage\sql</cls:base>
-    <cls:class alias="elemented" name="template\Handler">
+    <cls:class alias="elemented" name="template\handler\Formed">
       <cls:classes>
         <component>
           <cls:classes>
             <cls:base>\sylma\storage\sql\template\update</cls:base>
             <cls:class alias="table" name="Table"/>
-            <cls:class alias="field" name="Field"/>
           </cls:classes>
         </component>
       </cls:classes>

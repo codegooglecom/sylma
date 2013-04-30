@@ -1,0 +1,20 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/storage/sql/view"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <argument>
+    <view>/#sylma/storage/sql/template/view.xml</view>
+    <update>/#sylma/storage/sql/template/update.xml</update>
+    <insert>/#sylma/storage/sql/template/insert.xml</insert>
+    <hollow>/#sylma/storage/sql/template/hollow.xml</hollow>
+  </argument>
+  <cls:classes>
+    <component>
+      <cls:classes>
+        <cls:base>\sylma\storage\sql\view</cls:base>
+        <cls:class alias="filter" name="Filter"/>
+      </cls:classes>
+    </component>
+  </cls:classes>
+</arg:argument>
