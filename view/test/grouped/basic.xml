@@ -219,28 +219,6 @@
       <div><h3>root</h3></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Type template with apply">
-    <tst:document>
-      <view:view user:ns="ns">
-        <sql:resource>
-          <sql:source>test</sql:source>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user3.xql</view:schema>
-        <view:template>
-          <div>
-            <stp:apply select="name"/>
-          </div>
-        </view:template>
-        <view:template match="#type/user:name" apply="element">
-          <h3><tpl:apply/></h3>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div><h3>admin</h3></div>
-    </tst:node>
-  </tst:test>
   <tst:test name="External parser">
     <tst:document>
       <view:view>
@@ -323,61 +301,29 @@
       <div class="test"/>
     </tst:node>
   </tst:test>
-  <tst:test name="Simple filter">
+  <tst:test name="List" disabled="true">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource>
           <sql:source>test</sql:source>
         </sql:resource>
-        <sql:filter name="id" single="single">2</sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
-          <h2><tpl:apply select="name"/></h2>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <a href="{email}"><tpl:apply select="name"/></a>
         </view:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <h2>admin</h2>
-    </tst:node>
-  </tst:test>
-  <tst:test name="Filter foreigner">
-    <tst:document>
-      <view:view user:ns="ns">
-        <sql:resource>
-          <sql:source>test</sql:source>
-        </sql:resource>
-        <sql:filter name="id" single="single"><le:argument name="id"/></sql:filter>
-        <view:schema>samples/user1.xql</view:schema>
-        <view:template>
-          <h2><tpl:apply select="name"/></h2>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:load>
-      return array('arguments' => $manager->createArgument(array('id' => 2)));
-    </tst:load>
-    <tst:node>
-      <h2>admin</h2>
-    </tst:node>
-  </tst:test>
-  <tst:test name="Filter with post">
-    <tst:document>
-      <view:view user:ns="ns" post="post">
-        <sql:resource>
-          <sql:source>test</sql:source>
-        </sql:resource>
-        <sql:filter name="id" single="single"><le:argument source="post" name="id"/></sql:filter>
-        <view:schema>samples/user1.xql</view:schema>
-        <view:template>
-          <h2><tpl:apply select="name"/></h2>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:load>
-      return array('post' => $manager->createArgument(array('id' => 2)));
-    </tst:load>
-    <tst:node>
-      <h2>admin</h2>
+      <div>
+        <a href="root@sylma.org">root</a>
+        <a href="admin@sylma.org">admin</a>
+        <a href="webmaster@sylma.org">webmaster</a>
+      </div>
     </tst:node>
   </tst:test>
 </tst:tests>

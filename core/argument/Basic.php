@@ -122,14 +122,14 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     $sResult = '';
 
-    if (count($this->aArray) == 1) {
+    if ($this->aArray && count($this->aArray) == 1) {
 
       list(,$val) = each($this->aArray);
-      $sResult = (string) $val;
+      $sResult = is_object($val) && method_exists($val, '__toString') ? (string) $val : gettype($val);
     }
     else {
 
-      $sResult = '[error] Cannot render an array as a string';
+      $sResult = '[error] Cannot render an argument as a string';
       //$this->throwException(sprintf('Cannot render an array as a string'));
     }
 

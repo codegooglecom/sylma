@@ -47,6 +47,27 @@ class Manager extends core\module\Argumented {
     return new Argument($result);
   }
 
+  public function insert($sQuery, $bDebug = true) {
+
+    if ($this->getDatabase()->exec($sQuery)) {
+
+      $result = $this->getDatabase()->lastInsertId();
+    }
+    else {
+
+      $result = false;
+    }
+
+    return $result;
+  }
+
+  public function read($sQuery, $bDebug = true) {
+
+    $result = $this->getDatabase()->exec($sQuery);
+
+    return $result;
+  }
+
   public function get($sQuery, $bDebug = true) {
 
     if (!$result = $this->getDatabase()->query($sQuery) and $bDebug) {

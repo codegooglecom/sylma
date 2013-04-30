@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\view\parser;
-use sylma\core, sylma\dom, sylma\template, sylma\parser\reflector, sylma\schema;
+use sylma\core, sylma\dom, sylma\template, sylma\parser\reflector, sylma\schema, sylma\parser\languages\common;
 
 class Elemented extends template\parser\handler\Elemented {
 

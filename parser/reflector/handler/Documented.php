@@ -255,7 +255,11 @@ class Documented extends core\module\Domed implements reflector\documented {
     $result = $this->createReflector();
     //$this->setReflector($reflector);
 
-    if (!$window) $window = $this->createWindow();
+    if (!$window) {
+
+      $window = $this->createWindow();
+    }
+
     $this->setWindow($window);
 
     return $result;

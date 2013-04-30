@@ -14,8 +14,7 @@ class Router extends View {
 
     if ($root->getName() == 'view') {
 
-      $this->setMode(self::MODE_DEFAULT);
-      $result = $this->buildDefault();
+      $this->launchException('"view" element instead of "crud"', get_defined_vars());
     }
     else if ($root->getName() == 'crud') {
 
@@ -32,7 +31,7 @@ class Router extends View {
       $class = $this->getFactory()->findClass('crud');
       $result = $this->create('crud', array($this, null, $class));
 
-      $this->setWindow($this->createWindow());
+      //$this->setWindow($this->createWindow());
 
       $result->parseRoot($this->getDocument()->getRoot());
     }
@@ -47,9 +46,11 @@ class Router extends View {
   protected function buildCrud () {
 
     $reflector = $this->buildCrudReflector();
+    //$window = $this->getWindow();
+
     $aRoutes = $reflector->getRoutes();
 
-    $window = $this->prepareArgumented();
+    $window = $this->prepareWindow(self::MODE_DEFAULT);
     //$this->setWindow($window);
 
     //$window->createVariable('arguments', '\sylma\core\argument');
@@ -59,8 +60,14 @@ class Router extends View {
 
     foreach ($aRoutes as $sub) {
 
-      if ($sub instanceof crud\Route) $content = $this->reflectRoute($sub, $window);
-      else $content = $this->reflectViewComponent($sub, $window);
+      if ($sub instanceof crud\Route) {
+
+        $content = $this->reflectRoute($sub, $window);
+      }
+      else {
+
+        $content = $this->reflectViewComponent($sub, $window);
+      }
 
       $switch->addCase($sub->getAlias(), $content);
     }
@@ -73,8 +80,7 @@ class Router extends View {
 
   protected function reflectViewComponent(crud\View $view, common\_window $window) {
 
-    $content = $this->reflectView($view->asDocument(), $this->prepareArgumented(), false, $view->getMode());
-    $file = $this->createFile($this->loadSelfTarget($this->getFile(), $view->getName()), $this->buildInstanciation($content));
+    $file = $this->buildView($view->asDocument(), $this->loadSelfTarget($this->getFile(), $view->getName()));
 
     return $this->callScript($file, $window, $window->tokenToInstance('\sylma\dom\handler'));
   }
@@ -105,15 +111,11 @@ class Router extends View {
     $file = $this->getFile();
 
     $main = $route->getMain();
-    $winView = $this->prepareArgumented();
-    $content = $this->reflectView($main->asDocument(), $winView, false, $main->getMode());
-    $view = $this->createFile($this->loadSelfTarget($file, $main->getName()), $this->buildInstanciation($content, $winView));
-//dsp($view);
+    $view = $this->buildView($main->asDocument(), $this->loadSelfTarget($file, $main->getName()));
+
     $sub = $route->getSub();
-    $winForm = $this->prepareFormed();
-    $content = $this->reflectView($sub->asDocument(), $winForm, true, $sub->getMode());
-    $form = $this->createFile($this->loadSelfTarget($file, $sub->getName()), $this->buildSimple($content, $winForm));
-//dsp($form);
+    $form = $this->buildView($sub->asDocument(), $this->loadSelfTarget($file, $sub->getName()));
+    
     $arguments = $window->getVariable('arguments');
 
     $getArgument = $arguments->call(self::ARGUMENT_METHOD);

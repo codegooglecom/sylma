@@ -9,6 +9,7 @@ class Builder extends reflector\handler\Documented {
 
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
 
+    //if ($window) $this->setWindow($window);
     $result = $this->reflectMain($file, $doc, $window);
     $result->parseRoot($doc->getRoot());
 

@@ -8,30 +8,82 @@ class View extends Variabled {
   const MODE_DEFAULT = 'view';
   const ARGUMENT_METHOD = 'getFirst';
 
-  const FORM_ARGUMENTS = '../form.xml';
+  const DO_ARGUMENTS = '../do.xml';
   const VIEW_ARGUMENTS = '../view.xml';
 
-  protected $sMode;
+  protected $sMode = self::MODE_DEFAULT;
   protected $reflector;
 
   public function build() {
 
     $this->setDirectory(__FILE__);
 
-    $this->setMode(self::MODE_DEFAULT);
-
     $doc = $this->getDocument();
 
-    if ($doc->readx('@post', array(), false)) {
+    $result = $this->buildView($doc, $this->loadSelfTarget($this->getFile()));
 
-      $window = $this->prepareFormed();
+    return $result;
+  }
+
+  protected function buildView(dom\document $doc, fs\file $target) {
+
+    $sMode = $this->loadDocument($doc);
+
+    $window = $this->prepareWindow($sMode);
+    $content = $this->reflectMain($this->getFile(), $doc, $window);
+
+    switch ($sMode) {
+
+      case 'insert' :
+      case 'update' :
+
+        $return = $this->buildSimple($content, $window);
+
+        break;
+
+      case 'hollow' :
+      case 'view' :
+
+        $return = $this->buildInstanciation($content, $window);
+
+        break;
+
+      default :
+
+        $this->launchException(sprintf('Unexpected mode : ""%s', $sMode), get_defined_vars());
     }
-    else {
 
-      $window = $this->prepareArgumented();
+    return $this->createFile($target, $return);
+  }
+
+  protected function prepareWindow($sMode) {
+
+    $window = $this->createWindow();
+
+    switch ($sMode) {
+
+      case 'insert' :
+      case 'update' :
+
+        $this->setArguments(self::DO_ARGUMENTS);
+        $this->prepareFormed($window);
+
+        break;
+
+      case 'hollow' :
+      case 'view' :
+
+        $this->setArguments(self::VIEW_ARGUMENTS);
+        $this->prepareArgumented($window);
+
+        break;
+
+      default :
+
+        $this->launchException(sprintf('Unexpected mode : ""%s', $sMode), get_defined_vars());
     }
 
-    return $this->buildDefault($window);
+    return $window;
   }
 
   protected function getMode() {
@@ -68,38 +120,28 @@ class View extends Variabled {
     return $result;
   }
 
-  public function getResultFile($sMode = '') {
-
-    // TODO : TMP
-    return $this->loadSelfTarget($this->getFile(), $sMode);
-  }
-
-  protected function createReflector() {
-
-    $result = parent::createReflector();
-    //$result->setMode($this->getMode()); // actually made by self::parseReflector() with elemented::parseRoot()
-    $this->setReflector($result);
-
-    return $result;
-  }
-
   protected function parseReflector(reflector\domed $reflector, dom\document $doc) {
 
     return $reflector->parseRoot($doc->getRoot(), $this->getMode());
   }
 
-  protected function reflectView(dom\document $doc, common\_window $window, $bForm = false, $sMode = '') {
+  protected function loadDocument(dom\handler $doc) {
 
-    $file = $this->getFile();
+    if ($sMode = $this->loadMode($doc)) {
 
-    if ($bForm) $this->setArguments(self::FORM_ARGUMENTS);
-    else $this->setArguments(self::VIEW_ARGUMENTS);
+      $this->setMode($sMode);
+    }
+    else {
 
-    $this->setMode($sMode);
+      $this->setMode(self::MODE_DEFAULT);
+    }
 
-    $result = $this->reflectMain($file, $doc, $window);
+    return $this->getMode();
+  }
 
-    return $result;
+  protected function loadMode(dom\handler $doc) {
+
+    return $doc->readx('@mode', array(), false);
   }
 }
 

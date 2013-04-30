@@ -123,6 +123,11 @@ class Parser extends tester\Prepare {
     return $this->get($sPath, $bDebug);
   }
 
+  public function readArgument($sPath, $bDebug = true, $mDefault = null) {
+
+    return $this->read($sPath, $bDebug);
+  }
+
   public function setArgument($sPath, $mValue) {
 
     return $this->set($sPath, $mValue);

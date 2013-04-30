@@ -48,7 +48,7 @@ class Insert extends Basic implements common\argumentable {
 
   protected function build($sMethod = '') {
 
-    parent::build('get');
+    parent::build('insert');
   }
 }
 

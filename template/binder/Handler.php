@@ -71,7 +71,10 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $window = $this->getRoot()->getWindow();
     //$manager = $window->addControler('parser');
 
-    $contexts = $window->createVariable('contexts', '\sylma\core\argument');
+    //if (!$contexts = $window->getVariable('contexts', false)) {
+
+      $contexts = $window->createVariable('contexts', '\sylma\core\argument');
+    //}
 
     $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($contexts));
     $content = $window->createCall($window->getSylma(), 'throwException', 'php-boolean', array('No context sent'));

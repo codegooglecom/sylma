@@ -31,17 +31,12 @@ class View extends Routed {
     return $sPrefix . $sSuffix;
   }
 
-  public function getMode() {
-
-    return $this->readx('@mode');
-  }
-
   public function asDocument() {
 
     //$this->getNode()->add($this->getParser()->getResource());
     $this->getNode()->add($this->getParser()->getGlobal());
 
-    return $this->getNode()->getDocument();
+    return $this->getNode()->getHandler();
   }
 }
 
