@@ -3,28 +3,16 @@
 namespace sylma\storage\sql\template\component;
 use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
 
-class Table extends sql\schema\component\Table implements sql\template\field {
+class Table extends Rooted implements sql\template\pathable, parser\element {
 
   protected $bBuilded = false;
   protected $aElements = array();
 
-  protected $query;
-  protected $var;
   protected $loop;
-  protected $source;
-
-  protected $bRoot = false;
 
   public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
-  }
-
-  public function isRoot($bValue = null) {
-
-    if (is_bool($bValue)) $this->bRoot = $bValue;
-
-    return $this->bRoot;
   }
 
   public function setParent(parser\element $parent) {
@@ -42,60 +30,6 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     return $this->parent;
   }
 
-  protected function isApplied() {
-
-    return $this->getQuery()->isApplied();
-  }
-
-  protected function isMultiple() {
-
-    return $this->getQuery()->isMultiple();
-  }
-
-  protected function preBuild() {
-
-    //if (!$this->bBuilded) {
-
-      if ($this->isMultiple()) {
-
-        $window = $this->getWindow();
-
-        $var = $window->createVariable('item', '\\sylma\\core\\argument');
-        $this->setSource($var);
-      }
-
-      //$this->bBuilded = true;
-    //}
-  }
-
-  public function getSource() {
-
-    return $this->source ? $this->source : $this->getQuery()->getVar();
-  }
-
-  protected function setSource($source) {
-
-    $this->source = $source;
-  }
-
-  protected function postBuild($result) {
-
-    if ($this->isMultiple()) {
-
-      $window = $this->getWindow();
-
-      $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource());
-      $window->setScope($loop);
-
-      $loop->addContent($this->getParser()->getView()->addToResult($result, false));
-      $window->stopScope();
-
-      $result = $loop;
-    }
-
-    return $result;
-  }
-
   public function getQuery() {
 
     if (!$this->query) {
@@ -106,22 +40,17 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     return $this->query;
   }
 
+  public function getSource() {
+
+    return $this->source ? $this->source : $this->getQuery()->getVar();
+  }
+
   protected function createQuery($sName) {
 
     $query = $this->loadSimpleComponent("template/$sName", $this);
     $query->setTable($this);
 
     return $query;
-  }
-
-  public function setQuery(sql\query\parser\Basic $query) {
-
-    $this->query = $query;
-  }
-
-  protected function setVar(common\_var $var) {
-
-    $this->var = $var;
   }
 
   public function reflectApplyPath(array $aPath, $sMode) {
@@ -134,37 +63,23 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     return $this->parsePathTokens($aPath, $sMode);
   }
 
-  protected function parsePathTokens($aPath, $sMode) {
-
-    return $this->getParser()->parsePathTokens($this, $aPath, $sMode);
-  }
-
-  protected function lookupTemplate($sMode) {
-
-    return $this->getParser()->lookupTemplate($this, 'element', $sMode, $this->isRoot());
-  }
-
-  protected function parsePaths($sPath) {
-
-    $aResult = $this->getParser()->parsePaths($sPath);
-
-    return $aResult;
-  }
-
-  public function reflectApply($sPath, $sMode = '*') {
+  public function reflectApply($sPath = '', $sMode = '') {
 
     if (!$sPath) {
 
-      if ($template = $this->lookupTemplate($sMode)) {
+      if ($result = $this->lookupTemplate($sMode)) {
 
-        $this->preBuild();
-        $template->setTree($this);
-
-        $result = $this->postBuild($template);
+        $result->setTree($this);
       }
       else {
 
+        if (!$sMode) {
+
+          $this->launchException('Cannot apply table without template and without mode');
+        }
+
         $result = null;
+
       }
     }
     else {
@@ -187,6 +102,19 @@ class Table extends sql\schema\component\Table implements sql\template\field {
     }
 
     return $result;
+  }
+
+  public function reflectApplyAll(array $aPath, $sMode) {
+
+    $aResult = array();
+
+    foreach ($this->getElements() as $element) {
+
+      $element->setParent($this);
+      $aResult[] = $element->reflectApplyPath($aPath, $sMode);
+    }
+
+    return $aResult;
   }
 }
 

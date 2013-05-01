@@ -163,7 +163,7 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
-  public function createVar($mValue, $sName = '', $bContent = true) {
+  public function createVar($mValue, $sName = '', $bContent = true, $bDebug = true) {
 
     $return = $this->lookupInstance($mValue);
     if (!$bContent) $mValue = null;
@@ -179,7 +179,7 @@ class Window extends common\basic\Window implements php\window {
     else {
 
       $result = $this->create($sAlias, array($this, $return, $sName, $mValue));
-      $this->setVariable($result);
+      $this->setVariable($result, $bDebug);
     }
 
     return $result;
@@ -230,11 +230,11 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
-  public function createVariable($sName, $mReturn) {
+  public function createVariable($sName, $mReturn, $bDebug = true) {
 
     if (!$sName) $sName = $this->getVarName();
 
-    return $this->createVar($mReturn, $sName, false);
+    return $this->createVar($mReturn, $sName, false, $bDebug);
   }
 
   public function createNot($mContent) {

@@ -80,7 +80,7 @@ class Basic extends sql\schema\Handler {
     return explode('/', $sPath);
   }
 
-  public function parsePathTokens($source, array $aPaths, $sMode) {
+  public function parsePathTokens(sql\template\pathable $source, array $aPaths, $sMode) {
 
     $aResult = array();
 
@@ -92,7 +92,7 @@ class Basic extends sql\schema\Handler {
     return $aResult;
   }
 
-  public function parsePathToken($source, array $aPath, $sMode) {
+  public function parsePathToken(sql\template\pathable $source, array $aPath, $sMode) {
 
     $sPath = array_shift($aPath);
 
@@ -135,29 +135,26 @@ class Basic extends sql\schema\Handler {
     return $aResult;
   }
 
-  public function parsePathAll($source, array $aPath, $sMode) {
+  public function createCollection() {
 
-    $aResult = array();
-
-    foreach ($source->getElements() as $element) {
-
-      $element->setParent($source);
-      $aResult[] = $element->reflectApplyPath($aPath, $sMode);
-    }
-
-    return $aResult;
+    return $this->loadSimpleComponent('component/collection');
   }
 
-  public function parsePathElement($source, $sPath, array $aPath, $sMode) {
+  public function parsePathAll(sql\template\pathable $source, array $aPath, $sMode) {
 
-    list($sNamespace, $sName) = $this->parseName($sPath, $source, $source->getNode());
+    return $source->reflectApplyAll($aPath, $sMode);
+  }
+
+  public function parsePathElement(sql\template\pathable $source, $sPath, array $aPath, $sMode) {
+
+    list($sNamespace, $sName) = $this->parseName($sPath, $source, $source->getNode(false));
 
     $element = $source->getElement($sName, $sNamespace);
 
     return $element ? $element->reflectApplyPath($aPath, $sMode) : null;
   }
 
-  public function parsePathContext($source, array $aMatch, array $aPath, $sMode) {
+  public function parsePathContext(sql\template\pathable $source, array $aMatch, array $aPath, $sMode) {
 
     switch ($aMatch[1]) {
 
@@ -178,7 +175,7 @@ class Basic extends sql\schema\Handler {
     return $result;
   }
 
-  public function parsePathFunction($source, array $aMatch, array $aPath, $sMode) {
+  public function parsePathFunction(sql\template\pathable $source, array $aMatch, array $aPath, $sMode) {
 
     return $source->reflectApplyFunction($aMatch[1], $aPath, $sMode);
   }

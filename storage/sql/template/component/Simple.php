@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template\component;
 use sylma\core, sylma\storage\sql, sylma\template, sylma\schema\xsd, sylma\schema\parser;
 
-class Simple extends xsd\component\SimpleType implements template\parser\tree {
+class Simple extends xsd\component\SimpleType implements sql\template\pathable {
 
   protected $elementRef;
 

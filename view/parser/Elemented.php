@@ -41,8 +41,9 @@ class Elemented extends template\parser\handler\Elemented {
 
     try {
 
-      $this->build($el, $sMode); // parseRoot(), onAdd()
-      $this->addToResult(array($this->getTemplate())); // asArray()
+      $tree = $this->loadTree($el, $sMode); // parseRoot(), onAdd()
+      $result = $this->build($tree, $sMode);
+      //$this->addToResult(array($this->getTemplate())); // asArray()
     }
     catch (core\exception $e) {
 
@@ -53,24 +54,7 @@ class Elemented extends template\parser\handler\Elemented {
       //return null;
     }
 
-    if (self::LOG_RESULT) $this->loadLog();
-
-    switch ($sMode) {
-
-      case 'update' :
-      case 'insert' :
-
-        $var = $this->getTemplate()->getTree()->getSource();
-        $var->insert();
-
-        $result = $var;
-
-        break;
-
-      default :
-
-        $result = $this->getResult();
-    }
+    if (self::LOG_RESULT || $el->readx('@debug', array(), false)) $this->loadLog();
 
     return $result;
   }
@@ -126,7 +110,54 @@ class Elemented extends template\parser\handler\Elemented {
     }
   }
 
-  protected function build(dom\element $el, $sMode) {
+  protected function build(template\parser\tree $tree, $sMode) {
+
+    switch ($sMode) {
+
+      case 'update' :
+      case 'insert' :
+
+        $tpl = $tree->reflectApply();
+
+        if ($tpl instanceof common\arrayable) {
+
+          $this->addToResult($tpl->asArray());
+        }
+        else {
+
+          $this->getWindow()->add($tpl);
+        }
+        //$tpl->asArray();
+        //dsp($tpl);
+
+        $var = $tree->getSource();
+        $var->insert();
+
+        $result = $var;
+
+        break;
+
+      // hollow, view, ...
+      default :
+
+        $content = $tree->reflectApply();
+
+        if ($content instanceof common\arrayable) {
+
+          $this->addToResult($content);
+        }
+        else {
+
+          $this->getWindow()->add($content);
+        }
+
+        $result = $this->getResult();
+    }
+
+    return $result;
+  }
+
+  protected function loadTree(dom\element $el, $sMode) {
 
     $el = $this->setNode($el);
 
@@ -137,7 +168,7 @@ class Elemented extends template\parser\handler\Elemented {
 
     $this->loadResult();
 
-    $resource = $this->parseElement($this->getx('*[local-name() = "resource"]')->remove());
+    $resource = $this->parseElement($this->getx('*[local-name() = "resource"]', true)->remove());
     $resource->setMode($sMode);
 
     $schema = $resource->setSchema($this->loadSchema());
@@ -148,8 +179,10 @@ class Elemented extends template\parser\handler\Elemented {
     //$this->loadTemplates();
     $schema->loadTemplates($this->getTemplates());
 
-    $tpl = $this->getTemplate();
-    $tpl->setTree($resource->getTree());
+    return $resource->getTree();
+
+    //$tpl = $this->getTemplate();
+    //$tpl->setTree($tree);
   }
 
   protected function loadSchema() {

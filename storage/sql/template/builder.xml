@@ -11,6 +11,7 @@
         <component>
           <cls:classes>
             <cls:base>\sylma\storage\sql\template\component</cls:base>
+            <cls:class alias="collection" name="Collection"/>
             <cls:class alias="table" name="Table"/>
             <cls:class alias="field" name="Field"/>
             <cls:class alias="foreign" name="Foreign"/>

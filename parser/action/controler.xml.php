@@ -3,7 +3,7 @@
 'debug' => array(
   'show' => '0',
   'run' => '1',
-  'update' => '1'),
+  'update' => '0'),
 'cache' => array(
   'elements' => array(
     'directory' => 'getDirectory',

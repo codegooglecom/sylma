@@ -10,10 +10,11 @@
     <hollow>/#sylma/storage/sql/template/hollow.xml</hollow>
   </argument>
   <cls:classes>
+    <cls:base>\sylma\storage\sql</cls:base>
+    <cls:class alias="collection" name="template\component\Collection"/>
     <component>
       <cls:classes>
-        <cls:base>\sylma\storage\sql\view</cls:base>
-        <cls:class alias="filter" name="Filter"/>
+        <cls:class alias="filter" name="view\Filter"/>
       </cls:classes>
     </component>
   </cls:classes>

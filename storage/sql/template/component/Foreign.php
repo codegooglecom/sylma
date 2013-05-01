@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template\component;
 use sylma\core, sylma\storage\sql, sylma\parser\languages\common, sylma\schema\parser;
 
-class Foreign extends sql\schema\component\Foreign implements sql\template\field {
+class Foreign extends sql\schema\component\Foreign implements sql\template\pathable, parser\element {
 
   protected $parent;
   protected $query;
@@ -103,7 +103,14 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
       $this->throwException('Not yet implemented');
     }
 
-    return $this->getElementRef()->reflectApply('', $sMode);
+    $element = $this->getElementRef();
+
+    $collection = $this->loadSimpleComponent('component/collection');
+
+    $collection->setQuery($element->getQuery());
+    $collection->setTable($element);
+
+    return $collection->reflectApply('*', $sMode);
   }
 
   public function reflectApply($sPath, $sMode = '') {
@@ -136,32 +143,32 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
     $parent = $this->getParent();
     $sNamespace = $this->getNamespace();
 
-    $result = $this->loadSimpleComponent('component/table');
-    $result->setName($sName);
-    $result->loadNamespace($sNamespace);
+    $table = $this->loadSimpleComponent('component/table');
+    $table->setName($sName);
+    $table->loadNamespace($sNamespace);
 
     $type = $this->loadSimpleComponent('component/complexType');
     //$type->loadNamespace($sNamespace);
 
-    $result->setType($type);
+    $table->setType($type);
 
     $particle = $this->loadSimpleComponent('component/particle');
     $type->addParticle($particle);
 
     $el1 = $this->loadSimpleComponent('component/field');
     $el1->setName('id_' . $parent->getName());
-    $el1->setParent($result);
+    $el1->setParent($table);
     $el1->loadNamespace($sNamespace);
 
     $el2 = $this->loadSimpleComponent('component/field');
     $el2->setName('id_' . $target->getName());
-    $el2->setParent($result);
+    $el2->setParent($table);
     $el2->loadNamespace($sNamespace);
 
     $particle->addElement($el1);
     $particle->addElement($el2);
 
-    return array($result, $el1, $el2);
+    return array($table, $el1, $el2);
   }
 
   protected function applyElement(Table $element, $sMode) {
@@ -174,17 +181,29 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\field
 
       $id = $parent->getElement('id', $element->getNamespace());
 
-      list($junction, $source, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
+      list($table, $source, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
 
-      $select1 = $this->loadSimpleComponent('template/select');
-      $select1->setTable($junction);
-      $select1->setWhere($source, '=', $id->reflectRead());
+      $query = $table->getQuery();
+      $collection = $this->getParser()->createCollection();
+
+      $collection->setQuery($table->getQuery());
+      $collection->setTable($element);
+
+      //$query = $this->loadSimpleComponent('template/select');
+      //$query->setTable($table);
+      $query->setWhere($source, '=', $id->reflectRead());
       //$select1->isMultiple(true);
 
-      $element->setQuery($select1);
-      $select1->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
+      $element->setQuery($query);
+      $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
 
-      $result = $element->reflectApply('', $sMode);
+      //$result = $element->reflectApply('', $sMode);
+      $result = $collection->reflectApply('*', $sMode);
+      //array(
+        //$collection->reflectApply('*', $sMode),
+        //$element->reflectApply('', $sMode),
+      //);
+
       //$result = array($loop);
     }
     else {

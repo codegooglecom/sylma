@@ -10,12 +10,13 @@ class Table extends sql\template\component\Table {
     if (!$this->query) {
 
       $this->setQuery($this->createQuery('insert'));
+      //$this->getQuery()->isMultiple(false);
     }
 
     return $this->query;
   }
 
-  public function reflectApply($sPath, $sMode = '*') {
+  public function reflectApply($sPath = '', $sMode = '') {
 
     return parent::reflectApply($sPath, $sMode);
   }

@@ -308,7 +308,7 @@ abstract class Window extends core\module\Domed {
     }
     else if (is_object($mContent)) {
 
-      $result = $this->objectToString($mContent);
+      $result = $this->objectToString($mContent, $target);
       //$result = $mContent;
     }
     else {
@@ -319,11 +319,11 @@ abstract class Window extends core\module\Domed {
     return $result;
   }
 
-  protected function objectToString($val) {
+  protected function objectToString($val, common\_var $target = null) {
 
     if ($val instanceof common\arrayable) {
 
-      $result = $this->arrayToString($this->parseArrayable($val));
+      $result = $this->arrayToString($this->parseArrayable($val), $target);
     }
     else if ($val instanceof core\argument) {
 
@@ -379,11 +379,11 @@ abstract class Window extends core\module\Domed {
     return $this->create('test', array($this, $val1, $val2, $op));
   }
 
-  public function setVariable(common\_var $var) {
+  public function setVariable(common\_var $var, $bDebug = true) {
 
     $sName = $var->getName();
 
-    if (array_key_exists($sName, $this->aVariables)) {
+    if ($bDebug && array_key_exists($sName, $this->aVariables)) {
 
       $this->throwException(sprintf('Variable %s ever registered', $sName));
     }

@@ -23,7 +23,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $el = $this->setNode($el);
     $this->allowForeign(true);
 
-    $this->parseSource();
+    //$this->parseSource();
 
     return $this;
   }
@@ -37,7 +37,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
       $this->parseID($id);
       $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
-      $query->isMultiple(false);
+      //$query->isMultiple(false);
     }
 
     //$this->setQuery($query);
@@ -58,18 +58,31 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     return $this->query;
   }
 
-  protected function build(fs\file $file) {
+  protected function build(fs\file $schema) {
 
-    $builder = $this->getManager('parser')->loadBuilder($file, null, $this->getArguments());
+    $builder = $this->getManager('parser')->loadBuilder($schema, null, $this->getArguments());
 
-    $schema = $builder->getSchema($file, $this->getWindow());
+    $schema = $builder->getSchema($schema, $this->getWindow());
     $schema->setView($this->getParent());
 
     $root = $schema->getElement();
-    $root->isRoot(true);
 
-    $this->setTree($root);
-    $this->addID();
+    if ($this->readx('@multiple')) {
+
+      $collection = $schema->createCollection();
+
+      $collection->setQuery($root->getQuery());
+      $collection->setTable($root);
+
+      $this->setTree($collection);
+    }
+    else {
+
+      $this->setTree($root);
+      $this->addID();
+    }
+
+    $this->getTree()->isRoot(true);
 
     return $schema;
   }

@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\template\view;
-use sylma\core, sylma\storage\sql\template\component, sylma\template, sylma\schema\parser;
+use sylma\core, sylma\storage\sql;
 
-class Field extends component\Field {
+class Field extends sql\template\component\Field implements sql\template\pathable {
 
   protected function reflectApplySelf($sMode = '') {
 

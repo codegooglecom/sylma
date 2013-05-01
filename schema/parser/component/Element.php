@@ -3,7 +3,7 @@
 namespace sylma\schema\parser\component;
 use sylma\core, sylma\schema\parser, sylma\parser\reflector, sylma\parser\languages\common;
 
-class Element extends Basic implements parser\element, common\stringable {
+class Element extends Basic implements parser\element, common\stringable, core\tokenable {
 
   protected $sName = '';
   protected $type;
@@ -98,6 +98,11 @@ class Element extends Basic implements parser\element, common\stringable {
   public function asString() {
 
     return $this->getParent()->asString() . '.`' . $this->getName() . "`";
+  }
+
+  public function asToken() {
+
+    return "schema:element [{$this->getNamespace()}:{$this->getName()}]";
   }
 }
 

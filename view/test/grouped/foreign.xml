@@ -32,7 +32,6 @@
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
@@ -52,7 +51,6 @@
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
@@ -74,7 +72,6 @@
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
@@ -97,7 +94,6 @@
     <tst:document>
       <view:view group:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
@@ -117,7 +113,6 @@
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
@@ -140,7 +135,6 @@
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
@@ -160,7 +154,6 @@
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
@@ -179,7 +172,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user3.xql</view:schema>

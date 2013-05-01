@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
-abstract class _Var extends common\basic\Controled implements common\_var, common\addable {
+abstract class _Var extends common\basic\Controled implements common\_var, common\addable, core\tokenable {
 
   private $sName = '';
   protected $instance;
@@ -106,5 +106,10 @@ abstract class _Var extends common\basic\Controled implements common\_var, commo
         '@name' => $this->sName,
       ),
     ));
+  }
+
+  public function asToken() {
+
+    return "php:var [name={$this->getName()}]";
   }
 }

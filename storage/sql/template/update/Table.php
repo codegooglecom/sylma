@@ -10,6 +10,7 @@ class Table extends sql\template\insert\Table {
     if (!$this->query) {
 
       $this->setQuery($this->createQuery('update'));
+      //$this->getQuery()->isMultiple(false);
     }
 
     return $this->query;

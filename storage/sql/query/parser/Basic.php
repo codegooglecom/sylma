@@ -6,8 +6,8 @@ use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 abstract class Basic extends reflector\component\Foreigner implements common\addable {
 
   protected $bAdded = false;
-  protected $bMultiple = true;
-  
+  protected $bMultiple = false;
+
   protected $aColumns = array();
   protected $aTables = array();
   protected $aWheres = array();

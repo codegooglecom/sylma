@@ -56,8 +56,8 @@
       <view:view user:ns="ns" mode="update">
         <sql:resource>
           <sql:source>test</sql:source>
+          <sql:id><le:argument name="id" source="post"/></sql:id>
         </sql:resource>
-        <sql:filter name="id"><le:argument name="id" source="post"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <tpl:apply select="name, email"/>
