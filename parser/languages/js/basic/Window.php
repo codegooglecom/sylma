@@ -98,6 +98,11 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     $this->launchException('Not yet implemented');
   }
 
+  public function createNot($mContent) {
+
+    $this->launchException('Not yet implemented');
+  }
+
   public function addVar(common\argumentable $val, $sName = '') {
 
     $this->throwException('Not yet implemented');

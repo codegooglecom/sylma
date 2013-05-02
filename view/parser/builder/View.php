@@ -56,6 +56,11 @@ class View extends Variabled {
     return $this->createFile($target, $return);
   }
 
+  /**
+   *
+   * @param type $sMode
+   * @return common\_window
+   */
   protected function prepareWindow($sMode) {
 
     $window = $this->createWindow();

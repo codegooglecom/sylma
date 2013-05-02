@@ -9,6 +9,7 @@
   xmlns:sql="http://2013.sylma.org/storage/sql/view"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:le="http://2013.sylma.org/action"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -22,7 +23,6 @@
       <crud:crud>
         <view:view mode="view">
           <sql:resource>
-            <sql:source>test</sql:source>
             <sql:id>1</sql:id>
           </sql:resource>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -42,11 +42,11 @@
       </div>
     </tst:node>
     <tst:expected>
-      $result = $controler->loadScript();
-      $node = $controler->getArgument('node');
+      $result = $manager->loadScript();
+      $node = $manager->getArgument('node');
 
       return
-        $controler->compareNodes($result, $node);
+        $manager->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
   <tst:test name="Using global">
@@ -55,7 +55,6 @@
         <view:view mode="view"/>
         <crud:global>
           <sql:resource>
-            <sql:source>test</sql:source>
             <sql:id>1</sql:id>
           </sql:resource>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -75,11 +74,396 @@
       </div>
     </tst:node>
     <tst:expected>
-      $result = $controler->loadScript();
-      $node = $controler->getArgument('node');
+      $result = $manager->loadScript();
+      $node = $manager->getArgument('node');
 
       return
-        $controler->compareNodes($result, $node);
+        $manager->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Route insert">
+    <tst:document>
+      <crud:crud>
+        <crud:route name="insert">
+          <view:view mode="hollow"/>
+          <view:view name="do" mode="insert"/>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource/>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+          <view:template match="user:*">
+            <tpl:register/>
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <input type="text" name="name" value=""/>
+        <input type="text" name="email" value=""/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $view = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'insert',
+        )),
+      ));
+      $node = $manager->getArgument('node');
+
+      $sID = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'insert', 'do'
+        )),
+        'post' => $manager->createArgument(array(
+          'name' => 'tester_crud',
+          'email' => 'tester_crud@sylma.org',
+        )),
+      ));
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
+      $manager->set('id', $sID);
+
+      return
+        $manager->compareNodes($view, $node) &amp;&amp;
+        $user->read('name') === 'tester_crud' &amp;&amp;
+        $user->read('email') === 'tester_crud@sylma.org';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Route update">
+    <tst:document>
+      <crud:crud>
+        <crud:route name="update">
+          <view:view mode="view">
+            <sql:filter name="id"><le:argument name="id"/></sql:filter>
+          </view:view>
+          <view:view name="do" mode="update">
+            <sql:filter name="id"><le:argument name="id" source="post"/></sql:filter>
+          </view:view>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource/>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+          <view:template match="user:*">
+            <tpl:register/>
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <input type="text" name="name" value="tester_crud"/>
+        <input type="text" name="email" value="tester_crud@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+      $sID = $manager->read('id');
+
+      $view = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update',
+          'id' => $sID,
+        )),
+      ));
+      $node = $manager->getArgument('node');
+
+      $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update', 'do'
+        )),
+        'post' => $manager->createArgument(array(
+          'name' => 'tester_crud2',
+          'email' => 'tester_crud2@sylma.org',
+          'id' => $sID,
+        )),
+      ));
+
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
+      //$manager->runQuery("DELETE FROM user WHERE id = $sID", false);
+
+      return
+        $manager->compareNodes($view, $node) &amp;&amp;
+        $user->read('name') === 'tester_crud2' &amp;&amp;
+        $user->read('email') === 'tester_crud2@sylma.org';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Route view">
+    <tst:document>
+      <crud:crud>
+        <crud:route name="view">
+          <view:view mode="view">
+            <view:template match="user:*">
+              <input type="text" name="{alias()}" value="{apply()}"/>
+            </view:template>
+          </view:view>
+          <view:view name="sub" mode="view">
+            <view:template match="user:*">
+              <textarea type="text" name="{alias()}" value="{apply()}"/>
+            </view:template>
+          </view:view>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource>
+            <sql:id>2</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="main">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <input type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <textarea type="text" name="name" value="admin"/>
+        <textarea type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'view',
+        )),
+      ));
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'view', 'sub'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view1, $node->get('main')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('sub'))
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Default route">
+    <tst:document>
+      <crud:crud>
+        <crud:route>
+          <view:view mode="view">
+            <view:template match="user:*">
+              <input type="text" name="{alias()}" value="{apply()}"/>
+            </view:template>
+          </view:view>
+          <view:view name="sub" mode="view">
+            <view:template match="user:*">
+              <textarea type="text" name="{alias()}" value="{apply()}"/>
+            </view:template>
+          </view:view>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource>
+            <sql:id>2</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="main">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <input type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <textarea type="text" name="name" value="admin"/>
+        <textarea type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript();
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view1, $node->get('main')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('sub'))
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple routes">
+    <tst:document>
+      <crud:crud>
+        <crud:route>
+          <view:view mode="view">
+            <sql:filter name="id">2</sql:filter>
+          </view:view>
+          <view:view name="sub" mode="view">
+            <sql:filter name="id">2</sql:filter>
+          </view:view>
+        </crud:route>
+        <crud:route name="update">
+          <view:view mode="view">
+            <sql:filter name="id"><le:argument name="id"/></sql:filter>
+          </view:view>
+          <view:view name="do" mode="update">
+            <sql:filter name="id"><le:argument name="id" source="post"/></sql:filter>
+          </view:view>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource/>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+          <view:template match="user:*">
+            <tpl:register/>
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="view">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <input type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="update">
+      <form>
+        <input type="text" name="name" value="tester_crud2"/>
+        <input type="text" name="email" value="tester_crud2@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $sID = $manager->read('id');
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript();
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      $update = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update',
+          'id' => $sID,
+        )),
+      ));
+
+      $result = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update', 'do'
+        )),
+        'post' => $manager->createArgument(array(
+          'name' => 'tester_crud3',
+          'email' => 'tester_crud3@sylma.org',
+          'id' => $sID,
+        )),
+      ));
+
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
+
+      return
+        $manager->compareNodes($view1, $node->get('view')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('view')) &amp;&amp;
+        $manager->compareNodes($update, $node->get('update')) &amp;&amp;
+        $user->read('name') === 'tester_crud3' &amp;&amp;
+        $user->read('email') === 'tester_crud3@sylma.org';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Local element">
+    <tst:document>
+      <crud:crud>
+        <crud:route>
+          <crud:local>
+            <sql:resource>
+              <sql:id>2</sql:id>
+            </sql:resource>
+          </crud:local>
+          <view:view mode="view">
+            <view:template match="user:*">
+              <input type="text" name="{alias()}" value="{apply()}"/>
+            </view:template>
+          </view:view>
+          <view:view name="sub" mode="view">
+            <view:template match="user:*">
+              <textarea type="text" name="{alias()}" value="{apply()}"/>
+            </view:template>
+          </view:view>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="main">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <input type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <textarea type="text" name="name" value="admin"/>
+        <textarea type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript();
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view1, $node->get('main')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('sub'))
     </tst:expected>
   </tst:test>
 </tst:tests>

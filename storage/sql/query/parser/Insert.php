@@ -46,9 +46,9 @@ class Insert extends Basic implements common\argumentable {
     $this->getWindow()->loadContent($this->aValues);
   }
 
-  protected function build($sMethod = '') {
+  protected function build($sMethod = 'insert') {
 
-    parent::build('insert');
+    parent::build($sMethod);
   }
 }
 

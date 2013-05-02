@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\fs, sylm
 
 class Router extends View {
 
+  const ROUTE_DEFAULT = 'default';
+
   public function build() {
 
     $this->setDirectory(__FILE__);
@@ -57,6 +59,18 @@ class Router extends View {
     $result = $window->addVar($window->createVar($window->argToInstance(null), 'result'));
 
     $switch = $this->createSwitch($window);
+
+    if ($route = $reflector->getDefault()) {
+
+      $route->setAlias(self::ROUTE_DEFAULT);
+      $arguments = $window->getVariable(self::ARGUMENTS_NAME);
+
+      $if = $window->createCondition(
+              $window->createNot($arguments->call('query')),
+              $arguments->call('add', array(self::ROUTE_DEFAULT)));
+
+      $window->add($if);
+    }
 
     foreach ($aRoutes as $sub) {
 
@@ -115,11 +129,11 @@ class Router extends View {
 
     $sub = $route->getSub();
     $form = $this->buildView($sub->asDocument(), $this->loadSelfTarget($file, $sub->getName()));
-    
-    $arguments = $window->getVariable('arguments');
+
+    $arguments = $window->getVariable(self::ARGUMENTS_NAME);
 
     $getArgument = $arguments->call(self::ARGUMENT_METHOD);
-    $result = $window->createCondition($window->createTest($getArgument, 'do', '=='));
+    $result = $window->createCondition($window->createTest($getArgument, $sub->getAlias(true), '=='));
 
     $result->addContent($arguments->call('shift'));
     $result->addContent($this->callScript($form, $window, $window->tokenToInstance('php-integer')));
@@ -130,7 +144,7 @@ class Router extends View {
 
   protected function createSwitch(common\_window $window) {
 
-    $call = $window->createCall($window->getVariable('arguments'), 'shift', 'php-string');
+    $call = $window->createCall($window->getVariable(self::ARGUMENTS_NAME), 'shift', 'php-string');
     $result = $window->createSwitch($call);
 
     return $result;

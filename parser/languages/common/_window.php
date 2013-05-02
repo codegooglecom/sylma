@@ -35,7 +35,8 @@ interface _window extends scope {
   function createInstruction(common\argumentable $content);
   function createInstanciate(common\_instance $instance, array $aArguments = array());
   function createCondition($test, $content = null);
-
+  function createNot($mContent);
+  
   /**
    * @return _instance
    */

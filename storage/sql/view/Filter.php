@@ -27,7 +27,7 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
     }
 
     $query->setWhere($tree->getElement($this->readx('@name', true), $tree->getNamespace()), '=', $content);
-    $query->isMultiple(!$this->readx('@single'));
+    //$query->isMultiple(!$this->readx('@single'));
   }
 
   public function asArray() {

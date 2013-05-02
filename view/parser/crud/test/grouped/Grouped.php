@@ -1,15 +1,23 @@
 <?php
 
 namespace sylma\view\parser\crud\test\grouped;
-use sylma\core, sylma\modules\tester, sylma\storage\fs;
+use sylma\core, sylma\modules\tester, sylma\storage\fs, sylma\storage\sql;
 
 class Grouped extends tester\Parser implements core\argumentable {
 
+  const DB_MANAGER = 'mysql';
+
   protected $sTitle = 'CRUD';
+  protected static $sArgumentClass = '\sylma\core\argument\Readable';
 
   public function __construct() {
 
     $this->setDirectory(__file__);
+
+    $arg = $this->createArgument('/#sylma/view/test/database.xml');
+    \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
+
+    $this->runQuery($arg->read('script'));
 
     parent::__construct();
   }
@@ -21,13 +29,37 @@ class Grouped extends tester\Parser implements core\argumentable {
     return null;
   }
 
+  protected function test(\sylma\dom\element $test, $sContent, $controler, \sylma\dom\document $doc, fs\file $file) {
+
+    $result = parent::test($test, $sContent, $controler, $doc, $file);
+
+    //$this->getFile()->delete();
+
+    return $result;
+  }
+
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
+  }
+
+  public function set($sPath, $mValue = null) {
+
+    return parent::set($sPath, $mValue);
+  }
+
   public function loadScript(array $aArguments = array()) {
 
     $manager = $this->getManager(self::PARSER_MANAGER);
     $result = $manager->load($this->getFile(), $aArguments, false);
-    $this->getFile()->delete();
 
     return $result;
+  }
+
+  public function runQuery($sValue, $bMultiple = true) {
+
+    $db = $this->getManager(self::DB_MANAGER);
+    return $bMultiple ? $db->query($sValue) : $db->get($sValue);
   }
 }
 

@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template\component;
 use sylma\core, sylma\storage\sql, sylma\template, sylma\schema\parser;
 
-abstract class Field extends sql\schema\component\Field implements template\parser\tree {
+abstract class Field extends sql\schema\component\Field implements sql\template\pathable {
 
   protected $parent;
   protected $query;

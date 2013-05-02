@@ -5,6 +5,8 @@ use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 
 abstract class Variabled extends reflector\handler\Documented {
 
+  const ARGUMENTS_NAME = 'arguments';
+
   protected function prepareFormed(common\_window $window) {
 
     $this->prepareArgumented($window);
@@ -16,7 +18,7 @@ abstract class Variabled extends reflector\handler\Documented {
   protected function prepareArgumented(common\_window $window) {
 
     $window->createVariable('aSylmaArguments', 'php-array');
-    $window->checkVariable('arguments', get_class($this->create('argument')));
+    $window->checkVariable(self::ARGUMENTS_NAME, get_class($this->create('argument')));
 
     return $window;
   }

@@ -28,9 +28,24 @@ class Update extends Insert {
 
     $sTable = current($this->getTables());
 
-    $aQuery = array('UPDATE ', $sTable, $this->getSets(), $this->getWheres());
+    if (!$aWheres = $this->getWheres()) {
+
+      $this->launchException('Cannot build update query without where clause');
+    }
+
+    if (!$this->aSets) {
+
+      $this->launchException('Cannot build update query without registered fields');
+    }
+
+    $aQuery = array('UPDATE ', $sTable, $this->getSets(), $aWheres);
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
+  }
+
+  protected function build($sMethod = 'read') {
+
+    parent::build($sMethod);
   }
 }
 

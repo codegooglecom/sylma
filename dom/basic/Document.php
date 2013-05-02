@@ -102,9 +102,12 @@ class Document extends \DOMDocument implements dom\document {
     return !$this->getRoot();
   }
 
-  public function getHandler() {
+  public function getHandler($bDebug = true) {
 
-    if (!$this->handler) $this->throwException(t('No handler defined'));
+    if ($bDebug && !$this->handler) {
+
+      $this->throwException('No handler defined');
+    }
 
     return $this->handler;
   }
@@ -116,10 +119,14 @@ class Document extends \DOMDocument implements dom\document {
 
   public function throwException($sMessage, array $aPath = array()) {
 
-    $handler = $this->getHandler();
-    //$aPath[] = '@file ' . $this->getPath();
+    if ($handler = $this->getHandler(false)) {
 
-    $handler->throwException($sMessage, $aPath);
+      $handler->throwException($sMessage, $aPath);
+    }
+    else {
+
+      \Sylma::throwException($sMessage, $aPath);
+    }
   }
 
   public function display($bHtml = false, $bDeclaration = true) {

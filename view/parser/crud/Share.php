@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom, sylma\parser\reflector;
 
-class _Global extends reflector\component\Foreigner implements dom\domable {
+class Share extends reflector\component\Foreigner implements dom\domable {
 
   public function parseRoot(dom\element $el) {
 

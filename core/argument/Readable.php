@@ -65,6 +65,11 @@ class Readable extends Domed implements core\argument {
 
       $sKey = current($aPath);
 
+      if (!is_array($mCurrent)) {
+
+        $this->launchException('Cannot set a value into object');
+      }
+
       if (!array_key_exists($sKey, $mCurrent)) $mCurrent[$sKey] = array();
       $mPrevious =& $mCurrent;
       $mCurrent =& $mCurrent[$sKey];

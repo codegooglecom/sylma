@@ -88,8 +88,15 @@ class Parser extends tester\Prepare {
 
   protected function loadResultNode(dom\element $test) {
 
-    $el = $test->getx('self:node', array(), false);
-    if ($el) $this->set('node', $el->getFirst());
+    $this->setArgument('node', null);
+
+    foreach($test->queryx('self:node', array(), false) as $node) {
+
+      if ($sName = $node->readx('@name', array(), false)) $sName = "node/$sName";
+      else $sName = 'node';
+
+      $this->set($sName, $node->getFirst());
+    }
   }
 
   protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
@@ -116,6 +123,11 @@ class Parser extends tester\Prepare {
   public function get($sPath, $bDebug = true) {
 
     return parent::get($sPath, $bDebug);
+  }
+
+  public function read($sPath, $bDebug = true) {
+
+    return parent::read($sPath, $bDebug);
   }
 
   public function getArgument($sPath, $bDebug = true, $mDefault = null) {

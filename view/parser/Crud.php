@@ -9,6 +9,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
   const VIEW_PREFIX = 'view';
 
   protected $global;
+  protected $default;
   protected $aRoutes = array();
 
   public function parseRoot(dom\element $el) {
@@ -24,8 +25,36 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     switch ($el->getName()) {
 
       case 'global' : $this->global = $this->parseComponent($el); break;
+      case 'route' : $this->aRoutes[] = $this->parseRoute($el); break;
       default : $this->aRoutes[] = $this->parseComponent($el);
     }
+  }
+
+  protected function parseRoute(dom\element $el) {
+
+    $result = $this->parseComponent($el);
+
+    if (!$result->getAlias()) {
+
+      $this->setDefault($result);
+    }
+
+    return $result;
+  }
+
+  protected function setDefault(crud\Route $route) {
+
+    if ($this->default) {
+
+      $this->launchException('Cannot have more than one default route', get_defined_vars());
+    }
+
+    $this->default = $route;
+  }
+
+  public function getDefault() {
+
+    return $this->default;
   }
 
   public function getRoutes() {

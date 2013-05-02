@@ -14,7 +14,8 @@
             <cls:base>\sylma\view\parser\crud</cls:base>
             <cls:class alias="view" name="View"/>
             <cls:class alias="route" name="Route"/>
-            <cls:class alias="global" name="_Global"/>
+            <cls:class alias="global" name="Share"/>
+            <cls:class alias="local" name="Share"/>
           </cls:classes>
         </component>
       </cls:classes>

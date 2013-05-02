@@ -3,19 +3,28 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom;
 
-class Route extends Routed {
+class Route extends Basic implements dom\domable {
+
+  protected $local;
 
   public function parseRoot(dom\element $el) {
-
-    if ($el->countChildren() != 2) {
-
-      $this->launchException('Route should contains exactly 2 children');
-    }
 
     $this->setNode($el);
 
     $this->main = $this->loadView($this->getx('view:view[not(@name)]', true));
     $this->sub = $this->loadView($this->getx('view:view[@name]', true));
+
+    if ($local = $this->getx('self:local')) {
+
+      $this->local = $this->parseComponent($local);
+    }
+
+    $this->loadAlias();
+  }
+
+  public function setAlias($sValue) {
+
+    return parent::setAlias($sValue);
   }
 
   protected function loadView(dom\element $el) {
@@ -34,6 +43,11 @@ class Route extends Routed {
   public function getSub() {
 
     return $this->sub;
+  }
+
+  public function asDOM() {
+
+    return $this->local ? $this->local->asDOM() : null;
   }
 }
 
