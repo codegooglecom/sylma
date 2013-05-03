@@ -22,20 +22,16 @@ class Grouped extends tester\Parser implements core\argumentable {
     parent::__construct();
   }
 
+  public function load($sPath, array $aArguments = array(), $bUpdate = true) {
+
+    return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $aArguments, $bUpdate);
+  }
+
   protected function loadResult($manager, fs\file $file, array $aArguments) {
 
     $this->setFile($file);
 
     return null;
-  }
-
-  protected function test(\sylma\dom\element $test, $sContent, $controler, \sylma\dom\document $doc, fs\file $file) {
-
-    $result = parent::test($test, $sContent, $controler, $doc, $file);
-
-    //$this->getFile()->delete();
-
-    return $result;
   }
 
   public function createArgument($mArguments, $sNamespace = '') {

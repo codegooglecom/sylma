@@ -11,7 +11,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
   protected $global;
   protected $default;
 
-  protected $aRoutes = array();
+  protected $aPaths = array();
   protected $aGroups = array();
 
   public function parseRoot(dom\element $el) {
@@ -20,6 +20,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     $this->setNamespace(self::VIEW_NS, self::VIEW_PREFIX);
 
     $this->parseChildren($el->getChildren());
+    $this->loadExtends();
   }
 
   protected function parseElementSelf(dom\element $el) {
@@ -28,7 +29,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
       case 'global' : $this->global = $this->parseComponent($el); break;
       case 'view' :
-      case 'route' : $this->aRoutes[] = $this->parseAliased($el); break;
+      case 'route' : $this->parsePath($el); break;
       case 'group' : $this->parseGroup($el); break;
       default :
 
@@ -36,16 +37,45 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     }
   }
 
-  protected function parseAliased(dom\element $el) {
+  protected function loadExtends() {
+
+    if ($sPath = $this->readx('@extends')) {
+
+      $file = $this->getSourceFile($sPath);
+
+      $reflector = clone $this;
+      $reflector->parseRoot($file->getDocument()->getRoot());
+
+      foreach ($reflector->getPaths() as $path) {
+
+        if ($parent = $this->getPath($path->getName())) {
+
+          $parent->merge($path);
+        }
+        else {
+
+          $this->addPath($path);
+        }
+      }
+    }
+  }
+
+  protected function parsePath(dom\element $el) {
 
     $result = $this->parseComponent($el);
-
-    if (!$result->getAlias(true)) {
-
-      $this->setDefault($result);
-    }
+    $this->addPath($result);
 
     return $result;
+  }
+
+  protected function addPath(crud\Path $path) {
+
+    if (!$path->getName()) {
+
+      $this->setDefault($path);
+    }
+
+    $this->aPaths[$path->getName()] = $path;
   }
 
   protected function parseGroup(dom\element $el) {
@@ -58,8 +88,8 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
     return $this->aGroups[$sName];
   }
-  
-  protected function setDefault(crud\Basic $route) {
+
+  protected function setDefault(crud\Path $route) {
 
     if ($this->default) {
 
@@ -74,9 +104,14 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     return $this->default;
   }
 
-  public function getRoutes() {
+  public function getPaths() {
 
-    return $this->aRoutes;
+    return $this->aPaths;
+  }
+
+  protected function getPath($sName) {
+
+    return isset($this->aPaths[$sName]) ? $this->aPaths[$sName] : null;
   }
 
   public function getGlobal() {
@@ -84,5 +119,11 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     return $this->global;
   }
 
+  public function __clone() {
+
+    $this->default = null;
+    $this->aPaths = array();
+    $this->aGroups = array();
+  }
 }
 

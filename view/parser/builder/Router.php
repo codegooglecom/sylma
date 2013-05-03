@@ -5,8 +5,6 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\fs, sylm
 
 class Router extends View {
 
-  const ROUTE_DEFAULT = 'default';
-
   public function build() {
 
     $this->setDirectory(__FILE__);
@@ -50,7 +48,10 @@ class Router extends View {
     $reflector = $this->buildCrudReflector();
     //$window = $this->getWindow();
 
-    $aRoutes = $reflector->getRoutes();
+    if (!$aPaths = $reflector->getPaths()) {
+
+      $this->launchException('No path defined');
+    }
 
     $window = $this->prepareWindow(self::MODE_DEFAULT);
     //$this->setWindow($window);
@@ -60,30 +61,29 @@ class Router extends View {
 
     $switch = $this->createSwitch($window);
 
-    if ($route = $reflector->getDefault()) {
+    if ($path = $reflector->getDefault()) {
 
-      $route->setAlias(self::ROUTE_DEFAULT);
       $arguments = $window->getVariable(self::ARGUMENTS_NAME);
 
       $if = $window->createCondition(
               $window->createNot($arguments->call('query')),
-              $arguments->call('add', array(self::ROUTE_DEFAULT)));
+              $arguments->call('add', array($path->getAlias())));
 
       $window->add($if);
     }
 
-    foreach ($aRoutes as $sub) {
+    foreach ($aPaths as $path) {
 
-      if ($sub instanceof crud\Route) {
+      if ($path instanceof crud\Route) {
 
-        $content = $this->reflectRoute($sub, $window);
+        $content = $this->reflectRoute($path, $window);
       }
       else {
 
-        $content = $this->reflectViewComponent($sub, $window);
+        $content = $this->reflectViewComponent($path, $window);
       }
 
-      $switch->addCase($sub->getAlias(true), $content);
+      $switch->addCase($path->getAlias(), $content);
     }
 
     $window->add($switch);
@@ -94,7 +94,7 @@ class Router extends View {
 
   protected function reflectViewComponent(crud\View $view, common\_window $window) {
 
-    $file = $this->buildView($view->asDocument(), $this->loadSelfTarget($this->getFile(), $view->getName()));
+    $file = $this->buildView($view->asDocument(), $this->loadSelfTarget($this->getFile(), $view->getAlias()));
 
     return $this->callScript($file, $window, $window->tokenToInstance('\sylma\dom\handler'));
   }
@@ -125,15 +125,15 @@ class Router extends View {
     $file = $this->getFile();
 
     $main = $route->getMain();
-    $view = $this->buildView($main->asDocument(), $this->loadSelfTarget($file, $main->getName()));
+    $view = $this->buildView($main->asDocument(), $this->loadSelfTarget($file, $main->getAlias()));
 
     $sub = $route->getSub();
-    $form = $this->buildView($sub->asDocument(), $this->loadSelfTarget($file, $sub->getName()));
+    $form = $this->buildView($sub->asDocument(), $this->loadSelfTarget($file, $sub->getAlias()));
 
     $arguments = $window->getVariable(self::ARGUMENTS_NAME);
 
     $getArgument = $arguments->call(self::ARGUMENT_METHOD);
-    $result = $window->createCondition($window->createTest($getArgument, $sub->getAlias(true), '=='));
+    $result = $window->createCondition($window->createTest($getArgument, $sub->getName(), '=='));
 
     $result->addContent($arguments->call('shift'));
     $result->addContent($this->callScript($form, $window, $window->tokenToInstance('php-integer')));

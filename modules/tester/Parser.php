@@ -18,7 +18,8 @@ class Parser extends tester\Prepare {
 
     $this->exportDirectory = $this->loadCacheDirectory($this->getDirectory());
 
-    $this->setSettings(array());
+    $this->setArguments(array());
+    $this->setSettings($this->getArguments());
     //$this->setFiles(array($this->getFile('basic.xml')));
   }
 
@@ -47,18 +48,21 @@ class Parser extends tester\Prepare {
 
   protected function parseResult(dom\element $test, fs\file $file, array $aArguments = array()) {
 
-    $document = $test->getx('self:document');
+    $result = null;
 
-    require_once('core/functions/Path.php');
-    $sName = core\functions\path\urlize($file->getName() . '-' . $test->readx('@name'));
+    if ($document = $test->getx('self:document', array(), false)) {
 
-    $cache = $this->getExportDirectory()->createFile($sName);
-    $cache->saveText((string) $this->createDocument($document->getFirst()));
+      require_once('core/functions/Path.php');
+      $sName = core\functions\path\urlize($file->getName() . '-' . $test->readx('@name'));
 
-    $manager = $this->getManager(self::PARSER_MANAGER);
-    $result = $this->buildResult($test, $manager, $cache, $aArguments);
+      $cache = $this->getExportDirectory()->createFile($sName);
+      $cache->saveText((string) $this->createDocument($document->getFirst()));
 
-    $this->set('result', $result);
+      $manager = $this->getManager(self::PARSER_MANAGER);
+      $result = $this->buildResult($test, $manager, $cache, $aArguments);
+
+      $this->set('result', $result);
+    }
 
     return $result;
   }

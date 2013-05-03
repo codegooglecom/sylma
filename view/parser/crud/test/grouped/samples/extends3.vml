@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+
+  extends="route1.vml"
+>
+  <crud:route>
+    <view:view>
+      <view:template match="user:*">
+        <button type="text" name="{alias()}" value="{apply()}"/>
+      </view:template>
+    </view:view>
+  </crud:route>
+</crud:crud>

@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom;
 
-class Route extends Basic implements dom\domable {
+class Route extends Path implements dom\domable {
 
   protected $local;
 
@@ -11,33 +11,59 @@ class Route extends Basic implements dom\domable {
 
     $this->setNode($el);
 
-    $this->main = $this->loadView($this->getx('view:view[not(@name)]', true));
-    $this->sub = $this->loadView($this->getx('view:view[@name]', true));
+    $this->main = $this->loadView($this->getx('view:view[not(@name)]'));
+    $this->sub = $this->loadView($this->getx('view:view[@name]'));
 
     if ($local = $this->getx('self:local')) {
 
       $this->local = $this->parseComponent($local);
     }
 
-    $this->loadAlias();
+    $this->loadName();
   }
 
-  protected function loadView(dom\element $el) {
+  protected function loadView(dom\element $el = null) {
 
-    $result = $this->loadComponent('component/' . $el->getName(), $el);
-    $result->parseRoot($el, $this);
+    $result = null;
+
+    if ($el) {
+
+      $result = $this->loadComponent('component/' . $el->getName(), $el);
+      $result->parseRoot($el, $this);
+    }
 
     return $result;
   }
 
-  public function getMain() {
+  public function getMain($bDebug = true) {
+
+    if ($bDebug && !$this->main) {
+
+      $this->launchException('No main route defined');
+    }
 
     return $this->main;
   }
 
-  public function getSub() {
+  public function getSub($bDebug = true) {
+
+    if ($bDebug && !$this->sub) {
+
+      $this->launchException('No sub route defined');
+    }
 
     return $this->sub;
+  }
+
+  public function merge($path) {
+
+    if (!$path instanceof self) {
+
+      $this->launchException('Cannot merge view into route');
+    }
+
+    $this->getMain(false) ? $this->getMain()->merge($path->getMain()) : $this->main = $path->getMain();
+    $this->getSub(false) ? $this->getSub()->merge($path->getSub()) : $this->sub = $path->getSub();
   }
 
   public function asDOM() {

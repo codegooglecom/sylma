@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom;
 
-class View extends Basic {
+class View extends Path {
 
   protected $route;
 
@@ -11,7 +11,7 @@ class View extends Basic {
 
     $this->setNode($el);
     if ($parent) $this->setRoute($parent);
-    $this->loadAlias();
+    $this->loadName();
   }
 
   public function getRoute() {
@@ -24,12 +24,17 @@ class View extends Basic {
     $this->route = $route;
   }
 
-  public function getName() {
+  public function getAlias() {
 
     $sPrefix = $this->getRoute() ? $this->getRoute()->getAlias() : '';
-    $sSuffix = parent::getAlias() ? '_' . parent::getAlias() : '';
+    $sContent = $this->getName() || $sPrefix ? $this->getName() : self::DEFAULT_FILE;
 
-    return $sPrefix . $sSuffix;
+    return $sPrefix . ($sPrefix && $sContent ? '_' : '') . $sContent;
+  }
+
+  public function merge($path) {
+
+    $this->getNode()->shift($path->asDocument()->queryx('* | @*'));
   }
 
   public function asDocument() {
