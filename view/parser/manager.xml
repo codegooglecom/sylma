@@ -16,6 +16,7 @@
             <cls:class alias="route" name="Route"/>
             <cls:class alias="global" name="Share"/>
             <cls:class alias="local" name="Share"/>
+            <cls:class alias="group" name="Share"/>
           </cls:classes>
         </component>
       </cls:classes>

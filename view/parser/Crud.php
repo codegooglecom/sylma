@@ -10,7 +10,9 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
   protected $global;
   protected $default;
+
   protected $aRoutes = array();
+  protected $aGroups = array();
 
   public function parseRoot(dom\element $el) {
 
@@ -25,16 +27,20 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     switch ($el->getName()) {
 
       case 'global' : $this->global = $this->parseComponent($el); break;
-      case 'route' : $this->aRoutes[] = $this->parseRoute($el); break;
-      default : $this->aRoutes[] = $this->parseComponent($el);
+      case 'view' :
+      case 'route' : $this->aRoutes[] = $this->parseAliased($el); break;
+      case 'group' : $this->parseGroup($el); break;
+      default :
+
+        $this->launchException('Unknown route', get_defined_vars());
     }
   }
 
-  protected function parseRoute(dom\element $el) {
+  protected function parseAliased(dom\element $el) {
 
     $result = $this->parseComponent($el);
 
-    if (!$result->getAlias()) {
+    if (!$result->getAlias(true)) {
 
       $this->setDefault($result);
     }
@@ -42,7 +48,18 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     return $result;
   }
 
-  protected function setDefault(crud\Route $route) {
+  protected function parseGroup(dom\element $el) {
+
+    $group = $this->parseComponent($el);
+    $this->aGroups[$group->getName()] = $group;
+  }
+
+  public function getGroup($sName) {
+
+    return $this->aGroups[$sName];
+  }
+  
+  protected function setDefault(crud\Basic $route) {
 
     if ($this->default) {
 

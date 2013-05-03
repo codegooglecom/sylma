@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:le="http://2013.sylma.org/action"
+>
+  <tst:description>Form</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="Route insert">
+    <tst:document>
+      <crud:crud>
+        <crud:route name="insert">
+          <view:view mode="hollow"/>
+          <view:view name="do" mode="insert"/>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource/>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+          <view:template match="user:*">
+            <tpl:register/>
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <input type="text" name="name" value=""/>
+        <input type="text" name="email" value=""/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $view = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'insert',
+        )),
+      ));
+      $node = $manager->getArgument('node');
+
+      $sID = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'insert', 'do'
+        )),
+        'post' => $manager->createArgument(array(
+          'name' => 'tester_crud',
+          'email' => 'tester_crud@sylma.org',
+        )),
+      ));
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
+      $manager->set('id', $sID);
+
+      return
+        $manager->compareNodes($view, $node) &amp;&amp;
+        $user->read('name') === 'tester_crud' &amp;&amp;
+        $user->read('email') === 'tester_crud@sylma.org';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Route update">
+    <tst:document>
+      <crud:crud>
+        <crud:route name="update">
+          <view:view mode="view">
+            <sql:filter name="id"><le:argument name="id"/></sql:filter>
+          </view:view>
+          <view:view name="do" mode="update">
+            <sql:filter name="id"><le:argument name="id" source="post"/></sql:filter>
+          </view:view>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource/>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+          <view:template match="user:*">
+            <tpl:register/>
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <input type="text" name="name" value="tester_crud"/>
+        <input type="text" name="email" value="tester_crud@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+      $sID = $manager->read('id');
+
+      $view = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update',
+          'id' => $sID,
+        )),
+      ));
+      $node = $manager->getArgument('node');
+
+      $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update', 'do'
+        )),
+        'post' => $manager->createArgument(array(
+          'name' => 'tester_crud2',
+          'email' => 'tester_crud2@sylma.org',
+          'id' => $sID,
+        )),
+      ));
+
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
+      //$manager->runQuery("DELETE FROM user WHERE id = $sID", false);
+
+      return
+        $manager->compareNodes($view, $node) &amp;&amp;
+        $user->read('name') === 'tester_crud2' &amp;&amp;
+        $user->read('email') === 'tester_crud2@sylma.org';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

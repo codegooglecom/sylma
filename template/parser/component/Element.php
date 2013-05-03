@@ -113,6 +113,11 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $this->aContent;
   }
 
+  protected function parseText(dom\text $node) {
+
+    return $node->getValue();
+  }
+
   public function onAdd() {
 
 

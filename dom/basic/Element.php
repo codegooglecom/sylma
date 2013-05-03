@@ -380,6 +380,11 @@ class Element extends \DOMElement implements dom\element {
       $node = $this->getDocument()->importNode($node);
     }
 
+    if ($node instanceof \DOMAttr) {
+
+      $referer = null;
+    }
+
     $result = $node;
 
     if ($bPrevious) {

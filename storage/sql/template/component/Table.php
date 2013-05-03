@@ -63,7 +63,7 @@ class Table extends Rooted implements sql\template\pathable, parser\element {
     return $this->parsePathTokens($aPath, $sMode);
   }
 
-  public function reflectApply($sPath = '', $sMode = '') {
+  public function reflectApply($sPath = '', $sMode = '', $bStatic = false) {
 
     if (!$sPath) {
 

@@ -187,7 +187,7 @@ abstract class Domed extends Componented {
 
   protected function parseText(dom\text $node) {
 
-    return (string) $node;
+    $this->throwException('Text node not allowed here', array($node->asToken()));
   }
 
   /**
@@ -277,7 +277,7 @@ abstract class Domed extends Componented {
    */
   protected function parseChildrenText(dom\text $node, array &$aResult) {
 
-    $this->throwException('Text node not allowed here', array($node->asToken()));
+    $aResult[] = $this->parseText($node);
   }
 
   protected function parseAttribute(dom\attribute $attr) {

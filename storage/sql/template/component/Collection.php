@@ -55,7 +55,7 @@ class Collection extends Rooted implements sql\template\pathable {
     return $this->parsePathTokens($aPath, $sMode);
   }
 
-  public function reflectApply($sPath = '', $sMode = '') {
+  public function reflectApply($sPath = '', $sMode = '', $bStatic = false) {
 
     if (!$sPath) {
 
@@ -66,18 +66,17 @@ class Collection extends Rooted implements sql\template\pathable {
       }
       else {
 
-        $this->launchException('Cannot apply collection without template', get_defined_vars());
+        if (!$sMode) {
+
+          $this->launchException('Cannot apply collection without template', get_defined_vars());
+        }
+
+        $result = null;
       }
     }
     else {
 
-      $this->preBuild();
-
-      $this->getQuery()->isMultiple(true);
-      $this->getTable()->setSource($this->getSource());
-
-      $content = $this->reflectApplyPath($this->parsePaths($sPath), $sMode);
-      $result = $this->postBuild($content);
+      $result = $this->reflectApplyPath($this->parsePaths($sPath), $sMode);
     }
 
     return $result;
@@ -85,7 +84,29 @@ class Collection extends Rooted implements sql\template\pathable {
 
   public function reflectApplyAll(array $aPath, $sMode) {
 
-    $result = $this->getTable()->reflectApply($aPath, $sMode);
+    $this->preBuild();
+
+    $this->getQuery()->isMultiple(true);
+    $this->getTable()->setSource($this->getSource());
+
+    $content = $this->getTable()->reflectApply($aPath, $sMode);
+
+    return $this->postBuild($content);
+  }
+
+  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+
+    switch ($sName) {
+
+      case 'static' :
+
+        $result = $this->getTable()->reflectApply($aPath, $sMode, true);
+        break;
+
+      default :
+
+        $this->launchException("Function '$sName' unknown", get_defined_vars());
+    }
 
     return $result;
   }

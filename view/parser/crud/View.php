@@ -26,33 +26,18 @@ class View extends Basic {
 
   public function getName() {
 
-    $root = $this->getParser()->getRoot();
+    $sPrefix = $this->getRoute() ? $this->getRoute()->getAlias() : '';
+    $sSuffix = parent::getAlias() ? '_' . parent::getAlias() : '';
 
-    return $this->getAlias() ? $this->getAlias() : $root::MODE_DEFAULT;
-  }
-
-  public function getAlias($bSimple = false) {
-
-    if ($bSimple) {
-
-      $sResult = parent::getAlias();
-    }
-    else {
-
-      $sPrefix = $this->getRoute() ? $this->getRoute()->getAlias() : '';
-      $sSuffix = parent::getAlias() ? '_' . parent::getAlias() : '';
-
-      $sResult = $sPrefix . $sSuffix;
-    }
-
-    return $sResult;
+    return $sPrefix . $sSuffix;
   }
 
   public function asDocument() {
 
     //$this->getNode()->add($this->getParser()->getResource());
-    $this->getNode()->add($this->getParser()->getGlobal());
-    $this->getNode()->add($this->getRoute());
+    $this->getNode()->shift($this->loadGroups());
+    $this->getNode()->shift($this->getRoute());
+    $this->getNode()->shift($this->getParser()->getGlobal());
 
     return $this->getNode()->getHandler();
   }

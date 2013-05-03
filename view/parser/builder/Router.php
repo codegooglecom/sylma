@@ -83,7 +83,7 @@ class Router extends View {
         $content = $this->reflectViewComponent($sub, $window);
       }
 
-      $switch->addCase($sub->getAlias(), $content);
+      $switch->addCase($sub->getAlias(true), $content);
     }
 
     $window->add($switch);

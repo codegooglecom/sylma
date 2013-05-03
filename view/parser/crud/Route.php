@@ -22,11 +22,6 @@ class Route extends Basic implements dom\domable {
     $this->loadAlias();
   }
 
-  public function setAlias($sValue) {
-
-    return parent::setAlias($sValue);
-  }
-
   protected function loadView(dom\element $el) {
 
     $result = $this->loadComponent('component/' . $el->getName(), $el);
@@ -47,7 +42,12 @@ class Route extends Basic implements dom\domable {
 
   public function asDOM() {
 
-    return $this->local ? $this->local->asDOM() : null;
+    $aResult = array();
+
+    if ($aGroups = $this->loadGroups()) $aResult[] = $aGroups;
+    if ($this->local) $aResult[] = $this->local->asDOM();
+
+    return $aResult ? $aResult : null;
   }
 }
 

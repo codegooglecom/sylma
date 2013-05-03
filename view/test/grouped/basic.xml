@@ -196,6 +196,27 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <h3>root</h3>
+        </view:template>
+        <view:template>
+          <div>
+            <stp:apply select="name"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>admin</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple root template with mode">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
         <view:template mode="hello">
           <h3>root</h3>
         </view:template>
