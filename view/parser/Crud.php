@@ -68,7 +68,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     return $result;
   }
 
-  protected function addPath(crud\Path $path) {
+  protected function addPath(crud\Pathed $path) {
 
     if (!$path->getName()) {
 
@@ -89,7 +89,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     return $this->aGroups[$sName];
   }
 
-  protected function setDefault(crud\Path $route) {
+  protected function setDefault(crud\Pathed $route) {
 
     if ($this->default) {
 

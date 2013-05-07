@@ -20,6 +20,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   protected $bCloned = false;
   protected static $aCall = array();
+  protected $aVariables = array();
   protected $sID = '';
   protected $sMode = self::MODE_DEFAULT;
 
@@ -190,6 +191,21 @@ class Template extends Child implements common\arrayable, parser\template, core\
     }
 
     return $this->aContent;
+  }
+
+  public function setVariable(Variable $var) {
+
+    $this->aVariables[$var->getName()] = $var;
+  }
+
+  public function getVariable($sName) {
+
+    return $this->aVariables[$sName];
+  }
+
+  protected function parseText(dom\text $node) {
+
+    return $node->getValue();
   }
 
   protected function initComponents() {

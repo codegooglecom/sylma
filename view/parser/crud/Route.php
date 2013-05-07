@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom;
 
-class Route extends Path implements dom\domable {
+class Route extends Pathed implements dom\domable {
 
   protected $local;
 
@@ -64,6 +64,36 @@ class Route extends Path implements dom\domable {
 
     $this->getMain(false) ? $this->getMain()->merge($path->getMain()) : $this->main = $path->getMain();
     $this->getSub(false) ? $this->getSub()->merge($path->getSub()) : $this->sub = $path->getSub();
+  }
+
+  public function getPath(array $aPath) {
+
+    if ($aPath) {
+
+      $sName = array_shift($aPath);
+    }
+    else {
+
+      $sName = '';
+    }
+
+    $sMain = $this->getMain()->getName();
+    $sSub = $this->getSub()->getName();
+
+    if ($sMain == $sName) {
+
+      $result = $this->getMain()->getPath($aPath);
+    }
+    else if ($sSub == $sName) {
+
+      $result = $this->getSub()->getPath($aPath);
+    }
+    else {
+
+      $this->launchException('No view available with this path', get_defined_vars());
+    }
+
+    return $result;
   }
 
   public function asDOM() {

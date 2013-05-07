@@ -34,9 +34,20 @@ class Grouped extends tester\Parser implements core\argumentable {
     return null;
   }
 
+  public function getFile($sPath = '', $bDebug = true) {
+    
+    return parent::getFile($sPath, $bDebug);
+  }
+
   public function createArgument($mArguments, $sNamespace = '') {
 
     return parent::createArgument($mArguments, $sNamespace);
+  }
+
+  protected function test(\sylma\dom\element $test, $sContent, $controler, \sylma\dom\document $doc, fs\file $file) {
+
+    $this->setFile($file);
+    return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
   public function set($sPath, $mValue = null) {

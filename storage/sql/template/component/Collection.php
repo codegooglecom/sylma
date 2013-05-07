@@ -103,12 +103,29 @@ class Collection extends Rooted implements sql\template\pathable {
         $result = $this->getTable()->reflectApply($aPath, $sMode, true);
         break;
 
+      case 'count' :
+
+        $result = $this->reflectCount();
+        break;
+
       default :
 
         $this->launchException("Function '$sName' unknown", get_defined_vars());
     }
 
     return $result;
+  }
+
+  protected function reflectCount() {
+
+    $query = clone $this->getQuery();
+
+    $query->clearColumns();
+    $query->setColumn('COUNT(*)');
+    $query->isMultiple(false);
+    $query->setMethod('read');
+
+    return $query->getVar();
   }
 }
 

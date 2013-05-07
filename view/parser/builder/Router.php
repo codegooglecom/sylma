@@ -5,6 +5,10 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\fs, sylm
 
 class Router extends View {
 
+  const NS = 'http://2013.sylma.org/view/crud';
+
+  protected $currentView;
+
   public function build() {
 
     $this->setDirectory(__FILE__);
@@ -12,16 +16,12 @@ class Router extends View {
     $doc = $this->getDocument();
     $root = $doc->getRoot();
 
-    if ($root->getName() == 'view') {
+    if ($root->getName() != 'crud') {
 
-      $this->launchException('"view" element instead of "crud"', get_defined_vars());
-    }
-    else if ($root->getName() == 'crud') {
-
-      $result = $this->buildCrud();
+      $this->launchException('Crud root element expected', get_defined_vars());
     }
 
-    return $result;
+    return $this->buildCrud();
   }
 
   protected function buildCrudReflector() {
@@ -52,6 +52,8 @@ class Router extends View {
 
       $this->launchException('No path defined');
     }
+
+    $this->setPaths($aPaths);
 
     $window = $this->prepareWindow(self::MODE_DEFAULT);
     //$this->setWindow($window);
@@ -92,14 +94,92 @@ class Router extends View {
     return $this->createFile($this->loadTarget($this->getDocument(), $this->getFile()), $this->buildWindow($window));
   }
 
+  protected function setPaths(array $aPaths) {
+
+    $this->aPaths = $aPaths;
+  }
+
+  protected function setView(crud\View $view) {
+
+    $this->currentView = $view;
+  }
+
+  public function getPath($sPath) {
+
+    $aPath = explode('/', $sPath);
+    $sName = current($aPath);
+
+    if (isset($this->aPaths[$sName])) {
+
+      array_shift($aPath);
+      $view = $this->aPaths[$sName];
+    }
+    else {
+
+      $view = $this->getDefault();
+    }
+
+    return $view ? $view->getPath($aPath) : null;
+  }
+
+  protected function getDefault() {
+
+    return isset($this->aPaths['']) ? $this->aPaths[''] : null;
+  }
+
+  public function getView() {
+
+    if (!$this->currentView) {
+
+      $this->launchException('No view defined');
+    }
+
+    return $this->currentView;
+  }
+
+  protected function buildReflector(common\_window $window = null) {
+
+    $result = parent::buildReflector($window);
+    $result->setNamespace(self::NS, 'crud');
+
+    return $result;
+  }
+
+  protected function buildCrudView(crud\View $view) {
+
+    $doc = $view->asDocument();
+    $file = $this->getPathFile($view);
+    $this->setView($view);
+
+    return parent::buildView($doc, $file);
+  }
+
+  public function getPathFile(crud\Pathed $path) {
+
+    $file = $this->getFile();
+    $sMode = $path->getAlias();
+
+    if ($sMode) {
+
+      $result = $this->getManager()->getCachedFile($file, ".{$sMode}.php");
+    }
+    else {
+
+      $result = $this->loadSelfTarget($file);
+    }
+
+    return $result;
+  }
+
   protected function reflectViewComponent(crud\View $view, common\_window $window) {
 
-    $file = $this->buildView($view->asDocument(), $this->loadSelfTarget($this->getFile(), $view->getAlias()));
+    $file = $this->buildCrudView($view);
+    $this->setView($view);
 
     return $this->callScript($file, $window, $window->tokenToInstance('\sylma\dom\handler'));
   }
 
-  protected function callScript(fs\file $file, common\_window $window, $return = null) {
+  public function callScript(fs\file $file, common\_window $window, $return = null, $bReturn = true) {
 
     $arguments = $window->getVariable('aSylmaArguments');
 
@@ -108,7 +188,7 @@ class Router extends View {
 
     $call = $window->createCall($window->getSylma(), 'includeFile', $return, array($file->getRealPath(), $arguments));
 
-    if ($return) {
+    if ($bReturn) {
 
       $result = $window->createAssign($window->getVariable('result'), $call);
     }
@@ -122,13 +202,11 @@ class Router extends View {
 
   protected function reflectRoute(crud\Route $route, common\_window $window) {
 
-    $file = $this->getFile();
-
     $main = $route->getMain();
-    $view = $this->buildView($main->asDocument(), $this->loadSelfTarget($file, $main->getAlias()));
+    $view = $this->buildCrudView($main);
 
     $sub = $route->getSub();
-    $form = $this->buildView($sub->asDocument(), $this->loadSelfTarget($file, $sub->getAlias()));
+    $form = $this->buildCrudView($sub);
 
     $arguments = $window->getVariable(self::ARGUMENTS_NAME);
 

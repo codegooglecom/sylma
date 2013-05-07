@@ -17,12 +17,7 @@ class Argument extends core\argument\Readable {
 
     if ($val instanceof \PDOStatement) {
 
-      $aResult = array();
-
-      foreach ($val as $sKey => $row) {
-
-        $aResult[$sKey] = $row;
-      }
+      $aResult = $val->fetchAll(\PDO::FETCH_ASSOC);
     }
     else {
 

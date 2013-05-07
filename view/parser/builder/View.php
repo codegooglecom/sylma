@@ -111,20 +111,6 @@ class View extends Variabled {
     $this->reflector = $reflector;
   }
 
-  protected function loadSelfTarget(fs\file $file, $sMode = '') {
-
-    if ($sMode) {
-
-      $result = $this->getManager()->getCachedFile($file, ".{$sMode}.php");
-    }
-    else {
-
-      $result = parent::loadSelfTarget($file);
-    }
-
-    return $result;
-  }
-
   protected function parseReflector(reflector\domed $reflector, dom\document $doc) {
 
     return $reflector->parseRoot($doc->getRoot(), $this->getMode());

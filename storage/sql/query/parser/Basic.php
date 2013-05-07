@@ -124,9 +124,9 @@ abstract class Basic extends reflector\component\Foreigner implements common\add
     return $content->asArgument();
   }
 
-  public function isApplied() {
+  public function __clone() {
 
-    return (bool) $this->var;
+    $this->var = null;
   }
 }
 

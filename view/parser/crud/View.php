@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom;
 
-class View extends Path {
+class View extends Pathed {
 
   protected $route;
 
@@ -35,6 +35,25 @@ class View extends Path {
   public function merge($path) {
 
     $this->getNode()->shift($path->asDocument()->queryx('* | @*'));
+  }
+
+  public function getPath(array $aPath) {
+
+    if ($aPath) {
+
+      $this->launchException('Cannot get subpath of view');
+    }
+
+    return $this;
+  }
+
+  public function asPath() {
+
+    $aResult[] = $this->getSourceFile()->asPath();
+    $aResult[] = $this->getRoute() ? $this->getRoute()->getName() : '';
+    $aResult[] = $this->getName();
+
+    return  implode('/', array_filter($aResult, 'strlen'));
   }
 
   public function asDocument() {

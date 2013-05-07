@@ -89,4 +89,38 @@
         $user->read('email') === 'tester02@sylma.org';
     </tst:expected>
   </tst:test>
+  <tst:test name="Really simple update" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns" mode="update">
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id><le:argument name="id" source="post"/></sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <tpl:register select="name"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      $sID = $manager->readArgument('id');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'id' => $sID,
+          'name' => 'tester02',
+          'email' => 'tester02@sylma.org',
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->readArgument('id');
+
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
+      $manager->runQuery("DELETE FROM user WHERE id = $sID", false);
+
+      return
+        $user->read('name') === 'tester02' &amp;&amp;
+        $user->read('email') === 'tester02@sylma.org';
+    </tst:expected>
+  </tst:test>
 </tst:tests>

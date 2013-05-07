@@ -25,8 +25,7 @@
       <cls:classes>
         <component>
           <cls:classes>
-            <cls:base>\sylma\view\parser\component</cls:base>
-            <cls:class alias="schema" name="Schema"/>
+            <cls:class alias="schema" name="component\Schema"/>
           </cls:classes>
         </component>
       </cls:classes>

@@ -60,10 +60,10 @@ class Parser extends tester\Prepare {
 
       $manager = $this->getManager(self::PARSER_MANAGER);
       $result = $this->buildResult($test, $manager, $cache, $aArguments);
-
-      $this->set('result', $result);
     }
 
+    $this->set('result', $result);
+    
     return $result;
   }
 

@@ -69,6 +69,11 @@ class Elemented extends template\parser\handler\Elemented {
     return $this->sMode;
   }
 
+  public function setNamespace($sNamespace, $sPrefix = null, $bDefault = true) {
+
+    return parent::setNamespace($sNamespace, $sPrefix, $bDefault);
+  }
+
   public function loadElementForeignKnown(dom\element $el, reflector\elemented $parser) {
 
     switch ($this->getMode()) {

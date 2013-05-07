@@ -189,6 +189,11 @@ class File extends Resource implements fs\file {
     return '@file ' . (string) $this;
   }
 
+  public function asPath() {
+
+    return $this->getParent() . '/' . $this->getSimpleName();
+  }
+
   public function asArgument() {
 
     $iSize = ($this->getSize() / 1000);

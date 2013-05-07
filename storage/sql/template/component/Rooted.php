@@ -43,7 +43,7 @@ class Rooted extends sql\schema\component\Table {
 
     return $aResult;
   }
-  
+
   protected function lookupTemplate($sMode) {
 
     return $this->getParser()->lookupTemplate($this, 'element', $sMode, $this->isRoot());

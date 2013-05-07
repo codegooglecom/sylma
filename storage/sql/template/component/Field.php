@@ -48,6 +48,11 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $result;
   }
 
+  public function reflectRead() {
+
+    $this->launchException('Should not be used');
+  }
+
   public function reflectApply($sPath, $sMode = '') {
 
     if ($sPath) {
@@ -86,6 +91,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
     switch ($sName) {
 
+      case 'value' : $result = $this->reflectRead(); break;
       case 'alias' : $result = $this->getFormAlias(); break;
       case 'apply' : $result = $this->reflectApply(''); break;
 

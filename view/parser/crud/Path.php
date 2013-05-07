@@ -1,53 +1,18 @@
 <?php
 
 namespace sylma\view\parser\crud;
-use sylma\core, sylma\dom, sylma\parser\reflector;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
 
-abstract class Path extends reflector\component\Foreigner {
+class Path extends parser\component\Child implements parser\component, common\arrayable {
 
-  const DEFAULT_FILE = 'default';
+  public function parseRoot(dom\element $el) {
 
-  protected $sAlias = '';
-
-  protected function loadName() {
-
-    $this->setName($this->readx('@name'));
+    //$this->setNode($el);
   }
 
-  public function getAlias() {
+  public function asArray() {
 
-    return $this->getName() ? $this->getName() : self::DEFAULT_FILE;
-  }
-
-  protected function setName($sValue) {
-
-    $this->sName = $sValue;
-  }
-
-  public function getName() {
-
-    return $this->sName;
-  }
-
-  protected function loadGroups() {
-
-    $aResult = array();
-
-    if ($sGroups = $this->readx('@groups')) {
-
-      foreach (explode(',', $sGroups) as $sGroup) {
-
-        $sGroup = trim($sGroup);
-        $aResult[] = $this->getParser()->getGroup($sGroup);
-      }
-    }
-
-    return $aResult ? $aResult : null;
-  }
-
-  public function merge($path) {
-
-    return null;
+    return array($this->getRoot()->getView()->asPath());
   }
 }
 

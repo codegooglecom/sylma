@@ -117,7 +117,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     return json_encode($this->asArray(true), \JSON_FORCE_OBJECT);
   }
-
+/*
   public function __toString() {
 
     $sResult = '';
@@ -135,4 +135,5 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     return $sResult;
   }
+ */
 }

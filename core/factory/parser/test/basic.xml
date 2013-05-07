@@ -34,6 +34,30 @@
         $obj instanceof \sylma\core\factory\parser\test\samples\Sample1
     </tst:expected>
   </tst:test>
+  <tst:test name="Multiple base paths">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:base>\sylma\core\factory\parser\test\samples</cls:base>
+        <cls:class alias="test1" name="Sample1">
+          <cls:classes>
+            <cls:base>\sylma\core\factory\parser\test\samples\sub</cls:base>
+            <cls:class alias="sub" name="Sub1"/>
+          </cls:classes>
+        </cls:class>
+        <cls:class alias="test2" name="Sample2"/>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('test1');
+      $obj2 = $controler->create('test1/sub');
+      $obj3 = $controler->create('test2');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\sub\Sub1 &amp;&amp;
+        $obj3 instanceof \sylma\core\factory\parser\test\samples\Sample2
+    </tst:expected>
+  </tst:test>
   <tst:test name="Encapsed key">
     <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
       <cls:classes>

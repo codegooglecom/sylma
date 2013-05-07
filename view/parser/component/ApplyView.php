@@ -12,14 +12,7 @@ class ApplyView extends parser\component\Apply implements common\arrayable {
 
   public function asArray() {
 
-    if ($sValue = $this->readx('@select')) {
-
-      if ($sValue{0} === '$') {
-
-        $this->throwException('Not yet implemented');
-      }
-    }
-
+    $sValue = $this->readx('@select');
     $result = $this->getTree()->reflectApply($sValue, $this->readx('@mode'));
 
     $this->startLog("Apply ({$sValue})");

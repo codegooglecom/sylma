@@ -350,4 +350,118 @@
         $manager->compareNodes($view2, $node2)
     </tst:expected>
   </tst:test>
+  <tst:test name="Simple path">
+    <tst:prepare>
+
+      $sPath = 'samples/path1.vml';
+
+      $manager->set('file', $manager->getFile($sPath));
+      $manager->set('result', $manager->load($sPath));
+
+    </tst:prepare>
+    <tst:expected>
+
+      $view = $manager->get('result');
+      $file = $manager->get('file');
+
+      return
+        $view->readx() === $file->asPath() . '?test=test';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple include">
+    <tst:document>
+      <crud:crud>
+        <view:view mode="view">
+          <sql:resource>
+            <sql:id>1</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template match="user:name">
+            <crud:include path="sub"/>
+            <textarea type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </view:view>
+        <view:view mode="view" name="sub">
+          <sql:resource>
+            <sql:id>2</sql:id>
+          </sql:resource>
+          <view:template>
+            <span><tpl:apply select="name"/></span>
+          </view:template>
+        </view:view>
+        <crud:global user:ns="ns">
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <tpl:apply select="name"/>
+            </form>
+          </view:template>
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <span>admin</span>
+        <textarea type="text" name="name" value="root"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+      $view = $manager->loadScript();
+
+      return
+        $manager->compareNodes($view, $node)
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple route include">
+    <tst:document>
+      <crud:crud>
+        <crud:route>
+          <crud:local user:ns="ns">
+            <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+            <view:template>
+              <form>
+                <tpl:apply select="name"/>
+              </form>
+            </view:template>
+          </crud:local>
+          <view:view mode="view">
+            <sql:resource>
+              <sql:id>1</sql:id>
+            </sql:resource>
+            <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+            <view:template match="user:name">
+              <crud:include path="sub"/>
+              <textarea type="text" name="{alias()}" value="{apply()}"/>
+            </view:template>
+          </view:view>
+          <view:view mode="view" name="sub">
+            <sql:resource>
+              <sql:id>2</sql:id>
+            </sql:resource>
+            <view:template>
+              <span><tpl:apply select="name"/></span>
+            </view:template>
+          </view:view>
+        </crud:route>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <span>admin</span>
+        <textarea type="text" name="name" value="root"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+      $view = $manager->loadScript();
+
+      return
+        $manager->compareNodes($view, $node)
+
+    </tst:expected>
+  </tst:test>
 </tst:tests>

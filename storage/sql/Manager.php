@@ -63,9 +63,10 @@ class Manager extends core\module\Argumented {
 
   public function read($sQuery, $bDebug = true) {
 
-    $result = $this->getDatabase()->exec($sQuery);
+    $stat = $this->getDatabase()->query($sQuery);
+    $result = $stat->fetch();
 
-    return $result;
+    return $result ? current($result) : $result;
   }
 
   public function get($sQuery, $bDebug = true) {

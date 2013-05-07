@@ -7,9 +7,5 @@ class Field extends sql\template\insert\Field {
 
   const MSG_MISSING = 'The field %s is missing';
 
-  public function reflectRead() {
-
-    $this->launchException('Should not be used');
-  }
 }
 

@@ -7,7 +7,7 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
 
   const NS = 'http://2013.sylma.org/core/factory';
 
-  protected $sClassBase = '';
+  protected $aBases = array();
   protected $allowForeign = true;
 
   public function parseRoot(dom\element $el) {
@@ -56,7 +56,10 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
     //$result = $this->getWindow()->create('array', array($this->getWindow()));
     //$result->setContent(array('classes' => $this->parseChildren($el->getChildren())));
 
+    $this->startClasses($el);
     $aResult = array('classes' => $this->parseClasses($el->getChildren()));
+    $this->stopClasses($el);
+
     //$this->dsp($aResult);
 
     return $aResult;
@@ -102,24 +105,42 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
 
   protected function parseChildrenElementForeign(dom\element $el, array &$aResult) {
 
-    $aResult[] = $el;
+    $aResult[] = $this->parseElementForeign($el);
+  }
+
+  protected function startClasses($test) {
+
+    $this->aBases[] = '';
+  }
+
+  protected function stopClasses($test) {
+
+    array_pop($this->aBases);
   }
 
   protected function reflectBase(dom\element $el) {
 
-    $this->sClassBase = $el->read();
+    array_pop($this->aBases);
+    $this->aBases[] = $el->read();
   }
 
   protected function getClassBase() {
 
-    return $this->sClassBase;
+    $sResult = '';
+
+    foreach ($this->aBases as $sBase) {
+
+      if ($sBase) $sResult = $sBase;
+    }
+
+    return $sResult;
   }
 
   protected function reflectClass(dom\element $el) {
 
     $content = null;
     $sClass = $this->getClassName($el);
-    
+
     if ($el->hasChildren()) $content = $this->parseChildren($el->getChildren());
 
     return array($el->readAttribute('alias') => array(

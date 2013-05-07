@@ -32,4 +32,6 @@ interface file extends fs\resource {
   function getSimpleName();
 
   function getExtension();
+
+  function asPath();
 }

@@ -9,12 +9,12 @@ abstract class Templated extends reflector\handler\Elemented {
 
   public function getCurrentTemplate() {
 
-    if (!$this->aElements) {
+    if (!$this->aTemplates) {
 
-      $this->launchException('No element defined');
+      $this->launchException('No template defined');
     }
 
-    return end($this->aElements);
+    return end($this->aTemplates);
   }
 
   public function startTemplate(parser\template $tpl) {

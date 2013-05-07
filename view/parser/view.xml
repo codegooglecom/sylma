@@ -14,13 +14,15 @@
     <cls:base>\sylma\view\parser</cls:base>
     <cls:class alias="elemented" name="Elemented">
       <cls:classes>
-        <cls:base>\sylma\view\parser\component</cls:base>
+        <cls:base>\sylma\view\parser</cls:base>
         <component>
           <cls:classes>
-            <cls:class alias="template" name="Container">
+            <cls:class alias="template" name="component\Container">
               <cls:classes>
                 <!--<cls:class alias="browse" name="Browse"/>-->
-                <cls:class alias="apply" name="ApplyView"/>
+                <cls:class alias="apply" name="component\ApplyView"/>
+                <cls:class alias="path" name="crud\Path"/>
+                <cls:class alias="include" name="crud\_Include"/>
               </cls:classes>
             </cls:class>
           </cls:classes>

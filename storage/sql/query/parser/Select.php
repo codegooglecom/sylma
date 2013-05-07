@@ -6,6 +6,7 @@ use sylma\core, sylma\parser\languages\common;
 class Select extends Basic implements common\argumentable {
 
   protected $aJoins = array();
+  protected $sMethod = '';
 
   public function setColumn($val) {
 
@@ -26,6 +27,11 @@ class Select extends Basic implements common\argumentable {
     }
 
     return $aResult;
+  }
+
+  public function clearColumns() {
+
+    $this->aColumns = array();
   }
 
   public function addJoin($table, $field, $val) {
@@ -52,9 +58,27 @@ class Select extends Basic implements common\argumentable {
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }
 
+  public function setMethod($sMethod) {
+
+    $this->sMethod = $sMethod;
+  }
+
+  protected function getMethod() {
+
+    return $this->sMethod;
+  }
+
   protected function build($sMethod = '') {
 
-    parent::build(($this->isMultiple() ? 'query' : 'get'));
+    if (!$sMethod) {
+
+      if (!$sMethod = $this->getMethod()) {
+
+        $sMethod = $this->isMultiple() ? 'query' : 'get';
+      }
+    }
+
+    parent::build($sMethod);
   }
 }
 

@@ -84,7 +84,16 @@ class Documented extends core\module\Domed implements reflector\documented {
    */
   public function getSourceFile($sPath = '') {
 
-    return $this->getManager(static::FILE_MANAGER)->getFile($sPath, $this->getSourceDirectory());
+    if ($sPath) {
+
+      $result = $this->getManager(static::FILE_MANAGER)->getFile($sPath, $this->getSourceDirectory());
+    }
+    else {
+
+      $result = $this->getFile();
+    }
+
+    return $result;
   }
 
   protected function getClass(dom\handler $doc) {
