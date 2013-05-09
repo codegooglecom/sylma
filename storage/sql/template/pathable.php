@@ -7,7 +7,7 @@ interface pathable extends template\parser\tree  {
 
   function getNode();
 
-  function reflectApply($sPath, $sMode = ''); // , $bStatic = true
+  function reflectApply($sMode = ''); // , $bStatic = true
   //function reflectApplyPath(array $aPath, $sMode);
   //function reflectApplyFunction($sName, array $aPath, $sMode);
   //function reflectApplyAll(array $aPath, $sMode);

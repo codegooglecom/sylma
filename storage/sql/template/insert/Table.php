@@ -16,9 +16,5 @@ class Table extends sql\template\component\Table {
     return $this->query;
   }
 
-  public function reflectApply($sPath = '', $sMode = '') {
-
-    return parent::reflectApply($sPath, $sMode);
-  }
 }
 

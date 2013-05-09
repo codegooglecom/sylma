@@ -41,18 +41,9 @@ class Simple extends xsd\component\SimpleType implements sql\template\pathable {
     return $result;
   }
 
-  public function reflectApply($sPath, $sMode = '') {
+  public function reflectApply($sMode = '') {
 
-    if ($sPath) {
-
-      $result = $this->reflectApplyPath($this->getParser()->parsePath($sPath), $sMode);
-    }
-    else {
-
-      $result = $this->reflectRead();
-    }
-
-    return $result;
+    return $this->reflectRead();;
   }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode) {

@@ -15,6 +15,7 @@
             <cls:base>\sylma\template\parser\component</cls:base>
             <cls:class alias="template" name="Template">
               <cls:classes>
+                <cls:class alias="pather" name="\sylma\template\parser\Pather"/>
                 <cls:class alias="element" name="Element"/>
                 <!--<cls:class alias="browse" name="Browse"/>-->
                 <!--<cls:class alias="if" name="Condition"/>-->

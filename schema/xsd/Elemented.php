@@ -1,13 +1,13 @@
 <?php
 
 namespace sylma\schema\xsd;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\schema\parser;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\schema;
 
 /**
  * DOM delayed class. This class won't parse all DOM at start, but lookup for
  * usefull elements when requested
  */
-class Elemented extends parser\Handler implements reflector\elemented, parser\schema {
+class Elemented extends schema\parser\Handler implements reflector\elemented, schema\parser\schema {
 
   const NS = 'http://www.w3.org/2001/XMLSchema';
   const TARGET_PREFIX = 'target';
@@ -89,7 +89,7 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
    * @param $context
    * @return type
    */
-  public function parseName($sName, parser\element $source = null, dom\element $context = null) {
+  public function parseName($sName, schema\parser\element $source = null, dom\element $context = null) {
 
     $iPrefix = strpos($sName, ':');
 
@@ -97,19 +97,12 @@ class Elemented extends parser\Handler implements reflector\elemented, parser\sc
 
       $sPrefix = substr($sName, 0, $iPrefix);
       $sNamespace = $this->lookupNamespace($sPrefix, $context);
-//dsp($sName);
-//dsp($context);
-//dsp($context->getNamespace($sPrefix));
-//dsp($sPrefix);
-//dsp($this->getDocument());
-//if ($sPrefix == 'group') {
-//$this->throwException('test');
-//}
+
       $sName = substr($sName, $iPrefix + 1);
     }
     else {
 
-      $sNamespace = $source ? $source->getNamespace() : $this->getTargetNamespace();
+      $sNamespace = $source && $source->getNamespace() ? $source->getNamespace() : $this->getTargetNamespace();
     }
 
     return array($sNamespace, $sName);

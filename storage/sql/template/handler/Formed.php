@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template\handler;
 use sylma\core, sylma\dom, sylma\storage\sql\template;
 
-class Formed extends Pather {
+class Formed extends Basic {
 
   protected $reflector;
 

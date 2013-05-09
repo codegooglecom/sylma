@@ -63,28 +63,20 @@ class Table extends Rooted implements sql\template\pathable, parser\element {
     return $this->parsePathTokens($aPath, $sMode);
   }
 
-  public function reflectApply($sPath = '', $sMode = '', $bStatic = false) {
+  public function reflectApply($sMode = '', $bStatic = false) {
 
-    if (!$sPath) {
+    if ($result = $this->lookupTemplate($sMode)) {
 
-      if ($result = $this->lookupTemplate($sMode)) {
-
-        $result->setTree($this);
-      }
-      else {
-
-        if (!$sMode) {
-
-          $this->launchException('Cannot apply table without template and without mode');
-        }
-
-        $result = null;
-
-      }
+      $result->setTree($this);
     }
     else {
 
-      $result = $this->reflectApplyPath($this->parsePaths($sPath), $sMode);
+      if (!$sMode) {
+
+        $this->launchException('Cannot apply table without template and without mode');
+      }
+
+      $result = null;
     }
 
     return $result;

@@ -5,18 +5,9 @@ use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\c
 
 class Field extends sql\template\component\Field {
 
-  public function reflectApply($sPath, $sMode = '') {
+  public function reflectApply($sMode = '') {
 
-    if ($sPath) {
-
-      $result = parent::reflectApply($sPath, $sMode);
-    }
-    else {
-
-      $result = null;
-    }
-
-    return $result;
+    return null;
   }
 
   public function reflectRead() {

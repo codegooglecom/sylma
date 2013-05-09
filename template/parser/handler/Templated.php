@@ -18,7 +18,7 @@ abstract class Templated extends reflector\handler\Elemented {
   }
 
   public function startTemplate(parser\template $tpl) {
-
+//if (!$tpl->getTree()) $this->launchException ('test');
     $this->aTemplates[] = $tpl;
   }
 
@@ -33,6 +33,11 @@ abstract class Templated extends reflector\handler\Elemented {
     $template->parseRoot($el);
 
     $this->addTemplate($template);
+  }
+
+  protected function resetTemplates() {
+
+    $this->aTemplates = array();
   }
 
   protected function getTemplates() {

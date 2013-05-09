@@ -53,18 +53,9 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     $this->launchException('Should not be used');
   }
 
-  public function reflectApply($sPath, $sMode = '') {
+  public function reflectApply($sMode = '') {
 
-    if ($sPath) {
-
-      $result = $this->reflectApplyPath($this->getParser()->parsePath($sPath), $sMode);
-    }
-    else {
-
-      $result = $this->reflectSelf();
-    }
-
-    return $result;
+    return $this->reflectSelf();
   }
 
   protected function parsePathToken($aPath, $sMode) {
@@ -93,7 +84,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
       case 'value' : $result = $this->reflectRead(); break;
       case 'alias' : $result = $this->getFormAlias(); break;
-      case 'apply' : $result = $this->reflectApply(''); break;
+      case 'apply' : $result = $this->reflectApply($sMode); break;
 
       default :
 

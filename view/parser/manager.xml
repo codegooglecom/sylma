@@ -26,6 +26,11 @@
         <component>
           <cls:classes>
             <cls:class alias="schema" name="component\Schema"/>
+            <cls:class alias="template" name="xxx">
+              <cls:classes>
+                <cls:class alias="pather" name="\sylma\storage\sql\template\Pather"/>
+              </cls:classes>
+            </cls:class>
           </cls:classes>
         </component>
       </cls:classes>

@@ -37,9 +37,9 @@ class Rooted extends sql\schema\component\Table {
     return $this->query;
   }
 
-  protected function parsePaths($sPath) {
+  protected function parsePaths($sPath, $sMode) {
 
-    $aResult = $this->getParser()->parsePaths($sPath);
+    $aResult = $this->getParser()->parsePath($sPath, $sMode);
 
     return $aResult;
   }

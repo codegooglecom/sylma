@@ -55,28 +55,26 @@ class Collection extends Rooted implements sql\template\pathable {
     return $this->parsePathTokens($aPath, $sMode);
   }
 
-  public function reflectApply($sPath = '', $sMode = '', $bStatic = false) {
+  public function getType() {
 
-    if (!$sPath) {
+    return null;
+  }
 
-      if ($result = $this->lookupTemplate($sMode)) {
+  public function reflectApply($sMode = '', $bStatic = false) {
 
-        $this->preBuild();
-        $result->setTree($this);
-      }
-      else {
+    if ($result = $this->lookupTemplate($sMode)) {
 
-        if (!$sMode) {
-
-          $this->launchException('Cannot apply collection without template', get_defined_vars());
-        }
-
-        $result = null;
-      }
+      $result->setTree($this);
+      $this->preBuild();
     }
     else {
 
-      $result = $this->reflectApplyPath($this->parsePaths($sPath), $sMode);
+      if (!$sMode) {
+
+        $this->launchException('Cannot apply collection without template', get_defined_vars());
+      }
+
+      $result = null;
     }
 
     return $result;
@@ -89,7 +87,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->getQuery()->isMultiple(true);
     $this->getTable()->setSource($this->getSource());
 
-    $content = $this->getTable()->reflectApply($aPath, $sMode);
+    $content = $this->getTable()->reflectApply($sMode);
 
     return $this->postBuild($content);
   }

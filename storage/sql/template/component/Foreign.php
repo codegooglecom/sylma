@@ -51,38 +51,23 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     }
     else {
 
-      $result = $this->parsePathToken($aPath, $sMode);
+      $result = $this->getParser()->parsePathToken($this, $aPath, $sMode);
     }
 
     return $result;
   }
 
-  public function parsePathToken(array $aPath, $sMode) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode) {
 
-    $sPath = array_shift($aPath);
-
-    if ($aMatch = $this->getParser()->matchFunction($sPath)) {
-
-      $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode);
-    }
-    else {
-
-      $aResult = $this->getParser()->parsePathToken($this, $aPath, $sMode);
-    }
-
-    return $aResult;
-  }
-
-  protected function parsePathFunction(array $aMatch, array $aPath, $sMode) {
-
-    switch ($aMatch[1]) {
+    switch ($sName) {
 
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode); break;
 
       default :
 
-        $result = $this->getParser()->parsePathFunction($this, $aMatch, $aPath, $sMode);
+        $this->launchException("Invalid function name : '{$sName}'");
+        //$result = $this->getParser()->parsePathFunction($this, $aMatch, $aPath, $sMode);
     }
 
     return $result;
@@ -110,12 +95,12 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $collection->setQuery($element->getQuery());
     $collection->setTable($element);
 
-    return $collection->reflectApply('*', $sMode);
+    return $collection->reflectApplyAll(array('*'), $sMode);
   }
 
-  public function reflectApply($sPath, $sMode = '') {
-
-    return $this->reflectApplyPath($this->getParser()->parsePath($sPath), $sMode);
+  public function reflectApply($sMode = '') {
+$this->launchException('Not used ?');
+    return $this->getParser()->parsePath($this, $sPath, $sMode);
   }
 
   protected function lookupTemplate($sMode) {
@@ -189,22 +174,13 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       $collection->setQuery($table->getQuery());
       $collection->setTable($element);
 
-      //$query = $this->loadSimpleComponent('template/select');
-      //$query->setTable($table);
       $query->setWhere($source, '=', $id->reflectRead());
-      //$select1->isMultiple(true);
 
       $element->setQuery($query);
       $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
 
-      //$result = $element->reflectApply('', $sMode);
-      $result = $collection->reflectApply('*', $sMode);
-      //array(
-        //$collection->reflectApply('*', $sMode),
-        //$element->reflectApply('', $sMode),
-      //);
-
-      //$result = array($loop);
+      $result = $collection->reflectApplyAll(array(), $sMode);
+      //$result = $this->getParser()->parsePath($collection, '*', $sMode);
     }
     else {
 
@@ -214,9 +190,8 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       $id = $element->getElement('id', $element->getNamespace());
 
       $query->addJoin($element, $id, $this);
-      //$this->setVar($this->getParent()->getSource());
 
-      $result = $element->reflectApply('', $sMode);
+      $result = $element->reflectApply($sMode);
     }
 
     return $result;

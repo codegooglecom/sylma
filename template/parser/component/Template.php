@@ -17,6 +17,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
   protected $sMatch;
 
   protected $tree;
+  protected $pather;
 
   protected $bCloned = false;
   protected static $aCall = array();
@@ -237,7 +238,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     $this->getTree(); // exists
     $this->initComponents();
-//dsp($this->aComponents);
+
     if (in_array($this->getID(), self::$aCall)) {
 
       $this->launchException('Recursive template call');
@@ -245,12 +246,14 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     self::$aCall[] = $this->getID();
 
+    $this->start();
     $this->startLog();
 
     if (self::CHECK_RECURSION) $result = array($this->getWindow()->toString($this->build()));
     else $result = $this->getWindow()->parseArrayables($this->build());
 
     $this->stopLog();
+    $this->stop();
 
     array_pop(self::$aCall);
 
@@ -263,6 +266,26 @@ class Template extends Child implements common\arrayable, parser\template, core\
       $this->asToken(),
       array_merge(array(), $aVars)
     );
+  }
+
+  public function getPather() {
+
+    if (!$this->pather) {
+
+      $pather = $this->pather = $this->loadSimpleComponent('pather');
+
+      $pather->setSource($this->getTree());
+      $pather->setTemplate($this);
+    }
+
+    return $this->pather;
+  }
+
+  public function applyPath($sPath, $sMode) {
+
+    $pather = $this->getPather();
+
+    return $sPath ? $pather->applyPath($sPath, $sMode) : $this->getTree()->reflectApply($sMode);
   }
 
   public function __clone() {

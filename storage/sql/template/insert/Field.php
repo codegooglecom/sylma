@@ -7,10 +7,7 @@ class Field extends sql\template\component\Field {
 
   const MSG_MISSING = 'The field %s is missing';
 
-  public function reflectApply($sPath, $sMode = '') {
-
-    if ($sPath) parent::reflectApply($sPath, $sMode);
-    //$this->getSource()->insert();
+  public function reflectApply($sMode = '') {
 
     return null;
   }

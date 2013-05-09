@@ -62,7 +62,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
       foreach ($aMatches as $aResult) {
 
         $iVarLength = strlen($aResult[0][0]);
-        $val = $this->getTree()->reflectApply($aResult[1][0]);
+        $val = $this->getTemplate()->applyPath($aResult[1][0], '');
 
         $sStart = substr($sValue, 0, $aResult[0][1]);
         $sEnd = substr($sValue, $aResult[0][1] + $iVarLength);

@@ -19,8 +19,7 @@
           <cls:classes>
             <cls:class alias="template" name="component\Container">
               <cls:classes>
-                <!--<cls:class alias="browse" name="Browse"/>-->
-                <cls:class alias="apply" name="component\ApplyView"/>
+                <cls:class alias="apply" name="component\Apply"/>
                 <cls:class alias="path" name="crud\Path"/>
                 <cls:class alias="include" name="crud\_Include"/>
               </cls:classes>

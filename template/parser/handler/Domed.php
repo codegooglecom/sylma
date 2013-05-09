@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser\handler;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\parser\languages\common;
 
 class Domed extends Templated implements reflector\elemented {
 
@@ -9,6 +9,8 @@ class Domed extends Templated implements reflector\elemented {
 
   protected $aRegistered = array();
   protected $aTemplates = array();
+  protected $aElements = array();
+
   protected $result;
 
   protected $logger;
@@ -34,6 +36,26 @@ class Domed extends Templated implements reflector\elemented {
   protected function loadLogger() {
 
     $this->logger = $this->create('logger');
+  }
+
+  public function getElement() {
+
+    if (!$this->aElements) {
+
+      $this->launchException('No element defined');
+    }
+
+    return end($this->aElements);
+  }
+
+  public function startElement(template\element $el) {
+
+    $this->aElements[] = $el;
+  }
+
+  public function stopElement() {
+
+    array_pop($this->aElements);
   }
 
   public function lookupNamespace($sPrefix = '') {

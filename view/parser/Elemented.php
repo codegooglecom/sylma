@@ -3,7 +3,7 @@
 namespace sylma\view\parser;
 use sylma\core, sylma\dom, sylma\template, sylma\parser\reflector, sylma\schema, sylma\parser\languages\common;
 
-class Elemented extends template\parser\handler\Elemented {
+class Elemented extends template\parser\handler\Domed {
 
   const NS = 'http://2013.sylma.org/view';
   const NS_SCHEMA = 'http://2013.sylma.org/schema/template';
@@ -42,6 +42,7 @@ class Elemented extends template\parser\handler\Elemented {
     try {
 
       $tree = $this->loadTree($el, $sMode); // parseRoot(), onAdd()
+      $this->resetTemplates();
       $result = $this->build($tree, $sMode);
       //$this->addToResult(array($this->getTemplate())); // asArray()
     }

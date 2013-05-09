@@ -17,7 +17,7 @@ class Basic extends sql\schema\Handler {
     return $this->view;
   }
 
-  public function setView(template\parser\handler\Elemented $view) {
+  public function setView(template\parser\handler\Domed $view) {
 
     $this->view = $view;
   }
@@ -70,6 +70,27 @@ class Basic extends sql\schema\Handler {
   public function createCollection() {
 
     return $this->loadSimpleComponent('component/collection');
+  }
+
+  public function getPather() {
+
+    return $this->getView()->getCurrentTemplate()->getPather();
+  }
+
+  public function parsePathToken(sql\template\pathable $source, array $aPath, $sMode) {
+
+    $pather = $this->getPather();
+    $pather->setSource($source);
+
+    return $pather->parsePathToken($aPath, $sMode);
+  }
+
+  public function parsePath(sql\template\pathable $source, $sPath, $sMode) {
+
+    $pather = $this->getPather();
+    $pather->setSource($source);
+
+    return $pather->applyPath($sPath, $sMode);
   }
 }
 

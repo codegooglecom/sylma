@@ -130,7 +130,10 @@ class Container extends template_ns\parser\component\Template {
 
           if (!$iResult = $this->getWeightElement($element)) {
 
-            $iResult = $this->getWeightType($element->getType());
+            if ($type = $element->getType()) {
+
+              $iResult = $this->getWeightType($type);
+            }
           }
         }
       }

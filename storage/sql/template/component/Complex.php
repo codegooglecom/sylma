@@ -41,18 +41,9 @@ class Complex extends sql\schema\component\ComplexType implements template\parse
     return $result;
   }
 
-  public function reflectApply($sPath, $sMode = '') {
+  public function reflectApply($sMode = '') {
 
-    if ($sPath) {
-
-      $result = $this->reflectApplyPath($this->getParser()->parsePath($sPath), $sMode);
-    }
-    else {
-
-      $result = $this->reflectRead();
-    }
-
-    return $result;
+    return $this->reflectRead();
   }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode) {

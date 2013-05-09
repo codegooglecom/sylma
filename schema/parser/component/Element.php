@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\schema\parser\component;
-use sylma\core, sylma\schema\parser, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\schema, sylma\parser\languages\common;
 
-class Element extends Basic implements parser\element, common\stringable, core\tokenable {
+class Element extends Basic implements schema\parser\element, common\stringable, core\tokenable {
 
   protected $sName = '';
   protected $type;
@@ -20,6 +20,11 @@ class Element extends Basic implements parser\element, common\stringable, core\t
   public function getName() {
 
     return $this->sName;
+  }
+
+  public function parseName($sName) {
+
+    return $this->getParser()->parseName($sName, $this, $this->getNode(false));
   }
 
   /**
@@ -40,7 +45,7 @@ class Element extends Basic implements parser\element, common\stringable, core\t
     return $this->type;
   }
 
-  public function setType(parser\type $type) {
+  public function setType(schema\parser\type $type) {
 
     $this->type = $type;
   }
