@@ -163,6 +163,16 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
+  /**
+   *
+   * @param null $mValue
+   * @param type $sName
+   * @param type $bContent
+   *    If TRUE, $mValue is assigned as content
+   *    if FALSE it's used only for getting return type
+   * @param type $bDebug
+   * @return type
+   */
   public function createVar($mValue, $sName = '', $bContent = true, $bDebug = true) {
 
     $return = $this->lookupInstance($mValue);

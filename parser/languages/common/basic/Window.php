@@ -379,6 +379,18 @@ abstract class Window extends core\module\Domed {
     return $this->create('test', array($this, $val1, $val2, $op));
   }
 
+  public function createOperator($sVal) {
+
+    return $this->createArgument(array(
+      'operator' => $sVal,
+    ));
+  }
+
+  public function createNumeric($val) {
+
+    return $this->create('numeric', array($this, $val));
+  }
+  
   public function setVariable(common\_var $var, $bDebug = true) {
 
     $sName = $var->getName();
@@ -481,7 +493,7 @@ abstract class Window extends core\module\Domed {
       case 'double' :
 
         if (is_null($mVar)) $mVar = 0;
-        $result = $this->create('numeric', array($this, $mVar));
+        $result = $this->createNumeric($mVar);
 
       break;
 

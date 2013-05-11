@@ -55,6 +55,42 @@
       <div><h3>admin</h3><a href="mailto:email">test</a></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Apply value">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name/value()"/></h3>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple attribute values">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3 class="{name/value()}" test="{name/alias()}"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3 class="admin" test="name"/></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Two templates">
     <tst:document>
       <view:view user:ns="ns">
@@ -405,6 +441,80 @@
       <div>
         <h3>admin</h3>
         <span>world</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple condition">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <h3>is-admin</h3>
+            </tpl:if>
+            <tpl:if test="name = 'root'">
+              <h3>is-root</h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>is-admin</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Condition with token">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <tpl:token name="class">is-admin</tpl:token>
+            </tpl:if>
+            <tpl:if test="name = 'root'">
+              <h3>is-root</h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="is-admin"/>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Condition with token and content" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <tpl:token name="class">is-admin</tpl:token>
+              <h3>hello world</h3>
+            </tpl:if>
+            <tpl:if test="name = 'root'">
+              <h3>is-root</h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="is-admin">
+        <h3>hello world</h3>
       </div>
     </tst:node>
   </tst:test>

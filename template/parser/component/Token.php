@@ -5,10 +5,24 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
 
 class Token extends Child implements common\arrayable, parser\component {
 
+  protected $sName;
+
   public function parseRoot(dom\element $el) {
 
     $this->allowForeign(true);
     $this->setNode($el);
+
+    $this->loadName();
+  }
+
+  protected function loadName() {
+
+    $this->sName = $this->readx('@name');
+  }
+
+  public function getName() {
+
+    return $this->sName;
   }
 
   protected function parseChildrenText(dom\text $node, array &$aResult) {
@@ -16,12 +30,9 @@ class Token extends Child implements common\arrayable, parser\component {
     $aResult[] = $node->getValue();
   }
 
-  public function asArray() {
+  public function asValue() {
 
     $el = $this->getNode();
-    $sName = $this->readx('@name');
-
-    $this->startLog("Token ({$sName})");
 
     $content = $this->parseChildren($el->getChildren());
 
@@ -30,8 +41,17 @@ class Token extends Child implements common\arrayable, parser\component {
       $content = current($content);
     }
 
+    return $content;
+  }
+
+  public function asArray() {
+
+    $sName = $this->getName();
+
+    $this->startLog("Token ({$sName})");
+
     $element = $this->getParser()->getElement();
-    $element->addToken($sName, $content);
+    $element->addToken($sName, $this->asValue());
 
     $this->stopLog();
 

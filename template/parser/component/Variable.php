@@ -13,6 +13,7 @@ class Variable extends Child implements common\arrayable, parser\component {
     $this->loadName();
 
     $this->allowForeign(true);
+    $this->allowText(true);
   }
 
   protected function loadName() {
@@ -23,11 +24,6 @@ class Variable extends Child implements common\arrayable, parser\component {
   public function getName() {
 
     return $this->sName;
-  }
-
-  protected function parseText(dom\text $node) {
-
-    return $node->getValue();
   }
 
   protected function build() {

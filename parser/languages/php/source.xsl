@@ -181,6 +181,10 @@
     <xsl:apply-templates select="php:val2/*"/>
   </xsl:template>
 
+  <xsl:template match="php:operator">
+    <xsl:value-of select="."/>
+  </xsl:template>
+
   <xsl:template match="php:string">
     <xsl:text>'</xsl:text>
     <xsl:apply-templates/>

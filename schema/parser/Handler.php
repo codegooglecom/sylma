@@ -82,7 +82,7 @@ class Handler extends reflector\handler\Elemented {
       $this->aTypes[$sNamespace] = array();
     }
 
-    $this->aTypes[$sNamespace][$type->getName()] = $type->getNamespace();
+    $this->aTypes[$sNamespace][$type->getName()] = $type;
 
     return $type;
   }

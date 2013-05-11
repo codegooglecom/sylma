@@ -98,7 +98,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'static' :
 
-        $result = $this->getTable()->reflectApply($aPath, $sMode, true);
+        $result = $this->getTable()->reflectApply($sMode, true);
         break;
 
       case 'count' :

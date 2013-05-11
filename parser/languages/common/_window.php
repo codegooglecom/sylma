@@ -36,7 +36,9 @@ interface _window extends scope {
   function createInstanciate(common\_instance $instance, array $aArguments = array());
   function createCondition($test, $content = null);
   function createNot($mContent);
-  
+  function createOperator($sVal);
+  function createNumeric($val);
+
   /**
    * @return _instance
    */

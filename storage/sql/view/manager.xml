@@ -15,6 +15,8 @@
     <component>
       <cls:classes>
         <cls:class alias="filter" name="view\Filter"/>
+        <cls:class alias="limit" name="view\Limit"/>
+        <cls:class alias="order" name="view\Order"/>
       </cls:classes>
     </component>
   </cls:classes>

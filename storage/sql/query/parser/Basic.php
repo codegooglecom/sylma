@@ -5,7 +5,6 @@ use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 
 abstract class Basic extends reflector\component\Foreigner implements common\addable {
 
-  protected $bAdded = false;
   protected $bMultiple = false;
 
   protected $aColumns = array();
@@ -95,7 +94,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\add
     $window = $this->getWindow();
 
     $manager = $window->addControler('mysql');
-    $var = $window->createVar($window->createCall($manager, $sMethod, '\\sylma\\core\\argument', array($this)));
+    $var = $window->createVar($window->createCall($manager, $sMethod, '\sylma\core\argument', array($this)));
 
     $this->setVar($var);
   }

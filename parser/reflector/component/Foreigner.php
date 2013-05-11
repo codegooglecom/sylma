@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\reflector;
 
 class Foreigner extends reflector\basic\Foreigner implements reflector\component {
 
+  const PREFIX = 'self';
+
   protected static $sFactoryFile = '/core/factory/Cached.php';
   protected static $sFactoryClass = '\sylma\core\factory\Cached';
 

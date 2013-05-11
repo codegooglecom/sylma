@@ -31,7 +31,51 @@ class Pather extends component\Child {
 
   public function parseExpression($sPath) {
 
+    $aResult = array();
 
+    $aTokens = explode(' ', $sPath);
+    $aOps = array('<', '>', '=', '!=', 'and', 'or');
+    $window = $this->getWindow();
+
+    foreach ($aTokens as $sToken) {
+
+      if (in_array($sToken, $aOps)) {
+
+        if ($sToken == '=') $sToken = '==';
+        $aResult[] = $window->createOperator($sToken);
+      }
+      else if ($sValue = $this->matchString($sToken)) {
+
+        $aResult[] = $window->createString($sValue);
+      }
+      else if ($this->matchNumeric($sToken)) {
+
+        $aResult[] = $window->createNumeric($sToken);
+      }
+      else {
+
+        $aResult[] = $this->applyPath($sToken, '');
+      }
+    }
+
+    return $this->buildExpression($aResult);
+  }
+
+  protected function buildExpression($aContent) {
+
+    $window = $this->getWindow();
+
+    return $window->createCondition($aContent);
+  }
+
+  protected function matchString($sValue) {
+
+    return $sValue{0} == "'" ? substr($sValue, 1, -1) : null;
+  }
+
+  protected function matchNumeric($sValue) {
+
+    return is_numeric($sValue);
   }
 
   public function applyPath($sPath, $sMode) {

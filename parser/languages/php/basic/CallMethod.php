@@ -64,7 +64,7 @@ class CallMethod extends Called implements common\addable, common\callable  {
 
   public function onAdd() {
 
-    $window = $this->getControler();
+    $window = $this->getWindow();
 
     $window->loadContent($this->getCalled());
     $window->loadContent($this->getArguments());

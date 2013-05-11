@@ -17,6 +17,7 @@
               <cls:classes>
                 <cls:class alias="pather" name="\sylma\template\parser\Pather"/>
                 <cls:class alias="element" name="Element"/>
+                <cls:class alias="if" name="_If"/>
                 <!--<cls:class alias="browse" name="Browse"/>-->
                 <!--<cls:class alias="if" name="Condition"/>-->
                 <!--<cls:class alias="variable" name="Variable"/>-->

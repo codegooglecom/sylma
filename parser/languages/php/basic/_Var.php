@@ -5,6 +5,8 @@ use \sylma\core, \sylma\parser\languages\common, \sylma\parser\languages\php;
 
 abstract class _Var extends common\basic\Controled implements common\_var, common\addable, core\tokenable {
 
+  const CHECK_INSERT = true;
+
   private $sName = '';
   protected $instance;
 
@@ -91,7 +93,7 @@ abstract class _Var extends common\basic\Controled implements common\_var, commo
 
   protected function checkInserted() {
 
-    if (!$this->isStatic() && !$this->bInserted && $this->getContent()) {
+    if (!$this->isStatic() && !$this->bInserted && $this->getContent() && self::CHECK_INSERT) {
 
       $this->getControler()->throwException(sprintf('Variable "%s" has not been inserted', $this->getName()));
     }

@@ -16,6 +16,9 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   public function parseRoot(dom\element $el) {
 
+    $this->allowUnknown(true);
+    $this->allowText(true);
+
     $this->build($el);
     //$this->setNamespace(\Sylma::read('namespaces/html'));
   }
@@ -113,14 +116,9 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $this->aContent;
   }
 
-  protected function parseText(dom\text $node) {
-
-    return $node->getValue();
-  }
-
   public function onAdd() {
 
-
+    //$this->getWindow()->loadContent($this->build());
   }
 
   protected function start() {
@@ -219,7 +217,17 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   public function addToken($sAttribute, $mVal) {
 
-    $this->aAttributes[$sAttribute][] = $mVal;
+    if (isset($this->aAttributes[$sAttribute])) {
+
+      $mContent = array(' ', $mVal);
+    }
+    else {
+
+      $mContent = $mVal;
+    }
+
+    $this->aAttributes[$sAttribute][] = $mContent;
+    //$this->aAttributes[$sAttribute][] = array($mVal);
   }
 
   public function asArray() {

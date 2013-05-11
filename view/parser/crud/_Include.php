@@ -13,7 +13,7 @@ class _Include extends parser\component\Child implements parser\component, commo
   public function asArray() {
 
     $root = $this->getRoot();
-    $path = $root->getPath($this->readx('@path'));
+    $path = $root->getPath($this->readx('@path', true));
 /*
     if ($path == $this->getRoot()->getView()) {
 

@@ -33,6 +33,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->allowUnknown(true);
     $this->allowForeign(true);
     $this->allowComponent(true);
+    $this->allowText(true);
 
     $this->setID(uniqid());
     $this->build();
@@ -204,11 +205,6 @@ class Template extends Child implements common\arrayable, parser\template, core\
     return $this->aVariables[$sName];
   }
 
-  protected function parseText(dom\text $node) {
-
-    return $node->getValue();
-  }
-
   protected function initComponents() {
 
     foreach ($this->aComponents as $component) {
@@ -270,15 +266,15 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   public function getPather() {
 
-    if (!$this->pather) {
+    //if (!$this->pather) {
 
-      $pather = $this->pather = $this->loadSimpleComponent('pather');
+      $pather = $this->loadSimpleComponent('pather');
 
       $pather->setSource($this->getTree());
       $pather->setTemplate($this);
-    }
+    //}
 
-    return $this->pather;
+    return $pather;
   }
 
   public function applyPath($sPath, $sMode) {

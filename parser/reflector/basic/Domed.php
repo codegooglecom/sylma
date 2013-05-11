@@ -9,6 +9,7 @@ abstract class Domed extends Componented {
 
   protected $allowForeign = false;
   protected $allowUnknown = false;
+  protected $allowText = false;
 
   protected $node;
   protected $elementDocument;
@@ -185,9 +186,20 @@ abstract class Domed extends Componented {
     $this->throwException(sprintf('Uknown %s not allowed', $el->asToken()));
   }
 
+  protected function allowText($mValue = null) {
+
+    if (!is_null($mValue)) $this->allowText = $mValue;
+    return $this->allowText;
+  }
+
   protected function parseText(dom\text $node) {
 
-    $this->throwException('Text node not allowed here', array($node->asToken()));
+    if (!$this->allowText()) {
+
+      $this->throwException('Text node not allowed here', array($node->asToken()));
+    }
+
+    return $node->getValue();
   }
 
   /**

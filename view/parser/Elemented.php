@@ -111,9 +111,18 @@ class Elemented extends template\parser\handler\Domed {
 
     switch ($el->getName()) {
 
-      case 'template' : $result = $this->loadTemplate($el); break;
-      default : $result = parent::parseElementSelf($el);
+      case 'template' :
+
+        $this->loadTemplate($el);
+        $result = null;
+        break;
+
+      default :
+
+        $result = parent::parseElementSelf($el);
     }
+
+    return $result;
   }
 
   protected function build(template\parser\tree $tree, $sMode) {
@@ -147,6 +156,7 @@ class Elemented extends template\parser\handler\Domed {
       default :
 
         $content = $tree->reflectApply();
+        $this->getWindow()->loadContent($content);
 
         if ($content instanceof common\arrayable) {
 
@@ -180,7 +190,9 @@ class Elemented extends template\parser\handler\Domed {
     $schema = $resource->setSchema($this->loadSchema());
     $this->setSchema($schema);
 
-    $this->parseChildren($el->getChildren());
+    $aResult = $this->parseChildren($el->getChildren()); // unused result
+
+    //$this->getWindow()->add($aResult);
 
     //$this->loadTemplates();
     $schema->loadTemplates($this->getTemplates());

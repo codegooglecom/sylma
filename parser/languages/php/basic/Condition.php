@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php, sylma\dom;
 
-class Condition extends common\basic\Structured implements common\argumentable, common\scope, common\structure {
+class Condition extends common\basic\Structured implements common\argumentable, common\scope, common\structure, common\addable {
 
   protected $aElse = array();
   protected $test;
@@ -16,29 +16,14 @@ class Condition extends common\basic\Structured implements common\argumentable, 
     if ($content) $this->addContent($content);
   }
 
-  public function _addContent($mVal) {
-
-    if (is_array($mVal)) {
-
-      foreach ($mVal as $mSub) $this->addContent($mSub);
-    }
-    else {
-
-      if (is_object($mVal)) {
-
-        if ($mVal instanceof dom\node) {
-
-          $this->bTemplate = true;
-        }
-      }
-
-      $this->aContent[] = $this->createLine($mVal);
-    }
-  }
-
   public function addElse($mVal) {
 
     $this->aElse[] = $this->createLine($mVal);
+  }
+
+  protected function getElse() {
+
+    return $this->aElse;
   }
 
   public function getTest() {
@@ -49,6 +34,15 @@ class Condition extends common\basic\Structured implements common\argumentable, 
   public function setTest($test) {
 
     $this->test = $test;
+  }
+
+  public function onAdd() {
+
+    $window = $this->getWindow();
+
+    $window->loadContent($this->getTest());
+    $window->loadContent($this->getContent());
+    $window->loadContent($this->getElse());
   }
 
   public function asArgument() {
