@@ -199,16 +199,6 @@ abstract class Argumented extends Managed {
 
     return \Sylma::show($mVar, $bToken);
   }
-
-  /**
-   * Log a message
-   * @param mixed|DOMNode|string|array $mMessage The message to send, will be parsed or stringed
-   * @param string $sStatut The statut of the message : see @file /system/allowed-messages.xml for more infos
-   */
-  protected function log($mMessage, $sStatut = \Sylma::LOG_STATUT_DEFAULT) {
-
-    return \Sylma::log($this->getNamespace(), $mMessage, $sStatut);
-  }
 }
 
 

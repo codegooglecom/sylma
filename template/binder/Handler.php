@@ -30,7 +30,6 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
    */
   protected $objects;
   protected $bInit = false;
-  protected $bDebug = false;
 
   public function init() {
 
@@ -38,7 +37,6 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
       $this->initWindow();
       $this->prepareParent();
-      $this->loadLogger();
 
       $this->bInit = true;
     }
@@ -140,11 +138,6 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     $el->getHandler()->registerNamespaces($this->getNS());
 
-    if ($el->readx('@js:debug', $this->getNS(), false)) {
-
-      $this->bDebug = true;
-    }
-
     if ($this->elementIsObject($el)) {
 
       $result = $this->reflectObject($el, $resultElement);
@@ -165,7 +158,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     }
   }
 
-  protected function isRoot() {
+  public function isRoot() {
 
     return !$this->aObjects;
   }
@@ -243,11 +236,6 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     }
 
     $window->add($this->getContext()->call('add', array($window->createString($aResult)), '\sylma\parser\context', false));
-  }
-
-  public function onFinish() {
-
-    if ($this->bDebug) $this->loadLog();
   }
 }
 

@@ -3,7 +3,7 @@
 namespace sylma\schema;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\parser\languages\common;
 
-class Builder extends reflector\handler\Documented {
+class Builder extends reflector\builder\Documented {
 
   public function getSchema(fs\file $file, common\_window $window = null) {
 

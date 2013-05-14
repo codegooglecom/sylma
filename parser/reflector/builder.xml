@@ -10,6 +10,7 @@
     <class>\sylma\dom\basic\handler\Rooted</class>
   </cache>
   <cls:classes>
+    <cls:class alias="logger" name="\sylma\parser\reflector\logger\Logger"/>
     <cls:class alias="elemented" name="\sylma\parser\reflector\handler\Elemented"/>
     <cls:class alias="window" name="\sylma\parser\languages\php\basic\Window"/>
   </cls:classes>

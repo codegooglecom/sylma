@@ -3,7 +3,7 @@
 namespace sylma\view\parser\builder;
 use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 
-abstract class Variabled extends reflector\handler\Documented {
+abstract class Variabled extends reflector\builder\Documented {
 
   const ARGUMENTS_NAME = 'arguments';
 

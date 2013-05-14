@@ -15,6 +15,7 @@
   <template>/#sylma/core/argument/parser/compiler/basic.xsl</template>
   <cls:classes>
     <cls:base>\sylma\core\argument\parser\compiler</cls:base>
+    <cls:class alias="logger" name="\sylma\parser\reflector\logger\Logger"/>
     <cls:class alias="elemented" name="Elemented">
       <importer>\sylma\core\argument\Importer</importer>
       <cls:classes>

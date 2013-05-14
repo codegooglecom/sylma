@@ -1,34 +1,20 @@
 <?php
 
 namespace sylma\parser\reflector\handler;
+use \sylma\core, sylma\parser\reflector;
 
 class Logger extends Parsed {
 
   protected $logger;
 
-  protected function loadLogger() {
-
-    $this->logger = $this->create('logger');
-  }
-
-  protected function loadLog() {
-
-    $this->getLogger()->asMessage();
-  }
-
-  protected function getLogger() {
-
-    return $this->logger;
-  }
-
   public function startComponentLog($component, $sMessage = '', array $aVars = array()) {
 
-    $this->getLogger()->startComponent($component, $sMessage, $aVars);
+    $this->getRoot()->startComponentLog($component, $sMessage, $aVars);
   }
 
   public function stopComponentLog() {
 
-    $this->getLogger()->stopComponent();
+    $this->getRoot()->stopComponentLog();
   }
 }
 

@@ -25,8 +25,14 @@ class View extends Variabled {
     return $result;
   }
 
+  public function getLogger() {
+
+    return parent::getLogger();
+  }
+
   protected function buildView(dom\document $doc, fs\file $target) {
 
+    $this->loadLogger();
     $sMode = $this->loadDocument($doc);
 
     $window = $this->prepareWindow($sMode);
@@ -53,7 +59,12 @@ class View extends Variabled {
         $this->launchException(sprintf('Unexpected mode : ""%s', $sMode), get_defined_vars());
     }
 
-    return $this->createFile($target, $return);
+    $result = $this->createFile($target, $return);
+
+    $this->loadLog($doc);
+    $this->clearLogger();
+
+    return $result;
   }
 
   /**

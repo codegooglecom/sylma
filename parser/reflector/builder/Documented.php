@@ -1,14 +1,10 @@
 <?php
 
-namespace sylma\parser\reflector\handler;
+namespace sylma\parser\reflector\builder;
 use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector, sylma\storage\fs;
 
-class Documented extends core\module\Domed implements reflector\documented {
+class Documented extends Logger implements reflector\documented {
 
-  /**
-   *
-   * @var common\_window
-   */
   protected $reflector;
   protected $sourceDir;
   protected $window;
@@ -31,6 +27,7 @@ class Documented extends core\module\Domed implements reflector\documented {
     $this->loadDefaultArguments();
     if ($args) $this->setArguments($args);
     $this->loadArguments($args);
+    //$this->loadLogger();
 
     $this->setDirectory(__FILE__);
     $this->setSourceDirectory($dir);
@@ -152,6 +149,8 @@ class Documented extends core\module\Domed implements reflector\documented {
     $mContent = $this->reflectMain($file, $doc, $window);
     $content = $this->buildInstanciation($mContent);
 
+    $this->loadLog($doc);
+
     return $this->createFile($cached, $content);
   }
 
@@ -215,6 +214,7 @@ class Documented extends core\module\Domed implements reflector\documented {
 
   protected function catchException(fs\file $file, core\exception $e) {
 
+    $this->getLogger()->addException($e->getMessage());
     $e->addPath($file->asToken());
 
     if ($this->throwExceptions()) throw $e;

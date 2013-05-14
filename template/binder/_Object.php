@@ -3,10 +3,12 @@
 namespace sylma\template\binder;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
 
-class _Object extends Basic implements common\arrayable {
+class _Object extends Basic implements common\arrayable, core\tokenable {
 
   const JS_LOAD_CONTEXT = 'js-load';
   const PARENT_PATH = 'sylma.ui.tmp';
+
+  protected $bRoot = true;
 
   protected $name;
   protected $id;
@@ -63,15 +65,11 @@ class _Object extends Basic implements common\arrayable {
     $this->sJSClass = $sName;
   }
 
-  public function setSubObject($sName, $val) {
+  protected function isRoot($mValue = null) {
 
-    //$this->getObject()->setProperty('objects.' . $sName, $val);
-    //$this->aObjects[$sName] = $obj;
-  }
+    if (is_bool($mValue)) $this->bRoot = $mValue;
 
-  protected function isRoot() {
-
-    return $this->getClass()->isRoot();
+    return $this->bRoot;
   }
 
   protected function setVar(common\_var $obj) {
@@ -176,9 +174,12 @@ class _Object extends Basic implements common\arrayable {
 
   public function asArray() {
 
+    $this->isRoot($this->getParser()->isRoot());
+
     $this->buildObject();
+
     $this->getParser()->startObject($this);
-    $this->startLog("Object [{$this->getClass()->getExtend()}]");
+    $this->startLog($this->asToken());
 
     $element = $this->getClass()->getElement();
     $element->setAttribute('id', $this->getID());
@@ -187,6 +188,7 @@ class _Object extends Basic implements common\arrayable {
 
     if ($this->isRoot()) {
 
+      $this->log("Close root in {$this->asToken()}");
       $this->addToWindow();
     }
 
@@ -198,5 +200,9 @@ class _Object extends Basic implements common\arrayable {
     );
   }
 
+  public function asToken() {
+
+    return "Object [{$this->getClass()->getExtend()}]";
+  }
 }
 

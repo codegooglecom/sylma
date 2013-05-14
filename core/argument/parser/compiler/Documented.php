@@ -3,7 +3,7 @@
 namespace sylma\core\argument\parser\compiler;
 use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
 
-class Documented extends reflector\handler\Documented implements reflector\documented {
+class Documented extends reflector\builder\Documented implements reflector\documented {
 
   //const PHP_TEMPLATE = 'basic.xsl';
 

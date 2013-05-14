@@ -62,6 +62,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     $builder = $this->getManager('parser')->loadBuilder($schema, null, $this->getArguments());
 
+    $builder->setLogger($this->getRoot()->getLogger());
     $schema = $builder->getSchema($schema, $this->getWindow());
     $schema->setView($this->getParent());
 

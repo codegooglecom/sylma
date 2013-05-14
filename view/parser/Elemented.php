@@ -9,7 +9,6 @@ class Elemented extends template\parser\handler\Domed {
   const NS_SCHEMA = 'http://2013.sylma.org/schema/template';
 
   const TMP_ARGUMENTS = 'view.xml';
-  const LOG_RESULT = false;
 
   protected $allowForeign = true;
 
@@ -37,25 +36,9 @@ class Elemented extends template\parser\handler\Domed {
     $this->allowForeign(true);
 
     $this->setMode($sMode);
-    $this->loadLogger();
 
-    try {
-
-      $tree = $this->loadTree($el, $sMode); // parseRoot(), onAdd()
-      //$this->resetTemplates();
-      $result = $this->build($tree, $sMode); // asArray()
-      //$this->addToResult(array($this->getTemplate()));
-    }
-    catch (core\exception $e) {
-
-      $this->getLogger()->addException($e->getMessage());
-      $this->loadLog();
-
-      throw $e;
-      //return null;
-    }
-
-    if (self::LOG_RESULT || $el->readx('@debug', array(), false)) $this->loadLog();
+    $tree = $this->loadTree($el, $sMode); // parseRoot(), onAdd()
+    $result = $this->build($tree, $sMode); // asArray()
 
     return $result;
   }

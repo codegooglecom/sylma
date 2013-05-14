@@ -9,7 +9,6 @@
     <cls:base>\sylma\template\parser</cls:base>
     <cls:class alias="elemented" name="handler\Elemented">
       <cls:classes>
-        <cls:class alias="logger" name="\sylma\parser\reflector\logger\Logger"/>
         <component>
           <cls:classes>
             <cls:base>\sylma\template\parser\component</cls:base>

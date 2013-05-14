@@ -6,6 +6,9 @@
   'class' => '\sylma\core\argument\parser\Cached'),
 'template' => '/#sylma/core/argument/parser/compiler/basic.xsl',
 'classes' => array(
+  'logger' => array(
+    'file' => '\sylma\parser\reflector\logger\Logger.php',
+    'name' => '\sylma\parser\reflector\logger\Logger'),
   'elemented' => array(
     'file' => '\sylma\core\argument\parser\compiler\Elemented.php',
     'name' => '\sylma\core\argument\parser\compiler\Elemented',
