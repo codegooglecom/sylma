@@ -196,6 +196,8 @@ class Documented extends core\module\Domed implements reflector\documented {
 
       $reflector = $this->buildReflector($window);
       $mContent = $this->parseReflector($reflector, $doc);
+
+      $this->finishReflector($reflector);
     }
     catch (core\exception $e) {
 
@@ -204,6 +206,11 @@ class Documented extends core\module\Domed implements reflector\documented {
     }
 
     return $mContent;
+  }
+
+  public function finishReflector($reflector) {
+
+    $reflector->onFinish();
   }
 
   protected function catchException(fs\file $file, core\exception $e) {

@@ -8,6 +8,7 @@ class Pather extends component\Child {
   const ALL_TOKEN = '*';
 
   protected $source;
+  protected $aOperators = array('<', '>', '=', '!=', 'and', 'or', '+', '*', '/');
 
   public function setSource($source) {
 
@@ -29,32 +30,61 @@ class Pather extends component\Child {
     return $this->source;
   }
 
+  protected function getOperators() {
+
+    return $this->aOperators;
+  }
+
   public function parseExpression($sPath) {
 
     $aResult = array();
 
     $aTokens = explode(' ', $sPath);
-    $aOps = array('<', '>', '=', '!=', 'and', 'or');
     $window = $this->getWindow();
+
+    $bOp = false; // alternate between op and val
 
     foreach ($aTokens as $sToken) {
 
-      if (in_array($sToken, $aOps)) {
+      if ($bOp) {
+
+        if (!in_array($sToken, $this->getOperators())) {
+
+          $this->launchException("Unknown operator : {$sToken}");
+        }
 
         if ($sToken == '=') $sToken = '==';
         $aResult[] = $window->createOperator($sToken);
-      }
-      else if ($sValue = $this->matchString($sToken)) {
 
-        $aResult[] = $window->createString($sValue);
-      }
-      else if ($this->matchNumeric($sToken)) {
-
-        $aResult[] = $window->createNumeric($sToken);
+        $bOp = false;
       }
       else {
 
-        $aResult[] = $this->applyPath($sToken, '');
+        $bNot = false;
+
+        if ($sToken{0} == '!') {
+
+          $bNot = true;
+          $sToken = (trim(substr($sToken, 1)));
+        }
+
+        if ($sValue = $this->matchString($sToken)) {
+
+          $result = $window->createString($sValue);
+        }
+        else if ($this->matchNumeric($sToken)) {
+
+          $result = $window->createNumeric($sToken);
+        }
+        else {
+
+          $result = $this->applyPath($sToken, '');
+        }
+
+        if ($bNot) $result = $window->createNot($result);
+        $aResult[] = $result;
+
+        $bOp = true;
       }
     }
 
@@ -153,7 +183,7 @@ class Pather extends component\Child {
 
   protected function matchFunction($sVal) {
 
-    preg_match('/^(\w+)\\(/', $sVal, $aResult);
+    preg_match('/^([\w-]+)\\(/', $sVal, $aResult);
 
     return $aResult;
   }

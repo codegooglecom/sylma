@@ -32,5 +32,6 @@ interface domed {
 
   function getNamespace();
   function getUsedNamespaces();
+  function onFinish();
 }
 

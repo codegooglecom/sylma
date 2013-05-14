@@ -3,7 +3,7 @@
 namespace sylma\parser\reflector\handler;
 use \sylma\core, sylma\dom, sylma\parser\reflector;
 
-class Elemented extends Parsed implements reflector\elemented {
+class Elemented extends Logger implements reflector\elemented {
 
   const ARGUMENTS = '';
   const PREFIX = 'self';

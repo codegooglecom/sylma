@@ -56,6 +56,11 @@ class CallMethod extends Called implements common\addable, common\callable  {
     return $bVar ? $call->getVar() : $call;
   }
 
+  public function insert() {
+
+    $this->getWindow()->add($this);
+  }
+
   public function isStatic($bStatic = null) {
 
     if (!is_null($bStatic)) $this->bStatic = $bStatic;

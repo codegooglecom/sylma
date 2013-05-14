@@ -7,6 +7,34 @@ abstract class Templated extends reflector\handler\Elemented {
 
   protected $aTemplates = array();
 
+  public function lookupTemplate(dom\element $el, $sMode, $bRoot = false) {
+
+    $iLast = 0;
+    $result = null;
+
+    if ($bRoot) {
+
+      $this->launchException('Not yet implemented');
+    }
+
+    foreach ($this->getTemplates() as $template) {
+
+      $iWeight = $template->getWeight($el->getNamespace(), $el->getName(), $sMode);
+      if ($iWeight && $iWeight >= $iLast) {
+
+        $result = $template;
+        $iLast = $iWeight;
+      }
+    }
+
+    if ($result && $result->getMatch()) {
+
+      $result = clone $result;
+    }
+
+    return $result;
+  }
+
   public function getCurrentTemplate() {
 
     if (!$this->aTemplates) {
@@ -34,12 +62,12 @@ abstract class Templated extends reflector\handler\Elemented {
 
     $this->addTemplate($template);
   }
-
+/*
   protected function resetTemplates() {
 
     $this->aTemplates = array();
   }
-
+*/
   protected function getTemplates() {
 
     return $this->aTemplates;

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:le="http://2013.sylma.org/action"
+>
+  <tst:description>Collection</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="List">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <a href="{email}"><tpl:apply select="name"/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <a href="root@sylma.org">root</a>
+        <a href="admin@sylma.org">admin</a>
+        <a href="webmaster@sylma.org">webmaster</a>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Collection count">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple">
+          <sql:table>user</sql:table>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+            <span><tpl:apply select="count()"/></span>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <a href="{email}"><tpl:apply select="name"/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <a href="root@sylma.org">root</a>
+        <a href="admin@sylma.org">admin</a>
+        <a href="webmaster@sylma.org">webmaster</a>
+        <span>3</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Collection count filtered">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple">
+          <sql:table>user_multi</sql:table>
+        </sql:resource>
+        <sql:filter name="name">admin</sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <span><tpl:apply select="count()"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <span>2</span>
+      </div>
+    </tst:node>
+  </tst:test>
+</tst:tests>

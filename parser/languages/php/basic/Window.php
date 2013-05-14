@@ -83,9 +83,9 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
-  public function callFunction($sName, common\_instance $return = null, array $aArguments = array()) {
+  public function callFunction($sName, $mReturn = null, array $aArguments = array()) {
 
-    return $this->create('function', array($this, $sName, $return, $aArguments));
+    return $this->create('function', array($this, $sName, $this->loadReturn($mReturn), $aArguments));
   }
 
   /**

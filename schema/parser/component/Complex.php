@@ -6,7 +6,6 @@ use sylma\core, sylma\schema\parser, sylma\parser\reflector;
 class Complex extends Basic implements parser\type, parser\type\complex {
 
   protected $aParticles = array();
-  protected $sName = '';
 
   public function isComplex() {
 
@@ -16,16 +15,6 @@ class Complex extends Basic implements parser\type, parser\type\complex {
   public function isSimple() {
 
     return false;
-  }
-
-  protected function setName($sName) {
-
-    $this->sName = $sName;
-  }
-
-  public function getName() {
-
-    return $this->sName;
   }
 
   protected function addParticle(parser\particle $particle) {

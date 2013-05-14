@@ -23,7 +23,7 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
     }
     else {
 
-      $content = $this->readx();
+      $content = "'{$this->readx()}'";
     }
 
     $query->setWhere($tree->getElement($this->readx('@name', true), $tree->getNamespace()), '=', $content);

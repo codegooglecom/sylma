@@ -9,6 +9,7 @@
   </debug>
   <cls:classes>
     <cls:base>\sylma\template\binder</cls:base>
+    <cls:class alias="logger" name="\sylma\parser\reflector\logger\Logger"/>
     <cls:class alias="class" name="_Class">
       <cls:classes>
         <cls:class alias="object" name="_Object"/>

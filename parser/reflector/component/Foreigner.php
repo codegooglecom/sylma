@@ -144,5 +144,17 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
 
     return $this->getParser()->getSourceFile($sPath);
   }
+
+  protected function startLog($sMessage = '', array $aVars = array()) {
+
+    $this->getParser()->startComponentLog($this, $sMessage, array_merge(array(
+      //'node' => $this->getNode(),
+    ), $aVars));
+  }
+
+  protected function stopLog() {
+
+    $this->getParser()->stopComponentLog();
+  }
 }
 

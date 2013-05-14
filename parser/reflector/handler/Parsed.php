@@ -156,5 +156,11 @@ abstract class Parsed extends reflector\basic\Foreigner {
     $this->aParsers = array_merge($this->aParsers, $aResult);
   }
 
+  public function onFinish() {
 
+    foreach ($this->aParsers as $parser) {
+
+      $this->getRoot()->finishReflector($parser);
+    }
+  }
 }

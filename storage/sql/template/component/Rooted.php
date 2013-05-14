@@ -32,7 +32,7 @@ class Rooted extends sql\schema\component\Table {
     $this->query = $query;
   }
 
-  protected function getQuery() {
+  public function getQuery() {
 
     return $this->query;
   }

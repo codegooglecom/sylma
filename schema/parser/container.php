@@ -1,9 +1,13 @@
 <?php
 
 namespace sylma\schema\parser;
+use sylma\core;
 
-interface elemented {
+interface container {
 
+  /**
+   * @return \sylma\schema\parser\element
+   */
   function getElement($sName, $sNamespace);
   function getElements();
 }

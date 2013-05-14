@@ -8,19 +8,18 @@ class _Object extends Basic implements common\arrayable {
   const JS_LOAD_CONTEXT = 'js-load';
   const PARENT_PATH = 'sylma.ui.tmp';
 
+  protected $name;
+  protected $id;
+
   protected $class;
   protected $var;
   protected $sJSClass;
-  protected $sName;
-  protected $sParent;
 
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
-
-    //$this->loadID();
-    $this->loadName();
     $this->loadParentName();
+    $this->setID($this->loadUnique());
   }
 
   public function setClass(_Class $class) {
@@ -30,23 +29,23 @@ class _Object extends Basic implements common\arrayable {
 
   protected function loadName() {
 
-    if (!$sName = $this->readx('@js:name', false)) {
+    if (!$mName = $this->readx('@js:name', false)) {
 
-      $sName = uniqid('sylma');
+      $mName = $this->loadUnique();
     }
 
-    $this->setName($sName);
+    $this->setName($mName);
     return $this->getName();
   }
 
-  protected function setName($sName) {
+  protected function setName($mName) {
 
-    $this->sName = $sName;
+    $this->name = $mName;
   }
 
   protected function getName() {
 
-    return $this->sName;
+    return $this->name;
   }
 
   protected function getClass() {
@@ -69,17 +68,7 @@ class _Object extends Basic implements common\arrayable {
     //$this->getObject()->setProperty('objects.' . $sName, $val);
     //$this->aObjects[$sName] = $obj;
   }
-/*
-  protected function getParent() {
 
-    return $this->parent;
-  }
-
-  protected function setParent(self $parent) {
-
-    $this->parent = $parent;
-  }
-*/
   protected function isRoot() {
 
     return $this->getClass()->isRoot();
@@ -132,24 +121,24 @@ class _Object extends Basic implements common\arrayable {
   }
 
   protected function buildObject() {
-//dsp($this->isRoot());
+
+    $name = $this->loadName();
+
     if ($this->isRoot()) {
 
       $var = $this->getParser()->getObjects();
-      $sPath = $this->getName();
+      $mPath = $name;
     }
     else {
-//$this->launchException('test');
+
       $parent = $this->getParser()->getObject();
-      //$parent->setSubObject($this->getID(), $this);
-//dsp($parent);
+
       $var = $parent->getVar();
-      $sPath = 'objects.' . $this->getName();
+      $mPath = $this->getParser()->getPHPWindow()->toString(array('objects.', $name));
     }
-//dsp($var);
 
     $arg = $var->call('set', array(
-      $sPath,
+      $mPath,
       array(
         'extend' => $this->getClass()->getExtend(),
         'binder' => $this->getClass()->getID(),
@@ -157,7 +146,7 @@ class _Object extends Basic implements common\arrayable {
       ),
       true,
     ), '\sylma\core\argument', true);
-//dsp($this->isRoot());
+
     $this->setVar($arg);
   }
 
@@ -167,22 +156,42 @@ class _Object extends Basic implements common\arrayable {
     //$this->aProperties[$sName] = $val;
   }
 
+  protected function loadUnique() {
+
+    $window = $this->getParser()->getPHPWindow();
+    $result = $window->addVar($window->callFunction('uniqid', 'php-string', array('sylma-')));
+
+    return $result;
+  }
+
+  protected function setID($mID) {
+
+    $this->id = $mID;
+  }
+
+  protected function getID() {
+
+    return $this->id;
+  }
+
   public function asArray() {
 
-//dsp('start');
-    $this->loadID();
     $this->buildObject();
     $this->getParser()->startObject($this);
+    $this->startLog("Object [{$this->getClass()->getExtend()}]");
 
     $element = $this->getClass()->getElement();
     $element->setAttribute('id', $this->getID());
 
     $aElement = $this->getParser()->getPHPWindow()->parseArrayables(array($element));
 
-    if ($this->isRoot()) $this->addToWindow();
+    if ($this->isRoot()) {
 
-//dsp('stop');
+      $this->addToWindow();
+    }
+
     $this->getParser()->stopObject();
+    $this->stopLog();
 
     return array(
       $aElement,

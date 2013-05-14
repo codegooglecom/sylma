@@ -11,7 +11,7 @@
   <xsl:import href="/#sylma/modules/html/copy.xsl"/>
 
   <xsl:template match="tpl:log">
-    <div>
+    <div class="sylma-message">
       <style type="text/css">
         .sylma-template-component {
           border-left: 2px dotted gray;

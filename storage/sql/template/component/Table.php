@@ -53,14 +53,9 @@ class Table extends Rooted implements sql\template\pathable, parser\element {
     return $query;
   }
 
-  public function reflectApplyPath(array $aPath, $sMode) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
-    if (!$aPath) {
-
-      $this->launchException('Table must not be applied (internally) without path neither template, reflectApply() should be called instead');
-    }
-
-    return $this->parsePathTokens($aPath, $sMode);
+    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
   }
 
   public function reflectApply($sMode = '', $bStatic = false) {

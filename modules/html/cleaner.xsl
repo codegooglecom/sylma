@@ -5,7 +5,7 @@
 ]]></xsl:variable>
 
   <xsl:template match="html:script">
-    <xsl:element name="script">
+    <xsl:element name="script" namespace="{namespace-uri()}">
       <xsl:apply-templates select="@*"/>
       <xsl:choose>
         <xsl:when test="text()">
@@ -32,11 +32,15 @@
 
   <xsl:template match="html:html">
     <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
-      <xsl:attribute name="xmlns">
-        <xsl:value-of select="namespace-uri()"/>
-      </xsl:attribute>
+    <xsl:attribute name="xmlns">
+      <xsl:value-of select="namespace-uri()"/>
+    </xsl:attribute>
       <xsl:apply-templates select="@* | * | text()"/>
     </xsl:element>
+  </xsl:template>
+
+  <xsl:template name="xmlns">
+
   </xsl:template>
 
   <!-- Empty elements that can be display as simple tag !-->

@@ -67,6 +67,11 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     $root = $schema->getElement();
 
+    if ($sTable = $this->readx('self:table')) {
+
+      $root->setName($sTable);
+    }
+
     if ($this->readx('@multiple')) {
 
       $collection = $schema->createCollection();

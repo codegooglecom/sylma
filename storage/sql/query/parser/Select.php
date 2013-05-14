@@ -8,6 +8,10 @@ class Select extends Basic implements common\argumentable {
   protected $aJoins = array();
   protected $sMethod = '';
 
+  protected $offset;
+  protected $count;
+  protected $clone;
+
   public function setColumn($val) {
 
     $this->aColumns[] = $val;
@@ -34,7 +38,22 @@ class Select extends Basic implements common\argumentable {
     $this->aColumns = array();
   }
 
+  public function setWhere($val1, $sOp, $val2, $sLog = 'AND') {
+
+    if ($clone = $this->getClone()) {
+
+      $clone->setWhere($val1, $sOp, $val2, $sLog);
+    }
+
+    return parent::setWhere($val1, $sOp, $val2, $sLog);
+  }
+
   public function addJoin($table, $field, $val) {
+
+    if ($clone = $this->getClone()) {
+
+      $clone->addJoin($table, $field, $val);
+    }
 
     $this->aJoins[] = array($table, $field, $val);
   }
@@ -51,13 +70,6 @@ class Select extends Basic implements common\argumentable {
     return $aResult;
   }
 
-  protected function getString() {
-
-    $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres());
-
-    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
-  }
-
   public function setMethod($sMethod) {
 
     $this->sMethod = $sMethod;
@@ -66,6 +78,45 @@ class Select extends Basic implements common\argumentable {
   protected function getMethod() {
 
     return $this->sMethod;
+  }
+
+  public function setOffset($offset) {
+
+    $this->offset = $offset;
+  }
+
+  protected function getOffset() {
+
+    return $this->offset;
+  }
+
+  public function setCount($count) {
+
+    $this->count = $count;
+  }
+
+  protected function getCount() {
+
+    return $this->count;
+  }
+
+  protected function getLimit() {
+
+    if ($this->getOffset() && $this->getCount()) {
+
+      $aResult = array(' LIMIT ', $this->getOffset(), ', ', $this->getCount());
+    }
+    else {
+
+      $aResult = array();
+    }
+
+    return $aResult;
+  }
+
+  public function clearLimit() {
+
+    $this->offset = $this->count = null;
   }
 
   protected function build($sMethod = '') {
@@ -79,6 +130,23 @@ class Select extends Basic implements common\argumentable {
     }
 
     parent::build($sMethod);
+  }
+
+  protected function getString() {
+
+    $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres(), $this->getLimit());
+
+    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
+  }
+
+  public function setClone(self $clone) {
+
+    $this->clone = $clone;
+  }
+
+  protected function getClone() {
+
+    return $this->clone;
   }
 }
 

@@ -3,14 +3,10 @@
 namespace sylma\schema\parser;
 use sylma\core;
 
-interface element {
+interface element extends container {
 
   function isComplex();
 
-  /**
-   * @return \sylma\schema\parser\element
-   */
-  function getElement($sName, $sNamespace);
   function getName();
   function getNamespace();
 }

@@ -3,9 +3,8 @@
 namespace sylma\schema\parser;
 use sylma\core;
 
-interface schema {
+interface schema extends container {
 
-  function getElement($sName);
   function getTargetNamespace();
 }
 

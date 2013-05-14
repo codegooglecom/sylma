@@ -5,6 +5,11 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 
 class Template extends Child implements common\arrayable, parser\template, core\tokenable {
 
+  const NAME_DEFAULT = '*';
+
+  const WEIGHT_ELEMENT = 25;
+  const WEIGHT_ELEMENT_ALL = 20;
+
   const MATCH_DEFAULT = '[root]';
   const MODE_DEFAULT = '';
 
@@ -14,7 +19,9 @@ class Template extends Child implements common\arrayable, parser\template, core\
   protected $aComponents = array();
 
   protected $bBuilded = false;
+
   protected $sMatch;
+  protected $aMatch = array();
 
   protected $tree;
   protected $pather;
@@ -110,9 +117,11 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->sMatch = $sMatch;
   }
 
-  public function getMatch() {
+  public function getMatch($sKey = '') {
 
-    return $this->sMatch;
+    if ($sKey) return $this->aMatch[$sKey];
+    else return $this->sMatch;
+    return ;
   }
 
   public function setTree(parser\tree $tree) {
@@ -140,19 +149,6 @@ class Template extends Child implements common\arrayable, parser\template, core\
     }
 
     return $this->tree;
-  }
-
-  protected function parseElementSelf(dom\element $el) {
-
-    switch ($el->getName()) {
-
-      case 'use' : $result = $this->reflectUse($el); break;
-      default :
-
-        $result = parent::parseElementSelf($el);
-    }
-
-    return $result;
   }
 
   protected function loadMode() {
@@ -202,6 +198,11 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   public function getVariable($sName) {
 
+    if (!isset($this->aVariables[$sName])) {
+
+      $this->launchException("Variable '{$sName}' does not exists");
+    }
+    
     return $this->aVariables[$sName];
   }
 
@@ -262,6 +263,36 @@ class Template extends Child implements common\arrayable, parser\template, core\
       $this->asToken(),
       array_merge(array(), $aVars)
     );
+  }
+
+  public function getWeight($sNamespace, $sName, $sMode = self::MODE_DEFAULT) {
+
+    $iResult = 0;
+
+    if ($sMode === $this->getMode()) {
+
+      $iResult = $this->getWeightName($sNamespace, $sName);
+    }
+
+    return $iResult;
+  }
+  public function getWeightName($sNamespace, $sName) {
+
+    $iResult = 0;
+
+    if ($this->getMatch() && $sNamespace === $this->getMatch('namespace')) {
+
+      if ($sName === $this->getMatch('name')) {
+
+        $iResult = self::WEIGHT_ELEMENT;
+      }
+      else if ($this->getMatch('name') === self::NAME_DEFAULT) {
+
+        $iResult = self::WEIGHT_ELEMENT_ALL;
+      }
+    }
+
+    return $iResult;
   }
 
   public function getPather() {

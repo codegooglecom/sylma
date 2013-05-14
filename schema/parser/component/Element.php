@@ -5,22 +5,11 @@ use sylma\core, sylma\dom, sylma\schema, sylma\parser\languages\common;
 
 class Element extends Basic implements schema\parser\element, common\stringable, core\tokenable {
 
-  protected $sName = '';
   protected $type;
   protected $parent;
 
   protected $iMinOccurs;
   protected $iMaxOccurs;
-
-  protected function setName($sName) {
-
-    $this->sName = $sName;
-  }
-
-  public function getName() {
-
-    return $this->sName;
-  }
 
   public function parseName($sName) {
 

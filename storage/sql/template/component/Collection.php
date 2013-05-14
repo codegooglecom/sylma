@@ -1,11 +1,13 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\template, sylma\storage\sql;
+use sylma\core, sylma\storage\sql;
 
 class Collection extends Rooted implements sql\template\pathable {
 
   protected $table;
+  protected $pager;
+  protected $counter;
 
   public function getElement($sName, $sNamespace) {
 
@@ -43,6 +45,11 @@ class Collection extends Rooted implements sql\template\pathable {
     $result = $loop;
 
     return $result;
+  }
+
+  public function reflectApplyDefault($sPath, array $aPath, $sMode) {
+
+    dsp($sPath);
   }
 
   public function reflectApplyPath(array $aPath, $sMode) {
@@ -103,7 +110,12 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'count' :
 
-        $result = $this->reflectCount();
+        $result = $this->getCounter();
+        break;
+
+      case 'pager' :
+
+        $result = $this->getPager()->reflectApply($sMode);
         break;
 
       default :
@@ -114,16 +126,50 @@ class Collection extends Rooted implements sql\template\pathable {
     return $result;
   }
 
-  protected function reflectCount() {
+  public function setPager(sql\template\Pager $pager) {
 
-    $query = clone $this->getQuery();
+    $pager->setCollection($this);
+    $pager->setParser($this->getParser()->getView());
 
-    $query->clearColumns();
-    $query->setColumn('COUNT(*)');
-    $query->isMultiple(false);
-    $query->setMethod('read');
+    $this->pager = $pager;
+  }
 
-    return $query->getVar();
+  protected function getPager() {
+
+    if (!$this->pager) {
+
+      $this->launchException('No pager defined');
+    }
+
+    return $this->pager;
+  }
+
+  public function setLimit($offset, $count) {
+
+    $query = $this->getQuery();
+
+    $query->setOffset($offset);
+    $query->setCount($count);
+  }
+
+  public function getCounter() {
+
+    if (!$this->counter) {
+
+      $query = clone $this->getQuery();
+      $this->getQuery()->setClone($query);
+
+      $query->clearColumns();
+      $query->clearLimit();
+
+      $query->setColumn('COUNT(*)');
+      $query->isMultiple(false);
+      $query->setMethod('read');
+
+      $this->counter = $query->getVar();
+    }
+
+    return $this->counter;
   }
 }
 

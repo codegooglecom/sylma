@@ -3,9 +3,9 @@
 namespace sylma\template\parser;
 use sylma\core, sylma\dom;
 
-interface tree {
+interface tree extends core\tokenable {
 
   //function reflectRead($sPath);
-  function reflectApply($sPath);
+  function reflectApply($sMode);
 }
 

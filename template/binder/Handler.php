@@ -30,6 +30,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
    */
   protected $objects;
   protected $bInit = false;
+  protected $bDebug = false;
 
   public function init() {
 
@@ -37,6 +38,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
       $this->initWindow();
       $this->prepareParent();
+      $this->loadLogger();
 
       $this->bInit = true;
     }
@@ -93,8 +95,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $window->add($js->call('add', array($fs->call('getFile', array((string) $this->getFile(self::FILE_MOOTOOLS))))));
     $window->add($js->call('add', array($fs->call('getFile', array((string) $this->getFile(self::FILE_SYLMA))))));
 
-    $instance = $window->tokenToInstance(get_class($this->create('cached')));
-    $arg = $window->addVar($window->createInstanciate($instance));
+    $arg = $this->createObject('cached', array(), $window);
     $this->setObjects($arg);
   }
 
@@ -138,6 +139,11 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     //$el = $this->setNode($el);
 
     $el->getHandler()->registerNamespaces($this->getNS());
+
+    if ($el->readx('@js:debug', $this->getNS(), false)) {
+
+      $this->bDebug = true;
+    }
 
     if ($this->elementIsObject($el)) {
 
@@ -237,6 +243,11 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     }
 
     $window->add($this->getContext()->call('add', array($window->createString($aResult)), '\sylma\parser\context', false));
+  }
+
+  public function onFinish() {
+
+    if ($this->bDebug) $this->loadLog();
   }
 }
 

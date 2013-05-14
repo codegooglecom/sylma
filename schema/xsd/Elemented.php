@@ -83,7 +83,6 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
   }
 
   /**
-   *
    * @param string $sName ([prefix]:)?[name]
    * @param $source
    * @param $context
@@ -130,6 +129,11 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     }
 
     return $result;
+  }
+
+  public function getElements() {
+
+    $this->launchException('Not yet implemented');
   }
 
   protected function lookupElement($sName, $sNamespace) {

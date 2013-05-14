@@ -90,7 +90,14 @@ class _Interface extends core\module\Argumented {
       $factory = $this->getFactory();
       $factory::includeClass($this->getName(), $this->getFile(), false);
 
-      $this->reflection = new \ReflectionClass($this->getName());
+      try {
+
+        $this->reflection = new \ReflectionClass($this->getName());
+      }
+      catch (\ReflectionException $e) {
+
+        $this->launchException($e->getMessage(), get_defined_vars());
+      }
     }
   }
 

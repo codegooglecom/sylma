@@ -5,19 +5,14 @@ use sylma\core, sylma\dom, sylma\schema as schema_ns, sylma\template as template
 
 class Container extends template_ns\parser\component\Template {
 
-  const NAME_DEFAULT = '*';
-
   const CONTEXT_ELEMENT = 'element';
   const CONTEXT_TYPE = 'type';
 
   const CONTEXT_DEFAULT = self::CONTEXT_ELEMENT;
 
-  const WEIGHT_ELEMENT = 25;
-  const WEIGHT_ELEMENT_ALL = 20;
   const WEIGHT_TYPE = 15;
   const WEIGHT_TYPE_ALL = 10;
 
-  protected $aMatch = array();
   protected $context;
 
   public function parseRoot(dom\element $el) {
@@ -101,13 +96,7 @@ class Container extends template_ns\parser\component\Template {
     $this->context = $context;
   }
 
-  public function getMatch($sKey = '') {
-
-    if ($sKey) return $this->aMatch[$sKey];
-    else return parent::getMatch();
-  }
-
-  public function getWeight(schema_ns\parser\element $element, $sContext, $sMode, $bRoot = false) {
+  public function getWeightSchema(schema_ns\parser\element $element, $sContext, $sMode, $bRoot = false) {
 
     $iResult = 0;
 
@@ -128,7 +117,7 @@ class Container extends template_ns\parser\component\Template {
         }
         else if ($sMode === $this->getMode()) {
 
-          if (!$iResult = $this->getWeightElement($element)) {
+          if (!$iResult = $this->getWeightName($element->getNamespace(), $element->getName())) {
 
             if ($type = $element->getType()) {
 
@@ -142,29 +131,10 @@ class Container extends template_ns\parser\component\Template {
     return $iResult;
   }
 
-  protected function getWeightElement(schema_ns\parser\element $element) {
-
-    $iResult = 0;
-
-    if ($element->getNamespace() === $this->getMatch('namespace')) {
-
-      if ($element->getName() === $this->getMatch('name')) {
-
-        $iResult = self::WEIGHT_ELEMENT;
-      }
-      else if ($this->getMatch('name') === self::NAME_DEFAULT) {
-
-        $iResult = self::WEIGHT_ELEMENT_ALL;
-      }
-    }
-
-    return $iResult;
-  }
-
   protected function startLog($sMessage = 'Template', array $aVars = array()) {
 
     parent::startLog($sMessage, array(
-      'element' => $this->getTree()->getName(),
+      'element' => $this->getTree()->asToken(),
     ));
   }
 

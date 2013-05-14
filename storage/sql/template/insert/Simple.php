@@ -7,16 +7,6 @@ class Simple extends sql\template\component\Simple {
 
   protected $var;
 
-  protected function createObject(common\_var $handler) {
-
-    $window = $this->getWindow();
-
-    $sClass = $this->getFactory()->findClass('cached')->read('name');
-    $instance = $window->tokenToInstance($sClass);
-
-    return $window->addVar($window->createInstanciate($instance, array($handler)));
-  }
-
   protected function getHandler() {
 
     return $this->getParser()->getReflector();
@@ -31,7 +21,7 @@ class Simple extends sql\template\component\Simple {
 
     if (!$this->var) {
 
-      $this->setVar($this->createObject($this->getHandler()));
+      $this->setVar($this->createObject('cached', array($this->getHandler())));
     }
 
     return $this->var;

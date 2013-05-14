@@ -3,7 +3,7 @@
 namespace sylma\schema\parser;
 use sylma\core;
 
-interface particle extends elemented {
+interface particle extends container {
 
   //function addElement(parser\element $element);
 }

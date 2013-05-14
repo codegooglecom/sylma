@@ -29,7 +29,7 @@ interface window extends common\_window {
   /**
    * @return basic\CallMethod
    */
-  function callFunction($sName, common\_instance $return = null, array $aArguments = array());
+  function callFunction($sName, $mReturn = null, array $aArguments = array());
   function createCall($obj, $sMethod, $mReturn, array $aArguments = array());
   /**
    * @return _instance

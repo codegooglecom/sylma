@@ -21,12 +21,9 @@ class Pather extends template\parser\Pather {
 
   protected function parsePathDefault($sPath, array $aPath, $sMode) {
 
-    return $this->parsePathElement($sPath, $aPath, $sMode);
-  }
+    return $this->getSource()->reflectApplyDefault($sPath, $aPath, $sMode);
 
-  protected function matchFunction($sVal) {
-
-    return parent::matchFunction($sVal);
+    //return $this->parsePathElement(, $sPath, $aPath, $sMode);
   }
 
   protected function matchContext($sVal) {
@@ -40,17 +37,17 @@ class Pather extends template\parser\Pather {
 
     return $this->getSource()->reflectApplyAll($aPath, $sMode);
   }
+/*
+  protected function parsePathElement(schema\parser\element $source, $sPath, array $aPath, $sMode) {
 
-  protected function parsePathElement($sPath, array $aPath, $sMode) {
 
-    $source = $this->getSource();
     list($sNamespace, $sName) = $source->parseName($sPath);
 
     $element = $source->getElement($sName, $sNamespace);
 
     return $element ? $element->reflectApplyPath($aPath, $sMode) : null;
   }
-
+*/
   protected function parsePathContext(array $aMatch, array $aPath, $sMode) {
 
     $source = $this->getSource();

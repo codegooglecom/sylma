@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\template\parser;
+namespace sylma\parser\reflector\logger;
 use sylma\core;
 
 class Logger extends core\module\Domed {

@@ -13,6 +13,7 @@ class _Class extends Basic implements common\arrayable, common\argumentable {
   protected $bRoot = false;
 
   protected $sExtend = '';
+  protected $sID;
 
   public function parseRoot(dom\element $el) {
 
@@ -44,8 +45,12 @@ class _Class extends Basic implements common\arrayable, common\argumentable {
     $this->init();
 
     $this->getParser()->startObject($this);
+    $this->startLog("Class [{$this->getExtend()}]");
+
     $this->getElement()->parseRoot($this->cleanAttributes($this->getNode()));
+
     $this->getParser()->stopObject();
+    $this->stopLog();
 
     //$this->addToWindow();
   }
@@ -114,31 +119,28 @@ class _Class extends Basic implements common\arrayable, common\argumentable {
     $this->getObject()->setProperty($sName, $val);
   }
 
-/*
-  protected function parseComponent(dom\element $el) {
+  protected function loadID() {
 
-    $result = parent::parseComponent($el);
+    if (!$sID = $this->readx('@id')) {
 
-    if ($result instanceof component\Property) {
-
-      $this->setProperty($result->getName(), $result->getValue());
-    }
-    else if ($result instanceof _Class) {
-
-      $this->setObject($result->getName(), $result);
-    }
-    else if ($result instanceof component\Event) {
-
-      $this->setEvent($result->getID(), $result);
-    }
-    else {
-
-      $this->launchException('Unknown component class', get_defined_vars());
+      $sID = uniqid('sylma');
     }
 
-    return $result;
+    $this->setID($sID);
+
+    return $this->getID();
   }
-*/
+
+  protected function setID($sID) {
+
+    $this->sID = $sID;
+  }
+
+  public function getID() {
+
+    return $this->sID;
+  }
+
   protected function addToWindow() {
 
     $this->getParser()->addToWindow($this->getObject());

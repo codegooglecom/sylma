@@ -42,9 +42,9 @@ class Elemented extends template\parser\handler\Domed {
     try {
 
       $tree = $this->loadTree($el, $sMode); // parseRoot(), onAdd()
-      $this->resetTemplates();
-      $result = $this->build($tree, $sMode);
-      //$this->addToResult(array($this->getTemplate())); // asArray()
+      //$this->resetTemplates();
+      $result = $this->build($tree, $sMode); // asArray()
+      //$this->addToResult(array($this->getTemplate()));
     }
     catch (core\exception $e) {
 
