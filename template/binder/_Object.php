@@ -108,16 +108,6 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     $this->sParent = $sParent;
   }
 
-  protected function addToWindow() {
-
-    $window = $this->getParser()->getPHPWindow();
-    $parent = $this->getParser()->getObjects();
-    $context = $window->getVariable('contexts')->call('get', array(self::JS_LOAD_CONTEXT), '\sylma\core\argument', true);
-
-    $aContent = array('sylma.ui.load(', array($this->getParentName(), ', ', $parent->call('asJSON', array(), 'php-string'), ')'));
-    $window->add($context->call('add', array($window->createString($aContent))));
-  }
-
   protected function buildObject() {
 
     $name = $this->loadName();
@@ -186,10 +176,9 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $aElement = $this->getParser()->getPHPWindow()->parseArrayables(array($element));
 
-    if ($this->isRoot()) {
+    if ($this->isRoot() and $sParent = $this->getParentName()) {
 
-      $this->log("Close root in {$this->asToken()}");
-      $this->addToWindow();
+      $this->getParser()->getObjects()->call('setParentPath', array($sParent))->insert();
     }
 
     $this->getParser()->stopObject();

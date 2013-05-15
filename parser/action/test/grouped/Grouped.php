@@ -49,7 +49,7 @@ class Grouped extends tester\Basic implements core\argumentable {
 
     if (is_null($result)) {
 
-      $this->throwException('No result');
+      $this->launchException('No result', get_defined_vars());
     }
 
     return $result;

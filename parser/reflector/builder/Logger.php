@@ -44,6 +44,12 @@ abstract class Logger extends core\module\Domed {
     $this->logger = null;
   }
 
+  public function log($component, $sMessage, array $aVars = array()) {
+
+    $this->startComponentLog($component, $sMessage, $aVars);
+    $this->stopComponentLog();
+  }
+
   public function startComponentLog($component, $sMessage = '', array $aVars = array()) {
 
     $this->getLogger()->startComponent($component, $sMessage, $aVars);

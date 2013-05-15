@@ -8,6 +8,8 @@ class Document extends action\handler\Basic {
   private $head = null;
   protected $result = null;
 
+  protected static $sArgumentClass = 'sylma\core\argument\Readable';
+
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
     // global context is usefull for free action (without parent)
@@ -16,9 +18,10 @@ class Document extends action\handler\Basic {
 
     $this->setContexts($this->createArgument(array(
       'css' => new context\CSS,
-      'js' => new context\JS,
-      'js-classes' => new binder\context\Classes,
-      'js-load' => new binder\context\Load,
+      'js' => new context\JS(array(
+        'load' => new binder\context\Load,
+      )),
+      //'js-classes' => new binder\context\Classes,
       //'js/load' => new js\context\Load,
       'message' =>  $messages,
       //'title' =>  new parser\context\Basic,
@@ -73,9 +76,7 @@ class Document extends action\handler\Basic {
 
   protected function loadContexts() {
 
-    $action = $this->getAction();
-
-    foreach ($this->getContexts() as $sName => $context) {
+    foreach ($this->getContexts()->query() as $sName => $context) {
 
       switch ($sName) {
 

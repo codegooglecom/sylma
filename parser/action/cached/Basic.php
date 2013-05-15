@@ -23,7 +23,7 @@ abstract class Basic extends core\module\Domed implements action\cached {
 
     if (!$contexts) $contexts = $this->createArgument(array());
 
-    if (!array_key_exists(self::CONTEXT_DEFAULT, $contexts)) {
+    if (!isset($contexts[self::CONTEXT_DEFAULT])) {
 
       $contexts[self::CONTEXT_DEFAULT] = $handler->getControler()->createContext();
     }
@@ -117,7 +117,7 @@ abstract class Basic extends core\module\Domed implements action\cached {
   public function setContexts(core\argument $contexts) {
 
     $this->contexts = $contexts;
-    $this->aResults = $contexts->query();
+    $this->aResults = $contexts;
   }
 
   /**
@@ -127,18 +127,7 @@ abstract class Basic extends core\module\Domed implements action\cached {
    */
   public function getContext($sContext = self::CONTEXT_DEFAULT, $bDebug = true) {
 
-    $mResult = null;
-
-    if (array_key_exists($sContext, $this->aResults)) {
-
-      $mResult = $this->aResults[$sContext];
-    }
-    else if ($bDebug) {
-
-      $this->throwException(sprintf('Context %s does not exists', $sContext));
-    }
-
-    return $mResult;
+    return $this->aResults->get($sContext, $bDebug);
   }
 
   protected function getActionFile($sPath, array $aArguments = array()) {
@@ -157,7 +146,7 @@ abstract class Basic extends core\module\Domed implements action\cached {
 
   public function asArray() {
 
-    return $this->getContext()->asArray();
+    return current($this->getContext()->loadArray());
   }
 
   public function asString($iMode = 0) {

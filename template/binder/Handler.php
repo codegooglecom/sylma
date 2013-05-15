@@ -8,7 +8,12 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
   const PREFIX = 'js';
   const NS = 'http://2013.sylma.org/template/binder';
 
-  const CONTEXT_CLASSES = 'js-classes';
+  const CLASSES_PATH = 'js/classes';
+  const CLASSES_CONTEXT = 'context/classes';
+
+  const OBJECTS_PATH = 'js/load/objects';
+  const OBJECTS_CONTEXT = 'context/objects';
+
   const CONTEXT_JS = 'js';
 
   const FILE_MOOTOOLS = '../mootools.js';
@@ -68,24 +73,14 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   protected function prepareParent() {
 
-    $window = $this->getRoot()->getWindow();
-    //$manager = $window->addControler('parser');
-
-    //if (!$contexts = $window->getVariable('contexts', false)) {
-
-      $contexts = $window->createVariable('contexts', '\sylma\core\argument');
-    //}
+    $window = $this->getPHPWindow();
+    $contexts = $window->createVariable('contexts', '\sylma\core\argument');
 
     $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($contexts));
     $content = $window->createCall($window->getSylma(), 'throwException', 'php-boolean', array('No context sent'));
     $window->add($window->createCondition($window->createNot($isset), $content));
 
-    //$window->setVariable($contexts);
-
-    $call = $contexts->call('get', array(self::CONTEXT_CLASSES), '\\sylma\\parser\\context');
-    $this->setContext($call->getVar());
-
-    $js = $contexts->call('get', array(self::CONTEXT_JS), '\\sylma\\parser\\context', true);
+    $js = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\parser\context', true);
 
     $this->setDirectory(__FILE__);
 
@@ -93,8 +88,22 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $window->add($js->call('add', array($fs->call('getFile', array((string) $this->getFile(self::FILE_MOOTOOLS))))));
     $window->add($js->call('add', array($fs->call('getFile', array((string) $this->getFile(self::FILE_SYLMA))))));
 
-    $arg = $this->createObject('cached', array(), $window);
-    $this->setObjects($arg);
+    $this->setContext($this->checkContext($contexts, self::CLASSES_PATH, self::CLASSES_CONTEXT, $window));
+    $this->setObjects($this->checkContext($contexts, self::OBJECTS_PATH, self::OBJECTS_CONTEXT, $window));
+  }
+
+  protected function checkContext(common\_var $contexts, $sPath, $sAlias, $window) {
+
+    $result = $contexts->call('get', array($sPath, false), '\sylma\parser\context')->getVar();
+    $if = $window->createCondition($window->createNot($result));
+
+    $new = $this->createObject($sAlias, array(), $window, false);
+    $call = $contexts->call('set', array($sPath, $new, true));
+    $if->addContent($window->createAssign($result, $call));
+
+    $window->add($if);
+
+    return $result;
   }
 
   protected function setObjects(common\_var $arg) {

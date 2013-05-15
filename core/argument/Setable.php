@@ -258,6 +258,10 @@ class Setable extends Domed implements core\argument {
               implode('/', $aParentPath), implode('/', $aParentPath + $aPath)),
               count($aPath) + 3);
           }
+          else {
+
+            break;
+          }
         }
       }
       else {

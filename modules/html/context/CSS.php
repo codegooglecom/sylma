@@ -11,7 +11,7 @@ class CSS extends context\Basic implements dom\domable {
     $aStyles = array();
     $aFiles = array();
 
-    foreach ($this->asArray() as $mValue) {
+    foreach ($this->query() as $mValue) {
 
       if ($mValue instanceof fs\file) {
 
@@ -44,7 +44,10 @@ class CSS extends context\Basic implements dom\domable {
       if ($aStyle) $aStyles[] = $aStyle;
     }
 
-    if ($aStyles) $result = $this->createArgument($aStyles, \Sylma::read('namespaces/html'))->asDOM();
+    if ($aStyles) {
+
+      $result = $this->buildDocument($aStyles, \Sylma::read('namespaces/html'));
+    }
 
     return $result;
   }

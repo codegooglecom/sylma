@@ -12,10 +12,9 @@ abstract class Normalizer extends Basic {
   const DEBUG_NORMALIZE_RECURSION = false;
 
   protected static $aNormalizedObjects = array();
-  protected static $sCurrentPath;
 
   protected function normalizeObject($val, $iMode) {
-//echo '- ' .get_class($val).'<br/>';
+
     $mResult = null;
 
     if (self::DEBUG_NORMALIZE_RECURSION) {
@@ -24,8 +23,7 @@ abstract class Normalizer extends Basic {
 
         if ($obj === $val) {
 
-          $formater = \Sylma::getControler('formater');
-          \Sylma::throwException(sprintf('Recursion when normalizing with object : %s', $formater->asToken($val)));
+          \Sylma::throwException("Recursion when normalizing with object : " . \Sylma::show($val));
         }
       }
     }
@@ -47,7 +45,10 @@ abstract class Normalizer extends Basic {
       $mResult = $this->normalizeObjectUnknown($val, $iMode);
     }
 
-    if (self::DEBUG_NORMALIZE_RECURSION) self::$aNormalizedObjects[] = $val;
+    if (self::DEBUG_NORMALIZE_RECURSION) {
+
+      self::$aNormalizedObjects[] = $val;
+    }
 
     return $mResult;
   }
@@ -70,17 +71,13 @@ abstract class Normalizer extends Basic {
   public function normalizeArray(array $aArray, $iMode = self::NORMALIZE_DEFAULT) {
 
     $aResult = array();
-    $sCurrentPath = self::$sCurrentPath;
 
     foreach ($aArray as $sKey => $mVal) {
 
-      self::$sCurrentPath = $sCurrentPath . '/' . $sKey;
       $mResult = $this->normalizeValue($mVal, $iMode);
 
       if ($mResult !== null) $aResult[$sKey] = $mResult;
     }
-
-    self::$sCurrentPath = $sCurrentPath;
 
     return $aResult;
   }
@@ -115,15 +112,19 @@ abstract class Normalizer extends Basic {
 
   public function normalize($iMode = self::NORMALIZE_DEFAULT) {
 
-    self::$sCurrentPath = '';
+    $this->aArray = $this->normalizeArray($this->aArray, $iMode);
+  }
 
-    try {
-      $this->aArray = $this->normalizeArray($this->aArray, $iMode);
-    }
-    catch (core\exception $e) {
+  public function asArray($bEmpty = false) {
 
-      $e->addPath('@last-path ' . self::$sCurrentPath);
-      throw $e;
-    }
+    $iMode = self::NORMALIZE_DEFAULT;
+    if (!$bEmpty) $iMode = $iMode & self::NORMALIZE_EMPTY_ARRAY;
+
+    return $this->normalizeArray($this->query(), $iMode);
+  }
+
+  public function asJSON() {
+
+    return json_encode($this->asArray(true), \JSON_FORCE_OBJECT);
   }
 }

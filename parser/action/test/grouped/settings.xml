@@ -254,7 +254,7 @@
         $sResult === 'samples/simple.txt';
     </tst:expected>
   </tst:test>
-  <tst:test name="Default not sent nether returned argument">
+  <tst:test name="Default not sent nether returned argument" disabled="true">
     <le:action>
       <le:settings>
         <le:argument format="php-string" name="path" required="false">

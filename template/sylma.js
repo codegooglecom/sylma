@@ -126,7 +126,14 @@ sylma.ui = new sylma.classes.ui;
 
     loadProperties : function(props) {
 
-      return Object.merge(props, sylma.binder.classes[props.binder]);
+      var binder = sylma.binder.classes[props.binder];
+
+      if (!binder) {
+
+        throw 'No valid binder defined with : ' + props.binder;
+      }
+
+      return Object.merge(props, binder);
     },
 
     initObjects : function(objects) {

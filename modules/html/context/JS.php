@@ -15,6 +15,10 @@ class JS extends context\Basic implements dom\domable {
 
       $sResult = $mValue->asString();
     }
+    else {
+
+      $this->launchException("Unknow value type : " . \Sylma::show($mValue));
+    }
 
     return $sResult;
   }
@@ -24,7 +28,8 @@ class JS extends context\Basic implements dom\domable {
     $doc = $this->createDocument('root');
     $aFiles = array();
 
-    foreach ($this->asArray() as $mValue) {
+    // first files
+    foreach ($this->query() as $mValue) {
 
       if ($mValue instanceof fs\file) {
 
@@ -38,9 +43,15 @@ class JS extends context\Basic implements dom\domable {
       }
       else {
 
-        $this->buildElement($doc)->set($this->loadString($mValue));
+        $aStrings[] = $this->loadString($mValue);
         //$el->set($doc->createCData($this->loadString($mValue)));
       }
+    }
+
+    // then scripts
+    foreach ($aStrings as $sVal) {
+
+      $this->buildElement($doc)->set($this->loadString($sVal));
     }
 
     return $doc->getChildren();

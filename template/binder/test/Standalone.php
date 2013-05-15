@@ -55,7 +55,7 @@ class Standalone extends tester\Parser implements dom\domable {
     $sBind = $expected->readx('@bind', array(), false);
     if (!$sBind) $sBind = 'example';
 
-    $parent->getContext('js-load')->add("sylma.tester.run(function() { $sExpected; }, $sBind);");
+    $parent->getContext('js/load')->add("sylma.tester.run(function() { $sExpected; }, $sBind);");
 
     return $action;
   }

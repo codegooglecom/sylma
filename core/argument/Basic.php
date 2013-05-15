@@ -17,7 +17,7 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
   public function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
 
-    if (is_array($aArray)) $this->aArray = $aArray;
+    $this->aArray = $aArray;
 
     $this->setNamespaces($aNS);
     if ($parent) $this->setParent($parent);
@@ -105,18 +105,6 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     return $aFrom;
   }
 
-  public function asArray($bEmpty = false) {
-
-    $iMode = self::NORMALIZE_DEFAULT;
-    if (!$bEmpty) $iMode = $iMode & self::NORMALIZE_EMPTY_ARRAY;
-
-    return static::normalizeArray($this->query(), $iMode);
-  }
-
-  public function asJSON() {
-
-    return json_encode($this->asArray(true), \JSON_FORCE_OBJECT);
-  }
 /*
   public function __toString() {
 

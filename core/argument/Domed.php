@@ -83,6 +83,11 @@ abstract class Domed extends Iterator implements dom\domable {
           }
           else {
 
+            if (!$sNamespace) {
+
+              $this->throwException('No namespace defined for export as dom document');
+            }
+
             $node = $parent->addElement($sKey, null, array(), $sNamespace);
           }
         }
@@ -169,11 +174,6 @@ abstract class Domed extends Iterator implements dom\domable {
     if (!$sNamespace = $this->getNamespace()) {
 
       $sNamespace = $sParentNamespace;
-    }
-
-    if (!$sNamespace) {
-
-      $this->throwException('No namespace defined for export as dom document');
     }
 
     $bChildren = false;

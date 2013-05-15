@@ -3,18 +3,13 @@
 namespace sylma\template\binder\context;
 use sylma\core, sylma\dom, sylma\modules;
 
-class Classes extends modules\html\context\JS {
+class Classes extends modules\html\context\JS implements core\stringable {
 
   const PARENT_PATH = 'sylma.binder.classes';
 
-  public function asDOM() {
+  public function asString() {
 
-    if ($this->getArguments()->query()) {
-
-      $this->setArguments(array(self::PARENT_PATH . ' = {' . implode(',', $this->asArray()) . '}'), false);
-    }
-
-    return parent::asDOM();
+    return self::PARENT_PATH . ' = {' . implode(',', $this->query()) . '}';
   }
 }
 

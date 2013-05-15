@@ -117,7 +117,7 @@
         $result === null;
     </tst:expected>
   </tst:test>
-  <tst:test name="Boolean">
+  <tst:test name="Boolean" disabled="true">
     <le:action>
       <le:bool value="true"/>
       <le:boolean value="false"/>

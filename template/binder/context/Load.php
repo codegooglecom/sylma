@@ -1,29 +1,35 @@
 <?php
 
 namespace sylma\template\binder\context;
-use sylma\core, sylma\parser\context, sylma\dom;
+use sylma\core, sylma\dom, sylma\modules;
 
-class Load extends context\Basic implements dom\domable {
+class Load extends modules\html\context\JS implements core\stringable {
 
-  public function asDOM() {
+  public function asString() {
 
-    $aValues = $this->asArray();
-    $result = null;
+    $aValues = array();
+
+    foreach ($this->query() as $child) {
+
+      if ($child instanceof core\argument) {
+
+        $aValues[] = $child->asString();
+      }
+      else {
+
+        $aValues[] = $child;
+      }
+    }
+
+    $sResult = '';
 
     if ($aValues) {
 
       $sCalls = join(";\n", $aValues);
-      $sContent = "window.addEvent('domready', function() { $sCalls });";
-
-      $doc = $this->createDocument();
-
-      $result = $doc->addElement('script', null, array('type' => 'text/javascript'), \Sylma::read('namespaces/html'));
-      $result->set($sContent);
+      $sResult = "window.addEvent('domready', function() { $sCalls });";
     }
 
-    return $result;
+    return $sResult;
   }
-
 }
 
-?>

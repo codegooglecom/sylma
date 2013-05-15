@@ -38,7 +38,7 @@ class Module extends core\module\Domed implements dom\domable {
 
     $action = $this->getControler('parser')->getContext('action/current');
     $action->getContext('js')->add("$sParent.tests = $sTests;");
-    $action->getContext('js-load')->add("$sParent.run()");
+    $action->getContext('js/load')->add("$sParent.run()");
   }
 }
 

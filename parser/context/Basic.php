@@ -3,45 +3,29 @@
 namespace sylma\parser\context;
 use sylma\core, sylma\parser\context, sylma\dom;
 
-class Basic extends core\module\Domed implements context {
+class Basic extends core\argument\Readable implements context {
 
-  protected static $sArgumentClass = 'sylma\core\argument\Setable';
   protected $parent;
 
-  public function __construct() {
-
-    $this->setArguments(array());
-  }
-
-  public function shift($mValue) {
-
-    $this->getArguments()->shift($mValue);
-  }
-
-  public function add($mValue) {
+  public function add($mValue, $bRef = false) {
 
     if (is_array($mValue)) {
 
       foreach ($mValue as $mItem) {
 
-        $this->getArguments()->add($mItem);
+        parent::add($mItem);
       }
     }
     else {
 
-      $this->getArguments()->add($mValue);
+     parent::add($mValue);
     }
-  }
-
-  public function set($sPath, $mValue = null) {
-
-    return $this->setArgument($sPath, $mValue);
   }
 
   public function asObject() {
 
     $result = null;
-    $aArguments = $this->getArguments()->query();
+    $aArguments = $this->loadArray();
 
     if (count($aArguments) > 1) {
 
@@ -52,19 +36,13 @@ class Basic extends core\module\Domed implements context {
       $result = reset($aArguments);
     }
 
-    /*
-    if (!is_object($result)) {
-
-      $this->throwException('Result should be an object');
-    }
-    */
     return $result;
   }
 
-  public function asArray() {
+  public function loadArray() {
 
     $aResult = array();
-    $aAction = $this->getArguments()->query();
+    $aAction = $this->query();
 
     if (count($aAction) == 1 && is_array(current($aAction))) {
 
@@ -78,15 +56,18 @@ class Basic extends core\module\Domed implements context {
     return $aResult;
   }
 
+  protected function createDocument($sElement = '') {
+
+    return \Sylma::getManager('dom')->createDocument($sElement);
+  }
+
   public function asDOM() {
 
     $result = $this->asObject();
 
     if ($result && !$result instanceof dom\handler) {
 
-      $result = $this->getManager('dom')->createDocument($result);
-      //echo $this->show($result)->asString();
-      //$this->throwException('Result should be a DOM object');
+      $result = $this->createDocument($result);
     }
 
     return $result;
@@ -94,7 +75,8 @@ class Basic extends core\module\Domed implements context {
 
   public function asString() {
 
-    $aResult = $this->getArguments()->asArray();
+    //$this->normalize();
+    $aResult = $this->loadArray();
 
     return (string) implode('', $aResult);
   }

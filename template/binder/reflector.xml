@@ -22,6 +22,11 @@
         <cls:class alias="include" name="component\_Include"/>
       </cls:classes>
     </component>
-    <cls:class alias="cached" name="Cached"/>
+    <context>
+      <cls:classes>
+        <cls:class alias="classes" name="context\Classes"/>
+        <cls:class alias="objects" name="context\Objects"/>
+      </cls:classes>
+    </context>
   </cls:classes>
 </arg:argument>

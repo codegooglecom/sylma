@@ -54,7 +54,7 @@ abstract class Documented extends Container {
 
       if ($val->isEmpty()) {
 
-        $this->throwException(t('Empty document cannot be setted to another document'));
+        $this->throwException('Empty document cannot be setted to another document');
       }
 
       $result = $this->setRoot($val->getRoot());
@@ -127,7 +127,7 @@ abstract class Documented extends Container {
     return $this->setObject($doc);
   }
 
-  protected function setArray($aVal) {
+  protected function setArray(array $aVal) {
 
     $mResult = array();
 
@@ -147,7 +147,7 @@ abstract class Documented extends Container {
 
       // = 1
 
-      $mResult = $this->set(array_pop($mValue));
+      $mResult = $this->set(array_pop($aVal));
     }
 
     return $mResult;

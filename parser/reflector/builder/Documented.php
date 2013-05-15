@@ -27,7 +27,7 @@ class Documented extends Logger implements reflector\documented {
     $this->loadDefaultArguments();
     if ($args) $this->setArguments($args);
     $this->loadArguments($args);
-    //$this->loadLogger();
+    $this->loadLogger();
 
     $this->setDirectory(__FILE__);
     $this->setSourceDirectory($dir);
@@ -199,6 +199,9 @@ class Documented extends Logger implements reflector\documented {
       $this->finishReflector($reflector);
     }
     catch (core\exception $e) {
+
+      $this->log($this, $e->getMessage());
+      $this->loadLog($doc);
 
       $this->catchException($file, $e);
       $mContent = null;

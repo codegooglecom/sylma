@@ -51,12 +51,7 @@ class Readable extends Domed implements core\argument {
     return $this->getValue($sPath, $bDebug);
   }
 
-  public function set($sPath, $mValue = null, $bRef = false) {
-
-    if (!$aPath = $this->parsePath($sPath)) {
-
-      $this->throwException('Cannot set without path');
-    }
+  public function setPath(array &$aPath, $mValue = null, $bRef = false) {
 
     $mCurrent =& $this->aArray;
     $bNULL = is_null($mValue);
@@ -64,13 +59,18 @@ class Readable extends Domed implements core\argument {
     do {
 
       $sKey = current($aPath);
+//echo is_object($mCurrent) ? get_class($mCurrent) : print_r($mCurrent);
+      if ($mCurrent instanceof core\argument) {
 
-      if (!is_array($mCurrent)) {
+        return $mCurrent->setPath($aPath, $mValue, $bRef);
+      }
+      else if (!is_array($mCurrent)) {
 
-        $this->launchException('Cannot set a value into object');
+        $this->launchException("Cannot set value to : " . \Sylma::show($mCurrent), get_defined_vars());
       }
 
       if (!array_key_exists($sKey, $mCurrent)) $mCurrent[$sKey] = array();
+
       $mPrevious =& $mCurrent;
       $mCurrent =& $mCurrent[$sKey];
 
@@ -91,6 +91,16 @@ class Readable extends Domed implements core\argument {
     }
 
     return $mCurrent;
+  }
+
+  public function set($sPath, $mValue = null, $bRef = false) {
+
+    if (!$aPath = $this->parsePath($sPath)) {
+
+      $this->throwException('Cannot set without path');
+    }
+
+    return $this->setPath($aPath, $mValue, $bRef);
   }
 
   public function shift() {
@@ -149,12 +159,13 @@ class Readable extends Domed implements core\argument {
 
       $sKey = current($aPath);
       $mCurrent =& $this->parseValue($aPath, $mCurrent, $bDebug);
+
       $bArray = is_array($mCurrent);
 
       if ($bArray && array_key_exists($sKey, $mCurrent)) {
 
         $mCurrent =& $mCurrent[$sKey];
-        $mResult =& $mCurrent;
+        $mResult = $mCurrent;
       }
       else {
 
@@ -168,10 +179,6 @@ class Readable extends Domed implements core\argument {
           $mResult = null;
           break;
         }
-        else {
-
-          $mResult =& $mCurrent;
-        }
       }
 
     } while (next($aPath));
@@ -179,6 +186,10 @@ class Readable extends Domed implements core\argument {
     if (each($aPath) && $bDebug) {
 
       $this->launchException(sprintf('Path "%s" not found', implode('/', $aPath)), get_defined_vars());
+    }
+    else if (!is_null($mResult)) {
+
+      $mResult =& $mCurrent;
     }
 
     return $mResult;

@@ -7,12 +7,14 @@ abstract class Componented extends Namespaced {
 
   protected $allowComponent = false;
 
-  protected function createObject($sAlias = 'cached', array $aArguments = array(), $window = null) {
+  protected function createObject($sAlias = 'cached', array $aArguments = array(), $window = null, $bVar = true) {
 
     if (!$window) $window = $this->getWindow();
     $sClass = $this->getFactory()->findClass($sAlias)->read('name');
 
-    return $window->addVar($window->createInstanciate($window->tokenToInstance($sClass), $aArguments));
+    $result = $window->createInstanciate($window->tokenToInstance($sClass), $aArguments);
+
+    return $bVar ? $window->addVar($result) : $result;
   }
 
   protected function allowComponent($mValue = null) {
