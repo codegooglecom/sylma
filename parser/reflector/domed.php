@@ -9,11 +9,6 @@ use sylma\core, sylma\dom, sylma\parser\reflector;
 interface domed {
 
   /**
-   * @return dom\element
-   */
-  function getLastElement();
-
-  /**
    * @param string $sNamespace
    * @return reflector\domed|null
    */

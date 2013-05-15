@@ -17,10 +17,15 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
   public function __construct(array $aArray = array(), array $aNS = array(), core\argument $parent = null) {
 
-    $this->aArray = $aArray;
+    $this->setArray($aArray);
 
     $this->setNamespaces($aNS);
     if ($parent) $this->setParent($parent);
+  }
+
+  protected function setArray(array $aContent) {
+
+    $this->aArray = $aContent;
   }
 
   public function getNamespace($sPrefix = null) {

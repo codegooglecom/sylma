@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\reflector\builder;
-use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector, sylma\storage\fs;
+use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\template;
 
 class Documented extends Logger implements reflector\documented {
 
@@ -14,6 +14,7 @@ class Documented extends Logger implements reflector\documented {
   const BUILD_NS = 'http://2013.sylma.org/parser/reflector/builder';
 
   protected $bThrow = true;
+  protected $aElements = array();
 
   public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null, dom\document $doc = null) {
 
@@ -311,6 +312,28 @@ class Documented extends Logger implements reflector\documented {
     $new = $window->createInstanciate($window->getSelf()->getInstance(), $aArguments);
     //$window->add($new);
     $window->setReturn($new);
+  }
+
+  public function getCurrentElement() {
+
+    if (!$this->aElements) {
+
+      $this->launchException('No element defined');
+    }
+
+    return end($this->aElements);
+  }
+
+  public function startElement(template\element $el) {
+
+    //$this->startComponentLog($el, $el->asToken());
+    $this->aElements[] = $el;
+  }
+
+  public function stopElement() {
+
+    //$this->stopComponentLog();
+    array_pop($this->aElements);
   }
 
   public function throwExceptions($mValue = null) {

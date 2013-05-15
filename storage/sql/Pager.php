@@ -71,7 +71,7 @@ class Pager extends core\module\Exceptionable {
 
   public function getPrevious() {
 
-    $this->launchException('Not yet implemented');
+    return $this->getPage() - 1;
   }
 }
 

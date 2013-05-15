@@ -13,7 +13,6 @@ class Elemented extends Logger implements reflector\elemented {
   protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
   protected $allowComponent = true;
-
   protected $root;
 
   public function __construct(reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
@@ -103,11 +102,6 @@ class Elemented extends Logger implements reflector\elemented {
   public function getSourceFile($sPath = '') {
 
     return $this->getRoot()->getSourceFile($sPath);
-  }
-
-  public function getLastElement() {
-
-    return parent::getLastElement();
   }
 
   public function getWindow() {

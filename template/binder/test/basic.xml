@@ -36,7 +36,7 @@
       return node.get('text') === 'world';
     </tst:expected>
   </tst:test>
-  <tst:test name="Simple event">
+  <tst:test name="Simple event" callback="callback">
     <tst:document>
       <view:view>
         <sql:resource>
@@ -46,7 +46,38 @@
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
           <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:event name="click">return %object%.getNode();</la:event>
+            <la:event name="click">return 'clicked';</la:event>
+            <p>hello</p>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      callback.test = function(result) {
+
+        return result === 'hello';
+      };
+
+      var test = example.test;
+      test.node.fireEvent('click', callback);
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Event on node">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <strong>
+              <la:event name="click">return 'clicked';</la:event>
+              world
+            </strong>
             <p>hello</p>
           </div>
         </view:template>
@@ -54,9 +85,9 @@
     </tst:document>
     <tst:expected>
       var test = example.test;
-      var node = test.node.fireEvent('click');
+      var result = test.node.getElement('strong').fireEvent('click');
 
-      return node.getChildren()[0].get('text') === 'hello';
+      return result === 'clicked';
     </tst:expected>
   </tst:test>
   <tst:test name="Sub object">
@@ -128,7 +159,7 @@
     <tst:expected>
       var test = example.test;
 
-      return test.directory === '/sylma/template/binder/test';
+      return test.get('directory') === '/sylma/template/binder/test';
     </tst:expected>
   </tst:test>
   <tst:test name="Simple sub node" disabled="true">

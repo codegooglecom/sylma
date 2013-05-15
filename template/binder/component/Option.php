@@ -11,6 +11,7 @@ class Option extends Basic implements common\arrayable {
   public function parseRoot(dom\element $el) {
 
     $this->allowForeign(true);
+    $this->allowText(true);
     $this->setNode($el);
   }
 
@@ -49,25 +50,13 @@ class Option extends Basic implements common\arrayable {
     $this->setValue($content);
   }
 
-  protected function parseChildrenText(dom\text $node, array &$aResult) {
-
-    $aResult[] = $node->getValue();
-  }
-
-  protected function setToObject($val) {
-
-    $parser = $this->getParser();
-
-    $val = $this->getPHPWindow()->toString($val);
-
-    $parser->getObject()->setOption($this->getName(), $val);
-  }
-
   public function asArray() {
 
     $this->build();
 
-    $this->setToObject($this->getValue());
+    $var = $this->getParser()->getObjects();
+    $content = current($this->getWindow()->parseArrayables(array($this->getValue())));
+    $var->call('addOption', array($this->getName(), $content))->insert();
 
     return array();
   }

@@ -12,6 +12,7 @@
         <component>
           <cls:classes>
             <cls:base>\sylma\template\parser\component</cls:base>
+            <cls:class alias="constant" name="Constant"/>
             <cls:class alias="template" name="Template">
               <cls:classes>
                 <cls:class alias="pather" name="\sylma\template\parser\Pather"/>

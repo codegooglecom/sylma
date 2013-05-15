@@ -299,9 +299,9 @@ abstract class Main extends reflector\basic\Foreigner {
     return $this->validateParser($sNamespace, $sParser);
   }
 
-  public function getLastElement() {
+  public function getCurrentElement() {
 
-    return parent::getLastElement();
+    $this->launchException('Not available');
   }
 
   /**

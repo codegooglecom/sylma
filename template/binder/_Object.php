@@ -72,21 +72,6 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     return $this->bRoot;
   }
 
-  protected function setVar(common\_var $obj) {
-
-    $this->var = $obj;
-  }
-
-  protected function getVar() {
-
-    if (!$this->var) {
-
-      $this->launchException('No var defined');
-    }
-
-    return $this->var;
-  }
-
   protected function loadParentName() {
 
     if (!$sParent = $this->readx('@js:parent')) {
@@ -110,38 +95,14 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
   protected function buildObject() {
 
-    $name = $this->loadName();
-
-    if ($this->isRoot()) {
-
-      $var = $this->getParser()->getObjects();
-      $mPath = $name;
-    }
-    else {
-
-      $parent = $this->getParser()->getObject();
-
-      $var = $parent->getVar();
-      $mPath = $this->getParser()->getPHPWindow()->toString(array('objects.', $name));
-    }
-
-    $arg = $var->call('set', array(
-      $mPath,
+    return array(
+      $this->loadName(),
       array(
         'extend' => $this->getClass()->getExtend(),
         'binder' => $this->getClass()->getID(),
         'id' => $this->getID(),
       ),
-      true,
-    ), '\sylma\core\argument', true);
-
-    $this->setVar($arg);
-  }
-
-  public function setOption($sName, $val) {
-
-    $this->getVar()->call('set', array('options.' . $sName, $val), 'php-boolean', true);
-    //$this->aProperties[$sName] = $val;
+    );
   }
 
   protected function loadUnique() {
@@ -166,15 +127,16 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $this->isRoot($this->getParser()->isRoot());
 
-    $this->buildObject();
-
     $this->getParser()->startObject($this);
     $this->startLog($this->asToken());
 
     $element = $this->getClass()->getElement();
     $element->setAttribute('id', $this->getID());
 
-    $aElement = $this->getParser()->getPHPWindow()->parseArrayables(array($element));
+    $var = $this->getParser()->getObjects();
+    $var->call('startObject', $this->buildObject())->insert();
+    $aElement[] = $this->getParser()->getPHPWindow()->parseArrayables(array($element));
+    $aElement[] = $var->call('stopObject');
 
     if ($this->isRoot() and $sParent = $this->getParentName()) {
 

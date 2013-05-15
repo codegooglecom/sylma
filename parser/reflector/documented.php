@@ -5,6 +5,12 @@ use sylma\core, sylma\dom, sylma\parser\languages\common;
 
 interface documented {
 
+  /**
+   * @return dom\element
+   */
+  function getCurrentElement();
+
+
   //function setWindow(common\_window $window);
   function getSourceDirectory($sPath = '');
 

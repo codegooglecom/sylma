@@ -3,7 +3,7 @@
 namespace sylma\template\parser\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template as template_ns;
 
-class Element extends Unknowned implements common\arrayable, common\argumentable, template_ns\parser\component, template_ns\element, common\addable {
+class Element extends Unknowned implements common\arrayable, common\argumentable, template_ns\parser\component, template_ns\element, common\addable, core\tokenable {
 
   const TARGET_PREFIX = 'target';
 
@@ -86,6 +86,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     if (!$this->bBuilded) {
 
       $this->setNode($el, true, false);
+      $this->start();
 
       $el = $this->getNode();
 
@@ -110,6 +111,8 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
         $this->aContent = $aContent;
       }
 
+      $this->stop();
+
       $this->bBuilded = true;
     }
 
@@ -123,12 +126,12 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   protected function start() {
 
-    return $this->getParser()->startElement($this);
+    return $this->getRoot()->startElement($this);
   }
 
   protected function stop() {
 
-    return $this->getParser()->stopElement();
+    return $this->getRoot()->stopElement();
   }
 
   protected function loadName(dom\element $el) {
@@ -253,6 +256,11 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     $assign = $this->getParser()->addToResult($this->asArray(), false);
 
     return $assign->asArgument();
+  }
+
+  public function asToken() {
+
+    return $this->getNode()->asToken();
   }
 }
 

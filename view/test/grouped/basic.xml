@@ -368,6 +368,31 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Constant">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <tpl:constant name="path">email</tpl:constant>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <span><tpl:apply use="path"/></span>
+            <h4><tpl:apply select="$$path"/></h4>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org</span>
+        <h4>email</h4>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Argument variable">
     <tst:document>
       <view:view sql:ns="ns">

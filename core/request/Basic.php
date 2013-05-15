@@ -36,7 +36,6 @@ class Basic extends core\module\Filed implements core\request {
 
     //$this->setSettings($arg);
     $this->setSettings(include('arguments.xml.php'));
-    $this->setArguments($aArguments);
 
     //if (!$aExtensions) $aExtensions = $this->getManager('init')->getExtensions();
     //$this->setExtensions($aExtensions);
@@ -44,6 +43,7 @@ class Basic extends core\module\Filed implements core\request {
     // Remove arguments following '?' of type ..?arg1=val&arg2=val..
     //$this->getArguments()->mergeArray($this->extractArguments($sPath));
 
+    $this->setArguments($aArguments);
     if ($bParse) $this->parse();
   }
 
@@ -109,6 +109,8 @@ class Basic extends core\module\Filed implements core\request {
     $dir = $this->getManager(self::FILE_MANAGER)->getDirectory('/');
     $this->setExtensions($this->query('extensions/executable'));
 
+    $aArguments = $this->getArguments()->query();
+
     $aPath = $this->getPath(true);
 
     do {
@@ -161,7 +163,8 @@ class Basic extends core\module\Filed implements core\request {
     */
 
     $this->setFile($file);
-    $this->getArguments()->mergeArray($aPath);
+    $this->setArguments($aPath, false);
+    $this->getArguments()->mergeArray($aArguments);
   }
 
   protected function loadIndexed(array $aPath) {
@@ -247,6 +250,11 @@ class Basic extends core\module\Filed implements core\request {
   public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
     return parent::getArgument($sPath, $bDebug, $mDefault);
+  }
+
+  public function getArguments() {
+
+    return parent::getArguments();
   }
 
   protected function setPath($sPath) {

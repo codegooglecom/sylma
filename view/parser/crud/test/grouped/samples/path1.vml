@@ -13,7 +13,9 @@
     <view:view mode="view">
       <view:template match="user:*"><crud:path/>?test=test</view:template>
     </view:view>
-    <view:view name="sub" mode="view"/>
+    <view:view name="sub" mode="view">
+      <view:template match="user:*"><crud:path/>?test=test</view:template>
+    </view:view>
   </crud:route>
   <crud:global user:ns="ns">
     <sql:resource>

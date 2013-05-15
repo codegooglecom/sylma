@@ -3,7 +3,22 @@
 namespace sylma\modules\html\context;
 use sylma\core, sylma\parser\context, sylma\dom;
 
-class Messages extends context\Basic implements dom\domable {
+class Messages extends core\module\Domed implements dom\domable {
+
+  public function __construct() {
+
+    $this->setArguments(array());
+  }
+
+  public function add($mVal) {
+
+    $this->getArguments()->add($mVal);
+  }
+
+  protected function asArray() {
+
+    return $this->getArguments()->query();
+  }
 
   public function asDOM() {
 

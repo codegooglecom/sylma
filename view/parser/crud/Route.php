@@ -13,6 +13,7 @@ class Route extends Pathed implements dom\domable {
 
     $this->main = $this->loadView($this->getx('view:view[not(@name)]'));
     $this->sub = $this->loadView($this->getx('view:view[@name]'));
+    if ($this->sub) $this->sub->isMain(false);
 
     if ($local = $this->getx('self:local')) {
 

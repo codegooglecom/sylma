@@ -176,7 +176,7 @@ class Pather extends component\Child {
 
   protected function matchVariable($sVal) {
 
-    preg_match('/^\$(\w+)$/', $sVal, $aResult);
+    preg_match('/^\$(\$?\w+)$/', $sVal, $aResult);
 
     return $aResult;
   }
@@ -195,9 +195,18 @@ class Pather extends component\Child {
 
   protected function parseVariable(array $aMatch, array $aPath, $sMode) {
 
-    $component = $this->getTemplate()->getVariable($aMatch[1]);
+    $sName = $aMatch[1];
 
-    return $component->getVar();
+    if ($sName{0} === '$') {
+
+      $result = $this->getParser()->getConstant(substr($sName, 1));
+    }
+    else {
+
+      $result = $this->getTemplate()->getVariable($sName)->getVar();
+    }
+
+    return $result;
     //return $source->parseVariable($aPath, $aMatch[1], $sMode);
   }
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\binder;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template, sylma\parser\languages\js;
 
 class _Class extends Basic implements common\arrayable, common\argumentable {
 
@@ -150,7 +150,13 @@ class _Class extends Basic implements common\arrayable, common\argumentable {
     //return 'myclass : {}';
   }
 
-  public function setEvent($sName, $val) {
+  public function setEvent($sName, js\basic\instance\_Object  $val, template\element $el) {
+
+    if ($el !== $this->getElement()) {
+
+      $el->addToken('class', $sName);
+      $val->setProperty('node', $sName);
+    }
 
     $this->getObject()->setProperty('events.' . $sName, $val);
   }

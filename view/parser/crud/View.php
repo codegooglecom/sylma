@@ -6,6 +6,7 @@ use sylma\core, sylma\dom;
 class View extends Pathed {
 
   protected $route;
+  protected $bMain = true;
 
   public function parseRoot(dom\element $el, Route $parent = null) {
 
@@ -22,6 +23,13 @@ class View extends Pathed {
   public function setRoute(Route $route) {
 
     $this->route = $route;
+  }
+
+  public function isMain($bValue = null) {
+
+    if (is_bool($bValue)) $this->bMain = $bValue;
+
+    return $this->bMain;
   }
 
   public function getAlias() {
@@ -50,7 +58,7 @@ class View extends Pathed {
   public function asPath() {
 
     $aResult[] = $this->getSourceFile()->asPath();
-    $aResult[] = $this->getRoute() ? $this->getRoute()->getName() : '';
+    $aResult[] = $this->getRoute() && !$this->isMain() ? $this->getRoute()->getAlias() : '';
     $aResult[] = $this->getName();
 
     return  implode('/', array_filter($aResult, 'strlen'));

@@ -12,9 +12,6 @@ class Event extends reflector\component\Foreigner implements common\arrayable {
   public function parseRoot(dom\element $el) {
 
     $window = $this->getWindow();
-    //dsp($this->getParser());
-    //dsp($window);
-//$this->launchException('test');
 
     $this->loadValue($el);
     $this->loadID();
@@ -26,6 +23,7 @@ class Event extends reflector\component\Foreigner implements common\arrayable {
 
     $event->setProperty('name', $sName);
     $event->setProperty('callback', $function);
+
 /*
     if (!$this->elementIsObject($el->getParent())) {
 
@@ -35,7 +33,7 @@ class Event extends reflector\component\Foreigner implements common\arrayable {
       $event->setProperty('target', $sClass);
     }
 */
-    $this->getParser()->getObject()->setEvent($this->getID(), $event);
+    $this->getParser()->getObject()->setEvent($this->getID(), $event, $this->getRoot()->getCurrentElement());
   }
 
   protected function loadValue(dom\element $el) {

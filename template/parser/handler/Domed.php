@@ -9,7 +9,7 @@ class Domed extends Templated implements reflector\elemented {
 
   protected $aRegistered = array();
   protected $aTemplates = array();
-  protected $aElements = array();
+  protected $aConstants = array();
 
   protected $result;
 
@@ -28,27 +28,7 @@ class Domed extends Templated implements reflector\elemented {
 
   public function parseFromChild(dom\element $el) {
 
-    $this->getCurrentTemplate()->parseComponent($el);
-  }
-
-  public function getElement() {
-
-    if (!$this->aElements) {
-
-      $this->launchException('No element defined');
-    }
-
-    return end($this->aElements);
-  }
-
-  public function startElement(template\element $el) {
-
-    $this->aElements[] = $el;
-  }
-
-  public function stopElement() {
-
-    array_pop($this->aElements);
+    return $this->getCurrentTemplate()->parseComponent($el);
   }
 
   public function lookupNamespace($sPrefix = '') {
@@ -86,5 +66,15 @@ class Domed extends Templated implements reflector\elemented {
   public function getRegistered() {
 
     return $this->aRegistered;
+  }
+
+  public function setConstant($sName, $sValue) {
+
+    $this->aConstants[$sName] = $sValue;
+  }
+
+  public function getConstant($sName) {
+
+    return $this->aConstants[$sName];
   }
 }

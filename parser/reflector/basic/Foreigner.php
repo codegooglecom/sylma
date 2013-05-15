@@ -63,7 +63,7 @@ abstract class Foreigner extends Domed {
   }
 
   abstract protected function loadElementForeignKnown(dom\element $el, reflector\elemented $parser);
-  
+
   protected function validateParser($sNamespace, $sParser = 'element') {
 
     $result = $this->lookupParserForeign($sNamespace);
@@ -139,7 +139,7 @@ abstract class Foreigner extends Domed {
     $aParsers = $this->getAttributeParsers();
     $this->setAttributeParsers();
 
-    $this->setLastElement($newElement);
+    //$this->startElement($newElement);
 
     if ($aChildren = $this->parseChildren($el->getChildren())) {
 
@@ -150,6 +150,8 @@ abstract class Foreigner extends Domed {
 
       $parser->onClose($el, $newElement);
     }
+
+    //$this->stopElement();
 
     return $mResult;
   }
@@ -238,16 +240,6 @@ abstract class Foreigner extends Domed {
   protected function setAttributeParsers(array $aParsers = array()) {
 
     $this->aAttributeParsers = $aParsers;
-  }
-
-  protected function getLastElement() {
-
-    return $this->lastElement;
-  }
-
-  protected function setLastElement($lastElement) {
-
-    $this->lastElement = $lastElement;
   }
 }
 

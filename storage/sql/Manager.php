@@ -37,12 +37,19 @@ class Manager extends core\module\Argumented {
     $this->launchException(sprintf('SQL Error : %s', "$aError[2] ({$aError[0]}, {$aError[1]})"), $aVars);
   }
 
+  protected function logQuery($sQuery) {
+
+    //dsp($sQuery);
+  }
+
   public function query($sQuery, $bDebug = true) {
 
     if (!$result = $this->getDatabase()->query($sQuery)) {
 
       $this->catchError();
     }
+
+    $this->logQuery($sQuery);
 
     return new Argument($result);
   }
@@ -52,6 +59,7 @@ class Manager extends core\module\Argumented {
     if ($this->getDatabase()->exec($sQuery)) {
 
       $result = $this->getDatabase()->lastInsertId();
+      $this->logQuery($sQuery);
     }
     else {
 
@@ -66,6 +74,8 @@ class Manager extends core\module\Argumented {
     $stat = $this->getDatabase()->query($sQuery);
     $result = $stat->fetch();
 
+    $this->logQuery($sQuery);
+
     return $result ? current($result) : $result;
   }
 
@@ -75,6 +85,8 @@ class Manager extends core\module\Argumented {
 
       $this->catchError(get_defined_vars());
     }
+
+    $this->logQuery($sQuery);
 
     return new Argument($result->fetch(\PDO::FETCH_ASSOC));
   }

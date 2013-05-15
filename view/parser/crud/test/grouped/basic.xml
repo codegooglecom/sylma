@@ -358,14 +358,21 @@
       $manager->set('file', $manager->getFile($sPath));
       $manager->set('result', $manager->load($sPath));
 
+      $manager->set('sub', $manager->load($sPath, array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub',
+        )),
+      )));
     </tst:prepare>
     <tst:expected>
 
-      $view = $manager->get('result');
       $file = $manager->get('file');
+      $main = $manager->get('result');
+      $sub = $manager->get('sub');
 
       return
-        $view->readx() === $file->asPath() . '?test=test';
+        $main->readx() === $file->asPath() . '?test=test' &amp;&amp;
+        $sub->readx() === $file->asPath() . '/default/sub?test=test'
     </tst:expected>
   </tst:test>
   <tst:test name="Simple include">

@@ -48,7 +48,7 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
         $aResult = array($window->createCondition($test, $content));
       }
 
-      $el = $this->getParser()->getElement();
+      $el = $this->getRoot()->getCurrentElement();
 
       foreach ($aTokens as $token) {
 

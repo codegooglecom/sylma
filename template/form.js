@@ -19,7 +19,7 @@ sylma.ui.Form = new Class({
       url : node.action,
       onSuccess: function(response) {
 
-        var result = sylma.ui.parseResult(response);
+        var result = sylma.ui.parseMessages(response);
       }
     });
     //this.getNode().set('send', {url: 'contact.php', method: 'get'});

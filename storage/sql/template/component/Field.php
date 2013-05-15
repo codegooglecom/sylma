@@ -106,7 +106,16 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
-    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
+    if ($aPath) {
+
+      $result = $this->parsePathToken($aPath, $sMode);
+    }
+    else {
+
+      $result = $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
+    }
+
+    return $result;
   }
 
   //public abstract function reflectRead();
