@@ -8,6 +8,7 @@ class Element extends parser\component\Element {
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, false);
+
     $this->loadName();
     //$this->loadNamespace();
 

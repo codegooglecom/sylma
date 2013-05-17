@@ -9,21 +9,6 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
   protected $query;
   protected $var;
 
-  public function setParent(parser\element $parent) {
-
-    $this->parent = $parent;
-  }
-
-  public function getParent($bDebug = true) {
-
-    if (!$this->parent && $bDebug) {
-
-      $this->throwException('No parent');
-    }
-
-    return $this->parent;
-  }
-
   protected function getQuery() {
 
     return $this->getParent()->getQuery();

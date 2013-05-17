@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\module;
-use \sylma\dom, \sylma\core;
+use \sylma\dom, \sylma\core, sylma\storage\fs;
 
 /**
  * Settings in DOM Document with @method getSettings() (global settings) and @method getOptions() (context settings)
@@ -82,6 +82,16 @@ abstract class Domed extends Filed {
     $controler = $this->getControler('action');
 
     return $controler->getAction($sPath, $aArguments, $this->getDirectory());
+  }
+
+  protected function getScriptFile(fs\file $file, array $aArguments = array()) {
+
+    return $this->getManager(self::PARSER_MANAGER)->load($file, $aArguments);
+  }
+
+  protected function getScript($sPath, array $aArguments = array()) {
+
+    return $this->getScriptFile($this->getFile($sPath), $aArguments);
   }
 
   /**

@@ -4,7 +4,7 @@ namespace sylma\core\module;
 
 abstract class Namespaced extends Exceptionable {
 
-  private $aNamespaces = array();
+  protected $aNamespaces = array();
   private $sNamespace = '';
   private $sPrefix = '';
 

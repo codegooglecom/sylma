@@ -3,7 +3,7 @@
 namespace sylma\schema\parser;
 use sylma\core;
 
-interface container {
+interface container extends namespaced {
 
   /**
    * @return \sylma\schema\parser\element

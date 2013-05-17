@@ -3,6 +3,9 @@
   xmlns="http://2013.sylma.org/storage/sql"
   xmlns:cls="http://2013.sylma.org/core/factory"
 >
+  <debug>
+    <show>1</show>
+  </debug>
   <cls:classes>
     <cls:class alias="insert" name="query/Insert"/>
     <cls:class alias="select" name="query/Select"/>

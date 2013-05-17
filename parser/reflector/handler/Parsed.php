@@ -104,11 +104,6 @@ abstract class Parsed extends reflector\basic\Foreigner {
     else if (!$result = $this->getParser($sNamespace)) {
 
       $result = $this->lookupParserForeign($sNamespace);
-
-      if ($result) {
-
-        $result->setParent($this);
-      }
     }
 
     return $result;

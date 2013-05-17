@@ -8,6 +8,5 @@ interface element extends container {
   function isComplex();
 
   function getName();
-  function getNamespace();
 }
 

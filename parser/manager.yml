@@ -1,6 +1,6 @@
 debug :
   run : true
-  update : false
+  update : false # TODO : if TRUE recursion and other proc killers
 namespaces :
   reflector :
     'http://2013.sylma.org/parser/security' : security

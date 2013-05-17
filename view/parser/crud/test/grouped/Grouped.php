@@ -35,7 +35,7 @@ class Grouped extends tester\Parser implements core\argumentable {
   }
 
   public function getFile($sPath = '', $bDebug = true) {
-    
+
     return parent::getFile($sPath, $bDebug);
   }
 

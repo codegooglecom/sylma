@@ -42,7 +42,17 @@ abstract class Domed extends Componented {
     return $result;
   }
 
+  /**
+   *
+   * @param $el Main element, can be used with queryx(), getx(), readx()
+   * @param bool $bClone Element is cloned, parents are lost
+   * @param bool $bNamespace Element namespace becomes main namespace and
+   *    handler namespaces are loaded into class
+   * @return \sylma\dom\element
+   */
   public function setNode(dom\element $el, $bClone = true, $bNamespace = true) {
+
+    $aNS = $el->getHandler()->getNS();
 
     if ($bClone) {
 
@@ -51,7 +61,7 @@ abstract class Domed extends Componented {
       $doc = $this->createDocument($el);
       $result = $doc->getRoot();
 
-      $doc->registerNamespaces($el->getHandler()->getNS());
+      $doc->registerNamespaces($aNS);
       $this->registerNamespaces($result);
 
       $this->elementDocument = $doc;
@@ -60,6 +70,11 @@ abstract class Domed extends Componented {
     else {
 
       $result = $this->node = $el;
+    }
+
+    if ($bNamespace) {
+
+      $this->aNamespaces = array_merge($aNS, $this->aNamespaces);
     }
 
     return $result;

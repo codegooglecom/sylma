@@ -12,6 +12,8 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
   const NS = 'http://www.w3.org/2001/XMLSchema';
   const TARGET_PREFIX = 'target';
 
+  const SSD_TYPES = '../ssd/simple.xsd';
+
   /**
    * These two vars are use for dom cache and namespaced names
    */
@@ -44,6 +46,11 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     $this->addSchema($doc);
 
     $this->loadBaseTypes(array('string' => self::NS, 'integer' => self::NS));
+
+    $this->setDirectory(__FILE__);
+
+    $import = $this->loadSimpleComponent('component/import');
+    $import->parseFile($this->getFile(self::SSD_TYPES));
   }
 
   protected function lookupNamespace($sPrefix, dom\element $context = null) {
@@ -88,7 +95,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
    * @param $context
    * @return type
    */
-  public function parseName($sName, schema\parser\element $source = null, dom\element $context = null) {
+  public function parseName($sName, schema\parser\namespaced $source = null, dom\element $context = null) {
 
     $iPrefix = strpos($sName, ':');
 
@@ -170,6 +177,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
 
       $el = $this->lookupType($sName, $sNamespace);
       $result = $this->addType($this->parseComponent($el));
+      $result->setNamespace($sNamespace);
     }
 
     return $result;
@@ -205,7 +213,6 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     switch ($el->getName()) {
 
       case 'element' :
-      case 'table' :
 
         $this->addSchemaElement($el, $sNamespace);
         break;

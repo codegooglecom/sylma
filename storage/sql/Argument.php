@@ -10,7 +10,7 @@ class Argument extends core\argument\Readable {
     $this->setNamespaces($aNS);
     if ($parent) $this->setParent($parent);
 
-    $this->aArray = $this->loadContent($content);
+    $this->setArray($this->loadContent($content));
   }
 
   protected function loadContent($val) {

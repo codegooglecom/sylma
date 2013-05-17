@@ -5,6 +5,8 @@ use sylma\core;
 
 class Manager extends core\module\Argumented {
 
+  const SUCCESS_CODE = '00000';
+
   public function __construct(core\argument $arg) {
 
     $this->setArguments($arg);
@@ -33,25 +35,44 @@ class Manager extends core\module\Argumented {
 
   protected function catchError(array $aVars = array()) {
 
-    $aError = $this->getDatabase()->errorInfo();
-    $this->launchException(sprintf('SQL Error : %s', "$aError[2] ({$aError[0]}, {$aError[1]})"), $aVars);
+    if ($this->getDatabase()->errorCode() !== self::SUCCESS_CODE) {
+
+      $aError = $this->getDatabase()->errorInfo();
+      $this->launchException(sprintf('SQL Error : %s', "$aError[2] ({$aError[0]}, {$aError[1]})"), $aVars);
+    }
+  }
+
+  protected function launchExceptionEmpty() {
+
+    $this->launchException("Empty query result");
   }
 
   protected function logQuery($sQuery) {
 
-    //dsp($sQuery);
+    if ($this->readArgument('debug/show')) {
+
+      dsp($sQuery);
+    }
   }
 
   public function query($sQuery, $bDebug = true) {
 
-    if (!$result = $this->getDatabase()->query($sQuery)) {
-
-      $this->catchError();
-    }
-
+    $result = $this->getDatabase()->query($sQuery);
     $this->logQuery($sQuery);
 
-    return new Argument($result);
+    $this->catchError();
+
+    if (!$result) {
+
+      if ($bDebug) $this->launchExceptionEmpty();
+      $result = array();
+    }
+    else {
+
+      $result = new Argument($result);
+    }
+
+    return $result;
   }
 
   public function insert($sQuery, $bDebug = true) {
@@ -72,23 +93,42 @@ class Manager extends core\module\Argumented {
   public function read($sQuery, $bDebug = true) {
 
     $stat = $this->getDatabase()->query($sQuery);
-    $result = $stat->fetch();
-
     $this->logQuery($sQuery);
+
+    $this->catchError();
+
+    if (!$stat) {
+
+      if ($bDebug) $this->launchExceptionEmpty();
+      $result = $stat;
+    }
+    else {
+
+      $result = $stat->fetch();
+    }
 
     return $result ? current($result) : $result;
   }
 
   public function get($sQuery, $bDebug = true) {
 
-    if (!$result = $this->getDatabase()->query($sQuery) and $bDebug) {
-
-      $this->catchError(get_defined_vars());
-    }
-
+    $result = $this->getDatabase()->query($sQuery);
     $this->logQuery($sQuery);
 
-    return new Argument($result->fetch(\PDO::FETCH_ASSOC));
+    $this->catchError();
+
+    $result = is_object($result) ? $result->fetch(\PDO::FETCH_ASSOC) : null;
+
+    if (!$result) {
+
+      if ($bDebug) $this->launchExceptionEmpty();
+    }
+    else {
+
+      $result = new Argument($result);
+    }
+
+    return $result;
   }
 }
 

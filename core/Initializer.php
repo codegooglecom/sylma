@@ -141,7 +141,7 @@ class Initializer extends module\Filed {
         $window = $this->createWindowAction($sExtension);
         \Sylma::setManager('window', $window);
 
-        $sResult = $this->loadWindowAction($path, $window);
+        $sResult = $this->loadWindowContent($path, $window);
       }
       else {
 
@@ -202,16 +202,24 @@ class Initializer extends module\Filed {
     return $window;
   }
 
-  protected function loadWindowAction(core\request $path, action\handler $window) {
+  protected function loadWindowContent(core\request $path, action\handler $window) {
 
-    $action = $this->loadAction($path);
-    $action->setContexts($window->getContexts());
-    $action->setParentParser($window);
-
-    $window->setArgument('content', $action);
-    $window->setArgument('current', $path);
+    $path->parse();
+    $file = $path->asFile();
 
     try {
+
+      switch ($file->getExtension()) {
+
+        case 'eml' : $content = $this->prepareAction($path, $window); break;
+        case 'vml' : $content = $this->prepareScript($path, $window); break;
+        default :
+
+          $this->launchException('Unknown extension for window content');
+      }
+
+      $window->setArgument('content', $content);
+      $window->setArgument('current', $path);
 
       $sResult = $window->asString();
     }
@@ -219,14 +227,15 @@ class Initializer extends module\Filed {
 
       if (\Sylma::read('debug/enable')) {
 
-        throw $e;
+        $e->save(false);
+        //throw $e;
       }
       else {
 
         header('HTTP/1.0 404 Not Found');
       }
 
-      $window = $this->loadWindow('');
+      //$window = $this->createWindowAction('');
       $action = $this->create('action', array($this->getFile($this->readArgument('error/action'))));
 
       $window->setArgument('content', $action);
@@ -238,6 +247,28 @@ class Initializer extends module\Filed {
     //if ($action->doRedirect()) self::doHTTPRedirect($oResult);
 
     return $sResult;
+  }
+
+  protected function prepareScript(core\request $path, action\handler $window) {
+
+    $builder = $this->getManager(self::PARSER_MANAGER);
+
+    $result = $builder->load($path->asFile(), array(
+      'arguments' => $path->getArguments(),
+      'contexts' => $window->getContexts(),
+      //'post' => $post,
+    ), $this->readArgument('debug/update'), $this->readArgument('debug/run'));
+
+    return $result;
+  }
+
+  protected function prepareAction(core\request $path, action\handler $window) {
+
+    $result = $this->loadAction($path);
+    $result->setContexts($window->getContexts());
+    $result->setParentParser($window);
+
+    return $result;
   }
 
   protected function createWindowFile(fs\file $file) {

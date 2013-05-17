@@ -60,9 +60,9 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
   protected function build(fs\file $schema) {
 
-    $builder = $this->getManager('parser')->loadBuilder($schema, null, $this->getArguments());
-
+    $builder = $this->getManager(self::PARSER_MANAGER)->loadBuilder($schema, null, $this->getArguments());
     $builder->setLogger($this->getRoot()->getLogger());
+
     $schema = $builder->getSchema($schema, $this->getWindow());
     $schema->setView($this->getParent());
 

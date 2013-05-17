@@ -3,7 +3,7 @@
 namespace sylma\modules\tester;
 use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-abstract class Basic extends core\module\Domed {
+abstract class Basic extends Asserter {
 
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
 

@@ -217,7 +217,7 @@ class Sylma {
 
       case 'mysql' :
 
-        $result = new storage\sql\Manager(self::get('database'));
+        $result = new storage\sql\Manager(new core\argument\Readable(self::get('database')->query()));
     }
 
     if ($result) self::setControler($sName, $result);

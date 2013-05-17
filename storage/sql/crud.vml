@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+>
+
+  <crud:route>
+
+    <crud:local>
+      <tpl:constant name="cols">*</tpl:constant>
+    </crud:local>
+
+    <view:view mode="view" debug="x">
+
+      <sql:resource multiple="multiple"/>
+
+      <view:template>
+        <div>
+          <a>
+            <tpl:token name="href">
+              <le:path/>/insert
+            </tpl:token>
+            Insert
+          </a>
+          <table js:class="sylma.ui.Base">
+            <tpl:apply select="static()" mode="row"/>
+            <crud:include path="list"/>
+          </table>
+        </div>
+      </view:template>
+
+      <view:template match="*" mode="row">
+        <thead>
+          <tr>
+            <th></th>
+            <tpl:apply use="cols" mode="cell"/>
+          </tr>
+        </thead>
+      </view:template>
+
+      <view:template match="user:*" mode="cell">
+        <th>
+          <tpl:apply select="alias()"/>
+        </th>
+      </view:template>
+
+    </view:view>
+
+    <view:view name="list" _debug="x">
+
+      <sql:resource multiple="multiple"/>
+
+      <le:check-argument name="page" format="integer">
+        <le:default>1</le:default>
+      </le:check-argument>
+
+      <le:check-argument name="order" format="string">
+        <le:default>id</le:default>
+      </le:check-argument>
+
+      <sql:pager>
+        <sql:current>
+          <le:argument name="page"/>
+        </sql:current>
+        <sql:count>3</sql:count>
+      </sql:pager>
+
+      <sql:order>
+
+      </sql:order>
+
+      <view:template mode="pager-count">10</view:template>
+      <view:template mode="order">id</view:template>
+
+      <view:template>
+        <tbody js:class="sylma.ui.Container">
+          <js:option name="path">
+            <crud:path/>
+          </js:option>
+          <tpl:apply select="*" mode="row"/>
+          <tr>
+            <td colspan="99">
+              <tpl:apply select="pager()"/>
+            </td>
+          </tr>
+        </tbody>
+      </view:template>
+
+      <view:template match="*" mode="row">
+        <tr js:class="sylma.ui.Base">
+          <td>
+            <a title="Editer">
+              <tpl:token name="href">
+                <le:path/>/update?id=<tpl:apply select="id/value()"/>
+              </tpl:token>
+              E
+            </a>
+          </td>
+          <tpl:apply use="cols" mode="cell"/>
+        </tr>
+      </view:template>
+
+      <view:template match="*" mode="cell">
+        <td>
+          <tpl:apply/>
+        </td>
+      </view:template>
+
+      <view:template match="sql:pager">
+
+        <div class="form-pager clear-block" js:class="sylma.ui.Base">
+
+          <tpl:if test="!is-multiple()">
+            <tpl:token name="class">form-disable</tpl:token>
+          </tpl:if>
+
+          <a href="#" title="Page précédente" class="button pager-previous">
+            <tpl:if test="is-first()">
+              <tpl:token name="class">form-disable</tpl:token>
+            </tpl:if>
+            <js:option name="prev">
+              <tpl:apply select="previous"/>
+            </js:option>
+            <js:event name="click">
+              %parent%.update({page : %object%.get('prev')});
+              return false;
+            </js:event>
+            prev
+          </a>
+
+          <a href="#" title="Première page" class="pager-current">
+            <tpl:if test="is-first()">
+              <tpl:token name="class">form-disable</tpl:token>
+            </tpl:if>
+            <js:event name="click">
+              %parent%.update({page : 1});
+              return false;
+            </js:event>
+            <tpl:apply select="current"/>
+          </a>
+
+          <span class="pager-separator">/</span>
+
+          <a href="#" title="Dernière page" class="pager-total">
+            <tpl:if test="is-last()">
+              <tpl:token name="class">form-disable</tpl:token>
+            </tpl:if>
+            <js:option name="last">
+              <tpl:apply select="last"/>
+            </js:option>
+            <js:event name="click">
+              %parent%.update({page : %object%.get('last')});
+              return false;
+            </js:event>
+            <tpl:apply select="last"/>
+          </a>
+
+          <a href="#" title="Page suivante" class="button pager-next">
+            <tpl:if test="is-last()">
+              <tpl:token name="class">form-disable</tpl:token>
+            </tpl:if>
+            <js:option name="next">
+              <tpl:apply select="next"/>
+            </js:option>
+            <js:event name="click">
+              %parent%.update({page : %object%.get('next')});
+              return false;
+            </js:event>
+            next
+          </a>
+        </div>
+
+      </view:template>
+
+    </view:view>
+
+  </crud:route>
+
+  <crud:route name="insert" groups="form">
+
+    <view:view mode="hollow">
+      <view:template mode="root">
+        <tpl:token name="action"><le:path/>/insert/do.json</tpl:token>
+      </view:template>
+    </view:view>
+
+    <view:view name="do" mode="insert"/>
+
+  </crud:route>
+
+  <crud:route name="update" groups="form">
+
+    <view:view mode="view">
+      <view:template mode="root">
+        <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
+        <sql:filter name="id" single="single"><le:argument name="id"/></sql:filter>
+        <js:option name="id"><stp:apply select="id/value()"/></js:option>
+        <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
+      </view:template>
+    </view:view>
+
+    <view:view name="do" mode="update">
+      <sql:filter name="id" single="single"><le:argument name="id" source="post"/></sql:filter>
+    </view:view>
+
+  </crud:route>
+  <!--<view:view mode="delete"/>-->
+
+  <crud:group name="form">
+
+    <sql:resource/>
+
+    <view:template>
+      <form js:class="sylma.ui.Form">
+        <js:include>/#sylma/template/form.js</js:include>
+        <stp:apply mode="root"/>
+        <stp:apply select="*" mode="form"/>
+        <input type="submit" value="Envoyer"/>
+      </form>
+    </view:template>
+
+    <view:template match="*" mode="form">
+      <tpl:register/>
+      <span/>
+      <input type="text" value="{value()}" name="{alias()}"/>
+    </view:template>
+
+  </crud:group>
+
+</crud:crud>

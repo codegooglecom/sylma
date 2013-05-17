@@ -12,6 +12,8 @@
         <le:action path="/#sylma/core/factory/test/group"/>
         <le:action path="/#sylma/storage/fs/test/group"/>
         <le:action path="/#sylma/parser/action/test/group"/>
+        <le:action path="/#sylma/schema/test/group"/>
+        <le:object class="\sylma\storage\sql\test\Handler"/>
         <le:action path="/#sylma/view/test/group"/>
         <le:object class="\sylma\view\parser\crud\test\grouped\Grouped"/>
         <le:object class="\sylma\parser\security\test\Module"/>

@@ -11,7 +11,7 @@ class ComplexType extends parser\component\Complex {
 
     if ($content = $el->getx('self:complexContent', array(), false)) {
 
-
+      $this->launchException('Not yet implemented');
     }
     else {
 

@@ -14,7 +14,6 @@
             <cls:class alias="field" name="component\Field"/>
             <cls:class alias="complexType" name="component\ComplexType"/>
             <cls:class alias="particle" name="component\Particle"/>
-            <cls:class alias="import" name="\sylma\schema\xsd\component\Import"/>
             <cls:class alias="foreign" name="component\Foreign"/>
           </cls:classes>
         </component>

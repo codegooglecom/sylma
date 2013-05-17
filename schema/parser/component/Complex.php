@@ -54,10 +54,5 @@ class Complex extends Basic implements parser\type, parser\type\complex {
 
     return $aResult;
   }
-
-  public function getNamespace($sPrefix = '') {
-
-    return parent::getNamespace($sPrefix);
-  }
 }
 

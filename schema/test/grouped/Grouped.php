@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\schema\test\grouped;
-use sylma\core, sylma\modules\tester, sylma\storage\sql;
+use sylma\core, sylma\dom, sylma\modules\tester, sylma\storage\fs;
 
 class Grouped extends tester\Parser implements core\argumentable {
 
@@ -14,7 +14,7 @@ class Grouped extends tester\Parser implements core\argumentable {
     parent::__construct();
   }
 
-  protected function buildResult($manager, \sylma\storage\fs\file $file, array $aArguments) {
+  protected function buildResult(dom\element $test, $manager, fs\file $file, array $aArguments) {
 
     $builder = $manager->loadBuilder($file, $this->getExportDirectory());
 

@@ -54,13 +54,16 @@ class Basic extends core\module\Filed implements core\request {
 
   public function asFile($bDebug = false) {
 
-    $this->setDirectory(__FILE__);
+    if (!$result = $this->getFile('', false)) {
 
-    if ($result = $this->getFile($this->getPath(), $bDebug)) {
+      $this->setDirectory(__FILE__);
 
-      if (!in_array($result->getExtension(), $this->query('extensions/readable'))) {
+      if ($result = $this->getFile($this->getPath(), $bDebug)) {
 
-        $this->throwException('Unauthorized extension type');
+        if (!in_array($result->getExtension(), $this->query('extensions/readable'))) {
+
+          $this->throwException('Unauthorized extension type');
+        }
       }
     }
 

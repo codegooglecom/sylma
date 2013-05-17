@@ -14,6 +14,8 @@ class Particle extends parser\component\Particle  {
 
   public function getElement($sName, $sNamespace) {
 
+    $this->launchException('Not yet ready');
+    
     $result = null;
 
     if ($el = $this->getx("self:element[@name='$sName']")) {

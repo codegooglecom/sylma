@@ -15,6 +15,8 @@
             <cls:class alias="simpleType" name="component\SimpleType"/>
             <cls:class alias="sequence" name="component\Sequence"/>
             <cls:class alias="baseType" name="\sylma\schema\parser\component\Simple"/>
+            <cls:class alias="restriction" name="component\Restriction"/>
+            <cls:class alias="import" name="\sylma\schema\xsd\component\Import"/>
           </cls:classes>
         </component>
       </cls:classes>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://www.sylma.org/storage/sql/test"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+>
+  <tst:description>Basic</tst:description>
+  <tst:datas name="mysql://user">
+  </tst:datas>
+  <tst:test name="Default type and ssd type">
+    <tst:expected>
+      $sNS = 'http://2013.sylma.org/storage/sql/test/sample1';
+      $schema = $manager->getSchema('samples/user2.xql');
+      $user = $schema->getElement();
+      $name = $user->getElement('name', $sNS);
+      $email = $user->getElement('email', $sNS);
+
+      $manager->assertEqual($name->getName(), 'name');
+      $manager->assertTrue($name->getType()->isSimple());
+      $manager->assertEqual($name->getType()->getName(), 'string');
+      $manager->assertEqual($email->getName(), 'email');
+      $manager->assertEqual($email->getType()->getName(), 'email');
+      $manager->assertEqual($email->getType()->getNamespace(), 'http://2013.sylma.org/schema/ssd');
+
+      return true;
+    </tst:expected>
+  </tst:test>
+</tst:tests>

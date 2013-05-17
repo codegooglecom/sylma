@@ -6,10 +6,17 @@ use sylma\core, sylma\schema\parser, sylma\parser\reflector;
 abstract class Particle extends Basic implements parser\particle {
 
   protected $aElements = array();
+  protected $aElementsIndexed = array();
 
-  public function addElement(parser\element $element) {
+  public function addElement(parser\element $element, $iPosition = null) {
+
+    $element->setPosition($iPosition);
+    $element->setParticle($this);
 
     $this->aElements[$element->getNamespace()][$element->getName()] = $element;
+
+    if (is_null($iPosition)) $iPosition = count($this->aElementsIndexed);
+    $this->aElementsIndexed[$iPosition] = $element;
   }
 
   public function getElement($sName, $sNamespace) {
@@ -27,6 +34,11 @@ abstract class Particle extends Basic implements parser\particle {
     }
 
     return $aResult;
+  }
+
+  public function getElementFromIndex($iPosition) {
+
+    return $this->aElementsIndexed[$iPosition];
   }
 }
 

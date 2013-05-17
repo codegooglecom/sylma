@@ -63,7 +63,7 @@ class Parser extends tester\Prepare {
     }
 
     $this->set('result', $result);
-    
+
     return $result;
   }
 

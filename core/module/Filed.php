@@ -173,6 +173,7 @@ abstract class Filed extends Sessioned {
   /**
    * Set a local file (exists mainly cause of @method getFile())
    * @param \sylma\storage\fs\file $file
+   * @return string
    */
   protected function setFile(fs\file $file) {
 

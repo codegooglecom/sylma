@@ -26,10 +26,24 @@ class Grouped extends tester\Parser implements core\argumentable {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
-  public function runQuery($sValue, $bMultiple = true) {
+  public function runQuery($sValue, $iMode = 1) {
 
     $db = $this->getManager(self::DB_MANAGER);
-    return $bMultiple ? $db->query($sValue) : $db->get($sValue);
+
+    if (!$iMode) {
+
+      $result = $db->get($sValue);
+    }
+    else if ($iMode & 1) {
+
+      $result = $db->query($sValue);
+    }
+    else if ($iMode & 2) {
+
+      $result = $db->read($sValue);
+    }
+    
+    return $result;
   }
 }
 

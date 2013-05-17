@@ -6,12 +6,10 @@ use sylma\core, sylma\dom, sylma\schema\parser, sylma\parser\reflector;
 class Basic extends reflector\component\Foreigner {
 
   protected $sName = '';
-  
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, false);
-
-    // do nothing
   }
 
   public function setName($sName) {
@@ -27,6 +25,11 @@ class Basic extends reflector\component\Foreigner {
   public function asToken() {
 
     return $this->getName();
+  }
+
+  public function getNamespace($sPrefix = '') {
+
+    return parent::getNamespace($sPrefix);
   }
 }
 

@@ -94,7 +94,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\add
     $window = $this->getWindow();
 
     $manager = $window->addControler('mysql');
-    $var = $window->createVar($window->createCall($manager, $sMethod, '\sylma\core\argument', array($this)));
+    $var = $window->createVar($manager->call($sMethod, array($this, false), '\sylma\core\argument'));
 
     $this->setVar($var);
   }

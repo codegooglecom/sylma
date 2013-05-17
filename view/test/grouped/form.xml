@@ -44,7 +44,7 @@
       $sID = $manager->readArgument('result');
       $manager->setArgument('id', $sID);
 
-      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", 0);
 
       return
         $user->read('name') === 'tester' &amp;&amp;
@@ -81,8 +81,8 @@
     <tst:expected>
       $sID = $manager->readArgument('id');
 
-      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
-      $manager->runQuery("DELETE FROM user WHERE id = $sID", false);
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", 0);
+      $manager->runQuery("DELETE FROM user WHERE id = $sID", 2);
 
       return
         $user->read('name') === 'tester02' &amp;&amp;
@@ -115,8 +115,8 @@
     <tst:expected>
       $sID = $manager->readArgument('id');
 
-      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", false);
-      $manager->runQuery("DELETE FROM user WHERE id = $sID", false);
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", 0);
+      $manager->runQuery("DELETE FROM user WHERE id = $sID", 2);
 
       return
         $user->read('name') === 'tester02' &amp;&amp;

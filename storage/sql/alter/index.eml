@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+>
+  <le:settings>
+    <le:argument format="php-string" name="path">
+      <le:validate return="true">
+        <le:call-self name="get-file">
+          <le:get-argument name="path"/>
+        </le:call-self>
+      </le:validate>
+    </le:argument>
+    <le:object class="Handler" le:set-variable="handler">
+      <le:call name="setFile">
+        <le:get-argument name="path"/>
+      </le:call>
+    </le:object>
+  </le:settings>
+  <le:context name="title">SQL Alter</le:context>
+  <h2>SQL Alter</h2>
+  <le:get-variable name="handler"/>
+</le:action>
