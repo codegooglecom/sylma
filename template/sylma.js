@@ -121,6 +121,7 @@ sylma.ui = new sylma.classes.ui;
     options : {
 
     },
+    objects : {},
 
     get : function(key) {
 
@@ -169,7 +170,7 @@ sylma.ui = new sylma.classes.ui;
         objects[key].parentObject = this;
         obj = ui.createObject(objects[key]);
 
-        if (objects[key].name) this[key] = obj;
+        if (objects[key].name) this.objects[key] = obj;
         else this.tmp.push(obj);
       }
     },
@@ -252,6 +253,11 @@ sylma.ui = new sylma.classes.ui;
     getParent : function() {
 
       return this.parentObject;
+    },
+
+    getObject : function(name) {
+
+      return this.objects[name];
     }
   });
 

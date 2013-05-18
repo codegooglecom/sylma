@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\languages\php\basic;
-use sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector;
+use sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflector, sylma\storage\fs;
 
 class _Interface extends core\module\Argumented {
 

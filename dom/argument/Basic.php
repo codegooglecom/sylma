@@ -22,7 +22,7 @@ abstract class Basic extends core\module\Controled {
   public function __construct(dom\document $doc, array $aNS = array()) {
 
     $this->setDocument($doc);
-    $this->registerNamespaces($aNS);
+    $this->setNamespaces($aNS);
 
     $this->setControler($this->getControler('dom'));
 
@@ -30,9 +30,13 @@ abstract class Basic extends core\module\Controled {
 
     if (!$this->getPrefix()) {
 
-      $root = $doc->getRoot();
-      $this->registerNamespaces(array('self' => $root->getNamespace()));
+      $sNamespace = $this->getNamespace() ? $this->getNamespace() : $doc->getRoot()->getNamespace();
+
+      unset($this->aNamespaces['']);
+      $this->setNamespace($sNamespace, 'self');
     }
+
+    $this->registerNamespaces($this->getNS());
   }
 
   public function setParent(core\argument $parent) {
@@ -223,12 +227,7 @@ abstract class Basic extends core\module\Controled {
 
   public function registerNamespaces(array $aNS) {
 
-    foreach ($aNS as $sPrefix => $sNamespace) {
-
-      $this->setNamespace($sNamespace, $sPrefix);
-    }
-
-    $this->getDocument()->registerNamespaces($this->getNS());
+    $this->getDocument()->registerNamespaces($aNS);
   }
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {

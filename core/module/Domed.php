@@ -32,17 +32,16 @@ abstract class Domed extends Filed {
     $this->setArguments(array(
     'classes' => array(
       'action' => array(
-        'file' => '\sylma\parser\action\handler\Basic.php',
         'name' => '\sylma\parser\action\handler\Basic'),
       'template' => array(
-        'file' => '\sylma\parser\xslt\Processor.php',
         'name' => '\sylma\parser\xslt\Processor'),
       'options' => array(
-        'file' => '\sylma\dom\Argument.php',
-        'name' => '\sylma\dom\Argument'),
+        'name' => '\sylma\dom\argument\Iterator'),
       'document' => array(
-        'file' => '\sylma\dom\basic\handler\Rooted.php',
-        'name' => '\sylma\dom\basic\handler\Rooted'))));
+        'name' => '\sylma\dom\basic\handler\Rooted'),
+      'path' => array(
+        'name' => '\sylma\core\request\Basic'),
+      )));
   }
 
   /*protected function createArgument($mArguments, $sNamespace = '') {
@@ -89,9 +88,27 @@ abstract class Domed extends Filed {
     return $this->getManager(self::PARSER_MANAGER)->load($file, $aArguments);
   }
 
-  protected function getScript($sPath, array $aArguments = array()) {
+  protected function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
 
-    return $this->getScriptFile($this->getFile($sPath), $aArguments);
+    if (strpos($sPath, '.') !== false) {
+
+      $file = $this->getFile($sPath);
+    }
+    else {
+
+      $path = $this->create('path', array($sPath, $this->getDirectory('', false), $aArguments));
+      
+      $aArguments = $path->getArguments();
+      $file = $path->asFile();
+    }
+
+    $aArguments = array(
+      'arguments' => $aArguments,
+      'contexts' => $aContexts ? $this->createArgument($aContexts) : null,
+      'post' => $aPosts ? $this->createArgument($aPosts) : null,
+    );
+
+    return $this->getScriptFile($file, $aArguments);
   }
 
   /**

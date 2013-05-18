@@ -50,6 +50,8 @@ class Handler extends reflector\handler\Elemented {
       $aResult[$sNamespace][$sType] = $type = $this->loadSimpleComponent('component/baseType', $this);
       $type->setName($sType);
       $type->setNamespace($sNamespace);
+
+      $type->setNamespaces($this->getNS());
     }
 
     $this->aBaseTypes = $this->aBaseTypes + $aResult;
@@ -83,6 +85,7 @@ class Handler extends reflector\handler\Elemented {
     }
 
     $this->aTypes[$sNamespace][$type->getName()] = $type;
+    //$type->setNamespaces($this->getNS());
 
     return $type;
   }

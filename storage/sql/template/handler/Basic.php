@@ -29,6 +29,8 @@ class Basic extends sql\schema\Handler {
 
     foreach ($this->getTemplates() as $template) {
 
+      if ($this->getView()->checkTemplate($template, false)) continue;
+
       $iWeight = $template->getWeightSchema($element, $sContext, $sMode, $bRoot);
       if ($iWeight && $iWeight >= $iLast) {
 

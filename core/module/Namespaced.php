@@ -50,13 +50,7 @@ abstract class Namespaced extends Exceptionable {
 
   protected function setNamespaces(array $aNS) {
 
-    foreach($aNS as $sPrefix => $sNamespace) {
-
-      // prefix 0 identify main namespace
-
-      if (!$sPrefix) $this->setNamespace($sNamespace);
-      else $this->setNamespace($sNamespace, $sPrefix, false);
-    }
+    $this->aNamespaces = $this->mergeNamespaces($aNS);
   }
 
   protected function getNS($sPrefix = null) {

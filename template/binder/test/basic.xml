@@ -9,7 +9,7 @@
   xmlns:la="http://2013.sylma.org/template/binder"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:stp="http://2013.sylma.org/schema/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
@@ -109,7 +109,7 @@
     <tst:expected>
       var test = example.test;
 
-      var node = test.sub.node;
+      var node = test.getObject('sub').getNode();
 
       return node.get('text') === 'yup';
     </tst:expected>

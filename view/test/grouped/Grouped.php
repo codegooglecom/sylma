@@ -42,7 +42,7 @@ class Grouped extends tester\Parser implements core\argumentable {
 
       $result = $db->read($sValue);
     }
-    
+
     return $result;
   }
 }

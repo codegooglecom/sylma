@@ -40,6 +40,8 @@ class Filed extends Setable {
 
     $aArray = array();
 
+    $this->loadDefaultNamespace($aNS);
+    
     if (is_string($mValue)) $aArray = $this->loadYAML($mValue, true);
     else if (is_array($mValue)) $aArray = $mValue;
     else $this->throwException(sprintf('Can only accepts array or string as first argument - given : %s', gettype($mValue)));

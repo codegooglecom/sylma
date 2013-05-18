@@ -6,7 +6,7 @@
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:stp="http://2013.sylma.org/schema/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
 >
   <view:view>
     <sql:resource>

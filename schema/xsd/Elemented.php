@@ -10,8 +10,12 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\schema;
 class Elemented extends schema\parser\Handler implements reflector\elemented, schema\parser\schema {
 
   const NS = 'http://www.w3.org/2001/XMLSchema';
+  const PREFIX = 'xs';
+
   const TARGET_PREFIX = 'target';
 
+  const SSD_NS = 'http://2013.sylma.org/schema/ssd';
+  const SSD_PREFIX = 'ssd';
   const SSD_TYPES = '../ssd/simple.xsd';
 
   /**
@@ -51,6 +55,8 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
 
     $import = $this->loadSimpleComponent('component/import');
     $import->parseFile($this->getFile(self::SSD_TYPES));
+
+    $this->setNamespace(self::SSD_NS, self::SSD_PREFIX, false);
   }
 
   protected function lookupNamespace($sPrefix, dom\element $context = null) {
@@ -187,7 +193,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
 
     if (!isset($this->aTypesNodes[$sNamespace][$sName])) {
 
-      $this->throwException(sprintf('Cannot find type %s:%s', $sNamespace, $sName));
+      $this->launchException("Cannot find type $sNamespace:$sName");
     }
 
     return $this->aTypesNodes[$sNamespace][$sName];

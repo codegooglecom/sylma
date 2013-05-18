@@ -25,6 +25,7 @@
                 <cls:class alias="register" name="Register"/>
                 <cls:class alias="token" name="Token"/>
                 <cls:class alias="variable" name="Variable"/>
+                <cls:class alias="read" name="Read"/>
               </cls:classes>
             </cls:class>
           </cls:classes>

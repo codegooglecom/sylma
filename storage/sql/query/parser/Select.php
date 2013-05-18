@@ -11,6 +11,7 @@ class Select extends Basic implements common\argumentable {
   protected $offset;
   protected $count;
   protected $clone;
+  protected $order;
 
   public function setColumn($val) {
 
@@ -119,6 +120,16 @@ class Select extends Basic implements common\argumentable {
     $this->offset = $this->count = null;
   }
 
+  public function setOrder($val) {
+
+    $this->order = $val;
+  }
+
+  protected function getOrder() {
+
+    return $this->order ? array(' ORDER BY ', $this->order, ' ASC ') : null;
+  }
+
   protected function build($sMethod = '') {
 
     if (!$sMethod) {
@@ -134,7 +145,7 @@ class Select extends Basic implements common\argumentable {
 
   protected function getString() {
 
-    $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres(), $this->getLimit());
+    $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres(), $this->getOrder(), $this->getLimit());
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }

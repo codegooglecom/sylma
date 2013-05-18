@@ -77,7 +77,10 @@ class Manager extends core\module\Argumented {
 
   public function insert($sQuery, $bDebug = true) {
 
-    if ($this->getDatabase()->exec($sQuery)) {
+    $bResult = $this->getDatabase()->exec($sQuery);
+    $this->catchError();
+
+    if ($bResult) {
 
       $result = $this->getDatabase()->lastInsertId();
       $this->logQuery($sQuery);

@@ -21,7 +21,7 @@
 
   <xs:simpleType name="phone">
     <xs:restriction base="xs:string">
-      <xs:maxLength value="255"/>
+      <xs:maxLength value="65"/>
     </xs:restriction>
   </xs:simpleType>
 

@@ -134,7 +134,8 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     $element->setAttribute('id', $this->getID());
 
     $var = $this->getParser()->getObjects();
-    $var->call('startObject', $this->buildObject())->insert();
+
+    $aElement[] = $var->call('startObject', $this->buildObject());
     $aElement[] = $this->getParser()->getPHPWindow()->parseArrayables(array($element));
     $aElement[] = $var->call('stopObject');
 

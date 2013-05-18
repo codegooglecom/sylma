@@ -19,8 +19,15 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
 
     $this->setArray($aArray);
 
+    $this->loadDefaultNamespace($aNS);
+
     $this->setNamespaces($aNS);
     if ($parent) $this->setParent($parent);
+  }
+
+  protected function loadDefaultNamespace(array $aNS) {
+
+    if (isset($aNS[0]) && $aNS[0]) $this->setNamespace($aNS[0]);
   }
 
   protected function setArray(array $aContent) {

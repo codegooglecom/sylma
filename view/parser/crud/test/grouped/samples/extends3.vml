@@ -2,7 +2,7 @@
 <crud:crud
   xmlns:crud="http://2013.sylma.org/view/crud"
   xmlns:view="http://2013.sylma.org/view"
-  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
@@ -12,7 +12,7 @@
   <crud:route>
     <view:view>
       <view:template match="user:*">
-        <button type="text" name="{alias()}" value="{apply()}"/>
+        <button type="text" name="{alias()}" value="{value()}"/>
       </view:template>
     </view:view>
   </crud:route>

@@ -19,6 +19,8 @@ abstract class Templated extends reflector\handler\Elemented {
 
     foreach ($this->getTemplates() as $template) {
 
+      if ($this->checkTemplate($template, false)) continue;
+
       $iWeight = $template->getWeight($el->getNamespace(), $el->getName(), $sMode);
       if ($iWeight && $iWeight >= $iLast) {
 
@@ -47,12 +49,24 @@ abstract class Templated extends reflector\handler\Elemented {
 
   public function startTemplate(parser\template $tpl) {
 //if (!$tpl->getTree()) $this->launchException ('test');
-    $this->aTemplates[] = $tpl;
+    $this->aTemplates[$tpl->getID()] = $tpl;
   }
 
   public function stopTemplate() {
 
     array_pop($this->aTemplates);
+  }
+
+  public function checkTemplate(parser\template $tpl, $bDebug = true) {
+
+    $bResult = in_array($tpl->getID(), array_keys($this->aTemplates));
+
+    if ($bResult) {
+
+      if ($bDebug) $this->launchException('Recursive template call');
+    }
+
+    return $bResult;
   }
 
   protected function loadTemplate(dom\element $el) {

@@ -10,8 +10,6 @@ class Table extends sql\schema\component\Table {
   public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
-
-    $this->loadColumns();
   }
 
   protected function loadColumns() {
@@ -36,6 +34,8 @@ class Table extends sql\schema\component\Table {
 
   public function asUpdate() {
 
+    $this->loadColumns();
+    
     foreach ($this->getElements() as $element) {
 
       $aChildren[] = $element->asUpdate();

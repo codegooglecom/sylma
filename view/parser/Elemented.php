@@ -167,7 +167,11 @@ class Elemented extends template\parser\handler\Domed {
 
     $this->loadResult();
 
-    $resource = $this->parseElement($this->getx('*[local-name() = "resource"]', true)->remove());
+    if (!$resource = $this->parseElement($this->getx('*[local-name() = "resource"]', true)->remove())) {
+
+      $this->launchException('No resource found');
+    }
+
     $resource->setMode($sMode);
 
     $schema = $resource->setSchema($this->loadSchema());

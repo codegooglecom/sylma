@@ -10,7 +10,7 @@ class Container extends template_ns\parser\component\Template {
 
   const CONTEXT_DEFAULT = self::CONTEXT_ELEMENT;
 
-  const WEIGHT_TYPE = 15;
+  const WEIGHT_TYPE = 20;
   const WEIGHT_TYPE_ALL = 10;
 
   protected $context;
@@ -117,13 +117,14 @@ class Container extends template_ns\parser\component\Template {
         }
         else if ($sMode === $this->getMode()) {
 
-          if (!$iResult = $this->getWeightName($element->getNamespace(), $element->getName())) {
+          $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
 
-            if ($type = $element->getType()) {
+          if ($type = $element->getType()) {
 
-              $iResult = $this->getWeightType($type);
-            }
+            $iType = $this->getWeightType($type);
           }
+
+          $iResult = $iType > $iElement ? $iType : $iElement;
         }
       }
     }

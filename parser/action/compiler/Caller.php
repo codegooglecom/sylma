@@ -69,7 +69,7 @@ class Caller extends Domed implements action\reflector {
 
     return $parser->parseFromChild($el);
   }
-  
+
   /**
    * Shortcut
    * @return php\basic\_Interface
@@ -259,10 +259,15 @@ class Caller extends Domed implements action\reflector {
 
   protected function reflectObject(dom\element $el) {
 
+    $file = null;
     $sName = $el->readAttribute('class');
-    $sFile = $el->readAttribute('file', null, false);
 
-    $interface = $this->getWindow()->getInterface($this->getAbsoluteClass($sName));
+    if ($sFile = $el->readAttribute('file', null, false)) {
+
+      $file = $this->getSourceFile($sFile);
+    }
+
+    $interface = $this->getWindow()->getInterface($this->getAbsoluteClass($sName), $file);
     $instance = $interface->addInstance($this->getWindow(), $el->getChildren());
 
     $var = $this->getWindow()->addVar($instance);

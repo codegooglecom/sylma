@@ -7,6 +7,7 @@ class Objects extends modules\html\context\JS implements core\stringable {
 
   const PARENT_PATH = 'sylma.tmp';
 
+  protected $sPath = '';
   protected $aObjects = array();
 
   protected function parsePath($sPath) {
@@ -56,6 +57,8 @@ class Objects extends modules\html\context\JS implements core\stringable {
     }
 
     $this->setCurrent($obj);
+
+    return '';
   }
 
   public function stopObject() {

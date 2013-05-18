@@ -34,4 +34,11 @@ abstract class Namespaced extends core\module\Domed {
 
     return parent::setNamespace($sNamespace, $sPrefix, $bDefault);
   }
+
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
+
+    if ($this instanceof core\tokenable) $mSender[] = $this->asToken();
+
+    return parent::launchException($sMessage, $aVars, $mSender);
+  }
 }

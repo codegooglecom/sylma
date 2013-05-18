@@ -311,7 +311,7 @@ abstract class Main extends reflector\basic\Foreigner {
    */
   public function getSourceFile($sPath = '') {
 
-    return $this->getControler(static::FILE_MANAGER)->getFile($sPath, $this->getParser()->getSourceDirectory());
+    return $this->getControler(static::FILE_MANAGER)->getFile($sPath, $this->getSourceDirectory());
   }
 
   public function asDOM() {

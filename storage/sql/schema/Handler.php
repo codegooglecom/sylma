@@ -5,7 +5,7 @@ use sylma\core, sylma\dom, sylma\schema\xsd, sylma\parser\reflector;
 
 class Handler extends xsd\Elemented {
 
-  const NS = 'http://2013.sylma.org/storage/sql/schema';
+  const NS = 'http://2013.sylma.org/storage/sql';
   const PREFIX = 'sql';
   const TYPES_FILE = 'datatypes.xql';
 

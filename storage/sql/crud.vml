@@ -5,7 +5,7 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:stp="http://2013.sylma.org/schema/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
   xmlns:js="http://2013.sylma.org/template/binder"
@@ -18,7 +18,7 @@
       <tpl:constant name="cols">*</tpl:constant>
     </crud:local>
 
-    <view:view mode="view" debug="x">
+    <view:view mode="view" _debug="x">
 
       <sql:resource multiple="multiple"/>
 
@@ -46,9 +46,16 @@
         </thead>
       </view:template>
 
-      <view:template match="user:*" mode="cell">
+      <view:template match="*" mode="cell">
         <th>
-          <tpl:apply select="alias()"/>
+          <a href="#" js:class="sylma.ui.Base">
+            <js:option name="name"><tpl:apply select="alias()"/></js:option>
+            <js:event name="click">
+              %parent%.getObject('container').update({order : %object%.get('name')});
+              return false;
+            </js:event>
+            <tpl:apply select="alias()"/>
+          </a>
         </th>
       </view:template>
 
@@ -70,18 +77,15 @@
         <sql:current>
           <le:argument name="page"/>
         </sql:current>
-        <sql:count>3</sql:count>
+        <sql:count>2</sql:count>
       </sql:pager>
 
       <sql:order>
-
+        <le:argument name="order"/>
       </sql:order>
 
-      <view:template mode="pager-count">10</view:template>
-      <view:template mode="order">id</view:template>
-
       <view:template>
-        <tbody js:class="sylma.ui.Container">
+        <tbody js:name="container" js:class="sylma.ui.Container">
           <js:option name="path">
             <crud:path/>
           </js:option>
@@ -198,7 +202,7 @@
 
   <crud:route name="update" groups="form">
 
-    <view:view mode="view">
+    <view:view mode="view" _debug="x">
       <view:template mode="root">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
         <sql:filter name="id" single="single"><le:argument name="id"/></sql:filter>
@@ -222,15 +226,27 @@
       <form js:class="sylma.ui.Form">
         <js:include>/#sylma/template/form.js</js:include>
         <stp:apply mode="root"/>
-        <stp:apply select="*" mode="form"/>
+        <stp:apply select="*" mode="container"/>
         <input type="submit" value="Envoyer"/>
       </form>
     </view:template>
 
-    <view:template match="*" mode="form">
+    <view:template match="*" mode="container">
       <tpl:register/>
-      <span/>
-      <input type="text" value="{value()}" name="{alias()}"/>
+      <div>
+        <label for="form-{alias()}"><tpl:apply select="alias()"/> :</label>
+        <tpl:apply mode="input"/>
+      </div>
+    </view:template>
+
+    <view:template match="*" mode="input">
+      <input type="text" id="form-{alias()}" value="{value()}" name="{alias()}"/>
+    </view:template>
+
+    <view:template match="#type/sql:string-long" mode="input" apply="element">
+      <textarea id="form-{alias()}" name="{alias()}">
+        <tpl:apply/>
+      </textarea>
     </view:template>
 
   </crud:group>

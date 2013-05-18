@@ -8,7 +8,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
   const NAME_DEFAULT = '*';
 
   const WEIGHT_ELEMENT = 25;
-  const WEIGHT_ELEMENT_ALL = 20;
+  const WEIGHT_ELEMENT_ALL = 15;
 
   const MATCH_DEFAULT = '[root]';
   const MODE_DEFAULT = '';
@@ -56,7 +56,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->sID = $sID;
   }
 
-  protected function getID() {
+  public function getID() {
 
     return $this->sID;
   }
@@ -202,7 +202,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
       $this->launchException("Variable '{$sName}' does not exists");
     }
-    
+
     return $this->aVariables[$sName];
   }
 
@@ -236,12 +236,9 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->getTree(); // exists
     $this->initComponents();
 
-    if (in_array($this->getID(), self::$aCall)) {
+    $this->getParser()->checkTemplate($this);
 
-      $this->launchException('Recursive template call');
-    }
-
-    self::$aCall[] = $this->getID();
+    //self::$aCall[] = $this->getID();
 
     $this->start();
     $this->startLog();
@@ -252,7 +249,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->stopLog();
     $this->stop();
 
-    array_pop(self::$aCall);
+    //array_pop(self::$aCall);
 
     return $result;
   }
@@ -276,6 +273,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     return $iResult;
   }
+
   public function getWeightName($sNamespace, $sName) {
 
     $iResult = 0;
@@ -306,6 +304,11 @@ class Template extends Child implements common\arrayable, parser\template, core\
     //}
 
     return $pather;
+  }
+
+  public function applyRead() {
+
+    return $this->getTree()->reflectRead();
   }
 
   public function applyPath($sPath, $sMode) {

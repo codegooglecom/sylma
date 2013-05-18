@@ -14,7 +14,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
   protected $sSource;
   protected $query;
 
-  const NS = 'http://2013.sylma.org/storage/sql/view';
+  const NS = 'http://2013.sylma.org/storage/sql';
 
   public function parseRoot(dom\element $el) {
 

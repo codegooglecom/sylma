@@ -4,7 +4,7 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql/view"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
   xmlns:le="http://2013.sylma.org/action"

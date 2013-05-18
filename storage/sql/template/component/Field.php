@@ -40,7 +40,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
   public function reflectApply($sMode = '') {
 
-    return $this->reflectSelf();
+    return $this->reflectApplySelf($sMode);
   }
 
   protected function parsePathToken($aPath, $sMode) {
