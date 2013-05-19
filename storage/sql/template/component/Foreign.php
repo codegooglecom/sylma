@@ -48,20 +48,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
   }
 
-  public function reflectApplyPath(array $aPath, $sMode) {
-
-    if (!$aPath) {
-
-      $result = $this->reflectApplySelf($sMode);
-    }
-    else {
-
-      $result = $this->getParser()->parsePathToken($this, $aPath, $sMode);
-    }
-
-    return $result;
-  }
-
   public function reflectApplyFunction($sName, array $aPath, $sMode) {
 
     switch ($sName) {
@@ -100,12 +86,12 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $collection->setQuery($element->getQuery());
     $collection->setTable($element);
 
-    return $collection->reflectApplyAll(array('*'), $sMode);
+    return $collection->reflectApplyAll($sMode);
   }
 
   public function reflectApply($sMode = '') {
-$this->launchException('Not used ?');
-    return $this->getParser()->parsePath($this, $sPath, $sMode);
+
+    return $this->reflectApplySelf($sMode);
   }
 
   protected function lookupTemplate($sMode) {
@@ -169,7 +155,7 @@ $this->launchException('Not used ?');
 
     if ($this->getMaxOccurs(true)) {
 
-      $id = $parent->getElement('id', $element->getNamespace());
+      $id = $parent->getElement('id', $parent->getNamespace());
 
       list($table, $source, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
 
@@ -184,7 +170,7 @@ $this->launchException('Not used ?');
       $element->setQuery($query);
       $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
 
-      $result = $collection->reflectApplyAll(array(), $sMode);
+      $result = $collection->reflectApplyAll($sMode);
       //$result = $this->getParser()->parsePath($collection, '*', $sMode);
     }
     else {

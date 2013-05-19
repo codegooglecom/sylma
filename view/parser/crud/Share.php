@@ -28,6 +28,16 @@ class Share extends reflector\component\Foreigner implements dom\domable {
     return $this->sName;
   }
 
+  public function merge(self $source = null) {
+
+    if ($source) $this->getNode()->shift($source);
+  }
+
+  public function setParser(reflector\domed $parent) {
+
+    parent::setParser($parent);
+  }
+
   public function asDOM() {
 
     $dom = $this->getManager('dom');

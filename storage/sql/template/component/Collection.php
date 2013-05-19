@@ -17,6 +17,7 @@ class Collection extends Rooted implements sql\template\pathable {
   public function setTable(Table $table) {
 
     $this->table = $table;
+    $this->loadNamespace($table->getNamespace());
   }
 
   protected function getTable() {
@@ -49,20 +50,10 @@ class Collection extends Rooted implements sql\template\pathable {
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
-    dsp($sPath);
+    //dsp($sPath);
   }
 
-  public function reflectApplyPath(array $aPath, $sMode) {
-
-    if (!$aPath) {
-
-      $this->launchException('Table must not be applied (internally) without path neither template, reflectApply() should be called instead');
-    }
-
-    return $this->parsePathTokens($aPath, $sMode);
-  }
-
-  public function getType() {
+  public function getType($bDebug = true) {
 
     return null;
   }
@@ -87,7 +78,7 @@ class Collection extends Rooted implements sql\template\pathable {
     return $result;
   }
 
-  public function reflectApplyAll(array $aPath, $sMode) {
+  public function reflectApplyAll($sMode) {
 
     $this->preBuild();
 

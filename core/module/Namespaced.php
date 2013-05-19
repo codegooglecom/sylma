@@ -15,9 +15,9 @@ abstract class Namespaced extends Exceptionable {
       $this->throwException('Cannot use empty string as dom namespace');
     }
 
-    $this->aNamespaces[$sPrefix] = $sNamespace;
+    if ($sPrefix) $this->aNamespaces[$sPrefix] = $sNamespace;
 
-    if ($bDefault && (!$this->sNamespace || !$sPrefix)) {
+    if ($bDefault) {
 
       $this->sNamespace = $sNamespace;
       $this->sPrefix = $sPrefix;

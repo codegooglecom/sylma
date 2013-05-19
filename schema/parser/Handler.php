@@ -5,12 +5,20 @@ use sylma\core, sylma\dom, sylma\schema\parser, sylma\parser\reflector;
 
 class Handler extends reflector\handler\Elemented {
 
+  const TARGET_PREFIX = 'target';
+  const TYPE_PREFIX = 'type';
+
   protected $sDefaultNamespace = '';
 
   protected $aElements = array();
   protected $aTypes = array();
 
   protected $aBaseTypes = array();
+
+  public function getTargetNamespace() {
+
+    return $this->getNamespace('target');
+  }
 
   protected function setDefaultNamespace($sNamespace) {
 
@@ -49,7 +57,7 @@ class Handler extends reflector\handler\Elemented {
 
       $aResult[$sNamespace][$sType] = $type = $this->loadSimpleComponent('component/baseType', $this);
       $type->setName($sType);
-      $type->setNamespace($sNamespace);
+      $type->setNamespace($sNamespace, self::TYPE_PREFIX);
 
       $type->setNamespaces($this->getNS());
     }

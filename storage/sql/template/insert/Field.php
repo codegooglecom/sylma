@@ -7,11 +7,6 @@ class Field extends sql\template\component\Field {
 
   const MSG_MISSING = 'The field %s is missing';
 
-  public function reflectApply($sMode = '') {
-
-    return null;
-  }
-
   public function reflectRegister() {
 
     $query = $this->getQuery();

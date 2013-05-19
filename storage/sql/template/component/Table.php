@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema;
 
-class Table extends Rooted implements sql\template\pathable, parser\element {
+class Table extends Rooted implements sql\template\pathable, schema\parser\element {
 
   protected $bBuilded = false;
   protected $aElements = array();
@@ -15,7 +15,7 @@ class Table extends Rooted implements sql\template\pathable, parser\element {
     parent::parseRoot($el);
   }
 
-  public function setParent(parser\element $parent) {
+  public function setParent(schema\parser\element $parent) {
 
     $this->parent = $parent;
   }
@@ -91,14 +91,40 @@ class Table extends Rooted implements sql\template\pathable, parser\element {
     return $result;
   }
 
-  public function reflectApplyAll(array $aPath, $sMode) {
+  public function reflectApplyAll($sMode) {
 
     $aResult = array();
 
     foreach ($this->getElements() as $element) {
 
-      $element->setParent($this);
-      $aResult[] = $element->reflectApplyPath($aPath, $sMode);
+      $aResult[] = $element->reflectApply($sMode);
+    }
+
+    return $aResult;
+  }
+
+  public function reflectApplyAllExcluding(array $aExcluded, $sMode) {
+
+    $aResult = array();
+    $aRemoved = array();
+
+    foreach ($aExcluded as $sName) {
+
+      list($sNamespace, $sName) = $this->getParser()->parseName($sName);
+      $aRemoved[] = $this->getElement($sName, $sNamespace, false);
+    }
+
+    foreach ($this->getElements() as $element) {
+
+      foreach ($aRemoved as $excluded) {
+
+        if ($excluded === $element) {
+
+          continue 2;
+        }
+      }
+
+      $aResult[] = $element->reflectApply($sMode);
     }
 
     return $aResult;

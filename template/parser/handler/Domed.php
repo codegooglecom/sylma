@@ -6,6 +6,7 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\parser\
 class Domed extends Templated implements reflector\elemented {
 
   const NS = 'http://2013.sylma.org/template';
+  //const PREFIX = 'tpl';
 
   protected $aRegistered = array();
   protected $aTemplates = array();

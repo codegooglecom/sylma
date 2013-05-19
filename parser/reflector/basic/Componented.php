@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\reflector\basic;
-use \sylma\core, sylma\dom, sylma\storage\fs, symla\parser\reflector;
+use \sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\reflector;
 
 abstract class Componented extends Namespaced {
 

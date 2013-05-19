@@ -68,6 +68,13 @@ class Elemented extends Logger implements reflector\elemented {
     return parent::loadSimpleComponent($sName, $manager);
   }
 
+  public function importComponent(reflector\component $component) {
+
+    $component->setParser($this);
+
+    return $component;
+  }
+
   protected function loadDirectory(core\argument $arg) {
 
     if ($arg and $sDirectory = $arg->read('directory', null, false)) {

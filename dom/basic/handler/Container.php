@@ -3,11 +3,6 @@
 namespace sylma\dom\basic\handler;
 use sylma\dom, sylma\core;
 
-require_once('Basic.php');
-
-/**
- *
- */
 abstract class Container extends Basic {
 
   private $fragment;

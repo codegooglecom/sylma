@@ -10,7 +10,7 @@ class Order extends reflector\component\Foreigner implements reflector\component
     $this->setNode($el);
     $this->allowForeign(true);
     $this->allowText(true);
-    
+
     $this->build();
   }
 
@@ -25,7 +25,7 @@ class Order extends reflector\component\Foreigner implements reflector\component
     }
     else {
 
-      $content = "'{$this->readx()}'";
+      $content = $this->readx();
     }
 
     $query->setOrder($content);

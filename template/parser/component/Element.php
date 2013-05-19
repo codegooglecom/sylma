@@ -260,7 +260,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   public function asToken() {
 
-    return $this->getNode()->asToken();
+    return $this->getNode(false) ? $this->getNode()->asToken() : '[No node defined]';
   }
 }
 

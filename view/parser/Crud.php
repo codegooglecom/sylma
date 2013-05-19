@@ -27,7 +27,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
     switch ($el->getName()) {
 
-      case 'global' : $this->global = $this->parseComponent($el); break;
+      case 'global' : $this->setGlobal($this->parseComponent($el)); break;
       case 'view' :
       case 'route' : $this->parsePath($el); break;
       case 'group' : $this->parseGroup($el); break;
@@ -57,7 +57,23 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
           $this->addPath($path);
         }
       }
+
+      if ($this->getGlobal()) $this->getGlobal()->merge($reflector->getGlobal());
+      else if ($reflector->getGlobal()) $this->setGlobal($reflector->getGlobal());
+
+      $this->addGroups($reflector->getGroups());
     }
+  }
+
+  protected function setGlobal(crud\Share $global) {
+
+    $this->importComponent($global);
+    $this->global = $global;
+  }
+
+  public function getGlobal() {
+
+    return $this->global;
   }
 
   protected function parsePath(dom\element $el) {
@@ -75,6 +91,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
       $this->setDefault($path);
     }
 
+    $this->importComponent($path);
     $this->aPaths[$path->getName()] = $path;
   }
 
@@ -82,6 +99,16 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
     $group = $this->parseComponent($el);
     $this->aGroups[$group->getName()] = $group;
+  }
+
+  protected function addGroups(array $aGroups) {
+
+    $this->aGroups = $this->aGroups + $aGroups;
+  }
+
+  public function getGroups() {
+
+    return $this->aGroups;
   }
 
   public function getGroup($sName) {
@@ -114,14 +141,10 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     return isset($this->aPaths[$sName]) ? $this->aPaths[$sName] : null;
   }
 
-  public function getGlobal() {
-
-    return $this->global;
-  }
-
   public function __clone() {
 
     $this->default = null;
+    //$this->global = null;
     $this->aPaths = array();
     $this->aGroups = array();
   }

@@ -10,6 +10,11 @@ abstract class Particle extends Basic implements parser\particle {
 
   public function addElement(parser\element $element, $iPosition = null) {
 
+    if (!$element->getNamespace()) {
+
+      $this->launchException('Element not valid, no namespace defined');
+    }
+
     $element->setPosition($iPosition);
     $element->setParticle($this);
 
@@ -36,9 +41,19 @@ abstract class Particle extends Basic implements parser\particle {
     return $aResult;
   }
 
-  public function getElementFromIndex($iPosition) {
+  public function getElementFromIndex($iPosition, $bDebug) {
 
-    return $this->aElementsIndexed[$iPosition];
+    if (!isset($this->aElementsIndexed[$iPosition])) {
+
+      if ($bDebug) $this->launchException('No element found at this position');
+      $result = null;
+    }
+    else {
+
+      $result = $this->aElementsIndexed[$iPosition];
+    }
+
+    return $result;
   }
 }
 

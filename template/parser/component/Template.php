@@ -48,11 +48,6 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   protected function setID($sID) {
 
-    if ($this->sID) {
-
-      $this->launchException('Template already IDed');
-    }
-
     $this->sID = $sID;
   }
 
@@ -141,11 +136,11 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->tree = $tree;
   }
 
-  public function getTree() {
+  public function getTree($bDebug = true) {
 
     if (!$this->tree) {
 
-      $this->launchException('No tree defined');
+      if ($bDebug) $this->launchException('No tree defined');
     }
 
     return $this->tree;
@@ -236,7 +231,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->getTree(); // exists
     $this->initComponents();
 
-    $this->getParser()->checkTemplate($this);
+    //$this->getParser()->checkTemplate($this);
 
     //self::$aCall[] = $this->getID();
 

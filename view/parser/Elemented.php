@@ -6,7 +6,8 @@ use sylma\core, sylma\dom, sylma\template, sylma\parser\reflector, sylma\schema,
 class Elemented extends template\parser\handler\Domed {
 
   const NS = 'http://2013.sylma.org/view';
-  const NS_SCHEMA = 'http://2013.sylma.org/schema/template';
+  const SCHEMA_NS = 'http://2013.sylma.org/schema/template';
+  const SCHEMA_PREFIX = 'stp';
 
   const TMP_ARGUMENTS = 'view.xml';
 
@@ -24,8 +25,9 @@ class Elemented extends template\parser\handler\Domed {
     //$arg = $this->setArguments($this->getFactory()->findClass('classes/elemented'));
 
     //$this->setNamespace(self::NS, self::PREFIX);
-    $this->setNamespace(self::NS_SCHEMA);
+    $this->setNamespace(self::SCHEMA_NS, self::SCHEMA_PREFIX);
     $this->setNamespace(parent::NS, parent::PREFIX);
+    $this->setNamespace(self::NS, 'self');
 
     parent::__construct($root, $parent, $arg);
   }

@@ -218,6 +218,10 @@
   </crud:route>
   <!--<view:view mode="delete"/>-->
 
+  <crud:global>
+    <tpl:constant name="form-cols">* ^ id,date-update,date-insert</tpl:constant>
+  </crud:global>
+
   <crud:group name="form">
 
     <sql:resource/>
@@ -226,7 +230,7 @@
       <form js:class="sylma.ui.Form">
         <js:include>/#sylma/template/form.js</js:include>
         <stp:apply mode="root"/>
-        <stp:apply select="*" mode="container"/>
+        <stp:apply use="form-cols" mode="container"/>
         <input type="submit" value="Envoyer"/>
       </form>
     </view:template>
@@ -243,7 +247,7 @@
       <input type="text" id="form-{alias()}" value="{value()}" name="{alias()}"/>
     </view:template>
 
-    <view:template match="#type/sql:string-long" mode="input" apply="element">
+    <view:template match="sql:string-long" mode="input">
       <textarea id="form-{alias()}" name="{alias()}">
         <tpl:apply/>
       </textarea>

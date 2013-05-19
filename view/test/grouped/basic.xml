@@ -136,6 +136,30 @@
       <div>2<h3>admin</h3><a href="mailto:email">admin@sylma.org</a></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Apply all with exclusion">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <stp:apply select="* ^ id,name"/>
+          </div>
+        </view:template>
+        <view:template match="user:name">
+          <h3><tpl:apply/></h3>
+        </view:template>
+        <view:template match="user:email">
+          <a href="mailto:email"><tpl:apply/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><a href="mailto:email">admin@sylma.org</a></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Multiple apply">
     <tst:document>
       <view:view user:ns="ns">

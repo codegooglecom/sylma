@@ -8,10 +8,9 @@ class View extends Pathed {
   protected $route;
   protected $bMain = true;
 
-  public function parseRoot(dom\element $el, Route $parent = null) {
+  public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
-    if ($parent) $this->setRoute($parent);
     $this->loadName();
   }
 
@@ -40,9 +39,9 @@ class View extends Pathed {
     return $sPrefix . ($sPrefix && $sContent ? '_' : '') . $sContent;
   }
 
-  public function merge($path) {
+  public function merge($path = null) {
 
-    $this->getNode()->shift($path->asDocument()->queryx('* | @*'));
+    if ($path) $this->getNode()->shift($path->getNode()->queryx('* | @*'));
   }
 
   public function getPath(array $aPath) {

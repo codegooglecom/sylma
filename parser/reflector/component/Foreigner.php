@@ -91,6 +91,11 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $result;
   }
 
+  protected function importComponent(reflector\component $component) {
+
+    return $this->getParser()->importComponent($component);
+  }
+
   protected function setParser(reflector\domed $parent) {
 
     $this->parser = $parent;

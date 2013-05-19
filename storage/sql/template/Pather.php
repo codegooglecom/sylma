@@ -33,9 +33,25 @@ class Pather extends template\parser\Pather {
     return $aResult;
   }
 
-  protected function parsePathAll(array $aPath, $sMode) {
+  protected function parsePathAll($sVal, $sMode) {
 
-    return $this->getSource()->reflectApplyAll($aPath, $sMode);
+    if (trim($sVal) !== '*') {
+
+      preg_match('/^\*\s*\^\s*([\w:-\s_,]+)$/', $sVal, $aMatch);
+
+      if (!$aMatch) {
+
+        $this->launchException('No valid path for exclusion', get_defined_vars());
+      }
+
+      $aResult = $this->getSource()->reflectApplyAllExcluding(array_map('trim', explode(',', $aMatch[1])), $sMode);
+    }
+    else {
+
+      $aResult = $this->getSource()->reflectApplyAll($sMode);
+    }
+
+    return $aResult;
   }
 /*
   protected function parsePathElement(schema\parser\element $source, $sPath, array $aPath, $sMode) {

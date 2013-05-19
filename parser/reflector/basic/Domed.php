@@ -54,6 +54,11 @@ abstract class Domed extends Componented {
 
     $aNS = $el->getHandler()->getNS();
 
+    if ($bNamespace) {
+
+      $this->setNamespaces($aNS);
+    }
+
     if ($bClone) {
 
       if ($bNamespace) $this->setNamespace($el->getNamespace(), static::PREFIX);
@@ -61,8 +66,8 @@ abstract class Domed extends Componented {
       $doc = $this->createDocument($el);
       $result = $doc->getRoot();
 
-      $doc->registerNamespaces($aNS);
-      $this->registerNamespaces($result);
+      //$doc->registerNamespaces($aNS);
+      //$this->registerNamespaces($result);
 
       $this->elementDocument = $doc;
       $this->node = $result;
@@ -72,10 +77,6 @@ abstract class Domed extends Componented {
       $result = $this->node = $el;
     }
 
-    if ($bNamespace) {
-
-      $this->aNamespaces = array_merge($aNS, $this->aNamespaces);
-    }
 
     return $result;
   }

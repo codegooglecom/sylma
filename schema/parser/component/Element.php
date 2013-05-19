@@ -88,11 +88,11 @@ class Element extends Basic implements schema\parser\element, common\stringable,
     return $this->getParent()->getElementFromIndex($this->getPosition() + 1);
   }
 
-  public function getType() {
+  public function getType($bDebug = true) {
 
     if (!$this->type) {
 
-      $this->throwException('No type defined');
+      if ($bDebug) $this->throwException('No type defined');
     }
 
     return $this->type;
@@ -103,7 +103,7 @@ class Element extends Basic implements schema\parser\element, common\stringable,
     $this->type = $type;
   }
 
-  public function getElement($sName, $sNamespace) {
+  public function getElement($sName, $sNamespace, $bDebug = true) {
 
     if (!$this->isComplex()) {
 
@@ -116,7 +116,8 @@ class Element extends Basic implements schema\parser\element, common\stringable,
     }
     else {
 
-      $this->launchException("Cannot find element $sNamespace:$sName", get_defined_vars());
+      if ($bDebug) $this->launchException("Cannot find element $sNamespace:$sName", get_defined_vars());
+      $result = null;
     }
 
     return $result;
@@ -142,6 +143,7 @@ class Element extends Basic implements schema\parser\element, common\stringable,
   protected function loadChild(schema\parser\element $child) {
 
     $child->setParent($this);
+    $child->loadNamespace($this->getNamespace());
   }
 
   public function isComplex() {

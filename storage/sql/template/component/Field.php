@@ -19,20 +19,6 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $this->getParent()->getSource();
   }
 
-  public function reflectApplyPath(array $aPath, $sMode = '') {
-
-    if (!$aPath) {
-
-      $result = $this->reflectApplySelf($sMode);
-    }
-    else {
-
-      $result = $this->parsePathToken($aPath, $sMode);
-    }
-
-    return $result;
-  }
-
   public function reflectRead() {
 
     $this->launchException('Should not be used');
@@ -41,11 +27,6 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
   public function reflectApply($sMode = '') {
 
     return $this->reflectApplySelf($sMode);
-  }
-
-  protected function parsePathToken($aPath, $sMode) {
-
-    return $this->getParser()->parsePathToken($this, $aPath, $sMode);
   }
 
   protected function lookupTemplate($sMode) {
@@ -91,14 +72,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
-    if ($aPath) {
-
-      $result = $this->parsePathToken($aPath, $sMode);
-    }
-    else {
-
-      $result = $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
-    }
+    $result = $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
 
     return $result;
   }

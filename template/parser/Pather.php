@@ -110,8 +110,18 @@ class Pather extends component\Child {
 
   public function applyPath($sPath, $sMode) {
 
-    $aPaths = $this->parsePaths($sPath);
-    return $this->parsePathTokens($aPaths, $sMode);
+    $sPath = trim($sPath);
+
+    if ($this->matchAll($sPath)) {
+
+      $aResult = $this->parsePathAll($sPath, $sMode);
+    }
+    else {
+
+      $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode);
+    }
+
+    return $aResult;
   }
 
   protected function parsePaths($sPath) {
@@ -148,10 +158,6 @@ class Pather extends component\Child {
 
       $aResult = $this->parseVariable($aMatch, $aPath, $sMode);
     }
-    else if ($aMatch = $this->matchAll($sPath)) {
-
-      $aResult = $this->parsePathAll($aPath, $sMode);
-    }
     else if ($aMatch = $this->matchFunction($sPath)) {
 
       $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode);
@@ -171,7 +177,7 @@ class Pather extends component\Child {
 
   protected function matchAll($sVal) {
 
-    return $sVal === self::ALL_TOKEN;
+    return $sVal{0} === self::ALL_TOKEN;
   }
 
   protected function matchVariable($sVal) {
@@ -188,7 +194,7 @@ class Pather extends component\Child {
     return $aResult;
   }
 
-  protected function parsePathAll(array $aPath, $sMode) {
+  protected function parsePathAll($sPath, $sMode) {
 
     $this->launchException('Not yet implemented');
   }

@@ -5,24 +5,30 @@ use sylma\core, sylma\schema, sylma\template;
 
 class Particle extends schema\parser\component\Particle {
 
-  protected function loadElements() {
+  protected $bBuilded = false;
 
-    // TODO, single element loaded with getElement() are erased !
+  public function loadElements($sNamespace) {
 
+    if ($this->bBuilded) {
+
+      return;
+    }
+
+    $this->bBuilded = true;
     $iPosition = 0;
 
     foreach ($this->queryx("sql:*") as $el) {
 
       $element = $this->getParser()->parseComponent($el);
-      //$element->loadNamespace
-
-      $element->loadNamespace();
+      $element->loadNamespace($sNamespace);
+      
       $this->addElement($element, $iPosition);
+
       $iPosition++;
     }
   }
 
-  public function getElement($sName, $sNamespace) {
+  public function _getElement($sName, $sNamespace) {
 
     $result = null;
 
@@ -41,13 +47,6 @@ class Particle extends schema\parser\component\Particle {
     }
 
     return $result;
-  }
-
-  public function getElements() {
-
-    $this->loadElements();
-
-    return parent::getElements();
   }
 }
 

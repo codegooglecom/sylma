@@ -127,7 +127,7 @@ class Select extends Basic implements common\argumentable {
 
   protected function getOrder() {
 
-    return $this->order ? array(' ORDER BY ', $this->order, ' ASC ') : null;
+    return $this->order ? array(' ORDER BY `', $this->order, '` ASC ') : null;
   }
 
   protected function build($sMethod = '') {

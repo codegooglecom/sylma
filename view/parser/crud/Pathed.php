@@ -3,11 +3,16 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom, sylma\parser\reflector;
 
-abstract class Pathed extends reflector\component\Foreigner {
+abstract class Pathed extends reflector\component\Foreigner implements reflector\component {
 
   const DEFAULT_FILE = 'default';
 
   protected $sAlias = '';
+
+  public function setParser(reflector\domed $parent) {
+
+    parent::setParser($parent);
+  }
 
   protected function loadName() {
 
@@ -43,11 +48,6 @@ abstract class Pathed extends reflector\component\Foreigner {
     }
 
     return $aResult ? $aResult : null;
-  }
-
-  public function merge($path) {
-
-    return null;
   }
 }
 

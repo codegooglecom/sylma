@@ -29,7 +29,7 @@ class Basic extends sql\schema\Handler {
 
     foreach ($this->getTemplates() as $template) {
 
-      if ($this->getView()->checkTemplate($template, false)) continue;
+      if ($this->getView()->checkTemplate($template, $element, false)) continue;
 
       $iWeight = $template->getWeightSchema($element, $sContext, $sMode, $bRoot);
       if ($iWeight && $iWeight >= $iLast) {
@@ -97,11 +97,11 @@ class Basic extends sql\schema\Handler {
 
   public function reflectApplyDefault(schema\parser\container $source, $sPath, array $aPath, $sMode) {
 
-    list($sNamespace, $sName) = $this->parseName($sPath);
+    list($sNamespace, $sName) = $this->parseName($sPath, $source);
 
     $element = $source->getElement($sName, $sNamespace);
 
-    return $element ? $element->reflectApplyPath($aPath, $sMode) : null;
+    return $element ? ($aPath ? $this->parsePathToken($element, $aPath, $sMode) : $element->reflectApply($sMode)) : null;
   }
 }
 

@@ -12,8 +12,6 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
   const NS = 'http://www.w3.org/2001/XMLSchema';
   const PREFIX = 'xs';
 
-  const TARGET_PREFIX = 'target';
-
   const SSD_NS = 'http://2013.sylma.org/schema/ssd';
   const SSD_PREFIX = 'ssd';
   const SSD_TYPES = '../ssd/simple.xsd';
@@ -79,15 +77,9 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     return $sNamespace ? $sNamespace : $this->getNamespace($sPrefix);
   }
 
-  public function getTargetNamespace() {
-
-    return $this->getNamespace('target');
-  }
-
   protected function loadTargetNamespace(dom\document $doc) {
 
     $this->setNamespace($this->parseTargetNamespace($doc), self::TARGET_PREFIX);
-
   }
 
   protected function parseTargetNamespace(dom\document $doc) {
@@ -183,7 +175,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
 
       $el = $this->lookupType($sName, $sNamespace);
       $result = $this->addType($this->parseComponent($el));
-      $result->setNamespace($sNamespace);
+      $result->setNamespace($sNamespace, self::TYPE_PREFIX);
     }
 
     return $result;

@@ -1,18 +1,20 @@
 <?php
 
 namespace sylma\view\parser\crud;
-use sylma\core, sylma\dom;
+use sylma\core, sylma\dom, sylma\parser\reflector;
 
 class Route extends Pathed implements dom\domable {
 
   protected $local;
+  protected $main;
+  protected $sub;
 
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
 
-    $this->main = $this->loadView($this->getx('view:view[not(@name)]'));
-    $this->sub = $this->loadView($this->getx('view:view[@name]'));
+    $this->main = $this->parseView($this->getx('view:view[not(@name)]'));
+    $this->sub = $this->parseView($this->getx('view:view[@name]'));
     if ($this->sub) $this->sub->isMain(false);
 
     if ($local = $this->getx('self:local')) {
@@ -23,17 +25,27 @@ class Route extends Pathed implements dom\domable {
     $this->loadName();
   }
 
-  protected function loadView(dom\element $el = null) {
-
-    $result = null;
+  protected function parseView(dom\element $el = null) {
 
     if ($el) {
 
-      $result = $this->loadComponent('component/' . $el->getName(), $el);
-      $result->parseRoot($el, $this);
+      $result = $this->importView($this->parseComponent($el));
+    }
+    else {
+
+      $result = null;
     }
 
     return $result;
+  }
+
+  public function setParser(reflector\domed $parent) {
+
+    parent::setParser($parent);
+
+    if ($this->main) $this->main->setParser($parent);
+    if ($this->sub) $this->sub->setParser($parent);
+    if ($this->local) $this->local->setParser($parent);
   }
 
   public function getMain($bDebug = true) {
@@ -46,6 +58,12 @@ class Route extends Pathed implements dom\domable {
     return $this->main;
   }
 
+  protected function importView(View $view) {
+
+    $view->setRoute($this);
+    return $this->importComponent($view);
+  }
+
   public function getSub($bDebug = true) {
 
     if ($bDebug && !$this->sub) {
@@ -56,6 +74,11 @@ class Route extends Pathed implements dom\domable {
     return $this->sub;
   }
 
+  protected function getLocal() {
+
+    return $this->local;
+  }
+
   public function merge($path) {
 
     if (!$path instanceof self) {
@@ -63,8 +86,27 @@ class Route extends Pathed implements dom\domable {
       $this->launchException('Cannot merge view into route');
     }
 
-    $this->getMain(false) ? $this->getMain()->merge($path->getMain()) : $this->main = $path->getMain();
-    $this->getSub(false) ? $this->getSub()->merge($path->getSub()) : $this->sub = $path->getSub();
+    $this->getNode()->shift($path->queryx('@*'));
+
+    $this->main = $this->mergeView($this->getMain(false), $path->getMain(false));
+    $this->sub = $this->mergeView($this->getSub(false), $path->getSub(false));
+
+    $this->getLocal() ? $this->getLocal()->merge($path->getLocal()) : $this->local = $path->getLocal() ? $this->importComponent($path->getLocal()) : null;
+  }
+
+  protected function mergeView($source = null, $target = null) {
+
+    if ($source) {
+
+      $result = $source;
+      if ($target) $source->merge($target);
+    }
+    else if ($target) {
+
+      $result = $this->importView($target);
+    }
+
+    return $result;
   }
 
   public function getPath(array $aPath) {
@@ -102,7 +144,7 @@ class Route extends Pathed implements dom\domable {
     $aResult = array();
 
     if ($aGroups = $this->loadGroups()) $aResult[] = $aGroups;
-    if ($this->local) $aResult[] = $this->local->asDOM();
+    if ($this->getLocal()) $aResult[] = $this->getLocal()->asDOM();
 
     return $aResult ? $aResult : null;
   }

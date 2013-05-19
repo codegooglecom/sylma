@@ -8,6 +8,8 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   const NS = 'http://2013.sylma.org/core/argument';
   const FACTORY_NS = 'http://2013.sylma.org/core/factory';
   const PARSER_MANAGER = 'parser';
+  const DEFAULT_PREFIX = 'default';
+
   //const PREFIX = 'arg';
 
   protected $allowForeign = true;
@@ -16,7 +18,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   public function parseRoot(dom\element $el) {
 
     $this->registerNamespaces($el);
-    $this->setNamespace(self::loadDefaultNamespace($el));
+    $this->setNamespace(self::loadDefaultNamespace($el), self::DEFAULT_PREFIX);
 
     if ($el->getName() !== 'argument') {
 
