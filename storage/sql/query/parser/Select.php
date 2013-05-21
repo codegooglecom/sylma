@@ -3,10 +3,10 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\languages\common;
 
-class Select extends Basic implements common\argumentable {
+class Select extends Basic implements common\argumentable, common\addable {
 
-  protected $aJoins = array();
   protected $sMethod = '';
+  protected $aJoins = array();
 
   protected $offset;
   protected $count;
@@ -76,11 +76,6 @@ class Select extends Basic implements common\argumentable {
     $this->sMethod = $sMethod;
   }
 
-  protected function getMethod() {
-
-    return $this->sMethod;
-  }
-
   public function setOffset($offset) {
 
     $this->offset = $offset;
@@ -130,17 +125,23 @@ class Select extends Basic implements common\argumentable {
     return $this->order ? array(' ORDER BY `', $this->order, '` ASC ') : null;
   }
 
-  protected function build($sMethod = '') {
+  public function onAdd() {
 
-    if (!$sMethod) {
+    $this->getWindow()->loadContent($this->aTables);
+    $this->getWindow()->loadContent($this->aColumns);
+    $this->getWindow()->loadContent($this->aWheres);
 
-      if (!$sMethod = $this->getMethod()) {
+    $this->getVar()->insert();
+  }
 
-        $sMethod = $this->isMultiple() ? 'query' : 'get';
-      }
+  protected function build() {
+
+    if (!$sMethod = $this->getMethod()) {
+
+      $this->setMethod($this->isMultiple() ? 'query' : 'get');
     }
 
-    parent::build($sMethod);
+    parent::build();
   }
 
   protected function getString() {

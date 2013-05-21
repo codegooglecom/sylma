@@ -8,11 +8,14 @@
     <cls:base>\sylma\storage\sql</cls:base>
     <cls:class alias="elemented" name="template\handler\Formed">
       <cls:classes>
-        <cls:class alias="reflector" name="\sylma\schema\cached\Form"/>
         <component>
           <cls:classes>
             <cls:base>\sylma\storage\sql\template\insert</cls:base>
-            <cls:class alias="table" name="Table"/>
+            <cls:class alias="table" name="Table">
+              <cls:classes>
+                <cls:class alias="handler" name="\sylma\schema\cached\Form"/>
+              </cls:classes>
+            </cls:class>
             <cls:class alias="field" name="Field"/>
             <cls:class alias="foreign" name="Foreign"/>
             <cls:class alias="baseType" name="Simple">

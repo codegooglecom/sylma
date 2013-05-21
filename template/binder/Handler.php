@@ -74,7 +74,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
   protected function prepareParent() {
 
     $window = $this->getPHPWindow();
-    $contexts = $window->createVariable('contexts', '\sylma\core\argument');
+    $contexts = $window->getVariable('contexts');
 
     $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($contexts));
     $content = $window->createCall($window->getSylma(), 'throwException', 'php-boolean', array('No context sent'));

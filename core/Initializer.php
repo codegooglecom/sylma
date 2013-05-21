@@ -218,10 +218,16 @@ class Initializer extends module\Filed {
           $this->launchException('Unknown extension for window content');
       }
 
+      if (!$content) {
+
+        $this->launchException('No content for main window');
+      }
+
       $window->setArgument('content', $content);
       $window->setArgument('current', $path);
 
       $sResult = $window->asString();
+
     }
     catch (core\exception $e) {
 

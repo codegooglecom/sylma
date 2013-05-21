@@ -7,29 +7,9 @@ class Simple extends sql\template\component\Simple {
 
   protected $var;
 
-  protected function getHandler() {
+  public function instanciate($val, $aSettings) {
 
-    return $this->getParser()->getReflector();
-  }
-
-  public function escape(common\callable $var) {
-
-    return $this->getVar()->call('escape', array($var));
-  }
-
-  protected function getVar() {
-
-    if (!$this->var) {
-
-      $this->setVar($this->createObject('cached', array($this->getHandler())));
-    }
-
-    return $this->var;
-  }
-
-  protected function setVar(common\_var $obj) {
-
-    $this->var = $obj;
+    return $this->createObject('cached', array($val, $aSettings), null, false);
   }
 }
 

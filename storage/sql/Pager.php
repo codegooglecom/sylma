@@ -41,7 +41,9 @@ class Pager extends core\module\Exceptionable {
 
   public function getOffset() {
 
-    return ($this->getPage() - 1) * $this->getSize() + 1;
+    $test = ($this->getPage() - 1) * $this->getSize();
+    
+    return $test;
   }
 
   public function isMultiple() {

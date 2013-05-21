@@ -5,6 +5,7 @@ use sylma\core, sylma\parser\languages\common;
 
 class Update extends Insert {
 
+  protected $sMethod = 'read';
   protected $aSets = array();
 
   public function addSet($field, $val) {
@@ -41,11 +42,6 @@ class Update extends Insert {
     $aQuery = array('UPDATE ', $sTable, $this->getSets(), $aWheres);
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
-  }
-
-  protected function build($sMethod = 'read') {
-
-    parent::build($sMethod);
   }
 }
 

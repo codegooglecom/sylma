@@ -35,7 +35,7 @@ class Table extends sql\schema\component\Table {
   public function asUpdate() {
 
     $this->loadColumns();
-    
+
     foreach ($this->getElements() as $element) {
 
       $aChildren[] = $element->asUpdate();
@@ -52,6 +52,26 @@ class Table extends sql\schema\component\Table {
     }
 
     return "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ');';
+  }
+
+  public function fieldAsUpdate($field, $previous) {
+
+    $sResult = '';
+
+    $previous = $field->getPrevious();
+    $sPosition = $previous ? " AFTER `{$previous->getName()}`" : ' FIRST';
+
+    if ($col = $field->getParent()->getColumn($field->getName())) {
+
+      $sName = $field->getName();
+      $sResult = "CHANGE `{$sName}` " . $field->asString() . $sPosition;
+    }
+    else {
+
+      $sResult = "ADD " . $field->asString() . $sPosition;
+    }
+
+    return $sResult;
   }
 }
 

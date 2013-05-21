@@ -61,7 +61,7 @@ abstract class Domed extends Componented {
 
     if ($bClone) {
 
-      if ($bNamespace) $this->setNamespace($el->getNamespace(), static::PREFIX);
+      if ($bNamespace && static::PREFIX) $this->setNamespace($el->getNamespace(), static::PREFIX);
 
       $doc = $this->createDocument($el);
       $result = $doc->getRoot();

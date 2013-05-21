@@ -7,7 +7,11 @@ class Simple extends schema\component\SimpleType {
 
   public function asString() {
 
-    if ($this->doExtends($this->getParser()->getType('string', $this->getNamespace('xs')))) {
+    if ($this->doExtends($this->getParser()->getType('datetime', $this->getNamespace('sql')))) {
+
+      $sValue = 'TIMESTAMP';
+    }
+    else if ($this->doExtends($this->getParser()->getType('string', $this->getNamespace('xs')))) {
 
       $iSize = $this->getDefine()->getRule('maxLength');
 
@@ -24,6 +28,10 @@ class Simple extends schema\component\SimpleType {
 
         $sValue = "VARCHAR({$iSize})";
       }
+    }
+    else if ($this->doExtends ($this->getParser ()->getType('id', $this->getNamespace ('sql')))) {
+
+      $sValue = 'BIGINT UNSIGNED';
     }
     else {
 

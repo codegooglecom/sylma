@@ -43,6 +43,11 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $this->var = $var;
   }
 
+  public function getFormAlias() {
+
+    return $this->getName();
+  }
+
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
@@ -52,6 +57,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
     switch ($sName) {
 
+      case 'alias' : $result = $this->getFormAlias(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode); break;
 
@@ -67,7 +73,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
   protected function reflectFunctionRef(array $aPath, $sMode) {
 
     $element = $this->getElementRef();
-    $result = $this->applyElement($element, $sMode);
+    $result = $this->applyElement($element, $aPath, $sMode);
 
     return $result;
   }
@@ -147,7 +153,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return array($table, $el1, $el2);
   }
 
-  protected function applyElement(Table $element, $sMode) {
+  protected function applyElement(Table $element, array $aPath, $sMode) {
 
     //$sName = $element->getName();
 
@@ -170,6 +176,12 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       $element->setQuery($query);
       $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
 
+      if ($aPath) {
+
+        $this->launchException('Not yet implemented');
+        // reflectApplyAll() need $aPath
+      }
+
       $result = $collection->reflectApplyAll($sMode);
       //$result = $this->getParser()->parsePath($collection, '*', $sMode);
     }
@@ -182,7 +194,14 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
       $query->addJoin($element, $id, $this);
 
-      $result = $element->reflectApply($sMode);
+      if ($aPath) {
+
+        $result = $this->getParser()->parsePathToken($element, $aPath, $sMode);
+      }
+      else {
+
+        $result = $element->reflectApply($sMode);
+      }
     }
 
     return $result;

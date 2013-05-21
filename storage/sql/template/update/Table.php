@@ -5,15 +5,6 @@ use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\c
 
 class Table extends sql\template\insert\Table {
 
-  public function getQuery() {
-
-    if (!$this->query) {
-
-      $this->setQuery($this->createQuery('update'));
-      //$this->getQuery()->isMultiple(false);
-    }
-
-    return $this->query;
-  }
+  protected $sMode = 'update';
 }
 

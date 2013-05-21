@@ -94,7 +94,7 @@ sylma.classes = {
 
       if (result.messages) {
 
-        $('messages').adopt(this.import(result.messages));
+        for (var i in result.messages) $('messages').adopt(this.import(result.messages[i].content));
       }
 
       return result;

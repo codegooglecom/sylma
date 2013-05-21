@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema;
 
 class Table extends Rooted implements sql\template\pathable, schema\parser\element {
 
+  protected $sMode = 'select';
+
   protected $bBuilded = false;
   protected $aElements = array();
 
@@ -30,11 +32,16 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->parent;
   }
 
+  protected function getMode() {
+
+    return $this->sMode;
+  }
+
   public function getQuery() {
 
     if (!$this->query) {
 
-      $this->setQuery($this->createQuery('select'));
+      $this->setQuery($this->createQuery($this->getMode()));
     }
 
     return $this->query;

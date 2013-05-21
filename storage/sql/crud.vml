@@ -12,11 +12,7 @@
   xmlns:le="http://2013.sylma.org/action"
 >
 
-  <crud:route>
-
-    <crud:local>
-      <tpl:constant name="cols">*</tpl:constant>
-    </crud:local>
+  <crud:route groups="list">
 
     <view:view mode="view" _debug="x">
 
@@ -41,7 +37,7 @@
         <thead>
           <tr>
             <th></th>
-            <tpl:apply use="cols" mode="cell"/>
+            <tpl:apply use="list-cols" mode="cell"/>
           </tr>
         </thead>
       </view:template>
@@ -77,7 +73,7 @@
         <sql:current>
           <le:argument name="page"/>
         </sql:current>
-        <sql:count>2</sql:count>
+        <sql:count>10</sql:count>
       </sql:pager>
 
       <sql:order>
@@ -108,7 +104,7 @@
               E
             </a>
           </td>
-          <tpl:apply use="cols" mode="cell"/>
+          <tpl:apply use="list-cols" mode="cell"/>
         </tr>
       </view:template>
 
@@ -205,7 +201,7 @@
     <view:view mode="view" _debug="x">
       <view:template mode="root">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
-        <sql:filter name="id" single="single"><le:argument name="id"/></sql:filter>
+        <sql:filter name="id"><le:argument name="id"/></sql:filter>
         <js:option name="id"><stp:apply select="id/value()"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
       </view:template>
@@ -219,7 +215,10 @@
   <!--<view:view mode="delete"/>-->
 
   <crud:global>
+
     <tpl:constant name="form-cols">* ^ id,date-update,date-insert</tpl:constant>
+    <tpl:constant name="list-cols">*</tpl:constant>
+
   </crud:global>
 
   <crud:group name="form">
@@ -251,6 +250,24 @@
       <textarea id="form-{alias()}" name="{alias()}">
         <tpl:apply/>
       </textarea>
+    </view:template>
+
+    <view:template match="sql:foreign" mode="input">
+      <select id="form-{alias()}" name="{alias()}">
+        <tpl:apply select="ref()" mode="select"/>
+      </select>
+    </view:template>
+
+    <view:template match="*" mode="select">
+      <option name="{id}"><tpl:apply select="value"/></option>
+    </view:template>
+
+  </crud:group>
+
+  <crud:group name="list">
+
+    <view:template match="sql:foreign">
+      <tpl:apply select="ref()"/>
     </view:template>
 
   </crud:group>

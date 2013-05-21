@@ -67,7 +67,7 @@ class Logger extends core\module\Domed {
 //dsp($arg);
 //dsp($doc);
     $result = $this->getTemplate('components.xsl')->parseDocument($doc);
-    $context->add($result);
+    $context->add(array('content' => $result));
   }
 }
 

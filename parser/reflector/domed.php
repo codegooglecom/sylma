@@ -25,7 +25,7 @@ interface domed {
    */
   function getRoot();
 
-  function getNamespace();
+  //function getNamespace();
   function getUsedNamespaces();
   function onFinish();
 }

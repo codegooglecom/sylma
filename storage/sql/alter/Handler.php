@@ -17,6 +17,9 @@ class Handler extends core\module\Domed implements core\stringable {
 
     $table = $schema->getElement();
 
+    //dsp($table->asCreate());
+    //dsp($table->asUpdate());
+
     $sql->read($table->asCreate());
     $sql->read($table->asUpdate());
   }

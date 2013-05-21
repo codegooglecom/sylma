@@ -6,32 +6,36 @@ use sylma\core;
 class Simple extends Basic {
 
   protected $sValue;
-  protected $handler;
 
-  public function __construct(Form $handler, core\argument $schema = null) {
+  public function __construct($sValue, array $aSettings = array()) {
 
-    $this->setHandler($handler);
-    if ($schema) $this->setSettings($schema);
+    $this->setValue($sValue);
+    $this->setSettings($aSettings);
   }
 
-  protected function setHandler(Form $handler) {
+  public function setValue($sValue) {
 
-    $this->handler = $handler;
+    $this->sValue = $sValue;
   }
 
-  protected function getHandler() {
+  public function getValue() {
 
-    return $this->handler;
+    return $this->sValue;
   }
 
   public function validate() {
 
+    if (!$this->getValue()) {
 
+      $this->addMessage("This field must be filled", array('alias' => $this->read('alias')));
+    }
+
+    return is_string($this->getValue());
   }
 
-  public function escape($sValue) {
+  public function escape() {
 
-    return "'".addslashes($sValue)."'";
+    return "'".addslashes($this->getValue())."'";
   }
 }
 

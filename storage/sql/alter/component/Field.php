@@ -7,22 +7,7 @@ class Field extends sql\schema\component\Field {
 
   public function asUpdate() {
 
-    $sResult = '';
-
-    $previous = $this->getPrevious();
-    $sPosition = $previous ? " AFTER `{$previous->getName()}`" : ' FIRST';
-
-    if ($col = $this->getParent()->getColumn($this->getName())) {
-
-      $sName = $this->getName();
-      $sResult = "CHANGE `{$sName}` " . $this->asString() . $sPosition;
-    }
-    else {
-
-      $sResult = "ADD " . $this->asString() . $sPosition;
-    }
-
-    return $sResult;
+    return $this->getParent()->fieldAsUpdate($this, $this->getPrevious());
   }
 
   public function asCreate() {

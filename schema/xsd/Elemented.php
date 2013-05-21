@@ -174,8 +174,11 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     if (!$result = $this->loadType($sName, $sNamespace)) {
 
       $el = $this->lookupType($sName, $sNamespace);
-      $result = $this->addType($this->parseComponent($el));
+
+      $result = $this->parseComponent($el);
       $result->setNamespace($sNamespace, self::TYPE_PREFIX);
+
+      $this->addType($result);
     }
 
     return $result;

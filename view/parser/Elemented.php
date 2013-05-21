@@ -86,8 +86,14 @@ class Elemented extends template\parser\handler\Domed {
    */
   public function lookupNamespace($sPrefix = '') {
 
-    if (!$sPrefix) $sResult = $this->getSchema()->lookupNamespace($sPrefix);
-    else $sResult = parent::lookupNamespace($sPrefix);
+    if (!$sPrefix) {
+
+      $sResult = $this->getSchema()->lookupNamespace($sPrefix);
+    }
+    else if (!$sResult = parent::lookupNamespace($sPrefix)) {
+
+      $sResult = $this->getNode()->lookupNamespace($sPrefix);
+    }
 
     return $sResult;
   }
@@ -112,45 +118,26 @@ class Elemented extends template\parser\handler\Domed {
 
   protected function build(template\parser\tree $tree, $sMode) {
 
+    $window = $this->getWindow();
+
+    $content = $tree->reflectApply();
+    $window->loadContent($content);
+
     switch ($sMode) {
 
       case 'update' :
       case 'insert' :
 
-        $tpl = $tree->reflectApply();
-
-        if ($tpl instanceof common\arrayable) {
-
-          $this->addToResult($tpl->asArray());
-        }
-        else {
-
-          $this->getWindow()->add($tpl);
-        }
-        //$tpl->asArray();
-        //dsp($tpl);
-
-        $var = $tree->getSource();
-        $var->insert();
-
-        $result = $var;
+        $this->addToResult($content, false);
+        $window->add($tree->asArgument());
+        $result = $this->getResult();
 
         break;
 
       // hollow, view, ...
       default :
 
-        $content = $tree->reflectApply();
-        $this->getWindow()->loadContent($content);
-
-        if ($content instanceof common\arrayable) {
-
-          $this->addToResult($content);
-        }
-        else {
-
-          $this->getWindow()->add($content);
-        }
+        $this->addToResult($content);
 
         $result = $this->getResult();
     }

@@ -88,6 +88,13 @@ abstract class Domed extends Filed {
     return $this->getManager(self::PARSER_MANAGER)->load($file, $aArguments);
   }
 
+  protected function createPath($sPath, array $aArguments = array()) {
+
+    $path = $this->create('path', array($sPath, $this->getDirectory('', false), $aArguments));
+
+    return $path;
+  }
+
   protected function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
 
     if (strpos($sPath, '.') !== false) {
@@ -96,8 +103,7 @@ abstract class Domed extends Filed {
     }
     else {
 
-      $path = $this->create('path', array($sPath, $this->getDirectory('', false), $aArguments));
-      
+      $path = $this->createPath($sPath, $aArguments);
       $aArguments = $path->getArguments();
       $file = $path->asFile();
     }

@@ -19,6 +19,7 @@ abstract class Variabled extends reflector\builder\Documented {
 
     $window->createVariable('aSylmaArguments', 'php-array');
     $window->checkVariable(self::ARGUMENTS_NAME, get_class($this->create('argument')));
+    $window->checkVariable('contexts', get_class($this->create('argument')));
 
     return $window;
   }

@@ -6,5 +6,5 @@ interface context {
 
   //function shift($mValue);
   function add($mValue);
-  function set($sPath, $mValue);
+  //function set($sPath, $mValue);
 }

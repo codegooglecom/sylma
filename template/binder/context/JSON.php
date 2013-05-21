@@ -26,6 +26,7 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
         'load' => new template\binder\context\Load,
       )),
     ));
+
 //dsp($path->getArguments());
     try {
 
@@ -40,6 +41,7 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
       $sResult = false;
       $e->save(false);
     }
+
     //dsp($sResult);
 //dsp($sResult, $path->getFile(), $path->getArguments());
     $this->setArray(array(
@@ -51,7 +53,7 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
 
   public function asString() {
 
-    $this->set('messages', $this->get('messages')->asString());
+    //$this->set('messages', $this->get('messages')->asString());
 
     return $this->asJSON();
   }

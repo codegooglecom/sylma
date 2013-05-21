@@ -41,7 +41,7 @@ abstract class Particle extends Basic implements parser\particle {
     return $aResult;
   }
 
-  public function getElementFromIndex($iPosition, $bDebug) {
+  public function getElementFromIndex($iPosition, $bDebug = true) {
 
     if (!isset($this->aElementsIndexed[$iPosition])) {
 

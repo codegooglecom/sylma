@@ -13,6 +13,9 @@ namespaces :
 render :
   gzip : true
 initializer :
+  debug :
+    update : true
+    run : true
   output :
     indent : true
   mime :

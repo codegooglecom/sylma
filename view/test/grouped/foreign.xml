@@ -56,6 +56,51 @@
         <view:schema>samples/user2.xql</view:schema>
         <view:template>
           <div>
+            <tpl:apply select="group_id"/>
+          </div>
+        </view:template>
+        <view:template match="user:group_id">
+          <li><tpl:apply select="ref()/name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign single key matching type">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="group_id"/>
+          </div>
+        </view:template>
+        <view:template match="sql:foreign">
+          <strong><tpl:apply select="ref()"/></strong>
+        </view:template>
+        <view:template match="group:group">
+          <span><tpl:apply select="name"/></span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><strong><span>group02</span></strong></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign single key apply ref">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
             <tpl:apply select="group_id/ref()"/>
           </div>
         </view:template>

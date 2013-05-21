@@ -24,6 +24,8 @@ abstract class Basic extends core\module\Controled {
     $this->setDocument($doc);
     $this->setNamespaces($aNS);
 
+    $this->loadDefaultNamespace($aNS);
+
     $this->setControler($this->getControler('dom'));
 
     // first element define default namespace & prefix
@@ -37,6 +39,18 @@ abstract class Basic extends core\module\Controled {
     }
 
     $this->registerNamespaces($this->getNS());
+  }
+
+  protected function loadDefaultNamespace(array $aNS) {
+
+    foreach ($aNS as $sPrefix => $sNamespace) {
+
+      if ($sPrefix == '') {
+
+        $this->setNamespace($sNamespace);
+        break;
+      }
+    }
   }
 
   public function setParent(core\argument $parent) {

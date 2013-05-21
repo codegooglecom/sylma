@@ -3,8 +3,9 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 
-abstract class Basic extends reflector\component\Foreigner implements common\addable {
+abstract class Basic extends reflector\component\Foreigner {
 
+  protected $sMethod = 'get';
   protected $bMultiple = false;
 
   protected $aColumns = array();
@@ -74,6 +75,19 @@ abstract class Basic extends reflector\component\Foreigner implements common\add
     return $aResult;
   }
 
+  public function getCall() {
+
+    $window = $this->getWindow();
+    $manager = $window->addControler('mysql');
+
+    return $manager->call($this->getMethod(), array($this, false), '\sylma\core\argument');
+  }
+
+  protected function getMethod() {
+
+    return $this->sMethod;
+  }
+
   public function getVar() {
 
     if (!$this->var) {
@@ -89,23 +103,9 @@ abstract class Basic extends reflector\component\Foreigner implements common\add
     $this->var = $var;
   }
 
-  protected function build($sMethod) {
+  protected function build() {
 
-    $window = $this->getWindow();
-
-    $manager = $window->addControler('mysql');
-    $var = $window->createVar($manager->call($sMethod, array($this, false), '\sylma\core\argument'));
-
-    $this->setVar($var);
-  }
-
-  public function onAdd() {
-
-    $this->getWindow()->loadContent($this->aTables);
-    $this->getWindow()->loadContent($this->aColumns);
-    $this->getWindow()->loadContent($this->aWheres);
-
-    $this->getVar()->insert();
+    $this->setVar($this->getWindow()->createVar($this->getCall()));
   }
 
   public function isMultiple($mValue = null) {

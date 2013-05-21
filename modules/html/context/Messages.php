@@ -3,7 +3,7 @@
 namespace sylma\modules\html\context;
 use sylma\core, sylma\parser\context, sylma\dom;
 
-class Messages extends core\module\Domed implements dom\domable {
+class Messages extends core\module\Domed implements core\argumentable, dom\domable {
 
   public function __construct() {
 
@@ -11,13 +11,8 @@ class Messages extends core\module\Domed implements dom\domable {
   }
 
   public function add($mVal) {
-
+//if (!is_array($mVal)) $this->launchException ('Bad message');
     $this->getArguments()->add($mVal);
-  }
-
-  protected function asArray() {
-
-    return $this->getArguments()->query();
   }
 
   public function asDOM() {
@@ -25,9 +20,9 @@ class Messages extends core\module\Domed implements dom\domable {
     $doc = $this->createDocument();
     $doc->addElement('div', null, array(), \Sylma::read('namespaces/html'));
 
-    foreach ($this->asArray() as $sMessage) {
+    foreach ($this->getArguments() as $message) {
 
-      $doc->add($this->createDocument($sMessage));
+      $doc->add($this->createDocument($message->read('content')));
     }
 
     return $doc->getChildren();
@@ -35,13 +30,14 @@ class Messages extends core\module\Domed implements dom\domable {
 
   public function asString() {
 
-    if ($aContent = $this->asArray()) {
+    if ($this->getArguments()->query()) {
 
       $sContent = '<div xmlns="' . \Sylma::read('namespaces/html') . '">';
 
-      foreach ($aContent as $sMessage) {
+      foreach ($this->getArguments() as $message) {
 
-        $sContent .= $sMessage;
+        if (is_array($message)) $sContent .= $this->show($message);
+        else $sContent .= $message->read('content');
       }
 
       $sContent .= '</div>';
@@ -60,5 +56,13 @@ class Messages extends core\module\Domed implements dom\domable {
     }
 
     return $sResult;
+  }
+
+  public function asArgument() {
+
+    return $this->getArguments();
+    $json = $this->getArguments()->asJSON();
+
+    return $json ? $json : '';
   }
 }

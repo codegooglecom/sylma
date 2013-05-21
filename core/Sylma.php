@@ -298,8 +298,16 @@ class Sylma {
     //$action = $parser ? $parser->getContext('action/current', false) : null;
     //$context = $action ? $action->getContext('message', false) : null;
 
-    if ($context && !self::read('debug/show')) $context->add('<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message" tabindex="0">' . $mValue . '</div>');
-    else echo $mValue . '<hr/>';
+    if ($context && !self::read('debug/show')) {
+
+      $context->add(array(
+        'content' => '<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message" tabindex="0">' . $mValue . '</div>',
+      ));
+    }
+    else if (self::read('debug/enable')) {
+
+      echo $mValue . '<hr/>';
+    }
   }
 
   public static function dsp() {

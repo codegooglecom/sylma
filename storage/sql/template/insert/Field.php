@@ -14,14 +14,19 @@ class Field extends sql\template\component\Field {
     $arguments = $window->getVariable('post');
 
     $type = $this->getType();
-    $arg = $arguments->call('read', array($this->getFormAlias()), 'php-string');
-    $var = $type->escape($arg);
+    $handler = $this->getParent()->getHandler();
+
+    $sName = $this->getFormAlias();
+
+    $val = $arguments->call('read', array($sName), 'php-string');
+    $call = $handler->call('addElement', array($sName, $type->instanciate($val, array('alias' => $sName))));
+    $window->add($call);
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
     //$test = $window->createCondition($window->createNot($var), $content);
     //$window->add($test);
 
-    $query->addSet($this, $var);
+    $query->addSet($this, $handler->call('readElement', array($sName)));
 
     //return $this->reflectSelf();
   }

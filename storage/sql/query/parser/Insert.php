@@ -5,6 +5,7 @@ use sylma\core, sylma\parser\languages\common;
 
 class Insert extends Basic implements common\argumentable {
 
+  protected $sMethod = 'insert';
   protected $aSets = array();
   protected $aValues = array();
 
@@ -44,11 +45,6 @@ class Insert extends Basic implements common\argumentable {
 
     $this->getWindow()->loadContent($this->aSets);
     $this->getWindow()->loadContent($this->aValues);
-  }
-
-  protected function build($sMethod = 'insert') {
-
-    parent::build($sMethod);
   }
 }
 
