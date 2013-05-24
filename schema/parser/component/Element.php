@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\schema\parser\component;
-use sylma\core, sylma\dom, sylma\schema, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\schema, sylma\parser\reflector, sylma\parser\languages\common;
 
 class Element extends Basic implements schema\parser\element, common\stringable, core\tokenable {
 
@@ -149,6 +149,18 @@ class Element extends Basic implements schema\parser\element, common\stringable,
   public function isComplex() {
 
     return $this->getType()->isComplex();
+  }
+
+  protected function isRequired() {
+
+    return !$this->isOptional();
+  }
+
+  protected function isOptional($bValue = null) {
+
+    if (is_bool($bValue)) $this->bOptional = $bValue;
+    
+    return $this->bOptional;
   }
 
   protected function setOccurs($iMin, $iMax) {

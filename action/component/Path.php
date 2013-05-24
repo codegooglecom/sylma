@@ -7,13 +7,22 @@ class Path extends reflector\component\Foreigner implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
-    $file = $this->getRoot()->getFile();
-    $this->setFile($file);
+    $this->setNode($el);
+    $this->loadDefaultArguments();
   }
 
   public function asArray() {
+//return array($this->create('request', array($this->getRoot()->getFile()))->asString());
+    if ($sValue = $this->readx()) {
 
-    $request = $this->create('request', array($this->getFile()));
+      $request = $this->create('request');
+      $request->setPath($sValue);
+    }
+    else {
+
+      $request = $this->create('request');
+      $request->setFile($this->getRoot()->getFile());
+    }
 
     return array($request->asString());
   }

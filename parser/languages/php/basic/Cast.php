@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\parser\languages\common;
 
-class Cast extends common\basic\Controled implements common\argumentable {
+class Cast extends common\basic\Controled implements common\argumentable, common\addable {
 
   protected $content;
   protected $sType;
@@ -33,6 +33,11 @@ class Cast extends common\basic\Controled implements common\argumentable {
   protected function getContent() {
 
     return $this->content;
+  }
+
+  public function onAdd() {
+
+    $this->getWindow()->loadContent($this->getContent());
   }
 
   public function asArgument() {

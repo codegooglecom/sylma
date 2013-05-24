@@ -90,6 +90,35 @@
       return result === 'clicked';
     </tst:expected>
   </tst:test>
+  <tst:test name="Event on node with existing class">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:source>test</sql:source>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <strong class="myclass">
+              <la:event name="click">return 'clicked';</la:event>
+              world
+            </strong>
+            <p>hello</p>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var result = test.getNode().getElement('strong').fireEvent('click');
+
+      return
+        result === 'clicked' &amp;&amp;
+        test.getNode().hasClass('myclass');
+
+    </tst:expected>
+  </tst:test>
   <tst:test name="Sub object">
     <tst:document>
       <view:view>

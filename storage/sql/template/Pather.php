@@ -5,7 +5,7 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template;
 
 class Pather extends template\parser\Pather {
 
-  protected function parsePathTokenValue($sPath, array $aPath, $sMode) {
+  protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead) {
 
     if ($aMatch = $this->matchContext($sPath)) {
 
@@ -13,15 +13,15 @@ class Pather extends template\parser\Pather {
     }
     else {
 
-      $aResult = parent::parsePathTokenValue($sPath, $aPath, $sMode);
+      $aResult = parent::parsePathTokenValue($sPath, $aPath, $sMode, $bRead);
     }
 
     return $aResult;
   }
 
-  protected function parsePathDefault($sPath, array $aPath, $sMode) {
+  protected function parsePathDefault($sPath, array $aPath, $sMode, $bRead) {
 
-    return $this->getSource()->reflectApplyDefault($sPath, $aPath, $sMode);
+    return $this->getSource()->reflectApplyDefault($sPath, $aPath, $sMode, $bRead);
 
     //return $this->parsePathElement(, $sPath, $aPath, $sMode);
   }
@@ -91,14 +91,14 @@ class Pather extends template\parser\Pather {
     return $result;
   }
 
-  protected function parsePathFunction(array $aMatch, array $aPath, $sMode) {
+  protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead) {
 
     if (!$this->getSource()) {
 
       $this->launchException('No source defined');
     }
 
-    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode);
+    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode, $bRead);
   }
 }
 

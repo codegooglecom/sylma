@@ -187,7 +187,18 @@ class Documented extends Logger implements reflector\documented {
 
   protected function buildWindow(common\_window $window) {
 
-    return $window->asDOM();
+    try {
+
+      $result = $window->asDOM();
+    }
+    catch (core\exception $e) {
+
+      //dsp($window->asArgument());
+      $e->addPath($this->getSourceFile() ? $this->getSourceFile()->asToken() : '[no-file]');
+      throw $e;
+    }
+
+    return $result;
   }
 
   protected function reflectMain(fs\file $file, dom\document $doc, common\_window $window = null) {
@@ -225,13 +236,18 @@ class Documented extends Logger implements reflector\documented {
     else $e->save(false);
   }
 
-  protected function createFile(fs\file $result, $content) {
+  protected function showResult($content) {
 
     if ($this->readArgument('debug/show')) {
 
       dsp($this->getFile()->asToken());
       dsp($content);
     }
+  }
+
+  protected function createFile(fs\file $result, $content) {
+
+    $this->showResult($content);
 
     $template = $this->getTemplate($this->getTemplatePath());
 

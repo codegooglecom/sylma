@@ -51,9 +51,10 @@ class Cached extends core\module\Argumented implements core\factory {
 
   public function setArguments($mArguments = null, $bMerge = true) {
 
+    $this->aClasses = array();
     return parent::setArguments($mArguments, $bMerge);
   }
-  
+
   protected function getClass($sName, $sDirectory) {
 
     if (!array_key_exists($sName, $this->aClasses)) {

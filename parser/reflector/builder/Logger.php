@@ -13,9 +13,9 @@ abstract class Logger extends core\module\Domed {
     $this->logger = $this->create('logger');
   }
 
-  protected function loadLog(dom\document $doc) {
+  protected function loadLog(dom\document $doc = null) {
 
-    if ($doc->readx('@debug', array(), false)) {
+    if (!$doc || $doc->readx('@debug', array(), false)) {
 
       $this->getLogger()->asMessage();
     }

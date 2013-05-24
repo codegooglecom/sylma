@@ -3,15 +3,15 @@
 namespace sylma\template\parser\component;
 use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
 
-class Token extends Child implements parser\component {
+class Attribute extends Child implements common\arrayable, parser\component {
 
   protected $sName;
-  protected $element;
+  protected $var;
 
   public function parseRoot(dom\element $el) {
 
+    //$this->allowForeign(true);
     $this->allowText(true);
-    $this->allowForeign(true);
     $this->setNode($el);
 
     $this->loadName();
@@ -25,21 +25,6 @@ class Token extends Child implements parser\component {
   public function getName() {
 
     return $this->sName;
-  }
-
-  public function setElement(Element $el) {
-
-    $this->element = $el;
-  }
-
-  protected function getElement() {
-
-    if (!$this->element) {
-
-      $this->launchException('No element defined');
-    }
-
-    return $this->element;
   }
 
   public function asValue() {
@@ -56,16 +41,12 @@ class Token extends Child implements parser\component {
     return $content;
   }
 
-  public function getCall() {
+  public function asArray() {
 
-    $sName = $this->getName();
+    $element = $this->getRoot()->getCurrentElement();
+    $element->setAttribute($this->getName(), $this->asValue());
 
-    $this->log("Token ({$sName})");
-
-    $element = $this->getElement();
-    $result = $element->addToken($sName, $this->getWindow()->toString($this->asValue()));
-
-    return $result;
+    return array($this->getVar());
   }
 }
 

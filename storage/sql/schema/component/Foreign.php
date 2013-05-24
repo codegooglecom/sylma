@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\schema\component;
-use sylma\core, sylma\dom, sylma\schema;
+use sylma\core, sylma\dom, sylma\schema, sylma\storage\fs;
 
 class Foreign extends schema\xsd\component\Element {
 
@@ -15,30 +15,40 @@ class Foreign extends schema\xsd\component\Element {
     $this->setName($el->readx('@name'));
     //$this->loadNamespace();
 
-    if ($sImport = $el->readx('@import', array(), false)) {
-
-      $file = $this->getSourceFile($sImport);
-      $this->getParser()->addSchema($file->getDocument());
-    }
-
-    if ($sElement = $el->readx('@table', array(), false)) {
-
-      $parser = $this->getParser();
-      list($sNamespace, $sName) = $parser->parseName($sElement, $this, $el);
-
-      $this->setElementRef($this->getParser()->getElement($sName, $sNamespace));
-    }
-
     $this->setType($this->getParser()->getType('foreign', $this->getParser()->getNamespace(self::PREFIX)));
 
     $this->reflectOccurs($el);
+  }
+
+  protected function loadElementRef(fs\file $file) {
+
+    $this->getParser()->addSchema($file->getDocument());
+
+    list($sNamespace, $sName) = $this->getParser()->parseName($this->readx('@table', true), $this, $this->getNode());
+
+    return $this->getParser()->getElement($sName, $sNamespace);
   }
 
   public function getElementRef() {
 
     if (!$this->elementRef) {
 
-      $this->throwException('No ref element defined');
+      if (is_null($this->elementRef)) {
+
+        if ($sImport = $this->readx('@import')) {
+
+          $file = $this->getSourceFile($sImport);
+          $this->setElementRef($this->loadElementRef($file));
+        }
+        else {
+
+          $this->launchException('Not yet implemented');
+        }
+      }
+      else {
+
+        $this->throwException('No ref element defined');
+      }
     }
 
     return $this->elementRef;

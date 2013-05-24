@@ -12,10 +12,10 @@ class Read extends Child implements common\arrayable, parser\component {
 
   public function build() {
 
-    $result = $this->getTemplate()->applyRead();
 
     $this->log("Read");
-    $aResult = $this->getWindow()->parseArrayables(array($result));
+
+    $aResult = array($this->getTemplate()->applyRead($this->readx('@select'), $this->readx('@mode')));
 
     return $aResult;
   }

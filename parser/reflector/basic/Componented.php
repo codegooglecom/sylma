@@ -14,7 +14,7 @@ abstract class Componented extends Namespaced {
 
     $result = $window->createInstanciate($window->tokenToInstance($sClass), $aArguments);
 
-    return $bVar ? $window->addVar($result) : $result;
+    return $bVar ? $window->createVar($result) : $result;
   }
 
   protected function allowComponent($mValue = null) {

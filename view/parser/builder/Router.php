@@ -151,8 +151,20 @@ class Router extends View {
     $file = $this->getPathFile($view);
     $this->setView($view);
 
-    return parent::buildView($doc, $file);
+    try {
+
+      $result = parent::buildView($doc, $file);
+    }
+    catch (core\exception $e) {
+
+      $e->addPath('@view ' . $view->getAlias());
+      $this->loadLog();
+      throw $e;
+    }
+
+    return $result;
   }
+
 
   public function getPathFile(crud\Pathed $path) {
 

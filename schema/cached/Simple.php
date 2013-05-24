@@ -25,12 +25,18 @@ class Simple extends Basic {
 
   public function validate() {
 
+    $bResult = false;
+
     if (!$this->getValue()) {
 
       $this->addMessage("This field must be filled", array('alias' => $this->read('alias')));
     }
+    else {
 
-    return is_string($this->getValue());
+      $bResult = is_string($this->getValue());
+    }
+
+    return $bResult;
   }
 
   public function escape() {

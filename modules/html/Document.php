@@ -168,7 +168,7 @@ class Document extends action\handler\Basic {
     $result = null;
     $doc = parent::asDOM();
 
-    if ($doc) {
+    if ($doc && !$doc->isEmpty()) {
 
       $this->result = $doc;
       $doc->registerNamespaces($this->getNS());
@@ -186,7 +186,7 @@ class Document extends action\handler\Basic {
     }
     else if (\Sylma::read('debug/enable')) {
 
-      echo 'No result document';
+      echo '<h2>No result document</h2>';
     }
 
     return $result;

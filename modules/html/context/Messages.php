@@ -22,7 +22,10 @@ class Messages extends core\module\Domed implements core\argumentable, dom\domab
 
     foreach ($this->getArguments() as $message) {
 
-      $doc->add($this->createDocument($message->read('content')));
+      $sMessage = $message->read('content');
+
+      if (is_string($sMessage) && $sMessage{0} === '<') $doc->add($this->createDocument($sMessage));
+      else $doc->add($sMessage);
     }
 
     return $doc->getChildren();

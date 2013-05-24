@@ -185,6 +185,6 @@
 .sylma-debug-hovered:hover .sylma-debug-mask
 {
   visibility: visible;
-  max-height: 450px;
+  max-height: 1850px;
   opacity: 1;
 }

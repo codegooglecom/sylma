@@ -35,7 +35,7 @@ class _ObjectVar extends _Var implements common\_object, common\scope, common\ca
 
   public function asArgument() {
 
-    $this->checkInserted();
+    //$this->checkInserted();
 
     return $this->getControler()->createArgument(array(
       'var' => array(

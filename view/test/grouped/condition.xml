@@ -54,6 +54,9 @@
             <tpl:if test="name = 'admin'">
               <tpl:token name="class">is-admin</tpl:token>
             </tpl:if>
+            <tpl:if test="name != 'admin'">
+              <tpl:token name="class">is-not-admin</tpl:token>
+            </tpl:if>
             <tpl:if test="name = 'root'">
               <h3>is-root</h3>
             </tpl:if>

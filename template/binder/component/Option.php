@@ -57,8 +57,8 @@ class Option extends Basic implements common\arrayable {
     $var = $this->getParser()->getObjects();
     $window = $this->getPHPWindow();
     $content = current($window->parseArrayables(array($window->createCast($this->getValue()))));
-    
-    return array($var->call('addOption', array($this->getName(), $content)));
+
+    return array($window->createInstruction($var->call('addOption', array($this->getName(), $content))));
 
     return array();
   }

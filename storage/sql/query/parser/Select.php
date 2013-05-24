@@ -130,7 +130,7 @@ class Select extends Basic implements common\argumentable, common\addable {
     $this->getWindow()->loadContent($this->aTables);
     $this->getWindow()->loadContent($this->aColumns);
     $this->getWindow()->loadContent($this->aWheres);
-
+//$this->launchException('test');
     $this->getVar()->insert();
   }
 

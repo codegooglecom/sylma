@@ -51,6 +51,7 @@ class Pager extends reflector\component\Foreigner implements reflector\component
     $collection = $this->getCollection();
 
     $var = $this->createObject();
+    $var->insert();
     $this->setVar($var);
 
     $offset = $this->parseComponentRoot($this->getx('self:current'));

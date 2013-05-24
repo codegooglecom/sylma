@@ -10,6 +10,7 @@
   xmlns:group="http://2013.sylma.org/view/test/sample2"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
+  xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
   <crud:route groups="list">
@@ -25,6 +26,12 @@
               <le:path/>/insert
             </tpl:token>
             Insert
+          </a>
+          <a ls:owner="root" ls:group="admin" ls:mode="700">
+            <tpl:token name="href">
+              <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
+            </tpl:token>
+            Structure
           </a>
           <table js:class="sylma.ui.Base">
             <tpl:apply select="static()" mode="row"/>
@@ -99,7 +106,7 @@
           <td>
             <a title="Editer">
               <tpl:token name="href">
-                <le:path/>/update?id=<tpl:apply select="id/value()"/>
+                <le:path/>/update?id=<tpl:read select="id"/>
               </tpl:token>
               E
             </a>
@@ -202,7 +209,7 @@
       <view:template mode="root">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
         <sql:filter name="id"><le:argument name="id"/></sql:filter>
-        <js:option name="id"><stp:apply select="id/value()"/></js:option>
+        <js:option name="id"><tpl:read select="id"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
       </view:template>
     </view:view>
@@ -254,7 +261,7 @@
 
     <view:template match="sql:foreign" mode="input">
       <select id="form-{alias()}" name="{alias()}">
-        <tpl:apply select="ref()" mode="select"/>
+        <tpl:apply select="all()"/>
       </select>
     </view:template>
 

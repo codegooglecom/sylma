@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\common\basic;
 use \sylma\core, \sylma\parser\languages\common;
 
-class Instruction extends Controled implements core\argumentable {
+class Instruction extends Controled implements core\argumentable, common\instruction {
 
   private $content;
 

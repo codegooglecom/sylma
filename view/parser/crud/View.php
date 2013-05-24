@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom;
 
-class View extends Pathed {
+class View extends Pathed implements core\tokenable {
 
   protected $route;
   protected $bMain = true;
@@ -71,6 +71,11 @@ class View extends Pathed {
     $this->getNode()->shift($this->getParser()->getGlobal());
 
     return $this->getNode()->getHandler();
+  }
+
+  public function asToken() {
+
+    return '@view : ' . $this->getAlias();
   }
 }
 

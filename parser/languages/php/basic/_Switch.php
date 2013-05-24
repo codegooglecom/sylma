@@ -14,6 +14,16 @@ class _Switch extends common\basic\Controled implements common\argumentable, com
     $this->setTest($test);
   }
 
+  public function setContent(array $aContent) {
+
+    $this->launchException('Cannot manipulate switch content');
+  }
+
+  public function getContent() {
+
+    $this->launchException('Cannot manipulate switch content');
+  }
+
   public function addCase($sName, $content) {
 
     if (!isset($this->aCases[$sName])) $this->aCases[$sName] = $this->createCase($sName, $content);

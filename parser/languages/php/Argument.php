@@ -14,6 +14,11 @@ class Argument extends core\argument\Setable {
 
   protected function getWindow() {
 
+    if (!$this->window) {
+
+      $this->launchException('No window defined');
+    }
+
     return $this->window;
   }
 
@@ -29,7 +34,10 @@ class Argument extends core\argument\Setable {
     }
     else if ($val instanceof common\stringable) {
 
-      $mResult = $this->normalizeArgument($this->getWindow()->argToInstance($val->asString())->asArgument());
+      if ($sValue = $val->asString()) {
+
+        $mResult = $this->normalizeArgument($this->getWindow()->argToInstance($sValue)->asArgument());
+      }
     }
     else if ($val instanceof common\arrayable) {
 

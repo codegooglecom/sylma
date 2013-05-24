@@ -330,45 +330,6 @@
       <div><h3>def</h3><a href="mailto:world@world">world@world</a></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Value in attribute">
-    <tst:document>
-      <view:view user:ns="ns">
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user1.xql</view:schema>
-        <view:template>
-          <div>
-            <a href="mailto:{email}">test</a>
-          </div>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div><a href="mailto:admin@sylma.org">test</a></div>
-    </tst:node>
-  </tst:test>
-  <tst:test name="Token in template">
-    <tst:document>
-      <view:view user:ns="ns">
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user1.xql</view:schema>
-        <view:template>
-          <div>
-            <tpl:apply mode="test"/>
-          </div>
-        </view:template>
-        <view:template mode="test">
-          <tpl:token name="class">test</tpl:token>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div class="test"/>
-    </tst:node>
-  </tst:test>
   <tst:test name="Simple variable">
     <tst:document>
       <view:view sql:ns="ns">

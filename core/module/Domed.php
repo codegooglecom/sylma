@@ -109,7 +109,7 @@ abstract class Domed extends Filed {
     }
 
     $aArguments = array(
-      'arguments' => $aArguments,
+      'arguments' => $aArguments ? $this->createArgument($aArguments) : null,
       'contexts' => $aContexts ? $this->createArgument($aContexts) : null,
       'post' => $aPosts ? $this->createArgument($aPosts) : null,
     );

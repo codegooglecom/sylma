@@ -34,6 +34,7 @@ class Element extends parser\component\Element {
     if (!$sNamespace) $sNamespace = $this->getParser()->getTargetNamespace();
 
     $this->setNamespace($sNamespace, 'element');
+    $this->log("load > {$this->asToken()} [" . get_class($this) . ']');
   }
 }
 

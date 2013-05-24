@@ -38,14 +38,24 @@ class Window extends common\basic\Window implements php\window {
 
   protected function addContentUnknown($mVal) {
 
-    if (!$mVal instanceof dom\node && !$mVal instanceof common\structure) {
-
-      $mVal = $this->create('line', array($this, $mVal));
-    }
-
+    $mVal = $this->transformContent($mVal);
     $this->loadContent($mVal);
 
     $this->aContent[] = $mVal;
+  }
+
+  public function transformContent($mVal) {
+
+    if (!$mVal instanceof dom\node && !$mVal instanceof common\structure && !$mVal instanceof common\instruction) {
+
+      $mResult = $this->create('line', array($this, $mVal));
+    }
+    else {
+
+      $mResult = $mVal;
+    }
+
+    return $mResult;
   }
 
   public function addControler($sName, $from = null) {

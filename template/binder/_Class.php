@@ -167,8 +167,9 @@ class _Class extends Basic implements common\arrayable, common\argumentable {
     $obj->setClass($this);
 
     $obj->parseRoot($this->getNode());
+    $aResult[] = $obj->asArray();
 
-    return $obj->asArray();
+    return $aResult;
   }
 
   public function asArgument() {

@@ -5,11 +5,16 @@ use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\c
 
 class Foreign extends sql\template\component\Foreign {
 
+  protected function reflectFunctionAll(array $aPath, $sMode) {
+
+    return null;
+  }
+
   protected function reflectFunctionRef(array $aPath, $sMode) {
 
     return null;
   }
-  
+
   public function reflectRegister() {
 
     $query = $this->getParent()->getQuery();
@@ -34,9 +39,9 @@ class Foreign extends sql\template\component\Foreign {
     //return $this->reflectSelf();
   }
 
-  public function reflectApplyPath(array $aPath, $sMode) {
+  protected function _applyElement(sql\template\component\Table $element, array $aPath, $sMode) {
 
-    parent::reflectApplyPath($aPath, $sMode);
+    return null;
   }
 }
 

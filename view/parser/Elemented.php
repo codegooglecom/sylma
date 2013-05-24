@@ -121,7 +121,7 @@ class Elemented extends template\parser\handler\Domed {
     $window = $this->getWindow();
 
     $content = $tree->reflectApply();
-    $window->loadContent($content);
+    //$window->loadContent($content);
 
     switch ($sMode) {
 
@@ -138,7 +138,6 @@ class Elemented extends template\parser\handler\Domed {
       default :
 
         $this->addToResult($content);
-
         $result = $this->getResult();
     }
 
@@ -156,10 +155,7 @@ class Elemented extends template\parser\handler\Domed {
 
     $this->loadResult();
 
-    if (!$resource = $this->parseElement($this->getx('*[local-name() = "resource"]', true)->remove())) {
-
-      $this->launchException('No resource found');
-    }
+    $resource = $this->parseElement($this->getx('*[local-name() = "resource"]', true)->remove());
 
     $resource->setMode($sMode);
 
@@ -192,7 +188,7 @@ class Elemented extends template\parser\handler\Domed {
     $this->schema = $schema;
   }
 
-  protected function getSchema() {
+  public function getSchema() {
 
     return $this->schema;
   }

@@ -8,17 +8,20 @@ class _Foreach extends common\basic\Structured implements common\argumentable, c
   protected $looped;
   protected $var;
 
-  public function __construct(common\_window $controler, $looped, common\_var $var) {
+  public function __construct(common\_window $controler, $looped, common\_var $var, $content = null) {
 
     $this->setControler($controler);
     $this->looped = $looped;
     $this->var = $var;
     $var->insert(null, false);
+
+    if ($content) $this->addContent($content);
   }
 
   public function onAdd() {
 
-    $this->getControler()->loadContent($this->looped);
+    $this->getWindow()->loadContent($this->looped);
+    $this->getWindow()->loadContent($this->getContent());
   }
 
   public function asArgument() {

@@ -40,7 +40,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource());
     $window->setScope($loop);
 
-    $loop->addContent($this->getParser()->getView()->addToResult($result, false));
+    $loop->setContent($window->parseArrayables(array($result)));
     $window->stopScope();
 
     $result = $loop;

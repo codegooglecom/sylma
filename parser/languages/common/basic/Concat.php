@@ -10,9 +10,9 @@ class Concat extends common\basic\Controled implements common\addable {
   public function __construct(common\_window $controler, array $aContent) {
 
     $this->setControler($controler);
-    $this->setValues($aContent);
+    $this->setValues($this->getWindow()->flattenArray($aContent));
 
-    if (!$aContent) {
+    if (!$this->getValues()) {
 
       $this->getControler()->throwException('No value defined for string');
     }
@@ -69,7 +69,7 @@ class Concat extends common\basic\Controled implements common\addable {
     }
     else {
 
-      $result = $this->getControler()->convertToString($mValue);
+      $result = $this->getControler()->toString($mValue);
       //$result = $mValue;
     }
 
@@ -85,7 +85,7 @@ class Concat extends common\basic\Controled implements common\addable {
 
     foreach ($aContent as $mContent) {
 
-      $aResult[] = $this->toString($mContent);
+      $aResult[] = is_string($mContent) ? $this->getWindow()->createString($mContent, null, true) : $mContent;
     }
 
     return $aResult ? $aResult : null;
@@ -94,6 +94,11 @@ class Concat extends common\basic\Controled implements common\addable {
   protected function setValues($aValues) {
 
     $this->aValues = $aValues;
+  }
+
+  protected function getValues() {
+
+    return $this->aValues;
   }
 
   public function onAdd() {

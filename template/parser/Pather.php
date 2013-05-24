@@ -124,6 +124,14 @@ class Pather extends component\Child {
     return $aResult;
   }
 
+  public function readPath($sPath, $sMode) {
+
+    $sPath = trim($sPath);
+    $aResult = $this->parsePathToken($this->parsePaths($sPath), $sMode, true);
+
+    return $aResult;
+  }
+
   protected function parsePaths($sPath) {
 
     $aPaths = explode(',', $sPath);
@@ -135,24 +143,24 @@ class Pather extends component\Child {
     return explode('/', $sPath);
   }
 
-  public function parsePathTokens(array $aPaths, $sMode) {
+  public function parsePathTokens(array $aPaths, $sMode, $bRead = false) {
 
     $aResult = array();
 
     foreach ($aPaths as $sPath) {
 
-      $aResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode);
+      $aResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode, $bRead);
     }
 
     return $aResult;
   }
 
-  public function parsePathToken(array $aPath, $sMode) {
+  public function parsePathToken(array $aPath, $sMode, $bRead) {
 
-    return $this->parsePathTokenValue(array_shift($aPath), $aPath, $sMode);
+    return $this->parsePathTokenValue(array_shift($aPath), $aPath, $sMode, $bRead);
   }
 
-  protected function parsePathTokenValue($sPath, array $aPath, $sMode) {
+  protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead) {
 
     if ($aMatch = $this->matchVariable($sPath)) {
 
@@ -160,17 +168,17 @@ class Pather extends component\Child {
     }
     else if ($aMatch = $this->matchFunction($sPath)) {
 
-      $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode);
+      $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode, $bRead);
     }
     else {
 
-      $aResult = $this->parsePathDefault($sPath, $aPath, $sMode);
+      $aResult = $this->parsePathDefault($sPath, $aPath, $sMode, $bRead);
     }
 
     return $aResult;
   }
 
-  protected function parsePathDefault($sPath, array $aPath, $sMode) {
+  protected function parsePathDefault($sPath, array $aPath, $sMode, $bRead) {
 
     $this->launchException('No default action defined');
   }
@@ -216,7 +224,7 @@ class Pather extends component\Child {
     //return $source->parseVariable($aPath, $aMatch[1], $sMode);
   }
 
-  protected function parsePathFunction(array $aMatch, array $aPath, $sMode) {
+  protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead) {
 
     $this->launchException('Not yet implemented');
   }

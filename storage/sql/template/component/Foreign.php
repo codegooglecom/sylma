@@ -9,6 +9,8 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
   protected $query;
   protected $var;
 
+  protected $bInserted = false;
+
   public function setParent(parser\element $parent) {
 
     $this->parent = $parent;
@@ -50,7 +52,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
-    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
+    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, false);
   }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode) {
@@ -58,6 +60,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     switch ($sName) {
 
       case 'alias' : $result = $this->getFormAlias(); break;
+      case 'value' : $result = $this->reflectRead(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode); break;
 
@@ -98,6 +101,19 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
   public function reflectApply($sMode = '') {
 
     return $this->reflectApplySelf($sMode);
+  }
+
+  public function reflectRead() {
+
+    if (!$this->bInserted) {
+
+      $query = $this->getParent()->getQuery();
+      $query->setColumn($this);
+
+      $this->bInserted = true;
+    }
+
+    return $this->getParent()->getSource()->call('read', array($this->getName()), 'php-string');
   }
 
   protected function lookupTemplate($sMode) {
@@ -188,6 +204,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     else {
 
       $query = $parent->getQuery();
+      $element->setSource($parent->getSource());
       $element->setQuery($query);
 
       $id = $element->getElement('id', $element->getNamespace());

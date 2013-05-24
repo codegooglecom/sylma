@@ -15,61 +15,13 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
 
   public function asArray() {
 
-    $aResult = array();
-    $aContent = $aTokens = array();
-
     $aChildren = $this->parseChildren($this->getNode()->getChildren());
 
-    foreach ($aChildren as $val) {
-
-      if ($val instanceof Token) {
-
-        $aTokens[] = $val;
-      }
-      else {
-
-        $aContent[] = $val;
-      }
-    }
-
-    $window = $this->getWindow();
     $if = $this->getTemplate()->getPather()->parseExpression($this->readx('@test'));
-    $content = $this->getParser()->addToResult($aContent, false);
 
-    if ($aTokens) {
+    $if->setContent($aChildren);
 
-      if ($content) {
-
-        //$this->launchException('Not yet tested');
-        $test = $window->createVariable('', 'php-boolean');
-        $assign = $window->createAssign($test, true);
-        $if->addContent($assign);
-
-        $aResult = array($window->createCondition($test, $content));
-      }
-
-      $el = $this->getRoot()->getCurrentElement();
-
-      foreach ($aTokens as $token) {
-
-        $var = $window->createVariable('', 'php-string');
-        $assign = $window->createAssign($var, $window->toString($token->asValue()));
-
-        $if->addContent($assign);
-        $if->addElse($window->createAssign($var, $window->argToInstance('')));
-
-        $el->addToken($token->getName(), $var);
-        //$var->insert();
-        $window->add($if);
-      }
-    }
-    else {
-
-      $if->addContent($content);
-      $aResult = array($if);
-    }
-
-    return $aResult;
+    return array($if);
   }
 }
 

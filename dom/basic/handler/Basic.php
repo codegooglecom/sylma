@@ -102,26 +102,26 @@ abstract class Basic extends core\module\Managed {
 
     if (!$sName) $this->throwException(t('Empty value cannot be used as element\'s name'));
 
-    if ($sNamespace) {
+    try {
 
-      // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
-      if (!strpos($sName, ':')) {
+      if ($sNamespace) {
 
-        $sName = $this->generateName($sName, $sNamespace);
-      }
+        // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
+        if (!strpos($sName, ':')) {
 
-      try {
+          $sName = $this->generateName($sName, $sNamespace);
+        }
 
         $el = $doc->createElementNS($sNamespace, $sName);
       }
-      catch (\DOMException $e) {
+      else {
 
-        $this->launchException('DOM exception : ' . $e->getMessage(), get_defined_vars());
+        $el = $doc->createElement($sName);
       }
     }
-    else {
+    catch (\DOMException $e) {
 
-      $el = $doc->createElement($sName);
+      $this->launchException('DOM exception : ' . $e->getMessage(), get_defined_vars());
     }
 
     if ($mContent) {
@@ -311,7 +311,8 @@ abstract class Basic extends core\module\Managed {
         $container = $this->getContainer();
 
         if ($el) $sResult = $container->saveXML($el);
-        else $sResult = $container->saveXML();
+        else if ($this->getRoot(false)) $sResult = $container->saveXML();
+        else $sResult = '';
       }
 
       $sResult = trim($sResult);

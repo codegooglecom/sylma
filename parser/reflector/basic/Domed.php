@@ -208,14 +208,14 @@ abstract class Domed extends Componented {
     return $this->allowText;
   }
 
-  protected function parseText(dom\text $node) {
+  protected function parseText(dom\text $node, $bTrim = true) {
 
     if (!$this->allowText()) {
 
       $this->throwException('Text node not allowed here', array($node->asToken()));
     }
 
-    return $node->getValue();
+    return $bTrim ? trim($node->getValue()) : $node->getValue();
   }
 
   /**

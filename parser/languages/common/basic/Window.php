@@ -178,7 +178,7 @@ abstract class Window extends core\module\Domed {
     }
     else {
 
-      $result = $this->argToString($mContent);
+      $result = $this->argToString(array($mContent));
     }
 
     return $result;
@@ -251,28 +251,64 @@ abstract class Window extends core\module\Domed {
     return $this->create('string', array($this, $mValue));
   }
 
-  protected function arrayToString(array $mContent, common\_var $target = null) {
+  protected function assignArray(array $mContent, common\_var $target = null, $bDebug = true) {
 
     $aContent = $this->parseArrayables($mContent);
-    $aResult = array();
+    $this->loadContent($aContent);
+
+    $aResult = $aTexts = array();
 
     foreach ($aContent as $mVal) {
 
       if ($mVal instanceof common\structure) {
 
-        $this->addToResult($aResult, $target);
-        $this->add($mVal);
+        if ($bDebug || !$target) {
 
-        $aResult = array();
+          $this->launchException('Structure not allowed here');
+        }
+
+        $aResult[] = $this->assignArrayString($aTexts, $target);
+
+        $aChildContent = $this->assignArray($mVal->getContent(), $target, $bDebug);
+        $mVal->setContent(is_array($aChildContent) ? $aChildContent : array($aChildContent));
+
+        $aResult[] = $mVal;
+      }
+      else if ($mVal instanceof common\basic\Assign) {
+
+        $this->launchException('Assign not allowed here');
+      }
+      else if ($mVal instanceof common\instruction) {
+
+        if ($bDebug || !$target) {
+
+          $this->launchException('Instruction not allowed here');
+        }
+
+        $aResult[] = $this->assignArrayString($aTexts, $target);
+
+        $aResult[] = $mVal;
       }
       else {
 
-        $aResult[] = $this->prepareToString($mVal);
+        //$val = $this->createString($this->prepareToString($mVal));
+        //$aResult[] = $target ? $this->createAssign($target, $val, '.') : $val;
+        $aTexts[] = $this->prepareToString($mVal);
       }
     }
 
-    if ($aResult) $result = $this->createString($aResult);
-    else $result = null;
+    if ($aTexts) {
+
+      $aResult[] = $target ? $this->assignArrayString($aTexts, $target) : $this->createString($aTexts);
+    }
+
+    return count($aResult) == 1 ? current($aResult) : $aResult;
+  }
+
+  protected function assignArrayString(array &$aStrings, common\_var $target) {
+
+    $result = $aStrings ? $this->createInstruction($this->createAssign($target, $this->createString($aStrings), '.')) : null;
+    $aStrings = array();
 
     return $result;
   }
@@ -300,30 +336,34 @@ abstract class Window extends core\module\Domed {
     return $result;
   }
 
-  public function toString($mContent, common\_var $target = null) {
+  public function toString($mContent, common\_var $target = null, $bDebug = false) {
 
     if (is_array($mContent)) {
 
-      $result = $this->arrayToString($mContent, $target);
+      $result = $this->assignArray($mContent, $target, $bDebug);
     }
     else if (is_object($mContent)) {
 
-      $result = $this->objectToString($mContent, $target);
+      $result = $this->objectToString($mContent, $target, $bDebug);
       //$result = $mContent;
+    }
+    else if (is_string($mContent)) {
+
+      $result = $this->createString($mContent);
     }
     else {
 
-      $result = $this->arrayToString(array($mContent));
+      $result = $this->assignArray(array($mContent), $target, $bDebug);
     }
 
     return $result;
   }
 
-  protected function objectToString($val, common\_var $target = null) {
+  protected function objectToString($val, common\_var $target = null, $bDebug = false) {
 
     if ($val instanceof common\arrayable) {
 
-      $result = $this->arrayToString($this->parseArrayable($val), $target);
+      $result = $this->assignArray($this->parseArrayable($val), $target, $bDebug);
     }
     else if ($val instanceof core\argument) {
 
@@ -340,11 +380,11 @@ abstract class Window extends core\module\Domed {
   public function addToResult($mContent, common\_var $target, $bAdd = true) {
 
     $content = $this->toString($mContent, $target);
-
+//dsp($content);
     if ($content) {
 
-      $result = $this->createAssign($target, $content, '.');
-      if ($bAdd) $this->add($result);
+      if ($bAdd) $this->add($content);
+      $result = $content;
     }
     else {
 
@@ -356,7 +396,7 @@ abstract class Window extends core\module\Domed {
 
   public function createInstruction(common\argumentable $content) {
 
-    return $this->create('instruction', array($this, $content));
+    return $this->create('line', array($this, $content));
   }
 
   public function createInstanciate(common\_instance $instance, array $aArguments = array()) {
@@ -390,7 +430,7 @@ abstract class Window extends core\module\Domed {
 
     return $this->create('numeric', array($this, $val));
   }
-  
+
   public function setVariable(common\_var $var, $bDebug = true) {
 
     $sName = $var->getName();

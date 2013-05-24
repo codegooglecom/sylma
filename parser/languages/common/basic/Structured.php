@@ -21,33 +21,23 @@ class Structured extends Controled {
     }
     else {
 
-      $aContent[] = $this->transformContent($mVal);
-    }
-  }
-
-  protected function getContent() {
-
-    return $this->aContent;
-  }
-
-  protected function transformContent($mVal) {
-
-    if (is_object($mVal)) {
-
       if ($mVal instanceof dom\node) {
 
         $this->bTemplate = true;
       }
+
+      $aContent[] = $this->getWindow()->transformContent($mVal);
     }
-
-    $mResult = $this->createLine($mVal);
-
-    return $mResult;
   }
 
-  protected function createLine($mVal) {
+  public function setContent(array $aContent) {
 
-    return $this->getControler()->create('line', array($this->getControler(), $mVal));
+    $this->aContent = $aContent;
+  }
+
+  public function getContent() {
+
+    return $this->aContent;
   }
 
   protected function useTemplate() {

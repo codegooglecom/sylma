@@ -30,6 +30,17 @@ class Handler extends xsd\Elemented {
     $import->parseFile($this->getFile(self::TYPES_FILE));
   }
 
+  public function getArguments() {
+
+    return parent::getArguments();
+  }
+
+  public function setArguments($mArguments = null, $bMerge = true) {
+
+    $this->log('Change schema arguments', array($mArguments));
+    return parent::setArguments($mArguments, $bMerge);
+  }
+
   protected function addSchemaChild(dom\element $el, $sNamespace) {
 
     switch ($el->getName()) {

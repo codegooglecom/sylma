@@ -27,23 +27,29 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
     $aResult = array();
 
-    foreach ($this->getAttributes() as $sName => $aValue) {
+    foreach ($this->getAttributes() as $sName => $mVal) {
 
       $aResult[] = ' ';
-      $aResult[] = $this->parseAttributeArray($sName, $aValue);
+      $aResult[] = is_array($mVal) ? $this->parseAttributeArray($sName, $mVal) : $mVal;
     }
 
-    return $aResult;
+    //$this->getWindow()->loadContent($aResult);
+
+    return $this->getWindow()->parseArrayables($aResult);
   }
 
   protected function parseAttributeArray($sName, array $aValue) {
 
     $aResult = array();
+    $bFirst = true;
 
     $aResult[] = $sName;
     $aResult[] = '="';
 
     foreach ($this->getWindow()->parseArrayables($aValue) as $mVal) {
+
+      if (!$bFirst) $aResult[] = ' ';
+      $bFirst = false;
 
       if (is_string($mVal)) $aResult[] = $this->parseAttributeValue($mVal);
       else $aResult[] = $mVal;
@@ -143,6 +149,91 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $sName;
   }
 
+  protected function extractTokens(array $aSource) {
+
+    $aContent = $aBefore = $aAttributes = array();
+
+    foreach ($aSource as $val) {
+
+      if (is_array($val)) {
+
+        list($aChildContent, $aChildBefore, $aChildAttributes) = $this->extractTokens($val);
+
+        $aContent = array_merge($aContent, $aChildContent);
+        $aBefore = array_merge($aBefore, $aChildBefore);
+        $aAttributes = array_merge($aAttributes, $aChildAttributes);
+      }
+      else if ($val instanceof Token) {
+
+        $sName = $val->getName();
+
+        if (!isset($aAttributes[$sName])) {
+
+          $aAttributes[$sName] = $this->getAttribute($sName);
+        }
+
+        $val->setElement($this);
+        $aBefore[] = $val->getCall();
+      }
+      else if ($val instanceof common\structure) {
+
+        list($aChildContent, $aChildBefore, $aChildAttributes) = $this->extractTokens($val->getContent());
+/*
+        $window = $this->getWindow();
+
+        $test = $window->createVariable('', 'php-boolean');
+        $assign = $window->createAssign($test, true);
+        $val->addContent($assign);
+
+        $inside->setMain($test);
+ */
+
+        $aAttributes = array_merge($aAttributes, $aChildAttributes);
+
+        if ($aChildBefore) {
+
+          if ($aChildContent) {
+
+            $inside = clone $val;
+
+            $inside->setContent($aChildContent);
+            $aContent[] = $inside;
+          }
+
+          $val->setContent($aChildBefore);
+          $aBefore[] = $val;
+        }
+        else {
+
+          $val->setContent($aChildContent);
+          $aContent[] = $val;
+        }
+      }
+      else {
+
+//if ($val instanceof common\basic\Assign) dsp($val->getValue());
+        $aContent[] = $val;
+      }
+    }
+
+    return array($aContent, $aBefore, $aAttributes);
+  }
+
+  protected function importTokens(array $aToken) {
+
+    foreach ($aToken as $token) {
+
+      $this->importToken($token);
+    }
+
+    return $aToken;
+  }
+
+  protected function importToken(Token $token) {
+
+    $token->setElement($this);
+  }
+
   protected function complexAsArray(dom\element $el) {
 
     $aResult = $aContent = array();
@@ -155,6 +246,15 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
       $aContent[] = $this->getWindow()->parseArrayables(array($child));
     }
+
+    list($aContent, $aBefore, $aAttributes) = $this->extractTokens($aContent);
+
+    foreach ($aAttributes as $attr) {
+
+      $aResult[] = $attr->getVar()->getInsert();
+    }
+
+    $aResult[] = $aBefore;
 
     $sName = $this->loadName($el);
 
@@ -213,23 +313,95 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $this->aAttributes;
   }
 
-  public function readAttribute($sName) {
+  public function readAttribute($sName, $bDebug = true) {
 
-    return $this->aAttributes[$sName];
-  }
+    if (isset($this->aAttributes[$sName]) && is_array($this->aAttributes[$sName])) {
 
-  public function addToken($sAttribute, $mVal) {
-
-    if (isset($this->aAttributes[$sAttribute])) {
-
-      $mContent = array(' ', $mVal);
+      $result = $this->aAttributes[$sName];
     }
     else {
 
-      $mContent = $mVal;
+      if ($bDebug) $this->launchException ("No static argument named '$sName'");
+      $result = null;
     }
 
-    $this->aAttributes[$sAttribute][] = $mContent;
+    return $result;
+  }
+
+  protected function getAttribute($sName, $bLoad = true) {
+
+    if (isset($this->aAttributes[$sName])) {
+
+      $mVal = $this->aAttributes[$sName];
+
+      if (is_array($mVal)) {
+
+        $result = $bLoad ? $this->loadAttribute($sName, $mVal) : null;
+      }
+      else {
+
+        $result = $mVal;
+      }
+    }
+    else {
+
+      $result = $bLoad ? $this->loadAttribute($sName) : null;
+    }
+
+    return $result;
+  }
+
+  public function setAttributeComponent(ElementAttribute $component) {
+
+    $this->aAttributes[$component->getName()] = $component;
+  }
+
+  protected function addTokenStatic($sName, $sValue) {
+
+    if (isset($this->aDefaultAttributes[$sName])) {
+
+      $this->aDefaultAttributes[$sName][] = $sValue;
+      $this->aAttributes[$sName][] = $sValue;
+    }
+    else {
+
+      $this->setDefaultAttribute($sName, $sValue);
+      $this->setAttribute($sName, $sValue);
+    }
+//dsp('static');
+//dsp($this->aAttributes);
+  }
+
+  protected function loadAttribute($sName, $mValue = null) {
+
+    $attr = $this->getTemplate()->loadSimpleComponent('element-attribute');
+    $attr->init($sName, $mValue);
+
+    $this->setAttributeComponent($attr);
+
+    return $attr;
+  }
+
+  public function addToken($sName, $mVal) {
+
+    if ($attr = $this->getAttribute($sName, false)) {
+
+      $result = $attr->addToken($mVal);
+    }
+    else {
+
+      if (is_string($mVal)) { // static
+
+        $this->addTokenStatic($sName, $mVal);
+        $result = null;
+      }
+      else {
+
+        $result = $this->getAttribute($sName)->addToken($mVal);
+      }
+    }
+
+    return $result;
     //$this->aAttributes[$sAttribute][] = array($mVal);
   }
 
@@ -253,9 +425,10 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
   public function asArgument() {
 
-    $assign = $this->getParser()->addToResult($this->asArray(), false);
+    $aContent = $this->asArray();
+    $result = $this->getParser()->addToResult($aContent, false);
 
-    return $assign->asArgument();
+    return $result ? $this->getWindow()->transformContent($result)->asArgument() : null;
   }
 
   public function asToken() {

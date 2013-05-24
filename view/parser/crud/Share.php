@@ -41,10 +41,10 @@ class Share extends reflector\component\Foreigner implements dom\domable {
   public function asDOM() {
 
     $dom = $this->getManager('dom');
-    $collection = $dom->create('collection', array($this->getNode()->getChildren()));
-    $collection->add($this->queryx('@*'));
+    $result = $dom->create('collection', array($this->getNode()->isComplex() ? $this->getNode()->getChildren() : null));
+    $result->add($this->queryx('@*'));
 
-    return $collection;
+    return $result;
   }
 }
 

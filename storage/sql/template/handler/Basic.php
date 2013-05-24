@@ -79,12 +79,17 @@ class Basic extends sql\schema\Handler {
     return $this->getView()->getCurrentTemplate()->getPather();
   }
 
-  public function parsePathToken(sql\template\pathable $source, array $aPath, $sMode) {
+  public function parsePathToken(sql\template\pathable $source, array $aPath, $sMode, $bRead = false) {
+
+    if (!$aPath) {
+
+      $this->launchException('No token defined');
+    }
 
     $pather = $this->getPather();
     $pather->setSource($source);
 
-    return $pather->parsePathToken($aPath, $sMode);
+    return $pather->parsePathToken($aPath, $sMode, $bRead);
   }
 
   public function parsePath(sql\template\pathable $source, $sPath, $sMode) {
@@ -95,13 +100,13 @@ class Basic extends sql\schema\Handler {
     return $pather->applyPath($sPath, $sMode);
   }
 
-  public function reflectApplyDefault(schema\parser\container $source, $sPath, array $aPath, $sMode) {
+  public function reflectApplyDefault(schema\parser\container $source, $sPath, array $aPath, $sMode, $bRead) {
 
     list($sNamespace, $sName) = $this->parseName($sPath, $source);
 
     $element = $source->getElement($sName, $sNamespace);
 
-    return $element ? ($aPath ? $this->parsePathToken($element, $aPath, $sMode) : $element->reflectApply($sMode)) : null;
+    return $element ? ($aPath ? $this->parsePathToken($element, $aPath, $sMode, $bRead) : ($bRead ? $element->reflectRead() : $element->reflectApply($sMode))) : null;
   }
 }
 

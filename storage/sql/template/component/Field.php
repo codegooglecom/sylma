@@ -70,9 +70,9 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getName()));
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead) {
 
-    $result = $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
+    $result = $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead);
 
     return $result;
   }

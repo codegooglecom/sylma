@@ -61,7 +61,17 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
       if ($this->getGlobal()) $this->getGlobal()->merge($reflector->getGlobal());
       else if ($reflector->getGlobal()) $this->setGlobal($reflector->getGlobal());
 
-      $this->addGroups($reflector->getGroups());
+      foreach ($reflector->getGroups() as $group) {
+
+        if ($parent = $this->getGroup($group->getName(), false)) {
+
+          $parent->merge($group);
+        }
+        else {
+
+          $this->addGroup($group);
+        }
+      }
     }
   }
 
@@ -101,9 +111,10 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     $this->aGroups[$group->getName()] = $group;
   }
 
-  protected function addGroups(array $aGroups) {
+  protected function addGroup(crud\Share $group) {
 
-    $this->aGroups = $this->aGroups + $aGroups;
+    $this->importComponent($group);
+    $this->aGroups[$group->getName()] = $group;
   }
 
   public function getGroups() {
@@ -111,9 +122,19 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     return $this->aGroups;
   }
 
-  public function getGroup($sName) {
+  public function getGroup($sName, $bDebug = true) {
 
-    return $this->aGroups[$sName];
+    if (!isset($this->aGroups[$sName])) {
+
+      if ($bDebug) $this->launchException('No group with this name');
+      $result = null;
+    }
+    else {
+
+      $result = $this->aGroups[$sName];
+    }
+
+    return $result;
   }
 
   protected function setDefault(crud\Pathed $route) {

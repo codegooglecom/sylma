@@ -60,9 +60,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $query;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false) {
 
-    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode);
+    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead);
   }
 
   public function reflectApply($sMode = '', $bStatic = false) {
@@ -84,11 +84,31 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $result;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+  public function reflectRead() {
+
+    $this->launchException('Cannot read table');
+  }
+
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead) {
 
     switch ($sName) {
 
       //case 'apply' : $result = $this->reflectApply(''); break;
+      case 'parent' :
+
+        $parent = $this->getParent();
+
+        if ($aPath) {
+
+          $result = $this->getParser()->parsePathToken($parent, $aPath, $sMode, $bRead);
+        }
+        else {
+
+
+          $result = $bRead ? $parent->reflectRead($sMode) : $parent->reflectApply($sMode);
+        }
+
+        break;
 
       default :
 

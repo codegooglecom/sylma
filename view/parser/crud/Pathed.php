@@ -34,17 +34,26 @@ abstract class Pathed extends reflector\component\Foreigner implements reflector
     return $this->sName;
   }
 
-  protected function loadGroups() {
+  protected function extractGroups() {
 
     $aResult = array();
 
     if ($sGroups = $this->readx('@groups')) {
 
-      foreach (explode(',', $sGroups) as $sGroup) {
+      $aResult = explode(',', $sGroups);
+    }
 
-        $sGroup = trim($sGroup);
-        $aResult[] = $this->getParser()->getGroup($sGroup);
-      }
+    return $aResult;
+  }
+
+  protected function loadGroups() {
+
+    $aResult = array();
+
+    foreach ($this->extractGroups() as $sGroup) {
+
+      $sGroup = trim($sGroup);
+      $aResult[] = $this->getParser()->getGroup($sGroup);
     }
 
     return $aResult ? $aResult : null;

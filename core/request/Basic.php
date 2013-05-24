@@ -25,6 +25,8 @@ class Basic extends core\module\Filed implements core\request {
    */
   public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, core\argument $arg = null) {
 
+    $sPath = (string) $sPath;
+
     if ($directory) {
 
       require_once('core/functions/Path.php');
@@ -35,16 +37,18 @@ class Basic extends core\module\Filed implements core\request {
     $this->setNamespace(self::NS);
 
     //$this->setSettings($arg);
-    $this->setSettings(include('arguments.xml.php'));
+    $this->loadSettings();
+    $this->setArguments($aArguments);
 
     //if (!$aExtensions) $aExtensions = $this->getManager('init')->getExtensions();
     //$this->setExtensions($aExtensions);
 
-    // Remove arguments following '?' of type ..?arg1=val&arg2=val..
-    //$this->getArguments()->mergeArray($this->extractArguments($sPath));
-
-    $this->setArguments($aArguments);
     if ($bParse) $this->parse();
+  }
+
+  protected function loadSettings() {
+
+    $this->setSettings(include('arguments.xml.php'));
   }
 
   public function getFile($sPath = '', $bDebug = true) {
@@ -82,30 +86,7 @@ class Basic extends core\module\Filed implements core\request {
 
     $this->aExtensions = $aExtensions;
   }
-/*
-  protected function extractArguments($sPath) {
 
-    $aResult = array();
-
-    if ($iAssoc = strpos($sPath, '?')) {
-
-      $sAssoc = substr($sPath, $iAssoc + 1);
-      $sPath = substr($sPath, 0, $iAssoc);
-
-      $aAssoc = explode('&', $sAssoc);
-
-      foreach ($aAssoc as $sArgument) {
-
-        $aArgument = explode('=', $sArgument);
-
-        if (count($aArgument) == 1) $aResult[] = $this->parseBaseType($aArgument[0]); // index : only name
-        else $aResult[$aArgument[0]] = $this->parseBaseType($aArgument[1]); // assoc : name and value
-      }
-    }
-
-    return $aResult;
-  }
-*/
   public function parse() {
 
     $file = null;

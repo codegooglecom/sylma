@@ -86,7 +86,12 @@ class Route extends Pathed implements dom\domable {
       $this->launchException('Cannot merge view into route');
     }
 
+    //$aGroups = array_merge($this->extractGroups(), $path->extractGroups());
+    $sGroup = $this->readx('@groups');
+
     $this->getNode()->shift($path->queryx('@*'));
+    if ($sGroup) $this->getNode()->setAttribute('groups', $sGroup);
+    //$this->getNode()->setAttribute('groups', implode(',', $aGroups));
 
     $this->main = $this->mergeView($this->getMain(false), $path->getMain(false));
     $this->sub = $this->mergeView($this->getSub(false), $path->getSub(false));
@@ -144,6 +149,7 @@ class Route extends Pathed implements dom\domable {
     $aResult = array();
 
     if ($aGroups = $this->loadGroups()) $aResult[] = $aGroups;
+
     if ($this->getLocal()) $aResult[] = $this->getLocal()->asDOM();
 
     return $aResult ? $aResult : null;

@@ -18,7 +18,7 @@ class Field extends sql\template\component\Field {
 
     $sName = $this->getFormAlias();
 
-    $val = $arguments->call('read', array($sName), 'php-string');
+    $val = $arguments->call('read', $this->isRequired() ? array($sName) : array($sName, false), 'php-string');
     $call = $handler->call('addElement', array($sName, $type->instanciate($val, array('alias' => $sName))));
     $window->add($call);
 

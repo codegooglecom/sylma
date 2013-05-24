@@ -18,7 +18,7 @@ class Condition extends common\basic\Structured implements common\argumentable, 
 
   public function addElse($mVal) {
 
-    $this->aElse[] = $this->createLine($mVal);
+    $this->aElse[] = $this->getWindow()->createInstruction($mVal);
   }
 
   protected function getElse() {
