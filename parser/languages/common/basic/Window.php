@@ -116,7 +116,7 @@ abstract class Window extends core\module\Domed {
   }
 */
   public function loadContent($content) {
-
+return; // todo, decide to use or not
     if (is_array($content)) {
 
       foreach ($content as $item) {

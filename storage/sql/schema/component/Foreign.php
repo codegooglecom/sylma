@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\schema\component;
 use sylma\core, sylma\dom, sylma\schema, sylma\storage\fs;
 
-class Foreign extends schema\xsd\component\Element {
+class Foreign extends Element {
 
   const PREFIX = 'sql';
 
@@ -18,6 +18,7 @@ class Foreign extends schema\xsd\component\Element {
     $this->setType($this->getParser()->getType('foreign', $this->getParser()->getNamespace(self::PREFIX)));
 
     $this->reflectOccurs($el);
+    $this->loadOptional();
   }
 
   protected function loadElementRef(fs\file $file) {

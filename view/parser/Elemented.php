@@ -37,10 +37,23 @@ class Elemented extends template\parser\handler\Domed {
     $this->allowUnknown(true);
     $this->allowForeign(true);
 
+    $el = $this->setNode($el);
+
     $this->setMode($sMode);
 
-    $tree = $this->loadTree($el, $sMode); // parseRoot(), onAdd()
-    $result = $this->build($tree, $sMode); // asArray()
+    $resource = $this->loadResource($sMode); // parseRoot(), onAdd()
+
+    $schema = $resource->setSchema($this->loadSchema());
+    $this->setSchema($schema);
+
+    $aContent = $this->parseChildren($el->getChildren());
+
+    $schema->loadTemplates($this->getTemplates());
+
+    $window = $this->getWindow();
+    $window->add($window->parseArrayables($aContent));
+
+    $result = $this->build($aContent, $resource->getTree(), $sMode); // asArray()
 
     return $result;
   }
@@ -116,7 +129,7 @@ class Elemented extends template\parser\handler\Domed {
     return $result;
   }
 
-  protected function build(template\parser\tree $tree, $sMode) {
+  protected function build(array $aContent, template\parser\tree $tree, $sMode) {
 
     $window = $this->getWindow();
 
@@ -144,9 +157,9 @@ class Elemented extends template\parser\handler\Domed {
     return $result;
   }
 
-  protected function loadTree(dom\element $el, $sMode) {
+  protected function loadResource($sMode) {
 
-    $el = $this->setNode($el);
+    $el = $this->getNode();
 
     if (!$el->getName() == 'view') {
 
@@ -156,23 +169,9 @@ class Elemented extends template\parser\handler\Domed {
     $this->loadResult();
 
     $resource = $this->parseElement($this->getx('*[local-name() = "resource"]', true)->remove());
-
     $resource->setMode($sMode);
 
-    $schema = $resource->setSchema($this->loadSchema());
-    $this->setSchema($schema);
-
-    $aResult = $this->parseChildren($el->getChildren()); // unused result
-
-    //$this->getWindow()->add($aResult);
-
-    //$this->loadTemplates();
-    $schema->loadTemplates($this->getTemplates());
-
-    return $resource->getTree();
-
-    //$tpl = $this->getTemplate();
-    //$tpl->setTree($tree);
+    return $resource;
   }
 
   protected function loadSchema() {

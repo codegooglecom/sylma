@@ -39,7 +39,7 @@ class Window extends common\basic\Window implements php\window {
   protected function addContentUnknown($mVal) {
 
     $mVal = $this->transformContent($mVal);
-    $this->loadContent($mVal);
+    //$this->loadContent($mVal);
 
     $this->aContent[] = $mVal;
   }

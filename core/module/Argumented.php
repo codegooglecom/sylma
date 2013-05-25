@@ -154,6 +154,18 @@ abstract class Argumented extends Managed {
     $this->settings = $arg;
   }
 
+  protected function translate() {
+
+    $aArguments = func_get_args();
+    $sValue = array_shift($aArguments);
+
+    // translate !
+
+    array_unshift($aArguments, $sValue);
+    
+    return call_user_func_array('sprintf', $aArguments);
+  }
+
   /**
    * @return core\argument
    */

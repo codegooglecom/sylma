@@ -22,7 +22,7 @@ class Handler extends core\module\Domed implements core\stringable {
     $sql->read($table->asCreate());
 
     dsp($table->asUpdate());
-    
+
     $sql->read($table->asUpdate());
   }
 }

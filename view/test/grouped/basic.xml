@@ -55,6 +55,24 @@
       <div><h3>admin</h3><a href="mailto:email">test</a></div>
     </tst:node>
   </tst:test>
+  <tst:test name="XML chars">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3>&lt;<stp:apply select="name"/>&gt;</h3>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>&lt;admin&gt;</h3></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Apply value">
     <tst:document>
       <view:view sql:ns="ns">

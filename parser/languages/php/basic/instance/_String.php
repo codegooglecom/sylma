@@ -3,10 +3,7 @@
 namespace sylma\parser\languages\php\basic\instance;
 use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php;
 
-require_once('_Scalar.php');
-require_once('parser/languages/common/_instance.php');
-
-class _String extends _Scalar implements common\_instance {
+class _String extends _Scalar implements common\_instance, core\tokenable {
 
   private $mValue = '';
   protected $sFormat = 'php-string';
@@ -40,13 +37,23 @@ class _String extends _Scalar implements common\_instance {
     $this->mValue = $mResult;
   }
 
+  protected function formatString($sValue) {
+
+    return str_replace('\'', '\\\'', $sValue);
+  }
+
   public function asArgument() {
 
     $mVal = $this->mValue;
     $mVal = $mVal instanceof core\stringable ? $mVal->asString() : $mVal;
 
     return $this->getControler()->createArgument(array(
-      'string' => is_string($mVal) ? str_replace('\'', '\\\'', $mVal) : $mVal,
+      'string' => is_string($mVal) ? $this->formatString($mVal) : $mVal,
     ));
+  }
+
+  public function asToken() {
+
+    return is_string($this->getValue()) ? ' [' . $this->getValue() . ']' : 'var value';
   }
 }

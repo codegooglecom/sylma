@@ -31,6 +31,9 @@ class Collection extends Rooted implements sql\template\pathable {
 
     $var = $window->createVariable('item', '\sylma\core\argument', false);
     $this->setSource($var);
+
+    $this->getQuery()->isMultiple(true);
+    $this->getTable()->insertQuery(false);
   }
 
   protected function postBuild($result) {
@@ -38,19 +41,16 @@ class Collection extends Rooted implements sql\template\pathable {
     $window = $this->getWindow();
 
     $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource());
-    $window->setScope($loop);
-
     $loop->setContent($window->parseArrayables(array($result)));
-    $window->stopScope();
 
-    $result = $loop;
+    $aResult[] = $loop;
 
-    return $result;
+    return $aResult;
   }
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
-    //dsp($sPath);
+    $this->launchException('No default value defined');
   }
 
   public function getType($bDebug = true) {
@@ -75,19 +75,30 @@ class Collection extends Rooted implements sql\template\pathable {
       $result = null;
     }
 
-    return $result;
+    $aResult = array();
+
+    if (!$sMode) {
+
+      $aResult[] = $this->getCounter();
+    }
+
+    $aResult[] = $result;
+
+    return $aResult;
   }
 
   public function reflectApplyAll($sMode) {
 
-    $this->preBuild();
+    $aResult = $this->preBuild();
 
-    $this->getQuery()->isMultiple(true);
     $this->getTable()->setSource($this->getSource());
 
     $content = $this->getTable()->reflectApply($sMode);
 
-    return $this->postBuild($content);
+    $aResult[] = $this->getQuery();
+    $aResult[] = $this->postBuild($content);
+
+    return $aResult;
   }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode) {
@@ -101,7 +112,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'count' :
 
-        $result = $this->getCounter();
+        $result = $this->getCounter()->getVar();
         break;
 
       case 'pager' :
@@ -150,14 +161,8 @@ class Collection extends Rooted implements sql\template\pathable {
       $query = clone $this->getQuery();
       $this->getQuery()->setClone($query);
 
-      $query->clearColumns();
-      $query->clearLimit();
-
-      $query->setColumn('COUNT(*)');
-      $query->isMultiple(false);
-      $query->setMethod('read');
-
-      $this->counter = $query->getVar();
+      $this->counter = $counter = $this->loadSimpleComponent('counter');
+      $counter->setQuery($query);
     }
 
     return $this->counter;

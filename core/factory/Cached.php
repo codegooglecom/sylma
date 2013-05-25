@@ -217,10 +217,6 @@ class Cached extends core\module\Argumented implements core\factory {
 
       $this->throwException($e->getMessage());
     }
-    catch (\Exception $e) {
-
-      $this->throwException(sprintf('Error when building class in @file %s : %s', \Sylma::classToFile($sClass), $e->getMessage()));
-    }
 
     if ($aArguments) $result = $reflected->newInstanceArgs($aArguments);
     else $result = $reflected->newInstance();

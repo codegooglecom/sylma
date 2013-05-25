@@ -3,10 +3,13 @@
 namespace sylma\storage\sql\template;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\parser\languages\common, sylma\storage\sql;
 
-class Pager extends reflector\component\Foreigner implements reflector\component, template\parser\tree {
+class Pager extends reflector\component\Foreigner implements reflector\component, template\parser\tree, common\arrayable {
 
   protected $var;
   protected $collection;
+
+  protected $offset;
+  protected $count;
 
   public function parseRoot(dom\element $el) {
 
@@ -46,22 +49,38 @@ class Pager extends reflector\component\Foreigner implements reflector\component
     return $this->var;
   }
 
+  protected function getOffset() {
+
+    return $this->offset;
+  }
+
+  protected function setOffset($offset) {
+
+    $this->offset = $offset;
+  }
+
+  protected function setCount($count) {
+
+    $this->count = $count;
+  }
+
+  protected function getCount() {
+
+    return $this->count;
+  }
+
   protected function build() {
 
     $collection = $this->getCollection();
 
     $var = $this->createObject();
-    $var->insert();
+    //$var->insert();
     $this->setVar($var);
 
-    $offset = $this->parseComponentRoot($this->getx('self:current'));
-    $count = $this->parseComponentRoot($this->getx('self:count'));
+    $this->setOffset($this->parseComponentRoot($this->getx('self:current')));
+    $this->setCount($this->parseComponentRoot($this->getx('self:count')));
 
-    $collection->setLimit($var->call('getOffset'), $count);
-
-    $var->call('setCount', array($this->getCollection()->getCounter()))->insert();
-    $var->call('setPage', array($offset))->insert();
-    $var->call('setSize', array($count))->insert();
+    $collection->setLimit($var->call('getOffset'), $this->getCount());
   }
 
   public function reflectApply($sMode) {
@@ -117,6 +136,19 @@ class Pager extends reflector\component\Foreigner implements reflector\component
   public function asToken() {
 
     return '[obj]' . get_class($this);
+  }
+
+  public function asArray() {
+
+    $this->log('Pager : build');
+    $var = $this->getVar();
+
+    $aResult[] = $var->getInsert();
+    $aResult[] = $var->call('setCount', array($this->getCollection()->getCounter()->getVar()))->getInsert();
+    $aResult[] = $var->call('setPage', array($this->getOffset()))->getInsert();
+    $aResult[] = $var->call('setSize', array($this->getCount()))->getInsert();
+
+    return $aResult;
   }
 }
 

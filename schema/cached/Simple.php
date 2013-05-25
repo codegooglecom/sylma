@@ -29,7 +29,14 @@ class Simple extends Basic {
 
     if (!$this->getValue()) {
 
-      $this->addMessage("This field must be filled", array('alias' => $this->read('alias')));
+      if (!$this->read('optional', false)) {
+
+        $this->addMessage($this->translate("The field '%s' must be filled", $this->read('title')), array('alias' => $this->read('alias')));
+      }
+      else {
+
+        $bResult = true;
+      }
     }
     else {
 
@@ -41,7 +48,16 @@ class Simple extends Basic {
 
   public function escape() {
 
-    return "'".addslashes($this->getValue())."'";
+    if ($this->getValue()) {
+
+      $sResult = "'".addslashes($this->getValue())."'";
+    }
+    else {
+
+      $sResult = $this->read('default');
+    }
+
+    return $sResult;
   }
 }
 

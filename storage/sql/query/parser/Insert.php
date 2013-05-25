@@ -39,7 +39,7 @@ class Insert extends Basic implements common\argumentable {
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }
 
-  public function onAdd() {
+  public function _onAdd() {
 
     parent::onAdd();
 

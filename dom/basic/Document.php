@@ -30,7 +30,7 @@ class Document extends \DOMDocument implements dom\document {
 
     return $mResult;
   }
-
+  
   /**
    * Allow implementation of node interface
    * @return dom\document

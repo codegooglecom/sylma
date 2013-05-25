@@ -8,7 +8,8 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected $sMode = 'select';
 
   protected $bBuilded = false;
-  protected $aElements = array();
+  protected $aColumns = array();
+  protected $bQueryInserted = true;
 
   protected $loop;
 
@@ -60,16 +61,49 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $query;
   }
 
+  protected function getColumns() {
+
+    return $this->aColumns;
+  }
+
+  protected function addColumn(schema\parser\element $el) {
+
+    $this->aColumns[$el->getName()] = $el;
+  }
+
+  public function addElementToQuery(schema\parser\element $el) {
+
+    $this->addColumn($el);
+
+    $query = $this->getQuery();
+    $query->setElement($el);
+  }
+
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false) {
 
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead);
   }
 
+  public function insertQuery($bVal = null) {
+
+    if (is_bool($bVal)) $this->bQueryInserted = $bVal;
+
+    return $this->bQueryInserted;
+  }
+
   public function reflectApply($sMode = '', $bStatic = false) {
 
-    if ($result = $this->lookupTemplate($sMode)) {
+    if ($tpl = $this->lookupTemplate($sMode)) {
 
-      $result->setTree($this);
+      $tpl->setTree($this);
+
+      if ($this->insertQuery()) {
+
+        $aResult[] = $this->getQuery();
+        $this->insertQuery(false);
+      }
+
+      $aResult[] = $tpl;
     }
     else {
 
@@ -78,10 +112,10 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
         $this->launchException('Cannot apply table without template and without mode');
       }
 
-      $result = null;
+      $aResult = array();
     }
 
-    return $result;
+    return $aResult;
   }
 
   public function reflectRead() {

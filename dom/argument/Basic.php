@@ -236,7 +236,7 @@ abstract class Basic extends core\module\Controled {
 
   public function asArray($bEmpty = false) {
 
-
+    return array('DOM Argument cannot show content');
   }
 
   public function registerNamespaces(array $aNS) {

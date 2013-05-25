@@ -116,6 +116,11 @@ abstract class Basic extends reflector\component\Foreigner {
 
   abstract protected function getString();
 
+  public function asArray() {
+
+    return array($this->getVar()->getInsert());
+  }
+
   public function asArgument() {
 
     $content = $this->getString();

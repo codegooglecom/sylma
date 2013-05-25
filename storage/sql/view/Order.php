@@ -3,18 +3,16 @@
 namespace sylma\storage\sql\view;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
 
-class Order extends reflector\component\Foreigner implements reflector\component {
+class Order extends reflector\component\Foreigner implements reflector\component, common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
     $this->allowForeign(true);
     $this->allowText(true);
-
-    $this->build();
   }
 
-  protected function build() {
+  public function asArray() {
 
     $tree = $this->getParser()->getTree();
     $query = $tree->getQuery();
@@ -28,7 +26,11 @@ class Order extends reflector\component\Foreigner implements reflector\component
       $content = $this->readx();
     }
 
+    $this->log('SQL : order');
+
     $query->setOrder($content);
+
+    return array();
   }
 }
 

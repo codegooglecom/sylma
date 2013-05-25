@@ -273,7 +273,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     $iResult = 0;
 
-    if ($this->getMatch() && $sNamespace === $this->getMatch('namespace')) {
+    if ($this->getMatch() && ($sNamespace === $this->getMatch('namespace') || !$this->getMatch('namespace'))) {
 
       if ($sName === $this->getMatch('name')) {
 

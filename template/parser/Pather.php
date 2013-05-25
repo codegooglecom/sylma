@@ -190,7 +190,7 @@ class Pather extends component\Child {
 
   protected function matchVariable($sVal) {
 
-    preg_match('/^\$(\$?\w+)$/', $sVal, $aResult);
+    preg_match('/^\$(\$?[\w-]+)$/', $sVal, $aResult);
 
     return $aResult;
   }

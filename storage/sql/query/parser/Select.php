@@ -1,12 +1,13 @@
 <?php
 
 namespace sylma\storage\sql\query\parser;
-use sylma\core, sylma\parser\languages\common;
+use sylma\core, sylma\parser\languages\common, sylma\schema;
 
-class Select extends Basic implements common\argumentable, common\addable {
+class Select extends Basic implements common\arrayable, common\argumentable {
 
   protected $sMethod = '';
   protected $aJoins = array();
+  protected $aElements = array();
 
   protected $offset;
   protected $count;
@@ -16,6 +17,33 @@ class Select extends Basic implements common\argumentable, common\addable {
   public function setColumn($val) {
 
     $this->aColumns[] = $val;
+  }
+
+  public function setElement(schema\parser\element $el) {
+
+    $sName = $el->getName();
+    $bAdd = true;
+
+    if (array_key_exists($sName, $this->aElements)) {
+
+      if ($el === $this->aElements[$sName]) {
+
+        $bAdd = false;
+      }
+      else {
+
+        $el->useAlias(true);
+      }
+    }
+    else {
+
+      $this->aElements[$sName] = $el;
+    }
+
+    if ($bAdd) {
+
+      $this->setColumn($el->asAlias());
+    }
   }
 
   protected function getColumns() {
@@ -32,6 +60,11 @@ class Select extends Basic implements common\argumentable, common\addable {
     }
 
     return $aResult;
+  }
+
+  public function isEmpty() {
+
+    return !$this->aColumns;
   }
 
   public function clearColumns() {
@@ -125,13 +158,9 @@ class Select extends Basic implements common\argumentable, common\addable {
     return $this->order ? array(' ORDER BY `', $this->order, '` ASC ') : null;
   }
 
-  public function onAdd() {
+  public function clearOrder() {
 
-    $this->getWindow()->loadContent($this->aTables);
-    $this->getWindow()->loadContent($this->aColumns);
-    $this->getWindow()->loadContent($this->aWheres);
-//$this->launchException('test');
-    $this->getVar()->insert();
+    $this->order = null;
   }
 
   protected function build() {

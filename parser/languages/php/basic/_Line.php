@@ -9,7 +9,6 @@ class _Line extends common\basic\Controled implements core\argumentable, common\
 
   public function __construct(common\_window $controler, $content) {
 
-//if ($content instanceof \sylma\view\parser\component\Container) \Sylma::throwException ('tst');
     $this->setControler($controler);
     $controler->checkContent($content);
 

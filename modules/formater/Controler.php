@@ -65,7 +65,7 @@ class Controler extends core\module\Domed {
 
     if ($val instanceof core\argument) {
 
-      $aResult = $val->query();
+      $aResult = $val instanceof dom\argument\Basic ? $val->asArray() : $val->query();
       $result = is_array($aResult) ? $this->loadArray($aResult) : $this->loadVar($aResult);
     }
     else if ($val instanceof dom\handler) {
@@ -165,7 +165,7 @@ class Controler extends core\module\Domed {
 
       $aResult = array('unknown' => array('@type' => gettype($mVar)));
     }
-
+    
     return $aResult;
     //else if ()
   }

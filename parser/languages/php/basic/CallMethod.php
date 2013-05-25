@@ -56,6 +56,11 @@ class CallMethod extends Called implements common\addable, common\callable  {
     return $bVar ? $call->getVar() : $call;
   }
 
+  public function getInsert() {
+
+    return $this->getWindow()->createInstruction($this);
+  }
+
   public function insert() {
 
     $this->getWindow()->add($this);

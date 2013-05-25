@@ -3,7 +3,7 @@
 namespace sylma\schema\parser\component;
 use sylma\core, sylma\dom, sylma\schema, sylma\parser\reflector, sylma\parser\languages\common;
 
-class Element extends Basic implements schema\parser\element, common\stringable, core\tokenable {
+class Element extends Basic implements schema\parser\element, core\tokenable {
 
   protected $type;
   protected $parent;
@@ -13,6 +13,8 @@ class Element extends Basic implements schema\parser\element, common\stringable,
 
   protected $iMinOccurs;
   protected $iMaxOccurs;
+
+  protected $bOptional = false;
 
   public function setParent(schema\parser\element $parent) {
 
@@ -88,6 +90,10 @@ class Element extends Basic implements schema\parser\element, common\stringable,
     return $this->getParent()->getElementFromIndex($this->getPosition() + 1);
   }
 
+  /**
+   * @param bool $bDebug
+   * @return \schema\parser\type
+   */
   public function getType($bDebug = true) {
 
     if (!$this->type) {
@@ -159,7 +165,7 @@ class Element extends Basic implements schema\parser\element, common\stringable,
   protected function isOptional($bValue = null) {
 
     if (is_bool($bValue)) $this->bOptional = $bValue;
-    
+
     return $this->bOptional;
   }
 
@@ -177,11 +183,6 @@ class Element extends Basic implements schema\parser\element, common\stringable,
   protected function getMaxOccurs($bBool) {
 
     return $bBool ? $this->iMaxOccurs == 'n' || $this->iMaxOccurs > 1 : $this->iMaxOccurs;
-  }
-
-  public function asString() {
-
-    return $this->getParent()->asString() . '.`' . $this->getName() . "`";
   }
 
   public function asToken() {

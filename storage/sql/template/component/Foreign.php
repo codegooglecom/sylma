@@ -45,7 +45,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $this->var = $var;
   }
 
-  public function getFormAlias() {
+  public function getAlias() {
 
     return $this->getName();
   }
@@ -59,7 +59,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
     switch ($sName) {
 
-      case 'alias' : $result = $this->getFormAlias(); break;
+      case 'alias' : $result = $this->getAlias(); break;
       case 'value' : $result = $this->reflectRead(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode); break;
@@ -103,15 +103,14 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $this->reflectApplySelf($sMode);
   }
 
+  protected function addToQuery() {
+
+    $this->getParent()->addElementToQuery($this);
+  }
+
   public function reflectRead() {
 
-    if (!$this->bInserted) {
-
-      $query = $this->getParent()->getQuery();
-      $query->setColumn($this);
-
-      $this->bInserted = true;
-    }
+    $this->addToQuery();
 
     return $this->getParent()->getSource()->call('read', array($this->getName()), 'php-string');
   }
@@ -206,6 +205,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       $query = $parent->getQuery();
       $element->setSource($parent->getSource());
       $element->setQuery($query);
+      $element->insertQuery(false);
 
       $id = $element->getElement('id', $element->getNamespace());
 

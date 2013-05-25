@@ -47,8 +47,6 @@ class Container extends template_ns\parser\component\Template {
 
   public function parseMatchValue($sMatch) {
 
-    $sMode = $this->getMode();
-
     if (!$sMatch) {
 
       $this->throwException('No match defined');
@@ -60,9 +58,16 @@ class Container extends template_ns\parser\component\Template {
     $sPrefix = $aMatches[2];
     $sName = $aMatches[3];
 
-    if (!$sNamespace = $this->lookupNamespace($sPrefix)) {
+    if ($sPrefix) {
 
-      $this->launchException('Cannot match value, no namespace defined', get_defined_vars());
+      if (!$sNamespace = $this->lookupNamespace($sPrefix)) {
+
+        $this->launchException('Cannot match value, no namespace defined', get_defined_vars());
+      }
+    }
+    else {
+
+      $sNamespace = '';
     }
 
     if (!$sName) {

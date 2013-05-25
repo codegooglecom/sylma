@@ -8,6 +8,7 @@
     <cls:base>\sylma\storage\sql</cls:base>
     <cls:class alias="elemented" name="xxx">
       <cls:classes>
+        <cls:class alias="counter" name="template\Counter"/>
         <component>
           <cls:classes>
             <cls:base>\sylma\storage\sql\template\component</cls:base>

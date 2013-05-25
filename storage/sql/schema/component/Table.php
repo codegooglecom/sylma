@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\schema\component;
 use sylma\core, sylma\dom, sylma\schema;
 
-class Table extends schema\xsd\component\Element {
+class Table extends Element {
 
   public function parseRoot(dom\element $el) {
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\storage\sql, sylma\template, sylma\schema\parser;
+use sylma\core, sylma\storage\sql, sylma\parser\languages\common;
 
 abstract class Field extends sql\schema\component\Field implements sql\template\pathable {
 
@@ -49,7 +49,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     switch ($sName) {
 
       case 'value' : $result = $this->reflectRead(); break;
-      case 'alias' : $result = $this->getFormAlias(); break;
+      case 'alias' : $result = $this->getAlias(); break;
       case 'apply' : $result = $this->reflectApply($sMode); break;
 
       default :
@@ -60,14 +60,9 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $result;
   }
 
-  public function getFormAlias() {
-
-    return $this->getName();
-  }
-
   protected function reflectSelf() {
 
-    return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getName()));
+    return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getAlias()));
   }
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead) {
@@ -76,7 +71,5 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
     return $result;
   }
-
-  //public abstract function reflectRead();
 }
 

@@ -5,8 +5,6 @@ use sylma\core, sylma\storage\sql;
 
 class Field extends sql\template\component\Field implements sql\template\pathable {
 
-  protected $bInserted = false;
-
   protected function reflectApplySelf($sMode = '') {
 
     if ($result = parent::reflectApplySelf($sMode)) {
@@ -23,13 +21,7 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
   protected function addToQuery() {
 
-    if (!$this->bInserted) {
-
-      $query = $this->getQuery();
-      $query->setColumn($this);
-
-      $this->bInserted = true;
-    }
+    $this->getParent()->addElementToQuery($this);
   }
 
   public function reflectRead() {

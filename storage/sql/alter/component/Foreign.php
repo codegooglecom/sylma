@@ -18,7 +18,9 @@ class Foreign extends sql\schema\component\Foreign {
 
   protected function typeAsString() {
 
-    return "BIGINT UNSIGNED";
+    $sDefault = $this->isRequired() ? ' NOT NULL' : ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $this->getDefault() : '');
+
+    return "BIGINT UNSIGNED" . $sDefault;
   }
 
   public function asString() {

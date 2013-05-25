@@ -3,19 +3,16 @@
 namespace sylma\action\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
 
-class CheckArgument extends reflector\component\Foreigner {
+class CheckArgument extends reflector\component\Foreigner implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
     $this->allowText(true);
     $this->allowForeign(true);
-
-    $content = $this->build();
-    $this->getWindow()->add($content);
   }
 
-  protected function build() {
+  public function asArray() {
 
     $window = $this->getWindow();
 
@@ -26,17 +23,19 @@ class CheckArgument extends reflector\component\Foreigner {
 
     $default = $this->getx('self:default');
     $arguments = $window->getVariable($sSource);
+    $sName = $this->readx('@name');
 
     if ($default) {
 
       $result = $window->createCondition($window->createNot($arguments->call('read', array($this->readx('@name'), false))));
 
       $content = $this->parseComponentRoot($default);
-      $result->addContent($arguments->call('set', array($this->readx('@name'), $content)));
+
+      $result->addContent($arguments->call('set', array($sName, $content)));
     }
     else {
 
-      $result = $arguments->call('read', array($this->readx('@name')));
+      $result = $arguments->call('read', $sName);
     }
 
     return array($result);

@@ -72,22 +72,29 @@
         <le:default>1</le:default>
       </le:check-argument>
 
-      <le:check-argument name="order" format="string">
-        <le:default>id</le:default>
-      </le:check-argument>
+      <view:template mode="init">
 
-      <sql:pager>
-        <sql:current>
-          <le:argument name="page"/>
-        </sql:current>
-        <sql:count>10</sql:count>
-      </sql:pager>
+        <sql:pager>
+          <sql:current>
+            <le:argument name="page"/>
+          </sql:current>
+          <sql:count>10</sql:count>
+        </sql:pager>
 
-      <sql:order>
-        <le:argument name="order"/>
-      </sql:order>
+        <le:check-argument name="order" format="string">
+          <le:default>
+            <tpl:apply select="$$list-order"/>
+          </le:default>
+        </le:check-argument>
+
+        <sql:order>
+          <le:argument name="order"/>
+        </sql:order>
+
+      </view:template>
 
       <view:template>
+        <tpl:apply mode="init"/>
         <tbody js:name="container" js:class="sylma.ui.Container">
           <js:option name="path">
             <crud:path/>
@@ -151,7 +158,7 @@
               %parent%.update({page : 1});
               return false;
             </js:event>
-            <tpl:apply select="current"/>
+            <tpl:read select="current"/>
           </a>
 
           <span class="pager-separator">/</span>
@@ -167,7 +174,7 @@
               %parent%.update({page : %object%.get('last')});
               return false;
             </js:event>
-            <tpl:apply select="last"/>
+            <tpl:read select="last"/>
           </a>
 
           <a href="#" title="Page suivante" class="button pager-next">
@@ -194,9 +201,17 @@
   <crud:route name="insert" groups="form">
 
     <view:view mode="hollow">
+
       <view:template mode="root">
         <tpl:token name="action"><le:path/>/insert/do.json</tpl:token>
       </view:template>
+
+      <view:template match="*" mode="select">
+        <option value="{id}">
+          <tpl:apply mode="option"/>
+        </option>
+      </view:template>
+
     </view:view>
 
     <view:view name="do" mode="insert"/>
@@ -206,12 +221,23 @@
   <crud:route name="update" groups="form">
 
     <view:view mode="view" _debug="x">
+
       <view:template mode="root">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
         <sql:filter name="id"><le:argument name="id"/></sql:filter>
         <js:option name="id"><tpl:read select="id"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
       </view:template>
+
+      <view:template match="*" mode="select">
+        <option value="{id}">
+          <tpl:if test="parent()/value() = id">
+            <tpl:token name="selected">selected</tpl:token>
+          </tpl:if>
+          <tpl:apply mode="option"/>
+        </option>
+      </view:template>
+
     </view:view>
 
     <view:view name="do" mode="update">
@@ -225,6 +251,7 @@
 
     <tpl:constant name="form-cols">* ^ id,date-update,date-insert</tpl:constant>
     <tpl:constant name="list-cols">*</tpl:constant>
+    <tpl:constant name="list-order">id</tpl:constant>
 
   </crud:global>
 
@@ -261,12 +288,9 @@
 
     <view:template match="sql:foreign" mode="input">
       <select id="form-{alias()}" name="{alias()}">
-        <tpl:apply select="all()"/>
+        <option value="0">&lt; Choisissez &gt;</option>
+        <tpl:apply select="all()" mode="select"/>
       </select>
-    </view:template>
-
-    <view:template match="*" mode="select">
-      <option name="{id}"><tpl:apply select="value"/></option>
     </view:template>
 
   </crud:group>

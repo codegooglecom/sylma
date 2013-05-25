@@ -70,6 +70,8 @@ class View extends Pathed implements core\tokenable {
     $this->getNode()->shift($this->getRoute());
     $this->getNode()->shift($this->getParser()->getGlobal());
 
+    foreach ($this->getNode()->queryx() as $node) if ($node->getType() == $node::TEXT) $node->remove();
+
     return $this->getNode()->getHandler();
   }
 

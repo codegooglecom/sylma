@@ -30,7 +30,14 @@ class Argument extends core\argument\Setable {
     }
     else if ($val instanceof common\argumentable) {
 
-      $mResult = $this->normalizeArgument($val->asArgument());
+      if ($arg = $val->asArgument()) {
+
+        $mResult = $this->normalizeArgument($arg);
+      }
+      else {
+        
+        $mResult = null;
+      }
     }
     else if ($val instanceof common\stringable) {
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\insert;
-use sylma\core, sylma\dom, sylma\storage\sql, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\parser\languages\common;
 
 class Table extends sql\template\component\Table implements common\argumentable {
 
@@ -14,6 +14,38 @@ class Table extends sql\template\component\Table implements common\argumentable 
     parent::parseRoot($el);
   }
 
+  public function addElementToHandler(schema\parser\element $el, $sDefault = '') {
+
+    $query = $this->getQuery();
+    $window = $this->getWindow();
+    $arguments = $window->getVariable('post');
+
+    $type = $el->getType();
+    $bOptional = $el->isOptional();
+    $sName = $el->getAlias();
+
+    $handler = $this->getHandler();
+    $val = $arguments->call('read', !$bOptional ? array($sName) : array($sName, false), 'php-string');
+
+    $aArguments = array(
+      'alias' => $sName,
+      'title' => $el->getName(),
+    );
+
+    if ($bOptional) $aArguments['optional'] = true;
+    if ($sDefault) $aArguments['default'] = $sDefault;
+
+
+    $call = $handler->call('addElement', array($sName, $type->instanciate($val, $aArguments)));
+    $window->add($call);
+
+    //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
+    //$test = $window->createCondition($window->createNot($var), $content);
+    //$window->add($test);
+
+    $query->addSet($el, $handler->call('readElement', array($sName)));
+
+  }
   protected function loadHandler() {
 
     $window = $this->getWindow();

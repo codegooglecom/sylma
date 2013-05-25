@@ -26,7 +26,10 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
       $content = "'{$this->readx()}'";
     }
 
-    $query->setWhere($tree->getElement($this->readx('@name', true), $tree->getNamespace()), '=', $content);
+    $sName = $this->readx('@name', true);
+    $this->log("SQL : filter [$sName]");
+
+    $query->setWhere($tree->getElement($sName, $tree->getNamespace()), '=', $content);
     //$query->isMultiple(!$this->readx('@single'));
   }
 
