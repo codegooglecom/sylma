@@ -9,7 +9,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
   protected $query;
   protected $var;
 
-  protected $bInserted = false;
+  protected $bBuilded = false;
 
   public function setParent(parser\element $parent) {
 
@@ -168,13 +168,31 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return array($table, $el1, $el2);
   }
 
+  protected function build(Table $element) {
+
+    if (!$this->bBuilded) {
+
+      $parent = $this->getParent();
+      $query = $parent->getQuery();
+
+      $element->setSource($parent->getSource());
+      $element->setQuery($query);
+      $element->insertQuery(false);
+
+      $id = $element->getElement('id', $element->getNamespace());
+
+      $query->addJoin($element, $id, $this);
+      $this->bBuilded = true;
+    }
+  }
+
   protected function applyElement(Table $element, array $aPath, $sMode) {
 
     //$sName = $element->getName();
 
-    $parent = $this->getParent();
-
     if ($this->getMaxOccurs(true)) {
+
+      $parent = $this->getParent();
 
       $id = $parent->getElement('id', $parent->getNamespace());
 
@@ -202,14 +220,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     }
     else {
 
-      $query = $parent->getQuery();
-      $element->setSource($parent->getSource());
-      $element->setQuery($query);
-      $element->insertQuery(false);
-
-      $id = $element->getElement('id', $element->getNamespace());
-
-      $query->addJoin($element, $id, $this);
+      $this->build($element);
 
       if ($aPath) {
 

@@ -104,7 +104,7 @@ abstract class Domed extends Filed {
     else {
 
       $path = $this->createPath($sPath, $aArguments);
-      $aArguments = $path->getArguments();
+      $aArguments = $path->getArguments()->query();
       $file = $path->asFile();
     }
 

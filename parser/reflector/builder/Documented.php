@@ -229,7 +229,7 @@ class Documented extends Logger implements reflector\documented {
 
   protected function catchException(fs\file $file, core\exception $e) {
 
-    $this->getLogger()->addException($e->getMessage());
+    if (self::LOG) $this->getLogger()->addException($e->getMessage());
     $e->addPath($file->asToken());
 
     if ($this->throwExceptions()) throw $e;

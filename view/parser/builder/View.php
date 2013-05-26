@@ -25,9 +25,9 @@ class View extends Variabled {
     return $result;
   }
 
-  public function getLogger() {
+  public function getLogger($bDebug = true) {
 
-    return parent::getLogger();
+    return parent::getLogger($bDebug);
   }
 
   protected function buildView(dom\document $doc, fs\file $target) {
