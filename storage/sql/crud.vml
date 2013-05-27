@@ -4,10 +4,7 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
-  xmlns:user="http://2013.sylma.org/view/test/sample1"
-  xmlns:group="http://2013.sylma.org/view/test/sample2"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
@@ -269,8 +266,8 @@
     <view:template>
       <form js:class="sylma.ui.Form">
         <js:include>/#sylma/template/form.js</js:include>
-        <stp:apply mode="root"/>
-        <stp:apply use="form-cols" mode="container"/>
+        <tpl:apply mode="root"/>
+        <tpl:apply use="form-cols" mode="container"/>
         <input type="submit" value="Envoyer"/>
       </form>
     </view:template>

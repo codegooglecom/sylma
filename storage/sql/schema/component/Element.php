@@ -42,7 +42,8 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
   protected function loadOptional() {
 
-    $this->isOptional((bool) $this->readx('@default'));
+    $sDefault = $this->readx('@default');
+    $this->isOptional(!is_null($sDefault) && $sDefault !== '');
   }
 
   public function getDefault() {

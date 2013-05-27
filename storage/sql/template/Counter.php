@@ -5,6 +5,7 @@ use sylma\core, sylma\parser\reflector, sylma\parser\languages\common, sylma\sto
 
 class Counter extends reflector\component\Foreigner implements reflector\component, common\arrayable {
 
+  protected $bUsed = false;
   protected $query;
 
   public function setQuery(sql\query\parser\Select $query) {
@@ -27,12 +28,21 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
 
   public function getVar() {
 
+    $this->isUsed(true);
+
     return $this->getQuery()->getVar();
+  }
+
+  protected function isUsed($bVal = NULL) {
+
+    if (is_bool($bVal)) $this->bUsed = $bVal;
+
+    return $this->bUsed;
   }
 
   public function asArray() {
 
-    if (!$this->getQuery()->isEmpty()) {
+    if ($this->isUsed()) {
 
       $aResult[] = $this->getQuery()->getVar()->getInsert();
     }

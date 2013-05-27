@@ -9,7 +9,7 @@ class SimpleType extends parser\component\Simple {
 
     $el = $this->setNode($el);
 
-    $this->setName($el->readx('@name'));
+    $this->setName($this->readx('@name'));
 
   }
 

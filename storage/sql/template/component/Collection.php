@@ -82,7 +82,7 @@ class Collection extends Rooted implements sql\template\pathable {
       $aResult[] = $this->getCounter();
     }
 
-    $aResult[] = $result;
+    $aResult[] = $this->getWindow()->parseArrayables(array($result));
 
     return $aResult;
   }
@@ -112,7 +112,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'count' :
 
-        $result = $this->getCounter()->getVar();
+        $result = $this->getCount();
         break;
 
       case 'pager' :
@@ -154,15 +154,27 @@ class Collection extends Rooted implements sql\template\pathable {
     $query->setCount($count);
   }
 
-  public function getCounter() {
+  public function getCount() {
+
+    return $this->getCounter()->getVar();
+  }
+
+  protected function loadCounter() {
+
+    $query = clone $this->getQuery();
+    $this->getQuery()->setClone($query);
+
+    $result = $this->loadSimpleComponent('counter');
+    $result->setQuery($query);
+
+    return $result;
+  }
+
+  protected function getCounter() {
 
     if (!$this->counter) {
 
-      $query = clone $this->getQuery();
-      $this->getQuery()->setClone($query);
-
-      $this->counter = $counter = $this->loadSimpleComponent('counter');
-      $counter->setQuery($query);
+      $this->counter = $this->loadCounter();
     }
 
     return $this->counter;

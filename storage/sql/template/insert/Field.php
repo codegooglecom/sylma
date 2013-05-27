@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\insert;
-use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
+use sylma\core, sylma\storage\sql;
 
 class Field extends sql\template\component\Field {
 

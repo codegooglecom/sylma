@@ -15,6 +15,11 @@ abstract class Particle extends Basic implements parser\particle {
       $this->launchException('Element not valid, no namespace defined');
     }
 
+    if (isset($this->aElements[$element->getNamespace()][$element->getName()])) {
+
+      $this->launchException('Element ever registered', get_defined_vars());
+    }
+
     $element->setPosition($iPosition);
     $element->setParticle($this);
 

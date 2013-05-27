@@ -47,7 +47,11 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     $this->getDocument()->getRoot()->set();
     $this->addSchema($doc);
 
-    $this->loadBaseTypes(array('string' => self::NS, 'integer' => self::NS));
+    $this->loadBaseTypes(array(
+      'string' => self::NS,
+      'integer' => self::NS,
+      'boolean' => self::NS,
+    ));
 
     $this->setDirectory(__FILE__);
 

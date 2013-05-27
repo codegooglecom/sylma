@@ -21,6 +21,7 @@
           </cls:classes>
         </cls:class>
         <cls:class alias="order" name="view\Order"/>
+        <cls:class alias="limit" name="view\Limit"/>
       </cls:classes>
     </component>
   </cls:classes>

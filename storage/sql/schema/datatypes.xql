@@ -13,13 +13,21 @@
     <sql:field name="date-update" type="xs:dateTime"/>
   </sql:group>
 
+  <xs:simpleType name="id" type="xs:integer"/>
+
+  <xs:simpleType name="int">
+    <xs:restriction base="xs:integer">
+      <xs:totalDigits value="6"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="boolean" type="xs:boolean"/>
+
   <xs:simpleType name="string-short">
     <xs:restriction base="xs:string">
       <xs:maxLength value="64"/>
     </xs:restriction>
   </xs:simpleType>
-
-  <xs:simpleType name="id" type="xs:integer"/>
 
   <xs:simpleType name="string">
     <xs:restriction base="xs:string">

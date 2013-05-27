@@ -3,9 +3,6 @@
 namespace sylma\storage\fs\basic\security;
 use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('core/module/Namespaced.php');
-require_once('storage/fs/security/manager.php');
-
 class Manager extends core\module\Namespaced implements fs\security\manager {
 
   const FILENAME = 'directory.sml';
@@ -76,7 +73,10 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
     $el = null;
     $spName = $this->escape($sName);
 
-    if ($this->getDocument()) $el = $this->getDocument()->getx(self::PREFIX . ":file[@name=$spName]", array(), false);
+    if ($this->getDocument()) {
+
+      $el = $this->getDocument()->getx(self::PREFIX . ":file[@name=$spName]", array(), false);
+    }
 
     return $this->extractRights($el);
   }
@@ -85,7 +85,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
 
     return "'".addslashes($sValue)."'";
   }
-  
+
   /*
    * Extract and check validity of security datas in element
    *

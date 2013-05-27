@@ -144,7 +144,7 @@ class Pager extends reflector\component\Foreigner implements reflector\component
     $var = $this->getVar();
 
     $aResult[] = $var->getInsert();
-    $aResult[] = $var->call('setCount', array($this->getCollection()->getCounter()->getVar()))->getInsert();
+    $aResult[] = $var->call('setCount', array($this->getCollection()->getCount()))->getInsert();
     $aResult[] = $var->call('setPage', array($this->getOffset()))->getInsert();
     $aResult[] = $var->call('setSize', array($this->getCount()))->getInsert();
 

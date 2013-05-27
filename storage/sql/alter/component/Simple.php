@@ -17,7 +17,7 @@ class Simple extends schema\component\SimpleType {
 
       if (!$iSize) {
 
-        $this->launchException('No maxLength defined');
+        $this->launchException('No @maxLength defined');
       }
 
       if ($iSize > 255) {
@@ -28,6 +28,21 @@ class Simple extends schema\component\SimpleType {
 
         $sValue = "VARCHAR({$iSize})";
       }
+    }
+    else if ($this->doExtends($this->getParser()->getType('integer', $this->getNamespace('xs')))) {
+
+      $iSize = $this->getDefine()->getRule('totalDigits');
+
+      if (!$iSize) {
+
+        $this->launchException('No @totalDigits defined');
+      }
+
+      $sValue = "INT({$iSize})";
+    }
+    else if ($this->doExtends($this->getParser()->getType('boolean', $this->getNamespace('xs')))) {
+
+      $sValue = "TINYINT(1)";
     }
     else if ($this->doExtends ($this->getParser ()->getType('id', $this->getNamespace ('sql')))) {
 

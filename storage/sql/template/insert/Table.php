@@ -33,7 +33,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     );
 
     if ($bOptional) $aArguments['optional'] = true;
-    if ($sDefault) $aArguments['default'] = $sDefault;
+    if ($sDefault !== '') $aArguments['default'] = $sDefault;
 
 
     $call = $handler->call('addElement', array($sName, $type->instanciate($val, $aArguments)));
@@ -46,6 +46,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $query->addSet($el, $handler->call('readElement', array($sName)));
 
   }
+
   protected function loadHandler() {
 
     $window = $this->getWindow();

@@ -9,7 +9,7 @@ class Select extends Basic implements common\arrayable, common\argumentable {
   protected $aJoins = array();
   protected $aElements = array();
 
-  protected $offset;
+  protected $offset = '0';
   protected $count;
   protected $clone;
   protected $order;
@@ -131,7 +131,7 @@ class Select extends Basic implements common\arrayable, common\argumentable {
 
   protected function getLimit() {
 
-    if ($this->getOffset() && $this->getCount()) {
+    if ($this->getCount()) {
 
       $aResult = array(' LIMIT ', $this->getOffset(), ', ', $this->getCount());
     }

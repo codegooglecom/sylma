@@ -30,7 +30,12 @@ class Field extends sql\schema\component\Field {
 
   protected function typeAsString() {
 
-    $sDefault = $this->isRequired() ? ' NOT NULL' : ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $this->getDefault() : '');
+    if (!$sDefault = $this->readx('@alter-default')) {
+
+      $sDefault = $this->getDefault();
+    }
+
+    $sDefault = $this->isRequired() ? ' NOT NULL' : ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $sDefault : '');
 
     return $this->getType()->asString() . ($this->isID() ? ' AUTO_INCREMENT' : $sDefault);
   }

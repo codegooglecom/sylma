@@ -27,7 +27,7 @@ class Simple extends Basic {
 
     $bResult = false;
 
-    if (!$this->getValue()) {
+    if (is_null($this->getValue()) || $this->getValue() === '') {
 
       if (!$this->read('optional', false)) {
 
