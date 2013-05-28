@@ -88,14 +88,7 @@ class Pather extends component\Child {
       }
     }
 
-    return $this->buildExpression($aResult);
-  }
-
-  protected function buildExpression($aContent) {
-
-    $window = $this->getWindow();
-
-    return $window->createCondition($aContent);
+    return $aResult;
   }
 
   protected function matchString($sValue) {

@@ -154,7 +154,7 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
-  public function createCondition($test, $content = null) {
+  public function createCondition($test = null, $content = null) {
 
     return $this->create('condition', array($this, $test, $content));
   }

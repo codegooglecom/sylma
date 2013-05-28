@@ -95,6 +95,15 @@ abstract class Domed extends Filed {
     return $path;
   }
 
+  protected function buildScriptArguments(array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
+
+    return array(
+      'arguments' => $aArguments ? $this->createArgument($aArguments) : null,
+      'contexts' => $aContexts ? $this->createArgument($aContexts) : null,
+      'post' => $aPosts ? $this->createArgument($aPosts) : null,
+    );
+  }
+
   protected function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
 
     if (strpos($sPath, '.') !== false) {
@@ -108,11 +117,7 @@ abstract class Domed extends Filed {
       $file = $path->asFile();
     }
 
-    $aArguments = array(
-      'arguments' => $aArguments ? $this->createArgument($aArguments) : null,
-      'contexts' => $aContexts ? $this->createArgument($aContexts) : null,
-      'post' => $aPosts ? $this->createArgument($aPosts) : null,
-    );
+    $aArguments = $this->buildScriptArguments($aArguments, $aContexts, $aPosts);
 
     return $this->getScriptFile($file, $aArguments);
   }

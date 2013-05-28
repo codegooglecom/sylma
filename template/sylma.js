@@ -81,10 +81,10 @@ sylma.classes = {
       return new parent(props);
     },
 
-    import : function(sValue) {
+    import : function(val, name) {
 
-      var el = new Element('table', {
-        html : sValue
+      var el = new Element(name, {
+        html : val
       });
 
       return el.getChildren();
@@ -275,8 +275,9 @@ sylma.ui = new sylma.classes.ui;
         onSuccess: function(response) {
 
           var result = sylma.ui.parseMessages(response);
+          var name = self.getNode().getParent().tagName || 'div';
 
-          sylma.ui.import(result.content).replaces(self.getNode());
+          sylma.ui.import(result.content, name).replaces(self.getNode());
           //console.log(result.objects[sylma.ui.extractFirst(result.objects)]);
           var props = result.objects[sylma.ui.extractFirst(result.objects)];
           self.initialize(props);

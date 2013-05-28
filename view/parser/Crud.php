@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\view\parser;
-use sylma\core, sylma\parser\reflector, sylma\dom;
+use sylma\core, sylma\parser\reflector, sylma\dom, sylma\storage\fs;
 
 class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
@@ -14,13 +14,27 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
   protected $aPaths = array();
   protected $aGroups = array();
 
-  public function parseRoot(dom\element $el) {
+  public function parseRoot(dom\element $el, fs\directory $base = null) {
 
     $el = $this->setNode($el);
     $this->setNamespace(self::VIEW_NS, self::VIEW_PREFIX);
 
+    if ($base) {
+
+      $this->setDirectory($base);
+      $this->resolveImports($base);
+    }
+
     $this->parseChildren($el->getChildren());
     $this->loadExtends();
+  }
+
+  protected function resolveImports(fs\directory $dir) {
+
+    foreach ($this->queryx('//self:import') as $el) {
+
+      $el->set((string) $this->getFile($el->readx()));
+    }
   }
 
   protected function parseElementSelf(dom\element $el) {
@@ -44,7 +58,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
       $file = $this->getSourceFile($sPath);
 
       $reflector = clone $this;
-      $reflector->parseRoot($file->getDocument()->getRoot());
+      $reflector->parseRoot($file->getDocument()->getRoot(), $file->getParent());
 
       foreach ($reflector->getPaths() as $path) {
 

@@ -111,24 +111,6 @@ class Elemented extends template\parser\handler\Domed {
     return $sResult;
   }
 
-  protected function parseElementSelf(dom\element $el) {
-
-    switch ($el->getName()) {
-
-      case 'template' :
-
-        $this->loadTemplate($el);
-        $result = null;
-        break;
-
-      default :
-
-        $result = parent::parseElementSelf($el);
-    }
-
-    return $result;
-  }
-
   protected function build(array $aContent, template\parser\tree $tree, $sMode) {
 
     $window = $this->getWindow();

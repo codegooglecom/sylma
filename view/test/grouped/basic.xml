@@ -309,6 +309,14 @@
       <div><h3>root</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Simple import">
+    <tst:prepare>
+      $manager->setArgument('result', $manager->getScript('samples/import1.vml'));
+    </tst:prepare>
+    <tst:node>
+      <div><h4>world</h4></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="External parser">
     <tst:document>
       <view:view>

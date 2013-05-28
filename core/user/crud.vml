@@ -10,7 +10,7 @@
 
   xmlns:user="http://2013.sylma,org/core/user"
 
-  extends="/#sylma/storage/sql/crud.vml"
+  extends="/#sylma/storage/sql/crud.tpl"
 >
 
   <crud:global>

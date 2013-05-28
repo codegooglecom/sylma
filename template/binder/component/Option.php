@@ -47,7 +47,7 @@ class Option extends Basic implements common\arrayable {
     }
 
     $this->setName($el->readx('@name'));
-    $this->setValue($content);
+    $this->setValue($this->getPHPWindow()->toString($content));
   }
 
   public function asArray() {

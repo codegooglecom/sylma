@@ -66,18 +66,9 @@
 
       <sql:resource multiple="multiple"/>
 
-      <le:check-argument name="page" format="integer">
-        <le:default>1</le:default>
-      </le:check-argument>
-
       <view:template mode="init">
 
-        <sql:pager>
-          <sql:current>
-            <le:argument name="page"/>
-          </sql:current>
-          <sql:count>10</sql:count>
-        </sql:pager>
+        <tpl:apply mode="init-pager"/>
 
         <le:check-argument name="order" format="string">
           <le:default>
@@ -126,78 +117,7 @@
         </td>
       </view:template>
 
-      <view:template match="sql:pager">
-
-        <div class="pager" js:class="sylma.ui.Base">
-
-          <tpl:if test="!is-multiple()">
-            <tpl:token name="class">form-disable</tpl:token>
-          </tpl:if>
-
-          <div class="clearfix">
-
-            <a href="#" title="Page précédente" class="button pager-previous">
-              <tpl:if test="is-first()">
-                <tpl:token name="class">form-disable</tpl:token>
-              </tpl:if>
-              <js:option name="prev">
-                <tpl:apply select="previous"/>
-              </js:option>
-              <js:event name="click">
-                %parent%.update({page : %object%.get('prev')});
-                return false;
-              </js:event>
-              &lt;&lt;
-            </a>
-
-            <span class="button pager-infos">
-
-              <a href="#" title="Première page" class="pager-current">
-                <tpl:if test="is-first()">
-                  <tpl:token name="class">form-disable</tpl:token>
-                </tpl:if>
-                <js:event name="click">
-                  %parent%.update({page : 1});
-                  return false;
-                </js:event>
-                <tpl:read select="current"/>
-              </a>
-
-              <span class="pager-separator">/</span>
-
-              <a href="#" title="Dernière page" class="pager-total">
-                <tpl:if test="is-last()">
-                  <tpl:token name="class">form-disable</tpl:token>
-                </tpl:if>
-                <js:option name="last">
-                  <tpl:apply select="last"/>
-                </js:option>
-                <js:event name="click">
-                  %parent%.update({page : %object%.get('last')});
-                  return false;
-                </js:event>
-                <tpl:read select="last"/>
-              </a>
-
-            </span>
-
-            <a href="#" title="Page suivante" class="button pager-next">
-              <tpl:if test="is-last()">
-                <tpl:token name="class">form-disable</tpl:token>
-              </tpl:if>
-              <js:option name="next">
-                <tpl:apply select="next"/>
-              </js:option>
-              <js:event name="click">
-                %parent%.update({page : %object%.get('next')});
-                return false;
-              </js:event>
-              &gt;&gt;
-            </a>
-          </div>
-        </div>
-
-      </view:template>
+      <crud:import>pager.tpl</crud:import>
 
     </view:view>
 
@@ -264,43 +184,7 @@
 
     <sql:resource/>
 
-    <view:template>
-      <form js:class="sylma.ui.Form">
-        <js:include>/#sylma/template/form.js</js:include>
-        <tpl:apply mode="root"/>
-        <tpl:apply use="form-cols" mode="container"/>
-        <input type="submit" value="Envoyer"/>
-      </form>
-    </view:template>
-
-    <view:template match="*" mode="container">
-      <tpl:register/>
-      <div class="field clearfix">
-        <label for="form-{alias()}"><tpl:apply select="alias()"/> :</label>
-        <tpl:apply mode="input"/>
-      </div>
-    </view:template>
-
-    <view:template match="*" mode="input">
-      <input class="field-input field-input-element" type="text" id="form-{alias()}" value="{value()}" name="{alias()}"/>
-    </view:template>
-
-    <view:template match="sql:string-long" mode="input">
-      <textarea id="form-{alias()}" name="{alias()}" class="field-input field-input-element">
-        <tpl:apply/>
-      </textarea>
-    </view:template>
-
-    <view:template match="sql:foreign" mode="input">
-      <select id="form-{alias()}" name="{alias()}">
-        <option value="0">&lt; Choisissez &gt;</option>
-        <tpl:apply select="all()" mode="select"/>
-      </select>
-    </view:template>
-
-    <view:template match="ssd:password" mode="input">
-      <input class="field-input field-input-element" type="password" id="form-{alias()}" value="{value()}" name="{alias()}"/>
-    </view:template>
+    <crud:import>form.tpl</crud:import>
 
   </crud:group>
 

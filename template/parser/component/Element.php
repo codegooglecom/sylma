@@ -140,6 +140,11 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $this->getRoot()->stopElement();
   }
 
+  protected function parseText(dom\text $node, $bTrim = false) {
+
+    return preg_replace('!\s+!', ' ', parent::parseText($node, $bTrim));
+  }
+
   protected function loadName(dom\element $el) {
 
     //$sName = ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
@@ -248,7 +253,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
         $child = htmlspecialchars($child);
       }
-      
+
       $aContent[] = $this->getWindow()->parseArrayables(array($child));
     }
 
