@@ -244,7 +244,11 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
     foreach ($aChildren as $child) {
 
-      if (is_string($child)) $child = htmlentities ($child);
+      if (is_string($child)) {
+
+        $child = htmlspecialchars($child);
+      }
+      
       $aContent[] = $this->getWindow()->parseArrayables(array($child));
     }
 

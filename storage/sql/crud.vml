@@ -4,6 +4,7 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
@@ -251,7 +252,7 @@
   </crud:route>
   <!--<view:view mode="delete"/>-->
 
-  <crud:global>
+  <crud:global ssd:ns="ns">
 
     <tpl:constant name="form-cols">* ^ id,date-update,date-insert</tpl:constant>
     <tpl:constant name="list-cols">*</tpl:constant>
@@ -281,9 +282,7 @@
     </view:template>
 
     <view:template match="*" mode="input">
-      <input class="field-input field-input-element" type="text" id="form-{alias()}" value="{value()}" name="{alias()}">
-        <tpl:token name="class">field-test</tpl:token>
-      </input>
+      <input class="field-input field-input-element" type="text" id="form-{alias()}" value="{value()}" name="{alias()}"/>
     </view:template>
 
     <view:template match="sql:string-long" mode="input">
@@ -297,6 +296,10 @@
         <option value="0">&lt; Choisissez &gt;</option>
         <tpl:apply select="all()" mode="select"/>
       </select>
+    </view:template>
+
+    <view:template match="ssd:password" mode="input">
+      <input class="field-input field-input-element" type="password" id="form-{alias()}" value="{value()}" name="{alias()}"/>
     </view:template>
 
   </crud:group>

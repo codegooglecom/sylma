@@ -29,6 +29,8 @@ class Simple extends xsd\component\SimpleType implements sql\template\pathable {
 
   public function reflectApplyPath(array $aPath, $sMode = '') {
 
+    //$this->launchException('Should not be called');
+
     if (!$aPath) {
 
       $result = $this->reflectApplySelf($sMode);
@@ -39,6 +41,11 @@ class Simple extends xsd\component\SimpleType implements sql\template\pathable {
     }
 
     return $result;
+  }
+
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead) {
+
+    $this->launchException('Not ready');
   }
 
   public function reflectApply($sMode = '') {

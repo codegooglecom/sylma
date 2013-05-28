@@ -8,5 +8,8 @@ interface type extends namespaced {
   function isSimple();
   function isComplex();
   function getName();
+
+  function getReflectorStatic();
+  function buildReflector(array $aArguments = array());
 }
 

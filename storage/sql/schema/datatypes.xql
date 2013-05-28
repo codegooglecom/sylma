@@ -23,21 +23,21 @@
 
   <xs:simpleType name="boolean" type="xs:boolean"/>
 
-  <xs:simpleType name="string-short">
-    <xs:restriction base="xs:string">
-      <xs:maxLength value="64"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="string">
+  <xs:simpleType name="string" reflector-static="\sylma\schema\cached\view\_String">
     <xs:restriction base="xs:string">
       <xs:maxLength value="255"/>
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="string-short">
+    <xs:restriction base="sql:string">
+      <xs:maxLength value="64"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="string-long">
-    <xs:restriction base="xs:string">
-      <xs:maxLength value="65536"/>
+    <xs:restriction base="sql:string">
+      <xs:maxLength value="65535"/>
     </xs:restriction>
   </xs:simpleType>
 

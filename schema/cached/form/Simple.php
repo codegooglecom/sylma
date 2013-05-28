@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\schema\cached;
+namespace sylma\schema\cached\form;
 use sylma\core;
 
 class Simple extends Basic {
@@ -31,7 +31,7 @@ class Simple extends Basic {
 
       if (!$this->read('optional', false)) {
 
-        $this->addMessage($this->translate("The field '%s' must be filled", $this->read('title')), array('alias' => $this->read('alias')));
+        $this->addMessage($this->translate("The field '%s' must be filled", $this->read('title')), $this->asAlias());
       }
       else {
 
@@ -44,6 +44,11 @@ class Simple extends Basic {
     }
 
     return $bResult;
+  }
+
+  public function asAlias() {
+    
+    return array('alias' => $this->read('alias'));
   }
 
   public function escape() {

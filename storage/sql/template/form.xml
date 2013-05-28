@@ -13,21 +13,21 @@
             <cls:base>\sylma\storage\sql\template\insert</cls:base>
             <cls:class alias="table" name="Table">
               <cls:classes>
-                <cls:class alias="handler" name="\sylma\schema\cached\Form"/>
+                <cls:class alias="cached" name="\sylma\schema\cached\form\Form"/>
               </cls:classes>
             </cls:class>
-            <cls:class alias="field" name="Field"/>
-            <cls:class alias="foreign" name="Foreign"/>
-            <cls:class alias="baseType" name="Simple">
+            <cls:class alias="field" name="Field">
               <cls:classes>
-                <cls:class alias="cached" name="\sylma\schema\cached\Simple"/>
+                <cls:class alias="cached" name="\sylma\schema\cached\form\Simple"/>
               </cls:classes>
             </cls:class>
-            <cls:class alias="simpleType" name="Simple">
+            <cls:class alias="foreign" name="Foreign">
               <cls:classes>
-                <cls:class alias="cached" name="\sylma\schema\cached\Simple"/>
+                <cls:class alias="cached" name="\sylma\schema\cached\form\Simple"/>
               </cls:classes>
             </cls:class>
+            <cls:class alias="baseType" name="Simple"/>
+            <cls:class alias="simpleType" name="Simple"/>
           </cls:classes>
         </component>
       </cls:classes>

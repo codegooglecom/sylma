@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma,org/core/user"
+
+  extends="/#sylma/storage/sql/crud.vml"
+>
+
+  <crud:global>
+
+    <view:schema>schema.xql</view:schema>
+
+  </crud:global>
+
+  <crud:group name="form" user:ns="ns">
+
+    <view:template match="user:password" mode="container">
+      <tpl:apply mode="container"/>
+      <div class="field clearfix">
+        <label for="form-password-confirm">confirm password :</label>
+        <input class="field-input field-input-element" type="password" id="form-password-confirm" name="password_confirm"/>
+      </div>
+    </view:template>
+
+    <view:template match="user:password" mode="input">
+      <input class="field-input field-input-element" type="password" id="form-password" name="password"/>
+    </view:template>
+
+  </crud:group>
+
+</crud:crud>

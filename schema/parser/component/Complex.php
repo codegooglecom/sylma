@@ -3,7 +3,7 @@
 namespace sylma\schema\parser\component;
 use sylma\core, sylma\schema\parser, sylma\parser\reflector;
 
-class Complex extends Basic implements parser\type, parser\type\complex {
+class Complex extends Type implements parser\type, parser\type\complex {
 
   protected $aParticles = array();
 

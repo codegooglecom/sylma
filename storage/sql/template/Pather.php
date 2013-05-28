@@ -98,7 +98,9 @@ class Pather extends template\parser\Pather {
       $this->launchException('No source defined');
     }
 
-    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode, $bRead);
+    $aArguments = isset($aMatch[2]) && ($aMatch[2] !== '') ? $this->parseArguments($aMatch[2], $sMode, $bRead) : array();
+
+    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode, $bRead, $aArguments);
   }
 }
 

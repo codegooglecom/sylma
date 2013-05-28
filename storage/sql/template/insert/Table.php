@@ -10,8 +10,9 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function parseRoot(dom\element $el) {
 
-    $this->setHandler($this->loadHandler());
     parent::parseRoot($el);
+
+    $this->setHandler($this->loadHandler());
   }
 
   public function addElementToHandler(schema\parser\element $el, $sDefault = '') {
@@ -36,7 +37,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     if ($sDefault !== '') $aArguments['default'] = $sDefault;
 
 
-    $call = $handler->call('addElement', array($sName, $type->instanciate($val, $aArguments)));
+    $call = $handler->call('addElement', array($sName, $el->buildReflector(array($val, $aArguments))));
     $window->add($call);
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
@@ -51,7 +52,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     $window = $this->getWindow();
 
-    $result = $this->createObject('handler', array($window->getVariable('arguments'), $window->getVariable('contexts'), $this->getMode()), null, false);
+    $result = $this->buildReflector(array($window->getVariable('arguments'), $window->getVariable('post'), $window->getVariable('contexts'), $this->getMode()));
 
     return $result->getVar();
   }

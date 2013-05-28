@@ -65,6 +65,8 @@ abstract class _Var extends common\basic\Controled implements common\_var, commo
         $window->add($this->getInsert($content, false));
       }
     }
+
+    return $this;
   }
 
   public function onAdd() {

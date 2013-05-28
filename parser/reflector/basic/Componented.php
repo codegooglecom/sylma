@@ -7,10 +7,34 @@ abstract class Componented extends Namespaced {
 
   protected $allowComponent = false;
 
+  protected function createClass($sAlias = 'cached') {
+
+    $sClass = $this->parseClassName($sAlias);
+    $window = $this->getWindow();
+
+    $result = $window->createClass($sClass);
+
+    return $result;
+  }
+
+  protected function parseClassName($sName) {
+
+    if ($sName{0} == '\\') {
+
+      $sResult = $sName;
+    }
+    else {
+
+      $sResult = $this->getFactory()->findClass($sName)->read('name');
+    }
+
+    return $sResult;
+  }
+
   protected function createObject($sAlias = 'cached', array $aArguments = array(), $window = null, $bVar = true) {
 
+    $sClass = $this->parseClassName($sAlias);
     if (!$window) $window = $this->getWindow();
-    $sClass = $this->getFactory()->findClass($sAlias)->read('name');
 
     $result = $window->createInstanciate($window->tokenToInstance($sClass), $aArguments);
 

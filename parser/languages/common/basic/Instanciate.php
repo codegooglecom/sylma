@@ -6,6 +6,7 @@ use sylma\core, sylma\parser\languages\common;
 class Instanciate extends Controled implements common\_object, common\_instance, common\argumentable {
 
   protected $instance;
+  protected $aArguments = array();
 
   public function __construct(common\_window $controler, common\_instance $instance, array $aArguments = array()) {
 
@@ -25,9 +26,9 @@ class Instanciate extends Controled implements common\_object, common\_instance,
     return $this->aArguments;
   }
 
-  public function addContent($mVar) {
+  public function setArguments(array $aArguments) {
 
-    return $this->getControler()->add($mVar);
+    $this->aArguments = $aArguments;
   }
 
   public function asArgument() {

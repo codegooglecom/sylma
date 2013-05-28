@@ -424,4 +424,26 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Simple format">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <span><tpl:apply select="email/format(length=8)"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sy ...</span>
+      </div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

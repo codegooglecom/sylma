@@ -33,7 +33,7 @@ class Window extends common\basic\Window implements php\window {
     $node = $this->loadInstance('\sylma\dom\node');
     $this->setInterface($node->getInterface());
 
-    $this->sylma =  $this->create('class', array($this, $this->tokenToInstance('\Sylma')->getInterface()));
+    $this->sylma =  $this->createClass('\Sylma');
   }
 
   protected function addContentUnknown($mVal) {
@@ -104,6 +104,16 @@ class Window extends common\basic\Window implements php\window {
   public function createClosure(array $aArguments = array()) {
 
     return $this->create('closure', array($this, $aArguments));
+  }
+
+  public function createClass($sName) {
+
+    return $this->create('class', array($this, $this->getObjectInterface($this->loadReturn($sName))));
+  }
+
+  protected function getObjectInterface(common\_object $obj) {
+
+    return $obj->getInterface();
   }
 
   public function callClosure($closure, common\_instance $return, array $aArguments = array()) {

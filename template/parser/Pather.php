@@ -127,7 +127,7 @@ class Pather extends component\Child {
   public function readPath($sPath, $sMode) {
 
     $sPath = trim($sPath);
-    $aResult = $this->parsePathToken($this->parsePaths($sPath), $sMode, true);
+    $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode, true);
 
     return $aResult;
   }
@@ -197,7 +197,41 @@ class Pather extends component\Child {
 
   protected function matchFunction($sVal) {
 
-    preg_match('/^([\w-]+)\\(/', $sVal, $aResult);
+    //preg_match('/^([\w-]+)\\(/', $sVal, $aResult);
+    preg_match('/^([\w-]+)\\((.*)\\)$/', $sVal, $aResult);
+
+    return $aResult;
+  }
+
+  protected function parseArguments($sArguments, $sMode, $bRead) {
+
+    $aResult = array();
+
+    foreach (explode(',', $sArguments) as $sArgument) {
+
+      if (strpos($sArgument, '=') !== false) {
+
+        list($mKey, $sValue) = explode('=', $sArgument);
+      }
+      else {
+
+        $mKey = count($aResult);
+        $sValue = $sArgument;
+      }
+
+      if ($sString = $this->matchString($sValue)) {
+
+        $aResult[$mKey] = $sString;
+      }
+      else if ($this->matchNumeric($sValue)) {
+
+        $aResult[$mKey] = $sValue;
+      }
+      else {
+
+        $aResult[$mKey] = $this->applyPath($sValue, $sMode, $bRead);
+      }
+    }
 
     return $aResult;
   }

@@ -30,5 +30,28 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
     return $this->reflectSelf();
   }
+
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead, array $aArguments = array()) {
+
+    switch ($sName) {
+
+      case 'format' :
+
+        if (!$reflector = $this->getReflectorStatic()) {
+
+          $this->launchException('No reflector defined', get_defined_vars());
+        }
+
+        $result = $reflector->call('format', array($this->reflectRead(), $aArguments));
+
+        break;
+
+      default :
+
+        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $aArguments);
+    }
+
+    return $result;
+  }
 }
 

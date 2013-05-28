@@ -16,6 +16,8 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
 
   protected $bOptional = false;
 
+  protected $reflector;
+
   public function setParent(schema\parser\element $parent) {
 
     $this->parent = $parent;
@@ -183,6 +185,34 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
   protected function getMaxOccurs($bBool) {
 
     return $bBool ? $this->iMaxOccurs == 'n' || $this->iMaxOccurs > 1 : $this->iMaxOccurs;
+  }
+
+  protected function getReflectorStatic() {
+
+    if (is_null($this->reflector)) {
+
+      if (!$result = $this->parseReflector(array(), true)) {
+
+        $result = $this->getType()->getReflectorStatic();
+      }
+
+      $this->reflector = $result;
+    }
+
+    return $this->reflector;
+  }
+
+  public function buildReflector(array $aArguments = array()) {
+
+    if (!$result = $this->parseReflector($aArguments)) {
+
+      if (!$this->getType(false) || !$result = $this->getType()->buildReflector($aArguments)) {
+
+        $result = $this->createObject('cached', $aArguments, null, false);
+      }
+    }
+
+    return $result;
   }
 
   public function asToken() {

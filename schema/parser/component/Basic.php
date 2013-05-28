@@ -31,5 +31,26 @@ class Basic extends reflector\component\Foreigner {
 
     return parent::getNamespace($sPrefix);
   }
+
+  protected function parseReflector(array $aArguments = array(), $bStatic = false) {
+
+    if ($this->getNode(false) and $sClass = $this->readx('@' . 'reflector' . ($bStatic ? '-static' : ''))) {
+
+      if ($bStatic) {
+
+        $result = $this->createClass($sClass);
+      }
+      else {
+
+        $result = $this->createObject($sClass, $aArguments, null, false);
+      }
+    }
+    else {
+
+      $result = false;
+    }
+
+    return $result;
+  }
 }
 

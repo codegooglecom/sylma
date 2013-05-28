@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\schema\cached;
+namespace sylma\schema\cached\form;
 use sylma\core;
 
-class Basic extends core\module\Argumented {
+abstract class Basic extends core\module\Argumented {
 
   protected $handler;
 
