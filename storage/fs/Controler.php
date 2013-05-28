@@ -9,7 +9,7 @@ require_once('resource.php');
 class Controler extends core\module\Argumented {
 
   const NS = 'http://www.sylma.org/storage/fs/controler';
-  const SETTINGS = 'settings.yml';
+  const SETTINGS = 'settings.xml.php';
 
   private $directory;
   protected $sPath = '';
@@ -17,8 +17,8 @@ class Controler extends core\module\Argumented {
   protected $aSettings = array();
   protected $bSecured = true;
 
-  protected static $sArgumentClass = 'sylma\core\argument\Filed';
-  protected static $sArgumentFile = 'core/argument/Filed.php';
+  //protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  //protected static $sArgumentFile = 'core/argument/Filed.php';
 
   public function __construct($sPath = '', $bEditable = false, $bFS = true, $bSecure = true) {
 
@@ -32,8 +32,8 @@ class Controler extends core\module\Argumented {
 
     if (!$bFS) $sDirectory = \Sylma::ROOT . $sDirectory;
 
-    $arg = $this->createArgument(path\toAbsolute(self::SETTINGS, $sDirectory));
-    $this->setArguments($arg);
+    //$arg = $this->createArgument(path\toAbsolute(self::SETTINGS, $sDirectory));
+    $this->setArguments(include(self::SETTINGS));
 
     if (!$this->getArgument('rights')) {
 

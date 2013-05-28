@@ -16,6 +16,7 @@ class Basic extends tester\Basic implements core\argumentable {
     $this->setNamespace(self::NS, 'self');
 
     $this->setArguments('../settings.yml');
+    //$this->setArguments(\Sylma::load('../settings.xml.php', __DIR__));
 
     $dir = $this->getDirectory();
 

@@ -178,7 +178,7 @@ class Document extends action\handler\Basic {
         $this->loadSystemInfos($doc);
       }
 
-      //$this->getContext('message')->add(core\factory\Cached::loadStats());
+      //$this->getContext('message')->add(array('content' => $this->getManager('init')->getStats()));
 
       $this->loadContexts();
 

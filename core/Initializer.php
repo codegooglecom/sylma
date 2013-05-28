@@ -9,6 +9,8 @@ class Initializer extends module\Filed {
   const EXTENSION_DEFAULT = 'html';
 
   protected $iStartTime = 0;
+  protected static $aStats = array();
+
   //protected static $sArgumentClass = 'sylma\core\argument\Iterator';
   //protected static $sArgumentFile = 'core/argument/Iterator.php';
 
@@ -455,4 +457,19 @@ class Initializer extends module\Filed {
     self::$aResults = $_SESSION['results'];
   }
 
+  public function addStat($sPath) {
+
+    if (!isset(self::$aStats[$sPath])) self::$aStats[$sPath] = 0;
+    self::$aStats[$sPath]++;
+  }
+
+  public function getStats() {
+
+    $arg = new core\argument\advanced\Treed(self::$aStats);
+
+    $aTree = $arg->parseTree();
+    $aResult = $arg->renderTree($aTree);
+
+    return $aResult[1];
+  }
 }

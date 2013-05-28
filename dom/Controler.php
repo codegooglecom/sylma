@@ -7,10 +7,10 @@ require_once('core/functions/Path.php');
 
 class Controler extends core\module\Domed {
 
-  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  //protected static $sArgumentClass = 'sylma\core\argument\Filed';
 
   const NS = 'http://www.sylma.org/dom';
-  const SETTINGS = 'settings.yml';
+  const SETTINGS = 'settings.xml.php';
 
   protected $aDefaultClasses = array();
 
@@ -33,7 +33,8 @@ class Controler extends core\module\Domed {
   public function __construct() {
 
     $this->setDirectory(__file__);
-    $this->setArguments(self::SETTINGS);
+    //$this->setArguments('settings.yml');
+    $this->setArguments(include(self::SETTINGS));
     $this->setNamespace(self::NS);
 
     foreach ($this->getArgument('namespaces')->query() as $sPrefix => $sNamespace) {
@@ -61,9 +62,6 @@ class Controler extends core\module\Domed {
 
       $factory = $this->getFactory();
 
-      $this->getArguments()->registerToken(core\factory::CLASSBASE_TOKEN);
-      $this->getArguments()->registerToken(core\factory::DIRECTORY_TOKEN);
-
       $classes = $this->getArguments()->get('classes');
       if ($settings) $classes->merge($settings);
 
@@ -71,23 +69,11 @@ class Controler extends core\module\Domed {
 
         if ($class = $classes->get($sKey)) {
 
-          if ($sClassBase = $classes->getToken(core\factory::CLASSBASE_TOKEN)) {
-
-            $class->set('name', path\toAbsolute($class->read('name'), $sClassBase, '\\'));
-          }
-
-          if (!class_exists($class->read('name'), false)) {
-
-            if ($sFile = $class->read('file', false)) $class->set('file', path\toAbsolute($sFile, $class->getLastDirectory()));
-            $factory->includeClass($class->read('name'), $class->read('file', false));
-          }
-
           $aClasses[$sClass] = $class->read('name');
         }
       }
 
-      $this->getArguments()->unRegisterToken(core\factory::CLASSBASE_TOKEN);
-      $this->getArguments()->unRegisterToken(core\factory::DIRECTORY_TOKEN);
+      $factory->setArguments($this->getArguments());
 
       if (!$settings) $this->aDefaultClasses = $aClasses;
     }

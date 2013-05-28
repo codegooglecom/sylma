@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic\instance;
 use sylma\core, sylma\parser\languages\common, sylma\parser\languages\php;
 
-class _String extends _Scalar implements common\_instance, core\tokenable {
+class _String extends _Scalar implements common\_instance, core\tokenable, common\arrayable {
 
   private $mValue = '';
   protected $sFormat = 'php-string';
@@ -40,6 +40,11 @@ class _String extends _Scalar implements common\_instance, core\tokenable {
   protected function formatString($sValue) {
 
     return str_replace('\'', '\\\'', $sValue);
+  }
+
+  public function asArray() {
+
+    return array($this->getValue());
   }
 
   public function asArgument() {

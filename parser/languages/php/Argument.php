@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php;
 use sylma\core, sylma\parser\languages\php, sylma\parser\languages\common;
 
-class Argument extends core\argument\Setable {
+class Argument extends core\argument\Readable {
 
   protected $window;
 
@@ -35,7 +35,7 @@ class Argument extends core\argument\Setable {
         $mResult = $this->normalizeArgument($arg);
       }
       else {
-        
+
         $mResult = null;
       }
     }

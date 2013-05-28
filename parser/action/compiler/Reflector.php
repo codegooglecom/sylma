@@ -94,6 +94,7 @@ class Reflector extends Argumented implements reflector_ns\elemented {
       case 'context' : $mResult = $this->reflectContext($el); break;
       case 'escape' : $mResult = $this->reflectEscape($el); break;
       case 'function' : $mResult = $this->reflectFunction($el); break;
+      case 'script' : $mResult = $this->reflectScript($el); break;
 
       case 'switch' :
       case 'xquery' :
@@ -501,5 +502,18 @@ class Reflector extends Argumented implements reflector_ns\elemented {
     else $result = $call;
 
     return $result;
+  }
+
+  protected function reflectScript(dom\element $el) {
+
+    $window = $this->getWindow();
+    $path = $this->getControler()->create('path', array($el->readx('@path')));
+    $file = $path->asFile();
+
+    //$this->getManager(self::PARSER_MANAGER)->load($file, array(), true, true);
+
+    //$cache = $this->getManager('fs/cache')->getFile((string) $file . '.php');
+
+    return $window->getSelf()->call('includeScript', array((string) $file));
   }
 }

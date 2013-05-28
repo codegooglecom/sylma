@@ -9,22 +9,6 @@ class Cached extends core\module\Argumented implements core\factory {
    * Classes to use within @method create() loaded in @settings /classes
    */
   public $aClasses = array();
-  protected static $aObjects = array();
-
-  public static function loadStats() {
-
-    $arg = new core\argument\advanced\Treed(self::$aObjects);
-    $aTree = $arg->parseTree();
-    $aResult = $arg->renderTree($aTree);
-
-    return $aResult[1];
-  }
-
-  protected function addStat($sClass) {
-
-    if (!array_key_exists($sClass, self::$aObjects)) self::$aObjects[$sClass] = 0;
-    self::$aObjects[$sClass]++;
-  }
 
   public function __construct(core\argument $classes = null) {
 
@@ -43,8 +27,6 @@ class Cached extends core\module\Argumented implements core\factory {
 
     $class = $this->getClass($sName, $sDirectory);
     $result = $this->createObject($class, $aArguments);
-
-    //$this->addStat($class->read('name'));
 
     return $result;
   }
@@ -147,6 +129,8 @@ class Cached extends core\module\Argumented implements core\factory {
 
       $result = $this->buildClass($sClass, $aArguments);
     }
+
+    //$this->getManager('init')->addStat($sClass);
 
     return $result;
   }

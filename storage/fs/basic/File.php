@@ -33,6 +33,8 @@ class File extends Resource implements fs\file {
 
     $this->bExist = is_file($this->getRealPath());
 
+    //\Sylma::getManager('init')->addStat($this->getRealPath());
+
     if ($this->doExist() || $iDebug & self::DEBUG_EXIST) {
 
       $this->aRights = $aRights;

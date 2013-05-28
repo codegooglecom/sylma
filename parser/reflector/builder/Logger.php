@@ -7,7 +7,6 @@ abstract class Logger extends core\module\Domed {
 
   const LOG = true;
 
-  protected $bLog = false;
   protected $logger;
 
   protected function loadLogger() {

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/dom"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:target="[current()]"
+>
+  <rights>
+    <owner>root</owner>
+    <group>0</group>
+    <mode>711</mode>
+    <user-mode></user-mode>
+  </rights>
+  <browse>
+    <excluded arg:type="token">.svn</excluded>
+    <depth>1</depth>
+    <extensions arg:type="token"/>
+    <only-path>1</only-path>
+  </browse>
+  <tokens>
+    <sylma>
+      <path>sylma</path>
+    </sylma>
+    <tmp>
+      <path>.sylma-tmp</path>
+      <propagate>1</propagate>
+    </tmp>
+    <trash>
+      <path>trash</path>
+    </trash>
+  </tokens>
+  <system>
+    <rights>0770</rights>
+  </system>
+  <cls:classes>
+    <cls:base>\sylma\storage\fs</cls:base>
+    <cls:class alias="controler" name="Controler"/>
+    <cls:class alias="file" name="basic\File">
+      <cls:classes>
+        <cls:class alias="document" name="\sylma\dom\basic\handler\Rooted"/>
+        <cls:class alias="editable" name="basic\editable\File"/>
+      </cls:classes>
+    </cls:class>
+    <cls:class alias="directory" name="basic\tokened\Directory">
+      <cls:classes>
+        <cls:class alias="editable" name="basic\editable\Directory"/>
+      </cls:classes>
+    </cls:class>
+    <cls:class alias="security" name="basic\security\Manager">
+      <cls:classes>
+        <cls:class alias="document" name="\sylma\dom\basic\handler\Rooted"/>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>

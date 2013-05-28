@@ -6,7 +6,8 @@ use \sylma\dom, \sylma\storage\fs, \sylma\core;
 class Document extends \DOMDocument implements dom\document {
 
   const NS = 'http://www.sylma.org/dom/basic/Document';
-
+  const DEBUG_NAMESPACE = false;
+  
   protected $handler;
 
   public function __construct($sVersion = '1.0', $sEncoding = 'utf-8') {
@@ -30,7 +31,7 @@ class Document extends \DOMDocument implements dom\document {
 
     return $mResult;
   }
-  
+
   /**
    * Allow implementation of node interface
    * @return dom\document
@@ -65,7 +66,7 @@ class Document extends \DOMDocument implements dom\document {
 
     // Import error can append with not-prefixed element
 
-    if (\Sylma::read('debug/xml/import')) {
+    if (self::DEBUG_NAMESPACE) {
 
       if ($node instanceof dom\element) {
 

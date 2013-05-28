@@ -24,7 +24,7 @@ class Messages extends core\module\Domed implements core\argumentable, dom\domab
 
       $sMessage = $message->read('content');
 
-      if (is_string($sMessage) && $sMessage{0} === '<') $doc->add($this->createDocument($sMessage));
+      if ($sMessage && is_string($sMessage) && $sMessage{0} === '<') $doc->add($this->createDocument($sMessage));
       else $doc->add($sMessage);
     }
 
