@@ -1,17 +1,18 @@
 <?php
 
 namespace sylma\storage\sql\query\parser;
-use sylma\core, sylma\parser\languages\common, sylma\schema;
+use sylma\core, sylma\parser\languages\common, sylma\schema, sylma\storage\sql;
 
 class Select extends Basic implements common\arrayable, common\argumentable {
 
   protected $sMethod = '';
   protected $aJoins = array();
   protected $aElements = array();
+  protected $aJoinsElements = array();
 
   protected $offset = '0';
   protected $count;
-  protected $clone;
+  protected $aClones = array();
   protected $order;
 
   public function setColumn($val) {
@@ -74,7 +75,7 @@ class Select extends Basic implements common\arrayable, common\argumentable {
 
   public function setWhere($val1, $sOp, $val2, $sLog = 'AND') {
 
-    if ($clone = $this->getClone()) {
+    foreach($this->getClones() as $clone) {
 
       $clone->setWhere($val1, $sOp, $val2, $sLog);
     }
@@ -82,14 +83,28 @@ class Select extends Basic implements common\arrayable, common\argumentable {
     return parent::setWhere($val1, $sOp, $val2, $sLog);
   }
 
-  public function addJoin($table, $field, $val) {
+  public function addJoin(sql\schema\table $table, sql\schema\field $field, $val) {
 
-    if ($clone = $this->getClone()) {
+    $bAdd = true;
 
-      $clone->addJoin($table, $field, $val);
+    foreach ($this->aJoinsElements as $el) {
+
+      if ($el === $field) {
+
+        $bAdd = false;
+      }
     }
 
-    $this->aJoins[] = array($table, $field, $val);
+    if ($bAdd) {
+
+      foreach($this->getClones() as $clone) {
+
+        $clone->addJoin($table, $field, $val);
+      }
+
+      $this->aJoins[] = array($table, $field, $val);
+      $this->aJoinsElements[] = $field;
+    }
   }
 
   protected function getJoins() {
@@ -102,6 +117,11 @@ class Select extends Basic implements common\arrayable, common\argumentable {
     }
 
     return $aResult;
+  }
+
+  public function clearJoins() {
+
+    $this->aJoins = array();
   }
 
   public function setMethod($sMethod) {
@@ -180,14 +200,14 @@ class Select extends Basic implements common\arrayable, common\argumentable {
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }
 
-  public function setClone(self $clone) {
+  public function addClone(self $clone) {
 
-    $this->clone = $clone;
+    $this->aClones[] = $clone;
   }
 
-  protected function getClone() {
+  protected function getClones() {
 
-    return $this->clone;
+    return $this->aClones;
   }
 }
 

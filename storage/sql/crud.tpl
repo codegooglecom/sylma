@@ -77,7 +77,7 @@
         </le:check-argument>
 
         <sql:order>
-          <le:argument name="order"/>
+          <le:argument name="order" escape="x"/>
         </sql:order>
 
       </view:template>
@@ -131,9 +131,9 @@
         <tpl:token name="action"><le:path/>/insert/do.json</tpl:token>
       </view:template>
 
-      <view:template match="*" mode="select">
+      <view:template match="*" mode="select-option">
         <option value="{id}">
-          <tpl:apply mode="option"/>
+          <tpl:apply mode="select-option-value"/>
         </option>
       </view:template>
 
@@ -149,24 +149,15 @@
 
       <view:template mode="root">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
-        <sql:filter name="id"><le:argument name="id"/></sql:filter>
+        <sql:filter name="id"><le:argument name="id" escape="x"/></sql:filter>
         <js:option name="id"><tpl:read select="id"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
-      </view:template>
-
-      <view:template match="*" mode="select">
-        <option value="{id}">
-          <tpl:if test="parent()/value() = id">
-            <tpl:token name="selected">selected</tpl:token>
-          </tpl:if>
-          <tpl:apply mode="option"/>
-        </option>
       </view:template>
 
     </view:view>
 
     <view:view name="do" mode="update">
-      <sql:filter name="id" single="single"><le:argument name="id" source="post"/></sql:filter>
+      <sql:filter name="id" single="single"><le:argument name="id" source="post" escape="x"/></sql:filter>
     </view:view>
 
   </crud:route>

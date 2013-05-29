@@ -111,7 +111,12 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
     $this->type = $type;
   }
 
-  public function getElement($sName, $sNamespace, $bDebug = true) {
+  public function getElement($sName, $sNamespace = null, $bDebug = true) {
+
+    if (is_null($sNamespace)) {
+
+      $sNamespace = $this->getNamespace();
+    }
 
     if (!$this->isComplex()) {
 

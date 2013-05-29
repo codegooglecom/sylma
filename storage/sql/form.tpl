@@ -39,10 +39,23 @@
   </view:template>
 
   <view:template match="sql:foreign" mode="input" sql:ns="ns">
+    <tpl:apply mode="select"/>
+  </view:template>
+
+  <view:template match="*" mode="select">
     <select id="form-{alias()}" name="{alias()}">
       <option value="0">&lt; Choisissez &gt;</option>
-      <tpl:apply select="all()" mode="select"/>
+      <tpl:apply select="all()" mode="select-option"/>
     </select>
+  </view:template>
+
+  <view:template match="*" mode="select-option">
+    <option value="{id}">
+      <tpl:if test="parent()/value() = id">
+        <tpl:token name="selected">selected</tpl:token>
+      </tpl:if>
+      <tpl:apply mode="select-option-value"/>
+    </option>
   </view:template>
 
   <view:template match="ssd:password" mode="input" ssd:ns="ns">

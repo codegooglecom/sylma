@@ -91,6 +91,11 @@ class Pather extends template\parser\Pather {
     return $result;
   }
 
+  protected function parseArgumentDefault($sValue, $sMode, $bRead, $bApply) {
+
+    return $this->getSource()->getElement($sValue);
+  }
+
   protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead) {
 
     if (!$this->getSource()) {
@@ -98,9 +103,10 @@ class Pather extends template\parser\Pather {
       $this->launchException('No source defined');
     }
 
-    $aArguments = isset($aMatch[2]) && ($aMatch[2] !== '') ? $this->parseArguments($aMatch[2], $sMode, $bRead) : array();
+    //$aArguments = isset($aMatch[2]) && ($aMatch[2] !== '') ? $this->parseArguments($aMatch[2], $sMode, $bRead) : array();
+    $sArguments = isset($aMatch[2]) ? $aMatch[2] : '';
 
-    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode, $bRead, $aArguments);
+    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode, $bRead, $sArguments);
   }
 }
 

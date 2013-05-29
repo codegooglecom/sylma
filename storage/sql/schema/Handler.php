@@ -16,7 +16,10 @@ class Handler extends xsd\Elemented {
     $this->setDirectory(__FILE__);
     $this->setNamespace(parent::NS, parent::PREFIX);
 
-    $this->loadBaseTypes(array('foreign' => self::NS));
+    $this->loadBaseTypes(array(
+      'foreign' => self::NS,
+      'collection' => self::NS,
+    ));
   }
 
   public function parseRoot(dom\element $el) {

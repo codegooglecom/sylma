@@ -175,4 +175,30 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Simple distinct">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple">
+          <sql:table>user_multi</sql:table>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="distinct(group_id)/*"/>
+          </div>
+        </view:template>
+        <view:template match="group:group">
+          <span>
+            <tpl:read select="name"/>
+          </span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <span>group01</span>
+        <span>group02</span>
+      </div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

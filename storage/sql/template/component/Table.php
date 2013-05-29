@@ -128,6 +128,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     switch ($sName) {
 
       //case 'apply' : $result = $this->reflectApply(''); break;
+      case 'name' : $result = $this->getName(); break;
       case 'parent' :
 
         $parent = $this->getParent();

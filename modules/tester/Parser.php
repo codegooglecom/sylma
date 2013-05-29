@@ -79,13 +79,15 @@ class Parser extends tester\Prepare {
       }
     }
 
-    return $this->loadResult($manager, $file, $aArguments);
+    return $this->loadResult($manager, $file, $aArguments, !$test->getx('self:expected', array(), false));
   }
 
-  protected function loadResult($manager, fs\file $file, array $aArguments) {
+  protected function loadResult($manager, fs\file $file, array $aArguments, $bDelete = true) {
+
+    $this->setFile($file);
 
     $result = $manager->load($file, $aArguments, false);
-    $file->delete();
+    if ($bDelete) $file->delete();
 
     return $result;
   }
@@ -122,6 +124,11 @@ class Parser extends tester\Prepare {
     $this->loadResultNode($test);
 
     return parent::test($test, $sContent, $controler, $doc, $file);
+  }
+
+  public function loadScript(array $aArguments = array(), array $aPosts = array(), array $aContexts = array()) {
+
+    return $this->getScriptFile($this->getFile(), $this->buildScriptArguments($aArguments, $aContexts, $aPosts));
   }
 
   public function get($sPath, $bDebug = true) {

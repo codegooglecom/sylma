@@ -44,7 +44,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $result;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead, array $aArguments = array()) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead, $sArguments = '') {
 
     switch ($sName) {
 

@@ -58,37 +58,15 @@ class Container extends template_ns\parser\component\Template {
     $sPrefix = $aMatches[2];
     $sName = $aMatches[3];
 
-    if ($sPrefix) {
-
-      if (!$sNamespace = $this->lookupNamespace($sPrefix)) {
-
-        $this->launchException('Cannot match value, no namespace defined', get_defined_vars());
-      }
-    }
-    else {
-
-      $sNamespace = '';
-    }
-
-    if (!$sName) {
-
-      $this->launchException('Cannot match value, no name defined', get_defined_vars());
-    }
-
     if (!$sContext) $sContext = self::CONTEXT_DEFAULT;
     //if (!$sMode) $sMode = self::MODE_DEFAULT;
 
     $this->aMatch = array(
       'context' => $sContext,
       //'mode' => $sMode,
-      'namespace' => $sNamespace,
+      'namespace' => $this->getNamespace('sylma-match'),
       'name' => $sName,
     );
-  }
-
-  protected function lookupNamespace($sPrefix) {
-
-    return $this->getParser()->lookupNamespace($sPrefix);
   }
 
   protected function getContext() {
@@ -127,9 +105,12 @@ class Container extends template_ns\parser\component\Template {
           if ($type = $element->getType()) {
 
             $iType = $this->getWeightType($type);
+            $iResult = $iType > $iElement ? $iType : $iElement;
           }
+          else {
 
-          $iResult = $iType > $iElement ? $iType : $iElement;
+            $iResult = $iElement;
+          }
         }
       }
     }

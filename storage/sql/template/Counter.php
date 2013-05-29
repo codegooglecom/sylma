@@ -10,11 +10,6 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
 
   public function setQuery(sql\query\parser\Select $query) {
 
-    $query->clearColumns();
-    $query->clearLimit();
-    $query->clearOrder();
-
-    $query->setColumn('COUNT(*)');
     $query->isMultiple(false);
     $query->setMethod('read');
 
@@ -43,6 +38,15 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
   public function asArray() {
 
     if ($this->isUsed()) {
+
+      $query = $this->getQuery();
+
+      $query->clearColumns();
+      $query->clearLimit();
+      $query->clearOrder();
+      //$query->clearJoins();
+
+      $query->setColumn('COUNT(*)');
 
       $aResult[] = $this->getQuery()->getVar()->getInsert();
     }

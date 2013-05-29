@@ -27,7 +27,7 @@ class Grouped extends tester\Parser implements core\argumentable {
     return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $aArguments, $bUpdate);
   }
 
-  protected function loadResult($manager, fs\file $file, array $aArguments) {
+  protected function loadResult($manager, fs\file $file, array $aArguments, $bDelete = true) {
 
     $this->setFile($file);
 
@@ -55,7 +55,7 @@ class Grouped extends tester\Parser implements core\argumentable {
     return parent::set($sPath, $mValue);
   }
 
-  public function loadScript(array $aArguments = array()) {
+  public function loadScript(array $aArguments = array(), array $aPosts = array(), array $aContexts = array()) {
 
     $manager = $this->getManager(self::PARSER_MANAGER);
     $result = $manager->load($this->getFile(), $aArguments, false);

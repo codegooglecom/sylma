@@ -31,7 +31,7 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
     return $this->reflectSelf();
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead, array $aArguments = array()) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead, $sArguments = '') {
 
     switch ($sName) {
 
@@ -42,13 +42,14 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
           $this->launchException('No reflector defined', get_defined_vars());
         }
 
+        $aArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead);
         $result = $reflector->call('format', array($this->reflectRead(), $aArguments));
 
         break;
 
       default :
 
-        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $aArguments);
+        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments);
     }
 
     return $result;

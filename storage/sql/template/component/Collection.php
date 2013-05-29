@@ -9,15 +9,20 @@ class Collection extends Rooted implements sql\template\pathable {
   protected $pager;
   protected $counter;
 
-  public function getElement($sName, $sNamespace) {
+  public function getElement($sName, $sNamespace = null) {
 
     return $this->getTable()->getElement($sName, $sNamespace);
   }
 
   public function setTable(Table $table) {
 
+    $sNamespace = $this->getParser()->getNamespace('sql');
+
+    $this->setType($this->getParser()->getType('collection', $sNamespace));
+    $this->setNamespace($sNamespace);
+
     $this->table = $table;
-    $this->loadNamespace($table->getNamespace());
+    //$this->loadNamespace($table->getNamespace());
   }
 
   protected function getTable() {
@@ -51,11 +56,6 @@ class Collection extends Rooted implements sql\template\pathable {
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
     $this->launchException('No default value defined');
-  }
-
-  public function getType($bDebug = true) {
-
-    return null;
   }
 
   public function reflectApply($sMode = '', $bStatic = false) {
@@ -101,13 +101,13 @@ class Collection extends Rooted implements sql\template\pathable {
     return $aResult;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '') {
 
     switch ($sName) {
 
       case 'static' :
 
-        $result = $this->getTable()->reflectApply($sMode, true);
+        $result = $aPath ? $this->getParser()->parsePathToken($this->getTable(), $aPath, $sMode, true) : $this->getTable()->reflectApply($sMode, true);
         break;
 
       case 'count' :
@@ -120,12 +120,57 @@ class Collection extends Rooted implements sql\template\pathable {
         $result = $this->getPager()->reflectApply($sMode);
         break;
 
+      case 'distinct' :
+
+        $aArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
+        $result = $this->getDistinct($aArguments, $aPath, $sMode);
+        break;
+
       default :
 
         $this->launchException("Function '$sName' unknown", get_defined_vars());
     }
 
     return $result;
+  }
+
+  protected function getDistinct(array $aArguments, array $aPath, $sMode) {
+
+    $el = array_pop($aArguments);
+    $table = $this->loadDistinctElement($el);
+
+    $query = clone $this->getQuery();
+    $this->getQuery()->addClone($query);
+
+    $query->clearColumns();
+    $query->clearLimit();
+    $query->clearOrder();
+    //$query->clearJoins();
+
+    $query->setMethod('extract');
+
+    $query->setColumn(array('DISTINCT ', $el->asString()));
+
+    $collection = $this->loadSimpleComponent('component/collection');
+    $collection->setTable($table);
+    $collection->setQuery($table->getQuery());
+
+    $window = $this->getWindow();
+
+    $sIDS = array('(', $window->callFunction('implode', 'php-string', array(',', $query->getVar()->call('asArray'))), ')');
+
+    $collection->getQuery()->setWhere($table->getElement('id'), 'IN', $sIDS);
+
+    $aResult[] = $query;
+
+    $aResult[] = $aPath ? $this->getParser()->parsePath($collection, implode('/', $aPath), $sMode) : $collection->reflectApply($sMode);
+
+    return $aResult;
+  }
+
+  protected function loadDistinctElement(Foreign $el) {
+
+    return $el->getElementRef();
   }
 
   public function setPager(sql\template\Pager $pager) {
@@ -162,7 +207,7 @@ class Collection extends Rooted implements sql\template\pathable {
   protected function loadCounter() {
 
     $query = clone $this->getQuery();
-    $this->getQuery()->setClone($query);
+    $this->getQuery()->addClone($query);
 
     $result = $this->loadSimpleComponent('counter');
     $result->setQuery($query);

@@ -23,7 +23,7 @@
       </sql:current>
       <sql:count>10</sql:count>
     </sql:pager>
-    
+
   </view:template>
 
   <view:template match="sql:pager">

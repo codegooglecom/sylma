@@ -10,6 +10,7 @@ class Pager extends reflector\component\Foreigner implements reflector\component
 
   protected $offset;
   protected $count;
+  protected $bCount = false;
 
   public function parseRoot(dom\element $el) {
 
@@ -98,36 +99,55 @@ class Pager extends reflector\component\Foreigner implements reflector\component
   public function reflectApplyFunction($sName, array $aPath, $sMode) {
 
     $var = $this->getVar();
+    //$aResult[] = $this->loadCount();
 
     switch ($sName) {
 
-      case 'is-multiple' : $result = $var->call('isMultiple'); break;
-      case 'is-first' : $result = $var->call('isFirst');; break;
-      case 'is-last' : $result = $var->call('isLast'); break;
+      case 'is-multiple' : $aResult[] = $var->call('isMultiple'); break;
+      case 'is-first' : $aResult[] = $var->call('isFirst');; break;
+      case 'is-last' : $aResult[] = $var->call('isLast'); break;
 
       default :
 
         $this->launchException("Unknow function : '$sName'");
     }
 
-    return $result;
+    return $aResult;
   }
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
     $var = $this->getVar();
+    //$aResult[] = $this->loadCount();
 
     switch ($sPath) {
 
-      case 'current' : $result = $var->call('getPage'); break;
-      case 'next' : $result = $var->call('getNext'); break;
-      case 'last' : $result = $var->call('getLast'); break;
+      case 'current' : $aResult = $var->call('getPage'); break;
+      case 'next' : $aResult = $var->call('getNext'); break;
+      case 'last' : $aResult = $var->call('getLast'); break;
       case 'prev' :
-      case 'previous' : $result = $var->call('getPrevious'); break;
+      case 'previous' : $aResult = $var->call('getPrevious'); break;
 
       default :
 
         $this->launchException("Unknown path : '$sPath'");
+    }
+
+    return $aResult;
+  }
+
+  protected function _loadCount() {
+
+    if (!$this->bCount) {
+
+      $count = $this->getCollection()->getCount();
+      $result = $this->getVar()->call('setCount', array($count))->getInsert();
+
+      $this->bCount = true;
+    }
+    else {
+
+      $result = null;
     }
 
     return $result;

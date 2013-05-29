@@ -74,4 +74,46 @@
       <h2>admin</h2>
     </tst:node>
   </tst:test>
+  <tst:test name="Dynamic filter">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:source>test</sql:source>
+        </sql:resource>
+        <sql:filter name="id" optional="x"><le:argument name="id" optional="x"/></sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <h2>
+            <tpl:apply select="name"/>
+          </h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node name="node1">
+      <h2>root</h2>
+      <h2>admin</h2>
+      <h2>admin</h2>
+    </tst:node>
+    <tst:node name="node2">
+      <h2>admin</h2>
+    </tst:node>
+    <tst:expected>
+
+      $nodes = $manager->getArgument('node');
+
+      $result1 = $manager->loadScript();
+      $result2 = $manager->loadScript(array(
+        'id' => 2,
+      ));
+
+      $manager->compareNodes($result1, $nodes->get('node1'));
+      $manager->compareNodes($result2, $nodes->get('node2'));
+
+    </tst:expected>
+  </tst:test>
 </tst:tests>

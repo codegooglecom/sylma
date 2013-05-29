@@ -132,7 +132,13 @@
       </view:view>
     </tst:document>
     <tst:node>
-      <div><ul><li>group01</li><li>group02</li></ul></div>
+      <div>
+        <ul>
+          <li>group01</li>
+          <li>group02</li>
+          <li>group03</li>
+        </ul>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Get ref values with path">
@@ -151,7 +157,11 @@
       </view:view>
     </tst:document>
     <tst:node>
-      <div><li>group01</li><li>group02</li></div>
+      <div>
+        <li>group01</li>
+        <li>group02</li>
+        <li>group03</li>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Apply template on ref values">
@@ -170,7 +180,11 @@
       </view:view>
     </tst:document>
     <tst:node>
-      <div><li>group01</li><li>group02</li></div>
+      <div>
+        <li>group01</li>
+        <li>group02</li>
+        <li>group03</li>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Read all ref parent value">
@@ -189,7 +203,11 @@
       </view:view>
     </tst:document>
     <tst:node>
-      <div><li>1</li><li>1</li></div>
+      <div>
+        <li>1</li>
+        <li>1</li>
+        <li>1</li>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Apply all ref parent value">
@@ -208,7 +226,11 @@
       </view:view>
     </tst:document>
     <tst:node>
-      <div><li>1</li><li>1</li></div>
+      <div>
+        <li>1</li>
+        <li>1</li>
+        <li>1</li>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Foreign multiple key">
@@ -249,7 +271,11 @@
       </view:view>
     </tst:document>
     <tst:node>
-      <div><li>group01</li><li>group02</li></div>
+      <div>
+        <li>group01</li>
+        <li>group02</li>
+        <li>group03</li>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Foreign key path access" disabled="true">

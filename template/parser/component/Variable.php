@@ -33,7 +33,7 @@ class Variable extends Child implements common\arrayable, parser\component {
 
     $aContent = $this->parseComponentRoot($this->getNode());
 
-    $this->var = $window->addVar($window->toString($aContent));
+    $this->var = $window->createVar($window->toString($aContent));
   }
 
   public function getVar() {
@@ -45,7 +45,7 @@ class Variable extends Child implements common\arrayable, parser\component {
 
     $this->build();
 
-    return array();
+    return array($this->getVar()->getInsert());
   }
 }
 

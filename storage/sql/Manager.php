@@ -55,7 +55,12 @@ class Manager extends core\module\Argumented {
     }
   }
 
-  public function query($sQuery, $bDebug = true) {
+  public function extract($sQuery, $bDebug = true) {
+
+    return $this->query($sQuery, $bDebug, \PDO::FETCH_COLUMN);
+  }
+
+  public function query($sQuery, $bDebug = true, $iFormat = \PDO::FETCH_ASSOC) {
 
     $result = $this->getDatabase()->query($sQuery);
     $this->logQuery($sQuery);
@@ -69,7 +74,7 @@ class Manager extends core\module\Argumented {
     }
     else {
 
-      $result = new Argument($result);
+      $result = new Argument($result->fetchAll($iFormat));
     }
 
     return $result;

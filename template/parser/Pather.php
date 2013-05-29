@@ -196,7 +196,7 @@ class Pather extends component\Child {
     return $aResult;
   }
 
-  protected function parseArguments($sArguments, $sMode, $bRead) {
+  public function parseArguments($sArguments, $sMode, $bRead, $bApply = true) {
 
     $aResult = array();
 
@@ -222,11 +222,16 @@ class Pather extends component\Child {
       }
       else {
 
-        $aResult[$mKey] = $this->applyPath($sValue, $sMode, $bRead);
+        $aResult[$mKey] = $bApply ? $this->applyPath($sValue, $sMode, $bRead) : $this->parseArgumentDefault($sValue, $sMode, $bRead, $bApply);
       }
     }
 
     return $aResult;
+  }
+
+  protected function parseArgumentDefault($sValue, $sMode, $bRead, $bApply) {
+
+    $this->launchException('No behaviour defined');
   }
 
   protected function parsePathAll($sPath, $sMode) {

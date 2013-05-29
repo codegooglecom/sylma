@@ -16,7 +16,7 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
 
     $tree = $this->getParser()->getTree();
     $query = $tree->getQuery();
-
+    
     if ($this->getNode()->isComplex()) {
 
       $content = $this->parseChildren($this->getNode()->getChildren());

@@ -34,6 +34,8 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   public function parseRoot(dom\element $el) {
 
+    $this->parseMatchNamespace($el);
+
     $this->setNode($el);
     $this->loadMode();
 
@@ -44,6 +46,31 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     $this->setID(uniqid());
     $this->build();
+  }
+
+  protected function parseMatchNamespace(dom\element $el) {
+
+    if ($sMatch = $el->readx('@match', array(), false)) {
+
+      preg_match_all('/(\w+):(\w+)/', $sMatch, $aMatches, PREG_SET_ORDER);
+
+      foreach ($aMatches as $aMatch) {
+
+        list(,$sPrefix, $sName) = $aMatch;
+
+        if (!$sNamespace = $el->lookupNamespace($sPrefix)) {
+
+          $this->launchException('Cannot match value, no namespace defined', get_defined_vars());
+        }
+
+        if (!$sName) {
+
+          $this->launchException('Cannot match value, no name defined', get_defined_vars());
+        }
+
+        $this->setNamespace($sNamespace, 'sylma-match');
+      }
+    }
   }
 
   protected function setID($sID) {
@@ -329,8 +356,8 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
 
-    $mSender[] = $this->getNode()->asToken() . ' @match ' . $this->getMatch();
-    $aVars[] = $this->getNode();
+    $mSender[] = ($this->getNode(false) ? $this->getNode()->asToken() : '[no-node]') . ' @match ' . $this->getMatch();
+    $aVars[] = $this->getNode(false);
 
     parent::launchException($sMessage, $aVars, $mSender);
   }

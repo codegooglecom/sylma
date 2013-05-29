@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\schema\component;
-use sylma\core, sylma\dom, sylma\schema;
+use sylma\core, sylma\dom, sylma\storage\sql\schema;
 
-class Table extends Element {
+class Table extends Element implements schema\table {
 
   public function parseRoot(dom\element $el) {
 
