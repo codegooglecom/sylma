@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\storage\sql;
+namespace sylma\storage\sql\cached;
 use sylma\core;
 
 class Pager extends core\module\Exceptionable {
@@ -42,7 +42,7 @@ class Pager extends core\module\Exceptionable {
   public function getOffset() {
 
     $test = ($this->getPage() - 1) * $this->getSize();
-    
+
     return $test;
   }
 

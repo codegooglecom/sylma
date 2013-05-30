@@ -5,9 +5,9 @@ use sylma\core, sylma\storage\sql;
 
 class Field extends sql\template\component\Field implements sql\template\pathable {
 
-  protected function reflectApplySelf($sMode = '') {
+  protected function reflectApplySelf($sMode = '', array $aArguments = array()) {
 
-    if ($result = parent::reflectApplySelf($sMode)) {
+    if ($result = parent::reflectApplySelf($sMode, $aArguments)) {
 
       $this->addToQuery();
     }

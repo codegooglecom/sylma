@@ -30,7 +30,7 @@ class Insert extends Basic implements common\argumentable {
     return parent::setTable($val);
   }
 
-  protected function getString() {
+  public function getString() {
 
     $sTable = current($this->getTables());
 

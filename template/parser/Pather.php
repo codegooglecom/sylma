@@ -101,17 +101,17 @@ class Pather extends component\Child {
     return is_numeric($sValue);
   }
 
-  public function applyPath($sPath, $sMode) {
+  public function applyPath($sPath, $sMode, array $aArguments = array()) {
 
     $sPath = trim($sPath);
 
     if ($this->matchAll($sPath)) {
 
-      $aResult = $this->parsePathAll($sPath, $sMode);
+      $aResult = $this->parsePathAll($sPath, $sMode, $aArguments);
     }
     else {
 
-      $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode);
+      $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode, false, $aArguments);
     }
 
     return $aResult;
@@ -136,24 +136,24 @@ class Pather extends component\Child {
     return explode('/', $sPath);
   }
 
-  public function parsePathTokens(array $aPaths, $sMode, $bRead = false) {
+  public function parsePathTokens(array $aPaths, $sMode, $bRead = false, array $aArguments = array()) {
 
     $aResult = array();
 
     foreach ($aPaths as $sPath) {
 
-      $aResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode, $bRead);
+      $aResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode, $bRead, $aArguments);
     }
 
     return $aResult;
   }
 
-  public function parsePathToken(array $aPath, $sMode, $bRead) {
+  public function parsePathToken(array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
-    return $this->parsePathTokenValue(array_shift($aPath), $aPath, $sMode, $bRead);
+    return $this->parsePathTokenValue(array_shift($aPath), $aPath, $sMode, $bRead, $aArguments);
   }
 
-  protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead) {
+  protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     if ($aMatch = $this->matchVariable($sPath)) {
 
@@ -161,17 +161,17 @@ class Pather extends component\Child {
     }
     else if ($aMatch = $this->matchFunction($sPath)) {
 
-      $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode, $bRead);
+      $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode, $bRead, $aArguments);
     }
     else {
 
-      $aResult = $this->parsePathDefault($sPath, $aPath, $sMode, $bRead);
+      $aResult = $this->parsePathDefault($sPath, $aPath, $sMode, $bRead, $aArguments);
     }
 
     return $aResult;
   }
 
-  protected function parsePathDefault($sPath, array $aPath, $sMode, $bRead) {
+  protected function parsePathDefault($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     $this->launchException('No default action defined');
   }
@@ -234,7 +234,7 @@ class Pather extends component\Child {
     $this->launchException('No behaviour defined');
   }
 
-  protected function parsePathAll($sPath, $sMode) {
+  protected function parsePathAll($sPath, $sMode, array $aArguments = array()) {
 
     $this->launchException('Not yet implemented');
   }
@@ -256,7 +256,7 @@ class Pather extends component\Child {
     //return $source->parseVariable($aPath, $aMatch[1], $sMode);
   }
 
-  protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead) {
+  protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     $this->launchException('Not yet implemented');
   }

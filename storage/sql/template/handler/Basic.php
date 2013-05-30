@@ -92,21 +92,44 @@ class Basic extends sql\schema\Handler {
     return $pather->parsePathToken($aPath, $sMode, $bRead);
   }
 
-  public function parsePath(sql\template\pathable $source, $sPath, $sMode) {
+  public function parsePath(sql\template\pathable $source, $sPath, $sMode, array $aArguments = array()) {
 
     $pather = $this->getPather();
     $pather->setSource($source);
 
-    return $pather->applyPath($sPath, $sMode);
+    return $pather->applyPath($sPath, $sMode, $aArguments);
   }
 
-  public function reflectApplyDefault(schema\parser\container $source, $sPath, array $aPath, $sMode, $bRead) {
+  public function reflectApplyDefault(schema\parser\container $source, $sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     list($sNamespace, $sName) = $this->parseName($sPath, $source);
 
     $element = $source->getElement($sName, $sNamespace);
 
-    return $element ? ($aPath ? $this->parsePathToken($element, $aPath, $sMode, $bRead) : ($bRead ? $element->reflectRead() : $element->reflectApply($sMode))) : null;
+    if ($element) {
+
+      if ($aPath) {
+
+        $result = $this->parsePathToken($element, $aPath, $sMode, $bRead, $aArguments);
+      }
+      else {
+
+        if ($bRead) {
+
+          $result = $element->reflectRead($aArguments);
+        }
+        else {
+
+          $result = $element->reflectApply($sMode, $aArguments);
+        }
+      }
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
   }
 }
 

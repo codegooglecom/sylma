@@ -20,9 +20,7 @@
   <tst:test name="Simple filter">
     <tst:document>
       <view:view user:ns="ns">
-        <sql:resource>
-          <sql:source>test</sql:source>
-        </sql:resource>
+        <sql:resource/>
         <sql:filter name="id" single="single">2</sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
@@ -37,9 +35,7 @@
   <tst:test name="Filter foreigner">
     <tst:document>
       <view:view user:ns="ns">
-        <sql:resource>
-          <sql:source>test</sql:source>
-        </sql:resource>
+        <sql:resource/>
         <sql:filter name="id" single="single"><le:argument name="id"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
@@ -57,9 +53,7 @@
   <tst:test name="Filter with post" disabled="true">
     <tst:document>
       <view:view user:ns="ns" mode="insert">
-        <sql:resource>
-          <sql:source>test</sql:source>
-        </sql:resource>
+        <sql:resource/>
         <sql:filter name="id" single="single"><le:argument source="post" name="id"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
@@ -77,9 +71,7 @@
   <tst:test name="Dynamic filter">
     <tst:document>
       <view:view user:ns="ns">
-        <sql:resource>
-          <sql:source>test</sql:source>
-        </sql:resource>
+        <sql:resource multiple="multiple"/>
         <sql:filter name="id" optional="x"><le:argument name="id" optional="x"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
@@ -95,12 +87,16 @@
       </view:view>
     </tst:document>
     <tst:node name="node1">
-      <h2>root</h2>
-      <h2>admin</h2>
-      <h2>admin</h2>
+      <div>
+        <h2>root</h2>
+        <h2>admin</h2>
+        <h2>webmaster</h2>
+      </div>
     </tst:node>
     <tst:node name="node2">
-      <h2>admin</h2>
+      <div>
+        <h2>admin</h2>
+      </div>
     </tst:node>
     <tst:expected>
 
@@ -114,6 +110,7 @@
       $manager->compareNodes($result1, $nodes->get('node1'));
       $manager->compareNodes($result2, $nodes->get('node2'));
 
+      return true;
     </tst:expected>
   </tst:test>
 </tst:tests>

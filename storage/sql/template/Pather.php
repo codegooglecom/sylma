@@ -5,7 +5,7 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template;
 
 class Pather extends template\parser\Pather {
 
-  protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead) {
+  protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     if ($aMatch = $this->matchContext($sPath)) {
 
@@ -13,15 +13,15 @@ class Pather extends template\parser\Pather {
     }
     else {
 
-      $aResult = parent::parsePathTokenValue($sPath, $aPath, $sMode, $bRead);
+      $aResult = parent::parsePathTokenValue($sPath, $aPath, $sMode, $bRead, $aArguments);
     }
 
     return $aResult;
   }
 
-  protected function parsePathDefault($sPath, array $aPath, $sMode, $bRead) {
+  protected function parsePathDefault($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
-    return $this->getSource()->reflectApplyDefault($sPath, $aPath, $sMode, $bRead);
+    return $this->getSource()->reflectApplyDefault($sPath, $aPath, $sMode, $bRead, $aArguments);
 
     //return $this->parsePathElement(, $sPath, $aPath, $sMode);
   }
@@ -33,7 +33,7 @@ class Pather extends template\parser\Pather {
     return $aResult;
   }
 
-  protected function parsePathAll($sVal, $sMode) {
+  protected function parsePathAll($sVal, $sMode, array $aArguments = array()) {
 
     if (trim($sVal) !== '*') {
 
@@ -44,11 +44,11 @@ class Pather extends template\parser\Pather {
         $this->launchException('No valid path for exclusion', get_defined_vars());
       }
 
-      $aResult = $this->getSource()->reflectApplyAllExcluding(array_map('trim', explode(',', $aMatch[1])), $sMode);
+      $aResult = $this->getSource()->reflectApplyAllExcluding(array_map('trim', explode(',', $aMatch[1])), $sMode, $aArguments);
     }
     else {
 
-      $aResult = $this->getSource()->reflectApplyAll($sMode);
+      $aResult = $this->getSource()->reflectApplyAll($sMode, $aArguments);
     }
 
     return $aResult;
@@ -96,7 +96,7 @@ class Pather extends template\parser\Pather {
     return $this->getSource()->getElement($sValue);
   }
 
-  protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead) {
+  protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     if (!$this->getSource()) {
 
@@ -106,7 +106,7 @@ class Pather extends template\parser\Pather {
     //$aArguments = isset($aMatch[2]) && ($aMatch[2] !== '') ? $this->parseArguments($aMatch[2], $sMode, $bRead) : array();
     $sArguments = isset($aMatch[2]) ? $aMatch[2] : '';
 
-    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode, $bRead, $sArguments);
+    return $this->getSource()->reflectApplyFunction($aMatch[1], $aPath, $sMode, $bRead, $sArguments, $aArguments);
   }
 }
 

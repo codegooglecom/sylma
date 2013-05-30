@@ -83,6 +83,8 @@ sylma.classes = {
 
     import : function(val, name) {
 
+      name = name || 'div';
+
       var el = new Element(name, {
         html : val
       });
@@ -94,7 +96,10 @@ sylma.classes = {
 
       if (result.messages) {
 
-        for (var i in result.messages) $('messages').adopt(this.import(result.messages[i].content));
+        for (var i in result.messages) {
+
+          $('messages').adopt(this.import(result.messages[i].content));
+        }
       }
 
       return result;
@@ -221,9 +226,9 @@ sylma.ui = new sylma.classes.ui;
     },
 
     prepareNodes : function(nodes) {
-
-      $$(nodes).store('sylma-object', this);
-      $$(nodes).store('sylma-parent', this.getParent());
+      
+      nodes.store('sylma-object', this);
+      nodes.store('sylma-parent', this.getParent());
     },
 
     /**
@@ -278,6 +283,7 @@ sylma.ui = new sylma.classes.ui;
           var name = self.getNode().getParent().tagName || 'div';
 
           sylma.ui.import(result.content, name).replaces(self.getNode());
+
           //console.log(result.objects[sylma.ui.extractFirst(result.objects)]);
           var props = result.objects[sylma.ui.extractFirst(result.objects)];
           self.initialize(props);

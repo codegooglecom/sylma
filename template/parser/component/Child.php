@@ -33,13 +33,6 @@ class Child extends reflector\component\Foreigner {
 
   public function setTemplate(parser_ns\template $template) {
 
-    /*
-    if (!$template->isCloned()) {
-
-      $this->launchException('Template must be cloned');
-    }
-    */
-
     $this->template = $template;
   }
 

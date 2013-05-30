@@ -58,11 +58,13 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->launchException('No default value defined');
   }
 
-  public function reflectApply($sMode = '', $bStatic = false) {
+  public function reflectApply($sMode = '', array $aArguments = array()) {
 
     if ($result = $this->lookupTemplate($sMode)) {
 
       $result->setTree($this);
+      $result->sendArguments($aArguments);
+
       $this->preBuild();
     }
     else {
@@ -82,18 +84,18 @@ class Collection extends Rooted implements sql\template\pathable {
       $aResult[] = $this->getCounter();
     }
 
-    $aResult[] = $this->getWindow()->parseArrayables(array($result));
+    $aResult[] = $result;
 
     return $aResult;
   }
 
-  public function reflectApplyAll($sMode) {
+  public function reflectApplyAll($sMode, array $aArguments = array()) {
 
     $aResult = $this->preBuild();
 
     $this->getTable()->setSource($this->getSource());
 
-    $content = $this->getTable()->reflectApply($sMode);
+    $content = $this->getTable()->reflectApply($sMode, $aArguments);
 
     $aResult[] = $this->getQuery();
     $aResult[] = $this->postBuild($content);
@@ -101,13 +103,13 @@ class Collection extends Rooted implements sql\template\pathable {
     return $aResult;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '') {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
       case 'static' :
 
-        $result = $aPath ? $this->getParser()->parsePathToken($this->getTable(), $aPath, $sMode, true) : $this->getTable()->reflectApply($sMode, true);
+        $result = $aPath ? $this->getParser()->parsePathToken($this->getTable(), $aPath, $sMode, true, $aArguments) : $this->getTable()->reflectApply($sMode, $aArguments);
         break;
 
       case 'count' :
@@ -122,8 +124,8 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'distinct' :
 
-        $aArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
-        $result = $this->getDistinct($aArguments, $aPath, $sMode);
+        $aFunctionArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
+        $result = $this->getDistinct($aFunctionArguments, $aPath, $sMode, $aArguments);
         break;
 
       default :
@@ -134,9 +136,9 @@ class Collection extends Rooted implements sql\template\pathable {
     return $result;
   }
 
-  protected function getDistinct(array $aArguments, array $aPath, $sMode) {
+  protected function getDistinct(array $aFunctionArguments, array $aPath, $sMode, array $aArguments = array()) {
 
-    $el = array_pop($aArguments);
+    $el = array_pop($aFunctionArguments);
     $table = $this->loadDistinctElement($el);
 
     $query = clone $this->getQuery();
@@ -162,8 +164,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $collection->getQuery()->setWhere($table->getElement('id'), 'IN', $sIDS);
 
     $aResult[] = $query;
-
-    $aResult[] = $aPath ? $this->getParser()->parsePath($collection, implode('/', $aPath), $sMode) : $collection->reflectApply($sMode);
+    $aResult[] = $aPath ? $this->getParser()->parsePath($collection, implode('/', $aPath), $sMode, $aArguments) : $collection->reflectApply($sMode, $aArguments);
 
     return $aResult;
   }

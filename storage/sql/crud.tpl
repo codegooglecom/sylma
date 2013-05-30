@@ -77,7 +77,7 @@
         </le:check-argument>
 
         <sql:order>
-          <le:argument name="order" escape="x"/>
+          <le:argument name="order"/>
         </sql:order>
 
       </view:template>

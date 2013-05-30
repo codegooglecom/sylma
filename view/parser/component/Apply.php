@@ -22,7 +22,9 @@ class Apply extends parser\component\Apply implements common\arrayable {
 
     $this->startLog("Apply ({$sValue})");
 
-    $result = $this->getTemplate()->applyPath($sValue, $this->readx('@mode'));
+    $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
+
+    $result = $this->getTemplate()->applyPath($sValue, $this->readx('@mode'), $aArguments);
     $aResult = $this->getWindow()->parseArrayables(array($result));
 
     $this->stopLog();

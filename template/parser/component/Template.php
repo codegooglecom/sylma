@@ -28,7 +28,10 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   protected $bCloned = false;
   protected static $aCall = array();
+
+  protected $aParameters = array();
   protected $aVariables = array();
+
   protected $sID = '';
   protected $sMode = self::MODE_DEFAULT;
 
@@ -213,6 +216,42 @@ class Template extends Child implements common\arrayable, parser\template, core\
     return $this->aContent;
   }
 
+  public function parseArguments(dom\collection $children) {
+
+    $aResult = array();
+
+    foreach ($children as $child) {
+
+      $aResult[$child->readx('@self:name')] = $this->parseElement($child);
+    }
+
+    return $aResult;
+  }
+
+  protected function setParameter($sName, Argument $arg) {
+
+    $this->aParameters[$sName] = $arg;
+  }
+
+  protected function getParameters() {
+
+    return $this->aParameters;
+  }
+
+  public function sendArguments(array $aVars) {
+
+    foreach ($this->getParameters() as $sName => $arg) {
+
+      if (!isset($aVars[$sName])) {
+
+        $this->launchException("Missing argument '$sName' for template");
+      }
+
+      $this->aVariables[$sName] = $arg;
+      $arg->setContent($aVars[$sName]);
+    }
+  }
+
   public function setVariable(Variable $var) {
 
     $this->aVariables[$var->getName()] = $var;
@@ -239,6 +278,11 @@ class Template extends Child implements common\arrayable, parser\template, core\
   protected function addComponent(parser\component $sub) {
 
     $sub->setTemplate($this); // first set for component build
+
+    if ($sub instanceof Argument) {
+
+      $this->setParameter($sub->getName(), $sub);
+    }
 
     $this->aComponents[] = $sub;
   }
@@ -335,11 +379,11 @@ class Template extends Child implements common\arrayable, parser\template, core\
     return $sPath ? $pather->readPath($sPath, $sMode) : $this->getTree()->reflectRead($sMode);
   }
 
-  public function applyPath($sPath, $sMode) {
+  public function applyPath($sPath, $sMode, array $aArguments = array()) {
 
     $pather = $this->getPather();
 
-    return $sPath ? $pather->applyPath($sPath, $sMode) : $this->getTree()->reflectApply($sMode);
+    return $sPath ? $pather->applyPath($sPath, $sMode, $aArguments) : $this->getTree()->reflectApply($sMode, $aArguments);
   }
 
   public function __clone() {

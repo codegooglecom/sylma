@@ -36,6 +36,8 @@
                 <cls:class alias="_attribute" name="Attribute"/>
                 <cls:class alias="variable" name="Variable"/>
                 <cls:class alias="read" name="Read"/>
+                <cls:class alias="text" name="Text"/>
+                <cls:class alias="argument" name="Argument"/>
               </cls:classes>
             </cls:class>
           </cls:classes>

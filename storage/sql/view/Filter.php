@@ -9,14 +9,14 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
 
     $this->setNode($el);
     $this->allowForeign(true);
-    $this->build();
+
   }
 
   protected function build() {
 
     $tree = $this->getParser()->getTree();
     $query = $tree->getQuery();
-    
+
     if ($this->getNode()->isComplex()) {
 
       $content = $this->parseChildren($this->getNode()->getChildren());
@@ -29,13 +29,19 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
     $sName = $this->readx('@name', true);
     $this->log("SQL : filter [$sName]");
 
-    $query->setWhere($tree->getElement($sName, $tree->getNamespace()), '=', $content);
-    //$query->isMultiple(!$this->readx('@single'));
+    if ($this->readx('@optional')) {
+
+      $query->setOptionalWhere($tree->getElement($sName, $tree->getNamespace()), '=', $this->getWindow()->toString($content));
+    }
+    else {
+
+      $query->setWhere($tree->getElement($sName, $tree->getNamespace()), '=', $content);
+    }
   }
 
   public function asArray() {
 
-    return array();
+    return array($this->build());
   }
 
 }

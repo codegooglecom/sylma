@@ -26,11 +26,6 @@ class Grouped extends tester\Parser implements core\argumentable {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
-  public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
-
-    return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $this->buildScriptArguments($aArguments, $aContexts, $aPosts), true);
-  }
-
   public function runQuery($sValue, $iMode = 1) {
 
     $db = $this->getManager(self::DB_MANAGER);

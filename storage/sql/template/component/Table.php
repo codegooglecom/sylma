@@ -79,9 +79,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     $query->setElement($el);
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
-    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead);
+    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
   }
 
   public function insertQuery($bVal = null) {
@@ -91,11 +91,12 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->bQueryInserted;
   }
 
-  public function reflectApply($sMode = '', $bStatic = false) {
+  public function reflectApply($sMode = '', array $aArguments = array()) {
 
     if ($tpl = $this->lookupTemplate($sMode)) {
 
       $tpl->setTree($this);
+      $tpl->sendArguments($aArguments);
 
       if ($this->insertQuery()) {
 

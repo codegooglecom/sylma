@@ -17,7 +17,7 @@
         <cls:class alias="filter" name="view\Filter"/>
         <cls:class alias="pager" name="template\Pager">
           <cls:classes>
-            <cls:class alias="cached" name="Pager"/>
+            <cls:class alias="cached" name="cached\Pager"/>
           </cls:classes>
         </cls:class>
         <cls:class alias="order" name="view\Order"/>

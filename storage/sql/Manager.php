@@ -127,16 +127,14 @@ class Manager extends core\module\Argumented {
 
     $result = is_object($result) ? $result->fetch(\PDO::FETCH_ASSOC) : null;
 
-    if (!$result) {
+    if (!$result && $bDebug) $this->launchExceptionEmpty();
 
-      if ($bDebug) $this->launchExceptionEmpty();
-    }
-    else {
+    return $result ? new Argument($result) : new Argument;
+  }
 
-      $result = new Argument($result);
-    }
+  public function escape($sValue) {
 
-    return $result;
+    return $this->getDatabase()->quote($sValue);
   }
 }
 

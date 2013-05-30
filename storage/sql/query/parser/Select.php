@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\languages\common, sylma\schema, sylma\storage\sql;
 
-class Select extends Basic implements common\arrayable, common\argumentable {
+class Select extends Wherer implements common\argumentable {
 
   protected $sMethod = '';
   protected $aJoins = array();
@@ -12,8 +12,10 @@ class Select extends Basic implements common\arrayable, common\argumentable {
 
   protected $offset = '0';
   protected $count;
-  protected $aClones = array();
   protected $order;
+
+  protected $aClones = array();
+  protected $main;
 
   public function setColumn($val) {
 
@@ -81,6 +83,47 @@ class Select extends Basic implements common\arrayable, common\argumentable {
     }
 
     return parent::setWhere($val1, $sOp, $val2, $sLog);
+  }
+
+  protected function insertDynamicWhere($bVal = null) {
+
+    if (is_bool($bVal)) $this->bDynamicWhere = $bVal;
+
+    return $this->bDynamicWhere;
+  }
+
+  protected function buildDynamicWhere() {
+
+    if ($this->getMain()) {
+
+      $aResult = $this->getMain()->buildDynamicWhere();
+    }
+    else if ($this->getDynamicWhere() && $this->insertDynamicWhere()) {
+
+      $aResult = parent::buildDynamicWhere();
+    }
+    else {
+
+      $aResult = null;
+    }
+
+    $this->insertDynamicWhere(false);
+
+    return $aResult;
+  }
+
+  protected function getWheres() {
+
+    if ($this->getMain() && $this->getMain()->getDynamicWhere()) {
+
+      $result = $this->getMain()->getDynamicWhere();
+    }
+    else {
+
+      $result = parent::getWheres();
+    }
+
+    return $result;
   }
 
   public function addJoin(sql\schema\table $table, sql\schema\field $field, $val) {
@@ -193,21 +236,37 @@ class Select extends Basic implements common\arrayable, common\argumentable {
     parent::build();
   }
 
-  protected function getString() {
+  public function getString() {
 
     $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres(), $this->getOrder(), $this->getLimit());
 
-    return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
+    return $this->getWindow()->createString($aQuery);
   }
 
   public function addClone(self $clone) {
 
     $this->aClones[] = $clone;
+    $clone->setMain($this);
+  }
+
+  public function setMain(self $main) {
+
+    $this->main = $main;
+  }
+
+  protected function getMain() {
+
+    return $this->main;
   }
 
   protected function getClones() {
 
     return $this->aClones;
+  }
+
+  public function _asArray() {
+
+    return array($this->buildDynamicWhere(), $this->getVar()->getInsert());
   }
 }
 

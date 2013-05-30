@@ -24,7 +24,11 @@
         <template>
           <cls:classes>
             <cls:base>\sylma\storage\sql</cls:base>
-            <cls:class alias="select" name="query\parser\Select"/>
+            <cls:class alias="select" name="query\parser\Select">
+              <cls:classes>
+                <cls:class alias="where" name="cached\Where"/>
+              </cls:classes>
+            </cls:class>
             <cls:class alias="update" name="query\parser\Update"/>
             <cls:class alias="insert" name="query\parser\Insert"/>
           </cls:classes>

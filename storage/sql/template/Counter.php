@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template;
 use sylma\core, sylma\parser\reflector, sylma\parser\languages\common, sylma\storage\sql;
 
-class Counter extends reflector\component\Foreigner implements reflector\component, common\arrayable {
+class Counter extends reflector\component\Foreigner implements reflector\component, common\argumentable, common\instruction {
 
   protected $bUsed = false;
   protected $query;
@@ -35,7 +35,7 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
     return $this->bUsed;
   }
 
-  public function asArray() {
+  public function asArgument() {
 
     if ($this->isUsed()) {
 
@@ -48,14 +48,14 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
 
       $query->setColumn('COUNT(*)');
 
-      $aResult[] = $this->getQuery()->getVar()->getInsert();
+      $result = $this->getQuery()->asArgument();
     }
     else {
 
-      $aResult[] = null;
+      $result = null;
     }
 
-    return $aResult;
+    return $result;
   }
 }
 

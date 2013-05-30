@@ -67,16 +67,26 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     if ($aMatches) {
 
       $mResult = array();
+      $iOffset = 0;
 
-      foreach ($aMatches as $aResult) {
+      foreach ($aMatches as $i => $aResult) {
+
+        $iStart = $aResult[0][1];
 
         $iVarLength = strlen($aResult[0][0]);
         $val = $this->getTemplate()->applyPath($aResult[1][0], '');
 
-        $sStart = substr($sValue, 0, $aResult[0][1]);
-        $sEnd = substr($sValue, $aResult[0][1] + $iVarLength);
+        $sStart = substr($sValue, $iOffset, $iStart - $iOffset);
 
-        $mResult[] = array($sStart, $val, $sEnd);
+        if ($i == count($aResult) - 1) {
+
+          $mResult[] = array($sStart, $val, substr($sValue, $iStart + $iVarLength));
+        }
+        else {
+
+          $mResult[] = array($sStart, $val);
+          $iOffset += $iStart + $iVarLength;
+        }
       }
     }
     else {

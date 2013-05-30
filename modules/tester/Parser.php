@@ -131,6 +131,11 @@ class Parser extends tester\Prepare {
     return $this->getScriptFile($this->getFile(), $this->buildScriptArguments($aArguments, $aContexts, $aPosts));
   }
 
+  public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
+
+    return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $this->buildScriptArguments($aArguments, $aContexts, $aPosts), true);
+  }
+
   public function get($sPath, $bDebug = true) {
 
     return parent::get($sPath, $bDebug);

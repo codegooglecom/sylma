@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
 
-abstract class Basic extends reflector\component\Foreigner {
+abstract class Basic extends reflector\component\Foreigner implements common\instruction {
 
   protected $sMethod = 'get';
   protected $bMultiple = false;
@@ -13,6 +13,13 @@ abstract class Basic extends reflector\component\Foreigner {
   protected $aWheres = array();
 
   protected $var;
+
+  public function __construct(reflector\domed $parser, core\argument $arg = null, array $aNamespaces = array()) {
+
+    parent::__construct($parser, $arg, $aNamespaces);
+    
+    $this->getWindow()->addControler('mysql');
+  }
 
   protected function implode($aArray, $sGlue = ', ') {
 
@@ -63,6 +70,11 @@ abstract class Basic extends reflector\component\Foreigner {
     return $aResult ? array(' WHERE', $aResult) : null;
   }
 
+  protected function clearWheres() {
+
+    $this->aWheres = array();
+  }
+
   protected function getColumns() {
 
     $aResult = array();
@@ -80,7 +92,7 @@ abstract class Basic extends reflector\component\Foreigner {
     $window = $this->getWindow();
     $manager = $window->addControler('mysql');
 
-    return $manager->call($this->getMethod(), array($this, false), '\sylma\core\argument');
+    return $manager->call($this->getMethod(), array(new Caller($this), false), '\sylma\core\argument');
   }
 
   protected function getMethod() {
@@ -114,18 +126,14 @@ abstract class Basic extends reflector\component\Foreigner {
     return $this->bMultiple;
   }
 
-  abstract protected function getString();
-
-  public function asArray() {
-
-    return array($this->getVar()->getInsert());
-  }
+  abstract public function getString();
 
   public function asArgument() {
 
-    $content = $this->getString();
+    return $this->getWindow()->create('group', array($this->getWindow(), array($this->buildDynamicWhere(), $this->getVar()->getInsert())))->asArgument();
+    //$content = $this->getString();
 
-    return $content->asArgument();
+    //return $content->asArgument();
   }
 
   public function __clone() {
