@@ -23,7 +23,7 @@ class Argument extends reflector\component\Foreigner implements common\arrayable
 
     $aArguments = array($this->readx('@name'));
     if ($this->readx('@optional')) $aArguments[] = false;
-    $argument = $arguments->call('read', $aArguments);
+    $argument = $this->readx('@name') ? $arguments->call('read', $aArguments) : $arguments->call('shift');
 
     return $this->readx('@escape') ? array("'", $window->callFunction('addslashes', 'php-string', array($argument)), "'") : array($argument);
   }

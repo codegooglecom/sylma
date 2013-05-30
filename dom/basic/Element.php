@@ -24,9 +24,9 @@ class Element extends \DOMElement implements dom\element {
     return $doc;
   }
 
-  public function getHandler() {
+  public function getHandler($bDebug = true) {
 
-    $handler = $this->getDocument()->getHandler();
+    $handler = $this->getDocument()->getHandler($bDebug);
 
     return $handler;
   }
@@ -843,7 +843,7 @@ class Element extends \DOMElement implements dom\element {
 
     if ($this->getDocument()) {
 
-      $sResult = ' @element ' . $this->getPath() . ' in ' . $this->getHandler()->asToken() . ':' . $this->getLineNo();
+      $sResult = ' @element ' . $this->getPath() . ' in ' . ($this->getHandler(false) ? $this->getHandler()->asToken() : '[no-handler]') . ':' . $this->getLineNo();
     }
     else {
 
@@ -897,7 +897,7 @@ class Element extends \DOMElement implements dom\element {
 
   public function asString($iMode = 0) {
 
-    return $this->getHandler()->elementAsString($this, $iMode);
+    return $this->getHandler(false) ? $this->getHandler()->elementAsString($this, $iMode) : '[no-handler]';
   }
 
   public function __toString() {

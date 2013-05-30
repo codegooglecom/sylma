@@ -29,6 +29,8 @@ class Template extends Child implements common\arrayable, parser\template, core\
   protected $bCloned = false;
   protected static $aCall = array();
 
+  protected $aHeaders = array();
+
   protected $aParameters = array();
   protected $aVariables = array();
 
@@ -205,7 +207,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
       $this->start();
 
-      $mContent = $this->parseComponentRoot($this->getNode());
+      $mContent = $this->getNode()->countChildren() ? $this->parseComponentRoot($this->getNode()) : null;
 
       $this->stop();
 
@@ -247,8 +249,12 @@ class Template extends Child implements common\arrayable, parser\template, core\
         $this->launchException("Missing argument '$sName' for template");
       }
 
-      $this->aVariables[$sName] = $arg;
-      $arg->setContent($aVars[$sName]);
+      $var = clone $arg;
+
+      $this->aVariables[$sName] = $var;
+      $var->setContent($aVars[$sName]);
+
+      $this->aHeaders[] = $var->getVar()->getInsert();
     }
   }
 
@@ -309,15 +315,17 @@ class Template extends Child implements common\arrayable, parser\template, core\
     $this->start();
     $this->startLog();
 
-    if (self::CHECK_RECURSION) $result = array($this->getWindow()->toString($this->build()));
-    else $result = $this->getWindow()->parseArrayables($this->build());
+    $aResult[] = $this->aHeaders;
+
+    if (self::CHECK_RECURSION) $aResult[] = $this->getWindow()->toString($this->build());
+    else $aResult[] = $this->getWindow()->parseArrayables($this->build());
 
     $this->stopLog();
     $this->stop();
 
     //array_pop(self::$aCall);
 
-    return $result;
+    return $aResult;
   }
 
   protected function startLog($sMessage = '', array $aVars = array()) {

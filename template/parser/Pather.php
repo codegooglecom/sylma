@@ -93,7 +93,7 @@ class Pather extends component\Child {
 
   protected function matchString($sValue) {
 
-    return $sValue{0} == "'" ? substr($sValue, 1, -1) : null;
+    return $sValue && $sValue{0} == "'" ? substr($sValue, 1, -1) : null;
   }
 
   protected function matchNumeric($sValue) {
@@ -200,29 +200,32 @@ class Pather extends component\Child {
 
     $aResult = array();
 
-    foreach (explode(',', $sArguments) as $sArgument) {
+    if ($sArguments) {
 
-      if (strpos($sArgument, '=') !== false) {
+      foreach (explode(',', $sArguments) as $sArgument) {
 
-        list($mKey, $sValue) = explode('=', $sArgument);
-      }
-      else {
+        if (strpos($sArgument, '=') !== false) {
 
-        $mKey = count($aResult);
-        $sValue = $sArgument;
-      }
+          list($mKey, $sValue) = explode('=', $sArgument);
+        }
+        else {
 
-      if ($sString = $this->matchString($sValue)) {
+          $mKey = count($aResult);
+          $sValue = $sArgument;
+        }
 
-        $aResult[$mKey] = $sString;
-      }
-      else if ($this->matchNumeric($sValue)) {
+        if ($sString = $this->matchString($sValue)) {
 
-        $aResult[$mKey] = $sValue;
-      }
-      else {
+          $aResult[$mKey] = $sString;
+        }
+        else if ($this->matchNumeric($sValue)) {
 
-        $aResult[$mKey] = $bApply ? $this->applyPath($sValue, $sMode, $bRead) : $this->parseArgumentDefault($sValue, $sMode, $bRead, $bApply);
+          $aResult[$mKey] = $sValue;
+        }
+        else {
+
+          $aResult[$mKey] = $bApply ? $this->applyPath($sValue, $sMode) : $this->parseArgumentDefault($sValue, $sMode, $bRead, $bApply);
+        }
       }
     }
 

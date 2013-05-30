@@ -7,7 +7,7 @@ class Document extends \DOMDocument implements dom\document {
 
   const NS = 'http://www.sylma.org/dom/basic/Document';
   const DEBUG_NAMESPACE = false;
-  
+
   protected $handler;
 
   public function __construct($sVersion = '1.0', $sEncoding = 'utf-8') {

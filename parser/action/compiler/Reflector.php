@@ -514,6 +514,6 @@ class Reflector extends Argumented implements reflector_ns\elemented {
 
     //$cache = $this->getManager('fs/cache')->getFile((string) $file . '.php');
 
-    return $window->getSelf()->call('includeScript', array((string) $file));
+    return $window->getSelf()->call('includeScript', array((string) $file, $path->getArguments()));
   }
 }

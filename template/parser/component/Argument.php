@@ -6,7 +6,6 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
 class Argument extends Variable implements parser\component, common\arrayable {
 
   protected $sName;
-  protected $bFilled = false;
 
   public function parseRoot(dom\element $el) {
 
@@ -16,14 +15,12 @@ class Argument extends Variable implements parser\component, common\arrayable {
 
   public function setContent($mContent) {
 
-    $this->bFilled = true;
     $this->loadVar($mContent);
   }
 
   public function asArray() {
 
-    return $this->bFilled ? array($this->getVar()->getInsert()) : array();
-    //return array();
+    return array();
   }
 }
 

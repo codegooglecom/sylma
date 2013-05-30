@@ -50,19 +50,20 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $this->getName();
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
-    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, false);
+    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
       case 'alias' : $result = $this->getAlias(); break;
+      case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode, $aArguments) : $this->reflectApply($sMode, $aArguments); break;
       case 'value' : $result = $this->reflectRead(); break;
-      case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode); break;
-      case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode); break;
+      case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
+      case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
 
       default :
 
@@ -73,10 +74,10 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $result;
   }
 
-  protected function reflectFunctionRef(array $aPath, $sMode) {
+  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
     $element = $this->getElementRef();
-    $result = $this->applyElement($element, $aPath, $sMode);
+    $result = $this->applyElement($element, $aPath, $sMode, $aArguments);
 
     return $result;
   }
@@ -98,9 +99,9 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $collection->reflectApplyAll($sMode);
   }
 
-  public function reflectApply($sMode = '') {
+  public function reflectApply($sMode = '', array $aArguments = array()) {
 
-    return $this->reflectApplySelf($sMode);
+    return $this->reflectApplySelf($sMode, $aArguments);
   }
 
   protected function addToQuery() {
@@ -120,11 +121,12 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $this->getParser()->lookupTemplate($this, 'element', $sMode);
   }
 
-  protected function reflectApplySelf($sMode) {
+  protected function reflectApplySelf($sMode, array $aArguments = array()) {
 
     if ($result = $this->lookupTemplate($sMode)) {
 
       $result->setTree($this);
+      $result->sendArguments($aArguments);
     }
     else {
 
@@ -186,7 +188,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     }
   }
 
-  protected function applyElement(Table $element, array $aPath, $sMode) {
+  protected function applyElement(Table $element, array $aPath, $sMode, array $aArguments = array()) {
 
     //$sName = $element->getName();
 
@@ -215,7 +217,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
         // reflectApplyAll() need $aPath
       }
 
-      $result = $collection->reflectApplyAll($sMode);
+      $result = $collection->reflectApplyAll($sMode, $aArguments);
       //$result = $this->getParser()->parsePath($collection, '*', $sMode);
     }
     else {
@@ -228,7 +230,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       }
       else {
 
-        $result = $element->reflectApply($sMode);
+        $result = $element->reflectApply($sMode, $aArguments);
       }
     }
 

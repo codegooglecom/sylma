@@ -74,33 +74,38 @@ class Document extends action\handler\Basic {
     return $sResult;
   }
 
-  protected function loadContexts() {
+  protected function loadContexts(dom\document $doc) {
 
     foreach ($this->getContexts()->query() as $sName => $context) {
 
-      switch ($sName) {
+      $this->loadContext($sName, $context, $doc);
+    }
+  }
 
-        case action\cached::CONTEXT_DEFAULT : break;
-        case 'message' :
+  protected function loadContext($sName, $context, dom\document $doc) {
 
-          if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
+    switch ($sName) {
 
-            $messages->add($context->asDOM());
-          }
-          else if (\Sylma::read('debug/enable')) {
+      case action\cached::CONTEXT_DEFAULT : break;
+      case 'message' :
 
-            echo '<h1>No container for messages</h1>';
-          }
+        if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
 
-          break;
+          $messages->add($context->asDOM());
+        }
+        else if (\Sylma::read('debug/enable')) {
 
-        default :
+          echo '<h1>No container for messages</h1>';
+        }
 
-          if ($context instanceof dom\domable) $content = $context;
-          else $content = $context->asArray();
+        break;
 
-          if ($content) $this->addHeadContent($content);
-      }
+      default :
+
+        if ($context instanceof dom\domable) $content = $context;
+        else $content = $context->asArray();
+
+        if ($content) $this->addHeadContent($content);
     }
   }
 
@@ -180,7 +185,7 @@ class Document extends action\handler\Basic {
 
       //$this->getContext('message')->add(array('content' => $this->getManager('init')->getStats()));
 
-      $this->loadContexts();
+      $this->loadContexts($doc);
 
       $result = $this->loadHeaders('text/html') . "\n" . $this->cleanResult($doc);
     }
@@ -190,28 +195,5 @@ class Document extends action\handler\Basic {
     }
 
     return $result;
-  }
-}
-
-class Cleaner extends core\module\Domed {
-
-  public function __construct() {
-
-    $this->setDirectory(__FILE__);
-    $this->loadDefaultArguments();
-  }
-
-  public function clean(dom\handler $doc) {
-
-    require_once('dom/handler.php');
-
-    $cleaner = $this->getTemplate('cleaner.xsl');
-
-    $cleaned = $cleaner->parseDocument($doc);
-
-    $iMode = 0;
-    if (\Sylma::read('initializer/output/indent')) $iMode = dom\handler::STRING_INDENT;
-
-    return $cleaned->asString($iMode); // | dom\handler::STRING_HEAD
   }
 }

@@ -10,7 +10,7 @@ class Foreign extends sql\template\component\Foreign {
     return null;
   }
 
-  protected function reflectFunctionRef(array $aPath, $sMode) {
+  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
     return null;
   }

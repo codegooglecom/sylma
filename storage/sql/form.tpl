@@ -16,9 +16,12 @@
       <js:include>/#sylma/template/form.js</js:include>
       <tpl:apply mode="root"/>
       <tpl:apply use="form-cols" mode="container"/>
+      <tpl:apply mode="action"/>
       <input type="submit" value="Envoyer"/>
     </form>
   </view:template>
+
+  <view:template mode="action"/>
 
   <view:template match="*" mode="container">
     <tpl:register/>
@@ -39,21 +42,34 @@
   </view:template>
 
   <view:template match="sql:foreign" mode="input" sql:ns="ns">
-    <tpl:apply mode="select"/>
+    <tpl:apply mode="select-notest"/>
   </view:template>
 
-  <view:template match="*" mode="select">
+  <view:template match="*" mode="select-notest">
     <select id="form-{alias()}" name="{alias()}">
       <option value="0">&lt; Choisissez &gt;</option>
       <tpl:apply select="all()" mode="select-option"/>
     </select>
   </view:template>
 
-  <view:template match="*" mode="select-option">
+  <view:template match="*" mode="select-test">
+    <select id="form-{alias()}" name="{alias()}">
+      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply select="all()" mode="select-option-test"/>
+    </select>
+  </view:template>
+
+  <view:template match="*" mode="select-option-test">
     <option value="{id}">
       <tpl:if test="parent()/value() = id">
         <tpl:token name="selected">selected</tpl:token>
       </tpl:if>
+      <tpl:apply mode="select-option-value"/>
+    </option>
+  </view:template>
+
+  <view:template match="*" mode="select-option">
+    <option value="{id}">
       <tpl:apply mode="select-option-value"/>
     </option>
   </view:template>

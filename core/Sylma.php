@@ -20,6 +20,8 @@ class Sylma {
 
   const LOG_STATUT_DEFAULT = 'notice';
 
+  protected static $SHORT_PATH;
+
   /**
    * @var core\argument
    */
@@ -41,6 +43,8 @@ class Sylma {
   private static $result = null;
 
   public static function init($sServer = '') {
+
+    self::$SHORT_PATH = substr(self::PATH, 1);
 
     require_once(self::$sExceptionFile);
     //xdebug_disable();
@@ -80,6 +84,8 @@ class Sylma {
   }
 
   public static function autoload($sClass) {
+
+    $sClass = preg_replace('/^(sylma)/', self::$SHORT_PATH, $sClass);
 
     include_once(self::classToFile($sClass));
   }

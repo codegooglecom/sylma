@@ -139,9 +139,17 @@ abstract class Basic extends core\module\Domed implements action\cached {
     return $action;
   }
 
-  protected function includeScript($sPath) {
+  protected function includeScript($sPath, array $aArguments = array()) {
 
-    return $this->getScript($sPath, array(), $this->getContexts()->query());
+    $arg = $this->createArgument($aArguments);
+    $arg->merge($this->aActionArguments);
+
+
+    return $this->getScriptFile($this->getFile($sPath), array(
+      'arguments' => $arg,
+      'contexts' => $this->getContexts(),
+      'post' => $this->getContext('post', false) ? $this->getContext('post') : null,
+    ));
   }
 
   public function asObject() {

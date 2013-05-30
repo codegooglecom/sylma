@@ -131,12 +131,6 @@
         <tpl:token name="action"><le:path/>/insert/do.json</tpl:token>
       </view:template>
 
-      <view:template match="*" mode="select-option">
-        <option value="{id}">
-          <tpl:apply mode="select-option-value"/>
-        </option>
-      </view:template>
-
     </view:view>
 
     <view:view name="do" mode="insert"/>
@@ -152,6 +146,10 @@
         <sql:filter name="id"><le:argument name="id" escape="x"/></sql:filter>
         <js:option name="id"><tpl:read select="id"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
+      </view:template>
+
+      <view:template match="sql:foreign" mode="input" sql:ns="ns">
+        <tpl:apply mode="select-test"/>
       </view:template>
 
     </view:view>

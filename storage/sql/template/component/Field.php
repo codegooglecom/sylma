@@ -50,6 +50,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     switch ($sName) {
 
       case 'value' : $result = $this->reflectRead(); break;
+      case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode) : $this->reflectApply($sMode); break;
       case 'alias' : $result = $this->getAlias(); break;
       case 'apply' : $result = $this->reflectApply($sMode); break;
 
