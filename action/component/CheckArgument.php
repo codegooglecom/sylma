@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 
 class CheckArgument extends reflector\component\Foreigner implements common\arrayable {
 
+  const PREFIX = 'action';
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
@@ -21,7 +23,7 @@ class CheckArgument extends reflector\component\Foreigner implements common\arra
       $sSource = 'arguments';
     }
 
-    $default = $this->getx('self:default');
+    $default = $this->getx('action:default');
     $arguments = $window->getVariable($sSource);
     $sName = $this->readx('@name');
 
@@ -35,7 +37,7 @@ class CheckArgument extends reflector\component\Foreigner implements common\arra
     }
     else {
 
-      $result = $arguments->call('read', $sName);
+      $result = $arguments->call('read', array($sName));
     }
 
     return array($result);

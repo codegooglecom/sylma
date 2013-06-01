@@ -5,6 +5,9 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\storage\fs;
 
 class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
+  const CRUD_NS = 'http://2013.sylma.org/view/crud';
+  const CRUD_PREFIX = 'crud';
+
   const VIEW_NS = 'http://2013.sylma.org/view';
   const VIEW_PREFIX = 'view';
 
@@ -17,6 +20,8 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
   public function parseRoot(dom\element $el, fs\directory $base = null) {
 
     $el = $this->setNode($el);
+
+    $this->setNamespace(self::CRUD_NS, self::CRUD_PREFIX);
     $this->setNamespace(self::VIEW_NS, self::VIEW_PREFIX);
 
     if ($base) {

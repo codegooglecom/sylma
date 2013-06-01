@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\parser\
 
 class Pager extends reflector\component\Foreigner implements reflector\component, template\parser\tree, common\arrayable {
 
+  CONST PREFIX = 'sql';
+
   protected $var;
   protected $collection;
 
@@ -78,8 +80,8 @@ class Pager extends reflector\component\Foreigner implements reflector\component
     //$var->insert();
     $this->setVar($var);
 
-    $this->setOffset($this->parseComponentRoot($this->getx('self:current')));
-    $this->setCount($this->parseComponentRoot($this->getx('self:count')));
+    $this->setOffset($this->parseComponentRoot($this->getx('sql:current', true)));
+    $this->setCount($this->parseComponentRoot($this->getx('sql:count', true)));
 
     $collection->setLimit($var->call('getOffset'), $this->getCount());
   }

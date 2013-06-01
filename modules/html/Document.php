@@ -23,7 +23,7 @@ class Document extends action\handler\Basic {
       )),
       //'js-classes' => new binder\context\Classes,
       //'js/load' => new js\context\Load,
-      'message' =>  $messages,
+      'messages' =>  $messages,
       //'title' =>  new parser\context\Basic,
     )));
 
@@ -87,7 +87,7 @@ class Document extends action\handler\Basic {
     switch ($sName) {
 
       case action\cached::CONTEXT_DEFAULT : break;
-      case 'message' :
+      case 'messages' :
 
         if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
 

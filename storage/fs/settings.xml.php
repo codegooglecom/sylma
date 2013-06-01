@@ -10,7 +10,8 @@
     '.svn'),
   'depth' => '1',
   '0' => 'extensions',
-  'only-path' => '1'),
+  'only-path' => '1',
+  'root' => '1'),
 'tokens' => array(
   'sylma' => array(
     'path' => 'sylma'),

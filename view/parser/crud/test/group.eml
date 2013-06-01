@@ -5,7 +5,7 @@
   xmlns:lm="http://www.sylma.org/parser/action/basic"
   xmlns:tst="http://www.sylma.org/modules/tester"
 >
-  <le:context name="title">Test View</le:context>
+  <le:context name="title">Test CRUD</le:context>
   <tst:group>
     <tst:description>View</tst:description>
     <le:object class="grouped\Grouped"/>

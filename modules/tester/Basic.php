@@ -142,6 +142,7 @@ abstract class Basic extends Asserter {
    */
   protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
+    $this->resetCount();
     $bResult = false;
 
     try {

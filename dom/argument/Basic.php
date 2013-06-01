@@ -21,6 +21,11 @@ abstract class Basic extends core\module\Controled {
 
   public function __construct(dom\document $doc, array $aNS = array()) {
 
+    $this->build($doc, $aNS);
+  }
+
+  protected function build(dom\document $doc, array $aNS = array()) {
+
     $this->setDocument($doc);
     $this->setNamespaces($aNS);
 
@@ -181,8 +186,17 @@ abstract class Basic extends core\module\Controled {
     }
     else {
 
-      $result = new Iterator($dom->create('handler', array($result)), $this->getNS());
+      $result = $this->buildChild($dom->create('handler', array($result)));
     }
+
+    return $result;
+  }
+
+  public function buildChild(dom\document $doc) {
+
+    $result = new static();
+    $result->build($doc, $this->getNS());
+    $result->setParent($this);
 
     return $result;
   }

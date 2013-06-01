@@ -8,7 +8,7 @@ require_once('resource.php');
 
 class Controler extends core\module\Argumented {
 
-  const NS = 'http://www.sylma.org/storage/fs/controler';
+  const NS = 'http://www.sylma.org/storage/fs';
   const SETTINGS = 'settings.xml.php';
 
   private $directory;
@@ -197,6 +197,10 @@ class Controler extends core\module\Argumented {
     return \Sylma::PATH_SYSTEM;
   }
 
+  public function getNamespace($sPrefix = null) {
+
+    return parent::getNamespace($sPrefix);
+  }
   public function throwException($sMessage, $mSender = array(), $iOffset = 1) {
 
     $mSender = (array) $mSender;

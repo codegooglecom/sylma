@@ -11,6 +11,9 @@ class Manager extends core\module\Argumented {
 
     $this->setArguments($arg);
     $this->db = $this->connect($this->getArguments());
+
+    $this->read("SET CHARACTER SET 'utf8';");
+    $this->read('SET NAMES \'utf8\'');
   }
 
   protected function connect(core\argument $arg) {

@@ -11,7 +11,7 @@ class Route extends Pathed implements dom\domable {
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
+    $this->setNode($el, true);
 
     $this->main = $this->parseView($this->getx('view:view[not(@name)]'));
     $this->sub = $this->parseView($this->getx('view:view[@name]'));

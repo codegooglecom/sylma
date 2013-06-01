@@ -17,7 +17,7 @@ class _Class extends Basic implements common\arrayable, common\argumentable {
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
+    $this->setNode($el, true);
     $this->allowComponent(true);
   }
 

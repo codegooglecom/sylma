@@ -310,7 +310,7 @@ class Sylma {
         'content' => '<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message" tabindex="0">' . $mValue . '</div>',
       ));
     }
-    else if (self::read('debug/enable')) {
+    else if (self::read('debug/show')) {
 
       echo $mValue . '<hr/>';
     }

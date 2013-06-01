@@ -1,10 +1,11 @@
 <?php
 
 namespace sylma\template\binder\context;
-use sylma\core, sylma\parser\context, sylma\dom, sylma\core\window, sylma\modules\html, sylma\template;
+use sylma\core, sylma\parser\context, sylma\parser\action, sylma\dom, sylma\core\window, sylma\modules\html, sylma\template;
 
-class JSON extends context\Basic implements dom\domable, window\scripted {
+class JSON extends context\Basic implements dom\domable, window\scripted, window\action {
 
+  protected $action;
   const PARSER_MANAGER = 'parser';
 
   //const PARSER_MANAGER = 'parser';
@@ -27,7 +28,6 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
       )),
     ));
 
-//dsp($path->getArguments());
     try {
 
       $sResult = $parser->load($path->getFile(), array(
@@ -42,8 +42,6 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
       $e->save(false);
     }
 
-    //dsp($sResult);
-//dsp($sResult, $path->getFile(), $path->getArguments());
     $this->setArray(array(
       'content' => (string) $sResult,
       'objects' => $contexts->get('js/load/objects', false),
@@ -51,12 +49,52 @@ class JSON extends context\Basic implements dom\domable, window\scripted {
     ));
   }
 
+  public function setAction(action\handler $action) {
+
+    $this->action = $action;
+  }
+
+  protected function getAction() {
+
+    return $this->action;
+  }
+
+  protected function loadAction(action\handler $action) {
+
+    $messages = new html\context\Messages;
+    $contexts = new core\argument\Readable(array(
+      'messages' => $messages,
+      'js' => new html\context\JS(),
+    ));
+
+    $action->setContexts($contexts);
+    $context = new window\classes\Context(\Sylma::getManager('init'));
+
+    try {
+
+      $context->setAction($action, 'default');
+      $sResult = $context->asString();
+    }
+    catch (core\exception $e) {
+
+      $e->save(false);
+      $sResult = '';
+    }
+
+    $this->setArray(array(
+      'content' => $sResult,
+      'messages' => $messages,
+    ));
+  }
+
   public function asString() {
 
-    //$this->set('messages', $this->get('messages')->asString());
+    if ($action = $this->getAction()) {
+
+      $this->loadAction($action);
+    }
 
     return $this->asJSON();
   }
-
 }
 

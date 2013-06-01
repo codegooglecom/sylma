@@ -9,7 +9,7 @@ class Share extends reflector\component\Foreigner implements dom\domable {
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
+    $this->setNode($el, true);
     $this->loadName();
   }
 

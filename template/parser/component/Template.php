@@ -39,9 +39,9 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   public function parseRoot(dom\element $el) {
 
+    $this->setNode($el, true, false);
     $this->parseMatchNamespace($el);
 
-    $this->setNode($el);
     $this->loadMode();
 
     $this->allowUnknown(true);
@@ -73,7 +73,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
           $this->launchException('Cannot match value, no name defined', get_defined_vars());
         }
 
-        $this->setNamespace($sNamespace, 'sylma-match');
+        $this->setNamespace($sNamespace);
       }
     }
   }
@@ -224,7 +224,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     foreach ($children as $child) {
 
-      $aResult[$child->readx('@self:name')] = $this->parseElement($child);
+      $aResult[$child->readx('@tpl:name')] = $this->parseElement($child);
     }
 
     return $aResult;
@@ -352,7 +352,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     $iResult = 0;
 
-    if ($this->getMatch() && ($sNamespace === $this->getMatch('namespace') || !$this->getMatch('namespace'))) {
+    if ($this->getMatch() && (($sNamespace === $this->getNamespace()) || !$this->getNamespace())) {
 
       if ($sName === $this->getMatch('name')) {
 

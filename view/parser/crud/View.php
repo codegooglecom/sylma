@@ -10,7 +10,7 @@ class View extends Pathed implements core\tokenable {
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
+    $this->setNode($el, true);
     $this->loadName();
   }
 

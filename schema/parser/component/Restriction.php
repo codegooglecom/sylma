@@ -33,7 +33,7 @@ class Restriction extends reflector\component\Foreigner {
     }
     else {
 
-      $this->rules = $val;
+      $this->rules = clone $val;
     }
   }
 

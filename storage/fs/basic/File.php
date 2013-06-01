@@ -206,7 +206,7 @@ class File extends Resource implements fs\file {
 
     return $this->getControler()->createArgument(array(
       'file' => array(
-        'full-path' => $this->getFullPath(),
+        'path' => $this->getFullPath(),
         'name' => $this->getName(),
         'simple-name' => $this->getSimpleName(),
         //'display-name' => $this->getDisplayName(),
@@ -219,7 +219,7 @@ class File extends Resource implements fs\file {
         'size' => $iSize,
         'extension' => $this->getExtension(),
       ),
-    ), self::NS);
+    ), $this->getControler()->getNamespace());
   }
 }
 

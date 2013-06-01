@@ -57,7 +57,7 @@ class Type extends Basic implements core\tokenable {
   public function getBases() {
 
     $base = $this->getBase();
-    return $base ? array($base) + $base->getBases() : array();
+    return $base ? array_merge(array($base), $base->getBases()) : array();
   }
 
   protected function getBase() {

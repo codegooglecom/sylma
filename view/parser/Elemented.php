@@ -6,6 +6,8 @@ use sylma\core, sylma\dom, sylma\template, sylma\parser\reflector, sylma\schema,
 class Elemented extends template\parser\handler\Domed {
 
   const NS = 'http://2013.sylma.org/view';
+  const PREFIX = 'view';
+
   const SCHEMA_NS = 'http://2013.sylma.org/schema/template';
   const SCHEMA_PREFIX = 'stp';
 
@@ -27,7 +29,7 @@ class Elemented extends template\parser\handler\Domed {
     //$this->setNamespace(self::NS, self::PREFIX);
     $this->setNamespace(self::SCHEMA_NS, self::SCHEMA_PREFIX);
     $this->setNamespace(parent::NS, parent::PREFIX);
-    $this->setNamespace(self::NS, 'self');
+    $this->setNamespace(self::NS, self::PREFIX);
 
     parent::__construct($root, $parent, $arg);
   }
@@ -159,7 +161,7 @@ class Elemented extends template\parser\handler\Domed {
   protected function loadSchema() {
 
     $component = $this->loadSimpleComponent('component/schema', $this);
-    $result = $component->parseRoot($this->getx('self:schema', true)->remove());
+    $result = $component->parseRoot($this->getx('view:schema', true)->remove());
 
     return $result;
   }

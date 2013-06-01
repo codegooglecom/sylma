@@ -63,7 +63,13 @@ abstract class Namespaced extends Exceptionable {
 
   protected function mergeNamespaces(array $aNamespaces = array()) {
 
-    if ($aNamespaces) return array_merge($this->getNS(), $aNamespaces);
-    else return $this->getNS();
+    $aResult = $this->getNS();
+
+    foreach ($aNamespaces as $sPrefix => $sNamespace) {
+
+      if ($sPrefix) $aResult[$sPrefix] = $sNamespace;
+    }
+
+    return $aResult;
   }
 }

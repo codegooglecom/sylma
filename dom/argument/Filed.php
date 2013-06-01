@@ -7,12 +7,15 @@ class Filed extends Tokened {
 
   private $file = null;
 
-  public function __construct(fs\file $file, array $aNS = array()) {
+  public function __construct(fs\file $file = null, array $aNS = array()) {
 
-    $this->setFile($file);
-    $doc = $file->getDocument();
+    if ($file) {
+      
+      $this->setFile($file);
+      $doc = $file->getDocument();
 
-    parent::__construct($doc, $aNS);
+      parent::__construct($doc, $aNS);
+    }
   }
 
   protected function getFile() {

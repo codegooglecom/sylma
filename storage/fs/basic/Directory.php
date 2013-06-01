@@ -94,7 +94,7 @@ class Directory extends Resource implements fs\directory {
     return $oResult;
   }
 
-  public function browse(core\argument $arg = null) {
+  public function browse(core\argument $arg = null, $bRoot = true) {
 
     if ($arg) {
 
@@ -111,6 +111,7 @@ class Directory extends Resource implements fs\directory {
     $iDepth = $arg->read('depth');
     $aExtensions = $arg->query('extensions');
     $aPaths = $arg->query('excluded');
+    $bInsertRoot = $bRoot ? $arg->read('root') : false;
 
     if ($iDepth) {
 
@@ -126,7 +127,7 @@ class Directory extends Resource implements fs\directory {
 
             if (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions)) {
 
-              if ($bOnlyPath) $aResult[] = $file->getName();
+              if ($bOnlyPath) $aResult[] = (string) $file;
               else $aResult[] = $file->asArgument();
             }
           }
@@ -146,14 +147,14 @@ class Directory extends Resource implements fs\directory {
             if ($bValid) {
 
               $arg->set('depth', $iDepth);
-              $aResult += $dir->browse($arg)->asArray();
+              $aResult = array_merge($aResult, $dir->browse($arg, false)->asArray());
             }
           }
         }
       }
     }
 
-    return $this->getControler()->createArgument($aResult);
+    return $this->getControler()->createArgument($bInsertRoot ? array('browse' => $aResult) : $aResult);
   }
 
   /**

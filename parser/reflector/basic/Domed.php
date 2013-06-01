@@ -50,18 +50,17 @@ abstract class Domed extends Componented {
    *    handler namespaces are loaded into class
    * @return \sylma\dom\element
    */
-  public function setNode(dom\element $el, $bClone = true, $bNamespace = true) {
+  public function setNode(dom\element $el, $bClone = false, $bNamespace = true) {
 
     $aNS = $el->getHandler()->getNS();
 
     if ($bNamespace) {
 
       $this->setNamespaces($aNS);
+      if (static::PREFIX) $this->setNamespace($el->getNamespace(), static::PREFIX);
     }
 
     if ($bClone) {
-
-      if ($bNamespace && static::PREFIX) $this->setNamespace($el->getNamespace(), static::PREFIX);
 
       $doc = $this->createDocument($el);
       $result = $doc->getRoot();
@@ -74,7 +73,10 @@ abstract class Domed extends Componented {
     }
     else {
 
+      if ($bNamespace) $el->getHandler()->registerNamespaces($this->getNS());
+
       $result = $this->node = $el;
+      //$this->registerNamespaces($result);
     }
 
 

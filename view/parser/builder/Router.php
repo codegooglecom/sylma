@@ -5,8 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\fs, sylm
 
 class Router extends View {
 
-  const NS = 'http://2013.sylma.org/view/crud';
-
+  const CRUD_NS = 'http://2013.sylma.org/view/crud';
+  
   protected $currentView;
 
   public function build() {
@@ -140,7 +140,7 @@ class Router extends View {
   protected function buildReflector(common\_window $window = null) {
 
     $result = parent::buildReflector($window);
-    $result->setNamespace(self::NS, 'crud');
+    $result->setNamespace(self::CRUD_NS, 'crud');
 
     return $result;
   }

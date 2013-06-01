@@ -30,6 +30,8 @@ abstract class Prepare extends Basic {
     $bResult = false;
     $bReady = true;
 
+    $this->resetCount();
+
     $sExpected = $test->readx('self:expected', array(), false);
 
     try {

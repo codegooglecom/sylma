@@ -18,6 +18,7 @@
     <depth>1</depth>
     <extensions arg:type="token"/>
     <only-path>1</only-path>
+    <root>1</root>
   </browse>
   <tokens>
     <sylma>

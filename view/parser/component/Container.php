@@ -64,7 +64,7 @@ class Container extends template_ns\parser\component\Template {
     $this->aMatch = array(
       'context' => $sContext,
       //'mode' => $sMode,
-      'namespace' => $this->getNamespace('sylma-match'),
+      //'namespace' => $this->getNamespace(),
       'name' => $sName,
     );
   }
@@ -129,7 +129,7 @@ class Container extends template_ns\parser\component\Template {
 
     $iResult = 0;
 
-    if ($type->getNamespace() === $this->getMatch('namespace')) {
+    if ($type->getNamespace() === $this->getNamespace()) {
 
       if ($type->getName() === $this->getMatch('name')) {
 
