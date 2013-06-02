@@ -194,9 +194,9 @@ class _Interface extends core\module\Argumented {
     return $this->aMethods[$sName];
   }
 
-  public function loadMethod($sName) {
+  public function loadMethod($sName, $return = null) {
 
-    $result = $this->getWindow()->create('method', array($this, $sName));
+    $result = $this->getWindow()->create('method', array($this, $sName, $return));
     $this->aMethods[$sName] = $result;
 
     return $result;

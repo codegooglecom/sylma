@@ -260,7 +260,7 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
-  public function createVariable($sName, $mReturn, $bDebug = true) {
+  public function createVariable($sName = '', $mReturn = null, $bDebug = true) {
 
     if (!$sName) $sName = $this->getVarName();
 

@@ -57,7 +57,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     if ($sMatch = $el->readx('@match', array(), false)) {
 
-      preg_match_all('/(\w+):(\w+)/', $sMatch, $aMatches, PREG_SET_ORDER);
+      preg_match_all('/(\w+):(\w+|\*)/', $sMatch, $aMatches, PREG_SET_ORDER);
 
       foreach ($aMatches as $aMatch) {
 
@@ -252,9 +252,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
       $var = clone $arg;
 
       $this->aVariables[$sName] = $var;
-      $var->setContent($aVars[$sName]);
-
-      $this->aHeaders[] = $var->getVar()->getInsert();
+      $this->aHeaders[] = $var->setContent($aVars[$sName]);
     }
   }
 
@@ -384,7 +382,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     $pather = $this->getPather();
 
-    return $sPath ? $pather->readPath($sPath, $sMode) : $this->getTree()->reflectRead($sMode);
+    return $sPath ? $pather->readPath($sPath, $sMode) : $this->getTree()->reflectRead();
   }
 
   public function applyPath($sPath, $sMode, array $aArguments = array()) {

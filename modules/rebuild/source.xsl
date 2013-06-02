@@ -8,19 +8,21 @@
 >
 
   <xsl:template match="/">
-    <div>
+    <div id="sylma-rebuild">
       <div style="-moz-columns: 3;">
         <xsl:apply-templates select="*"/>
       </div>
       <div>
-        <button onclick="sylma.rebuild.main.toggle()" id="rebuild-toggle">Start</button>
+        <button onclick="sylma.rebuild.main.toggle()" id="sylma-rebuild-toggle">Start</button>
+        <button onclick="sylma.rebuild.main.clearLog()">Clear</button>
       </div>
+      <div id="sylma-rebuild-log"/>
     </div>
   </xsl:template>
 
   <xsl:template match="fs:file">
     <div style="margin-bottom: 5px;">
-      <a href="{fs:path}" class="rebuild-file rebuild-ready" user-data="{fs:path}">
+      <a href="{fs:action-path}" class="rebuild-file rebuild-ready" user-data="{fs:path}">
         <xsl:value-of select="fs:path"/>
       </a>
       <span></span>

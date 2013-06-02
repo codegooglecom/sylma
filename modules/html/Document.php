@@ -13,8 +13,12 @@ class Document extends action\handler\Basic {
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
 
     // global context is usefull for free action (without parent)
-    $messages = new context\Messages;
-    $this->getManager('parser')->setContext('messages', $messages);
+
+    if (!$this->getManager('parser')->getContext('messages', false)) {
+
+      $messages = new context\Messages;
+      $this->getManager('parser')->setContext('messages', $messages);
+    }
 
     $this->setContexts($this->createArgument(array(
       'css' => new context\CSS,

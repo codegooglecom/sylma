@@ -9,7 +9,20 @@
       <lm:file path="samples/simple.txt"/>
     </le:action>
     <tst:node>
-      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+      <file xmlns="http://www.sylma.org/storage/fs">
+        <path>/sylma/parser/action/test/grouped/samples/simple.txt</path>
+        <action-path>/sylma/parser/action/test/grouped/samples/simple</action-path>
+        <name>simple.txt</name>
+        <simple-name>simple</simple-name>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <size>1</size>
+        <extension>txt</extension>
+      </file>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -43,7 +56,20 @@
       <le:call-self name="get-file">samples/simple.txt</le:call-self>
     </le:action>
     <tst:node>
-      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+      <file xmlns="http://www.sylma.org/storage/fs">
+        <path>/sylma/parser/action/test/grouped/samples/simple.txt</path>
+        <action-path>/sylma/parser/action/test/grouped/samples/simple</action-path>
+        <name>simple.txt</name>
+        <simple-name>simple</simple-name>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <size>1</size>
+        <extension>txt</extension>
+      </file>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -63,7 +89,20 @@
       </le:call-self>
     </le:action>
     <tst:node>
-      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+      <file xmlns="http://www.sylma.org/storage/fs">
+        <path>/sylma/parser/action/test/grouped/samples/simple.txt</path>
+        <action-path>/sylma/parser/action/test/grouped/samples/simple</action-path>
+        <name>simple.txt</name>
+        <simple-name>simple</simple-name>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <size>1</size>
+        <extension>txt</extension>
+      </file>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -112,6 +151,27 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Short call with defined return">
+    <le:action>
+      <div>
+        <lm:manager name="action" return="\sylma\parser\action\Manager">
+          <le:call name="validateNumeric">
+            <le:numeric>3</le:numeric>
+          </le:call>
+        </lm:manager>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">3</div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
   <tst:test name="Load a directory with ext-call">
     <le:action>
       <le:settings>
@@ -124,7 +184,16 @@
       </lm:directory>
     </le:action>
     <tst:node>
-      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory"><full-path>/sylma/parser/action/test/grouped/samples</full-path><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><name>samples</name></directory>
+      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory">
+        <path>/sylma/parser/action/test/grouped/samples</path>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <name>samples</name>
+      </directory>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -169,7 +238,16 @@
       </lm:directory>
     </le:action>
     <tst:node>
-      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory"><full-path>/sylma/parser/action/test/grouped/samples/sub</full-path><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><name>samples/sub</name></directory>
+      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory">
+        <path>/sylma/parser/action/test/grouped/samples/sub</path>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <name>samples/sub</name>
+      </directory>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');

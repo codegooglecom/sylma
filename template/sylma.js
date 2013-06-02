@@ -92,13 +92,19 @@ sylma.classes = {
       return el.getChildren();
     },
 
-    parseMessages : function(result) {
+    addMessage : function(content, container) {
+
+      container = container || $('messages');
+      container.adopt(this.import(content));
+    },
+
+    parseMessages : function(result, container) {
 
       if (result.messages) {
 
         for (var i in result.messages) {
 
-          $('messages').adopt(this.import(result.messages[i].content));
+          this.addMessage(result.messages[i].content, container);
         }
       }
 
@@ -226,7 +232,7 @@ sylma.ui = new sylma.classes.ui;
     },
 
     prepareNodes : function(nodes) {
-      
+
       nodes.store('sylma-object', this);
       nodes.store('sylma-parent', this.getParent());
     },

@@ -10,7 +10,7 @@ class Method extends core\module\Argumented {
   protected $aArguments = array();
   protected $reflection;
 
-  function __construct(_Interface $parent, $sName) {
+  function __construct(_Interface $parent, $sName, $return = null) {
 
     $this->setManager($parent);
     $this->setName($sName);
@@ -25,6 +25,7 @@ class Method extends core\module\Argumented {
       $this->throwException($e->getMessage());
     }
 
+    if ($return) $this->setReturn($return);
     $this->loadArguments();
   }
 
@@ -132,13 +133,21 @@ class Method extends core\module\Argumented {
 
   protected function loadReturn() {
 
-    $aParameters = $this->loadCommentFormat('/@return ([\w\\\\\|]*)/');
-    $this->return = $this->loadInstance(current($aParameters));
+    if (!$this->getReturn()) {
 
-    if (!$this->return) {
+      $aParameters = $this->loadCommentFormat('/@return ([\w\\\\\|]*)/');
+      $this->setReturn($this->loadInstance(current($aParameters)));
 
-      $this->throwException(sprintf('Cannot find return value'));
+      if (!$this->return) {
+
+        $this->throwException(sprintf('Cannot find return value'));
+      }
     }
+  }
+
+  protected function setReturn(common\_instance $return) {
+
+    $this->return = $return;
   }
 
   protected function loadInstance($sFormat) {
@@ -148,6 +157,8 @@ class Method extends core\module\Argumented {
       case 'string' : $sToken = 'php-string'; break;
       case 'array' : $sToken = 'php-array'; break;
       case 'null' : $sToken = 'php-null'; break;
+      case 'int' : 
+      case 'integer' : $sToken = 'php-integer'; break;
       case 'bool' :
       case 'boolean' : $sToken = 'php-boolean'; break;
       default : $sToken = $sFormat;

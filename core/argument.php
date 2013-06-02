@@ -27,6 +27,9 @@ interface argument extends \Iterator {
   function setParent(core\argument $parent);
   function getParent();
 
+  //function isSimple($sPath);
+  //function isComplex($sPath);
+
   /**
    * Replace object contained in argument with arrays
    */

@@ -485,7 +485,7 @@ class Directory extends Resource implements fs\directory {
 
     return $this->getControler()->createArgument(array(
       'directory' => array(
-        'full-path' => $sPath,
+        'path' => $sPath,
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),

@@ -11,12 +11,17 @@ sylma.rebuild = {
 
       },
 
-      toggle : function() {
+      toggle : function(stop) {
 
         this.enable = !this.enable;
 
-        if (this.enable) this.load();
-        $('rebuild-toggle').set('html', this.enable ? 'Stop' : 'Start');
+        if (this.enable && !stop) this.load();
+        $('sylma-rebuild-toggle').set('html', this.enable || stop ? 'Stop' : 'Start');
+      },
+
+      clearLog : function() {
+
+        $('sylma-rebuild-log').set('html', '');
       },
 
       load : function() {
@@ -30,6 +35,8 @@ sylma.rebuild = {
         files.removeClass('rebuild-load');
         files.removeClass('rebuild-complete');
 
+        this.clearLog();
+
         var callback = function() {
 
           var file = files[count];
@@ -41,7 +48,9 @@ sylma.rebuild = {
           var jsonRequest = new Request.JSON({
             url: '/sylma/modules/rebuild/standalone.json',
             onSuccess: function(result) {
-              //sylma.ui.parseMessages(result);
+
+              sylma.ui.addMessage(path);
+              sylma.ui.parseMessages(result, $('sylma-rebuild-log'));
             },
             onComplete : function() {
 
@@ -49,6 +58,7 @@ sylma.rebuild = {
               file.addClass('rebuild-complete');
 
               if (self.enable) callback();
+              else self.toggle(true);
             },
           }).get({path : path});
 

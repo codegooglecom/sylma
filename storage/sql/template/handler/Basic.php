@@ -39,7 +39,7 @@ class Basic extends sql\schema\Handler {
       }
     }
 
-    if ($result && $result->getMatch()) {
+    if ($result) {
 
       $result = clone $result;
     }

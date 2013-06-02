@@ -33,10 +33,12 @@ class Variable extends Child implements common\arrayable, parser\component {
 
     $aContent = $this->parseComponentRoot($this->getNode());
 
-    $this->loadVar($aContent);
+    return $this->loadVar($aContent);
   }
 
   protected function loadVar($mContent) {
+
+    $aResult = array();
 
     if ($mContent instanceof common\_var) {
 
@@ -44,8 +46,11 @@ class Variable extends Child implements common\arrayable, parser\component {
     }
     else {
 
-      $this->setVar($this->getWindow()->createVar($this->getWindow()->toString($mContent)));
+      $this->setVar($this->getWindow()->createVar($this->getWindow()->argToInstance('')));
+      $aResult[] = $this->getWindow()->toString($mContent, $this->getVar(), false, true);
     }
+
+    return $aResult;
   }
 
   protected function setVar(common\_var $var) {
@@ -65,9 +70,7 @@ class Variable extends Child implements common\arrayable, parser\component {
 
   public function asArray() {
 
-    $this->build();
-
-    return array($this->getVar()->getInsert());
+    return array($this->build());
   }
 }
 

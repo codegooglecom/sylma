@@ -7,8 +7,10 @@
   xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
-  xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -199,24 +201,27 @@
   </tst:test>
   <tst:test name="Match all namespace">
     <tst:document>
-      <view:view user:ns="ns">
+      <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
           <sql:id>2</sql:id>
         </sql:resource>
-        <view:schema>samples/user1.xql</view:schema>
+        <view:schema>samples/user2.xql</view:schema>
         <view:template>
           <div>
             <stp:apply select="name"/>
-            <stp:apply select="email"/>
+            <stp:apply select="group_id/ref()"/>
           </div>
         </view:template>
         <view:template match="user:*">
           <span><tpl:apply/></span>
         </view:template>
+        <view:template match="group:*">
+          <strong><tpl:read select="name"/></strong>
+        </view:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <div><span>admin</span><span>admin@sylma.org</span></div>
+      <div><span>admin</span><strong>group01</strong></div>
     </tst:node>
   </tst:test>
   <tst:test name="Using mode">
@@ -510,6 +515,50 @@
         <h3>admin</h3>
         <span>admin@sy ...</span>
       </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Import argument tree">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:tree1="http://2013.sylma.org/view/parser/test/grouped/samples/tree1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><stp:apply select="name"/></h3>
+            <span><tpl:apply import="samples/tree1.xml"/></span>
+          </form>
+        </view:template>
+        <view:template match="tree1:sample1">
+          <div>
+            <span><tpl:read select="abc"/></span>
+            <tpl:apply select="def"/>
+          </div>
+        </view:template>
+        <view:template match="tree1:def">
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </view:template>
+        <view:template match="tree1:*">
+          <li href="{name()}"><tpl:read/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <h3>admin</h3>
+        <span>
+          <div>
+            <span>123</span>
+            <ul>
+              <li href="ghi">hello</li>
+              <li href="lmn">world</li>
+            </ul>
+          </div>
+        </span>
+      </form>
     </tst:node>
   </tst:test>
 </tst:tests>

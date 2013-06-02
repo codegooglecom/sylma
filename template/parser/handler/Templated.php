@@ -8,7 +8,7 @@ abstract class Templated extends reflector\handler\Elemented {
   protected $aTemplates = array();
   protected $aCheckTemplates = array();
 
-  public function lookupTemplate(dom\element $el, $sMode, $bRoot = false) {
+  public function lookupTemplate($sName, $sNamespace, $sMode, $bRoot = false) {
 
     $iLast = 0;
     $result = null;
@@ -22,7 +22,7 @@ abstract class Templated extends reflector\handler\Elemented {
 
       if ($this->checkTemplate($template, null, false)) continue;
 
-      $iWeight = $template->getWeight($el->getNamespace(), $el->getName(), $sMode);
+      $iWeight = $template->getWeight($sNamespace, $sName, $sMode);
       if ($iWeight && $iWeight >= $iLast) {
 
         $result = $template;
@@ -30,7 +30,7 @@ abstract class Templated extends reflector\handler\Elemented {
       }
     }
 
-    if ($result && $result->getMatch()) {
+    if ($result) {
 
       $result = clone $result;
     }

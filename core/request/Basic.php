@@ -209,7 +209,7 @@ class Basic extends core\module\Filed implements core\request {
     return $mResult;
   }
 
-  public function parseExtension($bRemove) {
+  public function parseExtension($bRemove = true) {
 
     $sPath = $this->getPath();
 

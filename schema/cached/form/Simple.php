@@ -40,14 +40,17 @@ class Simple extends Basic {
     }
     else {
 
-      $bResult = is_string($this->getValue());
+      if (!$bResult = is_string($this->getValue())) {
+
+        $this->addMessage($this->translate("The field '%s' is not valid", $this->read('title')), $this->asAlias());
+      }
     }
 
     return $bResult;
   }
 
   public function asAlias() {
-    
+
     return array('alias' => $this->read('alias'));
   }
 

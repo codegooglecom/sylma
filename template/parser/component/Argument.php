@@ -15,7 +15,7 @@ class Argument extends Variable implements parser\component, common\arrayable {
 
   public function setContent($mContent) {
 
-    $this->loadVar($mContent);
+    return $this->loadVar($mContent);
   }
 
   public function asArray() {

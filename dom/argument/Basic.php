@@ -19,9 +19,9 @@ abstract class Basic extends core\module\Controled {
    */
   protected $bAttribute = false;
 
-  public function __construct(dom\document $doc, array $aNS = array()) {
+  public function __construct(dom\document $doc = null, array $aNS = array()) {
 
-    $this->build($doc, $aNS);
+    if ($doc) $this->build($doc, $aNS);
   }
 
   protected function build(dom\document $doc, array $aNS = array()) {
@@ -168,7 +168,7 @@ abstract class Basic extends core\module\Controled {
     $this->throwException('Feature not implemented');
   }
 
-  public function get($sPath = '', $bDebug = true) {
+  public function get($sPath = '', $bDebug = true, $bExpand = true) {
 
     $result = null;
     $dom = $this->getControler();
@@ -186,7 +186,7 @@ abstract class Basic extends core\module\Controled {
     }
     else {
 
-      $result = $this->buildChild($dom->create('handler', array($result)));
+      if ($bExpand) $result = $this->buildChild($dom->create('handler', array($result)));
     }
 
     return $result;
@@ -211,16 +211,40 @@ abstract class Basic extends core\module\Controled {
     if ($sPath) {
 
       $sPath = $this->parsePath($sPath);
-      $sResult = $this->getDocument()->readx($sPath, array(), $bDebug);
+
+      if ($el = $this->getDocument()->getx($sPath, array(), $bDebug)) {
+
+        if ($el->getType() === $el::ELEMENT) $sResult = $this->readElement($el);
+        else $sResult = $el->getValue();
+      }
+      else {
+
+        $sResult = '';
+      }
     }
     else {
 
-      $sResult = $this->getDocument()->getRoot()->read();
+      $sResult = $this->readElement($this->getDocument()->getRoot());
     }
 
     $mResult = $this->parseAttribute($sResult);
 
     return $mResult;
+  }
+
+  public function getRoot() {
+
+    return $this->getDocument()->getRoot()->getName();
+  }
+
+  protected function readElement(dom\element $el) {
+
+    if ($el->isComplex()) {
+
+      $this->launchException('Cannot read complex element');
+    }
+
+    return $el->read();
   }
 
   // public function add($mValue = null) {

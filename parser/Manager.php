@@ -154,7 +154,7 @@ class Manager extends compiler\Manager {
     if (!array_key_exists($sName, $this->aContexts)) {
 
       if ($bLoad) {
-
+//$this->launchException('Seems not ready');
         $result = $this->create($sName);
         $this->setContext($sName, $result);
       }

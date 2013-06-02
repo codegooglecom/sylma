@@ -261,6 +261,11 @@ class Manager extends compiler\Builder_old {
     return $mResult;
   }
 
+  /**
+   *
+   * @param type $iVal
+   * @return int
+   */
   public function validateNumeric($iVal) {
 
     if (!is_numeric($iVal)) {

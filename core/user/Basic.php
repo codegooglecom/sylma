@@ -101,6 +101,9 @@ class Basic extends core\module\Argumented implements core\user {
     return $this->bValid;
   }
 
+  /**
+   * @return bool
+   */
   public function logout() {
 
     if ($this->getCookie()) $this->getCookie()->kill();

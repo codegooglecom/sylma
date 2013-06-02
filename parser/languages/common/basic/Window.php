@@ -251,7 +251,7 @@ return; // todo, decide to use or not
     return $this->create('string', array($this, $mValue));
   }
 
-  protected function assignArray(array $mContent, common\_var $target = null, $bDebug = true) {
+  protected function assignArray(array $mContent, common\_var $target = null, $bDebug = true, $bFirst = false) {
 
     $aContent = $this->parseArrayables($mContent);
     $this->loadContent($aContent);
@@ -267,7 +267,7 @@ return; // todo, decide to use or not
           $this->launchException('Structure not allowed here');
         }
 
-        $aResult[] = $this->assignArrayString($aTexts, $target);
+        $aResult[] = $this->assignArrayString($aTexts, $target, $bFirst);
 
         $aChildContent = $this->assignArray($mVal->getContent(), $target, $bDebug);
         $mVal->setContent(is_array($aChildContent) ? $aChildContent : array($aChildContent));
@@ -285,7 +285,7 @@ return; // todo, decide to use or not
           $this->launchException('Instruction not allowed here');
         }
 
-        $aResult[] = $this->assignArrayString($aTexts, $target);
+        $aResult[] = $this->assignArrayString($aTexts, $target, $bFirst);
 
         $aResult[] = $mVal;
       }
@@ -299,16 +299,17 @@ return; // todo, decide to use or not
 
     if ($aTexts) {
 
-      $aResult[] = $target ? $this->assignArrayString($aTexts, $target) : $this->createString($aTexts);
+      $aResult[] = $target ? $this->assignArrayString($aTexts, $target, $bFirst) : $this->createString($aTexts);
     }
 
     return count($aResult) == 1 ? current($aResult) : $aResult;
   }
 
-  protected function assignArrayString(array &$aStrings, common\_var $target) {
+  protected function assignArrayString(array &$aStrings, common\_var $target, &$bFirst = false) {
 
-    $result = $aStrings ? $this->createInstruction($this->createAssign($target, $this->createString($aStrings), '.')) : null;
+    $result = $aStrings ? $this->createInstruction($this->createAssign($target, $this->createString($aStrings), $bFirst ? '' : '.')) : null;
     $aStrings = array();
+    $bFirst = false;
 
     return $result;
   }
@@ -336,34 +337,44 @@ return; // todo, decide to use or not
     return $result;
   }
 
-  public function toString($mContent, common\_var $target = null, $bDebug = false) {
+  public function toString($mContent, common\_var $target = null, $bDebug = false, $bFirst = false) {
 
     if (is_array($mContent)) {
 
-      $result = $this->assignArray($mContent, $target, $bDebug);
+      $result = $this->assignArray($mContent, $target, $bDebug, $bFirst);
     }
     else if (is_object($mContent)) {
 
-      $result = $this->objectToString($mContent, $target, $bDebug);
+      $result = $this->objectToString($mContent, $target, $bDebug, $bFirst);
       //$result = $mContent;
     }
     else if (is_string($mContent)) {
 
-      $result = $this->createString($mContent);
+      $var = $this->createString($mContent);
+
+      if ($target) {
+
+        $aContent = array($var);
+        $result = $this->assignArrayString($aContent, $target, $bFirst);
+      }
+      else {
+
+        $result = $var;
+      }
     }
     else {
 
-      $result = $this->assignArray(array($mContent), $target, $bDebug);
+      $result = $this->assignArray(array($mContent), $target, $bDebug, $bFirst);
     }
 
     return $result;
   }
 
-  protected function objectToString($val, common\_var $target = null, $bDebug = false) {
+  protected function objectToString($val, common\_var $target = null, $bDebug = false, $bFirst = false) {
 
     if ($val instanceof common\arrayable) {
 
-      $result = $this->assignArray($this->parseArrayable($val), $target, $bDebug);
+      $result = $this->assignArray($this->parseArrayable($val), $target, $bDebug, $bFirst);
     }
     else if ($val instanceof core\argument) {
 

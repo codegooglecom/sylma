@@ -319,10 +319,23 @@ class Caller extends Domed implements action\reflector {
     $window = $this->getWindow();
     $sMethod = $el->readAttribute('name');
 
-    $method = $this->getInterface()->loadMethod(text\toggleCamel($sMethod));
-
+    $method = $this->getInterface()->loadMethod(text\toggleCamel($sMethod), $this->loadCallReturn($el));
     $result = $this->runObject($el, $window->getSelf(), $method);
     //$result = $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
+
+    return $result;
+  }
+
+  protected function loadCallReturn(dom\element $el) {
+
+    if ($sReturn = $el->readx('@return', array(), false)) {
+
+      $result = $this->getWindow()->tokenToInstance($sReturn);
+    }
+    else {
+
+      $result = null;
+    }
 
     return $result;
   }
@@ -332,7 +345,7 @@ class Caller extends Domed implements action\reflector {
     $window = $this->getWindow();
 
     $sMethod = $this->getCallShort($el->getName());
-    $method = $this->getInterface()->loadMethod($sMethod);
+    $method = $this->getInterface()->loadMethod($sMethod, $this->loadCallReturn($el));
 
     $aArguments = array();
 

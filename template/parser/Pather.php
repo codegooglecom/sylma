@@ -103,15 +103,22 @@ class Pather extends component\Child {
 
   public function applyPath($sPath, $sMode, array $aArguments = array()) {
 
-    $sPath = trim($sPath);
+    if ($sPath) {
 
-    if ($this->matchAll($sPath)) {
+      $sPath = trim($sPath);
 
-      $aResult = $this->parsePathAll($sPath, $sMode, $aArguments);
+      if ($this->matchAll($sPath)) {
+
+        $aResult = $this->parsePathAll($sPath, $sMode, $aArguments);
+      }
+      else {
+
+        $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode, false, $aArguments);
+      }
     }
     else {
 
-      $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode, false, $aArguments);
+      $aResult = $this->getSource()->reflectApply($sMode, $aArguments);
     }
 
     return $aResult;

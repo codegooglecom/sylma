@@ -30,7 +30,7 @@ abstract class Filed extends Sessioned {
     return $result;
   }
 
-  private function createArgumentFromString($sPath, $sNamespace) {
+  private function createArgumentFromString($sPath, $sNamespace = '') {
 
     $file = $this->getManager(self::FILE_MANAGER)->getFile($sPath, $this->getDirectory('', false));
 

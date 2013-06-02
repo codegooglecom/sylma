@@ -22,10 +22,12 @@ class Main extends core\module\Domed implements dom\domable {
     $file = $this->getFile($sPath);
     $parent = $this->getControler('parser')->getContext('action/current');
 
+    dsp("Rebuild : $sPath");
+
     if ($file->getExtension() == 'eml') {
 
-      $action = $this->getManager(self::PARSER_ACTION)->getAction((string) $file);
-      $action->getContexts();
+      $action = $this->getManager(self::PARSER_ACTION)->getAction((string) $file->asPath());
+      $action->getContext('default');
     }
     else {
 

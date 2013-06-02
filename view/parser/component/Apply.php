@@ -12,19 +12,31 @@ class Apply extends parser\component\Apply implements common\arrayable {
 
   public function build() {
 
-    if (!$sValue = $this->readx('@select')) {
+    $sSelect = $this->readx('@select');
+    $sMode = $this->readx('@mode');
 
-      if ($sConstant = $this->readx('@use')) {
+    if ($sImport = $this->readx('@import')) {
 
-        $sValue = $this->getParser()->getConstant($sConstant);
+        $tree = $this->getParser()->importTree($sImport);
+        $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode);
+    }
+    else {
+
+      $this->startLog("Apply ({$sSelect})");
+
+      if (!$sSelect) {
+
+        if ($sConstant = $this->readx('@use')) {
+
+          $sSelect = $this->getParser()->getConstant($sConstant);
+        }
       }
+
+      $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
+
+      $result = $this->getTemplate()->applyPath($sSelect, $sMode, $aArguments);
     }
 
-    $this->startLog("Apply ({$sValue})");
-
-    $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
-
-    $result = $this->getTemplate()->applyPath($sValue, $this->readx('@mode'), $aArguments);
     $aResult = $this->getWindow()->parseArrayables(array($result));
 
     $this->stopLog();

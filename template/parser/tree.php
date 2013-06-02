@@ -7,5 +7,7 @@ interface tree extends core\tokenable {
 
   //function reflectRead($sPath);
   function reflectApply($sMode);
+  //function reflectApplyFunction($sName, array $aPath, $sMode)
+  //public function reflectApplyDefault($sPath, array $aPath, $sMode)
 }
 

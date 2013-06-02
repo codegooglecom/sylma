@@ -17,9 +17,8 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
   public function setScript(core\request $path, core\argument $post, $sContext = '') {
 
     //$path->parse();
-    $parser = \Sylma::getManager(self::PARSER_MANAGER);
-    $messages = new html\context\Messages;
-    $parser->setContext('messages', $messages);
+    $parser = \Sylma::getManager('parser');
+    $messages = $this->loadMessages();
 
     $contexts = new core\argument\Readable(array(
       'messages' => $messages,
@@ -59,9 +58,18 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
     return $this->action;
   }
 
+  protected function loadMessages() {
+
+    $result = new html\context\Messages;
+    \Sylma::getManager('parser')->setContext('messages', $result);
+
+    return $result;
+  }
+
   protected function loadAction(action\handler $action) {
 
-    $messages = new html\context\Messages;
+    $messages = $this->loadMessages();
+
     $contexts = new core\argument\Readable(array(
       'messages' => $messages,
       'js' => new html\context\JS(),

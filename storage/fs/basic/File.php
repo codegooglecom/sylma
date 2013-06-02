@@ -207,6 +207,7 @@ class File extends Resource implements fs\file {
     return $this->getControler()->createArgument(array(
       'file' => array(
         'path' => $this->getFullPath(),
+        'action-path' => $this->asPath(),
         'name' => $this->getName(),
         'simple-name' => $this->getSimpleName(),
         //'display-name' => $this->getDisplayName(),

@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\parser\handler;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\parser\languages\common, sylma\template;
 
-class Domed extends Templated implements reflector\elemented {
+class Domed extends Templated implements reflector\elemented, template\parser\handler {
 
   const NS = 'http://2013.sylma.org/template';
   const PREFIX = 'tpl';
@@ -71,6 +71,47 @@ class Domed extends Templated implements reflector\elemented {
 
     $result = $window->addVar($window->argToInstance(''));
     $this->result = $result;
+  }
+
+  public function applyArrayTo($target, array $aPath, $sMode, array $aArguments = array()) {
+
+    $pather = $this->getPather();
+    $pather->setSource($target);
+
+    return $aPath ? $pather->parsePathTokens($aPath, $sMode, $aArguments) : $target->reflectApply($sMode, $aArguments);
+  }
+
+  public function applyPathTo($target, $sPath, $sMode, array $aArguments = array()) {
+
+    $pather = $this->getPather();
+    $pather->setSource($target);
+
+    return $pather->applyPath($sPath, $sMode, $aArguments);
+  }
+
+  protected function getPather() {
+
+    return $this->getCurrentTemplate()->getPather();
+  }
+
+  public function importTree($sPath, $sMode = '') {
+
+    switch ($sMode) {
+
+      case 'argument' :
+
+        $content = $this->createArgumentFromString($sPath);
+        break;
+
+      default :
+      case 'document' :
+
+        $this->loadDefaultArguments();
+        $content = $this->create('options', array($this->getSourceFile($sPath)->getDocument()));
+        break;
+    }
+
+    return $this->create('tree', array($this, $content));
   }
 
   /**

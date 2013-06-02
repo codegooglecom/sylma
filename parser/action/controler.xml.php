@@ -10,7 +10,8 @@
     'file' => 'getFile',
     'document' => 'getDocument',
     'template' => 'getTemplate',
-    'argument' => 'createArgument'),
+    'argument' => 'createArgument',
+    'manager' => 'getManager'),
   'namespace' => 'http://www.sylma.org/parser/action/basic',
   'class' => '\sylma\parser\action\cached\Document'),
 'template' => array(
@@ -100,7 +101,10 @@
       'name' => '\sylma\parser\languages\php\basic\_Foreach'),
     'cast' => array(
       'file' => '\sylma\parser\languages\php\basic\Cast.php',
-      'name' => '\sylma\parser\languages\php\basic\Cast'))),
+      'name' => '\sylma\parser\languages\php\basic\Cast'),
+    'group' => array(
+      'file' => '\sylma\parser\languages\common\basic\Group.php',
+      'name' => '\sylma\parser\languages\common\basic\Group'))),
 'classes' => array(
   'window' => array(
     'file' => '\sylma\parser\action\compiler\Window.php',

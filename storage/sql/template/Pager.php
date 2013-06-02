@@ -88,7 +88,7 @@ class Pager extends reflector\component\Foreigner implements reflector\component
 
   public function reflectApply($sMode) {
 
-    if (!$result = $this->getParser()->lookupTemplate($this->getNode(), $sMode)) {
+    if (!$result = $this->getParser()->lookupTemplate($this->getNode()->getName(), $this->getNamespace(), $sMode)) {
 
       $this->launchException('Cannot render pager without template');
     }
