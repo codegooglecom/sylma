@@ -64,6 +64,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       case 'value' : $result = $this->reflectRead(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
+      case 'title' : $result = $this->getTitle(); break;
 
       default :
 

@@ -99,6 +99,11 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
 
     $args = $this->getArguments();
 
+    if ($aPath) {
+
+      $this->launchException('Not ready, should avoid path parsing');
+    }
+    
     if ($bRead) {
 
       $result = $args->read($sPath);

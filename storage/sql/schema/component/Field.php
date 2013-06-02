@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\schema\component;
-use sylma\core, sylma\dom, sylma\storage\sql\schema;
+use sylma\core, sylma\dom, sylma\storage\sql;
 
-class Field extends Element implements schema\field {
+class Field extends Element implements sql\schema\field {
 
   public function parseRoot(dom\element $el) {
 

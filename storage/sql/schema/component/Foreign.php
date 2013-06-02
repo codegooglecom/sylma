@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\schema\component;
-use sylma\core, sylma\dom, sylma\schema, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\schema, sylma\storage\sql;
 
-class Foreign extends Element {
+class Foreign extends Element implements sql\schema\element {
 
   const PREFIX = 'sql';
 
@@ -21,13 +21,12 @@ class Foreign extends Element {
     $this->loadOptional();
   }
 
-  protected function loadElementRef(fs\file $file) {
-
-    $this->getParser()->addSchema($file->getDocument());
+  protected function loadElementRef() {
 
     list($sNamespace, $sName) = $this->getParser()->parseName($this->readx('@table', true), $this, $this->getNode());
 
-    return $this->getParser()->getElement($sName, $sNamespace);
+    $el = $this->getParser()->getElement($sName, $sNamespace);
+    $this->setElementRef($el);
   }
 
   public function getElementRef() {
@@ -39,11 +38,13 @@ class Foreign extends Element {
         if ($sImport = $this->readx('@import')) {
 
           $file = $this->getSourceFile($sImport);
-          $this->setElementRef($this->loadElementRef($file));
+          $this->getParser()->addSchema($file->getDocument());
+
+          $this->loadElementRef($file);
         }
         else {
 
-          $this->launchException('Not yet implemented');
+          $this->loadElementRef();
         }
       }
       else {

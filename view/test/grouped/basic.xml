@@ -517,7 +517,7 @@
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Import argument tree">
+  <tst:test name="Import document tree">
     <tst:document>
       <view:view sql:ns="ns" xmlns:tree1="http://2013.sylma.org/view/parser/test/grouped/samples/tree1">
         <sql:resource>
@@ -534,6 +534,7 @@
           <div>
             <span><tpl:read select="abc"/></span>
             <tpl:apply select="def"/>
+            <!--<tpl:apply select="def/lmn"/>-->
           </div>
         </view:template>
         <view:template match="tree1:def">
@@ -558,6 +559,79 @@
             </ul>
           </div>
         </span>
+      </form>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Read path on apply" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:tree1="http://2013.sylma.org/view/parser/test/grouped/samples/tree1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><stp:apply select="name"/></h3>
+            <span><tpl:apply import="samples/tree2.xml"/></span>
+          </form>
+        </view:template>
+        <view:template match="tree1:sample1">
+          <div>
+            <span><tpl:read select="abc"/></span>
+            <tpl:apply read="def/lmn"/>
+          </div>
+        </view:template>
+        <view:template match="tree1:*">
+          <li><tpl:read/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <h3>admin</h3>
+        <span>
+          <div>
+            <span>123</span>
+            <li>smith</li>
+          </div>
+        </span>
+      </form>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Import argument options" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:tree1="http://2013.sylma.org/view/parser/test/grouped/samples/tree1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form><tpl:apply import="samples/tree3.xml"/></form>
+        </view:template>
+        <view:template match="tree1:sample1">
+          <div>
+            <span><tpl:read select="abc"/></span>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="tree1:test1">
+          <li href="{name()}"><tpl:apply select="*"/></li>
+        </view:template>
+        <view:template match="tree1:*">
+          <span><tpl:read/></span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <div>
+          <span>123</span>
+          <li href="test1">
+            <span>456</span>
+            <span>smith</span>
+          </li>
+          <span>john</span>
+        </div>
       </form>
     </tst:node>
   </tst:test>

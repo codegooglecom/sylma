@@ -378,7 +378,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     return $pather;
   }
 
-  public function applyRead($sPath, $sMode) {
+  public function readPath($sPath, $sMode) {
 
     $pather = $this->getPather();
 

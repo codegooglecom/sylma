@@ -101,7 +101,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
     if (!$this->bBuilded) {
 
-      $this->setNode($el, false, false);
+      $this->setNode($el, true, false);
       $this->start();
 
       $el = $this->getNode();

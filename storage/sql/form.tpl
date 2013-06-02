@@ -26,7 +26,7 @@
   <view:template match="*" mode="container">
     <tpl:register/>
     <div class="field clearfix">
-      <label for="form-{alias()}"><tpl:apply select="alias()"/> :</label>
+      <label for="form-{alias()}"><tpl:read select="title()"/> :</label>
       <tpl:apply mode="input"/>
     </div>
   </view:template>

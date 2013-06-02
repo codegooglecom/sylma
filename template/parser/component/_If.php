@@ -9,7 +9,7 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
+    $this->setNode($el, true);
     //$this->allowForeign(true);
     //$this->allowUnknown(true);
     $this->allowText(true);
@@ -18,7 +18,7 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
   public function asArray() {
 
     $this->setReflector($this->getWindow()->createCondition());
-    
+
     $test = $this->getTemplate()->getPather()->parseExpression($this->readx('@test'));
     $if = $this->getReflector();
 

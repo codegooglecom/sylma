@@ -4,20 +4,27 @@ namespace sylma\storage\sql\template\hollow;
 use sylma\core, sylma\storage\sql, sylma\storage\fs;
 
 class Foreign extends sql\template\component\Foreign {
-  
-  protected function loadElementRef(fs\file $file) {
 
-    $this->setDirectory(__FILE__);
+  protected function loadElementRef(fs\file $file = null) {
 
-    $args = $this->getScript('/#sylma/storage/sql/view/manager.xml');
-    $handler = $this->getParser();
+    if ($file) {
 
-    $old = $handler->getArguments();
-    $class = $this->getScript($args->read("argument/view"))->get('classes/elemented');
+      $this->setDirectory(__FILE__);
 
-    $handler->setArguments($class, false);
-    $result = parent::loadElementRef($file);
-    $handler->setArguments($old, false);
+      $args = $this->getScript('/#sylma/storage/sql/view/manager.xml');
+      $handler = $this->getParser();
+
+      $old = $handler->getArguments();
+      $class = $this->getScript($args->read("argument/view"))->get('classes/elemented');
+
+      $handler->setArguments($class, false);
+      $result = parent::loadElementRef($file);
+      $handler->setArguments($old, false);
+    }
+    else {
+
+      $result = parent::loadElementRef();
+    }
 
     return $result;
   }

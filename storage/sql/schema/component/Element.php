@@ -35,6 +35,16 @@ class Element extends schema\xsd\component\Element implements common\stringable 
     return $this->asString() . ($this->useAlias() ? ' AS `' . $this->getAlias() . '`' : '');
   }
 
+  public function getTitle() {
+
+    if (!$sResult = $this->readx('@title')) {
+
+      $sResult = $this->getAlias();
+    }
+
+    return $sResult;
+  }
+
   public function asString() {
 
     return $this->getParent()->asString() . '.`' . $this->getName() . "`";

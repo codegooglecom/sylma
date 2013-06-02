@@ -55,7 +55,7 @@
               %parent%.getObject('container').update({order : %object%.get('name')});
               return false;
             </js:event>
-            <tpl:apply select="alias()"/>
+            <tpl:apply select="title()"/>
           </a>
         </th>
       </view:template>

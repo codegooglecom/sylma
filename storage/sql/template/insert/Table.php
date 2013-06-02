@@ -15,7 +15,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->setHandler($this->loadHandler());
   }
 
-  public function addElementToHandler(schema\parser\element $el, $sDefault = '') {
+  public function addElementToHandler(sql\schema\element $el, $sDefault = '') {
 
     $query = $this->getQuery();
     $window = $this->getWindow();
@@ -30,7 +30,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     $aArguments = array(
       'alias' => $sName,
-      'title' => $el->getName(),
+      'title' => $el->getTitle(),
     );
 
     if ($bOptional) $aArguments['optional'] = true;

@@ -7,7 +7,7 @@ class Apply extends parser\component\Apply implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
+    $this->setNode($el, true);
   }
 
   public function build() {
@@ -30,6 +30,10 @@ class Apply extends parser\component\Apply implements common\arrayable {
 
           $sSelect = $this->getParser()->getConstant($sConstant);
         }
+        else if ($sValue = $this->readx('@read')) {
+$this->launchException("Not ready");
+          $sSelect = $this->lookupPath($sValue);
+        }
       }
 
       $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
@@ -42,6 +46,18 @@ class Apply extends parser\component\Apply implements common\arrayable {
     $this->stopLog();
 
     return $aResult;
+  }
+
+  protected function lookupPath($sValue) {
+
+    $sResult = $this->getTemplate()->readPath($sValue, '');
+
+    if (!is_string($sResult)) {
+
+      $this->launchException("String expected as read path in '$sValue'");
+    }
+
+    return $sResult;
   }
 
   public function _onAdd() {
