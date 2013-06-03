@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+  xmlns:le="http://2013.sylma.org/action"
+>
+  <crud:route groups="group1">
+    <view:view mode="view" groups="test1"/>
+    <view:view name="sub" mode="view">
+      <view:template match="user:*">
+        <button type="text" name="{alias()}" value="{value()}"/>
+      </view:template>
+    </view:view>
+  </crud:route>
+  <crud:global user:ns="ns">
+    <view:template>
+      <form>
+        <tpl:apply select="name, email"/>
+      </form>
+    </view:template>
+    <view:template match="user:*">
+      <input type="text" name="{alias()}" value="{value()}"/>
+    </view:template>
+  </crud:global>
+  <crud:group name="test1">
+    <span><tpl:read select="alias()"/></span>
+  </crud:group>
+</crud:crud>

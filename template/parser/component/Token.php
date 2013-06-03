@@ -56,6 +56,11 @@ class Token extends Child implements parser\component {
     return $content;
   }
 
+  protected function parseText(dom\text $node, $bTrim = true) {
+
+    return $bTrim ? trim($node->getValue()) : $node->getValue();
+  }
+
   public function getCall() {
 
     $sName = $this->getName();

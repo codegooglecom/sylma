@@ -130,6 +130,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
       //case 'apply' : $result = $this->reflectApply(''); break;
       case 'name' : $result = $this->getName(); break;
+      case 'title' : $result = $this->getTitle(); break;
       case 'parent' :
 
         $parent = $this->getParent();

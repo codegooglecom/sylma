@@ -31,7 +31,7 @@ abstract class Domed extends Iterator implements dom\domable {
     $dom = \Sylma::getControler('dom');
     $doc = $dom->create('handler');
     $fragment = $doc->createFragment();
-    $root = $fragment->add($doc->createElement('root'));
+    $root = $fragment->add($doc->createElement('root', null, array(), $sNamespace));
 
     $this->buildNode($root, $aArray, $sNamespace);
 

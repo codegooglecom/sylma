@@ -13,12 +13,12 @@ class Text extends Child implements common\arrayable, parser\component {
   }
 
   protected function build() {
-
+/*
     if ($this->getNode()->isComplex()) {
 
       $this->launchException('Text component must not be complex');
     }
-
+*/
     return $this->parseComponentRoot($this->getNode());
   }
 

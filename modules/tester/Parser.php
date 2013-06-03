@@ -101,6 +101,11 @@ class Parser extends tester\Prepare {
       if ($sName = $node->readx('@name', array(), false)) $sName = "node/$sName";
       else $sName = 'node';
 
+      if ($node->countChildren() > 1) {
+
+        $this->launchException('Too many node in test', get_defined_vars());
+      }
+
       $this->set($sName, $node->getFirst());
     }
   }
@@ -134,6 +139,11 @@ class Parser extends tester\Prepare {
   public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
 
     return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $this->buildScriptArguments($aArguments, $aContexts, $aPosts), true);
+  }
+
+  public function set($sPath, $mValue = null) {
+
+    return parent::set($sPath, $mValue);
   }
 
   public function get($sPath, $bDebug = true) {

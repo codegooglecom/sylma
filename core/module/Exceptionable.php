@@ -5,6 +5,8 @@ use \sylma\core;
 
 class Exceptionable {
 
+  const DB_MANAGER = 'mysql';
+  
   /**
    * Throw a customized exception to the main controler
    *

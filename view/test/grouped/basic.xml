@@ -442,6 +442,34 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Content argument with default value">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <span>
+              <tpl:apply select="email"/>
+            </span>
+          </div>
+        </view:template>
+        <view:template match="user:email">
+          <tpl:argument name="test2" default="alias()"/>
+          <tpl:read/><br/><tpl:read select="$test2"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org<br/>email</span>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Constant">
     <tst:document>
       <view:view sql:ns="ns">

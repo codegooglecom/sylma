@@ -117,7 +117,7 @@
         $manager->compareNodes($view2, $node2)
     </tst:expected>
   </tst:test>
-  <tst:test name="Double route with global and local overides">
+  <tst:test name="Double route with global and local overrides">
     <tst:node name="main">
       <div>
         <button type="text" name="name" value="admin"/>
@@ -173,7 +173,7 @@
         $manager->compareNodes($view4, $node4)
     </tst:expected>
   </tst:test>
-  <tst:test name="Double route with group overides">
+  <tst:test name="Double route with group overrides">
     <tst:node name="main">
       <h1>
         <textarea type="text" name="name" value="admin"/>
@@ -227,6 +227,38 @@
         $manager->compareNodes($view2, $node2) &amp;&amp;
         $manager->compareNodes($view3, $node3) &amp;&amp;
         $manager->compareNodes($view4, $node4)
+    </tst:expected>
+  </tst:test>
+  <tst:test name="View group override" disabled="true">
+    <tst:node name="main">
+      <form>
+        <span type="text" name="name" value="admin"/>
+        <span type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <button type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->get('node');
+
+      $view1 = $manager->load('samples/extends7.vml');
+      $view2 = $manager->load('samples/extends7.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub',
+        )),
+      ));
+
+      $node1 = $node->get('main');
+      $node2 = $node->get('sub');
+
+      return
+        $manager->compareNodes($view1, $node1) &amp;&amp;
+        $manager->compareNodes($view2, $node2)
     </tst:expected>
   </tst:test>
 </tst:tests>

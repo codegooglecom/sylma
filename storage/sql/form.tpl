@@ -12,9 +12,9 @@
 >
 
   <view:template>
-    <form js:class="sylma.ui.Form">
-      <js:include>/#sylma/template/form.js</js:include>
-      <tpl:apply mode="root"/>
+    <form js:class="sylma.crud.Form">
+      <js:include>/#sylma/template/crud.js</js:include>
+      <tpl:apply mode="init"/>
       <tpl:apply use="form-cols" mode="container"/>
       <tpl:apply mode="action"/>
       <input type="submit" value="Envoyer"/>

@@ -28,7 +28,7 @@ class Where extends core\module\Managed {
 
   public function __toString() {
 
-    return $this->getValues() ? ' WHERE ' . implode($this->getValues()) : '';
+    return $this->getValues() ? ' WHERE ' . implode(' AND ', $this->getValues()) : '';
   }
 }
 

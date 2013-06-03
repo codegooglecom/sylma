@@ -18,6 +18,11 @@ class Argument extends Variable implements parser\component, common\arrayable {
     return $this->loadVar($mContent);
   }
 
+  public function getDefault() {
+
+    return $this->getTemplate()->applyPath($this->readx('@default'), '');
+  }
+
   public function asArray() {
 
     return array();

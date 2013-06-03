@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+>
+  <tst:description>Basic</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="Context with one file">
+    <tst:node>
+      <link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
+    </tst:node>
+    <tst:expected>
+
+      $context = new \sylma\modules\html\context\CSS;
+      $manager->set('context', $context);
+
+      $manager->getScript('samples/context1.vml', array(), array(
+        'css' => $context,
+      ));
+      $manager->compareNodes($context->asDOM(), $manager->get('node'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Context with two files">
+    <tst:node>
+      <root>
+        <link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="/sylma/action/test/samples/style2.css" rel="stylesheet" type="text/css" media="all"/>
+      </root>
+    </tst:node>
+    <tst:expected>
+
+      $context = new \sylma\modules\html\context\CSS;
+      $manager->set('context', $context);
+
+      $manager->getScript('samples/context2.vml', array(), array(
+        'css' => $context,
+      ));
+      
+      $manager->compareNodes($context->asDOM(), $manager->get('node'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+
+</tst:tests>

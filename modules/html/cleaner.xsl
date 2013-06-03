@@ -32,9 +32,6 @@
 
   <xsl:template match="html:html">
     <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
-    <xsl:attribute name="xmlns">
-      <xsl:value-of select="namespace-uri()"/>
-    </xsl:attribute>
       <xsl:apply-templates select="@* | * | text()"/>
     </xsl:element>
   </xsl:template>

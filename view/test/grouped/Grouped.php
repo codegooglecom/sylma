@@ -5,8 +5,6 @@ use sylma\core, sylma\modules\tester, sylma\storage\sql;
 
 class Grouped extends tester\Parser implements core\argumentable {
 
-  const DB_MANAGER = 'mysql';
-
   protected $sTitle = 'Grouped';
 
   public function __construct() {

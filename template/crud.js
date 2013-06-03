@@ -1,5 +1,7 @@
 
-sylma.ui.Form = new Class({
+sylma.crud = {};
+
+sylma.crud.Form = new Class({
 
   Extends : sylma.ui.Base,
 
@@ -29,3 +31,18 @@ sylma.ui.Form = new Class({
     return false;
   }
 });
+
+sylma.crud.List = new Class({
+
+  Extends : sylma.ui.Container,
+
+  update : function(args) {
+
+    if (this.get('send')) {
+
+      args = Object.merge(this.get('send'), args);
+    }
+
+    return this.parent(args);
+  }
+})

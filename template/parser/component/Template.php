@@ -36,6 +36,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   protected $sID = '';
   protected $sMode = self::MODE_DEFAULT;
+  protected $aSendParameters = array(); // arguments are stored until template is ready
 
   public function parseRoot(dom\element $el) {
 
@@ -242,17 +243,21 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   public function sendArguments(array $aVars) {
 
+    $this->aSendParameters = $aVars;
+  }
+
+  protected function checkArguments() {
+
+    $aVars = $this->aSendParameters;
+
     foreach ($this->getParameters() as $sName => $arg) {
 
-      if (!isset($aVars[$sName])) {
-
-        $this->launchException("Missing argument '$sName' for template");
-      }
+      $content = isset($aVars[$sName]) ? $aVars[$sName] : $arg->getDefault();
 
       $var = clone $arg;
 
       $this->aVariables[$sName] = $var;
-      $this->aHeaders[] = $var->setContent($aVars[$sName]);
+      $this->aHeaders[] = $var->setContent($content);
     }
   }
 
@@ -305,6 +310,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
     $this->getTree(); // exists
     $this->initComponents();
+    $this->checkArguments();
 
     //$this->getParser()->checkTemplate($this);
 
