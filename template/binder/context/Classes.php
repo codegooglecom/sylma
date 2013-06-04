@@ -7,9 +7,16 @@ class Classes extends modules\html\context\JS implements core\stringable {
 
   const PARENT_PATH = 'sylma.binder.classes';
 
-  public function asString() {
+  public function asString($sTarget = '') {
 
-    return self::PARENT_PATH . ' = {' . implode(',', $this->query()) . '}';
+    if (!$sTarget) $sTarget = self::PARENT_PATH;
+
+    return $sTarget . ' = ' . '{' . implode(',', $this->query()) . '}';
+  }
+
+  public function asStringVar() {
+
+    return $this->asString('var classes');
   }
 }
 

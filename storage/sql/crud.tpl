@@ -15,59 +15,6 @@
 
     <view:view mode="view" groups="view" _debug="x">
 
-      <sql:resource multiple="multiple"/>
-
-      <view:template>
-
-        <tpl:apply mode="breadcrumb">
-          <tpl:read tpl:name="title" select="static()/title()"/>
-        </tpl:apply>
-
-        <le:context name="title">
-          <le:string><tpl:read select="static()/title()"/></le:string>
-        </le:context>
-
-        <div>
-          <a>
-            <tpl:token name="href">
-              <le:path/>/insert
-            </tpl:token>
-            Insert
-          </a>
-          <a ls:owner="root" ls:group="admin" ls:mode="700">
-            <tpl:token name="href">
-              <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
-            </tpl:token>
-            Structure
-          </a>
-          <table js:class="sylma.ui.Base">
-            <tpl:apply select="static()" mode="row"/>
-            <crud:include path="list"/>
-          </table>
-        </div>
-      </view:template>
-
-      <view:template match="*" mode="row">
-        <thead>
-          <tr>
-            <th></th>
-            <tpl:apply use="list-cols" mode="cell"/>
-          </tr>
-        </thead>
-      </view:template>
-
-      <view:template match="*" mode="cell">
-        <th>
-          <a href="#" js:class="sylma.ui.Base">
-            <js:option name="name"><tpl:apply select="alias()"/></js:option>
-            <js:event name="click">
-              %parent%.getObject('container').update({order : %object%.get('name')});
-              return false;
-            </js:event>
-            <tpl:apply select="title()"/>
-          </a>
-        </th>
-      </view:template>
 
     </view:view>
 
@@ -75,63 +22,11 @@
 
     <view:view name="list" _debug="x">
 
-      <sql:resource multiple="multiple"/>
-
-      <view:template mode="init">
-
-        <tpl:apply mode="init-pager"/>
-
-        <le:check-argument name="order" format="string">
-          <le:default>
-            <tpl:apply select="$$list-order"/>
-          </le:default>
-        </le:check-argument>
-
-        <sql:order>
-          <le:argument name="order"/>
-        </sql:order>
-
-      </view:template>
+      <crud:import>pager.tpl</crud:import>
 
       <view:template>
-        <tpl:apply mode="init"/>
-        <tbody js:name="container" js:class="sylma.crud.List">
-          <js:option name="path">
-            <crud:path/>
-          </js:option>
-          <js:option name="send.order">
-            <le:argument name="order"/>
-          </js:option>
-          <tpl:apply select="*" mode="row"/>
-          <tr>
-            <td colspan="99">
-              <tpl:apply select="pager()"/>
-            </td>
-          </tr>
-        </tbody>
+        <tpl:apply mode="internal"/>
       </view:template>
-
-      <view:template match="*" mode="row">
-        <tr js:class="sylma.ui.Base">
-          <td>
-            <a title="Editer">
-              <tpl:token name="href">
-                <le:path/>/update?id=<tpl:read select="id"/>
-              </tpl:token>
-              E
-            </a>
-          </td>
-          <tpl:apply use="list-cols" mode="cell"/>
-        </tr>
-      </view:template>
-
-      <view:template match="*" mode="cell">
-        <td>
-          <tpl:apply/>
-        </td>
-      </view:template>
-
-      <crud:import>pager.tpl</crud:import>
 
     </view:view>
 
@@ -143,9 +38,7 @@
 
       <view:template mode="init">
         <tpl:token name="action"><le:path/>/insert/do.json</tpl:token>
-
         <tpl:apply mode="title"/>
-        <tpl:apply mode="breadcrumb"/>
       </view:template>
 
     </view:view>
@@ -163,9 +56,7 @@
         <sql:filter name="id"><le:argument name="id" escape="x"/></sql:filter>
         <js:option name="id"><tpl:read select="id"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
-
         <tpl:apply mode="title"/>
-        <tpl:apply mode="breadcrumb"/>
       </view:template>
 
       <view:template match="sql:foreign" mode="input" sql:ns="ns">
@@ -198,16 +89,14 @@
   <crud:group name="form">
 
     <sql:resource/>
-
     <crud:import>form.tpl</crud:import>
 
   </crud:group>
 
   <crud:group name="list">
 
-    <view:template match="sql:foreign">
-      <tpl:apply select="ref()"/>
-    </view:template>
+    <sql:resource multiple="multiple"/>
+    <crud:import>list.tpl</crud:import>
 
   </crud:group>
 

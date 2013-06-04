@@ -276,13 +276,14 @@ sylma.ui = new sylma.classes.ui;
 
     Extends : this.Base,
 
-    update : function(args) {
+    update : function(args, path) {
 
       var self = this;
+      var path = path || this.get('path');
 
       var req = new Request.JSON({
 
-        url : this.get('path') + '.json',
+        url : path + '.json',
         onSuccess: function(response) {
 
           var result = sylma.ui.parseMessages(response);
@@ -291,6 +292,13 @@ sylma.ui = new sylma.classes.ui;
           sylma.ui.import(result.content, name).replaces(self.getNode());
 
           //console.log(result.objects[sylma.ui.extractFirst(result.objects)]);
+
+          if (result.classes) {
+
+            eval(result.classes);
+            Object.merge(sylma.binder.classes, classes);
+          }
+
           var props = result.objects[sylma.ui.extractFirst(result.objects)];
           self.initialize(props);
         }

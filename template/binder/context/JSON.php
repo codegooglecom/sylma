@@ -41,9 +41,12 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
       $e->save(false);
     }
 
+    $classes = $contexts->get('js/classes', false);
+
     $this->setArray(array(
       'content' => (string) $sResult,
       'objects' => $contexts->get('js/load/objects', false),
+      'classes' => $classes->asStringVar(),
       'messages' => $contexts->get('messages'),
     ));
   }
