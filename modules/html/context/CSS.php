@@ -46,7 +46,9 @@ class CSS extends context\Basic implements dom\domable {
 
     if ($aStyles) {
 
-      $result = $this->buildDocument($aStyles, \Sylma::read('namespaces/html'));
+      $bChildren = false;
+      $doc = $this->buildDocument($aStyles, \Sylma::read('namespaces/html'), $bChildren);
+      $result = $bChildren ? $doc->getChildren(): $doc->getRoot();
     }
 
     return $result;

@@ -100,13 +100,13 @@ abstract class Domed extends Iterator implements dom\domable {
 
           if ($mValue instanceof core\argument) {
 
-            if ($mValue instanceof dom\domable) {
+            if (0 && $mValue instanceof dom\domable) {
 
               $node->add($mValue->asDOM());
             }
             else {
 
-              self::buildNode($node, $mValue->asArray(), $sNamespace);
+              self::buildNode($node, $mValue->asDOMArray(), $mValue->getNamespace());
             }
           }
           else {
@@ -169,6 +169,13 @@ abstract class Domed extends Iterator implements dom\domable {
     return $result;
   }
 
+  public function asDOMArray() {
+
+    $this->normalize(self::NORMALIZE_EMPTY_ARRAY & self::NORMALIZE_ARGUMENT);
+
+    return $this->aArray;;
+  }
+
   public function asDOM($sParentNamespace = '') {
 
     if (!$sNamespace = $this->getNamespace()) {
@@ -178,19 +185,19 @@ abstract class Domed extends Iterator implements dom\domable {
 
     $bChildren = false;
 
-    $this->normalize(self::NORMALIZE_EMPTY_ARRAY & self::NORMALIZE_ARGUMENT);
+    $aChildren = $this->asDOMArray();
 
-    if (count($this->aArray) > 1) {
+    if (count($aChildren) > 1) {
 
       $bChildren = true;
-      $aValues = array('root' => $this->aArray);
+      $aValues = array('root' => $aChildren);
     }
     else {
 
-      $aValues = $this->aArray;
+      $aValues = $aChildren;
     }
 
-    $result = $this->buildDocument($aValues, $sNamespace, $bChildren);
+    $result = $this->buildDocument($aValues, $sNamespace);
 
     if (!$result || $result instanceof dom\handler && $result->isEmpty()) {
 

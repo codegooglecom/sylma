@@ -7,13 +7,11 @@ class Controler extends core\module\Filed {
 
   protected $user;
 
-  const SETTINGS_FILE = 'settings.yml';
-
   public function __construct() {
 
     $this->setDirectory(__FILE__);
 
-    $this->setArguments(self::SETTINGS_FILE);
+    $this->setArguments(include('settings.xml.php'));
     $this->getArguments()->merge(\Sylma::get('users'));
 
     $user = $this->createUser();

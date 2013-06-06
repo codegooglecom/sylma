@@ -17,7 +17,7 @@ class Form extends schema\cached\form\Form {
 
       if ($this->getMode() == 'insert') {
 
-        $this->addMessage($this->translate('You must confirm the password'), $password->asAlias());
+        $this->addMessage($this->translate('You must confirm the password'));
       }
       else {
 
@@ -35,7 +35,7 @@ class Form extends schema\cached\form\Form {
 
       if (!$password->validate() || $sConfirm !== $password->getValue()) {
 
-        $this->addMessage($this->translate('Passwords do not match'), $password->asAlias());
+        $this->addMessage($this->translate('Passwords do not match'));
       }
       else {
 

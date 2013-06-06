@@ -55,14 +55,12 @@ class Module extends core\module\Domed {
 
     $contexts = $this->getActionContexts();
     $contexts->set('internal', $this->createArgument(array()));
-    
+
     $this->loadDefaultArguments();
 
     $post = $this->createArgument($this->getManager('init')->loadPOST());
 
     $doc = $this->getScript('login/default/check', array(), $contexts->query() , $post->query());
-
-    $msg = $contexts->get('messages');
 
     if (!$doc->isEmpty()) {
 
@@ -73,13 +71,22 @@ class Module extends core\module\Domed {
       }
     }
 
+    $msg = $contexts->get('messages');
+
     if (!$sResult) {
 
-      $msg->add($this->translate('Authentication failed'));
+      $msg->add(array('content' => $this->translate('Authentication failed')));
     }
     else {
 
-      $msg->add($this->translate('Authentication successed'));
+      $bRemember = true; //(bool) $post->get('remember', false);
+      $user = $this->getManager('user');
+      $user->authenticate($post->read('name'));
+
+      \Sylma::setManager('user', $user);
+      $user->load($bRemember);
+
+      $msg->add(array('content' => $this->translate('Authentication successed')));
     }
 
     return $sResult;

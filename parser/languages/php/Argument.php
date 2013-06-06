@@ -32,7 +32,7 @@ class Argument extends core\argument\Readable {
 
       if ($arg = $val->asArgument()) {
 
-        $mResult = $this->normalizeArgument($arg);
+        $mResult = $arg; //$this->normalizeArgument($arg);
       }
       else {
 

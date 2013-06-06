@@ -6,7 +6,7 @@
 >
 	<le:settings>
 		<le:name>Déconnexion</le:name>
-		<return format="Redirect" />
+		<le:return format="object" />
 	</le:settings>
 	<lm:manager name="user" return="sylma\core\user\Basic">
       <le:call name="logout"/>

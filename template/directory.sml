@@ -14,4 +14,11 @@
       <mode>755</mode>
     </security>
   </file>
+  <file name="crud.js">
+    <security>
+      <owner>root</owner>
+      <group>0</group>
+      <mode>755</mode>
+    </security>
+  </file>
 </directory>

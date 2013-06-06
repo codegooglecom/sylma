@@ -38,9 +38,9 @@ class Form extends core\module\Argumented {
     $this->contexts = $contexts;
   }
 
-  protected function getContext($sName) {
+  protected function getContext($sName, $bDebug = true) {
 
-    return $this->contexts->get($sName);
+    return $this->contexts->get($sName, $bDebug);
   }
 
   public function addMessage($sMessage, array $aArguments = array()) {
@@ -84,6 +84,15 @@ class Form extends core\module\Argumented {
     foreach ($this->getElements() as $sName => $element) {
 
       if (!$element->validate()) $bValid = false;
+    }
+
+    if (!$bValid) {
+
+      $this->addMessage('Some fields are missing or invalids, they have been highlighted');
+    }
+    else if ($this->getContext('messages', false)) {
+
+      $this->addMessage('Datas has been ' . ($this->getMode() == 'insert' ? 'inserted' : 'updated'));
     }
 
     return $bValid;

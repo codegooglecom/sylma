@@ -58,34 +58,7 @@ class Basic extends core\module\Argumented implements core\user {
     return $this->sName;
   }
 
-  public function authenticate($sUser, $sPassword) {
-
-    $sResult = null;
-
-    //$file = $this->getFile();
-    //$this->setOptions(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
-
-    if (!$sUser || !$sPassword) {
-
-      $this->throwException(t('Cannot authenticate, bad datas !'));
-    }
-
-    $fs = $this->getControler('fs');
-    $users = $fs->getFreeFile($this->readArgument('users/path'));
-    $users = $users->getFreeDocument($this->getNS());
-
-    if ($users->isEmpty()) {
-
-      $this->throwException(t('No active user'));
-    }
-
-    require_once('core/functions/Text.php');
-    list($spUser, $spPassword) = functions\text\addQuote(array($sUser, sha1($sPassword)));
-
-    if (!$eUser = $users->getx("//user[@name = $spUser and @password = $spPassword]", array(), false)) {
-
-      $this->throwException('Bad authentication');
-    }
+  public function authenticate($sUser) {
 
     // Authentication successed !
 
@@ -111,7 +84,7 @@ class Basic extends core\module\Argumented implements core\user {
     $_SESSION = array();
     // setcookie(session_name(), '', time()-42000, '/');
 
-    return $this->getControler()->create('redirect', array('/'));
+    return $this->create('redirect', array('/'));
   }
 
   /**

@@ -20,16 +20,20 @@ class Document extends action\handler\Basic {
       $this->getManager('parser')->setContext('errors', $messages);
     }
 
-    $this->setContexts($this->createArgument(array(
+    $load = new binder\context\Load;
+    $contexts = $this->createArgument(array(
       'css' => new context\CSS,
       'js' => new context\JS(array(
-        'load' => new binder\context\Load,
+        'load' => $load,
       )),
       //'js-classes' => new binder\context\Classes,
       //'js/load' => new js\context\Load,
       'errors' =>  $messages,
       //'title' =>  new parser\context\Basic,
-    )));
+    ));
+
+    $this->setContexts($contexts);
+    $load->set('objects', new \sylma\template\binder\context\Objects());
 
     $this->setNamespaces(array(
       'html' => \Sylma::read('namespaces/html'),
@@ -79,7 +83,14 @@ class Document extends action\handler\Basic {
   }
 
   protected function loadContexts(dom\document $doc) {
+/*
+    $contexts = $this->getContexts();
 
+    if (!$contexts->get('js/load/objects', false)) {
+
+
+    }
+*/
     foreach ($this->getContexts()->query() as $sName => $context) {
 
       $this->loadContext($sName, $context, $doc);

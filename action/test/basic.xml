@@ -39,10 +39,8 @@
   </tst:test>
   <tst:test name="Context with two files">
     <tst:node>
-      <root>
-        <link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
-        <link href="/sylma/action/test/samples/style2.css" rel="stylesheet" type="text/css" media="all"/>
-      </root>
+      <link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
+      <link href="/sylma/action/test/samples/style2.css" rel="stylesheet" type="text/css" media="all"/>
     </tst:node>
     <tst:expected>
 

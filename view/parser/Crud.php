@@ -19,7 +19,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
   public function parseRoot(dom\element $el, fs\directory $base = null) {
 
-    $el = $this->setNode($el);
+    $el = $this->setNode($el, true);
 
     $this->setNamespace(self::CRUD_NS, self::CRUD_PREFIX);
     $this->setNamespace(self::VIEW_NS, self::VIEW_PREFIX);

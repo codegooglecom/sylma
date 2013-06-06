@@ -7,7 +7,8 @@ class _Include extends Basic implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
-    $this->setFile($this->getSourceFile($el->read()));
+    $this->setNode($el);
+    $this->setFile($this->getSourceFile($this->readx()));
   }
 
   protected function getContext() {
@@ -22,7 +23,7 @@ class _Include extends Basic implements common\arrayable {
     $contexts = $window->getVariable('contexts');
 
     $callFile = $window->addControler(self::FILE_MANAGER)->call('getFile', array((string) $this->getFile()));
-    
+
     return array($contexts->call('get', array($this->getContext()))->call('add', array($callFile)));
   }
 }

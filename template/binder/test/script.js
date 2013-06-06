@@ -1,4 +1,4 @@
-var sylma = {
+var sylma = sylma || {
   classes : {}
 };
 
@@ -70,7 +70,7 @@ sylma.classes.binder = new Class({
 
     var content = result.value ? 'ok' : 'failed';
     if (result.timemax) content += ' (time elapsed)';
-    
+
     var className = 'sylma-test-' + (result.value ? 'success' : 'failed');
 
 

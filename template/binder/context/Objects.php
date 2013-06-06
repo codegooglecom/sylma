@@ -75,7 +75,9 @@ class Objects extends modules\html\context\JS implements core\stringable {
 
   public function asString() {
 
-    return 'sylma.ui.load(' . $this->getParentPath() . ', ' . $this->asJSON() . ')';
+    $sParent = $this->query() ? $this->getParentPath() : "''";
+
+    return 'sylma.ui.load(' . $sParent . ', ' . $this->asJSON() . ')';
   }
 }
 

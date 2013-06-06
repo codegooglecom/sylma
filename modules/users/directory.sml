@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<directory xmlns="http://www.sylma.org/directory" xmlns:ls="http://www.sylma.org/security">
+<directory xmlns="http://www.sylma.org/storage/fs/security">
   <file name="login.css">
-    <ls:security>
-      <ls:owner>root</ls:owner>
-      <ls:group>users</ls:group>
-      <ls:mode>744</ls:mode>
-    </ls:security>
+    <security>
+      <owner>root</owner>
+      <group>admin</group>
+      <mode>744</mode>
+    </security>
+  </file>
+  <file name="login.js">
+    <security>
+      <owner>root</owner>
+      <group>admin</group>
+      <mode>744</mode>
+    </security>
   </file>
   <file name="crud.vml">
-    <ls:security>
-      <ls:owner>root</ls:owner>
-      <ls:group>users</ls:group>
-      <ls:mode>750</ls:mode>
-    </ls:security>
+    <security>
+      <owner>root</owner>
+      <group>users</group>
+      <mode>750</mode>
+    </security>
   </file>
 </directory>

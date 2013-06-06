@@ -10,6 +10,8 @@ class _Array extends reflector\component\Foreigner implements common\arrayable {
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
+
+    $this->allowForeign(true);
   }
 
   public function asArray() {

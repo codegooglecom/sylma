@@ -1,0 +1,59 @@
+
+#sylma-messages {
+  position: fixed;
+  padding-top: 1em;
+  overflow: hidden;
+  width: 100%;
+  z-index: 5;
+}
+
+.sylma-hidder {
+  opacity: 0;
+  transition: opacity 5s;
+}
+
+.sylma-hidder.sylma-visible {
+  opacity: 1;
+}
+
+.sylma-message.sylma-visible {
+  margin-top: 1em;
+  /*
+  max-height: 100px;
+  padding: 0.5em;
+  */
+}
+
+.sylma-message {
+  transition: opacity 0.7s, margin 0.7s, padding 0.7s;
+  padding: 0.5em;
+  font-size: 14px;
+  border: 2px solid #ddd;
+  margin: 0 auto;
+  width: 500px;
+  text-align: center;
+  background: white;
+}
+
+/**
+ * Markup free clearing.
+ *
+ * @see http://perishablepress.com/press/2009/12/06/new-clearfix-hack
+ */
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+/* IE6 */
+* html .clearfix {
+  height: 1%;
+}
+/* IE7 */
+*:first-child + html .clearfix {
+  min-height: 1%;
+}
+
+

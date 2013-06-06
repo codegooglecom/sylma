@@ -197,9 +197,9 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $result;
   }
 
-  public function getSourceFile($sPath = '') {
+  public function getSourceFile($sPath = '', $bElement = true) {
 
-    if ($source = $this->loadSourceFile()) {
+    if ($bElement and $source = $this->loadSourceFile()) {
 
       $manager = $this->getManager(self::FILE_MANAGER);
       $result = $sPath ? $manager->getFile($sPath, $source->getParent()) : $source;

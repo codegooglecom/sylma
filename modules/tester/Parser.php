@@ -103,10 +103,13 @@ class Parser extends tester\Prepare {
 
       if ($node->countChildren() > 1) {
 
-        $this->launchException('Too many node in test', get_defined_vars());
+        $this->set($sName, $node->getChildren());
+      }
+      else {
+
+        $this->set($sName, $node->getFirst());
       }
 
-      $this->set($sName, $node->getFirst());
     }
   }
 

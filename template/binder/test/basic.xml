@@ -20,7 +20,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -40,7 +39,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -68,7 +66,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -94,7 +91,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -123,7 +119,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -137,7 +132,6 @@
     </tst:document>
     <tst:expected>
       var test = example.test;
-
       var node = test.getObject('sub').getNode();
 
       return node.get('text') === 'yup';
@@ -147,7 +141,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -169,11 +162,40 @@
       return node.getChildren()[0].get('text') === 'bonsoir';
     </tst:expected>
   </tst:test>
+  <tst:test name="Sub object with dynamic name">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <div>Hello world</div>
+            <tpl:apply select="name,email" mode="field"/>
+          </div>
+        </view:template>
+        <view:template match="user:*" mode="field">
+          <div la:class="sylma.ui.Base">
+            <la:name>
+              <tpl:read select="alias()"/>
+            </la:name>
+            <tpl:read/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var node = test.getObject('email').getNode();
+
+      return node.get('text') === 'admin@sylma.org';
+    </tst:expected>
+  </tst:test>
   <tst:test name="Simple property">
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -195,7 +217,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -217,7 +238,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
@@ -239,7 +259,6 @@
     <tst:document>
       <view:view>
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>

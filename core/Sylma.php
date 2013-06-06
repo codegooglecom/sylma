@@ -307,7 +307,7 @@ class Sylma {
     if ($context && !self::read('debug/show')) {
 
       $context->add(array(
-        'content' => '<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-message" tabindex="0">' . $mValue . '</div>',
+        'content' => '<div xmlns="http://www.w3.org/1999/xhtml" class="sylma-error" tabindex="0">' . $mValue . '</div>',
       ));
     }
     else if (self::read('debug/show')) {

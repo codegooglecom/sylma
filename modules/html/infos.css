@@ -47,7 +47,7 @@
   list-style-type: none;
 }
 
-.sylma-message {
+.sylma-error {
   padding: 0.5em;
   border: 1px solid #ddd;
   margin: 0.5em;
@@ -55,7 +55,7 @@
   transition: background 0.5s ease, border 0.5s ease;
 }
 
-.sylma-message:focus {
+.sylma-error:focus {
   background-color: #eee;
   border-color: #ccc;
 }
@@ -96,14 +96,14 @@
   color: #444;
 }
 
-.sylma-message:hover .sylma-backtrace,
-.sylma-message:focus .sylma-backtrace
+.sylma-error:hover .sylma-backtrace,
+.sylma-error:focus .sylma-backtrace
 {
   max-height: 3500px;
 }
 
-.sylma-message:hover .sylma-backtrace > li,
-.sylma-message:focus .sylma-backtrace > li
+.sylma-error:hover .sylma-backtrace > li,
+.sylma-error:focus .sylma-backtrace > li
 {
   opacity: 1;
 }

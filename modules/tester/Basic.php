@@ -209,7 +209,24 @@ abstract class Basic extends Asserter {
     return $result;
   }
 
-  public function compareNodes(dom\node $node1, dom\node $node2) {
+  public function compareNodes($node1, $node2) {
+
+    if ($node1 instanceof dom\collection) {
+
+      if (!$node2 instanceof dom\collection) {
+
+        $this->launchException('Nodes are not equal types');
+      }
+
+      $root1 = $this->createDocument('root')->getRoot();
+      $root2 = $this->createDocument('root')->getRoot();
+
+      $root1->set($node1);
+      $root2->set($node2);
+
+      $node1 = $root1;
+      $node2 = $root2;
+    }
 
     $el = $this->loadDomElement($node1);
 

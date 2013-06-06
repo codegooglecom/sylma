@@ -13,19 +13,29 @@ sylma.classes = {
 
   ui : new Class({
 
+    cookie : {
+
+      name : 'sylma-main'
+    },
+
     tmp : {},
 
     load : function(parent, objects) {
 
-      var length = objects.length;
+      this.loadMessages();
 
-      if (length > 1) {
+      if (parent && objects) {
 
-        this.loadMultiple(objects, parent);
-      }
-      else {
+        var length = objects.length;
 
-        this.loadOne(objects, parent);
+        if (length > 1) {
+
+          this.loadMultiple(objects, parent);
+        }
+        else {
+
+          this.loadOne(objects, parent);
+        }
       }
     },
 
@@ -92,19 +102,79 @@ sylma.classes = {
       return el.getChildren();
     },
 
+    objectToString : function(val) {
+
+      return JSON.stringify(val);
+    },
+
+    stringToObject : function(val) {
+
+      return JSON.parse(val);
+    },
+
+    loadMessages : function() {
+
+      var val = Cookie.read(this.cookie.name);
+
+      if (val) {
+
+        var result = this.stringToObject(val);
+        this.parseMessages(result);
+        Cookie.dispose(this.cookie.name);
+      }
+    },
+
     addMessage : function(content, container) {
 
       container = container || $('messages');
-      container.adopt(this.import(content));
+      container.adopt(content);
     },
 
-    parseMessages : function(result, container) {
+    toggleVisibility : function() {
 
-      if (result.errors) {
 
-        for (var i in result.errors) {
+    },
 
-          this.addMessage(result.errors[i].content, container);
+    parseMessages : function(result, container, delay) {
+
+      if (result.errors && delay) {
+
+        console.log('Cannot redirect while exception occured');
+      }
+
+      if (delay) {
+
+        this.cookie.handler = Cookie.write(this.cookie.name, this.objectToString(result));
+      }
+      else {
+
+        if (result.messages) {
+
+          var msg;
+
+          if (!$('sylma-messages')) {
+
+            $(document.body).grab(new Element('div', {id : 'sylma-messages'}), 'top');
+          }
+
+          for (var i in result.messages) {
+
+            msg = result.messages[i];
+            var el = new Element('div', {html : msg.content, 'class' : 'sylma-message sylma-hidder'});
+            this.addMessage(el, $('sylma-messages'));
+            window.getComputedStyle(el).opacity;
+            el.addClass('sylma-visible');
+            (function() { el.removeClass('sylma-visible'); (function() { el.destroy(); }).delay(2000) }).delay(5000);
+            //el.addClass('sylma-visible');
+          }
+        }
+
+        if (result.errors) {
+
+          for (var i in result.errors) {
+
+            this.addMessage(this.import(result.errors[i].content), container);
+          }
         }
       }
 

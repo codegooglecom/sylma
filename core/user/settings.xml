@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/dom"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:target="[current()]"
+>
+  <cookies>
+    <name>sylma-user</name>
+    <!-- (!) This value should be rewrited for a good cookie security -->
+    <secret-key>This value is not really secret</secret-key>
+    <lifetime>
+      <!-- 8h -->
+      <short>28800</short>
+      <!-- ~7j -->
+      <normal>403200</normal>
+    </lifetime>
+    <remember>
+      <name>sylma-remember</name>
+      <lifetime>4032000</lifetime>
+    </remember>
+  </cookies>
+  <session>
+    <name>sylma-user</name>
+    <lifetime>28800</lifetime>
+  </session>
+  <cls:classes>
+    <cls:base>\sylma\core\user</cls:base>
+    <cls:class alias="user" name="Basic"/>
+    <cls:class alias="cookie" name="Cookie"/>
+    <cls:class alias="redirect" name="\sylma\core\Redirect"/>
+  </cls:classes>
+</arg:argument>

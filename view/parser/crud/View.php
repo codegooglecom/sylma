@@ -56,7 +56,7 @@ class View extends Pathed implements core\tokenable {
 
   public function asPath() {
 
-    $aResult[] = $this->getSourceFile()->asPath();
+    $aResult[] = $this->getSourceFile('', false)->asPath();
     $aResult[] = $this->getRoute() && !$this->isMain() ? $this->getRoute()->getAlias() : '';
     $aResult[] = $this->getName();
 

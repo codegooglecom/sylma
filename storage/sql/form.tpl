@@ -30,7 +30,13 @@
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="value" default="''"/>
 
-    <div class="field clearfix">
+    <div class="field clearfix" js:class="sylma.crud.Field">
+      <js:event name="click">
+        %object%.downlight();
+      </js:event>
+      <js:name>
+        <tpl:read select="alias()"/>
+      </js:name>
       <tpl:apply mode="register"/>
       <tpl:apply mode="label">
         <tpl:read tpl:name="alias" select="$alias"/>

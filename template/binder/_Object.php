@@ -28,7 +28,7 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     $this->class = $class;
   }
 
-  protected function setName($mName) {
+  public function setName($mName) {
 
     $this->name = $mName;
   }
@@ -83,13 +83,24 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
   protected function buildObject() {
 
+    $aResult = array(
+      'extend' => $this->getClass()->getExtend(),
+      'binder' => $this->getClass()->getID(),
+      'id' => $this->getID(),
+    );
+
+    if (!$this->getName()) {
+
+      $this->setName($this->getID());
+    }
+    else {
+
+      $aResult['name'] = true;
+    }
+
     return array(
       $this->getName(),
-      array(
-        'extend' => $this->getClass()->getExtend(),
-        'binder' => $this->getClass()->getID(),
-        'id' => $this->getID(),
-      ),
+      $aResult,
     );
   }
 
@@ -127,7 +138,7 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     else {
 
       $mName = $this->loadUnique();
-      $this->setName($mName);
+      //$this->setName($mName);
 
       $aResult[] = $mName->getInsert();
       $this->setID($mName);
@@ -143,8 +154,10 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $var = $this->getParser()->getObjects();
 
+    $content = $window->parseArrayables(array($element));
+
     $aResult[] = $window->createInstruction($var->call('startObject', $this->buildObject()));
-    $aResult[] = $window->parseArrayables(array($element));
+    $aResult[] = $content;
     $aResult[] = $window->createInstruction($var->call('stopObject'));
 
     if ($this->isRoot() and $sParent = $this->getParentName()) {

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\binder\test;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\modules\tester;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\modules\tester, sylma\storage\sql;
 
 class Standalone extends tester\Parser implements dom\domable {
 
@@ -13,6 +13,9 @@ class Standalone extends tester\Parser implements dom\domable {
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
+
+    $arg = $this->createArgument('/#sylma/view/test/database.xml');
+    \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
 
     $this->setFile($file);
     $this->setTestKey($iTest);

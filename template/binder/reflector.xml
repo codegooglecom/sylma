@@ -20,6 +20,7 @@
         <cls:class alias="option" name="component\Option"/>
         <cls:class alias="node" name="component\Node"/>
         <cls:class alias="include" name="component\_Include"/>
+        <cls:class alias="name" name="component\Name"/>
       </cls:classes>
     </component>
     <context>

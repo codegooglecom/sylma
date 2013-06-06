@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <directory xmlns="http://www.sylma.org/storage/fs/security">
-  <file name="clearfix.css">
+  <file name="base.css">
     <security>
       <owner>root</owner>
       <group>0</group>

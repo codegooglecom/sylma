@@ -20,14 +20,22 @@
 
       <le:context name="title">login</le:context>
 
-      <view:template mode="init">
-        <tpl:token name="action"><le:path>login-do</le:path>.json</tpl:token>
+      <view:template>
+
+        <form js:class="sylma.crud.Form">
+          <js:include>/#sylma/template/crud.js</js:include>
+          <tpl:token name="action"><le:path>login-do</le:path>.json</tpl:token>
+          <tpl:apply mode="init"/>
+          <tpl:apply use="form-cols" mode="container"/>
+          <input type="submit" value="Connection"/>
+        </form>
+
       </view:template>
 
     </view:view>
 
     <view:view name="check">
- 
+
       <le:context name="internal" required="x">1</le:context>
 
       <view:template>
