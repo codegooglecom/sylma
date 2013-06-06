@@ -2,21 +2,21 @@
 namespace sylma\modules\users;
 use sylma\core;
 
-class Module extends core\module\Filed {
+class Module extends core\module\Domed {
 
   const NS = 'http://www.sylma.org/modules/users';
 
   public function __construct() {
 
     $this->setDirectory(__file__);
-    $this->setArguments('module.yml');
+    //$this->setArguments('module.yml');
   }
 
   /**
    *
    * @return boolean
    */
-  public function login() {
+  public function _login() {
 
     $redirect = $this->getControler('redirect');
 
@@ -44,6 +44,45 @@ class Module extends core\module\Filed {
     }
 
     return $redirect;
+  }
+
+  /**
+   * @return string
+   */
+  public function login() {
+
+    $sResult = '';
+
+    $contexts = $this->getActionContexts();
+    $contexts->set('internal', $this->createArgument(array()));
+    
+    $this->loadDefaultArguments();
+
+    $post = $this->createArgument($this->getManager('init')->loadPOST());
+
+    $doc = $this->getScript('login/default/check', array(), $contexts->query() , $post->query());
+
+    $msg = $contexts->get('messages');
+
+    if (!$doc->isEmpty()) {
+
+      list($sID, $sPassword) = explode(' ', $doc->readx());
+      if ($sPassword == crypt($post->read('password'), $sPassword)) {
+
+        $sResult = $sID;
+      }
+    }
+
+    if (!$sResult) {
+
+      $msg->add($this->translate('Authentication failed'));
+    }
+    else {
+
+      $msg->add($this->translate('Authentication successed'));
+    }
+
+    return $sResult;
   }
 }
 

@@ -13,7 +13,7 @@ class Update extends Insert {
     $this->aSets[] = array($field, $val);
   }
 
-  protected function getSets() {
+  protected function _getSets() {
 
     $aResult = array();
 
@@ -33,13 +33,13 @@ class Update extends Insert {
 
       $this->launchException('Cannot build update query without where clause');
     }
-
+/*
     if (!$this->aSets) {
 
       $this->launchException('Cannot build update query without registered fields');
     }
-
-    $aQuery = array('UPDATE ', $sTable, $this->getSets(), $aWheres);
+*/
+    $aQuery = array('UPDATE ', $sTable, ' SET ', $this->getHandler()->call('asString'), $aWheres);
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }

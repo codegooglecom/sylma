@@ -12,23 +12,12 @@ class Context extends reflector\component\Foreigner implements common\arrayable 
     $this->allowForeign(true);
   }
 
-  public function asArray() {
-
-    $window = $this->getWindow();
-    $sContext = $this->readx('@name');
-    $var = $window->createVar($window->getVariable('contexts')->call('get', array($sContext, false), '\sylma\core\argument'));
-    $content = $var->call('add', array($this->parseChildren($this->getNode()->getChildren())));
-    $result = $window->createCondition($var->getInsert(null, false), $content);
-
-    return array($result);
-  }
-
   protected function parseChildren(dom\collection $children) {
 
     if ($aContent = parent::parseChildren($children)) {
 
       $aResult = $this->getWindow()->parseArrayables($aContent);
-      $aResult = count($aResult) > 1 ? $aResult : current($aResult);
+      //$aResult = count($aResult) > 1 ? $aResult : current($aResult);
     }
     else {
 
@@ -36,5 +25,36 @@ class Context extends reflector\component\Foreigner implements common\arrayable 
     }
 
     return $aResult;
+  }
+
+  protected function loadCalls(common\callable $context, $aContent) {
+
+    foreach ($aContent as $content) {
+
+      $aResult[] = $context->call('add', array($content));
+    }
+
+    return $aResult;
+  }
+
+  public function asArray() {
+
+    $window = $this->getWindow();
+    $sContext = $this->readx('@name');
+
+    $contexts = $window->getVariable('contexts');
+    $content = $this->parseChildren($this->getNode()->getChildren());
+
+    if ($this->readx('@required')) {
+
+      $result = $this->loadCalls($contexts->call('get', array($sContext), '\sylma\core\argument'), $content);
+    }
+    else {
+
+      $var = $window->createVar($contexts->call('get', array($sContext, false), '\sylma\core\argument'));
+      $result = $window->createCondition($var->getInsert(null, false), $this->loadCalls($var, $content));
+    }
+
+    return array($result);
   }
 }

@@ -5,8 +5,9 @@ use sylma\core, sylma\storage\fs;
 
 class Builder extends Basic {
 
-  public function __construct() {
+  public function __construct($sPath = '', fs\directory $dir = null) {
 
+    if ($sPath) $this->setPath($this->resolvePath($sPath, $dir));
     $this->loadSettings();
   }
 
@@ -19,7 +20,7 @@ class Builder extends Basic {
 
     return parent::setFile($file);
   }
-  
+
   protected function extractArguments(&$sPath) {
 
     $iAssoc = strpos($sPath, '?');

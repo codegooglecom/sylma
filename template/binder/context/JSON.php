@@ -18,10 +18,10 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
 
     //$path->parse();
     $parser = \Sylma::getManager('parser');
-    $messages = $this->loadMessages();
 
     $contexts = new core\argument\Readable(array(
-      'messages' => $messages,
+      'errors' => $this->loadMessages(),
+      'messages' => new html\context\Messages,
       'js' => new html\context\JS(array(
         'load' => new template\binder\context\Load,
       )),
@@ -46,7 +46,8 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
     $this->setArray(array(
       'content' => (string) $sResult,
       'objects' => $contexts->get('js/load/objects', false),
-      'classes' => $classes->asStringVar(),
+      'classes' => $classes ? $classes->asStringVar() : null,
+      'errors' => $contexts->get('errors'),
       'messages' => $contexts->get('messages'),
     ));
   }
@@ -64,17 +65,16 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
   protected function loadMessages() {
 
     $result = new html\context\Messages;
-    \Sylma::getManager('parser')->setContext('messages', $result);
+    \Sylma::getManager('parser')->setContext('errors', $result);
 
     return $result;
   }
 
   protected function loadAction(action\handler $action) {
 
-    $messages = $this->loadMessages();
-
     $contexts = new core\argument\Readable(array(
-      'messages' => $messages,
+      'errors' => $this->loadMessages(),
+      'messages' => new html\context\Messages,
       'js' => new html\context\JS(),
     ));
 
@@ -94,7 +94,8 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
 
     $this->setArray(array(
       'content' => $sResult,
-      'messages' => $messages,
+      'errors' => $contexts->get('errors'),
+      'messages' => $contexts->get('messages'),
     ));
   }
 

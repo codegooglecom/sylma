@@ -404,7 +404,7 @@ class Initializer extends module\Filed {
     return $aResult;
   }
 
-  protected function loadPOST() {
+  public function loadPOST() {
 
     return $_POST;
   }

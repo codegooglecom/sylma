@@ -44,8 +44,16 @@ class Table extends sql\template\component\Table implements common\argumentable 
     //$test = $window->createCondition($window->createNot($var), $content);
     //$window->add($test);
 
-    $query->addSet($el, $handler->call('readElement', array($sName)));
+    //$query->addSet($el, $handler->call('readElement', array($sName)));
 
+  }
+
+  protected function buildQuery() {
+
+    $result = parent::buildQuery();
+    $result->setHandler($this->getHandler());
+
+    return $result;
   }
 
   protected function loadHandler() {

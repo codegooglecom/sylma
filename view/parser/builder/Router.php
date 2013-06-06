@@ -6,7 +6,7 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\fs, sylm
 class Router extends View {
 
   const CRUD_NS = 'http://2013.sylma.org/view/crud';
-  
+
   protected $currentView;
 
   public function build() {
@@ -164,7 +164,6 @@ class Router extends View {
 
     return $result;
   }
-
 
   public function getPathFile(crud\Pathed $path) {
 

@@ -15,12 +15,13 @@ class Argument extends Variable implements parser\component, common\arrayable {
 
   public function setContent($mContent) {
 
-    return $this->loadVar($mContent);
+    $result = $this->loadVar($mContent);
+    return $result;
   }
 
   public function getDefault() {
 
-    return $this->getTemplate()->applyPath($this->readx('@default'), '');
+    return $this->getTemplate()->applyPath($this->readx('@default', true), '');
   }
 
   public function asArray() {

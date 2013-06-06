@@ -108,7 +108,10 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
       foreach ($el->getAttributes() as $attr) {
 
-        $this->setDefaultAttribute($attr->getName(), $attr->getValue());
+        if ($attr->getNamespace() !== self::BUILDER_NS) {
+
+          $this->setDefaultAttribute($attr->getName(), $attr->getValue());
+        }
       }
 
       $this->resetAttributes();

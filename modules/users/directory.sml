@@ -7,4 +7,11 @@
       <ls:mode>744</ls:mode>
     </ls:security>
   </file>
+  <file name="crud.vml">
+    <ls:security>
+      <ls:owner>root</ls:owner>
+      <ls:group>users</ls:group>
+      <ls:mode>750</ls:mode>
+    </ls:security>
+  </file>
 </directory>

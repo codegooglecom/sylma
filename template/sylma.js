@@ -100,11 +100,11 @@ sylma.classes = {
 
     parseMessages : function(result, container) {
 
-      if (result.messages) {
+      if (result.errors) {
 
-        for (var i in result.messages) {
+        for (var i in result.errors) {
 
-          this.addMessage(result.messages[i].content, container);
+          this.addMessage(result.errors[i].content, container);
         }
       }
 

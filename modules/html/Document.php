@@ -14,10 +14,10 @@ class Document extends action\handler\Basic {
 
     // global context is usefull for free action (without parent)
 
-    if (!$this->getManager('parser')->getContext('messages', false)) {
+    if (!$this->getManager('parser')->getContext('errors', false)) {
 
       $messages = new context\Messages;
-      $this->getManager('parser')->setContext('messages', $messages);
+      $this->getManager('parser')->setContext('errors', $messages);
     }
 
     $this->setContexts($this->createArgument(array(
@@ -27,7 +27,7 @@ class Document extends action\handler\Basic {
       )),
       //'js-classes' => new binder\context\Classes,
       //'js/load' => new js\context\Load,
-      'messages' =>  $messages,
+      'errors' =>  $messages,
       //'title' =>  new parser\context\Basic,
     )));
 
@@ -91,7 +91,7 @@ class Document extends action\handler\Basic {
     switch ($sName) {
 
       case action\cached::CONTEXT_DEFAULT : break;
-      case 'messages' :
+      case 'errors' :
 
         if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
 
@@ -187,7 +187,7 @@ class Document extends action\handler\Basic {
         $this->loadSystemInfos($doc);
       }
 
-      //$this->getContext('message')->add(array('content' => $this->getManager('init')->getStats()));
+      //$this->getContext('errors')->add(array('content' => $this->getManager('init')->getStats()));
 
       $this->loadContexts($doc);
 

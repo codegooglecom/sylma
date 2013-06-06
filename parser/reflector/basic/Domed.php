@@ -5,6 +5,7 @@ use \sylma\core, sylma\dom, sylma\storage\fs, symla\parser\reflector;
 
 abstract class Domed extends Componented {
 
+  const BUILDER_NS = 'http://2013.sylma.org/parser/reflector/builder';
   CONST PREFIX = null;
 
   protected $allowForeign = false;
@@ -235,22 +236,7 @@ abstract class Domed extends Componented {
 
         case $child::ELEMENT :
 
-          try {
-
-            if ($this->useNamespace($child->getNamespace())) {
-
-              $this->parseChildrenElementSelf($child, $aResult);
-            }
-            else {
-
-              $this->parseChildrenElementForeign($child, $aResult);
-            }
-          }
-          catch (core\exception $e) {
-
-            $e->addPath($child->asToken());
-            throw $e;
-          }
+          $this->parseChildrenElement($child, $aResult);
 
           break;
 
@@ -274,6 +260,25 @@ abstract class Domed extends Componented {
     return $aResult;
   }
 
+  protected function parseChildrenElement(dom\element $el, array &$aResult, $bRoot = false) {
+
+    try {
+
+      if ($this->useNamespace($el->getNamespace())) {
+
+        $this->parseChildrenElementSelf($el, $aResult);
+      }
+      else {
+
+        $this->parseChildrenElementForeign($el, $aResult);
+      }
+    }
+    catch (core\exception $e) {
+
+      $e->addPath($el->asToken());
+      throw $e;
+    }
+  }
   /**
    * Browsing function, result is not returned but added to $aResult,
    *
@@ -283,9 +288,9 @@ abstract class Domed extends Componented {
   protected function parseChildrenElementSelf(dom\element $el, array &$aResult) {
 
     $mResult = $this->parseElementSelf($el);
-
-    if (!is_null($mResult)) $aResult[] = $mResult;
+    $this->addParsedChild($el, $aResult, $mResult);
   }
+
 
   /**
    * Browsing function, result is not returned but added to $aResult,
@@ -296,8 +301,12 @@ abstract class Domed extends Componented {
   protected function parseChildrenElementForeign(dom\element $el, array &$aResult) {
 
     $mResult = $this->parseElementForeign($el);
+    $this->addParsedChild($el, $aResult, $mResult);
+  }
 
-    if (!is_null($mResult)) $aResult[] = $mResult;
+  protected function addParsedChild(dom\element $el, array &$aResult, $mContent) {
+
+    if (!is_null($mContent)) $aResult[] = $mContent;
   }
 
   /**
@@ -323,7 +332,7 @@ abstract class Domed extends Componented {
 
       $sNamespace = $attr->getNamespace();
 
-      if ($sNamespace && $sNamespace != $this->getNamespace(static::PREFIX)) {
+      if ($sNamespace && $sNamespace != $this->getNamespace(static::PREFIX) && $sNamespace !== self::BUILDER_NS) {
 
         $bResult = true;
         break;

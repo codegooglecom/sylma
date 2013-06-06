@@ -12,6 +12,7 @@
           <cls:classes>
             <cls:base>\sylma\storage\sql\template</cls:base>
             <cls:class alias="field" name="view\Field"/>
+            <cls:class alias="foreign" name="view\Foreign"/>
           </cls:classes>
         </component>
       </cls:classes>

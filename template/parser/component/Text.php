@@ -19,7 +19,7 @@ class Text extends Child implements common\arrayable, parser\component {
       $this->launchException('Text component must not be complex');
     }
 */
-    return $this->parseComponentRoot($this->getNode());
+    return $this->getNode()->countChildren() ? $this->parseComponentRoot($this->getNode()) : '';
   }
 
   public function asArray() {

@@ -15,10 +15,13 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
   protected $query;
 
   const NS = 'http://2013.sylma.org/storage/sql';
+  const PREFIX = 'sql';
 
   public function parseRoot(dom\element $el) {
 
     $this->setDirectory(__FILE__);
+
+    $this->setNamespace($el->getNamespace(), self::PREFIX);
 
     $el = $this->setNode($el);
     $this->allowForeign(true);
@@ -33,7 +36,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $row = $this->getTree();
     $query = $row->getQuery();
 
-    if ($id = $this->getx('self:id')) {
+    if ($id = $this->getx('sql:id')) {
 
       $this->parseID($id);
       $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
@@ -72,7 +75,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     $root = $schema->getElement();
 
-    if ($sTable = $this->readx('self:table')) {
+    if ($sTable = $this->readx('sql:table')) {
 
       $root->setName($sTable);
     }

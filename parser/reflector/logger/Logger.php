@@ -59,7 +59,7 @@ class Logger extends core\module\Domed {
 
   public function asMessage() {
 
-    $context = $this->getManager(self::PARSER_MANAGER)->getContext('messages');
+    $context = $this->getManager(self::PARSER_MANAGER)->getContext('errors');
     //$context->add(current($this->aComponents)->asDOM());
     //$test = $this->createArgument($arg->asArray(true));
 

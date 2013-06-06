@@ -15,8 +15,7 @@ class Path extends reflector\component\Foreigner implements common\arrayable {
 //return array($this->create('request', array($this->getRoot()->getFile()))->asString());
     if ($sValue = $this->readx()) {
 
-      $request = $this->create('request');
-      $request->setPath($sValue);
+      $request = $this->create('request', array($sValue, $this->getSourceDirectory()));
     }
     else {
 

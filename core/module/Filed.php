@@ -12,6 +12,8 @@ abstract class Filed extends Sessioned {
   const FILE_MANAGER = 'fs';
 
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  protected static $sFactoryClass = '\sylma\core\factory\Reflector';
+  
   protected static $sArgumentXMLClass = '\sylma\core\argument\parser\Handler';
 
   protected function createArgument($mArguments, $sNamespace = '') {

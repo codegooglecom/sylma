@@ -21,7 +21,8 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
   public function reflectRead() {
 
-    $this->launchException('Should not be used');
+    //$this->launchException('Should not be used');
+    return null;
   }
 
   public function reflectApply($sMode = '', array $aArguments = array()) {
@@ -65,7 +66,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
   protected function reflectSelf() {
 
-    return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getAlias()));
+    return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getAlias(), false));
   }
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {

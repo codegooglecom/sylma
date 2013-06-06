@@ -9,10 +9,22 @@ class Insert extends Basic implements common\argumentable {
   protected $aSets = array();
   protected $aValues = array();
 
+  protected $handler;
+/*
   public function addSet($field, $val) {
 
     $this->aColumns[] = $field;
     $this->aValues[] = $val;
+  }
+*/
+  public function setHandler(common\_var $handler) {
+
+    $this->handler = $handler;
+  }
+
+  protected function getHandler() {
+
+    return $this->handler;
   }
 
   protected function getValues() {
@@ -34,7 +46,8 @@ class Insert extends Basic implements common\argumentable {
 
     $sTable = current($this->getTables());
 
-    $aQuery = array('INSERT INTO ', $sTable, ' (', $this->getColumns() , ') VALUES (', $this->getValues(), ')');
+    //$aQuery = array('INSERT INTO ', $sTable, ' (', $this->getColumns() , ') VALUES (', $this->getValues(), ')');
+    $aQuery = array('INSERT INTO ', $sTable, $this->getHandler()->call('asString'));
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }

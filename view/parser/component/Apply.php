@@ -22,7 +22,7 @@ class Apply extends parser\component\Apply implements common\arrayable {
     }
     else {
 
-      $this->startLog("Apply ({$sSelect})");
+      $this->startLog("Apply [@select={$sSelect},@mode={$sMode}]");
 
       if (!$sSelect) {
 

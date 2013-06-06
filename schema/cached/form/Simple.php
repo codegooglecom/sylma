@@ -13,7 +13,7 @@ class Simple extends Basic {
     $this->setSettings($aSettings);
   }
 
-  public function setValue($sValue) {
+  public function setValue($sValue = '') {
 
     $this->sValue = $sValue;
   }

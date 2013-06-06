@@ -10,6 +10,7 @@ class Manager extends compiler\Manager {
   const CACHED_PATH = 'cached';
 
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  protected static $sFactoryClass = '\sylma\core\factory\Reflector';
 
   protected $aNamespaces = array();
   protected $aParserManagers = array();
@@ -37,12 +38,12 @@ class Manager extends compiler\Manager {
   public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true) {
 
     $result = parent::load($file, $aArguments, $bUpdate, $bRun);
-
+/*
     if (!$result) {
 
-      //$this->launchException('No result on parsing', get_defined_vars());
+      $this->launchException('No result on parsing', get_defined_vars());
     }
-
+*/
     return $result;
   }
 

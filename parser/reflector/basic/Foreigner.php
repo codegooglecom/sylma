@@ -170,8 +170,11 @@ abstract class Foreigner extends Domed {
       }
       else {
 
-        $aResult[$sNamespace] = true;
-        if ($bRemove) $attr->remove();
+        if ($sNamespace !== self::BUILDER_NS) {
+
+          $aResult[$sNamespace] = true;
+          if ($bRemove) $attr->remove();
+        }
       }
     }
 

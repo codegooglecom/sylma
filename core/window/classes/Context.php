@@ -17,9 +17,9 @@ class Context extends core\module\Argumented implements window\action {
 
     $this->action = $action;
     $this->sContext = $sContext;
-
-    $parser = $this->getControler('action');
     /*
+    $parser = $this->getControler('action');
+
     $this->getAction()->setContexts($this->createArgument(array(
       $sContext => $parser->createContext(),
     )));

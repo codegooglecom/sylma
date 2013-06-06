@@ -23,15 +23,9 @@ class Basic extends core\module\Filed implements core\request {
    * @param $bArguments Use of indexed arguments (file/argument1/argument2)
    * @param $bDebug throw exceptions on error
    */
-  public function __construct($sPath, fs\directory $directory = null, array $aArguments = array(), $bParse = true, core\argument $arg = null) {
+  public function __construct($sPath, fs\directory $dir = null, array $aArguments = array(), $bParse = true, core\argument $arg = null) {
 
-    $sPath = (string) $sPath;
-
-    if ($directory) {
-
-      require_once('core/functions/Path.php');
-      $sPath = functions\path\toAbsolute($sPath, $directory);
-    }
+    $sPath = $this->resolvePath($sPath, $dir);
 
     $this->setPath($sPath);
     $this->setNamespace(self::NS);
@@ -44,6 +38,21 @@ class Basic extends core\module\Filed implements core\request {
     //$this->setExtensions($aExtensions);
 
     if ($bParse) $this->parse();
+  }
+
+  protected function resolvePath($sPath, fs\directory $dir = null) {
+
+    if ($dir) {
+
+      require_once('core/functions/Path.php');
+      $sResult = functions\path\toAbsolute((string) $sPath, $dir);
+    }
+    else {
+
+      $sResult = (string) $sPath;
+    }
+
+    return $sResult;
   }
 
   protected function loadSettings() {

@@ -16,5 +16,10 @@ class Handler extends tester\Parser implements core\argumentable {
 
     parent::__construct();
   }
+
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
+  }
 }
 

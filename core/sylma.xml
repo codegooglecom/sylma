@@ -10,6 +10,8 @@
   <debug>
     <enable arg:type="bool">1</enable>
     <rights arg:type="bool">0</rights>
+    <show arg:type="bool">0</rights>
+    <parser arg:type="bool">0</parser>
     <backtrace>
       <show arg:type="bool">1</show>
       <html arg:type="bool">1</html>

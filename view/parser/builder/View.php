@@ -82,7 +82,6 @@ class View extends Variabled {
       case 'update' :
 
         $this->setArguments(self::DO_ARGUMENTS);
-        $this->prepareFormed($window);
 
         break;
 
@@ -90,7 +89,6 @@ class View extends Variabled {
       case 'view' :
 
         $this->setArguments(self::VIEW_ARGUMENTS);
-        $this->prepareArgumented($window);
 
         break;
 
@@ -98,6 +96,8 @@ class View extends Variabled {
 
         $this->launchException(sprintf('Unexpected mode : ""%s', $sMode), get_defined_vars());
     }
+
+    $this->prepareFormed($window);
 
     return $window;
   }
@@ -127,7 +127,7 @@ class View extends Variabled {
     return $reflector->parseRoot($doc->getRoot(), $this->getMode());
   }
 
-  protected function loadDocument(dom\handler $doc) {
+  public function loadDocument(dom\handler $doc) {
 
     if ($sMode = $this->loadMode($doc)) {
 

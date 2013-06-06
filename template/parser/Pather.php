@@ -166,6 +166,10 @@ class Pather extends component\Child {
 
       $aResult = $this->parseVariable($aMatch, $aPath, $sMode);
     }
+    else if (($sValue = $this->matchString($sPath)) || !is_null($sValue)) {
+
+      $aResult = array($sValue);
+    }
     else if ($aMatch = $this->matchFunction($sPath)) {
 
       $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode, $bRead, $aArguments);
@@ -259,7 +263,7 @@ class Pather extends component\Child {
     }
     else {
 
-      $result = $this->getTemplate()->getVariable($sName)->getVar();
+      $result = $this->getTemplate()->getVariable($sName)->getContent();
     }
 
     return $result;

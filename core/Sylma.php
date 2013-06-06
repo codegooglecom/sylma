@@ -162,21 +162,21 @@ class Sylma {
 
       case 'fs/editable' :
 
-        $result = new storage\fs\Controler(self::ROOT, true);
+        $result = new storage\fs\Controler(self::ROOT, true, true, true, 'editable');
         $result->loadDirectory();
 
       break;
 
       case 'fs/cache' :
 
-        $result = new storage\fs\Controler(self::PATH_CACHE, true, true, false);
+        $result = new storage\fs\Controler(self::PATH_CACHE, true, true, false, 'cache');
         $result->loadDirectory('');
 
       break;
 
       case 'fs/trash' :
 
-        $result = new storage\fs\Controler(self::PATH_TRASH, true, true, false);
+        $result = new storage\fs\Controler(self::PATH_TRASH, true, true, false, 'trash');
         $result->loadDirectory('');
 
       break;
@@ -300,7 +300,7 @@ class Sylma {
   public static function display($mValue) {
 
     $parser = self::getManager('parser');
-    $context = $parser ? $parser->getContext('messages', false) : null;
+    $context = $parser ? $parser->getContext('errors', false) : null;
     //$action = $parser ? $parser->getContext('action/current', false) : null;
     //$context = $action ? $action->getContext('message', false) : null;
 

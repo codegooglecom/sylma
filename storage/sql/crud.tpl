@@ -51,6 +51,22 @@
 
     <view:view mode="view" _debug="x" groups="view">
 
+      <view:template match="*" mode="container">
+
+        <tpl:argument name="alias" default="alias()"/>
+        <tpl:argument name="title" default="title()"/>
+        <tpl:argument name="type" default="'text'"/>
+        <tpl:argument name="value" default="value()"/>
+
+        <tpl:apply mode="container">
+          <tpl:read tpl:name="alias" select="$alias"/>
+          <tpl:read tpl:name="title" select="$title"/>
+          <tpl:read tpl:name="type" select="$type"/>
+          <tpl:read tpl:name="value" select="$value"/>
+        </tpl:apply>
+
+      </view:template>
+
       <view:template mode="init">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
         <sql:filter name="id"><le:argument name="id" escape="x"/></sql:filter>
@@ -78,11 +94,11 @@
     <tpl:constant name="list-cols">*</tpl:constant>
     <tpl:constant name="list-order">id</tpl:constant>
 
-    <js:include>/#sylma/template/crud.js</js:include>
-
   </crud:global>
 
   <crud:group name="view">
+
+    <js:include>/#sylma/template/crud.js</js:include>
 
   </crud:group>
 

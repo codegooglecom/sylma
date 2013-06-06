@@ -42,10 +42,15 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
     if (!$this->query) {
 
-      $this->setQuery($this->createQuery($this->getMode()));
+      $this->setQuery($this->buildQuery());
     }
 
     return $this->query;
+  }
+
+  protected function buildQuery() {
+
+    return $this->createQuery($this->getMode());
   }
 
   public function getSource() {

@@ -105,16 +105,9 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $this->reflectApplySelf($sMode, $aArguments);
   }
 
-  protected function addToQuery() {
-
-    $this->getParent()->addElementToQuery($this);
-  }
-
   public function reflectRead() {
 
-    $this->addToQuery();
-
-    return $this->getParent()->getSource()->call('read', array($this->getName()), 'php-string');
+    return null;
   }
 
   protected function lookupTemplate($sMode) {

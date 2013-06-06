@@ -12,6 +12,7 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
 
   protected $allowComponent = false;
   protected $parser;
+  protected $sourceFile;
 
   public function __construct(reflector\domed $parser, core\argument $arg = null, array $aNamespaces = array()) {
 
@@ -140,14 +141,75 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $this->getParser()->getWindow();
   }
 
+  protected function getElementFile(dom\element $el, $sPath, $bFile = true) {
+
+    if ($sSource = $this->readx('@build:source', false, array('build' => self::BUILDER_NS))) {
+
+      $tmp = $this->getParser()->getSourceFile();
+      $manager = $tmp->getControler();
+
+      $file = $this->getParser()->getSourceFile($sSource);
+
+      if ($sPath) {
+
+        $result = $bFile ? $manager->getFile($sPath, $file->getParent()) : $manager->getDirectory($sPath, $file->getParent());
+      }
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
+  }
+
+  protected function loadSourceFile() {
+
+    if (is_null($this->sourceFile)) {
+
+      if ($this->getNode(false) and $sSource = $this->readx('@build:source', false, array('build' => self::BUILDER_NS))) {
+
+        $result = $this->getParser()->getSourceFile($sSource);
+      }
+      else {
+
+        $result = false;
+      }
+
+      $this->sourceFile = is_null($result) ? false : $result;
+    }
+
+    return $this->sourceFile;
+  }
+
   public function getSourceDirectory($sPath = '') {
 
-    return $this->getParser()->getSourceDirectory($sPath);
+    if ($source = $this->loadSourceFile()) {
+
+      $manager = $this->getManager(self::FILE_MANAGER);
+      $result = $sPath ? $manager->getDirectory($sPath, $source->getParent()) : $source->getParent();
+    }
+    else {
+
+      $result = $this->getParser()->getSourceDirectory($sPath);
+    }
+
+    return $result;
   }
 
   public function getSourceFile($sPath = '') {
 
-    return $this->getParser()->getSourceFile($sPath);
+    if ($source = $this->loadSourceFile()) {
+
+      $manager = $this->getManager(self::FILE_MANAGER);
+      $result = $sPath ? $manager->getFile($sPath, $source->getParent()) : $source;
+    }
+    else {
+
+      $result = $this->getParser()->getSourceFile($sPath);
+    }
+
+    return $result;
   }
 
   protected function log($sMessage = '', array $aVars = array()) {

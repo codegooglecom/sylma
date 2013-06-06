@@ -8,6 +8,7 @@ class Schema extends reflector\component\Foreigner implements reflector\componen
   public function parseRoot(dom\element $el) {
 
     $sFile = $el->read();
+    $this->setNode($el);
 
     return $this->getSourceFile($sFile);
   }

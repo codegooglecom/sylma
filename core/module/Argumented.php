@@ -13,8 +13,7 @@ abstract class Argumented extends Managed {
   protected $factory;
 
   protected static $sArgumentClass = '\sylma\core\argument\Readable';
-  protected static $sFactoryClass = '\sylma\core\factory\Reflector';
-
+  protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
   /**
    * Argument object linked to this module, contains various parameters for the module
@@ -162,7 +161,7 @@ abstract class Argumented extends Managed {
     // translate !
 
     array_unshift($aArguments, $sValue);
-    
+
     return call_user_func_array('sprintf', $aArguments);
   }
 

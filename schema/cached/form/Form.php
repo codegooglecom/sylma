@@ -57,6 +57,11 @@ class Form extends core\module\Argumented {
     $this->aElements[$sName] = $element;
   }
 
+  protected function removeElement($sName) {
+
+    unset($this->aElements[$sName]);
+  }
+
   protected function getElement($sName, $bDebug = true) {
 
     if (!isset($this->aElements[$sName])) {
@@ -72,20 +77,6 @@ class Form extends core\module\Argumented {
     return $this->aElements;
   }
 
-  public function readElement($sName, $bEscape = true, $bDebug = true) {
-
-    if ($el = $this->getElement($sName, $bDebug)) {
-
-      $sResult = $bEscape ? $el->escape() : $el->getValue();
-    }
-    else {
-
-      $sResult = $bEscape ? "''" : '';
-    }
-
-    return $sResult;
-  }
-
   public function validate() {
 
     $bValid = true;
@@ -96,6 +87,44 @@ class Form extends core\module\Argumented {
     }
 
     return $bValid;
+  }
+
+  protected function buildInsert() {
+
+    $aKeys = $aValues = array();
+
+    foreach ($this->getElements() as $sName => $el) {
+
+      $aValues[] = $el->escape();
+      $aKeys[] = $sName;
+    }
+
+    $sKeys = implode(',', $aKeys);
+    $sValues = implode(',', $aValues);
+
+    return ' (' . $sKeys . ') VALUES (' . $sValues . ')';
+  }
+
+  protected function buildUpdate() {
+
+    $aResult = array();
+
+    foreach ($this->getElements() as $sName => $el) {
+
+      $aResult[] = '`' . $sName . '`' . '=' . $el->escape();
+    }
+
+    return implode(',', $aResult);
+  }
+
+  public function asString() {
+
+    if (!$this->getElements()) {
+
+      $this->launchException('Cannot update table without registered field');
+    }
+
+    return $this->getMode() === 'insert' ? $this->buildInsert() : $this->buildUpdate();
   }
 }
 

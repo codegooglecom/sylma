@@ -5,18 +5,21 @@ use \sylma\core, sylma\dom, sylma\parser\reflector;
 
 abstract class Logger extends core\module\Domed {
 
-  const LOG = true;
-
   protected $logger;
+
+  protected function useLog() {
+
+    return \Sylma::read('debug/parser');
+  }
 
   protected function loadLogger() {
 
-    if (self::LOG) $this->logger = $this->create('logger');
+    if ($this->useLog()) $this->logger = $this->create('logger');
   }
 
   protected function loadLog(dom\document $doc = null) {
 
-    if (self::LOG && (!$doc || $doc->readx('@debug', array(), false))) {
+    if ($this->useLog() && (!$doc || $doc->readx('@debug', array(), false))) {
 
       $this->getLogger()->asMessage();
     }
@@ -53,12 +56,12 @@ abstract class Logger extends core\module\Domed {
 
   public function startComponentLog($component, $sMessage = '', array $aVars = array()) {
 
-    if (self::LOG) $this->getLogger()->startComponent($component, $sMessage, $aVars);
+    if ($this->useLog()) $this->getLogger()->startComponent($component, $sMessage, $aVars);
   }
 
   public function stopComponentLog() {
 
-    if (self::LOG) $this->getLogger()->stopComponent();
+    if ($this->useLog()) $this->getLogger()->stopComponent();
   }
 }
 

@@ -52,8 +52,43 @@
       $manager->getScript('samples/context2.vml', array(), array(
         'css' => $context,
       ));
-      
+
       $manager->compareNodes($context->asDOM(), $manager->get('node'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple array">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <le:context name="messages">
+            <le:array>
+              <le:string>hello</le:string>
+              <le:string>world</le:string>
+            </le:array>
+          </le:context>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $context = $manager->createArgument(array());
+      $manager->set('context', $context);
+
+      $manager->loadScript(array(), array(), array(
+        'messages' => $context,
+      ));
+
+      $manager->assertEqual($context->asArray(), array(array('hello', 'world')));
 
       return true;
     </tst:expected>

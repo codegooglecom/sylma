@@ -11,7 +11,9 @@ class Documented extends Logger implements reflector\documented {
 
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
   const WINDOW_ARGS = 'php';
+
   const BUILD_NS = 'http://2013.sylma.org/parser/reflector/builder';
+  const BUILD_PREFIX = 'build';
 
   protected $bThrow = true;
   protected $aElements = array();
@@ -21,6 +23,8 @@ class Documented extends Logger implements reflector\documented {
     $this->setManager($manager);
 
     $this->setFile($file);
+
+    $this->setNamespace(self::BUILD_NS, self::BUILD_PREFIX);
 
     if ($doc) $this->setDocument($doc);
     else $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
@@ -46,14 +50,27 @@ class Documented extends Logger implements reflector\documented {
 
     //$doc->registerNamespaces($this->getNS());
 
-    $result = parent::setDocument($doc);
+    parent::setDocument($doc);
 
     if ($this->getDocument()->isEmpty()) {
 
       $this->throwException('Empty document');
     }
 
-    return $result;
+    return $this->importDocument($doc, $this->getFile());
+  }
+
+  public function importDocument(dom\handler $doc, fs\file $file) {
+
+    if (!$file->getControler()->getName()) {
+
+      foreach ($doc->queryx('//*') as $el) {
+
+        $el->createAttribute('build:source', (string) $file, $this->getNamespace());
+      }
+    }
+
+    return $doc;
   }
 
   protected function setSourceDirectory(fs\directory $sourceDirectory) {
@@ -229,7 +246,7 @@ class Documented extends Logger implements reflector\documented {
 
   protected function catchException(fs\file $file, core\exception $e) {
 
-    if (self::LOG) $this->getLogger()->addException($e->getMessage());
+    if ($this->useLog()) $this->getLogger()->addException($e->getMessage());
     $e->addPath($file->asToken());
 
     if ($this->throwExceptions()) throw $e;

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:user="http://2013.sylma,org/core/user"
+>
+
+  <crud:route>
+
+    <view:view mode="hollow">
+
+      <tpl:constant name="form-cols">name,password</tpl:constant>
+
+      <le:context name="title">login</le:context>
+
+      <view:template mode="init">
+        <tpl:token name="action"><le:path>login-do</le:path>.json</tpl:token>
+      </view:template>
+
+    </view:view>
+
+    <view:view name="check">
+ 
+      <le:context name="internal" required="x">1</le:context>
+
+      <view:template>
+
+        <sql:filter name="name">
+          <le:argument source="post" name="name" escape="x"/>
+        </sql:filter>
+
+        <div>
+          <tpl:read select="id"/>
+          <tpl:text> </tpl:text>
+          <tpl:read select="password"/>
+        </div>
+
+      </view:template>
+
+    </view:view>
+
+  </crud:route>
+
+  <crud:global>
+
+    <sql:resource/>
+    <view:schema>schema.xql</view:schema>
+    <crud:import>/#sylma/storage/sql/form.tpl</crud:import>
+
+  </crud:global>
+
+</crud:crud>

@@ -6,7 +6,7 @@
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
 >
 
-  <table name="user" reflector="\sylma\core\user\Form">
+  <table name="user" reflector="\sylma\modules\users\Form">
     <field name="id" type="sql:id"/>
     <field name="name" title="name" type="sql:string"/>
     <field name="password" title="password" type="ssd:password"/>

@@ -63,7 +63,7 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
       $file = $this->getSourceFile($sPath);
 
       $reflector = clone $this;
-      $reflector->parseRoot($file->getDocument()->getRoot(), $file->getParent());
+      $reflector->parseRoot($this->getRoot()->importDocument($file->getDocument(), $file)->getRoot(), $file->getParent());
 
       foreach ($reflector->getPaths() as $path) {
 

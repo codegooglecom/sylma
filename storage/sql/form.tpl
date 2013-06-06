@@ -24,15 +24,48 @@
   <view:template mode="action"/>
 
   <view:template match="*" mode="container">
-    <tpl:register/>
+
+    <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="title" default="title()"/>
+    <tpl:argument name="type" default="'text'"/>
+    <tpl:argument name="value" default="''"/>
+
     <div class="field clearfix">
-      <label for="form-{alias()}"><tpl:read select="title()"/> :</label>
-      <tpl:apply mode="input"/>
+      <tpl:apply mode="register"/>
+      <tpl:apply mode="label">
+        <tpl:read tpl:name="alias" select="$alias"/>
+        <tpl:read tpl:name="title" select="$title"/>
+      </tpl:apply>
+      <tpl:apply mode="input">
+        <tpl:read tpl:name="alias" select="$alias"/>
+        <tpl:read tpl:name="type" select="$type"/>
+        <tpl:read tpl:name="value" select="$value"/>
+      </tpl:apply>
     </div>
+
+  </view:template>
+
+  <view:template match="*" mode="register">
+    <tpl:register/>
+  </view:template>
+
+  <view:template match="*" mode="label">
+
+    <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="title" default="title()"/>
+
+    <label for="form-{$alias}"><tpl:read select="$title"/> :</label>
+
   </view:template>
 
   <view:template match="*" mode="input">
-    <input class="field-input field-input-element" type="text" id="form-{alias()}" value="{value()}" name="{alias()}"/>
+
+    <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="value" default="value()"/>
+    <tpl:argument name="type" default="'text'"/>
+
+    <input class="field-input field-input-element" type="{$type}" id="form-{$alias}" value="{$value}" name="{$alias}"/>
+
   </view:template>
 
   <view:template match="sql:string-long" mode="input" sql:ns="ns">
@@ -75,7 +108,15 @@
   </view:template>
 
   <view:template match="ssd:password" mode="input" ssd:ns="ns">
-    <input class="field-input field-input-element" type="password" id="form-{alias()}" value="{value()}" name="{alias()}"/>
+
+    <tpl:argument name="alias" default="alias()"/>
+
+    <tpl:apply mode="input">
+      <tpl:read tpl:name="alias" select="$alias"/>
+      <tpl:read tpl:name="type" select="'password'"/>
+      <tpl:read tpl:name="value" select="''"/>
+    </tpl:apply>
+
   </view:template>
 
 </view:view>

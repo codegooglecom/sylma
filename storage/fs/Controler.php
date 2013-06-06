@@ -13,6 +13,7 @@ class Controler extends core\module\Argumented {
 
   private $directory;
   protected $sPath = '';
+  protected $sName = '';
 
   protected $aSettings = array();
   protected $bSecured = true;
@@ -20,7 +21,7 @@ class Controler extends core\module\Argumented {
   //protected static $sArgumentClass = 'sylma\core\argument\Filed';
   //protected static $sArgumentFile = 'core/argument/Filed.php';
 
-  public function __construct($sPath = '', $bEditable = false, $bFS = true, $bSecure = true) {
+  public function __construct($sPath = '', $bEditable = false, $bFS = true, $bSecure = true, $sName = '') {
 
     $this->setNamespace(self::NS);
     //$this->mustSecure($bSecure);
@@ -29,6 +30,7 @@ class Controler extends core\module\Argumented {
     $this->sPath = $sPath;
 
     $sDirectory = $this->extractDirectory(__file__, false);
+    $this->setName($sName);
 
     if (!$bFS) $sDirectory = \Sylma::ROOT . $sDirectory;
 
@@ -41,6 +43,16 @@ class Controler extends core\module\Argumented {
     }
 
     if ($bEditable) $this->setEditable();
+  }
+
+  protected function setName($sName) {
+
+    $this->sName = $sName;
+  }
+
+  public function getName() {
+
+    return $this->sName;
   }
 
   public function getPath() {
@@ -201,6 +213,7 @@ class Controler extends core\module\Argumented {
 
     return parent::getNamespace($sPrefix);
   }
+
   public function throwException($sMessage, $mSender = array(), $iOffset = 1) {
 
     $mSender = (array) $mSender;

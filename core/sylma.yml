@@ -2,6 +2,7 @@ debug :
   enable : false
   rights: false
   show : false
+  parser : false
   backtrace :
     show : false
     html : true

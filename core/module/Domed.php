@@ -20,6 +20,7 @@ abstract class Domed extends Filed {
   protected $document = null;
 
   protected static $sArgumentClass = 'sylma\core\argument\Readable';
+  protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
   const ARGUMENTS = 'domed.yml';
 
@@ -102,6 +103,11 @@ abstract class Domed extends Filed {
       'contexts' => $aContexts ? $this->createArgument($aContexts) : null,
       'post' => $aPosts ? $this->createArgument($aPosts) : null,
     );
+  }
+
+  protected function getActionContexts() {
+
+    return $this->getManager(self::PARSER_MANAGER)->getContext('action/current')->getContexts();
   }
 
   protected function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
