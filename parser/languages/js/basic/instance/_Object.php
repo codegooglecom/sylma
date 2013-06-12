@@ -1,11 +1,14 @@
 <?php
 
 namespace sylma\parser\languages\js\basic\instance;
-use sylma\parser\languages\js, sylma\parser\languages\common;
+use sylma\core, sylma\parser\languages\js, sylma\parser\languages\common;
 
 class _Object extends js\basic\Base implements common\_instance, common\_object, common\argumentable {
 
   protected $aProperties = array();
+
+  protected $windowPHP;
+  protected $context;
 
   public function __construct(common\_window $window, array $aProperties = array()) {
 
@@ -60,9 +63,57 @@ class _Object extends js\basic\Base implements common\_instance, common\_object,
     return $result;
   }
 
+  public function setContext(common\_var $context) {
+
+    $this->context = $context;
+  }
+
+  protected function getContext() {
+
+    return $this->context;
+  }
+
+  public function setPHPWindow(common\_window $window) {
+
+    $this->windowPHP = $window;
+
+  }
+
+  protected function addToWindow(core\argument $arg) {
+
+    $window = $this->windowPHP;
+
+    $contents = $this->getWindow()->argumentAsDOM($arg);
+/*
+    if ($this->readArgument('debug/show')) {
+
+      //dsp($this->getFile()->asToken());
+      dsp($contents);
+    }
+*/
+    $aResult = array();
+
+    foreach($contents->getChildren() as $child) {
+
+      if ($child->getType() == $child::TEXT) $aResult[] = $child->getValue();
+      else $aResult[] = $child;
+    }
+
+    if ($aResult) {
+
+      $result = $this->getContext()->call('add', array($window->createString($aResult)), '\sylma\parser\context', false);
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
+  }
+
   public function asArgument() {
 
-    return $this->getControler()->createArgument(array(
+    $arg = $this->getControler()->createArgument(array(
       'object' => array(
         '@class' => $this->getInterface(),
         'items' => array(
@@ -70,5 +121,16 @@ class _Object extends js\basic\Base implements common\_instance, common\_object,
         )
       ),
     ));
+
+    if ($this->getContext()) {
+
+      $result = $this->addToWindow($arg);
+    }
+    else {
+
+      $result = $arg;
+    }
+
+    return $result;
   }
 }

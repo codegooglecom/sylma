@@ -154,11 +154,11 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     return $var;
   }
 
-  public function objAsDOM(common\_object $obj) {
+  public function argumentAsDOM(core\argument $arg) {
 
     $result = null;
 
-    $node = $obj->asArgument()->asDOM();
+    $node = $arg->asDOM();
 
     $doc = $this->createDocument();
     $doc->addElement('window', null, array(), $this->getNamespace('self'));

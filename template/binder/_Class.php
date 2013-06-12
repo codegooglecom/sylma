@@ -14,6 +14,7 @@ class _Class extends Basic implements common\arrayable {
 
   protected $sExtend = '';
   protected $sID;
+  protected $bAdded = false;
 
   public function parseRoot(dom\element $el) {
 
@@ -60,6 +61,16 @@ class _Class extends Basic implements common\arrayable {
     $this->object = $obj;
   }
 
+  protected function getObject() {
+
+    if (!$this->object) {
+
+      $this->launchException('No object defined');
+    }
+
+    return $this->object;
+  }
+
   public function isRoot($bVal = null) {
 
     if (is_bool($bVal)) $this->bRoot = $bVal;
@@ -74,7 +85,7 @@ class _Class extends Basic implements common\arrayable {
     $this->setObject($obj);
     //$bName = (bool) $this->readx('@js:name');
 
-    $sID = $this->loadID();
+    $this->loadID();
 
     $sParent = $this->readx('@js:parent');
 
@@ -89,9 +100,6 @@ class _Class extends Basic implements common\arrayable {
 
     $this->setExtend($this->readx('@js:class'));
     //$obj->setProperty('name', $bName);
-
-    $container = $this->getParser()->getContainer();
-    $container->setProperty($sID, $obj);
   }
 
   protected function setExtend($sExtend) {
@@ -102,16 +110,6 @@ class _Class extends Basic implements common\arrayable {
   public function getExtend() {
 
     return $this->sExtend;
-  }
-
-  protected function getObject() {
-
-    if (!$this->object) {
-
-      $this->launchException('No object defined');
-    }
-
-    return $this->object;
   }
 
   public function setProperty($sName, $val) {
@@ -153,6 +151,13 @@ class _Class extends Basic implements common\arrayable {
   }
 
   public function asArray() {
+
+    if (!$this->bAdded) {
+
+      $container = $this->getParser()->getContainer();
+      $container->setProperty($this->getID(), $this->getObject());
+      $this->bAdded = true;
+    }
 
     $obj = $this->loadSimpleComponent('object');
     $obj->setClass($this);

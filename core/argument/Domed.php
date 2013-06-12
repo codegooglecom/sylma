@@ -198,14 +198,14 @@ abstract class Domed extends Iterator implements dom\domable {
     }
 
     $result = $this->buildDocument($aValues, $sNamespace);
+/*
+    if ($result->isEmpty()) {
 
-    if (!$result || $result instanceof dom\handler && $result->isEmpty()) {
-
-      $result = null;
       $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
     }
-
-    if ($bChildren) $result = $result->getChildren();
+*/
+    if ($result->isEmpty()) $result = null;
+    else if ($bChildren) $result = $result->getChildren();
 
     return $result;
   }

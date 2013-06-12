@@ -13,13 +13,13 @@
 
   <view:template mode="init-pager">
 
-    <le:check-argument name="page" format="integer">
+    <le:argument name="page" format="integer">
       <le:default>1</le:default>
-    </le:check-argument>
+    </le:argument>
 
     <sql:pager>
       <sql:current>
-        <le:argument name="page"/>
+        <le:get-argument name="page"/>
       </sql:current>
       <sql:count>10</sql:count>
     </sql:pager>

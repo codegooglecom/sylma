@@ -222,7 +222,7 @@ return; // todo, decide to use or not
 
     foreach ($aContent as $mVal) {
 
-      if (is_array($mVal)) {
+      if (is_array($mVal) && $mVal) {
 
         $aResult[] = $this->parseArrayables($mVal);
       }
@@ -230,7 +230,7 @@ return; // todo, decide to use or not
 
         $aResult[] = $this->parseArrayable($mVal);
       }
-      else {
+      else if (!is_null($mVal)) {
 
         $aResult[] = $mVal;
       }

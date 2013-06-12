@@ -24,7 +24,7 @@ class _Include extends Basic implements common\arrayable {
 
     $callFile = $window->addControler(self::FILE_MANAGER)->call('getFile', array((string) $this->getFile()));
 
-    return array($contexts->call('get', array($this->getContext()))->call('add', array($callFile)));
+    return array($contexts->call('get', array($this->getContext()))->call('add', array($callFile))->getInsert());
   }
 }
 

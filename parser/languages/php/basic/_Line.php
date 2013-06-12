@@ -14,7 +14,7 @@ class _Line extends common\basic\Controled implements core\argumentable, common\
 
     if (is_scalar($content)) {
 
-      $this->getWindow()->throwException('Scalar not allowed');
+      $this->getWindow()->throwException('Invalid line content');
     }
 
     $this->setContent($content);

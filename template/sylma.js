@@ -206,6 +206,11 @@ sylma.ui = new sylma.classes.ui;
 
     get : function(key) {
 
+      if (!this.options[key]) {
+
+        throw 'No option named ' + key;
+      }
+
       return this.options[key];
     },
 
@@ -244,16 +249,19 @@ sylma.ui = new sylma.classes.ui;
 
     initObjects : function(objects) {
 
-      var obj;
-
       for (var key in objects) {
 
-        objects[key].parentObject = this;
-        obj = ui.createObject(objects[key]);
-
-        if (objects[key].name) this.objects[key] = obj;
-        else this.tmp.push(obj);
+        this.initObject(key, objects[key])
       }
+    },
+
+    initObject : function(key, options) {
+
+      options.parentObject = this;
+      var obj = ui.createObject(options);
+
+      if (options.name) this.objects[key] = obj;
+      else this.tmp.push(obj);
     },
 
     initNodes : function(nodes) {
@@ -338,7 +346,29 @@ sylma.ui = new sylma.classes.ui;
 
     getObject : function(name) {
 
+      if (!this.objects[name]) {
+
+        throw 'No object named ' + name;
+      }
+
       return this.objects[name];
+    },
+
+    call : function(path, args) {
+
+      args = args || {};
+      //var self = this;
+
+      var req = new Request.JSON({
+
+        url : path + '.json',
+        onSuccess: function(response) {
+
+          sylma.ui.parseMessages(response);
+        }
+      });
+
+      req.post(args);
     }
   });
 

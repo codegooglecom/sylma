@@ -20,6 +20,8 @@ class Collection extends Rooted implements sql\template\pathable {
 
     $this->setType($this->getParser()->getType('collection', $sNamespace));
     $this->setNamespace($sNamespace);
+    //$this->setNamespace($table->getNamespace(), 'element', false);
+    $this->setName('[collection]');
 
     $this->table = $table;
     //$this->loadNamespace($table->getNamespace());
@@ -51,6 +53,16 @@ class Collection extends Rooted implements sql\template\pathable {
     $aResult[] = $loop;
 
     return $aResult;
+  }
+
+  public function reflectRead(array $aPath = array(), array $aArguments = array()) {
+
+    if (!$aPath) {
+
+      $this->launchException('Cannot read collection');
+    }
+
+    return $this->getParse()->parsePathToken($this, $aPath, $aArguments);
   }
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {

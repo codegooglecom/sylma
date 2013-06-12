@@ -276,6 +276,8 @@ class Basic extends core\module\Argumented implements core\user {
 
   public function getMode($sOwner, $sGroup, $sMode, $sSource = '[undefined]') {
 
+    if (\Sylma::read('debug/rights')) return 7;
+
     $sMode = (string) $sMode;
 
     // Validity control of the arguments

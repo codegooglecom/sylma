@@ -41,6 +41,11 @@ class Elemented extends template\parser\handler\Domed {
 
     $el = $this->setNode($el);
 
+    if ($el->getNamespace() !== self::NS) {
+
+      $this->launchException('Bad namespace');
+    }
+
     $this->setMode($sMode);
 
     $resource = $this->loadResource($sMode); // parseRoot(), onAdd()

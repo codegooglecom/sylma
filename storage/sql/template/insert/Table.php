@@ -15,18 +15,15 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->setHandler($this->loadHandler());
   }
 
-  public function addElementToHandler(sql\schema\element $el, $sDefault = '') {
+  public function addElementToHandler(sql\schema\element $el, $sDefault = '', $content = null) {
 
-    $query = $this->getQuery();
     $window = $this->getWindow();
     $arguments = $window->getVariable('post');
 
-    $type = $el->getType();
     $bOptional = $el->isOptional();
     $sName = $el->getAlias();
 
     $handler = $this->getHandler();
-    $val = $arguments->call('read', !$bOptional ? array($sName) : array($sName, false), 'php-string');
 
     $aArguments = array(
       'alias' => $sName,
@@ -36,8 +33,12 @@ class Table extends sql\template\component\Table implements common\argumentable 
     if ($bOptional) $aArguments['optional'] = true;
     if ($sDefault !== '') $aArguments['default'] = $sDefault;
 
+    if (is_null($content)) {
 
-    $call = $handler->call('addElement', array($sName, $el->buildReflector(array($val, $aArguments))));
+      $content = $arguments->call('read', !$bOptional ? array($sName) : array($sName, false), 'php-string');
+    }
+
+    $call = $handler->call('addElement', array($sName, $el->buildReflector(array($content, $aArguments))));
     $window->add($call);
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));

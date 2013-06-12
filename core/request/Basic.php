@@ -274,8 +274,7 @@ class Basic extends core\module\Filed implements core\request {
       }
       else {
 
-        $mResult = explode('/', $this->getPath());
-        array_shift($mResult);
+        $mResult = array_values(array_filter(explode('/', $this->getPath())));
       }
     }
     else {

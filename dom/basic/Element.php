@@ -6,6 +6,7 @@ use sylma\core, sylma\dom;
 class Element extends \DOMElement implements dom\element {
 
   const CONTROLER_ALIAS = 'dom';
+  const SOURCE_NS = 'http://2013.sylma.org/parser/reflector/builder';
 
   public $compareBadNode;
   // public function __construct()
@@ -843,7 +844,23 @@ class Element extends \DOMElement implements dom\element {
 
     if ($this->getDocument()) {
 
-      $sResult = ' @element ' . $this->getPath() . ' in ' . ($this->getHandler(false) ? $this->getHandler()->asToken() : '[no-handler]') . ':' . $this->getLineNo();
+      if ($this->getHandler(false) and $this->getHandler()->getFile()) {
+
+        $sFile = $this->getHandler()->asToken();
+      }
+      else {
+
+        if ($sFile = $this->readAttribute('source', self::SOURCE_NS, false)) {
+
+          $sFile = '@file ' . $sFile;
+        }
+        else {
+
+          $sFile = '[no-file]' . ($this->getHandler(false) ? '[no-handler]' : '');
+        }
+      }
+
+      $sResult = ' @element ' . $this->getPath() . ' in ' . $sFile . ':' . $this->getLineNo();
     }
     else {
 

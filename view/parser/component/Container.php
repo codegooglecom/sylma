@@ -93,7 +93,7 @@ class Container extends template_ns\parser\component\Template {
 
         if ($bRoot) {
 
-          if (!$this->getMatch() && $sMode === $this->getMode()) {
+          if ((!$this->getMatch() || $this->getMatch() === self::NAME_DEFAULT) && $sMode === $this->getMode()) {
 
             $iResult = self::WEIGHT_ELEMENT_ALL;
           }

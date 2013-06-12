@@ -47,6 +47,29 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Apply collection match all">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template match="*">
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <a href="{email/value()}"><tpl:read select="name"/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <a href="root@sylma.org">root</a>
+        <a href="admin@sylma.org">admin</a>
+        <a href="webmaster@sylma.org">webmaster</a>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="List with simple foreign">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">

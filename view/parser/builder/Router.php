@@ -76,16 +76,19 @@ class Router extends View {
 
     foreach ($aPaths as $path) {
 
-      if ($path instanceof crud\Route) {
+      if (!$path->isDisabled()) {
 
-        $content = $this->reflectRoute($path, $window);
+        if ($path instanceof crud\Route) {
+
+          $content = $this->reflectRoute($path, $window);
+        }
+        else {
+
+          $content = $this->reflectViewComponent($path, $window);
+        }
+
+        $switch->addCase($path->getAlias(), $content);
       }
-      else {
-
-        $content = $this->reflectViewComponent($path, $window);
-      }
-
-      $switch->addCase($path->getAlias(), $content);
     }
 
     $window->add($switch);

@@ -36,7 +36,7 @@
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource/>
-        <sql:filter name="id" single="single"><le:argument name="id"/></sql:filter>
+        <sql:filter name="id" single="single"><le:get-argument name="id"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <h2><tpl:apply select="name"/></h2>
@@ -54,7 +54,7 @@
     <tst:document>
       <view:view user:ns="ns" mode="insert">
         <sql:resource/>
-        <sql:filter name="id" single="single"><le:argument source="post" name="id"/></sql:filter>
+        <sql:filter name="id" single="single"><le:get-argument source="post" name="id"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <h2><tpl:apply select="name"/></h2>
@@ -72,7 +72,7 @@
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource multiple="multiple"/>
-        <sql:filter name="id" optional="x"><le:argument name="id" optional="x"/></sql:filter>
+        <sql:filter name="id" optional="x"><le:get-argument name="id" optional="x"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>

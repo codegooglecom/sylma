@@ -505,7 +505,7 @@
         <view:template>
           <div>
             <tpl:variable name="test">
-              <le:argument name="hello"/>
+              <le:get-argument name="hello"/>
             </tpl:variable>
             <h3><stp:apply select="name"/></h3>
             <span><tpl:apply select="$test"/></span>

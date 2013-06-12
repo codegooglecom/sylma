@@ -14,7 +14,7 @@
           </cls:classes>
         </cls:class>
         <cls:class alias="argument" name="Argument"/>
-        <cls:class alias="check-argument" name="CheckArgument"/>
+        <cls:class alias="get-argument" name="GetArgument"/>
         <cls:class alias="context" name="Context"/>
         <cls:class alias="file" name="File"/>
         <cls:class alias="string" name="_String"/>

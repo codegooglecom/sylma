@@ -156,14 +156,14 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $content = $window->parseArrayables(array($element));
 
-    $aResult[] = $window->createInstruction($var->call('startObject', $this->buildObject()));
-    $aResult[] = $content;
-    $aResult[] = $window->createInstruction($var->call('stopObject'));
-
     if ($this->isRoot() and $sParent = $this->getParentName()) {
 
-      $this->getParser()->getObjects()->call('setParentPath', array($sParent))->insert();
+      $aResult[] = $this->getParser()->getObjects()->call('setParentPath', array($sParent))->getInsert();
     }
+
+    $aResult[] = $var->call('startObject', $this->buildObject())->getInsert();
+    $aResult[] = $content;
+    $aResult[] = $var->call('stopObject')->getInsert();
 
     $this->getParser()->stopObject();
     $this->stopLog();

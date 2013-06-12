@@ -112,22 +112,25 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $this->getParser()->getRoot();
   }
 
-  protected function parseComponentRoot(dom\element $el) {
+  protected function parseComponentRoot(dom\element $el, $bDebug = true) {
 
     $children = $el->getChildren();
 
     if (!$children->length) {
 
-      $this->launchException('Empty component not allowed', get_defined_vars());
-    }
-
-    if ($children->length > 1) {
-
-      $mResult = $this->parseChildren($children);
+      if ($bDebug) $this->launchException('Empty component not allowed', get_defined_vars());
+      $mResult = null;
     }
     else {
 
-      $mResult = $this->parseNode($el->getFirst());
+      if ($children->length > 1) {
+
+        $mResult = $this->parseChildren($children);
+      }
+      else {
+
+        $mResult = $this->parseNode($el->getFirst());
+      }
     }
 
     return $mResult;

@@ -55,7 +55,7 @@
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>
-          <sql:id><le:argument name="id" source="post"/></sql:id>
+          <sql:id><le:get-argument name="id" source="post"/></sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
@@ -92,7 +92,7 @@
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>
-          <sql:id><le:argument name="id" source="post"/></sql:id>
+          <sql:id><le:get-argument name="id" source="post"/></sql:id>
         </sql:resource>
         <view:schema>samples/user5.xql</view:schema>
         <view:template>
@@ -131,7 +131,7 @@
       <view:view user:ns="ns" mode="update">
         <sql:resource>
           <sql:source>test</sql:source>
-          <sql:id><le:argument name="id" source="post"/></sql:id>
+          <sql:id><le:get-argument name="id" source="post"/></sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>

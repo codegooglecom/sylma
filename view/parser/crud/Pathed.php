@@ -29,6 +29,11 @@ abstract class Pathed extends reflector\component\Foreigner implements reflector
     $this->sName = $sValue;
   }
 
+  public function isDisabled() {
+
+    return $this->readx('@disable');
+  }
+
   public function getName() {
 
     return $this->sName;

@@ -64,6 +64,11 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $result;
   }
 
+  public function reflectApplyAll($sMode, array $aArguments = array()) {
+
+    $this->launchException('Cannot reflect all on field');
+  }
+
   protected function reflectSelf() {
 
     return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getAlias(), false));

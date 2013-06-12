@@ -5,9 +5,13 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 
 class Argument extends reflector\component\Foreigner implements common\arrayable {
 
+  const PREFIX = 'action';
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
+    $this->allowText(true);
+    $this->allowForeign(true);
   }
 
   public function asArray() {
@@ -19,13 +23,25 @@ class Argument extends reflector\component\Foreigner implements common\arrayable
       $sSource = 'arguments';
     }
 
+    $default = $this->getx('action:default');
     $arguments = $window->getVariable($sSource);
+    $sName = $this->readx('@name');
 
-    $aArguments = array($this->readx('@name'));
-    if ($this->readx('@optional')) $aArguments[] = false;
-    $argument = $this->readx('@name') ? $arguments->call('read', $aArguments) : $arguments->call('shift');
+    if ($default) {
 
-    return $this->readx('@escape') ? array("'", $window->callFunction('addslashes', 'php-string', array($argument)), "'") : array($argument);
+      $result = $window->createCondition($window->createNot($arguments->call('read', array($this->readx('@name'), false))));
+
+      $content = $this->parseComponentRoot($default);
+
+      $result->addContent($arguments->call('set', array($sName, $content)));
+    }
+    else {
+
+      $result = $arguments->call('read', array($sName));
+    }
+
+    return array($result);
   }
+
 }
 

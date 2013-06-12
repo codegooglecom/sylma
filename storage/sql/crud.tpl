@@ -69,7 +69,7 @@
 
       <view:template mode="init">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
-        <sql:filter name="id"><le:argument name="id" escape="x"/></sql:filter>
+        <sql:filter name="id"><le:get-argument name="id" escape="x"/></sql:filter>
         <js:option name="id"><tpl:read select="id"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
         <tpl:apply mode="title"/>
@@ -82,7 +82,7 @@
     </view:view>
 
     <view:view name="do" mode="update">
-      <sql:filter name="id" single="single"><le:argument name="id" source="post" escape="x"/></sql:filter>
+      <sql:filter name="id" single="single"><le:get-argument name="id" source="post" escape="x"/></sql:filter>
     </view:view>
 
   </crud:route>

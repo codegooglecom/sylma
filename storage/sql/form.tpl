@@ -23,6 +23,22 @@
 
   <view:template mode="action"/>
 
+  <view:template match="*" mode="_tmp">
+
+    <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="title" default="title()"/>
+    <tpl:argument name="type" default="'text'"/>
+    <tpl:argument name="value" default="value()"/>
+
+    <tpl:apply mode="container">
+      <tpl:read tpl:name="alias" select="$alias"/>
+      <tpl:read tpl:name="title" select="$title"/>
+      <tpl:read tpl:name="type" select="$type"/>
+      <tpl:read tpl:name="value" select="$value"/>
+    </tpl:apply>
+
+  </view:template>
+
   <view:template match="*" mode="container">
 
     <tpl:argument name="alias" default="alias()"/>

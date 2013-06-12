@@ -35,6 +35,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
    */
   protected $objects;
   protected $bInit = false;
+  protected $rootElement;
 
   public function init() {
 
@@ -42,6 +43,9 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
       $this->initWindow();
       $this->prepareParent();
+
+      $this->getContainer()->setPHPWindow($this->getPHPWindow());
+      $this->getContainer()->setContext($this->getContext());
 
       $this->bInit = true;
     }
@@ -145,6 +149,11 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     //$el = $this->setNode($el);
 
+    if (is_null($this->rootElement)) {
+
+      $this->rootElement = $el;
+    }
+
     $el->getHandler()->registerNamespaces($this->getNS());
 
     if ($this->elementIsObject($el)) {
@@ -161,9 +170,9 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   public function onClose(dom\element $el, $newElement) {
 
-    if ($newElement instanceof Basic && $newElement->isRoot()) {
+    if ($newElement instanceof Basic && $this->rootElement === $el) {
 
-      $this->addToWindow($this->getContainer());
+      $this->getPHPWindow()->add($this->getContainer());
     }
   }
 
@@ -225,26 +234,5 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return $obj;
   }
 
-  public function addToWindow(common\_object $obj) {
-
-    $contents = $this->getWindow()->objAsDOM($obj);
-
-    if ($this->readArgument('debug/show')) {
-
-      //dsp($this->getFile()->asToken());
-      dsp($contents);
-    }
-
-    $window = $this->getRoot()->getWindow(); // PHP window
-    $aResult = array();
-
-    foreach($contents->getChildren() as $child) {
-
-      if ($child->getType() == $child::TEXT) $aResult[] = $child->getValue();
-      else $aResult[] = $child;
-    }
-
-    $window->add($this->getContext()->call('add', array($window->createString($aResult)), '\sylma\parser\context', false));
-  }
 }
 

@@ -68,11 +68,13 @@
 
     <tbody js:name="container" js:class="sylma.crud.List">
 
+      <tpl:apply mode="init-container"/>
+
       <js:option name="path">
         <crud:path/>
       </js:option>
       <js:option name="send.order">
-        <le:argument name="order"/>
+        <le:get-argument name="order"/>
       </js:option>
 
       <tpl:apply select="*" mode="row"/>
@@ -91,31 +93,35 @@
 
     <tpl:apply mode="init-pager"/>
 
-    <le:check-argument name="order" format="string">
+    <le:argument name="order" format="string">
       <le:default>
         <tpl:apply select="$$list-order"/>
       </le:default>
-    </le:check-argument>
+    </le:argument>
 
     <sql:order>
-      <le:argument name="order"/>
+      <le:get-argument name="order"/>
     </sql:order>
 
   </view:template>
 
-
   <view:template match="*" mode="row">
     <tr js:class="sylma.ui.Base">
+      <tpl:apply mode="init-row"/>
       <td>
-        <a title="Editer">
-          <tpl:token name="href">
-            <le:path/>/update?id=<tpl:read select="id"/>
-          </tpl:token>
-          E
-        </a>
+        <tpl:apply mode="row/action"/>
       </td>
       <tpl:apply use="list-cols" mode="cell"/>
     </tr>
+  </view:template>
+
+  <view:template match="*" mode="row/action">
+    <a title="Editer">
+      <tpl:token name="href">
+        <le:path/>/update?id=<tpl:read select="id"/>
+      </tpl:token>
+      E
+    </a>
   </view:template>
 
   <view:template match="*" mode="cell">
