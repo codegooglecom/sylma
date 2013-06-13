@@ -51,14 +51,22 @@ class Standalone extends tester\Parser implements dom\domable {
     $contexts = $this->getManager('parser')->getContext('action/current')->getContexts();
     $action = $this->parseResult($test, $this->getFile(), array('contexts' => $contexts));
 
-    $expected = $test->getx('self:expected');
+    $bCallback = 0;
+
+    if (!$expected = $test->getx('self:expected', array(), false)) {
+
+      $expected = $test->getx('self:callback');
+      $bCallback = 1;
+    }
+
     $sExpected = $expected->readx();
+
     $parent = $this->getManager('parser')->getContext('action/current');
 
     $sBind = $expected->readx('@bind', array(), false);
     if (!$sBind) $sBind = 'example';
 
-    $parent->getContext('js/load')->add("sylma.tester.run(function(callback) { $sExpected; }, $sBind);");
+    $parent->getContext('js/load')->add("sylma.tester.main.run(function() { $sExpected; }, $sBind, $bCallback);");
 
     return $action;
   }

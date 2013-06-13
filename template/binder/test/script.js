@@ -42,7 +42,7 @@ sylma.classes.binder = new Class({
 
           var doc = this.contentDocument || this.contentWindow.document;
           var timeStart = new Date().getTime();
-          var timeMax = 1000;
+          var timeMax = 2000;
           var input;
 
           while (!input && (new Date().getTime() - timeStart) < timeMax) {
@@ -50,15 +50,9 @@ sylma.classes.binder = new Class({
             input = doc.getElement('#sylma-test-result');
           }
 
-          var result = {
-            value : false,
-            timemax : false
-          };
+          if (!input) throw 'No input received';
 
-          if (input) result.value = (input.value);
-          else result.timemax = true;
-
-          sylma.binder.loadResult(test, result);
+          sylma.binder.loadResult(test, JSON.decode(input.get('value')));
         }
       }
     });

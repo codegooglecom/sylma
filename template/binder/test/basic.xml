@@ -44,23 +44,18 @@
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
           <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:event name="click">return 'clicked';</la:event>
+            <la:event name="click">sylma.tester.test(true);</la:event>
             <p>hello</p>
           </div>
         </view:template>
       </view:view>
     </tst:document>
-    <tst:expected>
-
-      callback.test = function(result) {
-
-        return result === 'hello';
-      };
+    <tst:callback>
 
       var test = example.test;
-      test.node.fireEvent('click', callback);
+      test.node.fireEvent('click');
 
-    </tst:expected>
+    </tst:callback>
   </tst:test>
   <tst:test name="Event on node">
     <tst:document>
@@ -72,7 +67,7 @@
         <view:template>
           <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
             <strong>
-              <la:event name="click">return 'clicked';</la:event>
+              <la:event name="click">sylma.tester.test(true);</la:event>
               world
             </strong>
             <p>hello</p>
@@ -80,12 +75,12 @@
         </view:template>
       </view:view>
     </tst:document>
-    <tst:expected>
-      var test = example.test;
-      var result = test.node.getElement('strong').fireEvent('click');
+    <tst:callback>
 
-      return result === 'clicked';
-    </tst:expected>
+      var test = example.test;
+      test.node.getElement('strong').fireEvent('click');
+
+    </tst:callback>
   </tst:test>
   <tst:test name="Event on node with existing class">
     <tst:document>
@@ -97,7 +92,7 @@
         <view:template>
           <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
             <strong class="myclass">
-              <la:event name="click">return 'clicked';</la:event>
+              <la:event name="click">console.log(this.tagName); sylma.tester.test(this.tagName == 'STRONG');</la:event>
               world
             </strong>
             <p>hello</p>
@@ -105,15 +100,12 @@
         </view:template>
       </view:view>
     </tst:document>
-    <tst:expected>
+    <tst:callback>
+
       var test = example.test;
       var result = test.getNode().getElement('strong').fireEvent('click');
 
-      return
-        result === 'clicked' &amp;&amp;
-        test.getNode().hasClass('myclass');
-
-    </tst:expected>
+    </tst:callback>
   </tst:test>
   <tst:test name="Sub object">
     <tst:document>

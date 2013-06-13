@@ -17,6 +17,7 @@
     <component>
       <cls:classes>
         <cls:class alias="event" name="component\Event"/>
+        <cls:class alias="method" name="component\Method"/>
         <cls:class alias="option" name="component\Option"/>
         <cls:class alias="node" name="component\Node"/>
         <cls:class alias="include" name="component\_Include"/>

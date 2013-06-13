@@ -1,27 +1,79 @@
-sylma.classes.tester = new Class({
+sylma.tester = {
 
-  run : function(test, bind) {
+  test : function(result) {
 
-    var result;
+    if (result) {
 
-    try {
-
-      result = test.call(bind);
+      $(document.body).grab(new Element('input', {
+        //type : 'hidden',
+        id : 'sylma-standalone-result',
+        value : result ? 1 : ''
+      }));
     }
-    catch (e) {
+  },
 
-      result = false;
-      console.log(e);
-    }
+  classes : {
 
-    $(document.body).grab(new Element('input', {
-      type : 'hidden',
-      id : 'sylma-test-result',
-      value : result ? 1 : ''
-    }))
+    Main : new Class({
+
+      test : null,
+
+      run : function(test, bind, callback) {
+
+        var result;
+
+        try {
+
+          result = test.call(bind);
+          if (callback) this.loop();
+        }
+        catch (e) {
+
+          console.log(e);
+          sylma.tester.test(false);
+        }
+
+        if (!callback) {
+
+          sylma.tester.test(result);
+          this.grabResult({value : result, timemax : false});
+        }
+      },
+
+      loop : function() {
+
+        var timeStart = new Date().getTime();
+        var timeMax = 1000;
+        var input;
+
+        while (!input && (new Date().getTime() - timeStart) < timeMax) {
+
+          input = $('sylma-standalone-result');
+        }
+
+        var result = {
+          value : false,
+          timemax : false
+        };
+
+        if (input) result.value = (input.value);
+        else result.timemax = true;
+
+        this.grabResult(result);
+      },
+
+      grabResult : function(result) {
+
+        $(document.body).grab(new Element('input', {
+          //type : 'hidden',
+          id : 'sylma-test-result',
+          value : JSON.stringify(result)
+        }));
+      }
+    })
   }
-});
+};
 
-sylma.tester = new sylma.classes.tester();
+sylma.tester.main = new sylma.tester.classes.Main;
 
 var example = {};
