@@ -56,9 +56,12 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     return $result;
   }
 
-  public function createObject(array $aProperties = array()) {
+  public function createObject(array $aProperties = array(), $sInterface = '') {
 
-    return $this->create('object', array($this, $aProperties));
+    $result = $this->create('object', array($this, $aProperties));
+    if ($sInterface) $result->setInterface($sInterface);
+
+    return $result;
   }
 
   public function createProperty($parent, $sName, $mReturn = null) {

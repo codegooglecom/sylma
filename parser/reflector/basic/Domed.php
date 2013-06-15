@@ -218,7 +218,12 @@ abstract class Domed extends Componented {
       $this->throwException('Text node not allowed here', array($node->asToken()));
     }
 
-    return $bTrim ? preg_replace('!\s+!', ' ', $node->getValue()) : $node->getValue();
+    return $bTrim ? $this->trimString($node->getValue()) : $node->getValue();
+  }
+
+  protected function trimString($sValue) {
+
+    return preg_replace('!([ \t])+!', '\1', $sValue);
   }
 
   /**

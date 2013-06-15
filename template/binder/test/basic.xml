@@ -35,7 +35,26 @@
       return node.get('text') === 'world';
     </tst:expected>
   </tst:test>
-  <tst:test name="Simple event" callback="callback">
+  <tst:test name="Base object with @id">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div id="hello" la:class="sylma.ui.Base" la:parent="example" la:name="test">world</div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var node = $('hello');
+
+      return node.get('text') === 'world';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple event">
     <tst:document>
       <view:view>
         <sql:resource>
@@ -92,7 +111,7 @@
         <view:template>
           <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
             <strong class="myclass">
-              <la:event name="click">console.log(this.tagName); sylma.tester.test(this.tagName == 'STRONG');</la:event>
+              <la:event name="click">sylma.tester.test(this.tagName == 'STRONG');</la:event>
               world
             </strong>
             <p>hello</p>
@@ -106,6 +125,73 @@
       var result = test.getNode().getElement('strong').fireEvent('click');
 
     </tst:callback>
+  </tst:test>
+  <tst:test name="Simple method">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <la:method name="update">return 'abc';</la:method>
+            <p>hello</p>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      var test = example.test;
+      return test.update() === 'abc';
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Method with arguments">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+            <la:method name="myTest" arguments="myarg">return myarg + 'world';</la:method>
+            <p>hello</p>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      var test = example.test;
+      return test.myTest('hello') === 'helloworld';
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Overriding method">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <la:include>samples/sample1.js</la:include>
+          <div la:class="sylma.samples.Sample1" la:parent="example" la:name="test">
+            <la:method name="hello">return this.parent() + 'world';</la:method>
+            <p>hello</p>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      var test = example.test;
+      return test.hello() === 'helloworld';
+
+    </tst:expected>
   </tst:test>
   <tst:test name="Sub object">
     <tst:document>
@@ -128,6 +214,17 @@
 
       return node.get('text') === 'yup';
     </tst:expected>
+  </tst:test>
+  <tst:test name="Replace sub object" disabled="true">
+    <tst:prepare>
+      $manager->set('result', $manager->getScript('samples/crud1.vml'));
+    </tst:prepare>
+    <tst:callback>
+
+      var test = example.test.tmp[0];
+      test.update();
+
+    </tst:callback>
   </tst:test>
   <tst:test name="Sub object without name">
     <tst:document>

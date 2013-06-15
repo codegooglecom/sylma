@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser;
-use sylma\core, sylma\dom, sylma\template as tpl, sylma\storage\fs;
+use sylma\core, sylma\template as tpl, sylma\parser\reflector;
 
 class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
 
@@ -38,7 +38,7 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
 
   public function reflectRead(array $aArguments = array()) {
 
-    return $this->getArguments()->read();
+    return $this->getHandler()->trimString($this->getArguments()->read());
   }
 
   public function reflectApply($sMode, array $aArguments = array()) {
@@ -103,7 +103,7 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
 
       $this->launchException('Not ready, should avoid path parsing');
     }
-    
+
     if ($bRead) {
 
       $result = $args->read($sPath);

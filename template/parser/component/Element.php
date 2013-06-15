@@ -247,6 +247,20 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     $token->setElement($this);
   }
 
+  protected function xmlize($mValue) {
+
+    if (is_string($mValue)) {
+
+      $mResult = htmlspecialchars($mValue);
+    }
+    else {
+
+      $mResult = $mValue;
+    }
+
+    return $mResult;
+  }
+
   protected function complexAsArray(dom\element $el) {
 
     $aResult = $aContent = array();
@@ -257,11 +271,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
     foreach ($aChildren as $child) {
 
-      if (is_string($child)) {
-
-        $child = htmlspecialchars($child);
-      }
-
+      $child = $this->xmlize($child);
       $aContent[] = $this->getWindow()->parseArrayables(array($child));
     }
 

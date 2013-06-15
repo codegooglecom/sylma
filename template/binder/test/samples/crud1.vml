@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+>
+
+  <crud:global>
+
+    <sql:resource>
+      <sql:id>2</sql:id>
+    </sql:resource>
+    <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+
+  </crud:global>
+
+  <view:view>
+
+    <view:template>
+
+      <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+        <div>
+          <js:option name="hello">world</js:option>
+          <js:option name="path">
+            <le:path/>
+            <tpl:text>/sub2</tpl:text>
+          </js:option>
+          <js:method name="update" arguments="args">
+
+            var path = path || this.get('path');
+
+            var req = new Request.JSON({
+
+              url : path + '.json',
+              onSuccess: (function(result) {
+
+                this.updateSuccess(result);
+                this.getNode().fireEvent('click');
+
+              }).bind(this)
+            });
+
+            req.get(args);
+          </js:method>
+        </div>
+
+        <crud:include path="sub1"/>
+      </div>
+
+    </view:template>
+
+  </view:view>
+
+  <view:view name="sub1">
+
+    <view:template>
+
+      <strong js:class="sylma.ui.Container">
+
+        <tpl:text>hello</tpl:text>
+      </strong>
+
+    </view:template>
+
+  </view:view>
+
+  <view:view name="sub2">
+
+    <view:template>
+
+      <span js:class="sylma.ui.Container">
+        <js:event name="click">
+          return sylma.tester.test(this.getParent().get('hello') == 'world');
+        </js:event>
+        <tpl:text>world</tpl:text>
+      </span>
+
+    </view:template>
+
+  </view:view>
+
+</crud:crud>

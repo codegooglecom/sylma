@@ -99,6 +99,9 @@ class _Class extends Basic implements common\arrayable {
     }
 
     $this->setExtend($this->readx('@js:class'));
+    $obj->setProperty('Extends', $this->getWindow()->createVariable($this->getExtend()));
+    //$this->setExtend($this->readx('@js:class'));
+
     //$obj->setProperty('name', $bName);
   }
 
@@ -150,12 +153,27 @@ class _Class extends Basic implements common\arrayable {
     $this->getObject()->setProperty('events.' . $sName, $val);
   }
 
+  public function setMethod($sName, js\basic\instance\_Object $val) {
+
+    $this->getObject()->setProperty($sName, $val);
+  }
+
   public function asArray() {
+
+    $obj = $this->getObject();
 
     if (!$this->bAdded) {
 
-      $container = $this->getParser()->getContainer();
-      $container->setProperty($this->getID(), $this->getObject());
+      if (count($obj->getProperties()) > 1) {
+
+        $this->setExtend('sylma.binder.classes.' . $this->getID());
+
+        $container = $this->getParser()->getContainer();
+        $class = $this->getWindow()->createObject(array(), 'Class');
+        $new = $this->getWindow()->createInstanciate($class, array($obj));
+        $container->setProperty($this->getID(), $new);
+      }
+
       $this->bAdded = true;
     }
 

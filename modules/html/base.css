@@ -9,11 +9,13 @@
 
 .sylma-hidder {
   opacity: 0;
-  transition: opacity 5s;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0.5s;
 }
 
 .sylma-hidder.sylma-visible {
   opacity: 1;
+  visibility: visible;
 }
 
 .sylma-message.sylma-visible {

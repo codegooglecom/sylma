@@ -10,29 +10,30 @@ class Method extends reflector\component\Foreigner implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
+    $this->setNode($el);
+
     $window = $this->getWindow();
 
     $this->loadValue($el);
-    $this->loadID();
 
-    $function = $window->createFunction(array('e'), $this->getValue());
-    $sName = $el->readAttribute('name');
+    if ($sArguments = $this->readx('@arguments')) {
 
-    $event = $window->createObject();
-
-    $event->setProperty('name', $sName);
-    $event->setProperty('callback', $function);
-
-/*
-    if (!$this->elementIsObject($el->getParent())) {
-
-      $sClass = uniqid('sylma');
-
-      $this->getParent()->getLastElement()->addToken('class', $sClass);
-      $event->setProperty('target', $sClass);
+      $aArguments = explode(',', $sArguments);
     }
-*/
-    $this->getParser()->getObject()->setMethod($this->getID(), $event, $this->getRoot()->getCurrentElement());
+    else {
+    
+      $aArguments = array();
+    }
+
+    $function = $window->createFunction($aArguments, $this->getValue());
+    $this->loadName();
+
+    $this->getParser()->getObject()->setMethod($this->getName(), $function);
+  }
+
+  protected function loadName() {
+
+    $this->setName($this->readx('@name'));
   }
 
   protected function loadValue(dom\element $el) {

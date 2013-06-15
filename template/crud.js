@@ -3,7 +3,7 @@ sylma.crud = {};
 
 sylma.crud.Form = new Class({
 
-  Extends : sylma.ui.Base,
+  Extends : sylma.ui.Container,
   mask : null,
 
   initialize : function(options) {
@@ -37,7 +37,7 @@ sylma.crud.Form = new Class({
       url : node.action,
       onSuccess: function(response) {
 
-        self.parseResult(response);
+        self.submitParse(response);
       }
     });
     //this.getNode().set('send', {url: 'contact.php', method: 'get'});
@@ -47,7 +47,7 @@ sylma.crud.Form = new Class({
     return false;
   },
 
-  parseResult : function(response) {
+  submitParse : function(response) {
 
     if (response.messages) {
 
@@ -63,6 +63,11 @@ sylma.crud.Form = new Class({
       }
     }
 
+    this.submitReturn(response);
+  },
+
+  submitReturn : function(response) {
+
     var redirect = response.content;
 
     sylma.ui.parseMessages(response, null, redirect);
@@ -75,7 +80,12 @@ sylma.crud.Form = new Class({
 
       var self = this;
       this.mask.removeClass('sylma-visible');
-      (function() { self.mask.setStyle('display', 'none'); }).delay(1000);
+
+      (function() {
+
+        self.mask.setStyle('display', 'none');
+
+      }).delay(1000);
     }
   }
 
@@ -85,6 +95,16 @@ sylma.crud.Field = new Class({
 
   Extends : sylma.ui.Base,
 
+  setValue : function(val) {
+
+    this.getInput().set('value', val);
+  },
+
+  getInput : function() {
+
+    return this.getNode('input', false) || this.getNode();
+  },
+
   highlight : function() {
 
     this.getNode().addClass('field-statut-invalid');
@@ -93,6 +113,16 @@ sylma.crud.Field = new Class({
   downlight : function() {
 
     this.getNode().removeClass('field-statut-invalid');
+  }
+});
+
+sylma.crud.Text = new Class({
+
+  Extends : sylma.crud.Field,
+
+  setValue : function(val) {
+
+    this.getInput().set('text', val);
   }
 });
 

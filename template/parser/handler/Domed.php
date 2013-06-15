@@ -114,6 +114,11 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
     return $this->create('tree', array($this, $content));
   }
 
+  public function trimString($sValue) {
+
+    return parent::trimString($sValue);
+  }
+
   /**
    *
    * @return common\_var

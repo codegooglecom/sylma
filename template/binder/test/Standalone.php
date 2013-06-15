@@ -42,14 +42,22 @@ class Standalone extends tester\Parser implements dom\domable {
     return $result;
   }
 
+  public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
+
+    return parent::getScript($sPath, $aArguments, $this->getActionContexts()->query(), $aPosts);
+  }
+
   public function asDOM() {
 
     $doc = $this->getFile()->getDocument($this->getNS());
 
     $test = $this->loadTest($doc);
 
-    $contexts = $this->getManager('parser')->getContext('action/current')->getContexts();
-    $action = $this->parseResult($test, $this->getFile(), array('contexts' => $contexts));
+    if (!$result = $this->parseResult($test, $this->getFile(), array('contexts' => $this->getActionContexts()))) {
+
+      $this->prepareTest($test, $this);
+      $result = $this->get('result');
+    }
 
     $bCallback = 0;
 
@@ -68,7 +76,7 @@ class Standalone extends tester\Parser implements dom\domable {
 
     $parent->getContext('js/load')->add("sylma.tester.main.run(function() { $sExpected; }, $sBind, $bCallback);");
 
-    return $action;
+    return $result;
   }
 }
 

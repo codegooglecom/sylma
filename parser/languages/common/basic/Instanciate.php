@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\parser\languages\php\basic;
+namespace sylma\parser\languages\common\basic;
 use sylma\core, sylma\parser\languages\common;
 
 class Instanciate extends Controled implements common\_object, common\_instance, common\argumentable {
@@ -13,7 +13,7 @@ class Instanciate extends Controled implements common\_object, common\_instance,
     $this->setControler($controler);
 
     $this->instance = $instance;
-    $this->aArguments = $aArguments;
+    $this->setArguments($aArguments);
   }
 
   public function getInterface() {
@@ -21,21 +21,21 @@ class Instanciate extends Controled implements common\_object, common\_instance,
     return $this->instance->getInterface();
   }
 
+  protected function setArguments(array $aArguments) {
+
+    $this->aArguments = $aArguments;
+  }
+
   protected function getArguments() {
 
     return $this->aArguments;
-  }
-
-  public function setArguments(array $aArguments) {
-
-    $this->aArguments = $aArguments;
   }
 
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(
       'instanciate' => array(
-        '@class' => $this->getInterface()->getName(),
+        '@class' => $this->getInterface(),
         '#argument' => $this->getArguments(),
     )));
   }

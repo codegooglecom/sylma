@@ -10,18 +10,19 @@ class Event extends Method {
 
   public function parseRoot(dom\element $el) {
 
+    $this->setNode($el);
     $window = $this->getWindow();
 
     $this->loadValue($el);
     $this->loadID();
 
     $function = $window->createFunction(array('e'), $this->getValue());
-    $sName = $el->readAttribute('name');
+    $this->loadName();
 
-    $event = $window->createObject();
+    $obj = $window->createObject();
 
-    $event->setProperty('name', $sName);
-    $event->setProperty('callback', $function);
+    $obj->setProperty('name', $this->getName());
+    $obj->setProperty('callback', $function);
 
 /*
     if (!$this->elementIsObject($el->getParent())) {
@@ -32,7 +33,7 @@ class Event extends Method {
       $event->setProperty('target', $sClass);
     }
 */
-    $this->getParser()->getObject()->setEvent($this->getID(), $event, $this->getRoot()->getCurrentElement());
+    $this->getParser()->getObject()->setEvent($this->getID(), $obj, $this->getRoot()->getCurrentElement());
   }
 
   protected function loadID() {

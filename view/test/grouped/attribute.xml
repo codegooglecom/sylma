@@ -233,14 +233,14 @@
               <tpl:token name="class">
                 sylma-test
               </tpl:token>
-              test
+              <tpl:text>test</tpl:text>
             </a>
           </div>
         </view:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <div><h3>admin</h3><a href="mailto:email" class="sylma-test"> test </a></div>
+      <div><h3>admin</h3><a href="mailto:email" class="sylma-test">test</a></div>
     </tst:node>
   </tst:test>
 </tst:tests>

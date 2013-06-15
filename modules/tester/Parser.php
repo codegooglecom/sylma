@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\modules\tester, sylma\storage\fs;
 
 class Parser extends tester\Prepare {
 
+  protected static $sArgumentClass = 'sylma\core\argument\Readable';
+
   const NS = 'http://www.sylma.org/modules/tester/parser';
   const TRASH_MANAGER = 'fs/trash';
 

@@ -30,7 +30,7 @@
     <xsl:text>new </xsl:text>
     <xsl:value-of select="@class"/>
     <xsl:text>(</xsl:text>
-    <xsl:call-template name="arguments"/>
+    <xsl:apply-templates select="js:argument/*"/>
     <xsl:text>)</xsl:text>
   </xsl:template>
 

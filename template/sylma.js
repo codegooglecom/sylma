@@ -83,7 +83,7 @@ sylma.classes = {
       if (!props.extend) {
 
         console.log(props);
-        throw 'No path defined';
+        throw new Error('No path defined');
       }
 
       var parent = this.loadPath(props.extend);
@@ -199,14 +199,18 @@ sylma.ui = new sylma.classes.ui;
     tmp : [],
     node : null,
     nodes : [],
-    options : {
+    settings : {},
+    options : [],
+
+    props : {
 
     },
+
     objects : {},
 
-    get : function(key) {
+    get : function(key, debug) {
 
-      if (!this.options[key]) {
+      if (!this.options[key] && debug) {
 
         throw 'No option named ' + key;
       }
@@ -214,36 +218,33 @@ sylma.ui = new sylma.classes.ui;
       return this.options[key];
     },
 
+    set : function (key, val) {
+
+      this.options[key] = val;
+    },
+
     initialize : function(props) {
 
-      props = this.loadProperties(props);
+      this.tmp = [];
 
       this.initBasic(props);
 
+      //if (props.methods) this.initMethods(props.methods);
+      if (this.events) this.initEvents(this.events);
+      if (this.nodes) this.initNodes(this.nodes);
+
       if (props.options) this.initOptions(props.options);
       if (props.objects) this.initObjects(props.objects);
-      if (props.events) this.initEvents(props.events);
-      if (props.nodes) this.initNodes(props.nodes);
     },
 
-    loadProperties : function(props) {
+    initBasic : function(props) {
 
-      var binder = sylma.binder.classes[props.binder];
+      if (!props.id) throw 'No node associated';
 
-      if (!binder) {
+      this.node = $(props.id);
+      this.parentObject = props.parentObject;
+      this.parentKey = props.parentKey;
 
-        throw 'No valid binder defined with : ' + props.binder;
-      }
-
-      return Object.merge(props, binder);
-    },
-
-    initBasic : function(options) {
-
-      if (!options.id) throw 'No node associated';
-
-      this.node = $(options.id);
-      this.parentObject = options.parentObject;
       this.prepareNodes(this.node);
     },
 
@@ -251,16 +252,18 @@ sylma.ui = new sylma.classes.ui;
 
       for (var key in objects) {
 
-        this.initObject(key, objects[key])
+        this.initObject(key, objects[key]);
       }
     },
 
-    initObject : function(key, options) {
+    initObject : function(key, props) {
 
-      options.parentObject = this;
-      var obj = ui.createObject(options);
+      props.parentObject = this;
+      props.parentKey = props.name ? key : this.tmp.length;
 
-      if (options.name) this.objects[key] = obj;
+      var obj = ui.createObject(props);
+
+      if (props.name) this.objects[key] = obj;
       else this.tmp.push(obj);
     },
 
@@ -270,6 +273,19 @@ sylma.ui = new sylma.classes.ui;
 
         this.nodes[key] = this.getNode().getElement('.' + nodes[key]);
       }
+    },
+
+    initMethods : function(methods) {
+
+      for (var name in methods) {
+
+        this.initMethod(name, methods[name]);
+      }
+    },
+
+    initMethod : function(name, method) {
+
+      this[name] = method.bind(this);
     },
 
     initEvents : function(events) {
@@ -318,7 +334,7 @@ sylma.ui = new sylma.classes.ui;
     /**
      * @return Element
      */
-    getNode : function(name) {
+    getNode : function(name, debug) {
 
       var result;
 
@@ -326,7 +342,7 @@ sylma.ui = new sylma.classes.ui;
 
         if (!this.nodes[name]) {
 
-          throw 'Unknow node ' + name;
+          if (debug) throw new Error('Unknow node ' + name);
         }
 
         result = this.nodes[name];
@@ -339,22 +355,27 @@ sylma.ui = new sylma.classes.ui;
       return result;
     },
 
-    getParent : function() {
+    getParent : function(depth) {
 
-      return this.parentObject;
+      var result;
+
+      if (depth && this.parentObject) result = this.parentObject.getParent(--depth);
+      else result = this.parentObject;
+
+      return result;
     },
 
     getObject : function(name) {
 
       if (!this.objects[name]) {
 
-        throw 'No object named ' + name;
+        throw new Error('No object named ' + name);
       }
 
       return this.objects[name];
     },
 
-    call : function(path, args) {
+    send : function(path, args) {
 
       args = args || {};
       //var self = this;
@@ -376,7 +397,9 @@ sylma.ui = new sylma.classes.ui;
 
     Extends : this.Base,
 
-    update : function(args, path) {
+    update : function(args, path, inside) {
+
+      this.set('sylma-inside', inside);
 
       var self = this;
       var path = path || this.get('path');
@@ -384,27 +407,51 @@ sylma.ui = new sylma.classes.ui;
       var req = new Request.JSON({
 
         url : path + '.json',
-        onSuccess: function(response) {
-
-          var result = sylma.ui.parseMessages(response);
-          var name = self.getNode().getParent().tagName || 'div';
-
-          sylma.ui.import(result.content, name).replaces(self.getNode());
-
-          //console.log(result.objects[sylma.ui.extractFirst(result.objects)]);
-
-          if (result.classes) {
-
-            eval(result.classes);
-            Object.merge(sylma.binder.classes, classes);
-          }
-
-          var props = result.objects[sylma.ui.extractFirst(result.objects)];
-          self.initialize(props);
-        }
+        onSuccess : self.updateSuccess.bind(self)
       });
 
       req.get(args);
+    },
+
+    updateSuccess : function(response) {
+
+      var result = sylma.ui.parseMessages(response);
+      var name = this.getNode().getParent().tagName || 'div';
+      var target;
+
+      if (this.get('sylma-inside', false)) {
+
+        target = this.getNode().getFirst();
+      }
+      else {
+
+        target = this.getNode();
+      }
+
+      sylma.ui.import(result.content, name).replaces(target);
+
+      //console.log(result.objects[sylma.ui.extractFirst(result.objects)]);
+
+      if (result.classes) {
+
+        eval(result.classes);
+        Object.merge(sylma.binder.classes, classes);
+      }
+
+      var props = result.objects[sylma.ui.extractFirst(result.objects)];
+      props.parentObject = this.getParent();
+
+      this.initialize(props);
+    },
+
+    show : function() {
+
+      this.getNode().addClass('sylma-visible');
+    },
+
+    hide : function() {
+
+      this.getNode().removeClass('sylma-visible');
     }
   })
 

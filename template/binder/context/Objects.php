@@ -20,7 +20,10 @@ class Objects extends modules\html\context\JS implements core\stringable {
 
   public function setParentPath($sPath) {
 
-    $this->sPath = $sPath;
+    if (!$this->sPath) {
+
+      $this->sPath = $sPath;
+    }
   }
 
   protected function setCurrent(core\argument $obj) {

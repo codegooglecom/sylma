@@ -10,6 +10,7 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
 
   const CONTROLER_ALIAS = 'action';
 
+  protected static $sArgumentClass = 'sylma\core\argument\Readable';
   //protected static $sArgumentClass = 'sylma\core\argument\Filed';
   //protected static $sArgumentFile = 'core/argument/Filed.php';
 

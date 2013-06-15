@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\binder;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
 class _Object extends Basic implements common\arrayable, core\tokenable {
 
@@ -85,7 +85,7 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $aResult = array(
       'extend' => $this->getClass()->getExtend(),
-      'binder' => $this->getClass()->getID(),
+      //'binder' => $this->getClass()->getID(),
       'id' => $this->getID(),
     );
 
@@ -122,6 +122,16 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     return $this->id;
   }
 
+  protected function loadID() {
+
+    if ($sID = $this->readx('@id')) {
+
+      $this->setID($sID);
+    }
+
+    return $this->getID();
+  }
+
   public function asArray() {
 
     $window = $this->getParser()->getPHPWindow();
@@ -130,18 +140,23 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
       $this->setName($mName);
 
-      $id = $this->loadUnique();
-      $this->setID($id);
+      if (!$this->loadID()) {
 
-      $aResult[] = $id->getInsert();
+        $id = $this->loadUnique();
+        $aResult[] = $id->getInsert();
+        $this->setID($id);
+      }
     }
     else {
 
       $mName = $this->loadUnique();
       //$this->setName($mName);
 
-      $aResult[] = $mName->getInsert();
-      $this->setID($mName);
+      if (!$this->loadID()) {
+
+        $aResult[] = $mName->getInsert();
+        $this->setID($mName);
+      }
     }
 
     $this->isRoot($this->getParser()->isRoot());
