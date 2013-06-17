@@ -89,7 +89,6 @@ abstract class Normalizer extends Basic {
     if (is_object($mValue)) {
 
       $mResult = $this->normalizeObject($mValue, $iMode);
-
       if (!$mResult) $mResult = null;
     }
     else if (is_array($mValue)) {
@@ -120,6 +119,7 @@ abstract class Normalizer extends Basic {
     $iMode = self::NORMALIZE_DEFAULT;
     if (!$bEmpty) $iMode = $iMode & self::NORMALIZE_EMPTY_ARRAY;
 
+    //return current($this->aArray) ? $this->normalizeArray($this->query(), $iMode) : $this->aArray;
     return $this->normalizeArray($this->query(), $iMode);
   }
 

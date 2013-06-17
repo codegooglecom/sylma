@@ -17,6 +17,6 @@ class _Null extends _Scalar implements common\_instance {
 
   public function asArgument() {
 
-    return $this->getControler()->createArgument(array('null' => array()));
+    return $this->getControler()->createArgument(array('null' => array(true)));
   }
 }

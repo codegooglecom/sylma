@@ -173,7 +173,7 @@ abstract class Domed extends Iterator implements dom\domable {
 
     $this->normalize(self::NORMALIZE_EMPTY_ARRAY & self::NORMALIZE_ARGUMENT);
 
-    return $this->aArray;;
+    return $this->aArray;
   }
 
   public function asDOM($sParentNamespace = '') {
@@ -198,6 +198,7 @@ abstract class Domed extends Iterator implements dom\domable {
     }
 
     $result = $this->buildDocument($aValues, $sNamespace);
+
 /*
     if ($result->isEmpty()) {
 

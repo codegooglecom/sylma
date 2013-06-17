@@ -229,9 +229,11 @@ abstract class Basic extends Asserter {
     }
 
     $el = $this->loadDomElement($node1);
+    $iResult = $el->compare($this->loadDomElement($node2));
 
-    if ($el->compare($this->loadDomElement($node2)) !== $el::COMPARE_SUCCESS) {
+    if ($iResult !== $el::COMPARE_SUCCESS) {
 
+      $node = $el->compareBadNode;
       //$this->throwException(sprintf('Node %s not equals with node %s', $el->asToken(), $node2->asToken()));
       $this->launchException(sprintf('Nodes not equals'), get_defined_vars());
     }

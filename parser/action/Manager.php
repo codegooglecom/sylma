@@ -29,21 +29,31 @@ class Manager extends compiler\Builder_old {
     //$this->setArguments('controler.yml');
   }
 
-  public function runAction($sPath, array $aArguments = array()) {
+  public function runAction($sPath, array $aArguments = array(), $bPath = true) {
 
-    $action = $this->getAction($sPath, $aArguments);
+    $action = $this->getAction($sPath, $aArguments, null, $bPath);
     return $action->asDOM();
   }
 
-  public function getAction($sPath, array $aArguments = array(), fs\directory $dir = null) {
+  public function getAction($sPath, array $aArguments = array(), fs\directory $dir = null, $bPath = true) {
 
     require_once('core/functions/Path.php');
 
-    $path = $this->create('path', array(core\functions\path\toAbsolute($sPath, $dir)));
     $fs = \Sylma::getControler('fs');
+
+    if ($bPath) {
+
+      $path = $this->create('path', array(core\functions\path\toAbsolute($sPath, $dir)));
+      $file = $path->getFile();
+    }
+    else {
+
+      $file = $fs->getFile($sPath, $dir);
+    }
+
     //$file = $fs->getFile($sPath, true, );
 
-    return $this->loadAction($path->getFile());
+    return $this->loadAction($file, $aArguments);
   }
 
   public function buildAction(dom\handler $doc, array $aArguments = array(), fs\editable\directory $dir = null, fs\directory $base = null, $sName = '') {
@@ -70,7 +80,7 @@ class Manager extends compiler\Builder_old {
 
     $result = $this->create('action', array($file, $aArguments, $base));
 
-    if ($parent = $this->getControler('parser')->getContext('action/current')) {
+    if ($parent = $this->getControler('parser')->getContext('action/current', false)) {
 
       $result->setParentParser($parent);
       $result->setContexts($parent->getContexts());

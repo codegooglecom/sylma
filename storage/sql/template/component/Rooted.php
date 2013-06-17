@@ -9,6 +9,7 @@ class Rooted extends sql\schema\component\Table {
   protected $query;
 
   protected $bRoot = false;
+  protected $aTriggers = array();
 
   public function isRoot($bValue = null) {
 
@@ -52,6 +53,17 @@ class Rooted extends sql\schema\component\Table {
   protected function parsePathTokens($aPath, $sMode) {
 
     return $this->getParser()->parsePathTokens($this, $aPath, $sMode);
+  }
+
+  public function addTrigger(array $aContent) {
+
+    //return $this->getWindow()->createGroup($aContent);
+    return $aContent;
+  }
+
+  protected function getTriggers() {
+
+    return $this->aTriggers;
   }
 }
 

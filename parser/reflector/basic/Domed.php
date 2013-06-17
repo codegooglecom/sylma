@@ -284,6 +284,7 @@ abstract class Domed extends Componented {
       throw $e;
     }
   }
+  
   /**
    * Browsing function, result is not returned but added to $aResult,
    *
@@ -295,7 +296,6 @@ abstract class Domed extends Componented {
     $mResult = $this->parseElementSelf($el);
     $this->addParsedChild($el, $aResult, $mResult);
   }
-
 
   /**
    * Browsing function, result is not returned but added to $aResult,

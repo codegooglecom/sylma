@@ -145,5 +145,26 @@ class View extends Variabled {
 
     return $doc->readx('@mode', array(), false);
   }
+
+  public function callScript(fs\file $file, common\_window $window, $return = null, $bReturn = true) {
+
+    $arguments = $window->getVariable('aSylmaArguments');
+
+    //$closure = $window->createClosure(array($arguments));
+    //$closure->addContent($window->callFunction('include', $return, array($file->getName())));
+
+    $call = $window->createCall($window->getSylma(), 'includeFile', $return, array($file->getRealPath(), $arguments));
+
+    if ($bReturn) {
+
+      $result = $window->createAssign($window->getVariable('result'), $call);
+    }
+    else {
+
+      $result = $call;
+    }
+
+    return $result;
+  }
 }
 

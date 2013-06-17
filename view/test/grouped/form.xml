@@ -160,4 +160,77 @@
         $user->read('email') === 'tester02@sylma.org';
     </tst:expected>
   </tst:test>
+  <tst:test name="Trigger on select">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <a href="mailto:email">test</a>
+          </div>
+          <sql:trigger>
+            <le:script path="samples/view1"/>
+          </sql:trigger>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      $sID = 2;
+
+      $user = $manager->runQuery("SELECT name, email FROM user WHERE id = $sID", 0);
+      $manager->resetDB();
+
+      $manager->assertEqual($user->query(), array(
+        'name' => 'admin',
+        'email' => 'trigger1@sylma.org',
+      ));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Trigger on update">
+    <tst:document>
+      <view:view mode="update" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <a href="mailto:email">test</a>
+          </div>
+          <sql:trigger>
+            <le:script path="samples/view2"/>
+          </sql:trigger>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return
+        array('post' => $manager->createArgument(array(
+          'name' => 'trigger2',
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = 2;
+
+      $user = $manager->runQuery("SELECT name, email FROM user WHERE id = $sID", 0);
+      $manager->resetDB();
+
+      $manager->assertEqual($user->query(), array(
+        'name' => 'trigger2',
+        'email' => 'trigger2@sylma.org',
+      ));
+
+      return true;
+    </tst:expected>
+  </tst:test>
 </tst:tests>

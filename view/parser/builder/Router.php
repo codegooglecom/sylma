@@ -193,27 +193,6 @@ class Router extends View {
     return $this->callScript($file, $window, $window->tokenToInstance('\sylma\dom\handler'));
   }
 
-  public function callScript(fs\file $file, common\_window $window, $return = null, $bReturn = true) {
-
-    $arguments = $window->getVariable('aSylmaArguments');
-
-    //$closure = $window->createClosure(array($arguments));
-    //$closure->addContent($window->callFunction('include', $return, array($file->getName())));
-
-    $call = $window->createCall($window->getSylma(), 'includeFile', $return, array($file->getRealPath(), $arguments));
-
-    if ($bReturn) {
-
-      $result = $window->createAssign($window->getVariable('result'), $call);
-    }
-    else {
-
-      $result = $call;
-    }
-
-    return $result;
-  }
-
   protected function reflectRoute(crud\Route $route, common\_window $window) {
 
     $main = $route->getMain();

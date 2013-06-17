@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\action\test\standalone;
-use sylma\modules\tester, sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\action;
+use sylma\modules\tester, sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\action, sylma\storage\sql;
 
 class Standalone extends tester\Prepare implements core\argumentable {
 
@@ -19,6 +19,9 @@ class Standalone extends tester\Prepare implements core\argumentable {
 
     if (!$controler) $controler = $this;
     //if (!$controler) $controler = \Sylma::getControler('action');
+
+    $arg = $this->createArgument('/#sylma/view/test/database.xml');
+    \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
 
     $this->setControler($controler);
   }

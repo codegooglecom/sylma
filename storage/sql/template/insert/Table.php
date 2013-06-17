@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\insert;
-use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\parser\languages\common;
 
 class Table extends sql\template\component\Table implements common\argumentable {
 
@@ -76,10 +76,29 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->handler = $handler;
   }
 
+  public function addTrigger(array $aContent) {
+
+    $this->aTriggers[] = $aContent;
+  }
+
   public function asArgument() {
 
     $window = $this->getWindow();
-    $result = $window->createCondition($this->getHandler()->call('validate'), $this->getParser()->getView()->addToResult(array($this->getQuery()->getCall()), false));
+    $view = $this->getParser()->getView();
+
+    $call = $view->addToResult(array($this->getQuery()->getCall()), false);
+
+    if ($aTriggers = $this->getTriggers()) {
+
+      $aContent[] = $call;
+      $aContent[] = $aTriggers;
+    }
+    else {
+
+      $aContent = $call;
+    }
+
+    $result = $window->createCondition($this->getHandler()->call('validate'), $aContent);
 
     return $result;
   }

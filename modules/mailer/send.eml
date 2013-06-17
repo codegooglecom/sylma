@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+>
+  <le:settings>
+    <le:argument name="email" format="php-string"/>
+    <le:argument name="subject" format="php-string"/>
+    <le:argument name="content" format="php-string"/>
+  </le:settings>
+  <le:object class="Mailer">
+    <le:call name="send">
+      <le:get-argument name="email"/>
+      <le:get-argument name="subject"/>
+      <le:get-argument name="content"/>
+    </le:call>
+  </le:object>
+</le:action>

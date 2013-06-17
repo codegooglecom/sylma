@@ -3,6 +3,9 @@ debug :
   rights: false
   show : false
   parser : false
+  email :
+    enable : false
+    default : example@example.org
   backtrace :
     show : false
     html : true

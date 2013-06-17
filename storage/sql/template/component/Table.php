@@ -106,6 +106,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       if ($this->insertQuery()) {
 
         $aResult[] = $this->getQuery();
+
         $this->insertQuery(false);
       }
 

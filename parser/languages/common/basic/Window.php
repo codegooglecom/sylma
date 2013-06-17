@@ -29,6 +29,8 @@ abstract class Window extends core\module\Domed {
    */
   protected $bRender = false;
 
+  protected $iMode = 1;
+
   public function getSelf() {
 
     return $this->self;
@@ -251,6 +253,16 @@ return; // todo, decide to use or not
     return $this->create('string', array($this, $mValue));
   }
 
+  public function setMode($iMode) {
+
+    $this->iMode = $iMode;
+  }
+
+  public function getMode() {
+
+    return $this->iMode;
+  }
+
   protected function assignArray(array $mContent, common\_var $target = null, $bDebug = true, $bFirst = false) {
 
     $aContent = $this->parseArrayables($mContent);
@@ -267,7 +279,7 @@ return; // todo, decide to use or not
           $this->launchException('Structure not allowed here');
         }
 
-        $aResult[] = $this->assignArrayString($aTexts, $target, $bFirst);
+        $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);
 
         $aChildContent = $this->assignArray($mVal->getContent(), $target, $bDebug);
         $mVal->setContent(is_array($aChildContent) ? $aChildContent : array($aChildContent));
@@ -285,8 +297,7 @@ return; // todo, decide to use or not
           $this->launchException('Instruction not allowed here');
         }
 
-        $aResult[] = $this->assignArrayString($aTexts, $target, $bFirst);
-
+        $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);
         $aResult[] = $mVal;
       }
       else {
@@ -299,17 +310,36 @@ return; // todo, decide to use or not
 
     if ($aTexts) {
 
-      $aResult[] = $target ? $this->assignArrayString($aTexts, $target, $bFirst) : $this->createString($aTexts);
+      $aResult[] = $target ? $this->assignArrayResult($aTexts, $target, $bFirst) : $this->createString($aTexts);
     }
 
     return count($aResult) == 1 ? current($aResult) : $aResult;
   }
 
-  protected function assignArrayString(array &$aStrings, common\_var $target, &$bFirst = false) {
+  protected function assignArrayResult(array &$aStrings, common\_var $target, &$bFirst = false) {
 
-    $result = $aStrings ? $this->createInstruction($this->createAssign($target, $this->createString($aStrings), $bFirst ? '' : '.')) : null;
-    $aStrings = array();
-    $bFirst = false;
+    if ($aStrings) {
+
+      if ($this->getMode() === 1) {
+
+        $content = $this->createString($aStrings);
+        $sOP = $bFirst ? '' : '.';
+      }
+      else {
+
+        $content = $aStrings;
+        $sOP = '';
+      }
+
+      $result = $this->createInstruction($this->createAssign($target, $content, $sOP));
+
+      $aStrings = array();
+      $bFirst = false;
+    }
+    else {
+
+      $result = null;
+    }
 
     return $result;
   }
@@ -355,7 +385,7 @@ return; // todo, decide to use or not
       if ($target) {
 
         $aContent = array($var);
-        $result = $this->assignArrayString($aContent, $target, $bFirst);
+        $result = $this->assignArrayResult($aContent, $target, $bFirst);
       }
       else {
 
@@ -408,6 +438,11 @@ return; // todo, decide to use or not
   public function createInstruction(common\argumentable $content) {
 
     return $this->create('line', array($this, $content));
+  }
+
+  public function createGroup(array $aContent) {
+
+    return $this->create('group', array($this, $aContent));
   }
 
   public function createInstanciate(common\_instance $instance, array $aArguments = array()) {

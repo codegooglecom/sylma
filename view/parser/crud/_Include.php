@@ -1,18 +1,17 @@
 <?php
 
 namespace sylma\view\parser\crud;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template, sylma\view\parser;
 
-class _Include extends parser\component\Child implements parser\component, common\arrayable {
+class _Include extends template\parser\component\Child implements template\parser\component, common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
   }
 
-  public function asArray() {
+  protected function build(parser\builder\Router $root) {
 
-    $root = $this->getRoot();
     $path = $root->getPath($this->readx('@path', true));
 /*
     if ($path == $this->getRoot()->getView()) {
@@ -20,9 +19,12 @@ class _Include extends parser\component\Child implements parser\component, commo
       $this->launchException('Recursive call detected', get_defined_vars());
     }
 */
-    $result = $root->callScript($root->getPathFile($path), $this->getWindow(), '\sylma\dom\handler', false);
+    return $root->callScript($root->getPathFile($path), $this->getWindow(), '\sylma\dom\handler', false);
+  }
 
-    return array($result);
+  public function asArray() {
+
+    return array($this->build($this->getRoot()));
   }
 }
 

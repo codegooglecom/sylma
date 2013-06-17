@@ -18,14 +18,17 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
 
     //$path->parse();
     $parser = \Sylma::getManager('parser');
+    $messages = new html\context\Messages;
 
     $contexts = new core\argument\Readable(array(
       'errors' => $this->loadMessages(),
-      'messages' => new html\context\Messages,
+      'messages' => $messages,
       'js' => new html\context\JS(array(
         'load' => new template\binder\context\Load,
       )),
     ));
+
+    $parser->setContext('messages', $messages);
 
     try {
 

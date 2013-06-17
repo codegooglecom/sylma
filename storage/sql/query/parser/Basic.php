@@ -17,7 +17,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
   public function __construct(reflector\domed $parser, core\argument $arg = null, array $aNamespaces = array()) {
 
     parent::__construct($parser, $arg, $aNamespaces);
-    
+
     $this->getWindow()->addControler('mysql');
   }
 
@@ -130,7 +130,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
 
   public function asArgument() {
 
-    return $this->getWindow()->create('group', array($this->getWindow(), array($this->buildDynamicWhere(), $this->getVar()->getInsert())))->asArgument();
+    return $this->getWindow()->createGroup(array($this->buildDynamicWhere(), $this->getVar()->getInsert()))->asArgument();
     //$content = $this->getString();
 
     //return $content->asArgument();

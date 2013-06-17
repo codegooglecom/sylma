@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests
   xmlns:tst="http://www.sylma.org/modules/tester/parser"
-  xmlns="http://www.w3.org/1999/xhtml"
+  _xmlns="http://www.w3.org/1999/xhtml"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
@@ -22,7 +22,7 @@
   </tst:datas>
   <tst:test name="Context with one file">
     <tst:node>
-      <link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
+      <html:link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
     </tst:node>
     <tst:expected>
 
@@ -39,8 +39,8 @@
   </tst:test>
   <tst:test name="Context with two files">
     <tst:node>
-      <link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
-      <link href="/sylma/action/test/samples/style2.css" rel="stylesheet" type="text/css" media="all"/>
+      <html:link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
+      <html:link href="/sylma/action/test/samples/style2.css" rel="stylesheet" type="text/css" media="all"/>
     </tst:node>
     <tst:expected>
 
@@ -91,5 +91,107 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Simple action">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <le:action path="samples/action1"/>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>hello<a href="mailto:email">test</a></div>
+    </tst:node>
+    <tst:expected>
 
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      return $manager->compareNodes($result, $node);
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Action with arguments">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <le:action path="samples/action2">
+              <le:string le:name="hello">world</le:string>
+              <tpl:read le:name="email" select="email"/>
+            </le:action>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>helloworldadmin@sylma.org<a href="mailto:email">test</a></div>
+    </tst:node>
+    <tst:expected>
+
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      return $manager->compareNodes($result, $node);
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple script call">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <le:script path="samples/view1"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3><a href="mailto:email">test</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Script call with arguments">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <le:script path="samples/view2">
+              <le:string le:name="hello">world</le:string>
+              <tpl:read le:name="email" select="email"/>
+            </le:script>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <div>
+          <h3>root</h3>world<a href="mailto:email">admin@sylma.org</a>
+        </div>
+      </div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

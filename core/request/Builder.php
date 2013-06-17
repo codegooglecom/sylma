@@ -7,6 +7,8 @@ class Builder extends Basic {
 
   public function __construct($sPath = '', fs\directory $dir = null) {
 
+    $this->setArguments(array());
+
     if ($sPath) $this->setPath($this->resolvePath($sPath, $dir));
     $this->loadSettings();
   }

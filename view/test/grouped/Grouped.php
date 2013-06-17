@@ -10,13 +10,17 @@ class Grouped extends tester\Parser implements core\argumentable {
   public function __construct() {
 
     $this->setDirectory(__file__);
+    $this->resetDB();
+
+    parent::__construct();
+  }
+
+  public function resetDB() {
 
     $arg = $this->createArgument('../database.xml');
     \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
 
     $this->runQuery($arg->read('script'));
-
-    parent::__construct();
   }
 
   public function createArgument($mArguments, $sNamespace = '') {

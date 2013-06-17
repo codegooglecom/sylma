@@ -157,14 +157,16 @@ sylma.classes = {
             $(document.body).grab(new Element('div', {id : 'sylma-messages'}), 'top');
           }
 
+          var el;
+
           for (var i in result.messages) {
 
             msg = result.messages[i];
-            var el = new Element('div', {html : msg.content, 'class' : 'sylma-message sylma-hidder'});
+            el = new Element('div', {html : msg.content, 'class' : 'sylma-message sylma-hidder'});
             this.addMessage(el, $('sylma-messages'));
             window.getComputedStyle(el).opacity;
             el.addClass('sylma-visible');
-            (function() { el.removeClass('sylma-visible'); (function() { el.destroy(); }).delay(2000) }).delay(5000);
+            (function() { this.removeClass('sylma-visible'); (function() { this.destroy(); }).bind(this).delay(2000) }).bind(el).delay(5000);
             //el.addClass('sylma-visible');
           }
         }

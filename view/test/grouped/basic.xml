@@ -4,13 +4,14 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
 
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
+
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -28,7 +29,7 @@
         <view:schema>samples/user.xsd</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email">test</a>
           </div>
         </view:template>
@@ -47,7 +48,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email">test</a>
           </div>
         </view:template>
@@ -66,7 +67,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3>&lt;<stp:apply select="name"/>&gt;</h3>
+            <h3>&lt;<tpl:apply select="name"/>&gt;</h3>
           </div>
         </view:template>
       </view:view>
@@ -84,7 +85,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name/value()"/></h3>
+            <h3><tpl:apply select="name/value()"/></h3>
           </div>
         </view:template>
       </view:view>
@@ -92,6 +93,32 @@
     <tst:node>
       <div><h3>admin</h3></div>
     </tst:node>
+  </tst:test>
+  <tst:test name="Return argument">
+    <tst:document>
+      <view:view sql:ns="ns" build:class="\sylma\core\argument\Readable" build:output="array">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <le:array>
+            <tpl:read le:name="name" select="name"/>
+            <tpl:read le:name="email" select="email"/>
+          </le:array>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $manager->assertEqual($manager->get('result')->query(), array(
+        'name' => 'admin',
+        'email' => 'admin@sylma.org',
+      ));
+
+      return true;
+
+    </tst:expected>
   </tst:test>
   <tst:test name="Multiple attribute values">
     <tst:document>
@@ -120,7 +147,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <stp:apply select="email"/>
+            <tpl:apply select="email"/>
           </div>
         </view:template>
         <view:template match="user:email">
@@ -141,7 +168,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <stp:apply select="*"/>
+            <tpl:apply select="*"/>
           </div>
         </view:template>
         <view:template match="user:name">
@@ -165,7 +192,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <stp:apply select="* ^ id,name"/>
+            <tpl:apply select="* ^ id,name"/>
           </div>
         </view:template>
         <view:template match="user:name">
@@ -189,8 +216,8 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="user:name"/></h3>
-            <span><stp:apply select="user:name"/></span>
+            <h3><tpl:apply select="user:name"/></h3>
+            <span><tpl:apply select="user:name"/></span>
           </div>
         </view:template>
       </view:view>
@@ -208,8 +235,8 @@
         <view:schema>samples/user2.xql</view:schema>
         <view:template>
           <div>
-            <stp:apply select="name"/>
-            <stp:apply select="group_id/ref()"/>
+            <tpl:apply select="name"/>
+            <tpl:apply select="group_id/ref()"/>
           </div>
         </view:template>
         <view:template match="user:*">
@@ -233,7 +260,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <stp:apply select="user:name" mode="hello"/>
+            <tpl:apply select="user:name" mode="hello"/>
           </div>
         </view:template>
         <view:template match="user:name">
@@ -260,7 +287,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <stp:apply mode="hello"/>
+            <tpl:apply mode="hello"/>
           </div>
         </view:template>
         <view:template mode="hello">
@@ -284,7 +311,7 @@
         </view:template>
         <view:template>
           <div>
-            <stp:apply select="name"/>
+            <tpl:apply select="name"/>
           </div>
         </view:template>
       </view:view>
@@ -305,7 +332,7 @@
         </view:template>
         <view:template>
           <div>
-            <stp:apply mode="hello"/>
+            <tpl:apply mode="hello"/>
           </div>
         </view:template>
       </view:view>
@@ -331,7 +358,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email" ls:owner="root" ls:group="root" ls:mode="750">test</a>
           </div>
         </view:template>
@@ -350,8 +377,8 @@
         <view:schema>samples/user.xsd</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
-            <tpl:variable name="email"><stp:apply select="email"/></tpl:variable>
+            <h3><tpl:apply select="name"/></h3>
+            <tpl:variable name="email"><tpl:apply select="email"/></tpl:variable>
             <a href="mailto:{$email}"><tpl:apply select="$email"/></a>
           </div>
         </view:template>
@@ -371,7 +398,7 @@
         <view:template>
           <div>
             <tpl:variable name="test">abc</tpl:variable>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply select="$test"/></span>
           </div>
         </view:template>
@@ -393,7 +420,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <tpl:apply>
               <tpl:read tpl:name="test2" select="email"/>
             </tpl:apply>
@@ -421,7 +448,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span>
               <tpl:apply select="email">
                 <tpl:text tpl:name="test2">world</tpl:text>
@@ -451,7 +478,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span>
               <tpl:apply select="email"/>
             </span>
@@ -480,7 +507,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply use="path"/></span>
             <h4><tpl:apply select="$$path"/></h4>
           </div>
@@ -507,7 +534,7 @@
             <tpl:variable name="test">
               <le:get-argument name="hello"/>
             </tpl:variable>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply select="$test"/></span>
           </div>
         </view:template>
@@ -532,7 +559,7 @@
         <view:schema>samples/user4.xql</view:schema>
         <view:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply select="email/format(length=8)"/></span>
           </div>
         </view:template>
@@ -554,7 +581,7 @@
         <view:schema>samples/user4.xql</view:schema>
         <view:template>
           <form>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply import="samples/tree1.xml"/></span>
           </form>
         </view:template>
@@ -599,7 +626,7 @@
         <view:schema>samples/user4.xql</view:schema>
         <view:template>
           <form>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply import="samples/tree2.xml"/></span>
           </form>
         </view:template>

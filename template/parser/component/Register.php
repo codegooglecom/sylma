@@ -10,6 +10,7 @@ class Register extends Child implements common\arrayable, parser\component {
     $this->setNode($el);
 
     $this->allowText(true);
+    $this->allowForeign(true);
   }
 
   protected function loadContent() {

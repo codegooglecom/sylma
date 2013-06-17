@@ -11,6 +11,8 @@ class Elemented extends template\parser\handler\Domed {
   const SCHEMA_NS = 'http://2013.sylma.org/schema/template';
   const SCHEMA_PREFIX = 'stp';
 
+  const BINDER_NS = 'http://2013.sylma.org/template/binder';
+
   const TMP_ARGUMENTS = 'view.xml';
 
   protected $allowForeign = true;
@@ -82,13 +84,15 @@ class Elemented extends template\parser\handler\Domed {
 
   public function loadElementForeignKnown(dom\element $el, reflector\elemented $parser) {
 
-    switch ($this->getMode()) {
+    switch ($el->getNamespace()) {
 
-      case 'update' :
-      case 'insert' :
+      case self::BINDER_NS;
 
-        $result = null;
-        break;
+        if ($this->getMode() !== 'view') {
+
+          $result = null;
+          break;
+        }
 
       default :
 
