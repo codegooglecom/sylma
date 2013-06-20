@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\alter\component;
 use sylma\core, sylma\storage\sql;
 
-class Field extends sql\schema\component\Field {
+class Field extends sql\schema\component\Field implements sql\alter\alterable {
 
   public function asUpdate() {
 

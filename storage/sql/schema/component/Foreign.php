@@ -12,21 +12,49 @@ class Foreign extends Element implements sql\schema\element {
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, false);
-    $this->setName($el->readx('@name'));
-    //$this->loadNamespace();
 
-    $this->setType($this->getParser()->getType('foreign', $this->getParser()->getNamespace(self::PREFIX)));
+    $this->loadName();
+    $this->loadType();
 
     $this->reflectOccurs($el);
     $this->loadOptional();
   }
 
+  protected function loadName() {
+
+    $this->setName($this->readx('@name'));
+  }
+
+  protected function loadType() {
+
+    $this->setType($this->getParser()->getType('foreign', $this->getParser()->getNamespace(self::PREFIX)));
+  }
+
   protected function loadElementRef() {
 
-    list($sNamespace, $sName) = $this->getParser()->parseName($this->readx('@table', true), $this, $this->getNode());
+    list($sNamespace, $sName) = $this->parseName($this->readx('@table', true));
 
-    $el = $this->getParser()->getElement($sName, $sNamespace);
-    $this->setElementRef($el);
+    $result = $this->getParser()->getElement($sName, $sNamespace);
+    $result->setParent($this);
+    
+    return $result;
+  }
+
+  protected function importElementRef() {
+
+    if ($sImport = $this->readx('@import')) {
+
+      $file = $this->getSourceFile($sImport);
+      $this->getParser()->addSchema($file->getDocument());
+
+      $result = $this->loadElementRef($file);
+    }
+    else {
+
+      $result = $this->loadElementRef();
+    }
+
+    return $result;
   }
 
   public function getElementRef() {
@@ -35,17 +63,7 @@ class Foreign extends Element implements sql\schema\element {
 
       if (is_null($this->elementRef)) {
 
-        if ($sImport = $this->readx('@import')) {
-
-          $file = $this->getSourceFile($sImport);
-          $this->getParser()->addSchema($file->getDocument());
-
-          $this->loadElementRef($file);
-        }
-        else {
-
-          $this->loadElementRef();
-        }
+        $this->setElementRef($this->importElementRef());
       }
       else {
 
@@ -58,7 +76,6 @@ class Foreign extends Element implements sql\schema\element {
 
   public function setElementRef(schema\parser\element $element) {
 
-    $element->setParent($this);
     $this->elementRef = $element;
   }
 

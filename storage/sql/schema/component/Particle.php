@@ -21,32 +21,11 @@ class Particle extends schema\parser\component\Particle {
 
       $element = $this->getParser()->parseComponent($el);
       $element->loadNamespace($sNamespace);
-      
+
       $this->addElement($element, $iPosition);
 
       $iPosition++;
     }
-  }
-
-  public function _getElement($sName, $sNamespace) {
-
-    $result = null;
-
-    if (!$result = parent::getElement($sName, $sNamespace)) {
-
-      $sPath = "sql:*[@name='$sName']";
-
-      if ($el = $this->getx($sPath)) {
-
-        $result = $this->getParser()->parseComponent($el);
-        $result->loadNamespace($sNamespace);
-
-        $iPosition = $this->readx($sPath . '[position()]');
-        $this->addElement($result, $iPosition);
-      }
-    }
-
-    return $result;
   }
 }
 

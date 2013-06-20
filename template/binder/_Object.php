@@ -169,6 +169,8 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $var = $this->getParser()->getObjects();
 
+    //$element->addBefore($element->getAttribute('class')->getVar()->getInsert());
+    //$element->addBefore($element->addToken('class', $this->getID()));
     $content = $window->parseArrayables(array($element));
 
     if ($this->isRoot() and $sParent = $this->getParentName()) {

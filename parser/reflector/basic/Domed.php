@@ -284,7 +284,7 @@ abstract class Domed extends Componented {
       throw $e;
     }
   }
-  
+
   /**
    * Browsing function, result is not returned but added to $aResult,
    *

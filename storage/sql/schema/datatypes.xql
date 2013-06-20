@@ -13,7 +13,7 @@
     <sql:field name="date-update" type="xs:dateTime"/>
   </sql:group>
 
-  <xs:simpleType name="id" type="xs:integer"/>
+  <xs:simpleType name="id" type="xs:integer" reflector="\sylma\schema\cached\form\_Integer"/>
 
   <xs:simpleType name="int">
     <xs:restriction base="xs:integer">

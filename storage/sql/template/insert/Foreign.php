@@ -19,10 +19,5 @@ class Foreign extends sql\template\component\Foreign {
 
     $this->getParent()->addElementToHandler($this, $this->getDefault());
   }
-
-  protected function _applyElement(sql\template\component\Table $element, array $aPath, $sMode) {
-
-    return null;
-  }
 }
 

@@ -1,15 +1,16 @@
 <?php
 
-namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template as template_ns;
+namespace sylma\template\parser\component\element;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template;
 
-class Element extends Unknowned implements common\arrayable, common\argumentable, template_ns\parser\component, template_ns\element, common\addable, core\tokenable {
+class Basic extends template\parser\component\Unknowned implements common\arrayable, common\argumentable, template\parser\component, template\element, common\addable, core\tokenable {
 
   const TARGET_PREFIX = 'target';
 
   //protected $aAttributes = array();
   protected $aContent = array();
   protected $bBuilded = false;
+  protected $aBefore = array();
 
   protected $aDefaultAttributes = array();
   protected $aAttributes = array();
@@ -21,6 +22,20 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
 
     $this->build($el);
     //$this->setNamespace(\Sylma::read('namespaces/html'));
+  }
+
+  public function parseAttributeKey($sName) {
+
+    $mVal = $this->readAttribute($sName);
+
+    $content = $this->parseAttributeValue($mVal[0]);
+
+    if (is_array($content)) {
+
+      $content = current($content);
+    }
+
+    return $content;
   }
 
   protected function parseAttributes() {
@@ -176,7 +191,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
         $aBefore = array_merge($aBefore, $aChildBefore);
         $aAttributes = array_merge($aAttributes, $aChildAttributes);
       }
-      else if ($val instanceof Token) {
+      else if ($val instanceof template\parser\component\Token) {
 
         $sName = $val->getName();
 
@@ -261,6 +276,16 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $mResult;
   }
 
+  public function addBefore($content) {
+
+    $this->aBefore[] = $content;
+  }
+
+  protected function getBefore() {
+
+    return $this->aBefore;
+  }
+
   protected function complexAsArray(dom\element $el) {
 
     $aResult = $aContent = array();
@@ -283,6 +308,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     }
 
     $aResult[] = $aBefore;
+    $aResult[] = $this->getBefore();
 
     $sName = $this->loadName($el);
 
@@ -303,8 +329,8 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
   protected function simpleAsArray(dom\element $el) {
 
     //$this->build();
-
     $aResult = array();
+
     $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
     $aResult[] = $this->parseAttributes();
     $aResult[] = '/>';
@@ -356,7 +382,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $result;
   }
 
-  protected function getAttribute($sName, $bLoad = true) {
+  public function getAttribute($sName, $bLoad = true) {
 
     if (isset($this->aAttributes[$sName])) {
 
@@ -379,7 +405,7 @@ class Element extends Unknowned implements common\arrayable, common\argumentable
     return $result;
   }
 
-  public function setAttributeComponent(ElementAttribute $component) {
+  public function setAttributeComponent(Attribute $component) {
 
     $this->aAttributes[$component->getName()] = $component;
   }

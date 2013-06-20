@@ -101,20 +101,42 @@ sylma.ui.tab.Caller = new Class({
 
   Extends : sylma.ui.Base,
 
+  options : {
+    mode : 'inside'
+  },
+
   initialize : function(props) {
 
     this.parent(props);
 
-    var content = this.getNode().get('html');
+    this.prepareNode();
+  },
+
+  prepareNode : function() {
+
+    var node;
+
+    if (this.get('mode') == 'inside') {
+
+      node = new Element('a', {
+        html : this.getNode().get('html')
+      });
+
+      this.getNode().empty().grab(node);
+    }
+    else {
+
+      node = this.getNode();
+    }
+
     var self = this;
 
-    this.getNode().empty().grab(new Element('a', {
+    node.set({
       href : '#',
-      html : content,
       events : {
         click : function() { this.blur(); self.go(); return false; }
       }
-    }));
+    });
   },
 
   go : function() {

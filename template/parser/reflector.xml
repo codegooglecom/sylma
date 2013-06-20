@@ -20,8 +20,8 @@
             <cls:class alias="template" name="Template">
               <cls:classes>
                 <cls:class alias="pather" name="\sylma\template\parser\Pather"/>
-                <cls:class alias="element" name="Element"/>
-                <cls:class alias="element-attribute" name="ElementAttribute">
+                <cls:class alias="element" name="element\Tokened"/>
+                <cls:class alias="element-attribute" name="element\Attribute">
                   <cls:classes>
                     <cls:class alias="cached" name="\sylma\template\cached\Attribute"/>
                   </cls:classes>

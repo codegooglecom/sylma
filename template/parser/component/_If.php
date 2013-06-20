@@ -46,7 +46,7 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
 
     if ($result instanceof _Else) {
 
-      $this->getReflector()->addElse($this->getWindow()->toString($result->parseContent()));
+      $this->getReflector()->setElse($result->parseContent());
       $result = null;
     }
 

@@ -5,7 +5,7 @@ use sylma\core, sylma\schema\cached\form;
 
 class Form1 extends form\Form {
 
-  public function addElement($sName, form\Simple $element = null) {
+  public function addElement($sName, form\Type $element = null) {
 
     switch ($sName) {
 

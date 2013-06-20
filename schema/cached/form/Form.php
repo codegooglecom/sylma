@@ -51,7 +51,7 @@ class Form extends core\module\Argumented {
     ));
   }
 
-  public function addElement($sName, Simple $element) {
+  public function addElement($sName, Type $element) {
 
     $element->setHandler($this);
     $this->aElements[$sName] = $element;
@@ -105,7 +105,7 @@ class Form extends core\module\Argumented {
     foreach ($this->getElements() as $sName => $el) {
 
       $aValues[] = $el->escape();
-      $aKeys[] = $sName;
+      $aKeys[] = '`' . $sName . '`';
     }
 
     $sKeys = implode(',', $aKeys);

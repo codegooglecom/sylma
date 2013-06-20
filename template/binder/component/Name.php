@@ -15,6 +15,8 @@ class Name extends Basic implements common\arrayable {
 
   public function asArray() {
 
+    $this->log('JS : name');
+
     $obj = $this->getParser()->getObject();
     $window = $this->getPHPWindow();
     $obj->setName($window->toString($this->parseComponentRoot($this->getNode())));

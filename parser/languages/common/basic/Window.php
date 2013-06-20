@@ -263,6 +263,19 @@ return; // todo, decide to use or not
     return $this->iMode;
   }
 
+  protected function assignStructure(common\structure $struct, common\_var $target, $bDebug) {
+
+    $aResult = array();
+
+    foreach ($struct->getContents() as $sKey => $mContent) {
+
+      $aChildContent = $this->assignArray($mContent, $target, $bDebug);
+      $aResult[$sKey] = is_array($aChildContent) ? $aChildContent : array($aChildContent);
+    }
+
+    $struct->setContents($aResult);
+  }
+
   protected function assignArray(array $mContent, common\_var $target = null, $bDebug = true, $bFirst = false) {
 
     $aContent = $this->parseArrayables($mContent);
@@ -281,8 +294,7 @@ return; // todo, decide to use or not
 
         $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);
 
-        $aChildContent = $this->assignArray($mVal->getContent(), $target, $bDebug);
-        $mVal->setContent(is_array($aChildContent) ? $aChildContent : array($aChildContent));
+        $this->assignStructure($mVal, $target, $bDebug);
 
         $aResult[] = $mVal;
       }

@@ -9,7 +9,9 @@ debug :
   backtrace :
     show : false
     html : true
-  html : false
+  html :
+    foreign : false
+    show : true
   xml :
     import : false
 namespaces :

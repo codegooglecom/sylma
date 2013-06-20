@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template as template_ns;
 
-class Token extends Child implements parser\component {
+class Token extends Child implements template_ns\parser\component {
 
   protected $sName;
   protected $element;
@@ -27,7 +27,7 @@ class Token extends Child implements parser\component {
     return $this->sName;
   }
 
-  public function setElement(Element $el) {
+  public function setElement(template_ns\element $el) {
 
     $this->element = $el;
   }

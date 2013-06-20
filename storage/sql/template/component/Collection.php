@@ -22,6 +22,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->setNamespace($sNamespace);
     //$this->setNamespace($table->getNamespace(), 'element', false);
     $this->setName('[collection]');
+    $this->setQuery($table->getQuery());
 
     $this->table = $table;
     //$this->loadNamespace($table->getNamespace());
@@ -36,7 +37,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
     $window = $this->getWindow();
 
-    $var = $window->createVariable('item', '\sylma\core\argument', false);
+    $var = $window->createVariable('', '\sylma\core\argument', false);
     $this->setSource($var);
 
     $this->getQuery()->isMultiple(true);

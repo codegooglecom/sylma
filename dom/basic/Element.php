@@ -844,20 +844,17 @@ class Element extends \DOMElement implements dom\element {
 
     if ($this->getDocument()) {
 
-      if ($this->getHandler(false) and $this->getHandler()->getFile()) {
+      if ($sFile = $this->readAttribute('source', self::SOURCE_NS, false)) {
+
+        $sFile = '@file ' . $sFile;
+      }
+      else if ($this->getHandler(false) and $this->getHandler()->getFile()) {
 
         $sFile = $this->getHandler()->asToken();
       }
       else {
 
-        if ($sFile = $this->readAttribute('source', self::SOURCE_NS, false)) {
-
-          $sFile = '@file ' . $sFile;
-        }
-        else {
-
-          $sFile = '[no-file]' . ($this->getHandler(false) ? '[no-handler]' : '');
-        }
+        $sFile = '[no-file]' . ($this->getHandler(false) ? '[no-handler]' : '');
       }
 
       $sResult = ' @element ' . $this->getPath() . ' in ' . $sFile . ':' . $this->getLineNo();

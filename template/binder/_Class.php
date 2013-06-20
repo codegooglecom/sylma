@@ -122,11 +122,7 @@ class _Class extends Basic implements common\arrayable {
 
   protected function loadID() {
 
-    if (!$sID = $this->readx('@id')) {
-
-      $sID = uniqid('sylma');
-    }
-
+    $sID = uniqid('sylma');
     $this->setID($sID);
 
     return $this->getID();

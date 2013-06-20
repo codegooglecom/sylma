@@ -233,4 +233,47 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Trigger get result insert">
+    <tst:document>
+      <view:view mode="insert" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="name,email"/>
+          </div>
+          <sql:trigger>
+            <le:script path="samples/view3">
+              <sql:result le:name="id"/>
+            </le:script>
+          </sql:trigger>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return
+        array('post' => $manager->createArgument(array(
+          'name' => 'trigger3',
+          'email' => 'trigger3@sylma.org',
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->read('result');
+
+      $user = $manager->runQuery("SELECT name, email FROM user WHERE id = $sID", 0);
+      $manager->resetDB();
+
+      $manager->assertEqual($user->query(), array(
+        'name' => 'trigger3',
+        'email' => 'trigger3b@sylma.org',
+      ));
+
+      return true;
+    </tst:expected>
+  </tst:test>
 </tst:tests>

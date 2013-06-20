@@ -37,7 +37,7 @@ class _Object extends js\basic\Base implements common\_instance, common\_object,
 
     return $this->aProperties;
   }
-  
+
   public function setProperty($sPath, $value) {
 
     $aPath = explode('.', $sPath);

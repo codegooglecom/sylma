@@ -142,7 +142,7 @@ sylma.classes = {
         console.log('Cannot redirect while exception occured');
       }
 
-      if (delay) {
+      if (!result.errors && delay) {
 
         this.cookie.handler = Cookie.write(this.cookie.name, this.objectToString(result));
       }
@@ -163,10 +163,22 @@ sylma.classes = {
 
             msg = result.messages[i];
             el = new Element('div', {html : msg.content, 'class' : 'sylma-message sylma-hidder'});
+
             this.addMessage(el, $('sylma-messages'));
             window.getComputedStyle(el).opacity;
             el.addClass('sylma-visible');
-            (function() { this.removeClass('sylma-visible'); (function() { this.destroy(); }).bind(this).delay(2000) }).bind(el).delay(5000);
+
+            (function() {
+
+              this.removeClass('sylma-visible');
+
+              (function() {
+
+                this.destroy();
+
+              }).bind(this).delay(2000);
+
+            }).bind(el).delay(5000);
             //el.addClass('sylma-visible');
           }
         }
@@ -244,6 +256,12 @@ sylma.ui = new sylma.classes.ui;
       if (!props.id) throw 'No node associated';
 
       this.node = $(props.id);
+
+      if (!this.node) {
+
+        throw new Error('Main node [@id=' + props.id + '] not found');
+      }
+
       this.parentObject = props.parentObject;
       this.parentKey = props.parentKey;
 
@@ -306,6 +324,12 @@ sylma.ui = new sylma.classes.ui;
       if (event.node) {
 
         nodes = this.getNode().getElements('.' + event.node);
+
+        if (!nodes) {
+
+          throw new Error('No node [.' + event.node + '] found to bind event on ' + event.name);
+        }
+
         this.prepareNodes(nodes);
       }
       else {
@@ -328,6 +352,11 @@ sylma.ui = new sylma.classes.ui;
     },
 
     prepareNodes : function(nodes) {
+
+      if (!nodes) {
+
+        throw new Error('No nodes sent');
+      }
 
       nodes.store('sylma-object', this);
       nodes.store('sylma-parent', this.getParent());

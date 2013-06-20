@@ -5,26 +5,10 @@ use sylma\core, sylma\storage\sql, sylma\parser\languages\common, sylma\schema\p
 
 class Foreign extends sql\schema\component\Foreign implements sql\template\pathable, parser\element {
 
-  protected $parent;
   protected $query;
   protected $var;
 
   protected $bBuilded = false;
-
-  public function setParent(parser\element $parent) {
-
-    $this->parent = $parent;
-  }
-
-  public function getParent($bDebug = true) {
-
-    if (!$this->parent && $bDebug) {
-
-      $this->throwException('No parent');
-    }
-
-    return $this->parent;
-  }
 
   /**
    *
@@ -60,7 +44,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     switch ($sName) {
 
       case 'alias' : $result = $this->getAlias(); break;
-      case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode, $aArguments) : $this->reflectApply($sMode, $aArguments); break;
+      //case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode, $aArguments) : $this->reflectApply($sMode, $aArguments); break;
       case 'value' : $result = $this->reflectRead(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
@@ -164,7 +148,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return array($table, $el1, $el2);
   }
 
-  protected function build(Table $element) {
+  protected function buildSingle(Table $element) {
 
     if (!$this->bBuilded) {
 
@@ -182,28 +166,35 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     }
   }
 
+  protected function buildMultiple(Table $element) {
+
+    $parent = $this->getParent();
+
+    $id = $parent->getElement('id', $parent->getNamespace());
+
+    list($table, $field, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
+
+    $query = $table->getQuery();
+    $result = $this->getParser()->createCollection();
+
+    $result->setTable($element);
+    $result->setQuery($table->getQuery());
+
+    $query->setWhere($field, '=', $id->reflectRead());
+
+    $element->setQuery($query);
+    $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
+
+    return $result;
+  }
+
   protected function applyElement(Table $element, array $aPath, $sMode, array $aArguments = array()) {
 
     //$sName = $element->getName();
 
     if ($this->getMaxOccurs(true)) {
 
-      $parent = $this->getParent();
-
-      $id = $parent->getElement('id', $parent->getNamespace());
-
-      list($table, $source, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
-
-      $query = $table->getQuery();
-      $collection = $this->getParser()->createCollection();
-
-      $collection->setQuery($table->getQuery());
-      $collection->setTable($element);
-
-      $query->setWhere($source, '=', $id->reflectRead());
-
-      $element->setQuery($query);
-      $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
+      $collection = $this->buildMultiple($element);
 
       if ($aPath) {
 
@@ -216,7 +207,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     }
     else {
 
-      $this->build($element);
+      $this->buildSingle($element);
 
       if ($aPath) {
 

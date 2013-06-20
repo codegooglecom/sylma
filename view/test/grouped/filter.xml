@@ -17,11 +17,18 @@
     2;admin;admin@sylma.org
     3;webmaster;webmaster@sylma.org
   </tst:datas>
+  <tst:datas name="mysql://user2">
+    id;name;email;date-update
+    1;root;root@sylma.org;1;2010-10-01-00:00:00
+    2;admin;admin@sylma.org;2;2030-06-02-00:00:00
+    3;webmaster;webmaster@sylma.org;0;2010-12-05-00:00:00
+    4;user1;user1@sylma.org;1;2035-01-18-00:00:00
+  </tst:datas>
   <tst:test name="Simple filter">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource/>
-        <sql:filter name="id" single="single">2</sql:filter>
+        <sql:filter name="id">2</sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <h2><tpl:apply select="name"/></h2>
@@ -32,11 +39,47 @@
       <h2>admin</h2>
     </tst:node>
   </tst:test>
+  <tst:test name="Filter with op">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource/>
+        <sql:filter name="name" op="NOT LIKE">%m%</sql:filter>
+        <view:schema>samples/user6.xql</view:schema>
+        <view:template>
+          <h2><tpl:apply select="name"/></h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <h2>root</h2>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Filter with function">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="x"/>
+        <sql:filter name="date-update" op="&lt;" function="x">now()</sql:filter>
+        <view:schema>samples/user6.xql</view:schema>
+        <view:template>
+          <div><tpl:apply select="*"/></div>
+        </view:template>
+        <view:template match="user:user2">
+          <h2><tpl:apply select="name"/></h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h2>root</h2>
+        <h2>webmaster</h2>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Filter foreigner">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource/>
-        <sql:filter name="id" single="single"><le:get-argument name="id"/></sql:filter>
+        <sql:filter name="id"><le:get-argument name="id"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <h2><tpl:apply select="name"/></h2>
@@ -54,7 +97,7 @@
     <tst:document>
       <view:view user:ns="ns" mode="insert">
         <sql:resource/>
-        <sql:filter name="id" single="single"><le:get-argument source="post" name="id"/></sql:filter>
+        <sql:filter name="id"><le:get-argument source="post" name="id"/></sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <h2><tpl:apply select="name"/></h2>
@@ -104,7 +147,7 @@
 
       $result1 = $manager->loadScript();
       $result2 = $manager->loadScript(array(
-        'id' => 2,
+        'id' => '2',
       ));
 
       $manager->compareNodes($result1, $nodes->get('node1'));

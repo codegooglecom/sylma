@@ -215,6 +215,11 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $result;
   }
 
+  protected function reflectEscape($content) {
+
+    return array("'", $this->getWindow()->callFunction('addslashes', 'php-string', array($content)), "'");
+  }
+
   protected function log($sMessage = '', array $aVars = array()) {
 
     $this->startLog($sMessage, $aVars);

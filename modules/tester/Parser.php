@@ -18,6 +18,9 @@ class Parser extends tester\Prepare {
 
     $this->setControler($this);
 
+    $dir = $this->loadCacheDirectory($this->getDirectory());
+    $dir->delete();
+    
     $this->exportDirectory = $this->loadCacheDirectory($this->getDirectory());
 
     $this->setArguments(array());

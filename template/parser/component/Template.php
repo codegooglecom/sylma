@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template\parser;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template as template_ns;
 
-class Template extends Child implements common\arrayable, parser\template, core\tokenable {
+class Template extends Child implements common\arrayable, template_ns\parser\template, core\tokenable {
 
   const NAME_DEFAULT = '*';
 
@@ -116,7 +116,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     return $result;
   }
 
-  protected function loadAttributes(dom\element $el, Element $component) {
+  protected function loadAttributes(dom\element $el, template_ns\element $component) {
 
     if ($this->useForeignAttributes($el)) {
 
@@ -152,7 +152,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     return ;
   }
 
-  public function setTree(parser\tree $tree) {
+  public function setTree(template_ns\parser\tree $tree) {
 
     if (!$this->bCloned && $this->getMatch()) {
 
@@ -284,7 +284,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
     }
   }
 
-  protected function addComponent(parser\component $sub) {
+  protected function addComponent(template_ns\parser\component $sub) {
 
     $sub->setTemplate($this); // first set for component build
 
@@ -334,10 +334,7 @@ class Template extends Child implements common\arrayable, parser\template, core\
 
   protected function startLog($sMessage = '', array $aVars = array()) {
 
-    parent::startLog(
-      $this->asToken(),
-      array_merge(array(), $aVars)
-    );
+    parent::startLog($this->asToken(), array_merge(array('file' => (string) $this->getSourceFile()), $aVars));
   }
 
   public function getWeight($sNamespace, $sName, $sMode = self::MODE_DEFAULT) {

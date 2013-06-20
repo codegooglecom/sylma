@@ -79,7 +79,7 @@ class Basic extends sql\schema\Handler {
     return $this->getView()->getCurrentTemplate()->getPather();
   }
 
-  public function parsePathToken(sql\template\pathable $source, array $aPath, $sMode, $bRead = false) {
+  public function parsePathToken(sql\template\pathable $source, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     if (!$aPath) {
 
@@ -89,7 +89,7 @@ class Basic extends sql\schema\Handler {
     $pather = $this->getPather();
     $pather->setSource($source);
 
-    return $pather->parsePathToken($aPath, $sMode, $bRead);
+    return $pather->parsePathToken($aPath, $sMode, $bRead, $aArguments);
   }
 
   public function parsePath(sql\template\pathable $source, $sPath, $sMode, array $aArguments = array()) {

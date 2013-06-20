@@ -5,6 +5,7 @@ use sylma\core, sylma\template, sylma\schema;
 
 interface pathable extends template\parser\tree  {
 
+  //function getQuery();
   function getNode();
 
   //function reflectApplyDefault($sPath, array $aPath, $sMode = '');

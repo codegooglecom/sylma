@@ -18,12 +18,12 @@
             </cls:class>
             <cls:class alias="field" name="Field">
               <cls:classes>
-                <cls:class alias="cached" name="\sylma\schema\cached\form\Simple"/>
+                <cls:class alias="cached" name="\sylma\schema\cached\form\_String"/>
               </cls:classes>
             </cls:class>
             <cls:class alias="foreign" name="Foreign">
               <cls:classes>
-                <cls:class alias="cached" name="\sylma\schema\cached\form\Simple"/>
+                <cls:class alias="cached" name="\sylma\schema\cached\form\_Integer"/>
               </cls:classes>
             </cls:class>
             <cls:class alias="baseType" name="Simple"/>
@@ -34,4 +34,3 @@
     </cls:class>
   </cls:classes>
 </arg:argument>
-

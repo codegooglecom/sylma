@@ -3,14 +3,30 @@
 namespace sylma\schema\cached\form;
 use sylma\core;
 
-class Simple extends Basic {
+abstract class Type extends core\module\Argumented {
 
   protected $sValue;
+  protected $handler;
 
   public function __construct($sValue, array $aSettings = array()) {
 
     $this->setValue($sValue);
     $this->setSettings($aSettings);
+  }
+
+  public function setHandler(Form $handler) {
+
+    $this->handler = $handler;
+  }
+
+  protected function getHandler() {
+
+    return $this->handler;
+  }
+
+  protected function addMessage($sMessage, array $aArguments = array()) {
+
+    $this->getHandler()->addMessage($sMessage, $aArguments);
   }
 
   public function setValue($sValue = '') {
@@ -40,7 +56,7 @@ class Simple extends Basic {
     }
     else {
 
-      if (!$bResult = is_string($this->getValue())) {
+      if (!$bResult = $this->validateFormat()) {
 
         $this->addMessage($this->translate("The field '%s' is not valid", $this->read('title')), $this->asAlias());
       }
@@ -48,6 +64,8 @@ class Simple extends Basic {
 
     return $bResult;
   }
+
+  abstract protected function validateFormat();
 
   public function asAlias() {
 

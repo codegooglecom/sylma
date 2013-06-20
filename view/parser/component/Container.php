@@ -120,9 +120,9 @@ class Container extends template_ns\parser\component\Template {
 
   protected function startLog($sMessage = 'Template', array $aVars = array()) {
 
-    parent::startLog($sMessage, array(
+    parent::startLog($sMessage, array_merge($aVars, array(
       'element' => $this->getTree()->asToken(),
-    ));
+    )));
   }
 
   protected function getWeightType(schema_ns\parser\type $type) {

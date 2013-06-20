@@ -11,17 +11,16 @@ class Manager extends core\module\Argumented {
 
     $this->setArguments($arg);
     $this->db = $this->connect($this->getArguments());
-
-    $this->read("SET CHARACTER SET 'utf8';");
-    $this->read('SET NAMES \'utf8\'');
   }
 
   protected function connect(core\argument $arg) {
 
     try {
 
-      $sLink = 'mysql:dbname=' . $arg->read('database') . ';host=' .  $arg->read('host');
-      $result = new \PDO($sLink, $arg->read('user'), $arg->read('password'));
+      $sLink = 'mysql:dbname=' . $arg->read('database') . ';host=' .  $arg->read('host') . ';charset=UTF8';
+      $result = new \PDO($sLink, $arg->read('user'), $arg->read('password'), array(
+        \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
+      ));
 
     } catch (\PDOException $e) {
 

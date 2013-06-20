@@ -40,6 +40,18 @@ class Structured extends Controled {
     return $this->aContent;
   }
 
+  public function getContents() {
+
+    return array(
+      'main' => $this->getContent(),
+    );
+  }
+
+  public function setContents(array $aContents) {
+
+    $this->setContent($aContents['main']);
+  }
+  
   protected function useTemplate() {
 
     return $this->bTemplate;

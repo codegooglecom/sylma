@@ -23,6 +23,7 @@
         <cls:class alias="order" name="view\Order"/>
         <cls:class alias="limit" name="view\Limit"/>
         <cls:class alias="trigger" name="view\Trigger"/>
+        <cls:class alias="result" name="view\Result"/>
       </cls:classes>
     </component>
   </cls:classes>

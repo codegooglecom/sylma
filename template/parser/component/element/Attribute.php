@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
+namespace sylma\template\parser\component\element;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template;
 
-class ElementAttribute extends Child implements common\arrayable, parser\component {
+class Attribute extends template\parser\component\Child implements common\arrayable, template\parser\component {
 
   protected $sName;
   protected $var;

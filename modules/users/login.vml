@@ -41,7 +41,7 @@
       <view:template>
 
         <sql:filter name="name">
-          <le:get-argument source="post" name="name" escape="x"/>
+          <le:get-argument source="post" name="name"/>
         </sql:filter>
 
         <div>

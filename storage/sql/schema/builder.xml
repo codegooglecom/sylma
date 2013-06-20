@@ -15,6 +15,7 @@
             <cls:class alias="complexType" name="component\ComplexType"/>
             <cls:class alias="particle" name="component\Particle"/>
             <cls:class alias="foreign" name="component\Foreign"/>
+            <cls:class alias="reference" name="component\Reference"/>
           </cls:classes>
         </component>
       </cls:classes>

@@ -52,6 +52,9 @@ class Sylma {
 
     spl_autoload_register('\Sylma::autoload');
 
+    ini_set("default_charset", 'utf-8');
+    mb_internal_encoding('utf-8');
+    
     require_once(self::$sInitializerFile);
 
     //xdebug_start_code_coverage();

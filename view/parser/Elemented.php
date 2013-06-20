@@ -84,11 +84,12 @@ class Elemented extends template\parser\handler\Domed {
 
   public function loadElementForeignKnown(dom\element $el, reflector\elemented $parser) {
 
-    switch ($el->getNamespace()) {
+    switch ($this->getMode()) {
 
-      case self::BINDER_NS;
+      case 'insert' :
+      case 'update' :
 
-        if ($this->getMode() !== 'view') {
+        if ($el->getNamespace() == self::BINDER_NS) {
 
           $result = null;
           break;

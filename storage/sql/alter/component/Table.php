@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\alter\component;
 use sylma\core, sylma\dom, sylma\storage\sql;
 
-class Table extends sql\schema\component\Table {
+class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
   const SQL_PARSER = 'mysql';
 
@@ -38,20 +38,32 @@ class Table extends sql\schema\component\Table {
 
     foreach ($this->getElements() as $element) {
 
-      $aChildren[] = $element->asUpdate();
+      if ($element instanceof sql\schema\reference) continue;
+      $aChildren[] = $this->updateChild($element);
     }
 
     return "ALTER TABLE `{$this->getName()}` " . implode(",\n", $aChildren) . ';';
+  }
+
+  protected function updateChild(sql\alter\alterable $element) {
+
+    return $element->asUpdate();
   }
 
   public function asCreate() {
 
     foreach ($this->getElements() as $element) {
 
-      $aChildren[] = $element->asCreate();
+      if ($element instanceof sql\schema\reference) continue;
+      $aChildren[] = $this->createChild($element);
     }
 
     return "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ');';
+  }
+
+  protected function createChild(sql\alter\alterable $element) {
+
+    return $element->asCreate();
   }
 
   public function fieldAsUpdate($field, $previous) {

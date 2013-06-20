@@ -35,6 +35,11 @@ class Rooted extends sql\schema\component\Table {
 
   public function getQuery() {
 
+    if (!$this->query) {
+
+      $this->launchException('No query defined');
+    }
+
     return $this->query;
   }
 
@@ -64,6 +69,11 @@ class Rooted extends sql\schema\component\Table {
   protected function getTriggers() {
 
     return $this->aTriggers;
+  }
+
+  public function getResult() {
+
+    return $this->getParser()->getView()->getResult();
   }
 }
 

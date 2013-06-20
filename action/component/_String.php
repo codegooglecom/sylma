@@ -17,7 +17,7 @@ class _String extends reflector\component\Foreigner implements common\arrayable 
     $window = $this->getWindow();
     $content = $window->parseArrayables($this->parseChildren($this->getNode()->getChildren()));
 
-    return array($window->createString($content));
+    return array($window->createCast($window->createString($content)));
   }
 }
 

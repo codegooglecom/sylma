@@ -70,11 +70,12 @@ sylma.crud.Form = new Class({
 
     var redirect = response.content;
 
-    sylma.ui.parseMessages(response, null, redirect);
+    var result = sylma.ui.parseMessages(response, null, redirect);
 
-    if (redirect) {
+    if (!result.errors && redirect) {
 
-      window.history.back();
+      window.location = document.referrer;
+      //window.history.back();
     }
     else {
 

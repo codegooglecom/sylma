@@ -13,6 +13,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
   protected $tree;
   protected $sSource;
   protected $query;
+  protected $schema;
 
   const NS = 'http://2013.sylma.org/storage/sql';
   const PREFIX = 'sql';
@@ -51,16 +52,6 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $this->setArguments($this->readArgument("argument/$sMode"));
   }
 
-  protected function setQuery(sql\query\parser\Basic $query) {
-
-    $this->query = $query;
-  }
-
-  public function getQuery() {
-
-    return $this->query;
-  }
-
   protected function build(fs\file $schema) {
 
     $builder = $this->getManager(self::PARSER_MANAGER)->loadBuilder($schema, null, $this->getArguments());
@@ -84,7 +75,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
       $collection = $schema->createCollection();
 
-      $collection->setQuery($root->getQuery());
+      //$collection->setQuery($root->getQuery());
       $collection->setTable($root);
 
       $this->setTree($collection);
@@ -107,7 +98,9 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
    */
   public function setSchema(fs\file $file) {
 
-    return $this->build($file);
+    $this->schema = $this->build($file);
+
+    return $this->getSchema();
   }
 
   protected function setTree(template\parser\tree $tree) {
@@ -118,6 +111,18 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
   public function getTree() {
 
     return $this->tree;
+  }
+
+  protected function getSchema() {
+
+    return $this->schema;
+  }
+
+  public function getCurrentTree() {
+
+    $current = $this->getSchema()->getView()->getCurrentTemplate()->getTree(false);
+
+    return $current ? $current : $this->getTree();
   }
 
   protected function parseSource() {

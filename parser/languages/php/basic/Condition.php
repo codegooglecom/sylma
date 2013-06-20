@@ -21,6 +21,11 @@ class Condition extends common\basic\Structured implements common\argumentable, 
     $this->aElse[] = $this->addToContent($this->aElse, $mVal);
   }
 
+  public function setElse(array $aContent) {
+
+    $this->aElse = $aContent;
+  }
+
   protected function getElse() {
 
     return $this->aElse;
@@ -43,6 +48,20 @@ class Condition extends common\basic\Structured implements common\argumentable, 
     $window->loadContent($this->getTest());
     $window->loadContent($this->getContent());
     $window->loadContent($this->getElse());
+  }
+
+  public function getContents() {
+
+    return array(
+      'main' => $this->getContent(),
+      'else' => $this->getElse(),
+    );
+  }
+
+  public function setContents(array $aContents) {
+
+    parent::setContents($aContents);
+    $this->setElse($aContents['else']);
   }
 
   public function asArgument() {

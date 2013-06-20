@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 
 class Limit extends reflector\component\Foreigner implements reflector\component, common\arrayable {
 
+  protected $bBuilded = false;
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
@@ -13,9 +15,9 @@ class Limit extends reflector\component\Foreigner implements reflector\component
     $this->allowText(true);
   }
 
-  public function asArray() {
+  protected function build() {
 
-    $tree = $this->getParser()->getTree();
+    $tree = $this->getParser()->getCurrentTree();
     $query = $tree->getQuery();
 
     if ($this->getNode()->isComplex()) {
@@ -30,6 +32,15 @@ class Limit extends reflector\component\Foreigner implements reflector\component
     $this->log('SQL : limit');
 
     $query->setCount($content);
+  }
+
+  public function asArray() {
+
+    if (!$this->bBuilded) {
+
+      $this->build();
+      $this->bBuilded = true;
+    }
 
     return array();
   }

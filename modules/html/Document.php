@@ -168,7 +168,7 @@ class Document extends action\handler\Basic {
 
     $cleaner = new Cleaner;
 
-    if (\Sylma::read('debug/html')) {
+    if (\Sylma::read('debug/html/foreign')) {
 
       $sHTML = \Sylma::read('namespaces/html');
       $els = $doc->queryx("//*[namespace-uri() != '$sHTML']", array(), false);

@@ -18,6 +18,7 @@ class Handler extends xsd\Elemented {
 
     $this->loadBaseTypes(array(
       'foreign' => self::NS,
+      'reference' => self::NS,
       'collection' => self::NS,
     ));
   }

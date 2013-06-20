@@ -25,7 +25,7 @@ class GetArgument extends reflector\component\Foreigner implements common\arraya
     if ($this->readx('@optional')) $aArguments[] = false;
     $argument = $this->readx('@name') ? $arguments->call('read', $aArguments) : $arguments->call('shift');
 
-    return $this->readx('@escape') ? array("'", $window->callFunction('addslashes', 'php-string', array($argument)), "'") : array($argument);
+    return $this->readx('@escape') ? $this->reflectEscape($argument) : array($argument);
   }
 }
 

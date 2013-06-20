@@ -72,7 +72,14 @@ class Controler extends core\module\Domed {
 
       if ($val->getRoot(false)) {
 
-        $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+        if (\Sylma::read('debug/html/show')) {
+
+          $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+        }
+        else {
+
+          $result = '[]';
+        }
       }
       else {
 
@@ -82,8 +89,21 @@ class Controler extends core\module\Domed {
     }
     else if ($val instanceof dom\node) {
 
-      if ($val->getDocument()) $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
-      else $result = '[Lost DOM Element]';
+      if ($val->getDocument()) {
+
+        if (\Sylma::read('debug/html/show')) {
+
+          $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+        }
+        else {
+
+          $result = '[]';
+        }
+      }
+      else {
+
+        $result = '[Lost DOM Element]';
+      }
     }
     else if ($val instanceof dom\collection) {
 
@@ -165,7 +185,7 @@ class Controler extends core\module\Domed {
 
       $aResult = array('unknown' => array('@type' => gettype($mVar)));
     }
-    
+
     return $aResult;
     //else if ()
   }

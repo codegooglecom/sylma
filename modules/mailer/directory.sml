@@ -7,4 +7,11 @@
       <mode>711</mode>
     </security>
   </propagate>
+  <file name="mail.css">
+    <security>
+      <owner>root</owner>
+      <group>admin</group>
+      <mode>744</mode>
+    </security>
+  </file>
 </directory>
