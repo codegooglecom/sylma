@@ -62,7 +62,7 @@ class Elemented extends template\parser\handler\Domed {
     $window = $this->getWindow();
     $window->add($window->parseArrayables($aContent));
 
-    $result = $this->build($aContent, $resource->getTree(), $sMode); // asArray()
+    $result = $this->build($resource->getTree(), $sMode); // asArray()
 
     return $result;
   }
@@ -123,7 +123,7 @@ class Elemented extends template\parser\handler\Domed {
     return $sResult;
   }
 
-  protected function build(array $aContent, template\parser\tree $tree, $sMode) {
+  protected function build(template\parser\tree $tree, $sMode) {
 
     $window = $this->getWindow();
 

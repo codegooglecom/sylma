@@ -8,6 +8,8 @@ class Structured extends Controled {
   protected $aContent = array();
   protected $bTemplate = false;
 
+  protected $bExtracted = false;
+
   public function addContent($mVal) {
 
     $this->addToContent($this->aContent, $mVal);
@@ -51,7 +53,14 @@ class Structured extends Controled {
 
     $this->setContent($aContents['main']);
   }
-  
+
+  public function isExtracted($bVal = null) {
+
+    if (is_bool($bVal)) $this->bExtracted = $bVal;
+
+    return $this->bExtracted;
+  }
+
   protected function useTemplate() {
 
     return $this->bTemplate;

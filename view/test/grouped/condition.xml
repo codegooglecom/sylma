@@ -140,4 +140,27 @@
       <div>is-root</div>
     </tst:node>
   </tst:test>
+  <tst:test name="Token in else">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <tpl:token name="class">is-admin</tpl:token>
+              <tpl:else>
+                <tpl:token name="class">is-root</tpl:token>
+              </tpl:else>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="is-root"/>
+    </tst:node>
+  </tst:test>
 </tst:tests>
