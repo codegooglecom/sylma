@@ -70,6 +70,29 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Test result">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <sql:filter name="name">xorblutl</sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template match="*">
+          <tpl:if test="has-children()">
+            <tpl:apply select="*"/>
+            <tpl:else>
+              <div>no result</div>
+            </tpl:else>
+          </tpl:if>
+        </view:template>
+        <view:template match="user:user">
+          <a href="{email/value()}"><tpl:read select="name"/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>no result</div>
+    </tst:node>
+  </tst:test>
   <tst:test name="List with simple foreign">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">

@@ -39,7 +39,7 @@
       <h2>admin</h2>
     </tst:node>
   </tst:test>
-  <tst:test name="Filter with op">
+  <tst:test name="Filter with @op">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource/>
@@ -53,6 +53,47 @@
     <tst:node>
       <h2>root</h2>
     </tst:node>
+  </tst:test>
+  <tst:test name="Filter with @op in" disabled="true">
+    <!-- works but mysql throw exception -->
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="x"/>
+        <sql:filter name="id" op="in">
+          <le:get-argument name="ids" optional="x" source="post" format="array"/>
+        </sql:filter>
+        <view:schema>samples/user6.xql</view:schema>
+        <view:template>
+          <div><tpl:apply select="*"/></div>
+        </view:template>
+        <view:template match="user:user2">
+          <h2><tpl:apply select="name"/></h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div/>
+    </tst:node>
+    <tst:node>
+      <div>
+        <h2>root</h2>
+        <h2>admin</h2>
+      </div>
+    </tst:node>
+    <tst:expected>
+
+      $nodes = $manager->getArgument('node');
+
+      $result1 = $manager->loadScript();
+      $result2 = $manager->loadScript(array(), array(
+        'ids' => array(1,2),
+      ));
+
+      $manager->compareNodes($result1, $nodes->get('node1'));
+      $manager->compareNodes($result2, $nodes->get('node2'));
+
+      return true;
+    </tst:expected>
   </tst:test>
   <tst:test name="Filter with function">
     <tst:document>
@@ -155,5 +196,51 @@
 
       return true;
     </tst:expected>
+  </tst:test>
+  <tst:test name="Dynamic filter with default">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <sql:filter name="id" optional="x" default="0"><le:get-argument name="id" optional="x"/></sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <h2>
+            <tpl:apply select="name"/>
+          </h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div/>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Dynamic IN filter with default">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <sql:filter name="id" optional="x" op="in" default="0">
+          <le:get-argument name="ids" optional="x" format="array"/>
+        </sql:filter>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <h2>
+            <tpl:apply select="name"/>
+          </h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div/>
+    </tst:node>
   </tst:test>
 </tst:tests>

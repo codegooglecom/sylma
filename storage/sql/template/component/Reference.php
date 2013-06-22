@@ -30,9 +30,15 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
 
   protected function loadElementRef() {
 
-    $table = parent::loadElementRef();
-    list($sNamespace, $sName) = $this->parseName($this->readx('@foreign', true));
-    $result = $table->getElement($sName, $sNamespace);
+    if ($table = parent::loadElementRef()) {
+
+      list($sNamespace, $sName) = $this->parseName($this->readx('@foreign', true));
+      $result = $table->getElement($sName, $sNamespace);
+    }
+    else {
+
+      $result = null;
+    }
 
     return $result;
   }

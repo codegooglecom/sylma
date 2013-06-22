@@ -6,7 +6,9 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema\parser, sylma\parser\
 class Rooted extends sql\schema\component\Table {
 
   protected $source;
+  
   protected $query;
+  protected $bQueryInserted = true;
 
   protected $bRoot = false;
   protected $aTriggers = array();
@@ -41,6 +43,13 @@ class Rooted extends sql\schema\component\Table {
     }
 
     return $this->query;
+  }
+
+  public function insertQuery($bVal = null) {
+
+    if (is_bool($bVal)) $this->bQueryInserted = $bVal;
+
+    return $this->bQueryInserted;
   }
 
   protected function parsePaths($sPath, $sMode) {

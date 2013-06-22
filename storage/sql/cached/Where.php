@@ -7,13 +7,37 @@ class Where extends core\module\Managed {
 
   protected $aValues = array();
 
-  public function add($val1, $sOp, $val2) {
+  public function add($val1, $sOp, $val2, $sDefault = null) {
 
     if ($val2) {
 
       $sql = $this->getManager('mysql');
-      $this->addStatic($val1 . $sOp . $sql->escape($val2));
+
+      if (is_array($val2)) {
+
+        $aNew = array();
+
+        foreach ($val2 as $sSub) {
+
+          $aNew[] = $sql->escape($sSub);
+        }
+
+        $val2 = '(' . implode(',', $aNew) . ')';
+      }
+      else {
+
+        $val2 = $sql->escape($val2);
+      }
+
+      $this->addStatic($val1 . $sOp . $val2);
     }
+    else if (!is_null($sDefault) && $sDefault !== '') {
+
+      $val2 = is_array($val2) ? '(' . $sDefault . ')' : $sDefault;
+
+      $this->addStatic($val1 . $sOp . $val2);
+    }
+
   }
 
   public function addStatic($sValue) {

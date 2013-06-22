@@ -104,14 +104,17 @@ class Collection extends Rooted implements sql\template\pathable {
 
   public function reflectApplyAll($sMode, array $aArguments = array()) {
 
-    $aResult = $this->preBuild();
+    $this->preBuild();
 
     $this->getTable()->setSource($this->getSource());
+    $this->getTable()->setQuery($this->getQuery());
 
     $content = $this->getTable()->reflectApply($sMode, $aArguments);
 
-    $aResult[] = $this->getQuery();
+    if ($this->insertQuery()) $aResult[] = $this->getQuery();
     $aResult[] = $this->postBuild($content);
+
+    $this->insertQuery(false);
 
     return $aResult;
   }
@@ -139,6 +142,17 @@ class Collection extends Rooted implements sql\template\pathable {
 
         $aFunctionArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
         $result = $this->getDistinct($aFunctionArguments, $aPath, $sMode, $aArguments);
+        break;
+
+      case 'has-children' :
+
+        $result = array();
+
+        if ($this->insertQuery()) $result[] = $this->getQuery();
+        $this->insertQuery(false);
+
+        $result[] = $this->getQuery()->getVar()->call('query');
+
         break;
 
       default :

@@ -11,8 +11,7 @@ class Initializer extends module\Filed {
   protected $iStartTime = 0;
   protected static $aStats = array();
 
-  //protected static $sArgumentClass = 'sylma\core\argument\Iterator';
-  //protected static $sArgumentFile = 'core/argument/Iterator.php';
+  protected static $sArgumentClass = 'sylma\core\argument\Readable';
 
   /**
    * 2. Load global settings
@@ -25,7 +24,7 @@ class Initializer extends module\Filed {
 
     //$settings = $this->createArgument($sSylma, \Sylma::NS);
     //require_once(self::$sArgumentFile);
-    $settings = new self::$sArgumentClass($sSylma, array(\Sylma::NS));
+    $settings = new \sylma\core\argument\Filed($sSylma, array(\Sylma::NS));
 
     if ($sServer) $settings->mergeFile($sServer);
 

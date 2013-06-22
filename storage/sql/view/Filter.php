@@ -22,12 +22,23 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
     $bEscape = !$this->readx('@function');
     $bOptional = $this->readx('@optional');
 
+    if (!$sOP = $this->readx('@op')) {
+
+      $sOP = '=';
+    }
+
+    $bIN = strtolower(trim($sOP)) == 'in';
+
     if ($this->getNode()->isComplex()) {
 
       $content = $this->parseComponentRoot($this->getNode());
-      $content = $bEscape && !$bOptional ? $this->reflectEscape($content) : $content;
+
+      if ($bEscape && !$bOptional && !$bIN) {
+
+        $content = $this->reflectEscape($content);
+      }
     }
-    else {
+    else if (!$bIN) {
 
       if ($bOptional) {
 
@@ -37,18 +48,21 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
       $content = $bEscape ? "'{$this->readx()}'" : $this->readx();
     }
 
-    $sName = $this->readx('@name', true);
+    if ($bIN && !$bOptional) {
 
-    if (!$sOP = $this->readx('@op')) {
-
-      $sOP = '=';
+      $window = $this->getWindow();
+      $escape = $window->addControler(self::DB_MANAGER)->call('escape', array($content));
+      $content = array('(', $window->callFunction('implode', 'php-string', array(',', $escape)), ')');
     }
+
+    $sName = $this->readx('@name', true);
 
     $this->log("SQL : filter [$sName]");
 
     if ($bOptional) {
 
-      $query->setOptionalWhere($tree->getElement($sName, $tree->getNamespace()), $sOP, $this->getWindow()->toString(array($content)));
+      $sDefault = $this->readx('@default');
+      $query->setOptionalWhere($tree->getElement($sName, $tree->getNamespace()), $sOP, $this->getWindow()->toString(array($content)), $sDefault);
     }
     else {
 

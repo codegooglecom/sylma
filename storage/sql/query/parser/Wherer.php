@@ -9,7 +9,7 @@ abstract class Wherer extends Basic {
   protected $dynamicWhere;
   protected $aDynamicWhereCalls = array();
 
-  public function setOptionalWhere($val1, $sOp, $val2, $sLog = 'AND') {
+  public function setOptionalWhere($val1, $sOp, $val2, $sDefault = '', $sLog = 'AND') {
 
     $bImport = !$this->getDynamicWhere();
     $where = $this->loadDynamicWhere();
@@ -24,7 +24,7 @@ abstract class Wherer extends Basic {
       $this->clearWheres();
     }
 
-    $this->addDynamicWhereCall($where->call('add', array($val1, $sOp, $val2)));
+    $this->addDynamicWhereCall($where->call('add', array($val1, $sOp, $val2, $sDefault)));
   }
 
   protected function addDynamicWhereCall(common\_call $call) {

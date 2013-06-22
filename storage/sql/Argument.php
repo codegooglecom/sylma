@@ -12,5 +12,12 @@ class Argument extends core\argument\Readable {
 
     $this->setArray($content);
   }
+
+  public function read($sPath = '', $bDebug = true) {
+
+    $sResult = parent::read($sPath, $bDebug);
+
+    return htmlspecialchars($sResult);
+  }
 }
 

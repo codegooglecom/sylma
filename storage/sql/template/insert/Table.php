@@ -20,7 +20,6 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $window = $this->getWindow();
     $arguments = $window->getVariable('post');
 
-    $bOptional = $el->isOptional();
     $sName = $el->getAlias();
 
     $handler = $this->getHandler();
@@ -30,12 +29,12 @@ class Table extends sql\template\component\Table implements common\argumentable 
       'title' => $el->getTitle(),
     );
 
-    if ($bOptional) $aArguments['optional'] = true;
+    if ($el->isOptional()) $aArguments['optional'] = true;
     if ($sDefault !== '') $aArguments['default'] = $sDefault;
 
     if (is_null($content)) {
 
-      $content = $arguments->call('read', !$bOptional ? array($sName) : array($sName, false), 'php-string');
+      $content = $arguments->call('read', array($sName, false), 'php-string');
     }
 
     $call = $handler->call('addElement', array($sName, $el->buildReflector(array($content, $aArguments))));

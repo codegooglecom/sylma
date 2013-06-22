@@ -64,6 +64,32 @@ class Condition extends common\basic\Structured implements common\argumentable, 
     $this->setElse($aContents['else']);
   }
 
+  protected function parseTest() {
+
+    $test = $this->test;
+    $aResult = $aBefore = array();
+
+    $aContent = $this->getWindow()->parseArrayables(array($test));
+
+    foreach ($aContent as $sub) {
+
+      if ($sub instanceof common\instruction) {
+
+        $aBefore[] = $sub;
+      }
+      else if (is_string($sub)) {
+
+        $aResult[] = $this->getWindow()->createString($sub);
+      }
+      else {
+
+        $aResult[] = $sub;
+      }
+    }
+
+    return array($aBefore, $aResult);
+  }
+
   public function asArgument() {
 
     $sArgument = null;
@@ -77,14 +103,17 @@ class Condition extends common\basic\Structured implements common\argumentable, 
       $window->add($window->createInsert($window->argToInstance(false), '', $insert->getKey(), false));
     }
 
-    return $this->getControler()->createArgument(array(
-       'condition' => array(
-         //'@context' => $window->getContext(),
-         '@argument' => $sArgument,
-         'test' => $this->test,
-         'content' => $this->getContent(),
-         'else' => $this->aElse ? $this->aElse : null,
-       )
+    list($aBefore, $test) = $this->parseTest();
+    
+    return  $this->getWindow()->createArgument(array(
+      $aBefore,
+      'condition' => array(
+        //'@context' => $window->getContext(),
+        '@argument' => $sArgument,
+        'test' => $test,
+        'content' => $this->getContent(),
+        'else' => $this->aElse ? $this->aElse : null,
+      ),
     ));
   }
 }

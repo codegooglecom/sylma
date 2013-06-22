@@ -163,7 +163,6 @@ sylma.ui.tab.Container = new Class({
   initialize : function(props) {
 
     this.parent(props);
-
   },
 
   setWidth : function(val) {

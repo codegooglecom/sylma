@@ -10,8 +10,8 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
 
-  xmlns:user="http://2013.sylma.org/view/test/sample1"
-  xmlns:group="http://2013.sylma.org/view/test/sample2"
+  xmlns:user="http://2013.sylma.org/action/test/sample1"
+  xmlns:group="http://2013.sylma.org/action/test/sample2"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -191,6 +191,40 @@
         <div>
           <h3>root</h3>world<a href="mailto:email">admin@sylma.org</a>
         </div>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Get array arguments">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource multiple="x"/>
+        <sql:filter name="id" optional="x" op="in">
+          <le:get-argument name="ids" format="array" source="post"/>
+        </sql:filter>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <h3>
+            <tpl:apply select="name"/>
+          </h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array(
+        'post' => $manager->createArgument(array(
+          'ids' => array(1,2)
+        )),
+      );
+    </tst:load>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <h3>admin</h3>
       </div>
     </tst:node>
   </tst:test>

@@ -15,21 +15,6 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
     $this->allowText(true);
   }
 
-  public function asArray() {
-
-    $this->setReflector($this->getWindow()->createCondition());
-
-    $test = $this->getTemplate()->getPather()->parseExpression($this->readx('@test'));
-    $if = $this->getReflector();
-
-    $aChildren = $this->parseChildren($this->getNode()->getChildren());
-
-    $if->setTest($test);
-    $if->setContent($aChildren);
-
-    return array($if);
-  }
-
   protected function setReflector(php\basic\Condition $if) {
 
     $this->reflector = $if;
@@ -51,6 +36,21 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
     }
 
     return $result;
+  }
+
+  public function asArray() {
+
+    $this->setReflector($this->getWindow()->createCondition());
+
+    $test = $this->getTemplate()->getPather()->parseExpression($this->readx('@test'));
+    $if = $this->getReflector();
+
+    $aChildren = $this->parseChildren($this->getNode()->getChildren());
+
+    $if->setTest($test);
+    $if->setContent($aChildren);
+
+    return array($if);
   }
 }
 

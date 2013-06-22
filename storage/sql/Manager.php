@@ -134,9 +134,23 @@ class Manager extends core\module\Argumented {
     return $result ? new Argument($result) : new Argument;
   }
 
-  public function escape($sValue) {
+  public function escape($mVal) {
 
-    return $this->getDatabase()->quote($sValue);
+    if (is_array($mVal)) {
+
+      $mResult = array();
+
+      foreach ($mVal as $sub) {
+
+        $mResult[] = $this->escape($sub);
+      }
+    }
+    else {
+
+      $mResult = $this->getDatabase()->quote($mVal);
+    }
+
+    return $mResult;
   }
 }
 

@@ -34,24 +34,22 @@ class Foreign extends Element implements sql\schema\element {
 
     list($sNamespace, $sName) = $this->parseName($this->readx('@table', true));
 
-    $result = $this->getParser()->getElement($sName, $sNamespace);
-    $result->setParent($this);
-    
+    if ($result = $this->getParser()->getElement($sName, $sNamespace, false)) {
+
+      $result->setParent($this);
+    }
+
     return $result;
   }
 
   protected function importElementRef() {
 
-    if ($sImport = $this->readx('@import')) {
+    if (!$result = $this->loadElementRef()) {
 
-      $file = $this->getSourceFile($sImport);
+      $file = $this->getSourceFile($this->readx('@import', true));
       $this->getParser()->addSchema($file->getDocument());
 
       $result = $this->loadElementRef($file);
-    }
-    else {
-
-      $result = $this->loadElementRef();
     }
 
     return $result;

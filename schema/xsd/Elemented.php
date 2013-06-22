@@ -122,19 +122,24 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
    * @param boolean $bDebug
    * @return type\Basic
    */
-  public function getElement($sName = '', $sNamespace = '') {
+  public function getElement($sName = '', $sNamespace = '', $bDebug = true) {
 
     //list($sNamespace, $sName) = $this->parseName($sName, $context);
     if (!$sNamespace) $sNamespace = $this->getTargetNamespace();
 
     if (!$sName or !$result = $this->loadElement($sName, $sNamespace)) {
 
-      $el = $this->lookupElement($sName, $sNamespace);
+      if ($el = $this->lookupElement($sName, $sNamespace, $bDebug)) {
 
-      $result = $this->parseComponent($el);
+        $result = $this->parseComponent($el);
 
-      $result->loadNamespace($sNamespace);
-      $this->addElement($result);
+        $result->loadNamespace($sNamespace);
+        $this->addElement($result);
+      }
+      else {
+
+        $result = null;
+      }
     }
 
     return $result;
@@ -145,7 +150,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     $this->launchException('Not yet implemented');
   }
 
-  protected function lookupElement($sName, $sNamespace) {
+  protected function lookupElement($sName, $sNamespace, $bDebug = true) {
 
     if (!count($this->aElementsNodes)) {
 
@@ -159,10 +164,15 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
 
     if (!isset($this->aElementsNodes[$sNamespace][$sName])) {
 
-      $this->throwException(sprintf('Cannot find element %s:%s', $sNamespace, $sName));
+      if ($bDebug) $this->throwException(sprintf('Cannot find element %s:%s', $sNamespace, $sName));
+      $result = null;
+    }
+    else {
+
+      $result = $this->aElementsNodes[$sNamespace][$sName];
     }
 
-    return $this->aElementsNodes[$sNamespace][$sName];
+    return $result;
   }
 
   /**

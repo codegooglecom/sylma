@@ -14,7 +14,7 @@ class Order extends reflector\component\Foreigner implements reflector\component
 
   public function asArray() {
 
-    $tree = $this->getParser()->getTree();
+    $tree = $this->getParser()->getCurrentTree();
     $query = $tree->getQuery();
 
     if ($this->getNode()->isComplex()) {

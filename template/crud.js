@@ -6,13 +6,22 @@ sylma.crud.Form = new Class({
   Extends : sylma.ui.Container,
   mask : null,
 
+  options : {
+    mask : true,
+    method : 'post',
+  },
+
   initialize : function(options) {
 
     this.parent(options);
 
     this.getNode().addEvent('submit', this.submit.bind(this));
-    this.mask = new Element('div', {'class' : 'form-mask sylma-hidder'});
-    this.getNode().grab(this.mask, 'top'); //, 'before'
+
+    if (this.get('mask') === true) {
+
+      this.mask = new Element('div', {'class' : 'form-mask sylma-hidder'});
+      this.getNode().grab(this.mask, 'top'); //, 'before'
+    }
   },
 
   showMask : function() {
@@ -25,12 +34,14 @@ sylma.crud.Form = new Class({
     this.mask.addClass('sylma-visible');
   },
 
-  submit : function() {
+  submit : function(args) {
 
     var node = this.getNode();
     var self = this;
 
-    self.showMask();
+    if (args)
+
+    if (this.get('mask') === true) self.showMask();
 
     var req = new Request.JSON({
 
@@ -42,9 +53,19 @@ sylma.crud.Form = new Class({
     });
     //this.getNode().set('send', {url: 'contact.php', method: 'get'});
 
-    req.post(node);
+    var datas = this.loadDatas(args);
+
+    if (this.get('method') === 'get') req.get(datas);
+    else req.post(datas);
 
     return false;
+  },
+
+  loadDatas : function (args) {
+
+    var node = this.getNode();
+
+    return args ? node.toQueryString() + '&' + Object.toQueryString(args) : node.toQueryString();
   },
 
   submitParse : function(response) {

@@ -9,7 +9,6 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   protected $bBuilded = false;
   protected $aColumns = array();
-  protected $bQueryInserted = true;
 
   protected $loop;
 
@@ -87,13 +86,6 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
-  }
-
-  public function insertQuery($bVal = null) {
-
-    if (is_bool($bVal)) $this->bQueryInserted = $bVal;
-
-    return $this->bQueryInserted;
   }
 
   public function reflectApply($sMode = '', array $aArguments = array()) {
