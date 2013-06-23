@@ -3,20 +3,14 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\languages\common;
 
-class Insert extends Basic implements common\argumentable {
+class Insert extends Basic {
 
   protected $sMethod = 'insert';
   protected $aSets = array();
   protected $aValues = array();
 
   protected $handler;
-/*
-  public function addSet($field, $val) {
 
-    $this->aColumns[] = $field;
-    $this->aValues[] = $val;
-  }
-*/
   public function setHandler(common\_var $handler) {
 
     $this->handler = $handler;
@@ -50,14 +44,6 @@ class Insert extends Basic implements common\argumentable {
     $aQuery = array('INSERT INTO ', $sTable, $this->getHandler()->call('asString'));
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
-  }
-
-  public function _onAdd() {
-
-    parent::onAdd();
-
-    $this->getWindow()->loadContent($this->aSets);
-    $this->getWindow()->loadContent($this->aValues);
   }
 }
 

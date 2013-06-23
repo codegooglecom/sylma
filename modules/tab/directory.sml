@@ -7,4 +7,11 @@
       <mode>744</mode>
     </security>
   </file>
+  <file name="main.js">
+    <security>
+      <owner>root</owner>
+      <group>admin</group>
+      <mode>744</mode>
+    </security>
+  </file>
 </directory>

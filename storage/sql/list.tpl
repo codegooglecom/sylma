@@ -30,7 +30,7 @@
         </tpl:token>
         Structure
       </a>
-      <table js:class="sylma.ui.Base">
+      <table js:class="sylma.crud.Table" js:name="table" class="sylma-list">
         <tpl:apply select="static()" mode="head/row"/>
         <crud:include path="list"/>
       </table>
@@ -39,7 +39,7 @@
   </view:template>
 
   <view:template match="*" mode="head/row">
-    <thead>
+    <thead js:class="sylma.ui.Base" js:name="head">
       <tr>
         <th></th>
         <tpl:apply use="list-cols" mode="head/cell"/>
@@ -49,11 +49,10 @@
 
   <view:template match="*" mode="head/cell">
     <th>
-      <a href="#" js:class="sylma.ui.Base">
+      <a href="#" js:class="sylma.crud.Head">
         <js:option name="name"><tpl:apply select="alias()"/></js:option>
         <js:event name="click">
-          %parent%.getObject('container').update({order : %object%.get('name')});
-          return false;
+          return %object%.update();
         </js:event>
         <tpl:apply select="title()"/>
       </a>

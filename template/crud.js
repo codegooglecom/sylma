@@ -16,32 +16,48 @@ sylma.crud.Form = new Class({
     this.parent(options);
 
     this.getNode().addEvent('submit', this.submit.bind(this));
+  },
 
-    if (this.get('mask') === true) {
+  prepareMask : function() {
 
-      this.mask = new Element('div', {'class' : 'form-mask sylma-hidder'});
-      this.getNode().grab(this.mask, 'top'); //, 'before'
-    }
+    this.mask = new Element('div', {'class' : 'form-mask sylma-hidder'});
+    this.getNode().grab(this.mask, 'top'); //, 'before'
   },
 
   showMask : function() {
 
-    var size = this.getNode().getSize();
+    //var size = this.getNode().getSize();
 
-    this.mask.setStyle('width', size.x + 'px');
-    this.mask.setStyle('height', size.y);
-    this.mask.setStyle('display', 'block');
-    this.mask.addClass('sylma-visible');
+    //this.mask.setStyle('width', size.x + 'px');
+    //this.mask.setStyle('height', size.y);
+    //this.mask.setStyle('display', 'block');
+    //this.mask.addClass('sylma-visible');
+
+    this.updateMask(true);
+  },
+
+  hideMask : function() {
+
+    this.updateMask();
+  },
+
+  updateMask : function(val) {
+
+    if (this.get('mask') === true) {
+
+      if (val) val = 'disabled';
+
+      this.getNode().getElements('input, select, textarea').each(function(el) {
+
+        el.set('disabled', val);
+      });
+    }
   },
 
   submit : function(args) {
 
     var node = this.getNode();
     var self = this;
-
-    if (args)
-
-    if (this.get('mask') === true) self.showMask();
 
     var req = new Request.JSON({
 
@@ -51,12 +67,13 @@ sylma.crud.Form = new Class({
         self.submitParse(response);
       }
     });
-    //this.getNode().set('send', {url: 'contact.php', method: 'get'});
 
     var datas = this.loadDatas(args);
 
     if (this.get('method') === 'get') req.get(datas);
     else req.post(datas);
+
+    this.showMask();
 
     return false;
   },
@@ -101,7 +118,7 @@ sylma.crud.Form = new Class({
     else {
 
       var self = this;
-      this.mask.removeClass('sylma-visible');
+      this.hideMask();
 
       (function() {
 
@@ -160,5 +177,105 @@ sylma.crud.List = new Class({
     }
 
     return this.parent(args);
+  }
+});
+
+sylma.crud.Table = new Class({
+
+  Extends : sylma.ui.Container,
+
+  initialize : function(props) {
+
+    this.parent(props);
+    this.getObject('head').tmp.each(function(head) {
+      head.updateOrder();
+    });
+  }
+});
+
+sylma.crud.Head = new Class({
+
+  Extends : sylma.ui.Base,
+
+  options : {
+    dir : false,
+    current : false
+  },
+
+  updateOrder : function() {
+
+    var order = this.extractOrder();
+
+    if (order && order.name === this.get('name')) {
+
+      this.updateDir(order.dir);
+      this.highlight();
+    }
+  },
+
+  extractOrder : function() {
+
+    var result = {};
+    var name = this.getContainer().get('send').order;
+
+    if (name) {
+
+      if (name[0] === '!') {
+
+        result.name = name.substr(1);
+        result.dir = 1;
+      }
+      else {
+
+        result.name = name;
+      }
+    }
+
+    return result;
+  },
+
+  highlight : function() {
+
+    this.parent();
+    this.set('current', true);
+  },
+
+  downlight : function() {
+
+    this.parent();
+    this.set('current', false);
+  },
+
+  getContainer : function() {
+
+    return this.getParent(1).getObject('container');
+  },
+
+  updateDir : function(dir) {
+
+    dir = dir || false;
+
+    this.set('dir', dir);
+    this.getNode().toggleClass('order-desc', dir).blur();
+  },
+
+  update : function() {
+
+    var current = this.get('current');
+
+    this.getParent().tmp.each(function(head) {
+      head.downlight();
+    });
+
+    var container = this.getContainer();
+
+    if (current) this.updateDir(!this.get('dir'));
+    else this.updateDir(false);
+
+    container.update({order : (this.get('dir') ? '!' : '') + this.get('name')});
+
+    this.highlight();
+
+    return false;
   }
 });

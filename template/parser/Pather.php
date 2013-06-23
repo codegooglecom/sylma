@@ -157,7 +157,17 @@ class Pather extends component\Child {
 
   public function parsePathToken(array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
-    return $this->parsePathTokenValue(array_shift($aPath), $aPath, $sMode, $bRead, $aArguments);
+    if ($aPath) {
+
+      $result = $this->parsePathTokenValue(array_shift($aPath), $aPath, $sMode, $bRead, $aArguments);
+    }
+    else {
+
+      $el = $this->getSource();
+      $result = $bRead ? $el->reflectRead($sMode) : $el->reflectApply($sMode);
+    }
+    
+    return $result;
   }
 
   protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {

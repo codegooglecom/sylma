@@ -81,11 +81,6 @@ class Basic extends sql\schema\Handler {
 
   public function parsePathToken(sql\template\pathable $source, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
-    if (!$aPath) {
-
-      $this->launchException('No token defined');
-    }
-
     $pather = $this->getPather();
     $pather->setSource($source);
 

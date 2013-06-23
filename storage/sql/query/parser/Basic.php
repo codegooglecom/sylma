@@ -128,14 +128,6 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
 
   abstract public function getString();
 
-  public function asArgument() {
-
-    return $this->getWindow()->createGroup(array($this->buildDynamicWhere(), $this->getVar()->getInsert()))->asArgument();
-    //$content = $this->getString();
-
-    //return $content->asArgument();
-  }
-
   public function __clone() {
 
     $this->var = null;

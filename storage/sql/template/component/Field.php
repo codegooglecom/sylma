@@ -55,6 +55,11 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
       case 'alias' : $result = $this->getAlias(); break;
       case 'apply' : $result = $this->reflectApply($sMode); break;
       case 'title' : $result = $this->getTitle(); break;
+      case 'parent' :
+
+        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead);
+
+        break;
 
       default :
 

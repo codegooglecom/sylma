@@ -143,16 +143,6 @@ sylma.ui.tab.Caller = new Class({
 
     this.getParent(1).go(this.parentKey);
   },
-
-  highlight : function() {
-
-    this.getNode().addClass('sylma-tab-current sylma-highlight');
-  },
-
-  downlight : function() {
-
-    this.getNode().removeClass('sylma-tab-current sylma-highlight')
-  }
 });
 
 sylma.ui.tab.Container = new Class({

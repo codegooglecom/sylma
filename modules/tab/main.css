@@ -24,11 +24,11 @@
   margin-bottom: 1em;
 }
 
-.sylma-tab-head .sylma-tab-current a {
+.sylma-tab-head .sylma-highlight a {
   color: #EC008C;
 }
 
-.sylma-tab-head .sylma-tab-current {
+.sylma-tab-head .sylma-highlight {
   border-bottom: 3px solid gray;
 }
 

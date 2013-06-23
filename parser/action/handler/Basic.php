@@ -113,10 +113,12 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
       try {
 
         $aArguments = array($this->getDirectory(), $this, $this->getContexts(), $this->getArguments()->query(), $this->getControlers());
-        $action = $this->getControler()->load($this->getFile(), $aArguments);
 
-        $this->setAction($action);
-        $this->getAction()->loadAction();
+        if ($action = $this->getControler()->load($this->getFile(), $aArguments)) {
+
+          $this->setAction($action);
+          $this->getAction()->loadAction();
+        }
       }
       catch (core\exception $e) {
 

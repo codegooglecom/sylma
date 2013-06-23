@@ -421,6 +421,16 @@ sylma.ui = new sylma.classes.ui;
       });
 
       req.post(args);
+    },
+
+    highlight : function() {
+
+    this.getNode().addClass('sylma-highlight');
+    },
+
+    downlight : function() {
+
+      this.getNode().removeClass('sylma-highlight')
     }
   });
 

@@ -8,6 +8,7 @@ class Select extends Wherer implements common\argumentable {
   protected $sMethod = '';
   protected $aJoins = array();
   protected $aElements = array();
+  protected $aKeyElements = array();
   protected $aJoinsElements = array();
 
   protected $offset = '0';
@@ -27,9 +28,9 @@ class Select extends Wherer implements common\argumentable {
     $sName = $el->getName();
     $bAdd = true;
 
-    if (array_key_exists($sName, $this->aElements)) {
+    if (array_key_exists($sName, $this->aKeyElements)) {
 
-      if ($el === $this->aElements[$sName]) {
+      if ($el === $this->aKeyElements[$sName]) {
 
         $bAdd = false;
       }
@@ -40,13 +41,20 @@ class Select extends Wherer implements common\argumentable {
     }
     else {
 
-      $this->aElements[$sName] = $el;
+      $this->aKeyElements[$sName] = $el;
     }
 
     if ($bAdd) {
 
       $this->setColumn($el->asAlias());
     }
+
+    $this->aElements[] = $el;
+  }
+
+  protected function getElements() {
+
+    return $this->aElements;
   }
 
   protected function getColumns() {
@@ -218,7 +226,44 @@ class Select extends Wherer implements common\argumentable {
 
   protected function getOrder() {
 
-    return $this->order ? array(' ORDER BY `', $this->order, '` ASC ') : null;
+    return $this->order;
+  }
+
+  protected function prepareOrder() {
+
+    $aResult = $aJoins = $aElements = array();
+
+    if ($this->getOrder()) {
+
+      foreach ($this->aJoins as $aJoin) {
+
+        $foreign = $aJoin[2];
+        $ref = $aJoin[1];
+
+        if (!$ref instanceof sql\schema\element) {
+
+          $this->launchException('Cannot prepare unknown for order', get_defined_vars());
+        }
+
+        foreach ($this->getElements() as $el) {
+
+          if ($el->getParent() === $ref->getParent()) {
+
+            $aElements[$foreign->getName()] = $el;
+            break;
+          }
+        }
+      }
+
+      $aResult[] = $this->getOrder()->getInsert();
+
+      if ($aElements) {
+
+        $aResult[] = $this->getOrder()->call('setForeigns', array($aElements));
+      }
+    }
+
+    return $aResult;
   }
 
   public function clearOrder() {
@@ -264,9 +309,16 @@ class Select extends Wherer implements common\argumentable {
     return $this->aClones;
   }
 
-  public function _asArray() {
+  public function asArgument() {
 
-    return array($this->buildDynamicWhere(), $this->getVar()->getInsert());
+    return $this->getWindow()->createGroup(array(
+      $this->buildDynamicWhere(),
+      $this->prepareOrder(),
+      $this->getVar()->getInsert(),
+    ))->asArgument();
+    //$content = $this->getString();
+
+    //return $content->asArgument();
   }
 }
 

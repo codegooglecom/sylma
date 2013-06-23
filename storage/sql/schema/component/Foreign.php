@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\schema\component;
 use sylma\core, sylma\dom, sylma\schema, sylma\storage\sql;
 
-class Foreign extends Element implements sql\schema\element {
+class Foreign extends Element implements sql\schema\foreign {
 
   const PREFIX = 'sql';
 

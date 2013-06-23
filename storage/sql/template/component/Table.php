@@ -131,17 +131,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       case 'title' : $result = $this->getTitle(); break;
       case 'parent' :
 
-        $parent = $this->getParent();
-
-        if ($aPath) {
-
-          $result = $this->getParser()->parsePathToken($parent, $aPath, $sMode, $bRead);
-        }
-        else {
-
-
-          $result = $bRead ? $parent->reflectRead($sMode) : $parent->reflectApply($sMode);
-        }
+        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead);
 
         break;
 
