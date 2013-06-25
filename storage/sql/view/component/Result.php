@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\storage\sql\view;
+namespace sylma\storage\sql\view\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\storage\sql;
 
 class Result extends reflector\component\Foreigner implements reflector\component, common\arrayable {
@@ -10,7 +10,7 @@ class Result extends reflector\component\Foreigner implements reflector\componen
     $this->setNode($el);
   }
 
-  protected function getFromParser(Resource $parser) {
+  protected function getFromParser(sql\view\Resource $parser) {
 
     return $this->getFromTree($parser->getTree());
   }

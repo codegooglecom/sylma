@@ -38,7 +38,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
 
     $this->log("Import : " . $file->asToken());
 
-    $doc = $file->getDocument();
+    $doc = $this->getRoot()->importDocument($file->getDocument(), $file);
     $this->parseChildren($doc->getChildren());
   }
 
@@ -89,29 +89,33 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
     return $pather->applyPath($sPath, $sMode, $aArguments);
   }
 
-  protected function getPather() {
+  public function getPather() {
 
     return $this->getCurrentTemplate()->getPather();
   }
 
-  public function importTree($sPath, $sMode = '') {
+  public function importTree(fs\file $file, $sType = '') {
 
-    switch ($sMode) {
+    switch ($sType) {
 
       case 'argument' :
-
-        $content = $this->createArgumentFromString($sPath);
+$this->launchException('Not yet tested');
+        $content = $this->createArgumentFromString((string) $file);
         break;
 
       default :
       case 'document' :
 
         $this->loadDefaultArguments();
-        $content = $this->create('options', array($this->getSourceFile($sPath)->getDocument()));
+        $content = $this->create('options', array($file->getDocument(), $this->getNS()));
+
         break;
     }
 
-    return $this->create('tree', array($this, $content));
+    $result = $this->loadSimpleComponent('component/tree');
+    $result->setOptions($content);
+
+    return $result;
   }
 
   public function trimString($sValue) {

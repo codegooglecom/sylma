@@ -3,7 +3,7 @@
 namespace sylma\parser\reflector\handler;
 use \sylma\core, sylma\dom, sylma\parser\reflector;
 
-abstract class Parsed extends reflector\basic\Foreigner {
+abstract class Parsed extends reflector\basic\Reflector {
 
   /**
    * Sub parsers

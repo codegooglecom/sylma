@@ -9,16 +9,17 @@
     <cls:base>\sylma\template\parser</cls:base>
     <cls:class alias="elemented" name="handler\Elemented">
       <cls:classes>
-        <cls:class alias="tree" name="ArgumentTree"/>
         <component>
           <cls:classes>
-            <cls:base>\sylma\template\parser\component</cls:base>
+            <cls:base>\sylma\template\parser</cls:base>
 
-            <cls:class alias="constant" name="Constant"/>
-            <cls:class alias="import" name="Import"/>
+            <cls:class alias="tree" name="ArgumentTree"/>
+            <cls:class alias="constant" name="component\Constant"/>
+            <cls:class alias="import" name="component\Import"/>
 
             <cls:class alias="template" name="Template">
               <cls:classes>
+                <cls:base>\sylma\template\parser\component</cls:base>
                 <cls:class alias="pather" name="\sylma\template\parser\Pather"/>
                 <cls:class alias="element" name="element\Tokened"/>
                 <cls:class alias="element-attribute" name="element\Attribute">

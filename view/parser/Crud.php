@@ -30,7 +30,11 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
       $this->resolveImports($base);
     }
 
-    $this->parseChildren($el->getChildren());
+    if ($el->isComplex()) {
+
+      $this->parseChildren($el->getChildren());
+    }
+
     $this->loadExtends();
   }
 
@@ -187,6 +191,8 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
     //$this->global = null;
     $this->aPaths = array();
     $this->aGroups = array();
+    
+    $this->sourceFile = null;
   }
 }
 

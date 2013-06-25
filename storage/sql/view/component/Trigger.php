@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\storage\sql\view;
+namespace sylma\storage\sql\view\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\storage\sql;
 
 class Trigger extends reflector\component\Foreigner implements reflector\component, common\arrayable {
@@ -11,7 +11,7 @@ class Trigger extends reflector\component\Foreigner implements reflector\compone
     $this->allowForeign(true);
   }
 
-  protected function addToParser(Resource $parser) {
+  protected function addToParser(sql\view\Resource $parser) {
 
     return $this->addToTree($parser->getTree());
   }

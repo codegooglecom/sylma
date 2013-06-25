@@ -101,12 +101,12 @@ class Elemented extends Logger implements reflector\elemented {
     }
   }
 
-  public function getSourceDirectory($sPath = '') {
+  protected function lookupSourceDirectory($sPath) {
 
     return $this->getRoot()->getSourceDirectory($sPath);
   }
 
-  public function getSourceFile($sPath = '') {
+  protected function lookupSourceFile($sPath) {
 
     return $this->getRoot()->getSourceFile($sPath);
   }

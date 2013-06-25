@@ -6,7 +6,7 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema\parser, sylma\parser\
 class Rooted extends sql\schema\component\Table {
 
   protected $source;
-  
+
   protected $query;
   protected $bQueryInserted = true;
 

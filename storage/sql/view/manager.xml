@@ -14,20 +14,20 @@
     <cls:class alias="collection" name="template\component\Collection"/>
     <component>
       <cls:classes>
-        <cls:class alias="filter" name="view\Filter"/>
+        <cls:class alias="filter" name="view\component\Filter"/>
         <cls:class alias="pager" name="template\Pager">
           <cls:classes>
             <cls:class alias="cached" name="cached\Pager"/>
           </cls:classes>
         </cls:class>
-        <cls:class alias="order" name="view\Order">
+        <cls:class alias="order" name="view\component\Order">
           <cls:classes>
             <cls:class alias="cached" name="cached\Order"/>
           </cls:classes>
         </cls:class>
-        <cls:class alias="limit" name="view\Limit"/>
-        <cls:class alias="trigger" name="view\Trigger"/>
-        <cls:class alias="result" name="view\Result"/>
+        <cls:class alias="limit" name="view\component\Limit"/>
+        <cls:class alias="trigger" name="view\component\Trigger"/>
+        <cls:class alias="result" name="view\component\Result"/>
       </cls:classes>
     </component>
   </cls:classes>

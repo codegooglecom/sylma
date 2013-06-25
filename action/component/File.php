@@ -16,7 +16,7 @@ class File extends reflector\component\Foreigner implements common\arrayable, co
   public function asArray() {
 
     $fs = $this->getWindow()->addControler('fs');
-    $file = $this->getFile($this->readx(''));
+    $file = $this->getSourceFile($this->readx(''));
 
     return array($fs->call('getFile', array((string) $file), '\sylma\storage\fs\file'));
   }

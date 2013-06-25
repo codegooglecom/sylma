@@ -3,7 +3,7 @@
 namespace sylma\parser\reflector\handler;
 use \sylma\core, sylma\parser\reflector;
 
-class Logger extends Parsed {
+abstract class Logger extends Parsed {
 
   protected $logger;
 

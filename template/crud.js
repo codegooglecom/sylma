@@ -117,14 +117,7 @@ sylma.crud.Form = new Class({
     }
     else {
 
-      var self = this;
       this.hideMask();
-
-      (function() {
-
-        self.mask.setStyle('display', 'none');
-
-      }).delay(1000);
     }
   }
 

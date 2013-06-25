@@ -337,13 +337,20 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
     parent::startLog($this->asToken(), array_merge(array('file' => (string) $this->getSourceFile()), $aVars));
   }
 
-  public function getWeight($sNamespace, $sName, $sMode = self::MODE_DEFAULT) {
+  public function getWeight($sNamespace, $sName, $sMode = self::MODE_DEFAULT, $bRoot = false) {
 
     $iResult = 0;
 
     if ($sMode === $this->getMode()) {
 
-      $iResult = $this->getWeightName($sNamespace, $sName);
+      if ($bRoot && !$this->getMatch()) {
+
+        $iResult = self::WEIGHT_ELEMENT_ALL;
+      }
+      else {
+
+        $iResult = $this->getWeightName($sNamespace, $sName);
+      }
     }
 
     return $iResult;

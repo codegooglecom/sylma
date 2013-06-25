@@ -16,6 +16,7 @@
         <le:action path="/#sylma/schema/test/group"/>
         <le:object class="\sylma\storage\sql\test\Handler"/>
         <le:action path="/#sylma/view/test/group"/>
+        <le:object class="\sylma\storage\xml\test\Handler"/>
         <le:object class="\sylma\view\parser\crud\test\grouped\Grouped"/>
         <le:object class="\sylma\parser\security\test\Module"/>
         <le:object class="\sylma\core\module\test\Basic"/>

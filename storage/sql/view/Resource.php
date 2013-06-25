@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\view;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs, sylma\storage\sql;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs;
 
 /**
  * Load query

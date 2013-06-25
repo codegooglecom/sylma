@@ -35,7 +35,10 @@ abstract class Argumented extends Managed {
 
     if (!$this->factory && $bCreate) {
 
-      $this->factory = $this->createFactory($this->getArguments());
+      //$args = $this->getSettings(false) ? $this->getSettings() : $this->getArguments();
+      $args = $this->getArguments();
+
+      $this->factory = $this->createFactory($args);
     }
 
     return $this->factory;

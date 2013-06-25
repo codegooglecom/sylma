@@ -14,6 +14,7 @@ namespaces :
     #'http://2013.sylma.org/schema/template' : schema/template
     #'http://2013.sylma.org/view' : view/elemented
     'http://2013.sylma.org/storage/sql' : sql/view
+    'http://2013.sylma.org/storage/xml' : xml/view
     'http://2013.sylma.org/action' : action
   manager :
     'http://2013.sylma.org/template' : template
@@ -53,6 +54,11 @@ classes :
       schema :
         name : \sylma\schema\Builder
         arguments : /#sylma/storage/sql/schema/builder.xml
+  xml :
+    classes :
+      view :
+        name : \sylma\storage\xml\Resource
+        arguments : /#sylma/storage/xml/resource.xml
   security :
     name : \sylma\parser\security\Domed
   js :

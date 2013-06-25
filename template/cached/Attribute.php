@@ -36,7 +36,10 @@ class Attribute {
 
   public function addToken($sValue) {
 
-    $this->aValues[] = $sValue;
+    if (!is_null($sValue) && $sValue !== '') {
+
+      $this->aValues[] = $sValue;
+    }
   }
 
   public function __toString() {

@@ -3,7 +3,7 @@
 namespace sylma\parser\reflector\component;
 use sylma\core, sylma\dom, sylma\parser\reflector;
 
-class Foreigner extends reflector\basic\Foreigner implements reflector\component {
+class Foreigner extends reflector\basic\Reflector implements reflector\component {
 
   const PREFIX = 'self';
 
@@ -12,7 +12,6 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
 
   protected $allowComponent = false;
   protected $parser;
-  protected $sourceFile;
 
   public function __construct(reflector\domed $parser, core\argument $arg = null, array $aNamespaces = array()) {
 
@@ -166,53 +165,14 @@ class Foreigner extends reflector\basic\Foreigner implements reflector\component
     return $result;
   }
 
-  protected function loadSourceFile() {
+  protected function lookupSourceDirectory($sPath) {
 
-    if (is_null($this->sourceFile)) {
-
-      if ($this->getNode(false) and $sSource = $this->readx('@build:source', false, array('build' => self::BUILDER_NS))) {
-
-        $result = $this->getParser()->getSourceFile($sSource);
-      }
-      else {
-
-        $result = false;
-      }
-
-      $this->sourceFile = is_null($result) ? false : $result;
-    }
-
-    return $this->sourceFile;
+    return $this->getParser()->getSourceDirectory($sPath);
   }
 
-  public function getSourceDirectory($sPath = '') {
+  protected function lookupSourceFile($sPath) {
 
-    if ($source = $this->loadSourceFile()) {
-
-      $manager = $this->getManager(self::FILE_MANAGER);
-      $result = $sPath ? $manager->getDirectory($sPath, $source->getParent()) : $source->getParent();
-    }
-    else {
-
-      $result = $this->getParser()->getSourceDirectory($sPath);
-    }
-
-    return $result;
-  }
-
-  public function getSourceFile($sPath = '', $bElement = true) {
-
-    if ($bElement and $source = $this->loadSourceFile()) {
-
-      $manager = $this->getManager(self::FILE_MANAGER);
-      $result = $sPath ? $manager->getFile($sPath, $source->getParent()) : $source;
-    }
-    else {
-
-      $result = $this->getParser()->getSourceFile($sPath);
-    }
-
-    return $result;
+    return $this->getParser()->getSourceFile($sPath);
   }
 
   protected function reflectEscape($content) {

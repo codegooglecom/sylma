@@ -12,5 +12,8 @@
     'jpeg',
     'gif',
     'png',
-    'pdf'))));
+    'pdf',
+    'eot',
+    'ttf',
+    'woff'))));
   

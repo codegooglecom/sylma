@@ -3,17 +3,32 @@
 namespace sylma\template\parser;
 use sylma\core, sylma\template as tpl, sylma\parser\reflector;
 
-class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
+class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\tree {
 
   protected $handler;
+  protected $options;
+
   protected $sName;
+  protected $bRoot = false;
 
-  public function __construct(tpl\parser\handler $handler, core\argument $arg) {
+  public function setOptions(core\argument $arg) {
 
-    $this->setHandler($handler);
-    $this->setArguments($arg);
     $this->setNamespace($arg->getNamespace());
     $this->setName($arg->getRoot());
+
+    $this->options = $arg;
+  }
+
+  protected function getOptions() {
+
+    return $this->options;
+  }
+
+  public function isRoot($bValue = null) {
+
+    if (is_bool($bValue)) $this->bRoot = $bValue;
+
+    return $this->bRoot;
   }
 
   protected function setName($sName) {
@@ -26,24 +41,14 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
     return $this->sName;
   }
 
-  protected function setHandler(tpl\parser\handler $handler) {
-
-    $this->handler = $handler;
-  }
-
-  protected function getHandler() {
-
-    return $this->handler;
-  }
-
   public function reflectRead(array $aArguments = array()) {
 
-    return $this->getHandler()->trimString($this->getArguments()->read());
+    return $this->getParser()->trimString($this->getOptions()->read());
   }
 
-  public function reflectApply($sMode, array $aArguments = array()) {
+  public function reflectApply($sMode = '', array $aArguments = array()) {
 
-    if ($result = $this->getHandler()->lookupTemplate($this->getName(), $this->getNamespace(), $sMode)) {
+    if ($result = $this->getParser()->lookupTemplate($this->getName(), $this->getNamespace(), $sMode, $this->isRoot())) {
 
       $result->setTree($this);
       $result->sendArguments($aArguments);
@@ -59,7 +64,7 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
     return $result;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     $aResult = array();
 
@@ -67,7 +72,7 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
 
       case 'name' :
 
-        $aResult[] = $this->getArguments()->getRoot();
+        $aResult[] = $this->getOptions()->getRoot();
         break;
 
       default :
@@ -82,7 +87,7 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
 
     $aResult = array();
 
-    foreach ($this->getArguments() as $child) {
+    foreach ($this->getOptions() as $child) {
 
       $aResult[] = $this->loadChild($child)->reflectApply($sMode, $aArguments);
     }
@@ -92,12 +97,15 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
 
   protected function loadChild(core\argument $content) {
 
-    return new self($this->getHandler(), $content);
+    $result = new static($this->getParser());
+    $result->setOptions($content);
+
+    return $result;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead) {
+  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false) {
 
-    $args = $this->getArguments();
+    $args = $this->getOptions();
 
     if ($aPath) {
 
@@ -110,8 +118,17 @@ class ArgumentTree extends core\module\Domed implements tpl\parser\tree {
     }
     else {
 
-      $tree = $this->loadChild($args->get($sPath));
-      $result = $this->getHandler()->applyArrayTo($tree, $aPath, $sMode);
+      $el = $args->get($sPath, false, false);
+
+      if ($el->getType() == $el::ELEMENT && $el->isComplex()) {
+
+        $tree = $this->loadChild($args->get($sPath));
+        $result = $this->getParser()->applyArrayTo($tree, $aPath, $sMode);
+      }
+      else {
+
+        $result = $this->reflectApplyDefault($sPath, $aPath, $sMode, true);
+      }
     }
 
     return $result;

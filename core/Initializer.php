@@ -95,6 +95,7 @@ class Initializer extends module\Filed {
     $aGET = $this->loadGET();
 
     $path = $this->create('path', array($aGET['path'], null, $aGET['arguments'], false));
+    \Sylma::setManager('path', $path);
 
     // The extension specify the window type
 
@@ -139,10 +140,7 @@ class Initializer extends module\Filed {
       else if (!$path->getExtension()) {
 
         // HTML action
-        $window = $this->createWindowAction($sExtension);
-        \Sylma::setManager('window', $window);
-
-        $sResult = $this->loadWindowContent($path, $window);
+        $sResult = $this->buildWindowAction($path);
       }
       else {
 
@@ -180,7 +178,12 @@ class Initializer extends module\Filed {
 
     $path->parse();
 
-    return $this->create('action', array($path->getFile(), $path->getArguments()->asArray()));
+    return $this->createAction($path->getFile(), $path->getArguments()->asArray());
+  }
+
+  protected function createAction(fs\file $file, array $aArguments = array()) {
+
+    return $this->create('action', array($file, $aArguments));
   }
 
   /**
@@ -188,47 +191,67 @@ class Initializer extends module\Filed {
    * @param string $sExtension
    * @return parser\action
    */
-  protected function createWindowAction($sExtension) {
+  protected function buildWindowAction(core\request $path) {
 
-    $sExtension = strtolower($sExtension);
+    $sExtension = strtolower($path->getExtension());
     if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
 
     $settings = $this->getArgument('window/' . $sExtension);
 
     $sAlias = $sExtension;
-    $sPath = $settings->read('action');
+    $sCurrent = (string) $path;
 
-    $window = $this->create($sAlias, array($this->getFile($sPath)));
+    $route = $this->lookupRoute($settings, $sCurrent);
+    $window = $this->create($sAlias, array($this->getFile($route->read('action'))));
 
-    return $window;
+    //\Sylma::setManager('window', $window);
+
+    if ($sub = $route->get('sub', false)) {
+
+      $subRoute = $this->lookupRoute($sub, $sCurrent);
+      $content = $this->prepareAction($window, $this->getFile($subRoute->read('action')), $path->getArguments());
+      $window->setArgument('content', $content);
+
+      $result = $this->loadWindowContent($path, $window, $content);
+    }
+    else {
+
+      $result = $this->loadWindowContent($path, $window, $window);
+    }
+
+    return $result;
   }
 
-  protected function loadWindowContent(core\request $path, action\handler $window) {
+  protected function lookupRoute(core\argument $args, $sCurrent) {
 
-    $path->parse();
-    $file = $path->asFile();
+    $result = null;
+
+    foreach ($args as $alt) {
+
+      $sPattern = $alt->read('pattern', false);
+
+      if (!$sPattern || preg_match($sPattern, $sCurrent)) {
+
+        $result = $alt;
+      }
+    }
+
+    if (!$result) {
+
+      $this->launchException('No route found', get_defined_vars());
+    }
+
+    return $result;
+  }
+
+  protected function loadWindowContent(core\request $path, action\handler $window, action\handler $container) {
 
     try {
 
-      switch ($file->getExtension()) {
+      $path->parse();
 
-        case 'eml' : $content = $this->prepareAction($path, $window); break;
-        case 'vml' : $content = $this->prepareScript($path, $window); break;
-        default :
-
-          $this->launchException('Unknown extension for window content');
-      }
-
-      if (!$content) {
-
-        $this->launchException('No content for main window');
-      }
-
-      $window->setArgument('content', $content);
-      $window->setArgument('current', $path);
-
+      $this->prepareWindowContent($path, $container);
       $sResult = $window->asString();
-
     }
     catch (core\exception $e) {
 
@@ -242,7 +265,6 @@ class Initializer extends module\Filed {
         header('HTTP/1.0 404 Not Found');
       }
 
-      //$window = $this->createWindowAction('');
       $action = $this->create('action', array($this->getFile($this->readArgument('error/action'))));
 
       $window->setArgument('content', $action);
@@ -256,12 +278,37 @@ class Initializer extends module\Filed {
     return $sResult;
   }
 
-  protected function prepareScript(core\request $path, action\handler $window) {
+  protected function prepareWindowContent(core\request $path, action\handler $action) {
+
+    $path->parse();
+
+    $file = $path->asFile();
+    $args = $path->getArguments();
+
+    switch ($file->getExtension()) {
+
+      case 'eml' : $content = $this->prepareAction($action, $file, $args); break;
+      case 'vml' : $content = $this->prepareScript($action, $file, $args); break;
+      default :
+
+        $this->launchException('Unknown extension for window content');
+    }
+
+    if (!$content) {
+
+      $this->launchException('No content for main window');
+    }
+
+    $action->setArgument('content', $content);
+    $action->setArgument('current', $path);
+  }
+
+  protected function prepareScript(action\handler $window, fs\file $file, core\argument $args) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
-    $result = $builder->load($path->asFile(), array(
-      'arguments' => $path->getArguments(),
+    $result = $builder->load($file, array(
+      'arguments' => $args,
       'contexts' => $window->getContexts(),
       //'post' => $post,
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'));
@@ -269,9 +316,9 @@ class Initializer extends module\Filed {
     return $result;
   }
 
-  protected function prepareAction(core\request $path, action\handler $window) {
+  protected function prepareAction(action\handler $window, fs\file $file, core\argument $args) {
 
-    $result = $this->loadAction($path);
+    $result = $this->createAction($file, $args->asArray());
     $result->setContexts($window->getContexts());
     $result->setParentParser($window);
 

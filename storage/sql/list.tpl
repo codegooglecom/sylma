@@ -30,7 +30,7 @@
         </tpl:token>
         Structure
       </a>
-      <table js:class="sylma.crud.Table" js:name="table" class="sylma-list">
+      <table js:class="sylma.crud.Table" js:name="table" class="sylma-list sql-{static()/name()}">
         <tpl:apply select="static()" mode="head/row"/>
         <crud:include path="list"/>
       </table>
@@ -41,7 +41,9 @@
   <view:template match="*" mode="head/row">
     <thead js:class="sylma.ui.Base" js:name="head">
       <tr>
-        <th></th>
+        <th>
+          <a>action</a>
+        </th>
         <tpl:apply use="list-cols" mode="head/cell"/>
       </tr>
     </thead>

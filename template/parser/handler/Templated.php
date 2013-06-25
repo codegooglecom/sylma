@@ -13,16 +13,11 @@ abstract class Templated extends reflector\handler\Elemented {
     $iLast = 0;
     $result = null;
 
-    if ($bRoot) {
-
-      $this->launchException('Not yet implemented');
-    }
-
     foreach ($this->getTemplates() as $template) {
 
       if ($this->checkTemplate($template, null, false)) continue;
 
-      $iWeight = $template->getWeight($sNamespace, $sName, $sMode);
+      $iWeight = $template->getWeight($sNamespace, $sName, $sMode, $bRoot);
       if ($iWeight && $iWeight >= $iLast) {
 
         $result = $template;

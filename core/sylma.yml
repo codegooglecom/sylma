@@ -39,13 +39,17 @@ initializer :
     html : text/html
     xhtml : application/xhtml+xml
     json : application/json
+    ttf : application/octet-stream
+    eot : application/octet-stream
+    woff : application/x-font-woff
   executables : [json]
   error :
     action : error.eml
     html : error.html
   window :
     html :
-      action : /sylma/modules/html/backend.eml
+      default :
+        action : /sylma/modules/html/backend.eml
   redirect :
     extension : redirect
   classes :

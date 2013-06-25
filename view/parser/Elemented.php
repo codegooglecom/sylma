@@ -52,12 +52,18 @@ class Elemented extends template\parser\handler\Domed {
 
     $resource = $this->loadResource($sMode); // parseRoot(), onAdd()
 
-    $schema = $resource->setSchema($this->loadSchema());
-    $this->setSchema($schema);
+    if ($schemaElement = $this->loadSchema()) {
+
+      $schema = $resource->setSchema($schemaElement);
+      $this->setSchema($schema);
+    }
 
     $aContent = $this->parseChildren($el->getChildren());
 
-    $schema->loadTemplates($this->getTemplates());
+    if ($schemaElement) {
+
+      $schema->loadTemplates($this->getTemplates());
+    }
 
     $window = $this->getWindow();
     $window->add($window->parseArrayables($aContent));
@@ -171,7 +177,15 @@ class Elemented extends template\parser\handler\Domed {
   protected function loadSchema() {
 
     $component = $this->loadSimpleComponent('component/schema', $this);
-    $result = $component->parseRoot($this->getx('view:schema', true)->remove());
+
+    if ($el = $this->getx('view:schema')) {
+
+      $result = $component->parseRoot($el->remove());
+    }
+    else {
+
+      $result = null;
+    }
 
     return $result;
   }

@@ -80,6 +80,7 @@ abstract class Domed extends Componented {
       //$this->registerNamespaces($result);
     }
 
+    $this->loadSourceFile();
 
     return $result;
   }

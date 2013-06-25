@@ -9,6 +9,6 @@ interface handler {
   function getCurrentTemplate();
 
   function importFile(fs\file $file);
-  function importTree($sPath, $sMode);
+  function importTree(fs\file $file, $sType);
 }
 

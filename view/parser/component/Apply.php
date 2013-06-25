@@ -17,8 +17,8 @@ class Apply extends parser\component\Apply implements common\arrayable {
 
     if ($sImport = $this->readx('@import')) {
 
-        $tree = $this->getParser()->importTree($sImport);
-        $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode);
+      $tree = $this->getParser()->importTree($this->getSourceFile($sImport));
+      $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode);
     }
     else {
 
@@ -63,12 +63,6 @@ $this->launchException("Not ready");
     }
 
     return $sResult;
-  }
-
-  public function _onAdd() {
-
-    $window = $this->getWindow();
-    $window->add($window->toString($this->build()));
   }
 
   public function asArray() {

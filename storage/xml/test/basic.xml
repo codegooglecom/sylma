@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  _xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/action/test/sample1"
+  xmlns:group="http://2013.sylma.org/action/test/sample2"
+>
+  <tst:description>Basic</tst:description>
+  <tst:test name="Simple collection">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:read select="@name"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>root</li>
+        <li>admin</li>
+        <li>webmaster</li>
+      </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Override class">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:class>samples\Tree1</xl:class>
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <ul>
+            <span>
+              <tpl:read select="test()"/>
+            </span>
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:read select="@name"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <span>abc</span>
+        <li>root</li>
+        <li>admin</li>
+        <li>webmaster</li>
+      </ul>
+    </tst:node>
+  </tst:test>
+</tst:tests>

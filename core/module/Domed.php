@@ -183,51 +183,14 @@ abstract class Domed extends Filed {
     $this->document = $doc;
   }
 
-/*
-  protected function setOptions(dom\document $options, dom\document $schema = null, $aNS = array()) {
+  protected function createOptions($sPath) {
 
-    $this->options = $this->create('options', array($options, $schema, $this->mergeNamespaces($this->getNS(), $aNS)));
+    if (!$sPath) {
 
-    return $this->getOptions();
-  }
+      $this->launchException('A document is needed to build options');
+    }
 
-  protected function getOptions() {
-
-    return $this->options;
-  }
-*/
-  /**
-   * Return a setting result from @interface SettingsInterface object set with @method setOptions()
-   *
-   * @param string $sPath The path to the value wanted
-   * @param mixed $mDefault The default value to return if no value is found
-   * @param boolean $bDebug If set to TRUE, exceptions launched in class will be thrown.
-   *
-   * @return mixed The value found at the location of @param $sPath or null if not found
-   */
-  protected function getOption($sPath, $mDefault = null, $bDebug = false) {
-
-    $result = null;
-
-    if ($this->getOptions()) $result = $this->getOptions()->get($sPath, $bDebug);
-    return isset($result) ? $result : $mDefault;
-  }
-
-  /**
-   * Return a string formated option read with @method getOptions()
-   *
-   * @param string $sPath The path to the value wanted
-   * @param mixed The default value to return if no value is found
-   * @param boolean If set to TRUE, an @interface SylmaExceptionInterface object will be sent
-   *
-   * @return string|null The value found at the location of @param $sPath or null if not found
-   */
-  protected function readOption($sPath, $mDefault = null, $bDebug = false) {
-
-    $sResult = null;
-
-    if ($this->getOptions()) $sResult = $this->getOptions()->read($sPath, $bDebug);
-    return $sResult ? $sResult : $mDefault;
+    return $this->create('options', array($this->getDocument($sPath), $this->getNS()));
   }
 
   public function getFullPrefix() {

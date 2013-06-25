@@ -3,7 +3,7 @@
 #sylma-system {
   position: fixed;
   left: 10px;
-  top: 10px;
+  bottom: 15px;
   min-width : 5px;
   max-width: 5px;
   min-height: 5px;
