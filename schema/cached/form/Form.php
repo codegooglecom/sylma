@@ -80,10 +80,12 @@ class Form extends core\module\Argumented {
   public function validate() {
 
     $bValid = true;
+    $aResult = array();
 
     foreach ($this->getElements() as $sName => $element) {
 
       if (!$element->validate()) $bValid = false;
+      if ($element->isUsed()) $aResult[$sName] = $element;
     }
 
     if (!$bValid) {
@@ -94,6 +96,8 @@ class Form extends core\module\Argumented {
 
       $this->addMessage('Datas has been ' . ($this->getMode() == 'insert' ? 'inserted' : 'updated'));
     }
+
+    $this->aElements = $aResult;
 
     return $bValid;
   }

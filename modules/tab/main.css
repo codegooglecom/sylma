@@ -2,12 +2,12 @@
 .sylma-tab-container
 {
   transition: margin 0.5s;
+  -webkit-transition: margin 0.5s;
 }
 
 .sylma-tabs {
 
   width: 100%;
-  overflow-x: hidden;
 }
 
 .sylma-tab {

@@ -152,6 +152,17 @@ sylma.crud.Text = new Class({
 
   Extends : sylma.crud.Field,
 
+  initialize : function(props) {
+
+    this.parent(props);
+
+    var input = this.getNode('input');
+
+    if (input.get('text').match(/^\s*$/)) {
+      input.set('text');
+    }
+  },
+
   setValue : function(val) {
 
     this.getInput().set('text', val);
@@ -170,6 +181,26 @@ sylma.crud.List = new Class({
     }
 
     return this.parent(args);
+  }
+});
+
+sylma.crud.Row = new Class({
+
+  Extends : sylma.ui.Base,
+
+  onClick : function(e) {
+
+    if (['A', 'BUTTON'].indexOf(e.target.tagName) > -1) {
+
+      return true;
+    }
+
+    this.show();
+  },
+
+  show : function() {
+
+    window.location = this.get('url');
   }
 });
 

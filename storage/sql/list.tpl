@@ -18,18 +18,20 @@
     </tpl:apply>
 
     <div>
-      <a>
-        <tpl:token name="href">
-          <le:path/>/insert
-        </tpl:token>
-        Insert
-      </a>
-      <a ls:owner="root" ls:group="admin" ls:mode="700">
-        <tpl:token name="href">
-          <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
-        </tpl:token>
-        Structure
-      </a>
+      <div style="margin-bottom: 1em" class="clearfix">
+        <a class="button">
+          <tpl:token name="href">
+            <le:path/>/insert
+          </tpl:token>
+          Insert
+        </a>
+        <a class="button" ls:owner="root" ls:group="admin" ls:mode="700">
+          <tpl:token name="href">
+            <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
+          </tpl:token>
+          Structure
+        </a>
+      </div>
       <table js:class="sylma.crud.Table" js:name="table" class="sylma-list sql-{static()/name()}">
         <tpl:apply select="static()" mode="head/row"/>
         <crud:include path="list"/>
@@ -78,7 +80,18 @@
         <le:get-argument name="order"/>
       </js:option>
 
-      <tpl:apply select="*" mode="row"/>
+      <tpl:if test="has-children()">
+
+        <tpl:apply select="*" mode="row"/>
+
+        <tpl:else>
+          <tr>
+            <td colspan="99">
+              <p class="sylma-noresult">No result</p>
+            </td>
+          </tr>
+        </tpl:else>
+      </tpl:if>
 
       <tr>
         <td colspan="99">
@@ -107,7 +120,13 @@
   </view:template>
 
   <view:template match="*" mode="row">
-    <tr js:class="sylma.ui.Base">
+    <tr js:class="sylma.crud.Row">
+      <js:option name="url">
+        <le:path/>/update?id=<tpl:read select="id"/>
+      </js:option>
+      <js:event name="click">
+        %object%.onClick(e);
+      </js:event>
       <tpl:apply mode="init-row"/>
       <td>
         <tpl:apply mode="row/action"/>

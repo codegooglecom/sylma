@@ -228,6 +228,20 @@ return; // todo, decide to use or not
 
         $aResult[] = $this->parseArrayables($mVal);
       }
+      /*
+      else if ($mVal instanceof common\structure) {
+
+        $aContents = array();
+
+        foreach ($mVal->getContents() as $sKey => $mContent) {
+
+          $aContents[$sKey] = $this->parseArrayables(array($mContent));
+        }
+
+        $mVal->setContents($aContents);
+        $aResult[] = $mVal;
+      }
+      */
       else if ($mVal instanceof common\arrayable) {
 
         $aResult[] = $this->parseArrayable($mVal);

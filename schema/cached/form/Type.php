@@ -7,6 +7,7 @@ abstract class Type extends core\module\Argumented {
 
   protected $sValue;
   protected $handler;
+  protected $bUsed = true;
 
   public function __construct($sValue, array $aSettings = array()) {
 
@@ -27,6 +28,13 @@ abstract class Type extends core\module\Argumented {
   protected function addMessage($sMessage, array $aArguments = array()) {
 
     $this->getHandler()->addMessage($sMessage, $aArguments);
+  }
+
+  public function isUsed($bVal = null) {
+
+    if (is_bool($bVal)) $this->bUsed = $bVal;
+
+    return $this->bUsed;
   }
 
   public function setValue($sValue = '') {
@@ -51,6 +59,7 @@ abstract class Type extends core\module\Argumented {
       }
       else {
 
+        $this->isUsed(false);
         $bResult = true;
       }
     }

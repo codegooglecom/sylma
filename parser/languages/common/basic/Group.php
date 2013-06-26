@@ -19,32 +19,43 @@ class Group extends Controled implements common\argumentable, common\instruction
     $this->aValues = $aValues;
   }
 
-  protected function toInstruction(array $aValues) {
+  protected function toInstruction($mValue) {
 
-    $aResult = array();
+    if (is_array($mValue)) {
 
-    foreach ($aValues as $mValue) {
+      $aResult = array();
 
-      if (is_null($mValue)) continue;
+      foreach ($mValue as $mSub) {
+
+        if (is_null($mSub)) continue;
+        $aResult[] = $this->toInstruction($mSub);
+      }
+
+      $mValue = $aResult;
+    }
+    else {
 
       if (!$mValue instanceof common\instruction) {
 
-        if (is_array($mValue)) {
+        if ($mValue instanceof common\structure) {
 
-          $aResult[] = $this->toInstruction($mValue);
+          $aContents = array();
+
+          foreach ($mValue->getContents() as $sKey => $mContent) {
+
+            $aContents[$sKey] = $this->toInstruction($this->getWindow()->parseArrayables($mContent));
+          }
+
+          $mValue->setContents($aContents);
         }
         else {
 
-          $aResult[] = $this->getWindow()->createInstruction($mValue);
+          $mValue = $this->getWindow()->createInstruction($mValue);
         }
-      }
-      else {
-
-        $aResult[] = $mValue;
       }
     }
 
-    return $aResult;
+    return $mValue;
   }
 
   protected function getValues() {

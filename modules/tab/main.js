@@ -16,9 +16,7 @@ sylma.ui.tab.Main = new Class({
 
   prepareNode : function() {
 
-    this.getNode().setStyles({
-      overflow : 'hidden',
-    }).addClass('sylma-tabs');
+    this.getNode().addClass('sylma-tabs');
   },
 
   build : function(tabs) {
@@ -154,7 +152,10 @@ sylma.ui.tab.Container = new Class({
 
     this.parent(props);
     this.setWidth(this.getNode().getParent().getSize().x);
-    this.getNode().getParent().setStyle('position', 'relative');
+    this.getNode().getParent().setStyles({
+      position: 'relative',
+      overflow : 'hidden'
+    });
   },
 
   setWidth : function(val) {

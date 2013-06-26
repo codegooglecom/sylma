@@ -12,7 +12,7 @@
 >
 
   <view:template>
-    <form js:class="sylma.crud.Form">
+    <form js:class="sylma.crud.Form" class="sylma-form">
       <js:include>/#sylma/template/crud.js</js:include>
       <tpl:apply mode="init"/>
       <tpl:apply use="form-cols" mode="container"/>

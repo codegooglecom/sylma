@@ -68,7 +68,15 @@ class Window extends common\basic\Window implements php\window {
       $return = $this->tokenToInstance(get_class($controler));
 
       $call = $this->createCall($from, 'getManager', $return, array($sName));
-      $this->aManagers[$sName] = $call->getVar();
+
+      if (!$this->isRendering()) {
+
+        $this->aManagers[$sName] = $call->getVar();
+      }
+      else {
+
+        $this->aManagers[$sName] = $call;
+      }
     }
 
     return $this->aManagers[$sName];

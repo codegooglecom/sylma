@@ -90,7 +90,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     if ($aTriggers = $this->getTriggers()) {
 
       $aContent[] = $call;
-      $aContent[] = $aTriggers;
+      $aContent[] = $window->createGroup($aTriggers);
     }
     else {
 
