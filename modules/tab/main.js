@@ -17,7 +17,7 @@ sylma.ui.tab.Main = new Class({
   prepareNode : function() {
 
     this.getNode().setStyles({
-      overflow : 'hidden'
+      overflow : 'hidden',
     }).addClass('sylma-tabs');
   },
 
@@ -26,8 +26,8 @@ sylma.ui.tab.Main = new Class({
     this.prepareNode();
     this.tabs = tabs;
 
-    this.width = this.getNode().getSize().x;
-    this.getObject('container').setWidth(this.width);
+    //this.width = this.getNode().getSize().x;
+    this.width = this.getObject('container').getWidth();
 
     for (var i = 0; i < this.tabs.length; i++) {
 
@@ -153,12 +153,19 @@ sylma.ui.tab.Container = new Class({
   initialize : function(props) {
 
     this.parent(props);
+    this.setWidth(this.getNode().getParent().getSize().x);
+    this.getNode().getParent().setStyle('position', 'relative');
   },
 
   setWidth : function(val) {
 
     this.width = val;
     this.prepareNode();
+  },
+
+  getWidth : function() {
+
+    return this.width;
   },
 
   prepareNode : function() {
