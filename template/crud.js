@@ -54,24 +54,32 @@ sylma.crud.Form = new Class({
     }
   },
 
-  submit : function(args) {
+  submit : function(e, args) {
 
     var node = this.getNode();
     var self = this;
 
-    var datas = Object.merge(this.loadValues(), args);
+    try {
 
-    var req = new Request.JSON({
+      var datas = Object.merge(this.loadValues(), args);
+  
+      var req = new Request.JSON({
 
-      url : node.action,
-      onSuccess: function(response) {
+        url : node.action,
+        onSuccess: function(response) {
 
-        self.submitParse(response, datas);
-      }
-    });
+          self.submitParse(response, datas);
+        }
+      });
 
-    if (this.get('method') === 'get') req.get(datas);
-    else req.post(datas);
+      if (this.get('method') === 'get') req.get(datas);
+      else req.post(datas);
+    }
+    catch (e) {
+
+      console.log(e.message);
+      return false;
+    }
 
     this.showMask();
 
