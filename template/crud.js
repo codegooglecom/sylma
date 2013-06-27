@@ -165,7 +165,8 @@ sylma.crud.Text = new Class({
 
   setValue : function(val) {
 
-    this.getInput().set('text', val);
+    this.getInput().set('value', val);
+    //this.getInput().refresh();
   }
 });
 
