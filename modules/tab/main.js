@@ -140,7 +140,7 @@ sylma.ui.tab.Caller = new Class({
   go : function() {
 
     this.getParent(1).go(this.parentKey);
-  },
+  }
 });
 
 sylma.ui.tab.Container = new Class({
@@ -212,13 +212,16 @@ sylma.ui.tab.Tab = new Class({
     this.prepareNode();
   },
 
+  needUpdate : function() {
+
+    return this.get('path') && !this.getNode().getChildren().length;
+  },
+
   show : function() {
 
-    var path = this.get('path');
+    if (this.needUpdate()) {
 
-    if (path && !this.getNode().getChildren().length) {
-
-      this.update({}, path);
+      this.update({}, this.get('path'));
     }
   }
 });
