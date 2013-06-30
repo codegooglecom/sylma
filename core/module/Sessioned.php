@@ -19,7 +19,7 @@ abstract class Sessioned extends Argumented {
 
   protected function getSession() {
 
-    return $_SESSION[$this->getSessionKey()];
+    return isset($_SESSION[$this->getSessionKey()]) ? $_SESSION[$this->getSessionKey()] : null;
   }
 }
 

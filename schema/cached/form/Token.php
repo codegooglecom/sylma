@@ -23,6 +23,7 @@ class Token extends core\module\Sessioned {
   public function savePath($sPath) {
 
     $aSession = $this->getSession();
+    
     $aContent = array(
       self::TOKEN_PREFIX . $sPath => array('time' => microtime(true)),
     );
