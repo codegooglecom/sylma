@@ -3,7 +3,9 @@
 namespace sylma\schema\cached\form;
 use sylma\core;
 
-abstract class Type extends core\module\Argumented {
+abstract class Type extends core\module\Domed {
+
+  const EMPTY_VALUE = '#sylma-empty#';
 
   protected $sValue;
   protected $handler;
@@ -37,9 +39,10 @@ abstract class Type extends core\module\Argumented {
     return $this->bUsed;
   }
 
-  public function setValue($sValue = '') {
+  public function setValue($sValue = '', $bValidate = false) {
 
     $this->sValue = $sValue;
+    if ($bValidate) $this->validate();
   }
 
   public function getValue() {
@@ -62,6 +65,12 @@ abstract class Type extends core\module\Argumented {
         $this->isUsed(false);
         $bResult = true;
       }
+    }
+    else if ($this->getValue() === self::EMPTY_VALUE) {
+
+      $this->isUsed(true);
+      $bResult = true;
+      $this->setValue('');
     }
     else {
 

@@ -183,14 +183,23 @@ abstract class Domed extends Filed {
     $this->document = $doc;
   }
 
-  protected function createOptions($sPath) {
+  protected function createOptions($mContent) {
 
-    if (!$sPath) {
+    if (!$mContent) {
 
       $this->launchException('A document is needed to build options');
     }
 
-    return $this->create('options', array($this->getDocument($sPath), $this->getNS()));
+    if (is_string($mContent)) {
+
+      $result = $this->create('options', array($this->getDocument($mContent), $this->getNS()));
+    }
+    else {
+
+      $result = $this->create('options', array($mContent, $this->getNS()));
+    }
+
+    return $result;
   }
 
   public function getFullPrefix() {

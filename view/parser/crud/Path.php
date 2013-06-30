@@ -17,7 +17,7 @@ class Path extends parser\component\Child implements parser\component, common\ar
 
   public function asArray() {
 
-    return array($this->getRoot()->getView()->asPath());
+    return array($this->getRoot()->asPath());
   }
 }
 

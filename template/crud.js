@@ -61,8 +61,8 @@ sylma.crud.Form = new Class({
 
     try {
 
-      var datas = Object.merge(this.loadValues(), args);
-  
+      var datas = this.loadDatas(args);
+
       var req = new Request.JSON({
 
         url : node.action,
@@ -86,36 +86,11 @@ sylma.crud.Form = new Class({
     return false;
   },
 
-  valuesToQuery : function(vals) {
+  loadDatas : function (args) {
 
-    var result = [];
+    var node = this.getNode();
 
-    val.each(function(val, name) {
-      result.push(encodeURIComponent(name) + '=' + encodeURIComponent(val));
-    });
-
-    return result.join('&');
-  },
-
-  loadValues : function() {
-
-    var result = {};
-
-    this.getNode().getElements('input, select, textarea').each(function(el){
-      var type = el.type;
-      if (!el.name || el.disabled || type == 'submit' || type == 'reset' || type == 'file' || type == 'image') return;
-
-      var value = (el.get('tag') == 'select') ? el.getSelected().map(function(opt){
-          // IE
-          return document.id(opt).get('value');
-      }) : ((type == 'radio' || type == 'checkbox') && !el.checked) ? null : el.get('value');
-
-      Array.from(value).each(function(val){
-          if (typeof val != 'undefined') result[el.name] = val;
-      });
-    });
-
-    return result;
+    return args ? node.toQueryString() + '&' + Object.toQueryString(args) : node.toQueryString();
   },
 
   submitParse : function(response, args) {

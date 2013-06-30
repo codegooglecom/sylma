@@ -55,7 +55,7 @@ class Router extends View {
 
     $this->setPaths($aPaths);
 
-    $window = $this->prepareWindow(self::MODE_DEFAULT);
+    $window = $this->prepareWindow($this->getDocument(), self::MODE_DEFAULT);
     //$this->setWindow($window);
 
     //$window->createVariable('arguments', '\sylma\core\argument');
@@ -130,7 +130,12 @@ class Router extends View {
     return isset($this->aPaths['']) ? $this->aPaths[''] : null;
   }
 
-  public function getView() {
+  public function asPath() {
+
+    return $this->getView()->asPath();
+  }
+
+  protected function getView() {
 
     if (!$this->currentView) {
 

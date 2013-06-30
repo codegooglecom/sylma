@@ -58,7 +58,7 @@ abstract class Manager extends core\module\Domed {
     return $this->getCachedDirectory($file)->getFile($sName, $iDebug);
   }
 
-  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true, $bExternal = false) {
 
     $result = null;
     $cache = $this->loadCache($file, $bUpdate);
@@ -67,7 +67,7 @@ abstract class Manager extends core\module\Domed {
 
       if ($cache) {
 
-        $result = $this->createCache($cache, $aArguments);
+        $result = $this->createCache($cache, $aArguments, $bExternal);
 
         if (\Sylma::read('debug/enable')) {
 
@@ -166,8 +166,8 @@ abstract class Manager extends core\module\Domed {
    * @param array $aArguments
    * @return \sylma\parser\cached\documented
    */
-  protected function createCache(fs\file $file, array $aArguments) {
+  protected function createCache(fs\file $file, array $aArguments, $bExternal = false) {
 
-    return \Sylma::includeFile($file->getRealPath(), $aArguments);
+    return \Sylma::includeFile($file->getRealPath(), $aArguments, $bExternal);
   }
 }

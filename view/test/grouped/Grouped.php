@@ -11,6 +11,7 @@ class Grouped extends tester\Parser implements core\argumentable {
 
     $this->setDirectory(__file__);
     $this->resetDB();
+    $this->resetToken();
 
     parent::__construct();
   }
@@ -46,6 +47,23 @@ class Grouped extends tester\Parser implements core\argumentable {
     }
 
     return $result;
+  }
+
+  protected function createToken() {
+
+    return new \sylma\schema\cached\form\Token;
+  }
+
+  protected function resetToken() {
+
+    $token = $this->createToken();
+    $token->reset();
+  }
+
+  public function setToken($sValue) {
+
+    $token = $this->createToken();
+    $token->savePath($sValue);
   }
 }
 

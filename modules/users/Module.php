@@ -54,7 +54,6 @@ class Module extends core\module\Domed {
     $sResult = '';
 
     $contexts = $this->getActionContexts();
-    $contexts->set('internal', $this->createArgument(array()));
 
     $this->loadDefaultArguments();
 

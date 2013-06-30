@@ -97,7 +97,16 @@ class File extends Resource implements fs\file {
 
   public function getSimpleName() {
 
-    return substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1);
+    if ($sExt = $this->getExtension()) {
+
+      $sResult = substr($this->getName(), 0, strlen($this->getName()) - (strlen($sExt) + 1));
+    }
+    else {
+
+      $sResult = $this->getName();
+    }
+
+    return $sResult;
   }
 
   /**

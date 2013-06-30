@@ -101,12 +101,12 @@ class Manager extends compiler\Builder_old {
   /**
    * Made public to allow use of an handler
    */
-  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true) {
+  public function load(fs\file $file, array $aArguments = array(), $bUpdate = null, $bRun = true, $bExternal = false) {
 
-    return parent::load($file, $aArguments, $bUpdate, $bRun);
+    return parent::load($file, $aArguments, $bUpdate, $bRun, $bExternal);
   }
 
-  protected function createCache(fs\file $file, array $aArguments) {
+  protected function createCache(fs\file $file, array $aArguments, $bExternal = false) {
 
     //$aArguments = $arguments->query();
     array_unshift($aArguments, $file);

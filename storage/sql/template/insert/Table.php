@@ -59,8 +59,15 @@ class Table extends sql\template\component\Table implements common\argumentable 
   protected function loadHandler() {
 
     $window = $this->getWindow();
+    $token = (string) $this->getParser()->getView()->getRoot()->asPath();
 
-    $result = $this->buildReflector(array($window->getVariable('arguments'), $window->getVariable('post'), $window->getVariable('contexts'), $this->getMode()));
+    $result = $this->buildReflector(array(
+      $window->getVariable('arguments'),
+      $window->getVariable('post'),
+      $window->getVariable('contexts'),
+      $this->getMode(),
+      $this->createObject('token', array($token), null, false),
+    ));
 
     return $result->getVar();
   }

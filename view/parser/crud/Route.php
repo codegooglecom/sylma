@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud;
 use sylma\core, sylma\dom, sylma\parser\reflector;
 
-class Route extends Pathed implements dom\domable {
+class Route extends Pathed implements dom\domable, core\tokenable {
 
   protected $local;
   protected $main;
@@ -153,6 +153,11 @@ class Route extends Pathed implements dom\domable {
     if ($this->getLocal()) $aResult[] = $this->getLocal()->asDOM();
 
     return $aResult ? $aResult : null;
+  }
+
+  public function asToken() {
+
+    return '@route : ' . $this->getAlias();
   }
 }
 

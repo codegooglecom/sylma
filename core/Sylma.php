@@ -54,7 +54,7 @@ class Sylma {
 
     ini_set("default_charset", 'utf-8');
     mb_internal_encoding('utf-8');
-    
+
     require_once(self::$sInitializerFile);
 
     //xdebug_start_code_coverage();
@@ -88,7 +88,15 @@ class Sylma {
 
   public static function autoload($sClass) {
 
-    $sClass = preg_replace('/^(sylma)/', self::$SHORT_PATH, $sClass);
+    if (preg_match('/^sylma\\\/', $sClass)) {
+
+      $sClass = self::$SHORT_PATH . substr($sClass, 5);
+      //$sClass = preg_replace('/^(sylma)/', self::$SHORT_PATH, $sClass);
+    }
+    else if ($iSlash = strpos($sClass, '\\') and $iSlash !== -1) {
+
+      $sClass = substr($sClass, $iSlash + 1);
+    }
 
     include_once(self::classToFile($sClass));
   }
@@ -361,7 +369,7 @@ class Sylma {
     return PHP_OS == 'WINNT';
   }
 
-  public static function includeFile($sFile, array $aSylmaArguments = array()) {
+  public static function includeFile($sFile, array $aSylmaArguments = array(), $bSylmaExternal = false) {
 
     extract($aSylmaArguments);
 

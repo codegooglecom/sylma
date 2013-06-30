@@ -34,6 +34,9 @@
       </view:view>
     </tst:document>
     <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-simple-insert');
+
       return
         array('post' => $manager->createArgument(array(
           'name' => 'tester',
@@ -68,6 +71,8 @@
       </view:view>
     </tst:document>
     <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-simple-update');
       $sID = $manager->readArgument('id');
 
       return
@@ -105,6 +110,8 @@
       </view:view>
     </tst:document>
     <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-handler-override');
       $sID = $manager->readArgument('id');
 
       return
@@ -172,6 +179,10 @@
             <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email">test</a>
           </div>
+          <sql:token>
+            <le:directory/>
+            <tpl:text>/samples/view1</tpl:text>
+          </sql:token>
           <sql:trigger>
             <le:script path="samples/view1"/>
           </sql:trigger>
@@ -214,6 +225,10 @@
       </view:view>
     </tst:document>
     <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-trigger-on-update');
+      $manager->setToken('/sylma/view/test/grouped/samples/view2');
+
       return
         array('post' => $manager->createArgument(array(
           'name' => 'trigger2',
@@ -256,6 +271,10 @@
       </view:view>
     </tst:document>
     <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-trigger-get-result-insert');
+      $manager->setToken('/sylma/view/test/grouped/samples/view3');
+
       return
         array('post' => $manager->createArgument(array(
           'name' => 'trigger3',

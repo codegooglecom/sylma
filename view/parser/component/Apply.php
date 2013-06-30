@@ -15,10 +15,12 @@ class Apply extends parser\component\Apply implements common\arrayable {
     $sSelect = $this->readx('@select');
     $sMode = $this->readx('@mode');
 
+    $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
+
     if ($sImport = $this->readx('@import')) {
 
       $tree = $this->getParser()->importTree($this->getSourceFile($sImport));
-      $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode);
+      $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode, $aArguments);
     }
     else {
 
@@ -35,8 +37,6 @@ $this->launchException("Not ready");
           $sSelect = $this->lookupPath($sValue);
         }
       }
-
-      $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
 
       $result = $this->getTemplate()->applyPath($sSelect, $sMode, $aArguments);
     }

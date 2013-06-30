@@ -84,5 +84,10 @@ class Rooted extends sql\schema\component\Table {
 
     return $this->getParser()->getView()->getResult();
   }
+
+  public function getToken() {
+
+    return $this->createObject('token');
+  }
 }
 

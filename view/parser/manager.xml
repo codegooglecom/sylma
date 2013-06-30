@@ -28,6 +28,7 @@
             <cls:class alias="schema" name="component\Schema"/>
             <cls:class alias="template" name="xxx">
               <cls:classes>
+                <cls:class alias="path" name="crud\Path"/>
                 <cls:class alias="get-schema" name="component\getSchema"/>
                 <cls:class alias="pather" name="\sylma\storage\sql\template\Pather"/>
               </cls:classes>

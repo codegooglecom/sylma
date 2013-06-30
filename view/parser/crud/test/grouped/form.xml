@@ -22,7 +22,12 @@
     <tst:document>
       <crud:crud>
         <crud:route name="insert">
-          <view:view mode="hollow"/>
+          <view:view mode="hollow">
+            <sql:token>
+              <crud:path/>
+              <tpl:text>/do</tpl:text>
+            </sql:token>
+          </view:view>
           <view:view name="do" mode="insert"/>
         </crud:route>
         <crud:global user:ns="ns">
@@ -82,6 +87,10 @@
         <crud:route name="update">
           <view:view mode="view">
             <sql:filter name="id"><le:get-argument name="id"/></sql:filter>
+            <sql:token>
+              <crud:path/>
+              <tpl:text>/do</tpl:text>
+            </sql:token>
           </view:view>
           <view:view name="do" mode="update">
             <sql:filter name="id"><le:get-argument name="id" source="post"/></sql:filter>

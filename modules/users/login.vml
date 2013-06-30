@@ -34,9 +34,7 @@
 
     </view:view>
 
-    <view:view name="check">
-
-      <le:context name="internal" required="x">1</le:context>
+    <view:view name="check" internal="x">
 
       <view:template>
 

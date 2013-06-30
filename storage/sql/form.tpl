@@ -18,6 +18,7 @@
       <tpl:apply use="form-cols" mode="container"/>
       <tpl:apply mode="action"/>
       <input type="submit" value="Envoyer"/>
+      <tpl:apply mode="form/token"/>
     </form>
   </view:template>
 

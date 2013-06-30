@@ -6,15 +6,21 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
   <le:settings>
-    <le:argument name="email" format="php-string"/>
+    <le:argument name="from" format="php-string"/>
+    <le:argument name="to" format="php-string"/>
     <le:argument name="subject" format="php-string"/>
     <le:argument name="content" format="php-string"/>
+    <le:argument name="html" format="php-boolean" required="false">
+      <le:default><le:null/></le:default>
+    </le:argument>
   </le:settings>
   <le:object class="Mailer">
     <le:call name="send">
-      <le:get-argument name="email"/>
+      <le:get-argument name="from"/>
+      <le:get-argument name="to"/>
       <le:get-argument name="subject"/>
       <le:get-argument name="content"/>
+      <le:get-argument name="html"/>
     </le:call>
   </le:object>
 </le:action>

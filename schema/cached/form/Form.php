@@ -9,7 +9,9 @@ class Form extends core\module\Argumented {
   protected $contexts;
   protected $aElements = array();
 
-  public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode) {
+  public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token) {
+
+    $token->isValid();
 
     $this->setMode($sMode);
 
@@ -18,7 +20,7 @@ class Form extends core\module\Argumented {
     $this->setSettings($post);
   }
 
-  protected function checkToken($sToken) {
+  protected function checkToken($sPath) {
 
 
   }
@@ -62,7 +64,12 @@ class Form extends core\module\Argumented {
     unset($this->aElements[$sName]);
   }
 
-  protected function getElement($sName, $bDebug = true) {
+  public function get($sPath, $bDebug = true) {
+
+    return parent::get($sPath, $bDebug);
+  }
+
+  public function getElement($sName, $bDebug = true) {
 
     if (!isset($this->aElements[$sName])) {
 

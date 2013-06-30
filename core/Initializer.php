@@ -311,7 +311,7 @@ class Initializer extends module\Filed {
       'arguments' => $args,
       'contexts' => $window->getContexts(),
       //'post' => $post,
-    ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'));
+    ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'), true);
 
     return $result;
   }

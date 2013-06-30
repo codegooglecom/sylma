@@ -100,6 +100,13 @@
 
     <js:include>/#sylma/template/crud.js</js:include>
 
+    <view:template mode="form/token">
+      <sql:token>
+        <crud:path/>
+        <tpl:text>/do</tpl:text>
+      </sql:token>
+    </view:template>
+
   </crud:group>
 
   <crud:group name="form">

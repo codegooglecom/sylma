@@ -30,12 +30,12 @@ class View extends Variabled {
     return parent::getLogger($bDebug);
   }
 
-  protected function buildView(dom\document $doc, fs\file $target) {
+  protected function buildView(dom\handler $doc, fs\file $target) {
 
     $this->loadLogger();
     $sMode = $this->loadDocument($doc);
 
-    $window = $this->prepareWindow($sMode);
+    $window = $this->prepareWindow($doc, $sMode);
     $content = $this->reflectMain($this->getFile(), $doc, $window);
 
     switch ($sMode) {
@@ -72,7 +72,7 @@ class View extends Variabled {
    * @param type $sMode
    * @return common\_window
    */
-  protected function prepareWindow($sMode) {
+  protected function prepareWindow(dom\handler $doc, $sMode) {
 
     $window = $this->createWindow();
 
@@ -98,6 +98,12 @@ class View extends Variabled {
     }
 
     $this->prepareFormed($window);
+    $external = $window->createVariable('bSylmaExternal', 'php-boolean');
+
+    if ($doc->readx('@internal', array(), false)) {
+
+      $window->add($window->createCondition($external, $window->getSylma()->call('throwException', array('Public request for internal view'))));
+    }
 
     return $window;
   }
@@ -153,7 +159,7 @@ class View extends Variabled {
     //$closure = $window->createClosure(array($arguments));
     //$closure->addContent($window->callFunction('include', $return, array($file->getName())));
 
-    $call = $window->createCall($window->getSylma(), 'includeFile', $return, array($file->getRealPath(), $arguments));
+    $call = $window->createCall($window->getSylma(), 'includeFile', $return, array($file->getRealPath(), $arguments, $window->getVariable('bSylmaExternal')));
 
     if ($bReturn) {
 
@@ -165,6 +171,11 @@ class View extends Variabled {
     }
 
     return $result;
+  }
+
+  public function asPath() {
+
+    return $this->getSourceFile()->asPath();
   }
 }
 

@@ -23,6 +23,8 @@ class _Array extends reflector\component\Foreigner implements common\arrayable {
 
   protected function addParsedChild(dom\element $el, array &$aResult, $mContent) {
 
+    $mContent = $this->getWindow()->toString($mContent);
+
     if ($sKey = $el->readx('@action:name', array(), false)) {
 
       $aResult[$sKey] = $mContent;
