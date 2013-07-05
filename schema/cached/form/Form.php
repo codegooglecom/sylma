@@ -47,7 +47,12 @@ class Form extends core\module\Argumented {
 
   public function addMessage($sMessage, array $aArguments = array()) {
 
-    $this->getContext('messages')->add(array(
+    if (!$msg = $this->getContext('messages', false)) {
+
+      $this->launchException("Cannot send message '$sMessage', context not ready");
+    }
+
+    $msg->add(array(
       'content' => $sMessage,
       'arguments' => $aArguments,
     ));

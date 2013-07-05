@@ -144,6 +144,13 @@ class View extends Variabled {
       $this->setMode(self::MODE_DEFAULT);
     }
 
+    if ($sPath = $doc->readx('@extends', array(), false)) {
+
+      $file = $this->getSourceFile($sPath);
+      $new = $this->importDocument($file->getDocument(), $file);
+      $doc->add($new->getRoot()->getChildren());
+    }
+
     return $this->getMode();
   }
 

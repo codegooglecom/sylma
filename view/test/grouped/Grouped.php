@@ -45,6 +45,10 @@ class Grouped extends tester\Parser implements core\argumentable {
 
       $result = $db->read($sValue);
     }
+    else if ($iMode & 4) {
+
+      $result = $db->extract($sValue);
+    }
 
     return $result;
   }

@@ -423,9 +423,14 @@ sylma.ui = new sylma.classes.ui;
       req.post(args);
     },
 
+    toggleLight : function() {
+
+      this.getNode().toggleClass('sylma-highlight');
+    },
+
     highlight : function() {
 
-    this.getNode().addClass('sylma-highlight');
+      this.getNode().addClass('sylma-highlight');
     },
 
     downlight : function() {

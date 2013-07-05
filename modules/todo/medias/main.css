@@ -1,0 +1,88 @@
+
+#sylma-todo-widget
+{
+  height: 0;
+  width: 53px;
+  background: url("setting_tools.png") no-repeat scroll right 13px top 8px / 27px auto;
+  padding-top: 42px;
+  float:right;
+  overflow: hidden;
+  position: absolute;
+  right: 42px;
+  z-index: 2;
+  font-size: 12px;
+}
+
+#sylma-todo-widget:hover,
+#sylma-todo-widget.sylma-highlight
+{
+  height: auto;
+  background-color: #4D4D4D;
+  overflow: visible;
+  width: 300px;
+}
+
+#sylma-todo-widget .content
+{
+  background-color: #EEEEEE;
+  width: 100%;
+  font-family: Helvetica;
+  font-size: 12px;
+  padding-top: 5px;
+}
+
+#sylma-todo-widget .content > a
+{
+  display: block;
+  padding: 5px 1em;
+  text-align: center;
+  background-color: #CCCCCC;
+  width: 50px;
+  margin: 0 auto 5px;
+}
+
+#sylma-todo-widget .content > a:hover
+{
+  background-color: #bbb;
+  background-color: #eee;
+}
+
+#sylma-todo-widget .no-result
+{
+  padding: 2em;
+  text-align: center;
+}
+
+#sylma-todo-widget .count
+{
+  color: white;
+  display: block;
+  float: right;
+  font-size: 22px;
+  margin-top: -33px;
+  text-align: center;
+  text-shadow: 1px 1px black;
+  width: 53px;
+}
+
+#sylma-todo-widget ul
+{
+  list-style-type: none;
+}
+
+#sylma-todo-widget .todo
+{
+  display: block;
+  width: 100%;
+  padding: 5px;
+  1px solid #ddd
+  box-sizing: padding-box;
+  -moz-box-sizing: padding-box;
+  -webkit-box-sizing: padding-box;
+}
+
+#sylma-todo-widget .todo:hover
+{
+  background-color: #ccc;
+  color: black;
+}

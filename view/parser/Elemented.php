@@ -58,7 +58,7 @@ class Elemented extends template\parser\handler\Domed {
       $this->setSchema($schema);
     }
 
-    $aContent = $this->parseChildren($el->getChildren());
+    $aContent = $this->parseChildren($el->queryx('*'));
 
     if ($schemaElement) {
 
@@ -141,7 +141,9 @@ class Elemented extends template\parser\handler\Domed {
       case 'update' :
       case 'insert' :
 
-        $this->addToResult($content, false);
+        $content = $window->parseArrayables(array($content));
+
+        $window->add($this->cleanStrings($content));
         $window->add($tree->asArgument());
         $result = $this->getResult();
 
@@ -155,6 +157,21 @@ class Elemented extends template\parser\handler\Domed {
     }
 
     return $result;
+  }
+
+  protected function cleanStrings(array $aContent) {
+
+    $aResult = array();
+
+    foreach ($aContent as $mSub) {
+
+      if (!is_string($mSub)) {
+
+        $aResult[] = $mSub;
+      }
+    }
+
+    return $aResult;
   }
 
   protected function loadResource($sMode) {

@@ -9,7 +9,7 @@ class Field extends sql\template\component\Field {
 
   public function reflectRegister($content = null) {
 
-    $this->getParent()->addElementToHandler($this, $this->getDefault(), $content);
+    $this->getParent()->addElement($this, $this->getDefault(), $content);
   }
 
   protected function reflectSelf() {

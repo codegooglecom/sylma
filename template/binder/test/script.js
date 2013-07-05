@@ -50,9 +50,18 @@ sylma.classes.binder = new Class({
             input = doc.getElement('#sylma-test-result');
           }
 
-          if (!input) throw 'No input received';
+          var value;
 
-          sylma.binder.loadResult(test, JSON.decode(input.get('value')));
+          if (!input) {
+
+            value = {value : false}
+          }
+          else {
+
+            value = JSON.decode(input.get('value'));
+          }
+
+          sylma.binder.loadResult(test, value);
         }
       }
     });

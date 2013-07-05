@@ -7,7 +7,9 @@ class Traverser extends Container {
 
   protected function loadElementUnknown(dom\element $el) {
 
-    return $this->parseChildren($el->getChildren());
+    $aContent = $this->parseChildren($el->getChildren());
+    
+    return $aContent;
   }
 
   protected function parseChildrenText(dom\text $node, array &$aResult) {

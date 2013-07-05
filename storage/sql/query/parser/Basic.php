@@ -12,6 +12,8 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
   protected $aTables = array();
   protected $aWheres = array();
 
+  protected $aMethods = array('get', 'query', 'insert', 'extract');
+
   protected $var;
 
   public function __construct(reflector\domed $parser, core\argument $arg = null, array $aNamespaces = array()) {
@@ -75,6 +77,11 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     $this->aWheres = array();
   }
 
+  public function setColumn($val) {
+
+    $this->aColumns[] = $val;
+  }
+
   protected function getColumns() {
 
     $aResult = array();
@@ -89,10 +96,25 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
 
   public function getCall() {
 
+    if (!$this->getTables()) {
+
+      $this->launchException('No table defined');
+    }
+
     $window = $this->getWindow();
     $manager = $window->addControler('mysql');
 
     return $manager->call($this->getMethod(), array(new Caller($this), false), '\sylma\core\argument');
+  }
+
+  public function setMethod($sName) {
+
+    if (!in_array($sName, $this->aMethods)) {
+
+      $this->launchException("Unknown method name : $sName");
+    }
+
+    $this->sMethod = $sName;
   }
 
   protected function getMethod() {

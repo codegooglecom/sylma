@@ -8,7 +8,6 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   const NS = 'http://2013.sylma.org/template';
   const PREFIX = 'tpl';
 
-  protected $aRegistered = array();
   protected $aTemplates = array();
   protected $aConstants = array();
 
@@ -132,14 +131,14 @@ $this->launchException('Not yet tested');
     return $this->result;
   }
 
-  public function addToResult($mContent, $bAdd = true) {
+  public function addToResult($mContent, $bAdd = true, $bFirst = false) {
 
-    return $this->getWindow()->addToResult($mContent, $this->getResult(), $bAdd);
+    return $this->getWindow()->addToResult($mContent, $this->getResult(), $bAdd, $bFirst);
   }
 
   public function register($obj) {
 
-    $this->aRegistered[] = $obj;
+    $this->launchException('No usage defined');
   }
 
   public function getRegistered() {

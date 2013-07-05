@@ -48,9 +48,15 @@ class Variable extends Child implements common\arrayable, parser\component {
     //$mContent = $this->extractContent($mContent);
     $mContent = $this->getWindow()->parseArrayables(array($mContent));
 
-    //if (1 || $mContent instanceof common\_var || is_string($mContent)) {
+    if ($mContent instanceof common\_var) {
 
-    self::setContent($mContent);
+      self::setContent($mContent);
+    }
+    else {
+
+      self::setContent($this->getWindow()->createVar($this->getWindow()->argToInstance('')));
+      $aResult[] = $this->getWindow()->toString($mContent, $this->getContent(), false, true);
+    }
 
     return $aResult;
   }

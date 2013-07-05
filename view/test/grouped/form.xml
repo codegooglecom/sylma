@@ -85,12 +85,14 @@
     <tst:expected>
       $sID = $manager->readArgument('id');
 
-      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", 0);
-      //$manager->runQuery("DELETE FROM user WHERE id = $sID", 2);
+      $user = $manager->runQuery("SELECT name, email FROM user WHERE id = $sID", 0);
 
-      return
-        $user->read('name') === 'tester02' &amp;&amp;
-        $user->read('email') === 'tester02@sylma.org';
+      $manager->assertEqual($user->asArray(), array(
+        'name' => 'tester02',
+        'email' => 'tester02@sylma.org',
+      ));
+
+      return true;
     </tst:expected>
   </tst:test>
   <tst:test name="Handler override">
@@ -290,6 +292,149 @@
       $manager->assertEqual($user->query(), array(
         'name' => 'trigger3',
         'email' => 'trigger3b@sylma.org',
+      ));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Insert foreign multiple" catch="\sylma\core\exception" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns" mode="update">
+        <sql:resource>
+          <sql:id><le:get-argument name="id" source="post"/></sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <tpl:apply select="group"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+// Cannot insert foreign without other elements
+// Exception occurs on compile, tester should catch it
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-insert-foreign-multiple');
+      $sID = $manager->readArgument('id');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'id' => $sID,
+          'group' => array(2,3),
+        )))
+    </tst:load>
+  </tst:test>
+  <tst:test name="Insert foreign multiple">
+    <tst:document>
+      <view:view user:ns="ns" mode="insert">
+        <sql:resource/>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <tpl:apply select="name,group"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      $manager->setToken('/sylma/view/test/grouped/formxml-insert-foreign-multiple');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'name' => 'foreign01',
+          'group' => array(2,3),
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->readArgument('result');
+      $manager->setArgument('id', $sID);
+
+      $user = $manager->runQuery("SELECT id_group FROM user_group WHERE id_user = $sID", 4);
+      $manager->runQuery("DELETE FROM user WHERE id = $sID");
+
+      $manager->assertEqual($user->asArray(), array('2', '3'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Update foreign multiple">
+    <tst:document>
+      <view:view user:ns="ns" mode="update">
+        <sql:resource>
+          <sql:id><le:get-argument name="id" source="post"/></sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <tpl:apply select="group"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-update-foreign-multiple');
+      $sID = $manager->readArgument('id');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'id' => $sID,
+          'group' => array(1),
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->readArgument('id');
+      $user = $manager->runQuery("SELECT id_group FROM user_group WHERE id_user = $sID", 4);
+
+      $manager->assertEqual($user->asArray(), array('1'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Insert reference" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns" mode="insert">
+        <sql:resource/>
+        <view:schema>samples/group2.xql</view:schema>
+        <view:template>
+          <tpl:apply select="name,users"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      $manager->setToken('/sylma/view/test/grouped/formxml-insert-foreign-multiple');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'name' => 'reference01',
+          'users' => array(
+            array('name' => 'user-ref01'),
+            array('name' => 'user-ref02'),
+          ),
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->readArgument('result');
+      $manager->setArgument('id', $sID);
+
+      $group = $manager->runQuery("SELECT name FROM group WHERE id = $sID", 0);
+
+      $manager->assertEqual($group->query(), array(
+        'name' => 'reference01',
+      ));
+
+      $users = $manager->runQuery("SELECT user.name FROM user LEFT JOIN group ON user.group_id = group.id WHERE group.id = $sID", 1);
+
+      $manager->assertEqual($users->asArray(), array(
+        array('name' => 'user-ref01'),
+        array('name' => 'user-ref02'),
       ));
 
       return true;

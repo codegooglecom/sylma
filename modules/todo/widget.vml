@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:todo="http://2013.sylma,org/modules/todo"
+>
+
+  <le:context name="css">
+    <le:file>medias/main.css</le:file>
+  </le:context>
+
+  <view:schema>schema.xql</view:schema>
+
+  <sql:resource multiple="x"/>
+  <sql:filter name="url" op="like">
+    <tpl:text>%</tpl:text>
+    <le:manager name="path"/>
+  </sql:filter>
+
+  <tpl:template>
+    <div id="sylma-todo-widget">
+      <span class="count">
+        <tpl:if test="count()">
+          <tpl:read select="count()"/>
+        </tpl:if>
+      </span>
+      <div class="content">
+        <a>
+          <tpl:token name="href">
+            <le:directory/>
+            <tpl:text>/index/insert?url=</tpl:text>
+            <le:manager name="path"/>
+          </tpl:token>
+          <tpl:text>Add</tpl:text>
+        </a>
+        <tpl:if test="has-children()">
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+          <tpl:else>
+            <div class="no-result">No task</div>
+          </tpl:else>
+        </tpl:if>
+      </div>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="todo:todo">
+    <li>
+      <a class="todo">
+        <tpl:token name="href">
+          <le:directory/>
+          <tpl:text>/index/update?id=</tpl:text>
+          <tpl:read select="id"/>
+        </tpl:token>
+        <tpl:read select="description"/>
+      </a>
+    </li>
+  </tpl:template>
+
+
+
+</view:view>

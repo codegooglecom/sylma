@@ -20,7 +20,6 @@ class Register extends Child implements common\arrayable, parser\component {
 
   public function asArray() {
 
-    $this->getParser()->register($this->getTemplate()->getTree(), $this->loadContent());
     return array();
   }
 }

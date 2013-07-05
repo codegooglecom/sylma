@@ -62,13 +62,14 @@ sylma.crud.Form = new Class({
     try {
 
       var datas = this.loadDatas(args);
+      args = Object.merge(this.loadValues(), args);
 
       var req = new Request.JSON({
 
         url : node.action,
         onSuccess: function(response) {
 
-          self.submitParse(response, datas);
+          self.submitParse(response, args);
         }
       });
 
@@ -91,6 +92,27 @@ sylma.crud.Form = new Class({
     var node = this.getNode();
 
     return args ? node.toQueryString() + '&' + Object.toQueryString(args) : node.toQueryString();
+  },
+
+  loadValues : function() {
+
+    var result = {};
+
+    this.getNode().getElements('input, select, textarea').each(function(el){
+      var type = el.type;
+      if (!el.name || el.disabled || type == 'submit' || type == 'reset' || type == 'file' || type == 'image') return;
+
+      var value = (el.get('tag') == 'select') ? el.getSelected().map(function(opt){
+          // IE
+          return document.id(opt).get('value');
+      }) : ((type == 'radio' || type == 'checkbox') && !el.checked) ? null : el.get('value');
+
+      Array.from(value).each(function(val){
+          if (typeof val != 'undefined') result[el.name] = val;
+      });
+    });
+
+    return result;
   },
 
   submitParse : function(response, args) {
@@ -121,7 +143,6 @@ sylma.crud.Form = new Class({
     if (!result.errors && redirect) {
 
       window.location = document.referrer;
-      //window.history.back();
     }
     else {
 
@@ -163,11 +184,10 @@ sylma.crud.Text = new Class({
   initialize : function(props) {
 
     this.parent(props);
-
     var input = this.getNode('input');
 
-    if (input.get('text').match(/^\s*$/)) {
-      input.set('text');
+    if (input.get('value') && input.get('value').match(/^\s*$/)) {
+      input.set('value');
     }
   },
 

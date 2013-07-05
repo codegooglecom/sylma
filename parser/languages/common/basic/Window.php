@@ -262,6 +262,27 @@ return; // todo, decide to use or not
     return $this->parseArrayables($aResult);
   }
 
+  public function extractValue($mValue) {
+
+    if (is_array($mValue)) {
+
+      if (count($mValue) != 1) {
+
+        $mResult = $this->toString($mValue);
+      }
+      else {
+
+        $mResult = $this->extractValue(current($mValue));
+      }
+    }
+    else {
+
+      $mResult = $mValue;
+    }
+
+    return $mResult;
+  }
+
   protected function argToString($mValue) {
 
     return $this->create('string', array($this, $mValue));
@@ -444,9 +465,9 @@ return; // todo, decide to use or not
     return $result;
   }
 
-  public function addToResult($mContent, common\_var $target, $bAdd = true) {
+  public function addToResult($mContent, common\_var $target, $bAdd = true, $bFirst = false) {
 
-    $content = $this->toString($mContent, $target);
+    $content = $this->toString($mContent, $target, false, $bFirst);
 //dsp($content);
     if ($content) {
 
@@ -491,11 +512,9 @@ return; // todo, decide to use or not
     return $this->create('test', array($this, $val1, $val2, $op));
   }
 
-  public function createOperator($sVal) {
+  public function createOperator($sValue) {
 
-    return $this->createArgument(array(
-      'operator' => $sVal,
-    ));
+    return $this->create('operator', array($this, $sValue));
   }
 
   public function createNumeric($val) {

@@ -72,7 +72,7 @@ class Foreign extends Element implements sql\schema\foreign {
     return $this->elementRef;
   }
 
-  public function setElementRef(schema\parser\element $element) {
+  public function setElementRef(Table $element) {
 
     $this->elementRef = $element;
   }

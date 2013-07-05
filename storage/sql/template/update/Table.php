@@ -7,9 +7,23 @@ class Table extends sql\template\insert\Table {
 
   protected $sMode = 'update';
 
-  public function asArgument() {
+  protected function loadQuery() {
 
-    $result = parent::asArgument();
+    if (!$this->useElements()) {
+
+      $result = null;
+    }
+    else {
+
+      $result = parent::loadQuery();
+    }
+
+    return $result;
+  }
+  
+  protected function loadTriggers() {
+
+    $result = parent::loadTriggers();
     $result->addContent($this->getWindow()->toString('1', $this->getParser()->getView()->getResult()));
 
     return $result;

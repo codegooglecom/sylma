@@ -5,6 +5,7 @@
   overflow: hidden;
   width: 100%;
   z-index: 5;
+  pointer-events:none;
 }
 
 .sylma-hidder {

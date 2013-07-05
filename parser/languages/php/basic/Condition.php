@@ -26,7 +26,7 @@ class Condition extends common\basic\Structured implements common\argumentable, 
     $this->aElse = $aContent;
   }
 
-  protected function getElse() {
+  public function getElse() {
 
     return $this->aElse;
   }
@@ -104,7 +104,7 @@ class Condition extends common\basic\Structured implements common\argumentable, 
     }
 
     list($aBefore, $test) = $this->parseTest();
-    
+
     return  $this->getWindow()->createArgument(array(
       $aBefore,
       'condition' => array(

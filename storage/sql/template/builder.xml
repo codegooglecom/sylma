@@ -40,6 +40,7 @@
             </cls:class>
             <cls:class alias="update" name="query\parser\Update"/>
             <cls:class alias="insert" name="query\parser\Insert"/>
+            <cls:class alias="delete" name="query\parser\Delete"/>
           </cls:classes>
         </template>
       </cls:classes>

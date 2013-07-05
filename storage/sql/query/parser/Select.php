@@ -18,11 +18,6 @@ class Select extends Wherer implements common\argumentable {
   protected $aClones = array();
   protected $main;
 
-  public function setColumn($val) {
-
-    $this->aColumns[] = $val;
-  }
-
   public function setElement(schema\parser\element $el) {
 
     $sName = $el->getName();
@@ -234,6 +229,8 @@ class Select extends Wherer implements common\argumentable {
     $aResult = $aJoins = $aElements = array();
 
     if ($this->getOrder()) {
+
+      // On join, only first element is used as order, maybe todo
 
       foreach ($this->aJoins as $aJoin) {
 

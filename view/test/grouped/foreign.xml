@@ -279,6 +279,34 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Foreign multiple compare values">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div><tpl:apply select="group/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li>
+            <tpl:if test="id in parent()/values()">
+              <tpl:token name="selected">x</tpl:token>
+            </tpl:if>
+            <tpl:apply select="name"/>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li selected="x">group01</li>
+        <li selected="x">group02</li>
+        <li>group03</li>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Foreign key path access" disabled="true">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">

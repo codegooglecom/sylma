@@ -7,21 +7,32 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   protected $handler;
   protected $sMode = 'insert';
+  protected $bQueryInserted = false;
+  protected $bElements = false;
+
+  protected $aContent = array();
 
   public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
-
-    $this->setHandler($this->loadHandler());
+    $this->loadHandler();
   }
 
-  public function addElementToHandler(sql\schema\element $el, $sDefault = '', $content = null) {
+  public function addElement(sql\schema\element $el, $sDefault = '', $content = null) {
 
-    $window = $this->getWindow();
-    $arguments = $window->getVariable('post');
+    if ($this->getHandler()) {
+
+      $this->addElementToHandler($el, $sDefault, $content);
+    }
+    else {
+
+      $this->getQuery()->addSet($el, $content);
+    }
+  }
+
+  protected function addElementToHandler(sql\schema\element $el, $sDefault = '', $content = null) {
 
     $sName = $el->getAlias();
-
     $handler = $this->getHandler();
 
     $aArguments = array(
@@ -34,11 +45,13 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     if (is_null($content)) {
 
-      $content = $arguments->call('read', array($sName, false), 'php-string');
+      $content = $this->getElementArgument($sName);
     }
 
     $call = $handler->call('addElement', array($sName, $el->buildReflector(array($content, $aArguments))));
-    $window->add($call);
+    $this->aContent[] = $call;
+
+    $this->bElements = true;
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
     //$test = $window->createCondition($window->createNot($var), $content);
@@ -48,15 +61,26 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   }
 
+  public function getElementArgument($sName) {
+
+    $arguments = $this->getWindow()->getVariable('post');
+
+    return $arguments->call('read', array($sName, false), 'php-string');
+  }
+
   protected function buildQuery() {
 
     $result = parent::buildQuery();
-    $result->setHandler($this->getHandler());
+
+    if ($this->getHandler()) {
+
+      $result->setHandler($this->getHandler());
+    }
 
     return $result;
   }
 
-  protected function loadHandler() {
+  public function loadHandler() {
 
     $window = $this->getWindow();
     $token = (string) $this->getParser()->getView()->getRoot()->asPath();
@@ -69,7 +93,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
       $this->createObject('token', array($token), null, false),
     ));
 
-    return $result->getVar();
+    $this->setHandler($window->createVar($result));
   }
 
   public function getHandler() {
@@ -87,26 +111,47 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->aTriggers[] = $aContent;
   }
 
-  public function asArgument() {
+  protected function useElements() {
+
+    return $this->bElements;
+  }
+
+  protected function loadQuery() {
+
+    if (!$this->useElements()) {
+
+      $this->launchException('Cannot insert no element');
+    }
+
+    $view = $this->getParser()->getView();
+    return $view->addToResult(array($this->getQuery()->getCall()), false, true);
+  }
+
+  protected function loadTriggers() {
 
     $window = $this->getWindow();
-    $view = $this->getParser()->getView();
 
-    $call = $view->addToResult(array($this->getQuery()->getCall()), false);
+    $aContent[] = $this->loadQuery();
 
     if ($aTriggers = $this->getTriggers()) {
 
-      $aContent[] = $call;
       $aContent[] = $window->createGroup($aTriggers);
     }
-    else {
 
-      $aContent = $call;
+    return $window->createCondition($this->getHandler()->call('validate'), $aContent);
+  }
+
+  public function asArgument() {
+
+    if ($this->getHandler()) {
+
+      $aResult[] = $this->getHandler()->getInsert();
     }
 
-    $result = $window->createCondition($this->getHandler()->call('validate'), $aContent);
+    $aResult[] = $this->aContent;
+    $aResult[] = $this->loadTriggers();
 
-    return $result;
+    return $this->getWindow()->createGroup($aResult);
   }
 }
 

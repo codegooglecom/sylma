@@ -102,6 +102,9 @@
     'cast' => array(
       'file' => '\sylma\parser\languages\php\basic\Cast.php',
       'name' => '\sylma\parser\languages\php\basic\Cast'),
+    'operator' => array(
+      'file' => '\sylma\parser\languages\common\basic\Operator.php',
+      'name' => '\sylma\parser\languages\common\basic\Operator'),
     'group' => array(
       'file' => '\sylma\parser\languages\common\basic\Group.php',
       'name' => '\sylma\parser\languages\common\basic\Group'))),

@@ -98,7 +98,12 @@
   </view:template>
 
   <view:template match="sql:foreign" mode="input" sql:ns="ns">
-    <tpl:apply mode="select-notest"/>
+    <tpl:if test="is-multiple()">
+      <tpl:apply mode="select-multiple-notest"/>
+      <tpl:else>
+        <tpl:apply mode="select-notest"/>
+      </tpl:else>
+    </tpl:if>
   </view:template>
 
   <view:template match="*" mode="select-notest">
@@ -118,6 +123,35 @@
   <view:template match="*" mode="select-option-test">
     <option value="{id}">
       <tpl:if test="parent()/value() = id">
+        <tpl:token name="selected">selected</tpl:token>
+      </tpl:if>
+      <tpl:apply mode="select-option-value"/>
+    </option>
+  </view:template>
+
+  <view:template match="*" mode="select-multiple-notest">
+    <select id="form-{alias()}" name="{alias()}" multiple="multiple">
+      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply select="all()" mode="select-option"/>
+    </select>
+  </view:template>
+
+  <view:template match="*" mode="select-multiple-test">
+    <tpl:variable name="values">
+      <tpl:read select="values()"/>
+    </tpl:variable>
+    <select id="form-{alias()}" name="{alias()}" multiple="multiple">
+      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply select="all()" mode="select-multiple-option-test">
+        <tpl:read select="$values" tpl:name="values"/>
+      </tpl:apply>
+    </select>
+  </view:template>
+
+  <view:template match="*" mode="select-multiple-option-test">
+    <tpl:argument name="values"/>
+    <option value="{id}">
+      <tpl:if test="id in $values">
         <tpl:token name="selected">selected</tpl:token>
       </tpl:if>
       <tpl:apply mode="select-option-value"/>

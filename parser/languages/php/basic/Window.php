@@ -129,6 +129,40 @@ class Window extends common\basic\Window implements php\window {
     return $this->create('call', array($this, $closure, $return, $aArguments));
   }
 
+  public function isStatic($mVal) {
+
+    switch (gettype($mVal)) {
+
+      case 'array' :
+
+        foreach ($mVal as $mSub) {
+
+          if (!$this->isStatic($mSub)) {
+
+            return false;
+          }
+        }
+
+      case 'double' :
+      case 'integer' :
+      case 'string' :
+      case 'boolean' :
+
+        return true;
+
+      case 'object' :
+
+        if (
+                $mVal instanceof common\operator
+        ) {
+
+          return true;
+        }
+    }
+
+    return false;
+  }
+
   /**
    * Temp for common\concat use
    * @param type $mValue

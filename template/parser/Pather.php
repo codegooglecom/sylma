@@ -8,7 +8,7 @@ class Pather extends component\Child {
   const ALL_TOKEN = '*';
 
   protected $source;
-  protected $aOperators = array('<', '>', '=', '!=', 'and', 'or', '+', '*', '/');
+  protected $aOperators = array('<', '>', '=', '!=', 'and', 'or', '+', '*', '/', 'in');
 
   public function setSource($source) {
 
@@ -43,6 +43,7 @@ class Pather extends component\Child {
     $window = $this->getWindow();
 
     $bOp = false; // alternate between op and val
+    $bIN = false; // new custom op !
 
     foreach ($aTokens as $sToken) {
 
@@ -53,8 +54,15 @@ class Pather extends component\Child {
           $this->launchException("Unknown operator : {$sToken}");
         }
 
-        if ($sToken == '=') $sToken = '==';
-        $aResult[] = $window->createOperator($sToken);
+        if ($sToken == 'in') {
+
+          $bIN = true;
+        }
+        else {
+
+          if ($sToken == '=') $sToken = '==';
+          $aResult[] = $window->createOperator($sToken);
+        }
 
         $bOp = false;
       }
@@ -70,11 +78,13 @@ class Pather extends component\Child {
 
         if ($sValue = $this->matchString($sToken)) {
 
-          $result = $window->createString($sValue);
+          //$result = $window->createString($sValue);
+          $result = $sValue;
         }
         else if ($this->matchNumeric($sToken)) {
 
-          $result = $window->createNumeric($sToken);
+          //$result = $window->createNumeric($sToken);
+          $result = $sValue;
         }
         else {
 
@@ -82,13 +92,24 @@ class Pather extends component\Child {
         }
 
         if ($bNot) $result = $window->createNot($result);
-        $aResult[] = $result;
+
+        if ($bIN) {
+
+          $window = $this->getWindow();
+          $needle = $window->extractValue(array_pop($aResult));
+          $haystack = $window->extractValue($result);
+          $aResult[] = $window->callFunction('in_array', 'php-boolean', array($needle, $haystack));
+        }
+        else {
+
+          $aResult[] = $result;
+        }
 
         $bOp = true;
       }
     }
 
-    return $aResult;
+    return $window->flattenArray($aResult);
   }
 
   protected function matchString($sValue) {
@@ -166,7 +187,7 @@ class Pather extends component\Child {
       $el = $this->getSource();
       $result = $bRead ? $el->reflectRead($sMode) : $el->reflectApply($sMode);
     }
-    
+
     return $result;
   }
 

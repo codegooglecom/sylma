@@ -26,6 +26,7 @@
                 <cls:class alias="cached" name="\sylma\schema\cached\form\_Integer"/>
               </cls:classes>
             </cls:class>
+            <cls:class alias="reference" name="Reference"/>
             <cls:class alias="baseType" name="Simple"/>
             <cls:class alias="simpleType" name="Simple"/>
           </cls:classes>

@@ -44,6 +44,8 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     switch ($sName) {
 
       case 'alias' : $result = $this->getAlias(); break;
+      case 'is-optional' : $result = $this->isOptional(); break;
+      case 'is-multiple' : $result = $this->getMaxOccurs(true); break;
       //case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode, $aArguments) : $this->reflectApply($sMode, $aArguments); break;
       case 'value' : $result = $this->reflectRead(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
@@ -61,13 +63,10 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
-    $element = $this->getElementRef();
-    $result = $this->applyElement($element, $aPath, $sMode, $aArguments);
-
-    return $result;
+    $this->launchException('Should not be called');
   }
 
-  protected function reflectFunctionAll(array $aPath, $sMode) {
+  protected function reflectFunctionAll(array $aPath, $sMode, array $aArguments = array()) {
 
     if ($aPath) {
 
@@ -81,7 +80,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $collection->setQuery($element->getQuery());
     $collection->setTable($element);
 
-    return $collection->reflectApplyAll($sMode);
+    return $collection->reflectApplyAll($sMode, $aArguments);
   }
 
   public function reflectApply($sMode = '', array $aArguments = array()) {
@@ -115,7 +114,10 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $result;
   }
 
-  protected function loadJunction($sName, parser\element $target) {
+  protected function loadJunction() {
+
+    $sName = $this->readx('@junction', true);
+    $target = $this->getElementRef();
 
     $parent = $this->getParent();
     $sNamespace = $this->getNamespace();
@@ -146,80 +148,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $particle->addElement($el2);
 
     return array($table, $el1, $el2);
-  }
-
-  protected function buildSingle(Table $element) {
-
-    if (!$this->bBuilded) {
-
-      $parent = $this->getParent();
-      $query = $parent->getQuery();
-
-      $element->setSource($parent->getSource());
-      $element->setQuery($query);
-      $element->insertQuery(false);
-
-      $id = $element->getElement('id', $element->getNamespace());
-
-      $query->addJoin($element, $id, $this);
-      $this->bBuilded = true;
-    }
-  }
-
-  protected function buildMultiple(Table $element) {
-
-    $parent = $this->getParent();
-
-    $id = $parent->getElement('id', $parent->getNamespace());
-
-    list($table, $field, $target) = $this->loadJunction($this->getNode()->readx('@junction'), $element);
-
-    $query = $table->getQuery();
-    $result = $this->getParser()->createCollection();
-
-    $result->setTable($element);
-    $result->setQuery($table->getQuery());
-
-    $query->setWhere($field, '=', $id->reflectRead());
-
-    $element->setQuery($query);
-    $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
-
-    return $result;
-  }
-
-  protected function applyElement(Table $element, array $aPath, $sMode, array $aArguments = array()) {
-
-    //$sName = $element->getName();
-
-    if ($this->getMaxOccurs(true)) {
-
-      $collection = $this->buildMultiple($element);
-
-      if ($aPath) {
-
-        $this->launchException('Not yet implemented');
-        // reflectApplyAll() need $aPath
-      }
-
-      $result = $collection->reflectApplyAll($sMode, $aArguments);
-      //$result = $this->getParser()->parsePath($collection, '*', $sMode);
-    }
-    else {
-
-      $this->buildSingle($element);
-
-      if ($aPath) {
-
-        $result = $this->getParser()->parsePathToken($element, $aPath, $sMode);
-      }
-      else {
-
-        $result = $element->reflectApply($sMode, $aArguments);
-      }
-    }
-
-    return $result;
   }
 }
 

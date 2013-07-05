@@ -37,7 +37,7 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
   public function getTitle() {
 
-    if (!$sResult = $this->readx('@title')) {
+    if (!$this->getNode(false) or !$sResult = $this->readx('@title')) {
 
       $sResult = $this->getAlias();
     }

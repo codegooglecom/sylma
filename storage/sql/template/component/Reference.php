@@ -28,25 +28,17 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     return $result;
   }
 
-  protected function loadElementRef() {
+  protected function loadForeign() {
 
-    if ($table = parent::loadElementRef()) {
-
-      list($sNamespace, $sName) = $this->parseName($this->readx('@foreign', true));
-      $result = $table->getElement($sName, $sNamespace);
-    }
-    else {
-
-      $result = null;
-    }
-
-    return $result;
+    list($sNamespace, $sName) = $this->parseName($this->readx('@foreign', true));
+    return $this->getElementRef()->getElement($sName, $sNamespace);
   }
 
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
-    $element = $this->getElementRef();
-    $table = $element->getParent();
+    $table = $this->getElementRef();
+    $element = $this->loadForeign();
+
     $collection = $this->loadSimpleComponent('component/collection');
 
     $collection->setTable($table);
@@ -72,9 +64,34 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     return $result;
   }
 
-  public function reflectApply($sMode) {
-    ;
+  public function reflectApply($sMode = '', array $aArguments = array()) {
+
+    return $this->reflectApplySelf($sMode, $aArguments);
   }
 
+  public function reflectRead() {
+
+    return null;
+  }
+
+  protected function lookupTemplate($sMode) {
+
+    return $this->getParser()->lookupTemplate($this, 'element', $sMode);
+  }
+
+  protected function reflectApplySelf($sMode, array $aArguments = array()) {
+
+    if ($result = $this->lookupTemplate($sMode)) {
+
+      $result->setTree($this);
+      $result->sendArguments($aArguments);
+    }
+    else {
+
+      $result = null;
+    }
+
+    return $result;
+  }
 }
 

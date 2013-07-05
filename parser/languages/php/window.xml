@@ -32,6 +32,7 @@
     <cls:class alias="test" name="Test"/>
     <cls:class alias="loop" name="_Foreach"/>
     <cls:class alias="cast" name="Cast"/>
+    <cls:class alias="operator" name="\sylma\parser\languages\common\basic\Operator"/>
     <cls:class alias="group" name="\sylma\parser\languages\common\basic\Group"/>
   </cls:classes>
 </arg:argument>

@@ -49,7 +49,7 @@
 
   <crud:route name="update" groups="form">
 
-    <view:view mode="view" _debug="x" groups="view">
+    <view:view mode="view" _debug="x" groups="view" sql:ns="ns">
 
       <view:template match="*" mode="container">
 
@@ -67,6 +67,19 @@
 
       </view:template>
 
+      <view:template match="sql:foreign" mode="container">
+
+        <tpl:if test="is-multiple()">
+          <tpl:apply mode="container">
+            <tpl:text tpl:name="value">0</tpl:text>
+          </tpl:apply>
+          <tpl:else>
+            <tpl:apply mode="container"/>
+          </tpl:else>
+        </tpl:if>
+
+      </view:template>
+
       <view:template mode="init">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
         <sql:filter name="id"><le:get-argument name="id"/></sql:filter>
@@ -76,7 +89,12 @@
       </view:template>
 
       <view:template match="sql:foreign" mode="input" sql:ns="ns">
-        <tpl:apply mode="select-test"/>
+        <tpl:if test="is-multiple()">
+          <tpl:apply mode="select-multiple-test"/>
+          <tpl:else>
+            <tpl:apply mode="select-test"/>
+          </tpl:else>
+        </tpl:if>
       </view:template>
 
     </view:view>

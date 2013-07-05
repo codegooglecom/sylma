@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:todo="http://2013.sylma,org/modules/todo"
+
+  extends="/#sylma/storage/sql/crud.tpl"
+>
+
+  <crud:global todo:ns="ns">
+
+    <view:schema>schema.xql</view:schema>
+    <tpl:constant name="list-cols">description,url,insertion,priority,statut</tpl:constant>
+    <tpl:constant name="form-cols">description,url,insertion,priority,statut</tpl:constant>
+
+  </crud:global>
+
+  <crud:route name="insert">
+
+    <view:view>
+      <tpl:template match="todo:url" mode="input">
+        <tpl:apply mode="input">
+          <le:get-argument name="url" tpl:name="value" optional="x"/>
+        </tpl:apply>
+      </tpl:template>
+    </view:view>
+
+    <view name="do">
+
+      <tpl:template match="todo:insertion" mode="register">
+        <tpl:register>#sylma-empty#</tpl:register>
+      </tpl:template>
+
+    </view>
+
+  </crud:route>
+
+  <crud:group name="list">
+
+    <le:context name="title">Tasks</le:context>
+
+  </crud:group>
+
+  <crud:group name="view">
+
+
+  </crud:group>
+
+</crud:crud>

@@ -35,7 +35,7 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
 
       if ($bEscape && !$bOptional && !$bIN) {
 
-        $content = $this->reflectEscape($content);
+        $content = $this->reflectEscape($this->getWindow()->toString($content));
       }
     }
     else if (!$bIN) {
