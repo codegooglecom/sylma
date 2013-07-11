@@ -6,12 +6,11 @@
 >
   <le:settings>
     <le:name>Sylma Backend</le:name>
-    <le:argument name="content" format="\sylma\parser\action\handler"/>
+    <le:argument name="content" format="\sylma\core\stringable"/>
   </le:settings>
   <html>
     <head>
-      <title>
-      </title>
+      <title>Sylma</title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/backend.css"/>
       <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/infos.css" ls:owner="root" ls:group="user" ls:mode="710"/>

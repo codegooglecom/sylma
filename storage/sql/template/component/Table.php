@@ -9,6 +9,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   protected $bBuilded = false;
   protected $aColumns = array();
+  protected $bSub = false;
 
   protected $loop;
 
@@ -35,6 +36,13 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected function getMode() {
 
     return $this->sMode;
+  }
+
+  public function isSub($bVal = null) {
+
+    if (is_bool($bVal)) $this->bSub = $bVal;
+
+    return $this->bSub;
   }
 
   public function getQuery() {
@@ -180,6 +188,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     }
 
     return $aResult;
+  }
+
+  public function reflectRegister() {
+
+    $this->launchException('Table cannot be registered');
   }
 }
 

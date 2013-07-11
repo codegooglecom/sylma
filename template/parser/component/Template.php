@@ -9,6 +9,7 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
 
   const WEIGHT_ELEMENT = 25;
   const WEIGHT_ELEMENT_ALL = 15;
+  const WEIGHT_ELEMENT_ROOT = 25;
 
   const MATCH_DEFAULT = '[root]';
   const MODE_DEFAULT = '';
@@ -345,7 +346,7 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
 
       if ($bRoot && !$this->getMatch()) {
 
-        $iResult = self::WEIGHT_ELEMENT_ALL;
+        $iResult = self::WEIGHT_ELEMENT_ROOT;
       }
       else {
 

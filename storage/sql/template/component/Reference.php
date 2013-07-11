@@ -7,8 +7,21 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
 
   protected $query;
   protected $var;
+  protected $foreign;
 
   protected $bBuilded = false;
+
+  protected function importElementRef() {
+
+    $result = parent::importElementRef();
+
+    if ($result) {
+
+      $result->isSub(true);
+    }
+
+    return $result;
+  }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
@@ -28,6 +41,17 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     return $result;
   }
 
+  protected function getForeign() {
+
+    if (is_null($this->foreign)) {
+
+      $result = $this->loadForeign();
+      $this->foreign = $result ? $result : false;
+    }
+
+    return $this->foreign;
+  }
+
   protected function loadForeign() {
 
     list($sNamespace, $sName) = $this->parseName($this->readx('@foreign', true));
@@ -37,31 +61,8 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
     $table = $this->getElementRef();
-    $element = $this->loadForeign();
 
-    $collection = $this->loadSimpleComponent('component/collection');
-
-    $collection->setTable($table);
-
-    if ($element->getMaxOccurs(true)) {
-
-      $this->launchException('Not implemented');
-    }
-    else {
-
-      $table->getQuery()->setWhere($element, '=', $this->getParent()->getElement('id')->reflectRead());
-    }
-
-    if ($aPath) {
-
-      $result = $this->getParser()->parsePathToken($collection, $aPath, $sMode);
-    }
-    else {
-
-      $result = $collection->reflectApplyAll($sMode, $aArguments);
-    }
-
-    return $result;
+    return $this->getParser()->parsePathToken($table, $aPath, $sMode, $aArguments);
   }
 
   public function reflectApply($sMode = '', array $aArguments = array()) {

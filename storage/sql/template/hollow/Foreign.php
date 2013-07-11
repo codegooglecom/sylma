@@ -9,17 +9,9 @@ class Foreign extends sql\template\component\Foreign {
 
     if ($file) {
 
-      $this->setDirectory(__FILE__);
-
-      $args = $this->getScript('/#sylma/storage/sql/view/manager.xml');
-      $handler = $this->getParser();
-
-      $old = $handler->getArguments();
-      $class = $this->getScript($args->read("argument/view"))->get('classes/elemented');
-
-      $handler->setArguments($class, false);
+      $this->getParser()->changeMode('view');
       $result = parent::loadElementRef($file);
-      $handler->setArguments($old, false);
+      $this->getParser()->resetMode();
     }
     else {
 

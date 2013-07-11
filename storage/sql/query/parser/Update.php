@@ -31,7 +31,7 @@ class Update extends Insert {
 
     if (!$aWheres = $this->getWheres()) {
 
-      $this->launchException('Cannot build update query without where clause');
+      $this->launchException('Cannot build update query without where clause', get_defined_vars());
     }
 /*
     if (!$this->aSets) {

@@ -5,6 +5,23 @@ use sylma\core, sylma\storage\sql;
 
 class Field extends sql\template\component\Field implements sql\template\pathable {
 
+  protected function getParentKey() {
+
+    $parent = $this->getParent();
+    $id = $parent->getElement('id');
+
+    if ($id === $this) {
+
+      $result = $this->getName();
+    }
+    else {
+
+      $result = $id->reflectRead();
+    }
+
+    return $result;
+  }
+
   protected function reflectApplySelf($sMode = '', array $aArguments = array()) {
 
     if ($result = parent::reflectApplySelf($sMode, $aArguments)) {

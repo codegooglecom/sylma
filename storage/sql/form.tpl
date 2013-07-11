@@ -52,7 +52,7 @@
         %object%.downlight();
       </js:event>
       <js:name>
-        <tpl:read select="alias()"/>
+        <tpl:read select="alias('key')"/>
       </js:name>
       <tpl:apply mode="register"/>
       <tpl:apply mode="label">
@@ -83,7 +83,7 @@
 
   <view:template match="*" mode="input">
 
-    <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="value" default="value()"/>
     <tpl:argument name="type" default="'text'"/>
 
@@ -104,6 +104,15 @@
         <tpl:apply mode="select-notest"/>
       </tpl:else>
     </tpl:if>
+  </view:template>
+
+  <view:template match="sql:reference" mode="container" sql:ns="ns">
+    <fieldset>
+      <legend>
+        <tpl:read select="title()"/>
+      </legend>
+      <tpl:apply mode="container" required="x"/>
+    </fieldset>
   </view:template>
 
   <view:template match="*" mode="select-notest">

@@ -13,6 +13,7 @@
             <cls:base>\sylma\storage\sql\template\update</cls:base>
             <cls:class alias="table" name="Table"/>
             <cls:class alias="foreign" name="Foreign"/>
+            <cls:class alias="reference" name="Reference"/>
           </cls:classes>
         </component>
       </cls:classes>

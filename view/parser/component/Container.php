@@ -91,11 +91,11 @@ class Container extends template_ns\parser\component\Template {
 
         //if (!$sMode) $sMode = self::MODE_DEFAULT;
 
-        if ($bRoot) {
+        if (!$this->getMatch()) {
 
-          if ((!$this->getMatch() || $this->getMatch() === self::NAME_DEFAULT) && $sMode === $this->getMode()) {
+          if ($bRoot && $sMode === $this->getMode()) {
 
-            $iResult = self::WEIGHT_ELEMENT_ALL;
+            $iResult = self::WEIGHT_ELEMENT_ROOT;
           }
         }
         else if ($sMode === $this->getMode()) {

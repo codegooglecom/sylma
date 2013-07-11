@@ -9,6 +9,51 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
   protected $query;
   protected $var;
 
+  protected function getParentKey() {
+
+    return '';
+  }
+
+  public function getAlias($sMode = '') {
+
+    switch ($sMode) {
+
+      case 'form' :
+
+        if ($this->isSub()) {
+
+          $mResult = $this->getWindow()->toString(array($this->getParent()->getName(), '[', $this->getParentKey(), "][{$this->getName()}]"));
+        }
+        else {
+
+          $mResult = $this->getAlias();
+        }
+
+        break;
+
+      case 'key' :
+
+        $mResult = $this->getName();
+        break;
+
+      case '' :
+
+        $mResult = parent::getAlias();
+        break;
+
+      default :
+
+        $this->launchException("Unknown alias() mode : $sMode");
+    }
+
+    return $mResult;
+  }
+
+  protected function isSub() {
+
+    return $this->getParent()->isSub();
+  }
+
   public function getQuery() {
 
     return $this->getParent()->getQuery();
@@ -52,8 +97,9 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
       case 'value' : $result = $this->reflectRead(); break;
       case 'is-optional' : $result = $this->isOptional(); break;
-      //case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode) : $this->reflectApply($sMode); break;
-      case 'alias' : $result = $this->getAlias(); break;
+      case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode) : $this->reflectApply($sMode); break;
+      case 'name' : $result = $this->getName(); break;
+      case 'alias' : $result = $this->reflectFunctionAlias($sMode, $bRead, $sArguments); break;
       case 'apply' : $result = $this->reflectApply($sMode); break;
       case 'title' : $result = $this->getTitle(); break;
       case 'parent' :
@@ -68,6 +114,14 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     }
 
     return $result;
+  }
+
+  protected function reflectFunctionAlias($sMode, $bRead, $sArguments) {
+
+    $aArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead);
+    $sMode = $aArguments ? array_pop($aArguments) : '';
+
+    return $this->getAlias($sMode);
   }
 
   public function reflectApplyAll($sMode, array $aArguments = array()) {

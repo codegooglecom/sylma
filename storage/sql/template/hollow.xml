@@ -13,6 +13,7 @@
             <cls:base>\sylma\storage\sql\template\hollow</cls:base>
             <cls:class alias="field" name="Field"/>
             <cls:class alias="foreign" name="Foreign"/>
+            <cls:class alias="table" name="Table"/>
           </cls:classes>
         </component>
       </cls:classes>

@@ -8,7 +8,7 @@ class Rooted extends sql\schema\component\Table {
   protected $source;
 
   protected $query;
-  protected $bQueryInserted = true;
+  protected $bInsertQuery = true;
 
   protected $bRoot = false;
   protected $aTriggers = array();
@@ -47,9 +47,9 @@ class Rooted extends sql\schema\component\Table {
 
   public function insertQuery($bVal = null) {
 
-    if (is_bool($bVal)) $this->bQueryInserted = $bVal;
+    if (is_bool($bVal)) $this->bInsertQuery = $bVal;
 
-    return $this->bQueryInserted;
+    return $this->bInsertQuery;
   }
 
   protected function parsePaths($sPath, $sMode) {

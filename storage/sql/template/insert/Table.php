@@ -7,7 +7,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   protected $handler;
   protected $sMode = 'insert';
-  protected $bQueryInserted = false;
+  protected $bInsertQuery = false;
   protected $bElements = false;
 
   protected $aContent = array();
@@ -16,6 +16,8 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     parent::parseRoot($el);
     $this->loadHandler();
+
+    $this->setSource($this->getWindow()->getVariable('post'));
   }
 
   public function addElement(sql\schema\element $el, $sDefault = '', $content = null) {
@@ -28,6 +30,8 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
       $this->getQuery()->addSet($el, $content);
     }
+
+    $this->bElements = true;
   }
 
   protected function addElementToHandler(sql\schema\element $el, $sDefault = '', $content = null) {
@@ -51,7 +55,6 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $call = $handler->call('addElement', array($sName, $el->buildReflector(array($content, $aArguments))));
     $this->aContent[] = $call;
 
-    $this->bElements = true;
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
     //$test = $window->createCondition($window->createNot($var), $content);
@@ -61,11 +64,9 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   }
 
-  public function getElementArgument($sName) {
+  public function getElementArgument($sName, $sMethod = 'read') {
 
-    $arguments = $this->getWindow()->getVariable('post');
-
-    return $arguments->call('read', array($sName, false), 'php-string');
+    return $this->getSource()->call($sMethod, array($sName, false), 'php-string');
   }
 
   protected function buildQuery() {
@@ -124,7 +125,18 @@ class Table extends sql\template\component\Table implements common\argumentable 
     }
 
     $view = $this->getParser()->getView();
-    return $view->addToResult(array($this->getQuery()->getCall()), false, true);
+    $call = $this->getQuery()->getCall();
+
+    if ($this->isSub()) {
+
+      $result = $call->getInsert();
+    }
+    else {
+
+      $result = $view->addToResult(array($call), false, true);
+    }
+
+    return $result;
   }
 
   protected function loadTriggers() {

@@ -5,6 +5,9 @@ use sylma\core, sylma\dom, sylma\schema\xsd, sylma\parser\reflector;
 
 class Handler extends xsd\Elemented {
 
+  protected $argPaths;
+  protected $argPrevious;
+
   const NS = 'http://2013.sylma.org/storage/sql';
   const PREFIX = 'sql';
   const TYPES_FILE = 'datatypes.xql';
@@ -16,11 +19,26 @@ class Handler extends xsd\Elemented {
     $this->setDirectory(__FILE__);
     $this->setNamespace(parent::NS, parent::PREFIX);
 
+    $this->argPaths = $this->getScript('/#sylma/storage/sql/view/manager.xml');
+
     $this->loadBaseTypes(array(
       'foreign' => self::NS,
       'reference' => self::NS,
       'collection' => self::NS,
     ));
+  }
+
+  public function changeMode($sMode) {
+
+    $this->argPrevious = $this->getArguments();
+    $class = $this->getScript($this->argPaths->read("argument/$sMode"))->get('classes/elemented');
+
+    $this->setArguments($class, false);
+  }
+
+  public function resetMode() {
+
+    $this->setArguments($this->argPrevious, false);
   }
 
   public function parseRoot(dom\element $el) {

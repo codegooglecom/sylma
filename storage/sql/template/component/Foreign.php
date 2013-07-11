@@ -44,6 +44,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     switch ($sName) {
 
       case 'alias' : $result = $this->getAlias(); break;
+      case 'name' : $result = $this->getName(); break;
       case 'is-optional' : $result = $this->isOptional(); break;
       case 'is-multiple' : $result = $this->getMaxOccurs(true); break;
       //case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode, $aArguments) : $this->reflectApply($sMode, $aArguments); break;
