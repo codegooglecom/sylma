@@ -103,16 +103,18 @@
       <div>
         <input name="name" value="group01"/>
         <fieldset>
-          <input name="user2[2][name]" value="admin"/>
-          <input name="user2[4][name]" value="user1"/>
+          <input name="users[0][name]" value="admin"/>
+          <input name="users[1][name]" value="user1"/>
         </fieldset>
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Insert form">
+  <tst:test name="Form insert">
     <tst:document>
-      <view:view user:ns="ns" mode="hollow">
-        <sql:resource/>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>3</sql:id>
+        </sql:resource>
         <view:schema>samples/group2.xql</view:schema>
         <view:template>
           <div>
@@ -124,7 +126,7 @@
         </view:template>
         <view:template match="sql:reference" sql:ns="ns">
           <fieldset>
-            <tpl:apply select="ref()"/>
+            <tpl:apply select="static()"/>
           </fieldset>
         </view:template>
         <view:template match="*">
@@ -137,7 +139,7 @@
       <div>
         <input name="name"/>
         <fieldset>
-          <input name="user2[][name]"/>
+          <input name="users[][name]"/>
         </fieldset>
       </div>
     </tst:node>

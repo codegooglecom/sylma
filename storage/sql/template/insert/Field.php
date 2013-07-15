@@ -7,8 +7,9 @@ class Field extends sql\template\component\Field {
 
   const MSG_MISSING = 'The field %s is missing';
 
-  public function reflectRegister($content = null) {
+  public function reflectRegister($content = null, $sReflector = '') {
 
+    $this->setReflectorName($sReflector);
     $this->getParent()->addElement($this, $this->getDefault(), $content);
   }
 

@@ -12,6 +12,7 @@ class Table extends Element implements schema\table {
 
     $parser = $this->getParser();
     $type = $this->loadSimpleComponent('component/complexType', $parser);
+    $type->loadIdentity();
     $particle = $this->loadComponent('component/particle', $el, $parser);
 
     $type->addParticle($particle);

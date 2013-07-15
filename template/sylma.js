@@ -201,7 +201,7 @@ sylma.ui = new sylma.classes.ui;
 
 (function() {
 
-  var ui = this;
+  var ui = self = this;
 
   this.Base = new Class({
 
@@ -215,10 +215,6 @@ sylma.ui = new sylma.classes.ui;
     nodes : [],
     settings : {},
     options : [],
-
-    props : {
-
-    },
 
     objects : {},
 
@@ -253,17 +249,17 @@ sylma.ui = new sylma.classes.ui;
 
     initBasic : function(props) {
 
-      if (!props.id) throw 'No node associated';
+      this.parentObject = props.parentObject;
+      this.parentKey = props.parentKey;
 
-      this.node = $(props.id);
+      if (!props.id && !props.node) throw 'No node associated';
+
+      this.node = props.node ? $(props.node) : $(props.id);
 
       if (!this.node) {
 
         throw new Error('Main node [@id=' + props.id + '] not found');
       }
-
-      this.parentObject = props.parentObject;
-      this.parentKey = props.parentKey;
 
       this.prepareNodes(this.node);
     },
@@ -396,14 +392,23 @@ sylma.ui = new sylma.classes.ui;
       return result;
     },
 
-    getObject : function(name) {
+    getObject : function(name, debug) {
+
+      var result;
+
+      if (debug === undefined) debug = true;
 
       if (!this.objects[name]) {
 
-        throw new Error('No object named ' + name);
+        if (debug) throw new Error('No object named ' + name);
+        result = null;
+      }
+      else {
+
+        result = this.objects[name];
       }
 
-      return this.objects[name];
+      return result;
     },
 
     send : function(path, args) {
@@ -435,7 +440,23 @@ sylma.ui = new sylma.classes.ui;
 
     downlight : function() {
 
-      this.getNode().removeClass('sylma-highlight')
+      this.getNode().removeClass('sylma-highlight');
+    },
+
+    remove : function() {
+
+      this.hide();
+      this.getNode().morph({
+        padding : 0,
+        margin : 0,
+        height : 0
+      });
+
+      (function() {
+
+        this.getNode().destroy();
+
+      }).delay(2000, this);
     }
   });
 
@@ -499,7 +520,7 @@ sylma.ui = new sylma.classes.ui;
 
       this.getNode().removeClass('sylma-visible');
     }
-  })
+  });
 
 
 }).call(sylma.ui);

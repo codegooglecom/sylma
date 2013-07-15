@@ -91,6 +91,45 @@
       <div class="/sylma/view/test/grouped/attributexml-complex-token-test"/>
     </tst:node>
   </tst:test>
+  <tst:test name="html chars in attribute">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <a href="id=1&amp;name={name}"><tpl:apply select="name"/></a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><a href="id=1&amp;name=admin">admin</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="html chars in token">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <a>
+              <tpl:token name="href">abc&amp;def</tpl:token>
+              <tpl:apply select="name"/>
+            </a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><a href="abc&amp;def">admin</a></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Complex token with read">
     <tst:document>
       <view:view user:ns="ns">

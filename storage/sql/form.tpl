@@ -24,25 +24,9 @@
 
   <view:template mode="action"/>
 
-  <view:template match="*" mode="_tmp">
+  <view:template match="*" mode="container/empty">
 
-    <tpl:argument name="alias" default="alias()"/>
-    <tpl:argument name="title" default="title()"/>
-    <tpl:argument name="type" default="'text'"/>
-    <tpl:argument name="value" default="value()"/>
-
-    <tpl:apply mode="container">
-      <tpl:read tpl:name="alias" select="$alias"/>
-      <tpl:read tpl:name="title" select="$title"/>
-      <tpl:read tpl:name="type" select="$type"/>
-      <tpl:read tpl:name="value" select="$value"/>
-    </tpl:apply>
-
-  </view:template>
-
-  <view:template match="*" mode="container">
-
-    <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="title" default="title()"/>
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="value" default="''"/>
@@ -59,13 +43,16 @@
         <tpl:read tpl:name="alias" select="$alias"/>
         <tpl:read tpl:name="title" select="$title"/>
       </tpl:apply>
-      <tpl:apply mode="input">
+      <tpl:apply mode="input/empty">
         <tpl:read tpl:name="alias" select="$alias"/>
         <tpl:read tpl:name="type" select="$type"/>
-        <tpl:read tpl:name="value" select="$value"/>
       </tpl:apply>
     </div>
 
+  </view:template>
+
+  <view:template match="*" mode="container">
+    <tpl:apply mode="container/empty"/>
   </view:template>
 
   <view:template match="*" mode="register">
@@ -74,7 +61,7 @@
 
   <view:template match="*" mode="label">
 
-    <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="title" default="title()"/>
 
     <label for="form-{$alias}"><tpl:read select="$title"/> :</label>
@@ -82,22 +69,23 @@
   </view:template>
 
   <view:template match="*" mode="input">
+    <tpl:apply mode="input/empty"/>
+  </view:template>
+
+  <view:template match="*" mode="input/empty">
 
     <tpl:argument name="alias" default="alias('form')"/>
-    <tpl:argument name="value" default="value()"/>
     <tpl:argument name="type" default="'text'"/>
 
-    <input class="field-input field-input-element" type="{$type}" id="form-{$alias}" value="{$value}" name="{$alias}"/>
+    <input class="field-input field-input-element" type="{$type}" id="form-{$alias}" name="{$alias}"/>
 
   </view:template>
 
-  <view:template match="sql:string-long" mode="input" sql:ns="ns">
-    <textarea id="form-{alias()}" name="{alias()}" class="field-input field-input-element">
-      <tpl:apply/>
-    </textarea>
+  <view:template match="sql:string-long" mode="input/empty" sql:ns="ns">
+    <textarea id="form-{alias()}" name="{alias()}" class="field-input field-input-element"></textarea>
   </view:template>
 
-  <view:template match="sql:foreign" mode="input" sql:ns="ns">
+  <view:template match="sql:foreign" mode="input/empty" sql:ns="ns">
     <tpl:if test="is-multiple()">
       <tpl:apply mode="select-multiple-notest"/>
       <tpl:else>
@@ -106,24 +94,63 @@
     </tpl:if>
   </view:template>
 
+  <view:template match="sql:table" sql:ns="ns" mode="empty">
+    <tpl:apply select="* ^ sql:foreign" mode="container/empty"/>
+  </view:template>
+
+  <view:template match="sql:table" sql:ns="ns">
+    <tpl:apply select="* ^ sql:foreign" mode="container"/>
+  </view:template>
+
+  <view:template match="sql:table" sql:ns="ns" mode="update">
+    <div js:class="sylma.crud.fieldset.Row" class="form-reference clearfix">
+      <tpl:apply/>
+      <button type="button" class="right">
+        <js:event name="click">
+          %object%.remove();
+        </js:event>
+        <tpl:text>-</tpl:text>
+      </button>
+    </div>
+  </view:template>
+
   <view:template match="sql:reference" mode="container" sql:ns="ns">
-    <fieldset>
+    <fieldset js:class="sylma.crud.fieldset.Container">
       <legend>
         <tpl:read select="title()"/>
       </legend>
-      <tpl:apply mode="container" required="x"/>
+      <button type="button">
+        <js:event name="click">
+          %object%.addTemplate();
+        </js:event>
+        <tpl:text>+</tpl:text>
+      </button>
+      <div js:name="template" js:class="sylma.crud.fieldset.Template" class="form-reference clearfix sylma-hidder" style="display: none">
+        <tpl:apply select="static()" mode="empty"/>
+        <button type="button" class="right">
+          <js:event name="click">
+            %object%.remove();
+          </js:event>
+          <tpl:text>-</tpl:text>
+        </button>
+      </div>
+      <div js:node="content">
+        <tpl:apply select="ref()" mode="update"/>
+      </div>
     </fieldset>
   </view:template>
 
   <view:template match="*" mode="select-notest">
-    <select id="form-{alias()}" name="{alias()}">
+    <tpl:argument name="alias" default="alias('form')"/>
+    <select id="form-{$alias}" name="{$alias}">
       <option value="0">&lt; Choisissez &gt;</option>
       <tpl:apply select="all()" mode="select-option"/>
     </select>
   </view:template>
 
   <view:template match="*" mode="select-test">
-    <select id="form-{alias()}" name="{alias()}">
+    <tpl:argument name="alias" default="alias('form')"/>
+    <select id="form-{$alias}" name="{$alias}">
       <option value="0">&lt; Choisissez &gt;</option>
       <tpl:apply select="all()" mode="select-option-test"/>
     </select>
@@ -139,17 +166,19 @@
   </view:template>
 
   <view:template match="*" mode="select-multiple-notest">
-    <select id="form-{alias()}" name="{alias()}" multiple="multiple">
+    <tpl:argument name="alias" default="alias('form')"/>
+    <select id="form-{$alias}" name="{$alias}" multiple="multiple">
       <option value="0">&lt; Choisissez &gt;</option>
       <tpl:apply select="all()" mode="select-option"/>
     </select>
   </view:template>
 
   <view:template match="*" mode="select-multiple-test">
+    <tpl:argument name="alias" default="alias('form')"/>
     <tpl:variable name="values">
       <tpl:read select="values()"/>
     </tpl:variable>
-    <select id="form-{alias()}" name="{alias()}" multiple="multiple">
+    <select id="form-{$alias}" name="{$alias}" multiple="multiple">
       <option value="0">&lt; Choisissez &gt;</option>
       <tpl:apply select="all()" mode="select-multiple-option-test">
         <tpl:read select="$values" tpl:name="values"/>
@@ -174,13 +203,16 @@
   </view:template>
 
   <view:template match="ssd:password" mode="input" ssd:ns="ns">
+    <tpl:apply mode="input/empty"/>
+  </view:template>
+
+  <view:template match="ssd:password" mode="input/empty" ssd:ns="ns">
 
     <tpl:argument name="alias" default="alias()"/>
 
-    <tpl:apply mode="input">
+    <tpl:apply mode="input/empty">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'password'"/>
-      <tpl:read tpl:name="value" select="''"/>
     </tpl:apply>
 
   </view:template>

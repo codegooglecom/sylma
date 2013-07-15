@@ -76,7 +76,13 @@
 
   <xsl:template match="php:foreach">
     <xsl:text>foreach (</xsl:text>
-    <xsl:apply-templates select="php:looped/*"/> as <xsl:apply-templates select="php:var/*"/>
+    <xsl:variable name="key">
+      <xsl:if test="php:key">
+        <xsl:apply-templates select="php:key/*"/>
+        <xsl:text> => </xsl:text>
+      </xsl:if>
+    </xsl:variable>
+    <xsl:apply-templates select="php:looped/*"/> as <xsl:value-of select="$key"/><xsl:apply-templates select="php:var/*"/>
     <xsl:text>) {</xsl:text>
     <xsl:value-of select="$break"/>
     <xsl:apply-templates select="php:content/*"/>

@@ -34,7 +34,7 @@ class Readable extends Domed implements core\argument {
         $this->throwException(sprintf('No argument or array found at path "%s"', $sPath));
       }
 
-      $mResult = null;
+      $mResult = array();
     }
 
     return $mResult;

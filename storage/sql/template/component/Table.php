@@ -65,6 +65,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->source ? $this->source : $this->getQuery()->getVar();
   }
 
+  public function getKey() {
+
+    return parent::getKey();
+  }
+
   protected function createQuery($sName) {
 
     $query = $this->loadSimpleComponent("template/$sName", $this);
@@ -96,17 +101,16 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
   }
 
-  public function reflectApply($sMode = '', array $aArguments = array()) {
+  public function reflectApply($sMode = '', array $aArguments = array(), $bStatic = false) {
 
     if ($tpl = $this->lookupTemplate($sMode)) {
 
       $tpl->setTree($this);
       $tpl->sendArguments($aArguments);
 
-      if ($this->insertQuery()) {
+      if (!$bStatic && $this->insertQuery()) {
 
         $aResult[] = $this->getQuery();
-
         $this->insertQuery(false);
       }
 
@@ -170,15 +174,21 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
     foreach ($aExcluded as $sName) {
 
-      list($sNamespace, $sName) = $this->getParser()->parseName($sName);
-      $aRemoved[] = $this->getElement($sName, $sNamespace, false);
+      list($sNamespace, $sName) = $this->parseName($sName);
+
+      if (!$removed = $this->getElement($sName, $sNamespace, false)) {
+
+        $removed = $this->getParser()->getType($sName, $sNamespace, false);
+      }
+
+      $aRemoved[] = $removed;
     }
 
     foreach ($this->getElements() as $element) {
 
       foreach ($aRemoved as $excluded) {
 
-        if ($excluded === $element) {
+        if ($excluded === $element || $element->getType() === $excluded) {
 
           continue 2;
         }

@@ -29,11 +29,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $this->var = $var;
   }
 
-  public function getAlias() {
-
-    return $this->getName();
-  }
-
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
@@ -43,7 +38,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
     switch ($sName) {
 
-      case 'alias' : $result = $this->getAlias(); break;
+      case 'alias' : $result = $this->reflectFunctionAlias($sMode, $bRead, $sArguments); break;
       case 'name' : $result = $this->getName(); break;
       case 'is-optional' : $result = $this->isOptional(); break;
       case 'is-multiple' : $result = $this->getMaxOccurs(true); break;

@@ -9,18 +9,65 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
   protected $bAlias = false;
 
-  public function getAlias() {
+  protected function getParentKey() {
 
-    if ($this->useAlias()) {
+    return '';
+  }
 
-      $sResult = $this->getParent()->getName() . '_' . $this->getName();
+  protected function reflectFunctionAlias($sMode, $bRead, $sArguments) {
+
+    $aArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead);
+    $sMode = $aArguments ? array_pop($aArguments) : '';
+
+    return $this->getAlias($sMode);
+  }
+
+  public function getAlias($sMode = '') {
+
+    switch ($sMode) {
+
+      case 'form' :
+
+        if ($this->isSub()) {
+
+          $mResult = $this->getWindow()->toString(array($this->getParent()->getParent()->getName(), '[', $this->getParentKey(), "][{$this->getName()}]"));
+        }
+        else {
+
+          $mResult = $this->getAlias();
+        }
+
+        break;
+
+      case 'key' :
+
+        $mResult = $this->getName();
+        break;
+
+      case '' :
+
+        if ($this->useAlias()) {
+
+          $mResult = $this->getParent()->getName() . '_' . $this->getName();
+        }
+        else {
+
+          $mResult = $this->getName();
+        }
+
+        break;
+
+      default :
+
+        $this->launchException("Unknown alias() mode : $sMode");
     }
-    else {
 
-      $sResult = $this->getName();
-    }
+    return $mResult;
+  }
 
-    return $sResult;
+  protected function isSub() {
+
+    return $this->getParent()->isSub();
   }
 
   public function useAlias($bVal = null) {

@@ -7,6 +7,8 @@ class ComplexType extends parser\component\Complex {
 
   public function parseRoot(dom\element $el) {
 
+    $this->setNode($el);
+
     $this->setName($el->readx('@name', array(), false));
 
     if ($content = $el->getx('self:complexContent', array(), false)) {

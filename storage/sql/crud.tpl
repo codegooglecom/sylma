@@ -51,34 +51,7 @@
 
     <view:view mode="view" _debug="x" groups="view" sql:ns="ns">
 
-      <view:template match="*" mode="container">
-
-        <tpl:argument name="alias" default="alias()"/>
-        <tpl:argument name="title" default="title()"/>
-        <tpl:argument name="type" default="'text'"/>
-        <tpl:argument name="value" default="value()"/>
-
-        <tpl:apply mode="container">
-          <tpl:read tpl:name="alias" select="$alias"/>
-          <tpl:read tpl:name="title" select="$title"/>
-          <tpl:read tpl:name="type" select="$type"/>
-          <tpl:read tpl:name="value" select="$value"/>
-        </tpl:apply>
-
-      </view:template>
-
-      <view:template match="sql:foreign" mode="container">
-
-        <tpl:if test="is-multiple()">
-          <tpl:apply mode="container">
-            <tpl:text tpl:name="value">0</tpl:text>
-          </tpl:apply>
-          <tpl:else>
-            <tpl:apply mode="container"/>
-          </tpl:else>
-        </tpl:if>
-
-      </view:template>
+      <tpl:import>update.tpl</tpl:import>
 
       <view:template mode="init">
         <tpl:token name="action"><le:path/>/update/do.json</tpl:token>
@@ -86,15 +59,6 @@
         <js:option name="id"><tpl:read select="id"/></js:option>
         <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
         <tpl:apply mode="title"/>
-      </view:template>
-
-      <view:template match="sql:foreign" mode="input" sql:ns="ns">
-        <tpl:if test="is-multiple()">
-          <tpl:apply mode="select-multiple-test"/>
-          <tpl:else>
-            <tpl:apply mode="select-test"/>
-          </tpl:else>
-        </tpl:if>
       </view:template>
 
     </view:view>
@@ -117,13 +81,6 @@
   <crud:group name="view">
 
     <js:include>/#sylma/template/crud.js</js:include>
-
-    <view:template mode="form/token">
-      <sql:token>
-        <crud:path/>
-        <tpl:text>/do</tpl:text>
-      </sql:token>
-    </view:template>
 
   </crud:group>
 

@@ -87,7 +87,7 @@ class Type extends Basic implements core\tokenable {
 
   public function asToken() {
 
-    return "schema:type [{$this->getNamespace()}:{$this->getName()}]";
+    return "[{$this->getNamespace()}:{$this->getName()}]";
   }
 }
 

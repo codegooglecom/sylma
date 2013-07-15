@@ -54,7 +54,7 @@ abstract class Attributed extends Domed {
 
   protected function parseAttributeArray($sName, array $aValue) {
 
-    $aResult = array();
+    $aResult = $aContent = array();
     $bFirst = true;
 
     $aResult[] = $sName;
@@ -62,12 +62,14 @@ abstract class Attributed extends Domed {
 
     foreach ($this->getWindow()->parseArrayables($aValue) as $mVal) {
 
-      if (!$bFirst) $aResult[] = ' ';
+      if (!$bFirst) $aContent[] = ' ';
       $bFirst = false;
 
-      if (is_string($mVal)) $aResult[] = $this->parseAttributeValue($mVal);
-      else $aResult[] = $mVal;
+      if (is_string($mVal)) $aContent[] = $this->parseAttributeValue($mVal);
+      else $aContent[] = $mVal;
     }
+
+    $aResult[] = $this->getParser()->xmlize($aContent);
 
     $aResult[] = '"';
 

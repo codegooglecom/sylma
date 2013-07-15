@@ -6,6 +6,7 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema\parser, sylma\parser\
 class Rooted extends sql\schema\component\Table {
 
   protected $source;
+  protected $key;
 
   protected $query;
   protected $bInsertQuery = true;
@@ -28,6 +29,16 @@ class Rooted extends sql\schema\component\Table {
   protected function getSource() {
 
     return $this->source;
+  }
+
+  protected function setKey(common\_var $key) {
+
+    $this->key = $key;
+  }
+
+  protected function getKey() {
+
+    return $this->key;
   }
 
   public function setQuery(sql\query\parser\Basic $query) {

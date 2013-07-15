@@ -29,6 +29,8 @@ class Context extends reflector\component\Foreigner implements common\arrayable 
 
   protected function loadCalls(common\callable $context, $aContent) {
 
+    $aResult = array();
+
     foreach ($aContent as $content) {
 
       $aResult[] = $context->call('add', array($content));

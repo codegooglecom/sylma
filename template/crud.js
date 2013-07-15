@@ -117,6 +117,12 @@ sylma.crud.Form = new Class({
 
   submitParse : function(response, args) {
 
+    this.parseMessages(response);
+    this.submitReturn(response, args);
+  },
+
+  parseMessages : function(response) {
+
     if (response.messages) {
 
       for (var i in response.messages) {
@@ -125,13 +131,17 @@ sylma.crud.Form = new Class({
 
         if (msg.arguments) {
 
-          this.getObject(msg.arguments.alias).highlight();
+          this.parseMessage(msg);
           delete(response.messages[i]);
         }
       }
     }
 
-    this.submitReturn(response, args);
+  },
+
+  parseMessage : function(msg) {
+
+    this.getObject(msg.arguments.alias).highlight();
   },
 
   submitReturn : function(response, args) {
@@ -156,6 +166,12 @@ sylma.crud.Field = new Class({
 
   Extends : sylma.ui.Base,
 
+  initialize : function(props) {
+
+    this.parent(props);
+    this.props = props;
+  },
+
   setValue : function(val) {
 
     this.getInput().set('value', val);
@@ -163,7 +179,7 @@ sylma.crud.Field = new Class({
 
   getInput : function() {
 
-    return this.getNode('input', false) || this.getNode();
+    return this.getNode('input', false) || this.getNode().getElement('input, select, textarea');
   },
 
   highlight : function() {
@@ -174,7 +190,42 @@ sylma.crud.Field = new Class({
   downlight : function() {
 
     this.getNode().removeClass('field-statut-invalid');
-  }
+  },
+
+  clonePrepare : function() {
+
+    var id = 'sylma' + Math.floor(Math.random(new Date().getSeconds()) * 999);
+    this.getNode().addClass(id);
+
+    var input = this.getInput();
+    input.set('data-name', input.get('name'));
+    input.set('name');
+    
+    this.cloneID = id;
+  },
+
+  clone : function(parent, node, position) {
+
+    var props = this.props;
+
+    props.node = node.getElements('.' + this.cloneID).pick();
+    props.id = null;
+    props.parentObject = parent;
+
+    var result = sylma.ui.createObject(props);
+    result.updateID(position);
+
+    return result;
+  },
+
+  updateID : function(id) {
+
+    var input = this.getInput();
+    var name = input.get('data-name').replace(/\[\]/, '[' + id + ']');
+    input.set('name', name);
+    input.set('id', name);
+    this.getNode().getElement('label').set('for', name);
+  },
 });
 
 sylma.crud.Text = new Class({
@@ -332,3 +383,142 @@ sylma.crud.Head = new Class({
     return false;
   }
 });
+
+sylma.crud.fieldset = {};
+
+(function() {
+
+  var self = this;
+
+  this.Container = new Class({
+
+    Extends : sylma.ui.Container,
+
+    getCount : function() {
+
+      return this.getNode('content').getChildren().length;
+    },
+
+    addTemplate : function() {
+
+      var row = this.createTemplate(this.getCount() + 1);
+      this.getNode('content').grab(row.getNode());
+      setTimeout(function() {row.show()}, 1);
+    },
+
+    createTemplate : function(position) {
+
+      return this.getObject('template').clone(position);
+    }
+  });
+
+  this.Row = new Class({
+
+    Extends : sylma.ui.Container,
+    position : 0,
+
+    setPosition : function(pos) {
+
+      this.position = pos;
+    },
+
+    cloneContent : function(objects, tmp) {
+
+      this.getNode().setStyle('display', 'block');
+
+      var result = {
+        objects : {},
+        tmp : []
+      }
+
+      for (var i in objects) {
+
+        result.objects[i] = this.cloneSub(objects[i]);
+      }
+
+      for (i = 0; i < tmp.length; i++) {
+
+        result.tmp[i] = this.cloneSub(tmp[i]);
+      }
+
+      this.objects = result.objects;
+      this.tmp = result.tmp;
+    },
+
+    cloneSub : function(obj) {
+
+      var result = obj.clone(this, this.getNode(), this.position);
+
+      return result;
+    }
+  });
+
+  this.Template = new Class({
+
+    Extends : this.Row,
+
+    initialize : function(props) {
+
+      this.parent(props);
+
+      this.props = props;
+      this.prepare();
+    },
+
+    prepare : function() {
+
+      var objects = this.tmp.slice(0);
+      Object.each(this.objects, function(item) {
+        objects.push(item);
+      });
+
+      for (var i = 0; i < objects.length; i++) {
+
+        objects[i].clonePrepare();
+      }
+    },
+
+    clone : function(position) {
+
+      var props = this.props;
+      props.objects = {};
+
+      props.node = this.getNode().clone(true);
+
+      var clone = sylma.ui.createObject(props);
+
+      clone.setPosition(position);
+      clone.cloneContent(this.objects, this.tmp);
+
+      return clone;
+    }
+  });
+
+}).call(sylma.crud.fieldset);
+
+sylma.crud.Group = new Class({
+
+  Extends : sylma.ui.Container,
+  elements : [],
+
+  initialize : function(props) {
+
+    this.parent(props);
+    this.elements = Object.keys(this.objects);
+  },
+
+  highlight : function(alias) {
+
+    var result = false;
+    var obj = this.getObject(alias, false);
+
+    if (obj) {
+
+      result = true;
+      obj.highlight();
+    }
+
+    return result;
+  }
+
+})

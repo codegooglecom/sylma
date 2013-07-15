@@ -24,7 +24,7 @@ class Reference extends sql\template\component\Reference {
 
     if ($aPath) {
 
-      $result = $this->getParser()->parsePathToken($collection, $aPath, $sMode);
+      $result = $this->getParser()->parsePathToken($collection, $aPath, $sMode, false, $aArguments);
     }
     else {
 

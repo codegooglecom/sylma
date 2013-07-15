@@ -181,31 +181,37 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
    * @param boolean $bDebug
    * @return type\Basic
    */
-  public function getType($sName, $sNamespace) {
+  public function getType($sName, $sNamespace, $bDebug = true) {
 
     //list($sNamespace, $sName) = $this->parseName($sName, $source, $context);
 
     if (!$result = $this->loadType($sName, $sNamespace)) {
 
-      $el = $this->lookupType($sName, $sNamespace);
+      if ($el = $this->lookupType($sName, $sNamespace, $bDebug)) {
 
-      $result = $this->parseComponent($el);
-      $result->setNamespace($sNamespace, self::TYPE_PREFIX);
+        $result = $this->parseComponent($el);
+        $result->setNamespace($sNamespace, self::TYPE_PREFIX);
 
-      $this->addType($result);
+        $this->addType($result);
+      }
     }
 
     return $result;
   }
 
-  protected function lookupType($sName, $sNamespace) {
+  protected function lookupType($sName, $sNamespace, $bDebug = true) {
 
     if (!isset($this->aTypesNodes[$sNamespace][$sName])) {
 
-      $this->launchException("Cannot find type $sNamespace:$sName");
+      if ($bDebug) $this->launchException("Cannot find type $sNamespace:$sName");
+      $result = null;
+    }
+    else {
+
+      $result = $this->aTypesNodes[$sNamespace][$sName];
     }
 
-    return $this->aTypesNodes[$sNamespace][$sName];
+    return $result;
   }
 
   protected function loadDefaultNamespace(dom\document $doc) {

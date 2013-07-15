@@ -8,6 +8,7 @@ class Collection extends Rooted implements sql\template\pathable {
   protected $table;
   protected $pager;
   protected $counter;
+  protected $key;
 
   public function getElement($sName, $sNamespace = null) {
 
@@ -37,8 +38,11 @@ class Collection extends Rooted implements sql\template\pathable {
 
     $window = $this->getWindow();
 
-    $var = $window->createVariable('', '\sylma\core\argument', false);
-    $this->setSource($var);
+    $source = $window->createVariable('', '\sylma\core\argument', false);
+    $key = $window->createVariable('', 'php-string', false);
+
+    $this->setSource($source);
+    $this->setKey($key);
 
     $this->getQuery()->isMultiple(true);
     $this->getTable()->insertQuery(false);
@@ -48,7 +52,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
     $window = $this->getWindow();
 
-    $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource());
+    $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource(), $this->getKey());
     $loop->setContent($window->parseArrayables(array($result)));
 
     $aResult[] = $loop;
@@ -107,6 +111,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->preBuild();
 
     $this->getTable()->setSource($this->getSource());
+    $this->getTable()->setKey($this->getKey());
     $this->getTable()->setQuery($this->getQuery());
 
     $content = $this->getTable()->reflectApply($sMode, $aArguments);

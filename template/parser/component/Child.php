@@ -45,5 +45,10 @@ class Child extends reflector\component\Foreigner {
 
     return $this->getTemplate()->getTree();
   }
+
+  protected function parseText(dom\text $node, $bTrim = true) {
+
+    return $this->getParser()->xmlize(parent::parseText($node, $bTrim));
+  }
 }
 

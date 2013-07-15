@@ -7,19 +7,7 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
   protected function getParentKey() {
 
-    $parent = $this->getParent();
-    $id = $parent->getElement('id');
-
-    if ($id === $this) {
-
-      $result = $this->getName();
-    }
-    else {
-
-      $result = $id->reflectRead();
-    }
-
-    return $result;
+    return $this->getParent()->getKey();
   }
 
   protected function reflectApplySelf($sMode = '', array $aArguments = array()) {

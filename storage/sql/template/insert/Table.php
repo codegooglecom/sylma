@@ -20,6 +20,11 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->setSource($this->getWindow()->getVariable('post'));
   }
 
+  public function getAlias($sMode = '') {
+
+    $this->getName();
+  }
+
   public function addElement(sql\schema\element $el, $sDefault = '', $content = null) {
 
     if ($this->getHandler()) {

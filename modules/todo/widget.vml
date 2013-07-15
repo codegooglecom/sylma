@@ -35,8 +35,8 @@
             <le:directory/>
             <tpl:text>/index/insert?url=</tpl:text>
             <le:manager name="path"/>
-          </tpl:token>
-          <tpl:text>Add</tpl:text>
+          </tpl:token> 
+          <tpl:text>ADD</tpl:text>
         </a>
         <tpl:if test="has-children()">
           <ul>

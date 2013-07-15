@@ -58,7 +58,7 @@
       <div><h3>admin</h3><a href="mailto:email">test</a></div>
     </tst:node>
   </tst:test>
-  <tst:test name="XML chars">
+  <tst:test name="html chars in content">
     <tst:document>
       <view:view sql:ns="ns">
         <sql:resource>
@@ -205,6 +205,30 @@
     </tst:document>
     <tst:node>
       <div><a href="mailto:email">admin@sylma.org</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Apply all excluding type">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="* ^ sql:foreign"/>
+          </div>
+        </view:template>
+        <view:template match="*">
+          <input name="{alias()}"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <input name="id"/>
+        <input name="name"/>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Multiple apply">

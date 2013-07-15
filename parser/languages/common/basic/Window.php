@@ -497,14 +497,14 @@ return; // todo, decide to use or not
     return $this->create('instanciate', array($this, $instance, $aArguments));
   }
 
-  public function createLoop($looped, common\_var $var) {
+  public function createLoop($looped, common\_var $var, common\_var $key = null) {
 
     if (!$looped) {
 
       $this->throwException('Looped object required');
     }
 
-    return $this->create('loop', array($this, $looped, $var));
+    return $this->create('loop', array($this, $looped, $var, null, $key));
   }
 
   public function createTest($val1, $val2, $op = '==') {

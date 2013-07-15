@@ -5,6 +5,11 @@ use sylma\core, sylma\storage\sql;
 
 class Foreign extends sql\template\component\Foreign {
 
+  protected function getParentKey() {
+
+    return $this->getParent()->getKey();
+  }
+
   protected function addToQuery() {
 
     $this->getParent()->addElementToQuery($this);

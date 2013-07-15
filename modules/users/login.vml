@@ -14,7 +14,7 @@
 
   <crud:route>
 
-    <view:view mode="hollow">
+    <view:view mode="hollow" _debug="x">
 
       <tpl:constant name="form-cols">name,password</tpl:constant>
 

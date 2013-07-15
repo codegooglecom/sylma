@@ -141,6 +141,29 @@ $this->launchException('Not yet tested');
     $this->launchException('No usage defined');
   }
 
+  public function xmlize($mValue) {
+
+    if (is_string($mValue)) {
+
+      $mResult = htmlspecialchars($mValue);
+    }
+    else if (is_array($mValue)) {
+
+      foreach ($mValue as &$mSub) {
+
+        $mSub = $this->xmlize($mSub);
+      }
+
+      $mResult = $mValue;
+    }
+    else {
+
+      $mResult = $mValue;
+    }
+
+    return $mResult;
+  }
+
   public function getRegistered() {
 
     return $this->aRegistered;

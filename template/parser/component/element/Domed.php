@@ -79,20 +79,6 @@ abstract class Domed extends template\parser\component\Unknowned implements temp
     return $sName;
   }
 
-  protected function xmlize($mValue) {
-
-    if (is_string($mValue)) {
-
-      $mResult = htmlspecialchars($mValue);
-    }
-    else {
-
-      $mResult = $mValue;
-    }
-
-    return $mResult;
-  }
-
   public function asToken() {
 
     return $this->getNode(false) ? $this->getNode()->asToken() : '[No node defined]';

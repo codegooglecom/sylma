@@ -31,6 +31,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
       //case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
       case 'title' : $result = $this->getTitle(); break;
+      case 'static' : $result = $this->reflectStatic($aPath, $sMode); break;
 
       default :
 
@@ -70,6 +71,11 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     return $this->reflectApplySelf($sMode, $aArguments);
   }
 
+  protected function reflectStatic(array $aPath, $sMode) {
+
+    return $this->getElementRef()->reflectApply($sMode, $aPath, true);
+  }
+
   public function reflectRead() {
 
     return null;
@@ -93,6 +99,21 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     }
 
     return $result;
+  }
+
+  public function reflectRegister() {
+
+    $this->launchException('Cannot register reference');
+  }
+
+  public function reflectApplyAll() {
+
+    $this->launchException('Should not be called');
+  }
+
+  public function reflectApplyDefault() {
+
+    $this->launchException('Should not be called');
   }
 }
 

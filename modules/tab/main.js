@@ -35,6 +35,23 @@ sylma.ui.tab.Main = new Class({
     this.go(0);
   },
 
+  parseMessage : function(msg) {
+
+    var alias = msg.arguments.alias;
+    this.highlightTab(alias);
+  },
+
+  highlightTab : function(alias) {
+
+    for (var i in this.tabs) {
+
+      if (this.tabs[i].highlight(alias)) {
+
+        break;
+      }
+    }
+  },
+
   getTab : function(index) {
 
     return this.tabs[index];
@@ -186,7 +203,7 @@ sylma.ui.tab.Container = new Class({
 
 sylma.ui.tab.Tab = new Class({
 
-  Extends : sylma.ui.Container,
+  Extends : sylma.crud.Group,
   width : 0,
 
   initialize : function(options) {

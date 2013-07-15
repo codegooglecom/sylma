@@ -58,7 +58,9 @@ class Token extends Child implements template_ns\parser\component {
 
   protected function parseText(dom\text $node, $bTrim = true) {
 
-    return $bTrim ? trim($node->getValue()) : $node->getValue();
+    $sValue = parent::parseText($node);
+
+    return $bTrim ? trim($sValue) : $sValue;
   }
 
   public function getCall() {

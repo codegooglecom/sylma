@@ -14,41 +14,6 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return '';
   }
 
-  public function getAlias($sMode = '') {
-
-    switch ($sMode) {
-
-      case 'form' :
-
-        if ($this->isSub()) {
-
-          $mResult = $this->getWindow()->toString(array($this->getParent()->getName(), '[', $this->getParentKey(), "][{$this->getName()}]"));
-        }
-        else {
-
-          $mResult = $this->getAlias();
-        }
-
-        break;
-
-      case 'key' :
-
-        $mResult = $this->getName();
-        break;
-
-      case '' :
-
-        $mResult = parent::getAlias();
-        break;
-
-      default :
-
-        $this->launchException("Unknown alias() mode : $sMode");
-    }
-
-    return $mResult;
-  }
-
   protected function isSub() {
 
     return $this->getParent()->isSub();
@@ -114,14 +79,6 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     }
 
     return $result;
-  }
-
-  protected function reflectFunctionAlias($sMode, $bRead, $sArguments) {
-
-    $aArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead);
-    $sMode = $aArguments ? array_pop($aArguments) : '';
-
-    return $this->getAlias($sMode);
   }
 
   public function reflectApplyAll($sMode, array $aArguments = array()) {

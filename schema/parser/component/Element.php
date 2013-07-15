@@ -16,6 +16,7 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
 
   protected $bOptional = false;
 
+  protected $sReflector = '';
   protected $reflector;
 
   public function setParent(schema\parser\element $parent) {
@@ -207,9 +208,23 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
     return $this->reflector;
   }
 
+  protected function loadReflector() {
+
+    return $this->sReflector;
+  }
+
+  protected function setReflectorName($sName) {
+
+    $this->sReflector = $sName;
+  }
+
   public function buildReflector(array $aArguments = array()) {
 
-    if (!$result = $this->parseReflector($aArguments)) {
+    if ($sClass = $this->loadReflector()) {
+
+      $result = $this->createObject($sClass, $aArguments, null, false);
+    }
+    else if (!$result = $this->parseReflector($aArguments)) {
 
       if (!$this->getType(false) || !$result = $this->getType()->buildReflector($aArguments)) {
 
