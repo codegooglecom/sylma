@@ -44,19 +44,11 @@
   </view:template>
 
   <view:template match="*" mode="input">
-
-    <tpl:argument name="alias" default="alias('form')"/>
-    <tpl:argument name="value" default="value()"/>
-    <tpl:argument name="type" default="'text'"/>
-
-    <input class="field-input field-input-element" type="{$type}" id="form-{$alias}" value="{$value}" name="{$alias}"/>
-
+    <tpl:apply mode="input/update"/>
   </view:template>
 
   <view:template match="sql:string-long" mode="input" sql:ns="ns">
-    <textarea id="form-{alias()}" name="{alias()}" class="field-input field-input-element">
-      <tpl:apply/>
-    </textarea>
+    <tpl:apply mode="input/update"/>
   </view:template>
 
   <view:template match="sql:foreign" mode="container">
