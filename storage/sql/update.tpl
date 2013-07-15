@@ -81,11 +81,4 @@
     </tpl:if>
   </view:template>
 
-  <view:template mode="form/token">
-    <sql:token>
-      <crud:path/>
-      <tpl:text>/do</tpl:text>
-    </sql:token>
-  </view:template>
-
 </view:view>
