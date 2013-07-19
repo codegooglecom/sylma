@@ -5,6 +5,8 @@ use sylma\core, sylma\storage\sql, sylma\parser\languages\common;
 
 class Foreign extends sql\template\component\Foreign {
 
+  const JUNCTION_MODE = 'insert';
+
   protected function reflectFunctionAll(array $aPath, $sMode, array $aArguments = array()) {
 
     return null;
@@ -25,20 +27,16 @@ class Foreign extends sql\template\component\Foreign {
     return $this->getParser()->getView()->getResult();
   }
 
-  protected function buildMultiple(sql\schema\table $junction, sql\schema\field $source, sql\schema\field $target) {
+  protected function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
 
     $window = $this->getWindow();
     $val = $window->createVariable('', 'php-null');
-    $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName()), $val);
+    $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $val);
 
-    $query = $this->loadSimpleComponent('template/insert');
-
-    $junction->setQuery($query);
-    $query->setTable($junction);
     $junction->addElement($source, '', $this->loadID());
-    $junction->addElement($target, '', $this->reflectEscape($val));
+    $junction->addElement($target, '', $val);
 
-    $loop->addContent($query);
+    $loop->addContent($junction);
 
     return array($loop);
   }

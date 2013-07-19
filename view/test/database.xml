@@ -5,7 +5,7 @@
   <debug>
     <show>0</show>
   </debug>
-  <database>test</database>
+  <database>sandbox</database>
   <host>localhost</host>
   <user>test</user>
   <password>test</password>
@@ -14,6 +14,7 @@
     CREATE TABLE IF NOT EXISTS `user` (
       `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
       `name` varchar(255) COLLATE utf8_bin NOT NULL,
+      `email` varchar(65) COLLATE utf8_bin NOT NULL,
       `password` varchar(255) COLLATE utf8_bin NOT NULL,
       `group_id` int(10) unsigned NOT NULL,
       PRIMARY KEY (`id`)

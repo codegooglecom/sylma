@@ -152,7 +152,7 @@ sylma.crud.Form = new Class({
 
     if (!result.errors && redirect) {
 
-      window.location = document.referrer;
+      window.location.href = document.referrer;
     }
     else {
 
@@ -200,7 +200,7 @@ sylma.crud.Field = new Class({
     var input = this.getInput();
     input.set('data-name', input.get('name'));
     input.set('name');
-    
+
     this.cloneID = id;
   },
 

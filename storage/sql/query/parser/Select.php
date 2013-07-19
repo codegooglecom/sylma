@@ -129,7 +129,7 @@ class Select extends Wherer implements common\argumentable {
     return $result;
   }
 
-  public function addJoin(sql\schema\table $table, sql\schema\field $field, $val) {
+  public function addJoin(sql\schema\table $table, sql\schema\element $field, $val) {
 
     $bAdd = true;
 

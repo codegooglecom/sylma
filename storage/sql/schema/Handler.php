@@ -70,13 +70,15 @@ class Handler extends xsd\Elemented {
       case 'field' :
       case 'table' :
 
-        $this->addSchemaElement($el, $sNamespace);
+        $sName = $this->addSchemaElement($el, $sNamespace);
         break;
 
       default :
 
-        parent::addSchemaChild($el, $sNamespace);
+        $sName = parent::addSchemaChild($el, $sNamespace);
     }
+
+    return $sName;
   }
 
 }

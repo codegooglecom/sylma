@@ -5,12 +5,35 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\parse
 
 class Builder extends reflector\builder\Documented {
 
-  public function getSchema(fs\file $file, common\_window $window = null) {
+  public function setWindow(common\_window $window) {
 
-    $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);
+    return parent::setWindow($window);
+  }
 
-    //if ($window) $this->setWindow($window);
-    $result = $this->reflectMain($file, $doc, $window);
+  public function setFile(fs\file $file) {
+
+    return parent::setFile($file);
+  }
+
+  public function setDocument(dom\handler $doc) {
+
+    return $this->document = $doc;
+  }
+
+  public function getSchema() {
+
+    $file = $this->getFile('', false);
+
+    if ($file) {
+
+      $doc = $this->getFile()->getDocument(array(), \Sylma::MODE_EXECUTE);
+    }
+    else {
+
+      $doc = $this->getDocument();
+    }
+
+    $result = $this->reflectMain($doc, $file, $this->getWindow(false));
     $result->parseRoot($doc->getRoot());
 
     return $result;

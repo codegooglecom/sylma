@@ -36,7 +36,7 @@ class View extends Variabled {
     $sMode = $this->loadDocument($doc);
 
     $window = $this->prepareWindow($doc, $sMode);
-    $content = $this->reflectMain($this->getFile(), $doc, $window);
+    $content = $this->reflectMain($doc, $this->getFile(), $window);
 
     switch ($sMode) {
 

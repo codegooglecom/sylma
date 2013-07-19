@@ -18,16 +18,15 @@ class Documented extends Logger implements reflector\documented {
   protected $bThrow = true;
   protected $aElements = array();
 
-  public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null, dom\document $doc = null) {
+  public function __construct($manager, fs\file $file = null, fs\directory $dir = null, core\argument $args = null, dom\document $doc = null) {
 
     $this->setManager($manager);
-
-    $this->setFile($file);
+    if ($file) $this->setFile($file);
 
     $this->setNamespace(self::BUILD_NS, self::BUILD_PREFIX);
 
     if ($doc) $this->setDocument($doc);
-    else $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
+    else if ($file) $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
 
     $this->loadDefaultArguments();
     if ($args) $this->setArguments($args);
@@ -35,7 +34,7 @@ class Documented extends Logger implements reflector\documented {
     $this->loadLogger();
 
     $this->setDirectory(__FILE__);
-    $this->setSourceDirectory($dir);
+    if ($dir) $this->setSourceDirectory($dir);
   }
 
   protected function loadArguments(core\argument $arg = null) {
@@ -133,14 +132,19 @@ class Documented extends Logger implements reflector\documented {
    *
    * @return common\_window
    */
-  public function getWindow() {
+  public function getWindow($bDebug = true) {
 
     if (!$this->window) {
 
-      $this->throwException('No window defined');
+      if ($bDebug) $this->throwException('No window defined');
+      $result = null;
+    }
+    else {
+
+      $result = $this->window;
     }
 
-    return $this->window;
+    return $result;
   }
 
   protected function getTemplatePath() {
@@ -164,7 +168,7 @@ class Documented extends Logger implements reflector\documented {
     $doc = $this->getDocument();
     $cached = $this->loadTarget($doc, $file);
 
-    $mContent = $this->reflectMain($file, $doc, $window);
+    $mContent = $this->reflectMain($doc, $file, $window);
     $content = $this->buildInstanciation($mContent);
 
     $this->loadLog($doc);
@@ -218,7 +222,7 @@ class Documented extends Logger implements reflector\documented {
     return $result;
   }
 
-  protected function reflectMain(fs\file $file, dom\document $doc, common\_window $window = null) {
+  protected function reflectMain(dom\document $doc, fs\file $file = null, common\_window $window = null) {
 
     try {
 
@@ -232,7 +236,7 @@ class Documented extends Logger implements reflector\documented {
       $this->log($this, $e->getMessage());
       $this->loadLog($doc);
 
-      $this->catchException($file, $e);
+      $this->catchException($e, $file);
       $mContent = null;
     }
 
@@ -244,10 +248,12 @@ class Documented extends Logger implements reflector\documented {
     $reflector->onFinish();
   }
 
-  protected function catchException(fs\file $file, core\exception $e) {
+  protected function catchException(core\exception $e, fs\file $file = null) {
 
     if ($this->useLog()) $this->getLogger()->addException($e->getMessage());
-    $e->addPath($file->asToken());
+
+    if ($file) $e->addPath($file->asToken());
+    else $e->addPath ('No file defined');
 
     if ($this->throwExceptions()) throw $e;
     else $e->save(false);
@@ -327,7 +333,7 @@ class Documented extends Logger implements reflector\documented {
     $sInstance = $this->getClass($this->getDocument());
     $result = $this->create('window', array($this, $this->getArgument(static::WINDOW_ARGS), $sInstance));
 
-    if ($sOutput = $this->getDocument()->getRoot()->readx('@build:output', array(), false)) {
+    if ($sOutput = $this->getDocument()->getRoot()->readx('@build:output', array(self::BUILD_PREFIX => self::BUILD_NS), false)) {
 
       if ($sOutput !== 'dom') $result->setMode(2);
     }

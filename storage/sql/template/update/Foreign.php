@@ -7,10 +7,10 @@ class Foreign extends sql\template\insert\Foreign {
 
   protected function loadID() {
 
-    return $this->reflectEscape($this->getParent()->getElementArgument('id'));
+    return $this->getParent()->getElementArgument('id');
   }
 
-  protected function buildMultiple(sql\schema\table $junction, sql\schema\field $source, sql\schema\field $target) {
+  protected function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
 
     $del = $this->loadSimpleComponent('template/delete');
 

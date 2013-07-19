@@ -97,6 +97,15 @@ class Element extends schema\xsd\component\Element implements common\stringable 
     return $this->getParent()->asString() . '.`' . $this->getName() . "`";
   }
 
+  /**
+   * 
+   * @return \sylma\storage\sql\schema\Handler
+   */
+  protected function getParser() {
+    
+    return parent::getParser();
+  }
+  
   protected function loadOptional() {
 
     $sDefault = $this->readx('@default');

@@ -18,7 +18,7 @@ class Grouped extends tester\Parser implements core\argumentable {
 
     $builder = $manager->loadBuilder($file, $this->getExportDirectory());
 
-    return $builder->getSchema($file);
+    return $builder->getSchema();
   }
 }
 

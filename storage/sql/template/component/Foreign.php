@@ -10,6 +10,8 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
   protected $bBuilded = false;
 
+  const JUNCTION_MODE = 'view';
+
   /**
    *
    * @return sql\query\parser\Select
@@ -113,37 +115,64 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
   protected function loadJunction() {
 
     $sName = $this->readx('@junction', true);
-    $target = $this->getElementRef();
 
+    $field = $this->getElementRef();
     $parent = $this->getParent();
-    $sNamespace = $this->getNamespace();
 
-    $table = $this->loadSimpleComponent('component/table');
-    $table->setName($sName);
-    $table->loadNamespace($sNamespace);
+    $sSource = 'id_' . $parent->getName();
+    $sTarget = 'id_' . $field->getName();
 
-    $type = $this->loadSimpleComponent('component/complexType');
-    //$type->loadNamespace($sNamespace);
+    $doc = $this->createArgument(array(
+      'schema' => array(
+        '@targetNamespace' => $this->getNamespace(),
+        'table' => array(
+          '@name' => $sName,
+          '#foreign' => array(
+            array(
+              '@name' => $sSource,
+              '@occurs' => '0..1',
+              '@table' => 't1:' . $parent->getName(),
+              '@import' => (string) $this->getSourceFile(),
+            ),
+            array(
+              '@name' => $sTarget,
+              '@occurs' => '0..1',
+              '@table' => 't2:' . $field->getName(),
+              '@import' => (string) $this->getSourceFile($this->readx('@import')),
+            ),
+          ),
+        ),
+      ),
+    ), $this->getNamespace('sql'))->asDOM();
 
-    $table->setType($type);
+    $doc->registerNamespaces(array(
+      't1' => $this->getNamespace(),
+      't2' => $field->getNamespace(),
+    ));
 
-    $particle = $this->loadSimpleComponent('component/particle');
-    $type->addParticle($particle);
+    $sql = $this->getManager(self::DB_MANAGER);
 
-    $el1 = $this->loadSimpleComponent('component/field');
-    $el1->setName('id_' . $parent->getName());
-    $el1->setParent($table);
-    $el1->loadNamespace($sNamespace);
+    if (!$sql->get("show tables like '$sName'", false)) {
 
-    $el2 = $this->loadSimpleComponent('component/field');
-    $el2->setName('id_' . $target->getName());
-    $el2->setParent($table);
-    $el2->loadNamespace($sNamespace);
+      $handler = new sql\alter\Handler;
+      $handler->setDocument($doc);
 
-    $particle->addElement($el1);
-    $particle->addElement($el2);
+      $handler->asString();
+    }
 
-    return array($table, $el1, $el2);
+    $this->getParser()->changeMode(static::JUNCTION_MODE);
+
+    $sElement = $this->getParser()->addSchema($doc);
+
+    $table = $this->getParser()->getElement($sElement, $this->getNamespace());
+    $table->isSub(true);
+
+    $source = $table->getElement($sSource);
+    $target = $table->getElement($sTarget);
+
+    $this->getParser()->resetMode();
+
+    return array($table, $source, $target);
   }
 }
 

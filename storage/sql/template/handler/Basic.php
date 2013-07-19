@@ -14,6 +14,11 @@ class Basic extends sql\schema\Handler {
 
   public function getView() {
 
+    if (!$this->view) {
+
+      $this->launchException('No view defined');
+    }
+
     return $this->view;
   }
 

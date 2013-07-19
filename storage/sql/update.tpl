@@ -54,17 +54,17 @@
   <view:template match="sql:foreign" mode="container">
 
     <tpl:if test="is-multiple()">
-      <tpl:apply mode="container">
+      <tpl:apply mode="container/update">
         <tpl:text tpl:name="value">0</tpl:text>
       </tpl:apply>
       <tpl:else>
-        <tpl:apply mode="container"/>
+        <tpl:apply mode="container/update"/>
       </tpl:else>
     </tpl:if>
 
   </view:template>
 
-  <view:template match="sql:foreign" mode="input" sql:ns="ns">
+  <view:template match="sql:foreign" mode="input/update" sql:ns="ns">
     <tpl:if test="is-multiple()">
       <tpl:apply mode="select-multiple-test"/>
       <tpl:else>

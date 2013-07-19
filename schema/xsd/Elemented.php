@@ -31,7 +31,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
 
     //$this->setNode($el);
 
-    if (!$el->getName() == 'schema') {
+    if ($el->getName() != 'schema') {
 
       $this->throwException(sprintf('Bad root %s', $el->asToken()));
     }
@@ -222,32 +222,40 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
   public function addSchema(dom\document $doc) {
 
     $sNamespace = $this->parseTargetNamespace($doc);
+    $sResult = '';
 
     foreach ($doc->getChildren() as $child) {
 
-      $this->addSchemaChild($child, $sNamespace);
+      $sName = $this->addSchemaChild($child, $sNamespace);
+      if (!$sResult && $sName) $sResult = $sName;
     }
+
+    return $sResult;
   }
 
   protected function addSchemaChild(dom\element $el, $sNamespace) {
+
+    $sName = '';
 
     switch ($el->getName()) {
 
       case 'element' :
 
-        $this->addSchemaElement($el, $sNamespace);
+        $sName = $this->addSchemaElement($el, $sNamespace);
         break;
 
       case 'complexType' :
       case 'simpleType' :
 
-        $this->addSchemaType($el, $sNamespace);
+        $sName = $this->addSchemaType($el, $sNamespace);
         break;
 
       default :
 
         $this->getDocument()->add($el);
     }
+
+    return $sName;
   }
 
   protected function addSchemaElement(dom\element $el, $sNamespace) {
@@ -265,6 +273,8 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     }
 
     $this->aElementsNodes[$sNamespace][$sName] = $this->getDocument()->add($el);
+
+    return $sName;
   }
 
   protected function addSchemaType(dom\element $el, $sNamespace) {

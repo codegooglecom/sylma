@@ -27,7 +27,7 @@ class Context extends reflector\component\Foreigner implements common\arrayable 
     return $aResult;
   }
 
-  protected function loadCalls(common\callable $context, $aContent) {
+  protected function loadCalls(common\_callable $context, $aContent) {
 
     $aResult = array();
 

@@ -19,7 +19,7 @@ class Handler extends tester\Parser implements core\argumentable {
     $file = $this->getFile($sPath);
     $builder = $this->getManager(self::PARSER_MANAGER)->loadBuilder($file, $this->getExportDirectory());
 
-    return $builder->getSchema($file);
+    return $builder->getSchema();
   }
 }
 

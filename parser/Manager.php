@@ -51,7 +51,15 @@ class Manager extends compiler\Manager {
 
     if (!$dir) $dir = $file->getParent();
     $doc = $file->getDocument();
-    $sNamespace = $doc->getRoot()->getNamespace();
+
+    $result = $this->loadBuilderFromNS($doc->getRoot()->getNamespace(), $file, $dir, $args);
+
+    return $result;
+  }
+
+  public function loadBuilderFromNS($sNamespace, fs\file $file = null, fs\directory $dir = null, core\argument $args = null) {
+
+    if (!$dir) $dir = $this->getDirectory();
 
     if (!$result = $this->getParserManager($sNamespace)) {
 

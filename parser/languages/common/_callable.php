@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\common;
 use sylma\core;
 
-interface callable {
+interface _callable {
 
   public function call($sMethod, array $aArguments = array(), $mReturn = null, $bVar = false);
 }

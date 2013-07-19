@@ -37,7 +37,7 @@ class Router extends View {
     }
     catch (core\exception $e) {
 
-      $this->catchException($this->getFile(), $e);
+      $this->catchException($e, $this->getFile());
     }
 
     return $result;

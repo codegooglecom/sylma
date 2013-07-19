@@ -114,7 +114,7 @@ abstract class Manager extends core\module\Domed {
     return $builder->build();
   }
 */
-  protected function createBuilder($sClass, fs\file $file, fs\directory $dir, core\argument $args = null) {
+  protected function createBuilder($sClass, fs\file $file = null, fs\directory $dir = null, core\argument $args = null) {
 
     //$class = $this->getFactory()->findClass($sClass);
     //$class->merge($args);

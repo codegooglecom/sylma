@@ -1,20 +1,54 @@
 <?php
 
 namespace sylma\storage\sql\alter;
-use sylma\core, sylma\dom, sylma\storage\sql;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\schema;
 
 class Handler extends core\module\Domed implements core\stringable {
 
-  public function asString() {
+  const ARGUMENTS = 'builder.xml';
+
+  protected $schema;
+
+  public function __construct() {
 
     $this->setDirectory(__FILE__);
+  }
 
-    $file = $this->getFile();
-    $builder = $this->getManager(self::PARSER_MANAGER)->loadBuilder($file, null, $this->getScript('builder.xml'));
+  public function setFile(fs\file $file) {
+
+    $parser = $this->getManager(self::PARSER_MANAGER);
+    $builder = $parser->loadBuilder($file, null, $this->getScript(self::ARGUMENTS));
+    $result = $builder->getSchema();
+
+    $this->setSchema($result);
+  }
+
+  protected function setSchema(schema\parser\schema $schema) {
+
+    $this->schema = $schema;
+  }
+
+  protected function getSchema() {
+
+    return $this->schema;
+  }
+
+  public function setDocument(dom\handler $doc) {
+
+    $sNamespace = $doc->getRoot()->getNamespace();
+    $parser = $this->getManager(self::PARSER_MANAGER);
+    $builder = $parser->loadBuilderFromNS($sNamespace, null, null, $this->getScript(self::ARGUMENTS));
+    $builder->setDocument($doc);
+
+    $result = $builder->getSchema();
+    $this->setSchema($result);
+  }
+
+  public function asString() {
+
     $sql = $this->getManager('mysql');
 
-    $schema = $builder->getSchema($file);
-
+    $schema = $this->getSchema();
     $table = $schema->getElement();
 
     dsp($table->asCreate());
