@@ -64,7 +64,13 @@
     <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="title" default="title()"/>
 
-    <label for="form-{$alias}"><tpl:read select="$title"/> :</label>
+    <label for="form-{$alias}">
+      <tpl:read select="$title"/>
+      <tpl:if test="!is-optional()">
+        <tpl:text>*</tpl:text>
+      </tpl:if>
+      <tpl:text> :</tpl:text>
+    </label>
 
   </view:template>
 
@@ -229,6 +235,40 @@
     <tpl:apply mode="input/empty">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'password'"/>
+    </tpl:apply>
+
+  </view:template>
+
+  <view:template match="sql:boolean" mode="input/empty" sql:ns="ns">
+
+    <tpl:argument name="value" default="''"/>
+    <tpl:argument name="alias" default="alias()"/>
+
+    <input class="field-input field-input-element" type="checkbox" id="form-{$alias}" value="1" name="{$alias}">
+      <tpl:apply mode="input/value">
+        <tpl:read select="$value" tpl:name="value"/>
+      </tpl:apply>
+    </input>
+
+  </view:template>
+
+  <tpl:template match="sql:boolean" mode="input/value">
+
+    <tpl:argument name="value" default="''"/>
+
+    <tpl:if test="$value">
+      <tpl:token name="checked">checked</tpl:token>
+    </tpl:if>
+
+  </tpl:template>
+
+  <view:template match="sql:boolean" mode="input/update" sql:ns="ns">
+
+    <tpl:argument name="alias" default="alias()"/>
+
+    <tpl:apply mode="input/empty">
+      <tpl:read tpl:name="alias" select="$alias"/>
+      <tpl:read tpl:name="type" select="'checkbox'"/>
     </tpl:apply>
 
   </view:template>

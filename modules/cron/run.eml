@@ -7,7 +7,7 @@
   <le:settings>
     <le:return format="object"/>
   </le:settings>
-  <le:object class="Module">
-    <le:call name="login"/>
+  <le:object class="Main">
+    <le:call name="run"/>
   </le:object>
 </le:action>

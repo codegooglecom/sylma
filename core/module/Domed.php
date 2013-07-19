@@ -89,6 +89,12 @@ abstract class Domed extends Filed {
     return $this->getManager(self::PARSER_MANAGER)->load($file, $aArguments);
   }
 
+  /**
+   *
+   * @param type $sPath
+   * @param array $aArguments
+   * @return \sylma\core\request
+   */
   protected function createPath($sPath, array $aArguments = array()) {
 
     $path = $this->create('path', array($sPath, $this->getDirectory('', false), $aArguments));
@@ -125,7 +131,25 @@ abstract class Domed extends Filed {
 
     $aArguments = $this->buildScriptArguments($aArguments, $aContexts, $aPosts);
 
-    return $this->getScriptFile($file, $aArguments);
+    switch ($file->getExtension()) {
+
+      case 'vml' :
+      case 'xml' :
+
+        $result = $this->getScriptFile($file, $aArguments);
+        break;
+
+      case 'eml' :
+
+        $result = $this->readAction((string) $path, $aArguments);
+        break;
+
+      default :
+
+        $this->launchException("Unknown script extension : {$file->getExtension()}");
+    }
+
+    return $result;
   }
 
   /**

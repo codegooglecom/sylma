@@ -311,9 +311,23 @@ class Window extends common\basic\Window implements php\window {
 
   public function createNot($mContent) {
 
-    return $this->createArgument(array(
-      'not' => array($mContent),
-    ));
+    $op = $this->createOperator('!');
+
+    if ($mContent) {
+
+      // return array while expecting result is only treated in condition not body result
+
+      $result = array(
+        $op,
+        $mContent,
+      );
+    }
+    else {
+
+      $result = $op;
+    }
+
+    return $result;
   }
 
   public function getVarName() {
