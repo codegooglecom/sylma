@@ -41,13 +41,17 @@ sylma.classes.binder = new Class({
         load : function() {
 
           var doc = this.contentDocument || this.contentWindow.document;
-          var timeStart = new Date().getTime();
-          var timeMax = 2000;
-          var input;
 
-          while (!input && (new Date().getTime() - timeStart) < timeMax) {
+          if (doc && doc.getElement) {
 
-            input = doc.getElement('#sylma-test-result');
+            var timeStart = new Date().getTime();
+            var timeMax = 2000;
+            var input;
+
+            while (!input && (new Date().getTime() - timeStart) < timeMax) {
+
+              input = doc.getElement('#sylma-test-result');
+            }
           }
 
           var value;
@@ -61,7 +65,7 @@ sylma.classes.binder = new Class({
             value = JSON.decode(input.get('value'));
           }
 
-          sylma.binder.loadResult(test, value);
+          sylma.binder.loadResult(test, value, frame.src);
         }
       }
     });
@@ -69,7 +73,7 @@ sylma.classes.binder = new Class({
     this.node.grab(frame);
   },
 
-  loadResult : function(test, result) {
+  loadResult : function(test, result, href) {
 
     var content = result.value ? 'ok' : 'failed';
     if (result.timemax) content += ' (time elapsed)';
@@ -78,7 +82,7 @@ sylma.classes.binder = new Class({
 
 
     this.node.grab(new Element('div', {
-      html : '<li class="' + className + '"><span>' + test.name + '</span> - <span class="sylma-tester-result">' + content + '</span></li>',
+      html : '<li class="' + className + '"><a href="' + href + '">' + test.name + '</a> - <span class="sylma-tester-result">' + content + '</span></li>',
     }));
 
     this.loadNext();

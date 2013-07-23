@@ -107,7 +107,10 @@
       'name' => '\sylma\parser\languages\common\basic\Operator'),
     'group' => array(
       'file' => '\sylma\parser\languages\common\basic\Group.php',
-      'name' => '\sylma\parser\languages\common\basic\Group'))),
+      'name' => '\sylma\parser\languages\common\basic\Group'),
+    'expression' => array(
+      'file' => '\sylma\parser\languages\common\basic\Expression.php',
+      'name' => '\sylma\parser\languages\common\basic\Expression'))),
 'classes' => array(
   'window' => array(
     'file' => '\sylma\parser\action\compiler\Window.php',
@@ -130,3 +133,4 @@
   'context' => array(
     'file' => '\sylma\parser\context\Basic.php',
     'name' => '\sylma\parser\context\Basic'))));
+  

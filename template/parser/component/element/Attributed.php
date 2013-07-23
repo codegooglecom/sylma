@@ -78,39 +78,7 @@ abstract class Attributed extends Domed {
 
   protected function parseAttributeValue($sValue) {
 
-    preg_match_all('/{([^}]+)}/', $sValue, $aMatches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-
-    if ($aMatches) {
-
-      $mResult = array();
-      $iOffset = 0;
-
-      foreach ($aMatches as $i => $aResult) {
-
-        $iStart = $aResult[0][1];
-
-        $iVarLength = strlen($aResult[0][0]);
-        $val = $this->getTemplate()->applyPath($aResult[1][0], '');
-
-        $sStart = substr($sValue, $iOffset, $iStart - $iOffset);
-
-        if ($i == count($aResult) - 1) {
-
-          $mResult[] = array($sStart, $val, substr($sValue, $iStart + $iVarLength));
-        }
-        else {
-
-          $mResult[] = array($sStart, $val);
-          $iOffset += $iStart + $iVarLength;
-        }
-      }
-    }
-    else {
-
-      $mResult = $sValue;
-    }
-
-    return $mResult;
+    return $this->getTemplate()->parseValue($sValue);
   }
 
   public function setAttributes(array $aAttrs) {

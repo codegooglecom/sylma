@@ -47,9 +47,15 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
 
     if ($this->getWindow()->isStatic($test)) {
 
-      $sTest = implode('', $this->prepareEval($test));
+      if ($sTest = implode('', $this->prepareEval($test))) {
 
-      eval("\$bResult = $sTest;");
+        eval("\$bResult = $sTest;");
+      }
+      else {
+
+        $bResult = false;
+      }
+
       $result = $bResult ? $aChildren : $this->getReflector()->getElse();
     }
     else {

@@ -12,6 +12,7 @@ interface template {
 
   function setTree(tree $tree);
   function isCloned();
+  function parseValue($sValue);
   //function loadElement(dom\element $el);
 }
 

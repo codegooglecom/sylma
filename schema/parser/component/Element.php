@@ -19,6 +19,12 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
   protected $sReflector = '';
   protected $reflector;
 
+  /**
+   * Token is cached cause it's used many times as id in template lookup
+   * @var string
+   */
+  protected $sToken;
+
   public function setParent(schema\parser\element $parent) {
 
     $this->parent = $parent;
@@ -237,7 +243,12 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
 
   public function asToken() {
 
-    return "schema:element [{$this->getNamespace()}:{$this->getName()}]";
+    if (!$this->sToken) {
+
+      $this->sToken = "schema:element [{$this->getNamespace()}:{$this->getName()}]";
+    }
+
+    return $this->sToken;
   }
 }
 

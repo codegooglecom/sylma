@@ -94,6 +94,46 @@
       <div><h3>admin</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Value in string">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:read select="'id={id};name={name}'"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>id=2;name=admin</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Expression in read">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:read select="(id = 2)"/></h3>
+            <h4><tpl:read select="(id != 2)"/></h4>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>1</h3>
+        <h4/>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Return argument">
     <tst:document>
       <view:view sql:ns="ns" build:class="\sylma\core\argument\Readable" build:output="array">

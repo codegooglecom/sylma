@@ -12,6 +12,6 @@
   </le:context>
   <h3>JS Binder</h3>
   <le:object class="Module"/>
-  <div id="[sylma:variable::id]"/>
+  <ul id="[sylma:variable::id]"/>
 </le:action>
 

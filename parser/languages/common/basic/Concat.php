@@ -78,7 +78,6 @@ class Concat extends common\basic\Controled implements common\addable {
 
   protected function convertContent(array $aContent) {
 
-    $aContent = $this->getControler()->flattenArray($aContent);
     $aContent = $this->fusionStrings($aContent);
 
     $aResult = array();

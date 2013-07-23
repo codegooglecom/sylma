@@ -114,6 +114,13 @@ class Initializer extends module\Filed {
     }
     else {
 
+      $bProfile = $this->readArgument('debug/profile');
+
+      if ($bProfile) {
+
+        xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+      }
+
       $sExtension = $path->parseExtension(true);
 
       if ($path->getExtension() == $this->readArgument('redirect/extension')) {
@@ -145,6 +152,18 @@ class Initializer extends module\Filed {
       else {
 
         $this->throwException('No valid window defined');
+      }
+
+      if ($bProfile) {
+
+        $xhprof_data = xhprof_disable();
+
+        $XHPROF_ROOT = "xhprof/";
+        include_once $XHPROF_ROOT . "/utils/xhprof_lib.php";
+        include_once $XHPROF_ROOT . "/utils/xhprof_runs.php";
+
+        $xhprof_runs = new \XHProfRuns_Default();
+        $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
       }
     }
 

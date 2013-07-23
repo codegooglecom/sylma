@@ -522,6 +522,11 @@ return; // todo, decide to use or not
     return $this->create('numeric', array($this, $val));
   }
 
+  public function createExpression($val) {
+
+    return $this->create('expression', array($this, $val));
+  }
+
   public function setVariable(common\_var $var, $bDebug = true) {
 
     $sName = $var->getName();

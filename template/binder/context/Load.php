@@ -26,7 +26,7 @@ class Load extends modules\html\context\JS implements core\stringable {
     if ($aValues) {
 
       $sCalls = join(";\n", $aValues);
-      $sResult = "window.addEvent('domready', function() { $sCalls });";
+      $sResult = "window.addEvent && window.addEvent('domready', function() { $sCalls });";
     }
 
     return $sResult;

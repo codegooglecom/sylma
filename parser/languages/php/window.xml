@@ -34,5 +34,6 @@
     <cls:class alias="cast" name="Cast"/>
     <cls:class alias="operator" name="\sylma\parser\languages\common\basic\Operator"/>
     <cls:class alias="group" name="\sylma\parser\languages\common\basic\Group"/>
+    <cls:class alias="expression" name="\sylma\parser\languages\common\basic\Expression"/>
   </cls:classes>
 </arg:argument>

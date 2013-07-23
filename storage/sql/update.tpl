@@ -18,7 +18,7 @@
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="value" default="value()"/>
 
-    <div class="field clearfix" js:class="sylma.crud.Field">
+    <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
       <js:event name="click">
         %object%.downlight();
       </js:event>
@@ -54,23 +54,46 @@
   <view:template match="sql:foreign" mode="container">
 
     <tpl:if test="is-multiple()">
-      <tpl:apply mode="container/update">
-        <tpl:text tpl:name="value">0</tpl:text>
-      </tpl:apply>
+      <tpl:apply mode="container/multiple/update"/>
       <tpl:else>
-        <tpl:apply mode="container/update"/>
+        <tpl:apply mode="container/update">
+          <tpl:text tpl:name="type">foreign</tpl:text>
+        </tpl:apply>
       </tpl:else>
     </tpl:if>
 
   </view:template>
 
+  <tpl:template match="sql:foreign" mode="container/multiple/update">
+    <fieldset class="form-foreign" js:class="sylma.crud.Field">
+      <js:event name="click">
+        %object%.downlight();
+      </js:event>
+      <js:name>
+        <tpl:read select="alias('key')"/>
+      </js:name>
+      <legend>
+        <tpl:read select="title()"/>
+      </legend>
+      <tpl:apply mode="input/multiple/boolean/update"/>
+    </fieldset>
+  </tpl:template>
+
   <view:template match="sql:foreign" mode="input/update" sql:ns="ns">
+    <tpl:apply mode="select-test"/>
+  </view:template>
+
+  <view:template match="sql:foreign" mode="input/boolean/update" sql:ns="ns">
+
     <tpl:if test="is-multiple()">
-      <tpl:apply mode="select-multiple-test"/>
+      <tpl:apply mode="input/multiple/boolean/update"/>
       <tpl:else>
-        <tpl:apply mode="select-test"/>
+        <tpl:apply mode="input/single/boolean/update"/>
       </tpl:else>
     </tpl:if>
+
+    <tpl:apply mode="register"/>
+
   </view:template>
 
 </view:view>

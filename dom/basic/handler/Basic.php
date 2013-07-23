@@ -199,6 +199,10 @@ abstract class Basic extends core\module\Managed {
 
       $this->throwException($e->getMessage());
     }
+    catch (core\exception $e) {
+
+      $this->throwException($e->getMessage());
+    }
 
     return $bResult;
   }

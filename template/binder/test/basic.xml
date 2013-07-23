@@ -366,4 +366,32 @@
       return test.getNode('hello').get('text') === 'Hello' &amp;&amp; test.getNode('world').get('text') === 'World';
     </tst:expected>
   </tst:test>
+  <tst:test name="Event in view condition" disabled="true">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <h3 la:class="sylma.ui.Base" la:parent="example" la:name="test">
+                <la:event name="click">
+                  sylma.tester.test(true);
+                </la:event>
+                <tpl:text>is-admin</tpl:text>
+              </h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:callback>
+
+      var test = example.test;
+      test.node.fireEvent('click');
+
+    </tst:callback>
+  </tst:test>
 </tst:tests>

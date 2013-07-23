@@ -226,7 +226,7 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
 
     foreach ($children as $child) {
 
-      $aResult[$child->readx('@tpl:name')] = $this->parseElement($child);
+      $aResult[$this->parseElementKey($child)] = $this->parseElement($child);
     }
 
     return $aResult;
@@ -401,6 +401,43 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
     $pather = $this->getPather();
 
     return $sPath ? $pather->applyPath($sPath, $sMode, $aArguments) : $this->getTree()->reflectApply($sMode, $aArguments);
+  }
+
+  public function parseValue($sValue) {
+
+    preg_match_all('/{([^}]+)}/', $sValue, $aMatches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+
+    if ($aMatches) {
+
+      $mResult = array();
+      $iOffset = 0;
+
+      foreach ($aMatches as $i => $aResult) {
+
+        $iStart = $aResult[0][1];
+
+        $iVarLength = strlen($aResult[0][0]);
+        $val = $this->applyPath($aResult[1][0], '');
+
+        $sStart = substr($sValue, $iOffset, $iStart - $iOffset);
+
+        if ($i == count($aResult) - 1) {
+
+          $mResult[] = array($sStart, $val, substr($sValue, $iStart + $iVarLength));
+        }
+        else {
+
+          $mResult[] = array($sStart, $val);
+          $iOffset += $iStart + $iVarLength;
+        }
+      }
+    }
+    else {
+
+      $mResult = $sValue;
+    }
+
+    return $mResult;
   }
 
   public function __clone() {

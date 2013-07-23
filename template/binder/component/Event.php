@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\binder\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\template\binder;
 
 class Event extends Method {
 
@@ -11,9 +11,14 @@ class Event extends Method {
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
+    $this->addToObject($this->getParser()->getObject());
+  }
+
+  protected function addToObject(binder\_Class $target) {
+
     $window = $this->getWindow();
 
-    $this->loadValue($el);
+    $this->loadValue($this->getNode());
     $this->loadID();
 
     $function = $window->createFunction(array('e'), $this->getValue());
@@ -33,7 +38,7 @@ class Event extends Method {
       $event->setProperty('target', $sClass);
     }
 */
-    $this->getParser()->getObject()->setEvent($this->getID(), $obj, $this->getRoot()->getCurrentElement());
+    $target->setEvent($this->getID(), $obj, $this->getRoot()->getCurrentElement());
   }
 
   protected function loadID() {

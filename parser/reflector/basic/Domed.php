@@ -179,6 +179,11 @@ abstract class Domed extends Componented {
     return $mResult;
   }
 
+  protected function parseElementKey(dom\element $el) {
+
+    return $el->readx('@tpl:name');
+  }
+
   protected function parseElementSelf(dom\element $el) {
 
     return $this->parseComponent($el);
@@ -346,5 +351,12 @@ abstract class Domed extends Componented {
     }
 
     return $bResult;
+  }
+
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
+
+    $aVars['node'] = $this->getNode();
+
+    return parent::launchException($sMessage, $aVars, $mSender);
   }
 }

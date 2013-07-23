@@ -22,6 +22,7 @@ initializer :
   debug :
     update : true
     run : true
+    profile : false
   output :
     indent : true
   mime :

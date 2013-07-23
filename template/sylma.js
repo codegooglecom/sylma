@@ -505,7 +505,14 @@ sylma.ui = new sylma.classes.ui;
         Object.merge(sylma.binder.classes, classes);
       }
 
-      var props = result.objects[sylma.ui.extractFirst(result.objects)];
+      var key = sylma.ui.extractFirst(result.objects);
+
+      if (!key) {
+
+        throw new Error('No root object found');
+      }
+
+      var props = result.objects[key];
       props.parentObject = this.getParent();
 
       this.initialize(props);

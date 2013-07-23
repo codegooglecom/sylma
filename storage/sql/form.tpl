@@ -15,12 +15,16 @@
     <form js:class="sylma.crud.Form" class="sylma-form">
       <js:include>/#sylma/template/crud.js</js:include>
       <tpl:apply mode="init"/>
-      <tpl:apply use="form-cols" mode="container"/>
+      <tpl:apply mode="form"/>
       <tpl:apply mode="action"/>
       <input type="submit" value="Envoyer"/>
       <tpl:apply mode="form/token"/>
     </form>
   </view:template>
+
+  <tpl:template mode="form">
+    <tpl:apply use="form-cols" mode="container"/>
+  </tpl:template>
 
   <view:template mode="action"/>
 
@@ -31,7 +35,7 @@
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="value" default="''"/>
 
-    <div class="field clearfix" js:class="sylma.crud.Field">
+    <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
       <js:event name="click">
         %object%.downlight();
       </js:event>
@@ -62,10 +66,9 @@
   <view:template match="*" mode="label">
 
     <tpl:argument name="alias" default="alias('form')"/>
-    <tpl:argument name="title" default="title()"/>
 
     <label for="form-{$alias}">
-      <tpl:read select="$title"/>
+      <tpl:apply mode="label/value"/>
       <tpl:if test="!is-optional()">
         <tpl:text>*</tpl:text>
       </tpl:if>
@@ -74,6 +77,10 @@
 
   </view:template>
 
+  <tpl:template match="*" mode="label/value">
+    <tpl:read select="title()"/>
+  </tpl:template>
+
   <view:template match="*" mode="input">
     <tpl:apply mode="input/empty"/>
   </view:template>
@@ -81,19 +88,21 @@
   <view:template match="*" mode="input/empty">
 
     <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="type" default="'text'"/>
 
-    <input class="field-input field-input-element" type="{$type}" id="form-{$alias}" name="{$alias}"/>
+    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" name="{$alias}"/>
 
   </view:template>
 
   <view:template match="*" mode="input/update">
 
     <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="value" default="value()"/>
     <tpl:argument name="type" default="'text'"/>
 
-    <input class="field-input field-input-element" type="{$type}" id="form-{$alias}" value="{$value}" name="{$alias}"/>
+    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}"/>
 
   </view:template>
 
@@ -107,14 +116,238 @@
     </textarea>
   </view:template>
 
-  <view:template match="sql:foreign" mode="input/empty" sql:ns="ns">
+  <view:template match="sql:foreign" mode="container">
+
     <tpl:if test="is-multiple()">
-      <tpl:apply mode="select-multiple-notest"/>
+      <tpl:apply mode="container/multiple/empty"/>
       <tpl:else>
-        <tpl:apply mode="select-notest"/>
+        <tpl:apply mode="container/empty">
+          <tpl:text tpl:name="type">foreign</tpl:text>
+        </tpl:apply>
       </tpl:else>
     </tpl:if>
+
   </view:template>
+
+  <tpl:template match="sql:foreign" mode="container/multiple/empty">
+    <fieldset class="field form-foreign" js:class="sylma.crud.Field">
+      <js:event name="click">
+        %object%.downlight();
+      </js:event>
+      <js:name>
+        <tpl:read select="alias('key')"/>
+      </js:name>
+      <legend>
+        <tpl:read select="title()"/>
+      </legend>
+      <tpl:apply mode="input/boolean/empty"/>
+    </fieldset>
+  </tpl:template>
+
+  <view:template match="sql:foreign" mode="input/empty" sql:ns="ns">
+    <tpl:apply mode="select-notest"/>
+  </view:template>
+<!--
+  <view:template match="sql:foreign" mode="input/empty" sql:ns="ns">
+    <tpl:apply mode="input/boolean/empty"/>
+  </view:template>
+-->
+  <view:template match="sql:foreign" mode="input/boolean/empty">
+
+    <tpl:if test="is-multiple()">
+      <tpl:apply select="all()" mode="foreign/multiple/boolean/empty">
+        <tpl:read tpl:name="alias" select="alias('form')"/>
+      </tpl:apply>
+      <tpl:else>
+        <tpl:apply select="all()" mode="foreign/single/boolean/empty">
+          <tpl:read tpl:name="alias" select="alias('form')"/>
+        </tpl:apply>
+      </tpl:else>
+    </tpl:if>
+
+    <tpl:apply mode="register"/>
+
+  </view:template>
+
+  <view:template match="*" mode="foreign/single/boolean/empty">
+
+    <tpl:argument name="alias"/>
+    <tpl:argument name="id" default="'{$alias}_{id}'"/>
+
+    <div class="foreign-value">
+
+      <tpl:apply mode="input/update">
+        <tpl:read tpl:name="alias" select="'{$alias}[]'"/>
+        <tpl:read tpl:name="id" select="$id"/>
+        <tpl:read tpl:name="type" select="'radio'"/>
+        <tpl:read tpl:name="value" select="id"/>
+      </tpl:apply>
+
+      <tpl:apply mode="foreign/label">
+        <tpl:read tpl:name="alias" select="$id"/>
+      </tpl:apply>
+
+    </div>
+
+  </view:template>
+
+  <view:template match="*" mode="foreign/multiple/boolean/empty">
+
+    <tpl:argument name="alias"/>
+
+    <div class="foreign-value">
+
+      <tpl:apply mode="input/update">
+        <tpl:read tpl:name="alias" select="'{$alias}[{id}]'"/>
+        <tpl:read tpl:name="type" select="'checkbox'"/>
+        <tpl:read tpl:name="value" select="id"/>
+      </tpl:apply>
+
+      <tpl:apply mode="foreign/label">
+        <tpl:read tpl:name="alias" select="'{$alias}[{id}]'"/>
+      </tpl:apply>
+
+    </div>
+
+  </view:template>
+
+  <view:template match="sql:foreign" mode="select-notest">
+    <tpl:argument name="alias" default="alias('form')"/>
+    <select id="form-{$alias}" name="{$alias}" class="field-input-element">
+      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply select="all()" mode="select-option"/>
+    </select>
+  </view:template>
+
+  <view:template match="sql:foreign" mode="select-test">
+    <tpl:argument name="alias" default="alias('form')"/>
+    <select id="form-{$alias}" name="{$alias}" class="field-input-element">
+      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply select="all()" mode="select-option-test"/>
+    </select>
+  </view:template>
+
+  <view:template match="*" mode="select-option-test">
+    <option value="{id}">
+      <tpl:if test="parent()/value() = id">
+        <tpl:token name="selected">selected</tpl:token>
+      </tpl:if>
+      <tpl:apply mode="select-option-value" required="x"/>
+    </option>
+  </view:template>
+
+  <view:template match="sql:foreign" mode="select-multiple-notest">
+    <tpl:argument name="alias" default="alias('form')"/>
+    <select id="form-{$alias}" name="{$alias}" multiple="multiple">
+      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply select="all()" mode="select-option"/>
+    </select>
+  </view:template>
+
+  <view:template match="sql:foreign" mode="select-multiple-test">
+    <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:variable name="values">
+      <tpl:read select="values()"/>
+    </tpl:variable>
+    <select id="form-{$alias}" name="{$alias}" multiple="multiple">
+      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply select="all()" mode="select-multiple-option-test">
+        <tpl:read select="$values" tpl:name="values"/>
+      </tpl:apply>
+    </select>
+  </view:template>
+
+  <view:template match="*" mode="select-multiple-option-test">
+    <tpl:argument name="values"/>
+    <option value="{id}">
+      <tpl:if test="id in $values">
+        <tpl:token name="selected">selected</tpl:token>
+      </tpl:if>
+      <tpl:apply mode="select-option-value"/>
+    </option>
+  </view:template>
+
+  <view:template match="sql:foreign" mode="input/single/boolean/update">
+
+    <tpl:apply select="all()" mode="foreign/single/boolean/update">
+      <tpl:read tpl:name="value" select="$value"/>
+      <tpl:read tpl:name="alias" select="alias('form')"/>
+    </tpl:apply>
+  </view:template>
+
+  <view:template match="sql:foreign" mode="input/multiple/boolean/update">
+
+    <tpl:variable name="values">
+      <tpl:read select="values()"/>
+    </tpl:variable>
+
+    <tpl:apply select="all()" mode="foreign/multiple/boolean/update">
+      <tpl:read tpl:name="values" select="$values"/>
+      <tpl:read tpl:name="alias" select="alias('form')"/>
+    </tpl:apply>
+  </view:template>
+
+  <view:template match="*" mode="foreign/single/boolean/update">
+
+    <tpl:argument name="value"/>
+    <tpl:argument name="alias"/>
+
+    <tpl:apply mode="foreign/boolean/update">
+      <tpl:read tpl:name="type" select="'radio'"/>
+      <tpl:read tpl:name="value" select="id = $value"/>
+      <tpl:read tpl:name="alias" select="{$alias}[]"/>
+      <tpl:read tpl:name="id" select="'{$alias}_{id}'"/>
+    </tpl:apply>
+
+  </view:template>
+
+  <view:template match="*" mode="foreign/multiple/boolean/update">
+
+    <tpl:argument name="values"/>
+    <tpl:argument name="alias"/>
+
+    <tpl:apply mode="foreign/boolean/update">
+      <tpl:read tpl:name="type" select="'checkbox'"/>
+      <tpl:read tpl:name="value" select="(id in $values)"/>
+      <tpl:read tpl:name="alias" select="'{$alias}[{id}]'"/>
+    </tpl:apply>
+
+  </view:template>
+
+  <tpl:template match="*" mode="foreign/boolean/update">
+
+    <tpl:argument name="type"/>
+    <tpl:argument name="value"/>
+    <tpl:argument name="alias"/>
+    <tpl:argument name="id" default="$alias"/>
+
+    <div class="foreign-value">
+
+      <tpl:apply mode="input/boolean">
+        <tpl:read tpl:name="type" select="$type"/>
+        <tpl:read tpl:name="value" select="$value"/>
+        <tpl:read tpl:name="content" select="id"/>
+        <tpl:read tpl:name="id" select="$id"/>
+        <tpl:read tpl:name="alias" select="$alias"/>
+      </tpl:apply>
+
+      <tpl:apply mode="foreign/label">
+        <tpl:read tpl:name="alias" select="$id"/>
+      </tpl:apply>
+
+    </div>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="foreign/label">
+
+    <tpl:argument name="alias"/>
+
+    <label for="form-{$alias}">
+      <tpl:apply mode="select-option-value" required="x"/>
+    </label>
+
+  </tpl:template>
 
   <view:template match="sql:table" sql:ns="ns" mode="empty">
     <tpl:apply select="* ^ sql:foreign" mode="container/empty"/>
@@ -162,12 +395,10 @@
     </fieldset>
   </view:template>
 
-  <view:template match="*" mode="select-notest">
-    <tpl:argument name="alias" default="alias('form')"/>
-    <select id="form-{$alias}" name="{$alias}">
-      <option value="0">&lt; Choisissez &gt;</option>
-      <tpl:apply select="all()" mode="select-option"/>
-    </select>
+  <view:template match="*" mode="select-option">
+    <option value="{id}">
+      <tpl:apply mode="select-option-value"/>
+    </option>
   </view:template>
 
   <view:template match="*" mode="select-test">
@@ -178,81 +409,23 @@
     </select>
   </view:template>
 
-  <view:template match="*" mode="select-option-test">
-    <option value="{id}">
-      <tpl:if test="parent()/value() = id">
-        <tpl:token name="selected">selected</tpl:token>
-      </tpl:if>
-      <tpl:apply mode="select-option-value"/>
-    </option>
-  </view:template>
+  <tpl:template match="*" mode="input/boolean">
 
-  <view:template match="*" mode="select-multiple-notest">
-    <tpl:argument name="alias" default="alias('form')"/>
-    <select id="form-{$alias}" name="{$alias}" multiple="multiple">
-      <option value="0">&lt; Choisissez &gt;</option>
-      <tpl:apply select="all()" mode="select-option"/>
-    </select>
-  </view:template>
-
-  <view:template match="*" mode="select-multiple-test">
-    <tpl:argument name="alias" default="alias('form')"/>
-    <tpl:variable name="values">
-      <tpl:read select="values()"/>
-    </tpl:variable>
-    <select id="form-{$alias}" name="{$alias}" multiple="multiple">
-      <option value="0">&lt; Choisissez &gt;</option>
-      <tpl:apply select="all()" mode="select-multiple-option-test">
-        <tpl:read select="$values" tpl:name="values"/>
-      </tpl:apply>
-    </select>
-  </view:template>
-
-  <view:template match="*" mode="select-multiple-option-test">
-    <tpl:argument name="values"/>
-    <option value="{id}">
-      <tpl:if test="id in $values">
-        <tpl:token name="selected">selected</tpl:token>
-      </tpl:if>
-      <tpl:apply mode="select-option-value"/>
-    </option>
-  </view:template>
-
-  <view:template match="*" mode="select-option">
-    <option value="{id}">
-      <tpl:apply mode="select-option-value"/>
-    </option>
-  </view:template>
-
-  <view:template match="ssd:password" mode="input" ssd:ns="ns">
-    <tpl:apply mode="input/empty"/>
-  </view:template>
-
-  <view:template match="ssd:password" mode="input/empty" ssd:ns="ns">
-
-    <tpl:argument name="alias" default="alias()"/>
-
-    <tpl:apply mode="input/empty">
-      <tpl:read tpl:name="alias" select="$alias"/>
-      <tpl:read tpl:name="type" select="'password'"/>
-    </tpl:apply>
-
-  </view:template>
-
-  <view:template match="sql:boolean" mode="input/empty" sql:ns="ns">
-
+    <tpl:argument name="type" default="'radio'"/>
     <tpl:argument name="value" default="''"/>
+    <tpl:argument name="content" default="'1'"/>
     <tpl:argument name="alias" default="alias()"/>
+    <tpl:argument name="id" default="$alias"/>
 
-    <input class="field-input field-input-element" type="checkbox" id="form-{$alias}" value="1" name="{$alias}">
-      <tpl:apply mode="input/value">
+    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$content}" name="{$alias}">
+      <tpl:apply mode="input/boolean/value">
         <tpl:read select="$value" tpl:name="value"/>
       </tpl:apply>
     </input>
 
-  </view:template>
+  </tpl:template>
 
-  <tpl:template match="sql:boolean" mode="input/value">
+  <tpl:template match="*" mode="input/boolean/value">
 
     <tpl:argument name="value" default="''"/>
 
@@ -262,15 +435,46 @@
 
   </tpl:template>
 
-  <view:template match="sql:boolean" mode="input/update" sql:ns="ns">
+  <tpl:template match="*" mode="input/checkbox/empty">
+
+    <tpl:apply mode="input/update">
+      <tpl:read tpl:name="type" select="'checkbox'"/>
+      <tpl:read tpl:name="value" select="'1'"/>
+    </tpl:apply>
+    <!--<input class="field-input field-input-element" type="checkbox" id="form-{$alias}" value="1" name="{$alias}"/>-->
+  </tpl:template>
+
+  <tpl:template match="*" mode="input/checkbox/update">
+
+    <tpl:apply mode="input/boolean">
+      <tpl:read tpl:name="type" select="'checkbox'"/>
+      <tpl:read tpl:name="value" select="value()"/>
+      <tpl:read tpl:name="content" select="'1'"/>
+    </tpl:apply>
+
+  </tpl:template>
+
+  <view:template match="ssd:password" mode="input" ssd:ns="ns">
+    <tpl:apply mode="input/empty"/>
+  </view:template>
+
+  <view:template match="ssd:password" mode="input/empty" ssd:ns="ns">
 
     <tpl:argument name="alias" default="alias()"/>
 
-    <tpl:apply mode="input/empty">
+    <tpl:apply mode="input/checkbox">
       <tpl:read tpl:name="alias" select="$alias"/>
-      <tpl:read tpl:name="type" select="'checkbox'"/>
+      <tpl:read tpl:name="type" select="'password'"/>
     </tpl:apply>
 
+  </view:template>
+
+  <view:template match="sql:boolean" mode="input/empty" sql:ns="ns">
+    <tpl:apply mode="input/checkbox/empty"/>
+  </view:template>
+
+  <view:template match="sql:boolean" mode="input/update" sql:ns="ns">
+    <tpl:apply mode="input/checkbox/update"/>
   </view:template>
 
 </view:view>

@@ -76,19 +76,23 @@ class Pather extends component\Child {
           $sToken = (trim(substr($sToken, 1)));
         }
 
-        if ($sValue = $this->matchString($sToken)) {
+        if ($sValue = $this->matchString($sToken) or !is_null($sValue)) {
 
           //$result = $window->createString($sValue);
-          $result = $sValue;
+          $result = $this->getTemplate()->parseValue($sValue);
         }
-        else if ($this->matchNumeric($sToken)) {
+        else if ($sValue = $this->matchNumeric($sToken) or !is_null($sValue)) {
 
           //$result = $window->createNumeric($sToken);
           $result = $sValue;
         }
-        else {
+        else if ($sToken) {
 
           $result = $this->applyPath($sToken, '');
+        }
+        else {
+
+          $result = null;
         }
 
         if ($bNot) $result = $window->createNot($result);
@@ -112,6 +116,11 @@ class Pather extends component\Child {
     return $window->flattenArray($aResult);
   }
 
+  protected function matchExpression($sValue) {
+
+    return $sValue && $sValue{0} == '(' ? substr($sValue, 1, -1) : null;
+  }
+
   protected function matchString($sValue) {
 
     return $sValue && $sValue{0} == "'" ? substr($sValue, 1, -1) : null;
@@ -119,7 +128,7 @@ class Pather extends component\Child {
 
   protected function matchNumeric($sValue) {
 
-    return is_numeric($sValue);
+    return is_numeric($sValue) ? $sValue : null;
   }
 
   public function applyPath($sPath, $sMode, array $aArguments = array()) {
@@ -197,17 +206,30 @@ class Pather extends component\Child {
 
       $aResult = $this->parseVariable($aMatch, $aPath, $sMode);
     }
-    else if (($sValue = $this->matchString($sPath)) || !is_null($sValue)) {
+    else if ($sValue = $this->matchExpression($sPath)) {
 
-      $aResult = array($sValue);
+      if ($aPath) {
+
+        $this->launchException('Expression must not contains sub path');
+      }
+
+      $aResult = array($this->getWindow()->createExpression($this->parseExpression($sValue)));
+    }
+    else if ($sValue = $this->matchString($sPath) or !is_null($sValue)) {
+
+      $aResult = array($this->getTemplate()->parseValue($sValue));
     }
     else if ($aMatch = $this->matchFunction($sPath)) {
 
       $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode, $bRead, $aArguments);
     }
-    else {
+    else if ($sPath) {
 
       $aResult = $this->parsePathDefault($sPath, $aPath, $sMode, $bRead, $aArguments);
+    }
+    else {
+
+      $this->launchException('Invalid path token', get_defined_vars());
     }
 
     return $aResult;
