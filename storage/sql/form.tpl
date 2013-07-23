@@ -462,9 +462,10 @@
 
     <tpl:argument name="alias" default="alias()"/>
 
-    <tpl:apply mode="input/checkbox">
+    <tpl:apply mode="input/boolean">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'password'"/>
+      <tpl:read tpl:name="content" select="''"/>
     </tpl:apply>
 
   </view:template>
