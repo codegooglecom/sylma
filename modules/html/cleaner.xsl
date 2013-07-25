@@ -49,11 +49,10 @@
   </xsl:template>
 
   <xsl:template match="html:*">
+    <xsl:variable name="break" select="' '"/>
     <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
       <xsl:apply-templates select="@* | * | text()"/>
-      <xsl:if test="not(normalize-space(.))">
-        <xsl:text> </xsl:text>
-      </xsl:if>
+      <xsl:if test="not(normalize-space(.))"><![CDATA[]]></xsl:if>
     </xsl:element>
   </xsl:template>
 

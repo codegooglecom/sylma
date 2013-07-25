@@ -16,8 +16,7 @@
       <js:include>/#sylma/template/crud.js</js:include>
       <tpl:apply mode="init"/>
       <tpl:apply mode="form"/>
-      <tpl:apply mode="action"/>
-      <input type="submit" value="Envoyer"/>
+      <tpl:apply mode="form/action"/>
       <tpl:apply mode="form/token"/>
     </form>
   </view:template>
@@ -26,7 +25,9 @@
     <tpl:apply use="form-cols" mode="container"/>
   </tpl:template>
 
-  <view:template mode="action"/>
+  <view:template mode="form/action">
+    <input type="submit" value="Envoyer"/>
+  </view:template>
 
   <view:template match="*" mode="container/empty">
 
@@ -107,11 +108,11 @@
   </view:template>
 
   <view:template match="sql:string-long" mode="input/empty" sql:ns="ns">
-    <textarea id="form-{alias()}" name="{alias()}" class="field-input field-input-element"></textarea>
+    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field-input field-input-element"></textarea>
   </view:template>
 
   <view:template match="sql:string-long" mode="input/update" sql:ns="ns">
-    <textarea id="form-{alias()}" name="{alias()}" class="field-input field-input-element">
+    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field-input field-input-element">
       <tpl:apply/>
     </textarea>
   </view:template>
