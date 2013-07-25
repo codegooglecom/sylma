@@ -76,7 +76,12 @@ class Document extends action\handler\Basic {
 
     $this->getControler('init')->setHeaderContent($sMime, $sCharset);
 
-    if (!$this->getManager('user')->isPrivate()) {
+    if ($this->getManager('user')->isPrivate()) {
+
+      $this->getControler('init')->setHeaderCache(-3600, false);
+      header("Cache-Control: no-cache, must-revalidate");
+    }
+    else {
 
       $this->getControler('init')->setHeaderCache(3600);
     }

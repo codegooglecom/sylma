@@ -406,10 +406,11 @@ class Initializer extends module\Filed {
     return $sResult;
   }
 
-  public function setHeaderCache($iTime) {
+  public function setHeaderCache($iTime, $bPublic = true) {
 
     header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + $iTime));
-    header('Cache-Control: public');
+    //if ($bPublic) header('Cache-Control: public');
+
     header_remove('Pragma');
   }
 
