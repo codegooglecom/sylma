@@ -75,7 +75,11 @@ class Document extends action\handler\Basic {
     }
 
     $this->getControler('init')->setHeaderContent($sMime, $sCharset);
-    $this->getControler('init')->setHeaderCache(3600);
+
+    if (!$this->getManager('user')->isPrivate()) {
+
+      $this->getControler('init')->setHeaderCache(3600);
+    }
 
     //header("Vary: Accept");
 
