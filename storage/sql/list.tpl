@@ -119,11 +119,15 @@
 
   </view:template>
 
+  <tpl:template match="*" mode="row/click">
+    <js:option name="url">
+      <le:path/>/update?id=<tpl:read select="id"/>
+    </js:option>
+  </tpl:template>
+
   <view:template match="*" mode="row">
     <tr js:class="sylma.crud.Row">
-      <js:option name="url">
-        <le:path/>/update?id=<tpl:read select="id"/>
-      </js:option>
+      <tpl:apply mode="row/click"/>
       <js:event name="click">
         %object%.onClick(e);
       </js:event>

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\exception;
-use \sylma\core;
+use sylma\core, sylma\modules;
 
 require_once('core/exception.php');
 require_once('core/functions/Path.php');
@@ -303,28 +303,140 @@ class Basic extends \Exception implements core\exception {
 
     $sResult = '';
 
+    $aPath = $this->getPath();
+
+    $aResult['message'] = $this->parseString( htmlspecialchars($this->getMessage())) . '<br/>';
+    $aResult['paths'] = $this->readPaths($aPath);
+
+    $aResult['vars'] = $this->loadVariables($bHTML);
+
+    if ($bTrace) {
+
+      $aResult['trace'] = $this->loadTraces($bHTML);
+    }
+
     if (\Sylma::read('debug/enable')) {
 
+      if (\Sylma::read('exception/show')) {
 
-      $aPath = $this->getPath();
-
-      $sResult .= $this->parseString( htmlspecialchars($this->getMessage())) . '<br/>';
-      $sResult .= $this->readPaths($aPath);
-
-      $sResult .= $this->loadVariables($bHTML);
-      if ($bTrace) $sResult .= $this->loadTraces($bHTML);
-
-      if ($bPrint) {
-
-        echo $sResult;
+        $this->show($aResult, $bPrint);
       }
-      else {
 
-        \Sylma::display($sResult);
+      if (\Sylma::read('exception/send')) {
+
+        $this->send($aResult);
       }
+    }
+    else {
+
+      $this->send($aResult);
     }
 
     return $sResult;
+  }
+
+  protected function show(array $aResult, $bPrint) {
+
+    $sResult = implode('', $aResult);
+
+    if ($bPrint) {
+
+      echo $sResult;
+    }
+    else {
+
+      \Sylma::display($sResult);
+    }
+  }
+
+  protected function send(array $aResult) {
+
+    try {
+
+      if (!$this->insert($aResult)) {
+
+        $this->mail($aResult);
+      }
+    }
+    catch (core\exception $e) {
+
+      $this->mail($aResult);
+    }
+  }
+
+  protected function insert($aContent) {
+
+    $parser = \Sylma::getManager('parser');
+    $fs = \Sylma::getManager('fs');
+
+    $file = $fs->extractDirectory(__FILE__)->getFile('insert.vml');
+
+    return $parser->load($file, array(
+      'post' => new \sylma\core\argument\Readable(array(
+        'message' => $this->getMessage(),
+        'message_html' => $aContent['message'],
+        'context' => $aContent['paths'] . $aContent['vars'],
+        'backtrace' => $aContent['trace'],
+        'session' => $this->dump($_SESSION),
+        'request' => $this->dump($_REQUEST),
+        'server' => $this->dump($_SERVER),
+      )),
+      //'contexts' => array('messages' => $parser->getContext('messages')),
+    ), false);
+  }
+
+  protected function dump($var) {
+
+    ob_start();
+    var_dump($var);
+
+    return $this->stripInvalidXml(ob_get_clean());
+  }
+
+  protected function mail(array $aResult) {
+
+    $sResult = implode('', $aResult);
+
+    $now = new \DateTime();
+    $sError = $now->format('Y-m-d::H:m:s') . ' - ' . $this->getMessage();
+
+    if (\Sylma::read('exception/mail/enable')) {
+
+      try {
+
+        $mailer = new modules\mailer\Mailer;
+
+        if (!$mailer->send('Website', \Sylma::read('exception/mail/to'), 'Exception uncatch : ' . $sError, $sResult, true)) {
+
+          $this->logFile($sError);
+        }
+      }
+      catch (core\exception $e) {
+
+        $this->logFile($sError);
+      }
+    }
+    else {
+
+      $this->logFile($sError);
+    }
+  }
+
+  protected function logFile($sValue) {
+
+    try {
+
+      $sPath = $_SERVER['DOCUMENT_ROOT'] . '/cache/' . \Sylma::read('exception/file');
+
+      if (!file_put_contents($sPath, $sValue, \FILE_APPEND)) {
+
+        // :(
+      }
+    }
+    catch (core\exception $e) {
+
+      // :(
+    }
   }
 
   protected function readPaths(array $aPaths) {
@@ -344,6 +456,40 @@ class Basic extends \Exception implements core\exception {
     }
 
     return '<ul>' . $sResult .'</ul>';
+  }
+
+  protected function stripInvalidXml($value) {
+
+    // http://stackoverflow.com/questions/3466035/how-to-skip-invalid-characters-in-xml-file-using-php
+
+    $ret = "";
+    $current;
+
+    if (empty($value))
+    {
+        return $ret;
+    }
+
+    $length = strlen($value);
+    for ($i=0; $i < $length; $i++)
+    {
+        $current = ord($value{$i});
+        if (($current == 0x9) ||
+            ($current == 0xA) ||
+            ($current == 0xD) ||
+            (($current >= 0x20) && ($current <= 0xD7FF)) ||
+            (($current >= 0xE000) && ($current <= 0xFFFD)) ||
+            (($current >= 0x10000) && ($current <= 0x10FFFF)))
+        {
+            $ret .= chr($current);
+        }
+        else
+        {
+            $ret .= " ";
+        }
+    }
+
+    return $ret;
   }
 
   protected function implodePath($aPath, $sSeparator = '') {

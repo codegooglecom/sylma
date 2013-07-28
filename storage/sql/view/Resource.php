@@ -35,10 +35,11 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
   protected function addID() {
 
     $row = $this->getTree();
-    $query = $row->getQuery();
 
     if ($id = $this->getx('sql:id')) {
 
+      $query = $row->getQuery();
+      
       $this->parseID($id);
       $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
       //$query->isMultiple(false);

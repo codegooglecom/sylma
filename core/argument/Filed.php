@@ -128,38 +128,30 @@ class Filed extends Setable {
 
     $aResult = array();
 
-    try {
+    if ($fs = $this->getControler()) {
 
-      if ($fs = $this->getControler()) {
+      // file controler is ready
 
-        // file controler is ready
+      if ($file = $this->getFile()) {
 
-        if ($file = $this->getFile()) {
-
-          require_once('core/functions/Path.php');
-          $sPath = path\toAbsolute($sPath, (string) $file->getParent());
-        }
-
-        $file = $fs->getFile($sPath);
-
-        if (!$sContent = $file->execute()) {
-
-          $this->throwException(sprintf('@file %s is empty', $file));
-        }
-
-        if ($bFirstLoad) $this->setFile($file);
-        $aResult = $this->parseYAML($sContent);
+        require_once('core/functions/Path.php');
+        $sPath = path\toAbsolute($sPath, (string) $file->getParent());
       }
-      else {
 
-        // file controler is not ready
-        $aResult = $this->loadYAMLFree($sPath);
+      $file = $fs->getFile($sPath);
+
+      if (!$sContent = $file->execute()) {
+
+        $this->throwException(sprintf('@file %s is empty', $file));
       }
+
+      if ($bFirstLoad) $this->setFile($file);
+      $aResult = $this->parseYAML($sContent);
     }
-    catch (core\exception $e) {
+    else {
 
-      throw $e;
-      //return null;
+      // file controler is not ready
+      $aResult = $this->loadYAMLFree($sPath);
     }
 
     return $aResult;

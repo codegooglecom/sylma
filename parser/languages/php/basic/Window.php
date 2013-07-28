@@ -422,6 +422,37 @@ class Window extends common\basic\Window implements php\window {
     $this->add($this->createCondition($this->createNot($isset), $this->createAssign($var, $new)));
   }
 
+  public function getAbsoluteClass($sPath, $sDirectory = '/') {
+
+    if ($sPath{0} == '\\') {
+
+      $sResult = $sPath;
+    }
+    else {
+
+      $aPaths = explode('\\', $sPath);
+      $aDirectories = explode('/', $sDirectory);
+
+      foreach ($aPaths as $sPath) {
+
+        if ($sPath == '..') {
+
+          array_shift($aPaths);
+          array_pop($aDirectories);
+        }
+        else {
+
+          break;
+        }
+      }
+
+      \Sylma::load('/core/functions/Path.php');
+      $sResult = implode(array_merge($aDirectories, $aPaths), '\\');
+    }
+
+    return $sResult;
+  }
+
   public function createArgument($mArguments, $sNamespace = '') {
 
     $result = parent::createArgument($mArguments, $sNamespace);

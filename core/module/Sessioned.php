@@ -7,7 +7,7 @@ abstract class Sessioned extends Argumented {
 
   const CLASS_PREFIX = 'sylma-class-';
 
-  private function getSessionKey() {
+  protected function getSessionKey() {
 
     return self::CLASS_PREFIX . get_class($this);
   }

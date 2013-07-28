@@ -31,7 +31,7 @@ class File extends core\module\Controled implements core\window\file {
     $file = $this->getFile();
 
     if (\Sylma::read('debug/enable')) $init->setHeaderCache(0);
-    else $init->setHeaderCache(3600 * 24 * 365);
+    else $init->setHeaderCache(3600 * 24 * 7);
 
     $init->setHeaderContent($init->getMime($file->getExtension()));
 

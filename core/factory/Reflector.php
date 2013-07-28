@@ -38,7 +38,7 @@ class Reflector extends Cached {
     $args->registerToken(self::DIRECTORY_TOKEN);
     $args->registerToken(self::CLASSBASE_TOKEN);
 
-    $result = parent::lookupClass($sPath, $args);
+    $result = parent::lookupClass($sPath, $args, $bDebug);
 
     $args->unRegisterToken(self::DIRECTORY_TOKEN);
     $args->unRegisterToken(self::CLASSBASE_TOKEN);

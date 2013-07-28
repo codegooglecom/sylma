@@ -131,7 +131,7 @@ class Manager extends core\module\Argumented {
 
     if (!$result && $bDebug) $this->launchExceptionEmpty();
 
-    return $result ? new Argument($result) : array();
+    return $result ? new Argument($result) : new Argument;
   }
 
   public function escape($mVal) {

@@ -355,7 +355,7 @@ abstract class Domed extends Componented {
 
   protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
 
-    $aVars['node'] = $this->getNode();
+    $aVars['node'] = $this->getNode(false);
 
     return parent::launchException($sMessage, $aVars, $mSender);
   }

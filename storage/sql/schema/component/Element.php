@@ -8,6 +8,14 @@ class Element extends schema\xsd\component\Element implements common\stringable 
   //abstract protected function useAlias();
 
   protected $bAlias = false;
+  protected $bRoot = false;
+  
+  public function isRoot($bValue = null) {
+
+    if (is_bool($bValue)) $this->bRoot = $bValue;
+
+    return $this->bRoot;
+  }
 
   protected function getParentKey() {
 
@@ -98,14 +106,21 @@ class Element extends schema\xsd\component\Element implements common\stringable 
   }
 
   /**
-   * 
    * @return \sylma\storage\sql\schema\Handler
    */
   protected function getParser() {
-    
+
     return parent::getParser();
   }
-  
+
+  /**
+   * @return \sylma\storage\sql\view\Resource
+   */
+  protected function getRoot() {
+
+    return parent::getRoot();
+  }
+
   protected function loadOptional() {
 
     $sDefault = $this->readx('@default');

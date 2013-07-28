@@ -60,17 +60,15 @@ class Restriction extends schema\parser\component\Restriction {
     $aResult = array();
     $node = $this->getNode();
 
-    if (!$node->countChildren()) {
-
-      $this->launchException('No rule defined');
-    }
-
     foreach ($node->getChildren() as $el) {
 
       $this->loadRule($el, $aResult);
     }
 
-    $this->setRules($this->createArgument($aResult));
+    if ($aResult) {
+
+      $this->setRules($this->createArgument($aResult));
+    }
   }
 
   protected function loadRule(dom\element $el, array &$aResult) {

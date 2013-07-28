@@ -98,14 +98,14 @@ class View extends Variabled {
     }
 
     $this->prepareFormed($window);
-    $external = $window->createVariable('bSylmaExternal', 'php-boolean');
-
-    if ($doc->readx('@internal', array(), false)) {
-
-      $window->add($window->createCondition($external, $window->getSylma()->call('throwException', array('Public request for internal view'))));
-    }
+    $window->createVariable('bSylmaExternal', 'php-boolean');
 
     return $window;
+  }
+
+  public function getExternal() {
+
+    return $this->getWindow()->getVariable('bSylmaExternal');
   }
 
   protected function getMode() {

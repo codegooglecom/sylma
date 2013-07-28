@@ -52,4 +52,8 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="html">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
 </xs:schema>

@@ -3,7 +3,7 @@
 namespace sylma\template\parser\component;
 use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template as template_ns;
 
-class Token extends Child implements template_ns\parser\component {
+class Token extends Child implements template_ns\parser\component, core\tokenable {
 
   protected $sName;
   protected $element;
@@ -73,6 +73,11 @@ class Token extends Child implements template_ns\parser\component {
     $result = $element->addToken($sName, $this->getWindow()->toString($this->asValue()));
 
     return $result;
+  }
+
+  public function asToken() {
+
+    return get_class() . ' @' . $this->getName();
   }
 }
 

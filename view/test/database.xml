@@ -26,6 +26,19 @@
       (2, 'admin', 'admin@sylma.org', 1),
       (3, 'webmaster', 'webmaster@sylma.org', 0);
 
+    CREATE TABLE IF NOT EXISTS `user1b` (
+      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `name` varchar(255) COLLATE utf8_bin NOT NULL,
+      `source` varchar(255) COLLATE utf8_bin NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
+
+    DELETE FROM `user1b`;
+    INSERT INTO `user1b` (`id`, `name`, `source`) VALUES
+      (1, 'root', '&lt;span&gt;root bloc&lt;/span&gt;'),
+      (2, 'admin', 'a'),
+      (3, 'webmaster', 'b');
+
     CREATE TABLE IF NOT EXISTS `user2` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `name` varchar(85) COLLATE utf8_bin NOT NULL,

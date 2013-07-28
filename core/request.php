@@ -8,4 +8,9 @@ interface request extends core\arrayable {
    * @return \sylma\storage\fs\file
    */
   function asFile();
+
+  /**
+   * @return \sylma\core\argument
+   */
+  function getArguments();
 }

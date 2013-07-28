@@ -11,7 +11,10 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   protected $aTemplates = array();
   protected $aConstants = array();
 
+  protected $bInternal = false;
+
   protected $result;
+
 
   public function parseRoot(dom\element $el) {
 
@@ -31,6 +34,25 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   public function parseFromChild(dom\element $el) {
 
     return $this->getCurrentTemplate()->parseComponent($el);
+  }
+
+  protected function checkInternal() {
+
+    $window = $this->getWindow();
+    $external = $this->getRoot()->getExternal();
+
+    if ($this->readx('@internal')) {
+
+      $window->add($window->createCondition($external, $window->getSylma()->call('throwException', array('Public request for internal view'))));
+      $this->isInternal(true);
+    }
+  }
+
+  public function isInternal($bVal = null) {
+
+    if (is_bool($bVal)) $this->bInternal = $bVal;
+
+    return $this->bInternal;
   }
 
   public function importFile(fs\file $file) {
@@ -98,7 +120,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
     switch ($sType) {
 
       case 'argument' :
-$this->launchException('Not yet tested');
+
         $content = $this->createArgumentFromString((string) $file);
         break;
 
@@ -115,6 +137,20 @@ $this->launchException('Not yet tested');
     $result->setOptions($content);
 
     return $result;
+  }
+
+
+  public function createTree($sReflector) {
+
+    $result = $this->checkTree(new $sReflector($this));
+    $result->parseRoot();
+
+    return $result;
+  }
+
+  protected function checkTree(template\parser\tree $tree) {
+
+    return $tree;
   }
 
   public function trimString($sValue) {

@@ -18,6 +18,13 @@ namespaces :
   html : http://www.w3.org/1999/xhtml
 render :
   gzip : true
+exception :
+  show : true
+  send : false
+  mail :
+    enable : false
+    to : none
+  file : error.log
 initializer :
   debug :
     update : true
@@ -43,7 +50,7 @@ initializer :
     ttf : application/octet-stream
     eot : application/octet-stream
     woff : application/x-font-woff
-  executables : [json]
+  executables : [json, png]
   error :
     action : error.eml
     html : error.html
@@ -100,3 +107,9 @@ dom:
     token : true
   encoding:
     check: false
+
+modules :
+  captcha :
+    fonts : fonts/truetype/ttf-dejavu
+    background : false
+    session : sylma-captcha

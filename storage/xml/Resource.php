@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\xml;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template;
 
 class Resource extends reflector\handler\Elemented implements reflector\elemented {
 
@@ -18,8 +18,6 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $this->setDirectory(__FILE__);
 
     $this->setNamespace($el->getNamespace(), self::PREFIX);
-
-    $this->loadDefaultArguments();
 
     return $this->parseElement($el);
   }
@@ -57,7 +55,6 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
   protected function build() {
 
-    $options = $this->createOptions((string) $this->getSourceFile($this->readx('@file', true)));
     $view = $this->lookupParser(self::VIEW_NS);
 
     if ($sClass = $this->getReflector()) {
@@ -69,10 +66,15 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
       $root = $this->loadSimpleComponent('tree', $view);
     }
 
-    $root->setOptions($options);
+    $this->initTree($root);
+  }
 
-    $root->isRoot(true);
-    $this->setTree($root);
+  protected function initTree(template\parser\tree $tree) {
+
+    $tree->parseRoot($this->getNode());
+
+    $tree->isRoot(true);
+    $this->setTree($tree);
   }
 
   protected function setTree(template\parser\tree $tree) {

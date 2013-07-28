@@ -49,6 +49,7 @@ class Elemented extends template\parser\handler\Domed {
     }
 
     $this->setMode($sMode);
+    $this->checkInternal();
 
     $resource = $this->loadResource($sMode); // parseRoot(), onAdd()
 

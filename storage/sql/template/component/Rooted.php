@@ -11,15 +11,7 @@ class Rooted extends sql\schema\component\Table {
   protected $query;
   protected $bInsertQuery = true;
 
-  protected $bRoot = false;
   protected $aTriggers = array();
-
-  public function isRoot($bValue = null) {
-
-    if (is_bool($bValue)) $this->bRoot = $bValue;
-
-    return $this->bRoot;
-  }
 
   public function setSource($source) {
 

@@ -41,10 +41,18 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="text">
+    <xs:restriction base="sql:string"/>
+  </xs:simpleType>
+
   <xs:simpleType name="datetime">
     <xs:restriction base="xs:string">
       <xs:maxLength value="15"/>
     </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="html">
+    <xs:restriction base="sql:text"/>
   </xs:simpleType>
 
 </sql:schema>

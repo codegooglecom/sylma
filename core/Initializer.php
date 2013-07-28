@@ -105,8 +105,6 @@ class Initializer extends module\Filed {
     // Reload last alternatives mime-type results - $_SESSION['results']
     //self::loadResults();
 
-    $sResult = '';
-
     if ($file = $path->asFile()) {
 
       // A file
@@ -114,57 +112,61 @@ class Initializer extends module\Filed {
     }
     else {
 
-      $bProfile = $this->readArgument('debug/profile');
+      $sResult = $this->runScript($path);
+    }
 
-      if ($bProfile) {
+    return $sResult;
+  }
 
-        xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+  protected function runScript(core\request $path) {
+
+    $sResult = '';
+    $bProfile = $this->readArgument('debug/profile');
+
+    if ($bProfile) {
+
+      xhprof_enable(\XHPROF_FLAGS_CPU + \XHPROF_FLAGS_MEMORY);
+    }
+
+    $sExtension = $path->parseExtension(true);
+
+    if ($path->getExtension() == $this->readArgument('redirect/extension')) {
+
+      // Redirect
+      $action = $this->loadAction($path);
+      $redirect = $action->asObject();
+
+      if (!$redirect instanceof core\redirect) {
+
+        $this->throwException('Cannot redirect at that adress');
       }
 
-      $sExtension = $path->parseExtension(true);
+      $this->runRedirect($redirect);
+    }
+    else if (in_array($path->getExtension(), $this->getArgument('executables')->query())) {
 
-      if ($path->getExtension() == $this->readArgument('redirect/extension')) {
+      $sResult = $this->runExecutable($path);
+    }
+    else if (!$path->getExtension()) {
 
-        // Redirect
-        $action = $this->loadAction($path);
-        $redirect = $action->asObject();
+      // HTML action
+      $sResult = $this->buildWindowAction($path);
+    }
+    else {
 
-        if (!$redirect instanceof core\redirect) {
+      $this->throwException('No valid window defined');
+    }
 
-          $this->throwException('Cannot redirect at that adress');
-        }
+    if ($bProfile) {
 
-        $this->runRedirect($redirect);
-      }
-      else if (in_array($path->getExtension(), $this->getArgument('executables')->asArray())) {
+      $xhprof_data = xhprof_disable();
 
-        // Normal action
-        $window = $this->create($sExtension, array($this));
-        \Sylma::setManager('window', $window);
+      $XHPROF_ROOT = "xhprof/";
+      include_once $XHPROF_ROOT . "/utils/xhprof_lib.php";
+      include_once $XHPROF_ROOT . "/utils/xhprof_runs.php";
 
-        $sResult = $this->loadObject($path, $window);
-      }
-      else if (!$path->getExtension()) {
-
-        // HTML action
-        $sResult = $this->buildWindowAction($path);
-      }
-      else {
-
-        $this->throwException('No valid window defined');
-      }
-
-      if ($bProfile) {
-
-        $xhprof_data = xhprof_disable();
-
-        $XHPROF_ROOT = "xhprof/";
-        include_once $XHPROF_ROOT . "/utils/xhprof_lib.php";
-        include_once $XHPROF_ROOT . "/utils/xhprof_runs.php";
-
-        $xhprof_runs = new \XHProfRuns_Default();
-        $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
-      }
+      $xhprof_runs = new \XHProfRuns_Default();
+      $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
     }
 
     return $sResult;
@@ -186,6 +188,39 @@ class Initializer extends module\Filed {
     }
 
     return $result;
+  }
+
+  protected function runExecutable(core\request $path) {
+
+    $sExtension = $path->getExtension();
+
+    if ($this->getFactory()->findClass($sExtension, '', false)) {
+
+      // with window
+
+      $window = $this->create($sExtension, array($this));
+      \Sylma::setManager('window', $window);
+
+      $sResult = $this->loadObject($path, $window);
+    }
+    else {
+
+     // no window
+
+     $this->setHeaderContent($this->getMime($sExtension));
+
+     $path->parse();
+     $file = $path->asFile();
+
+     if ($file->getExtension() !== 'vml') {
+
+       $this->launchException('Can execute only view');
+     }
+
+     $sResult = (string) $this->prepareScript($file, $path->getArguments());
+    }
+
+    return $sResult;
   }
 
   public function getExtensions() {
@@ -274,12 +309,9 @@ class Initializer extends module\Filed {
     }
     catch (core\exception $e) {
 
-      if (\Sylma::read('debug/enable')) {
+      $e->save(false);
 
-        $e->save(false);
-        //throw $e;
-      }
-      else {
+      if (!\Sylma::read('debug/enable')) {
 
         header('HTTP/1.0 404 Not Found');
       }
@@ -307,7 +339,7 @@ class Initializer extends module\Filed {
     switch ($file->getExtension()) {
 
       case 'eml' : $content = $this->prepareAction($action, $file, $args); break;
-      case 'vml' : $content = $this->prepareScript($action, $file, $args); break;
+      case 'vml' : $content = $this->prepareScript($file, $args, $action->getContexts()); break;
       default :
 
         $this->launchException('Unknown extension for window content');
@@ -322,13 +354,13 @@ class Initializer extends module\Filed {
     $action->setArgument('current', $path);
   }
 
-  protected function prepareScript(action\handler $window, fs\file $file, core\argument $args) {
+  protected function prepareScript(fs\file $file, core\argument $args, core\argument $contexts = null) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
     $result = $builder->load($file, array(
       'arguments' => $args,
-      'contexts' => $window->getContexts(),
+      'contexts' => $contexts,
       //'post' => $post,
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'), true);
 

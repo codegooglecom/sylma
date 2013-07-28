@@ -58,7 +58,7 @@
       <div><h3>admin</h3><a href="mailto:email">test</a></div>
     </tst:node>
   </tst:test>
-  <tst:test name="html chars in content">
+  <tst:test name="special chars in content">
     <tst:document>
       <view:view sql:ns="ns">
         <sql:resource>
@@ -74,6 +74,28 @@
     </tst:document>
     <tst:node>
       <div><h3>&lt;admin&gt;</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="html chars in db">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1b.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:read select="source"/></h3>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>
+          <span>root bloc</span>
+        </h3>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Apply value">
@@ -680,6 +702,63 @@
         </span>
       </form>
     </tst:node>
+  </tst:test>
+  <tst:test name="Import reflector">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:rfl="http://2013.sylma.org/view/parser/test/grouped/samples/reflector1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><tpl:apply select="name"/></h3>
+            <fieldset><tpl:apply reflector="samples\Reflector1"/></fieldset>
+          </form>
+        </view:template>
+        <view:template match="rfl:sample1">
+          <div>
+            <span><tpl:read select="test()"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <h3>admin</h3>
+        <fieldset>
+          <div>
+            <span>Hello world !</span>
+          </div>
+        </fieldset>
+      </form>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Token in insert view" disabled="true">
+    <!-- TODO -->
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:rfl="http://2013.sylma.org/view/parser/test/grouped/samples/reflector1" mode="insert">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><tpl:apply select="name"/></h3>
+            <tpl:apply select="name"/>
+          </form>
+        </view:template>
+        <view:template match="*">
+          <tpl:register/>
+          <div>
+            <h4>
+              <tpl:token name="src">test</tpl:token>
+            </h4>
+            <span><tpl:read select="alias()"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
   </tst:test>
   <tst:test name="Read path on apply" disabled="true">
     <tst:document>

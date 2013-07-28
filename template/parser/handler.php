@@ -10,5 +10,7 @@ interface handler {
 
   function importFile(fs\file $file);
   function importTree(fs\file $file, $sType);
+  function createTree($sReflector);
+  function isInternal();
 }
 

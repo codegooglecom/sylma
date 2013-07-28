@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\schema\xsd;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\schema;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\schema, sylma\storage\fs;
 
 /**
  * DOM delayed class. This class won't parse all DOM at start, but lookup for
@@ -219,7 +219,12 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     $this->setDefaultNamespace($doc->getRoot()->lookupNamespace());
   }
 
-  public function addSchema(dom\document $doc) {
+  public function addSchema(dom\document $doc, fs\file $file = null) {
+
+    if ($file) {
+
+      $this->getRoot()->importDocument($doc, $file);
+    }
 
     $sNamespace = $this->parseTargetNamespace($doc);
     $sResult = '';

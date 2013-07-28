@@ -9,9 +9,12 @@ class Form extends core\module\Argumented {
   protected $contexts;
   protected $aElements = array();
 
-  public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token) {
+  public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token = null) {
 
-    $token->isValid();
+    if ($token) {
+
+      $token->isValid();
+    }
 
     $this->setMode($sMode);
 

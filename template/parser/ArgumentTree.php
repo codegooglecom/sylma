@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser;
-use sylma\core, sylma\template as tpl, sylma\parser\reflector;
+use sylma\core, sylma\dom, sylma\template as tpl, sylma\parser\reflector;
 
 class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\tree {
 
@@ -10,6 +10,19 @@ class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\t
 
   protected $sName;
   protected $bRoot = false;
+
+  public function parseRoot(dom\element $el) {
+
+    $this->setNode($el);
+    $this->setDirectory(__FILE__);
+    $this->loadDefaultArguments();
+
+    if ($sFile = $this->readx('@file')) {
+
+      $options = $this->createOptions((string) $this->getSourceFile($sFile));
+      $this->setOptions($options);
+    }
+  }
 
   public function setOptions(core\argument $arg) {
 
@@ -57,7 +70,7 @@ class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\t
 
       if (!$sMode) {
 
-        $this->launchException('Cannot apply tree without mode');
+        $this->launchException('Cannot apply tree');
       }
     }
 

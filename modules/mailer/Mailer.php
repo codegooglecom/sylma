@@ -26,6 +26,6 @@ class Mailer extends core\module\Domed {
 
     $this->getManager(self::PARSER_MANAGER)->getContext('messages')->add(array('content' => 'Mail sent to ' . $sEmail));
 
-    mail($sEmail, $sSubject, $sMessage, $sHeaders);
+    return mail($sEmail, $sSubject, $sMessage, $sHeaders);
   }
 }

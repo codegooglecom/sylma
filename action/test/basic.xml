@@ -227,4 +227,31 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Create object">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span>
+              <le:object class="samples\Sample1">
+                <tpl:text>hello</tpl:text>
+                <tpl:text>world</tpl:text>
+              </le:object>
+            </span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>hello-world</span>
+      </div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

@@ -88,7 +88,14 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
   protected function reflectSelf() {
 
-    return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', array($this->getAlias(), false));
+    $aArguments = array($this->getAlias(), false);
+
+    if ($this->getType()->doExtends($this->getParser()->getType('html', $this->getNamespace('sql')))) {
+
+      $aArguments[] = true;
+    }
+    
+    return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', $aArguments);
   }
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {

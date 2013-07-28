@@ -36,6 +36,8 @@ class Basic extends reflector\component\Foreigner {
 
     if ($this->getNode(false) and $sClass = $this->readx('@' . 'reflector' . ($bStatic ? '-static' : ''))) {
 
+      $sClass = $this->getWindow()->getAbsoluteClass($sClass, (string) $this->getSourceDirectory());
+
       if ($bStatic) {
 
         $result = $this->createClass($sClass);

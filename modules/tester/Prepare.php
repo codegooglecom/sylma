@@ -50,9 +50,15 @@ abstract class Prepare extends Basic {
         else {
 
           $result = $this->getArgument('result');
-          $node = $this->getArgument('node');
 
-          $bResult = $this->compareNodes($result, $node);
+          if ($node = $this->getArgument('node', false)) {
+
+            $bResult = $this->compareNodes($result, $node);
+          }
+          else {
+
+            $bResult = true;
+          }
         }
       }
     }

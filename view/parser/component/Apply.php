@@ -17,7 +17,14 @@ class Apply extends parser\component\Apply implements common\arrayable {
 
     $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
 
-    if ($sImport = $this->readx('@import')) {
+    if ($sReflector = $this->readx('@reflector')) {
+
+      $sReflector = $this->getWindow()->getAbsoluteClass($sReflector, (string) $this->getSourceDirectory());
+      $tree = $this->getParser()->createTree($sReflector);
+
+      $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode, $aArguments);
+    }
+    else if ($sImport = $this->readx('@import')) {
 
       $tree = $this->getParser()->importTree($this->getSourceFile($sImport));
       $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode, $aArguments);

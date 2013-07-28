@@ -11,6 +11,10 @@ class Simple extends schema\component\SimpleType {
 
       $sValue = 'TIMESTAMP';
     }
+    else if ($this->doExtends($this->getParser()->getType('text', $this->getNamespace('sql')))) {
+
+      $sValue = 'MEDIUMTEXT';
+    }
     else if ($this->doExtends($this->getParser()->getType('string', $this->getNamespace('xs')))) {
 
       $iSize = $this->getDefine()->getRule('maxLength');

@@ -89,14 +89,24 @@ class Table extends sql\template\component\Table implements common\argumentable 
   public function loadHandler() {
 
     $window = $this->getWindow();
-    $token = (string) $this->getParser()->getView()->getRoot()->asPath();
+    $view = $this->getParser()->getView();
+
+    if (!$view->isInternal()) {
+
+      $sToken = (string) $view->getRoot()->asPath();
+      $token = $this->createObject('token', array($sToken), null, false);
+    }
+    else {
+
+      $token = null;
+    }
 
     $result = $this->buildReflector(array(
       $window->getVariable('arguments'),
       $window->getVariable('post'),
       $window->getVariable('contexts'),
       $this->getMode(),
-      $this->createObject('token', array($token), null, false),
+      $token,
     ));
 
     $this->setHandler($window->createVar($result));
