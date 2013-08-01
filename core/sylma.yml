@@ -33,7 +33,7 @@ initializer :
   output :
     indent : true
   mime :
-    default : plain/text
+    txt : text/plain
     jpg : image/jpeg
     jpeg : image/jpeg
     png : image/png
@@ -50,7 +50,7 @@ initializer :
     ttf : application/octet-stream
     eot : application/octet-stream
     woff : application/x-font-woff
-  executables : [json, png]
+  executables : [json, png, txt]
   error :
     action : error.eml
     html : error.html

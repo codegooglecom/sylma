@@ -138,11 +138,15 @@
       <js:name>
         <tpl:read select="alias('key')"/>
       </js:name>
-      <legend>
-        <tpl:read select="title()"/>
-      </legend>
+      <tpl:apply mode="legend"/>
       <tpl:apply mode="input/boolean/empty"/>
     </fieldset>
+  </tpl:template>
+
+  <tpl:template match="*" mode="legend">
+    <legend>
+      <tpl:read select="title()"/>
+    </legend>
   </tpl:template>
 
   <view:template match="sql:foreign" mode="input/empty" sql:ns="ns">
@@ -372,29 +376,35 @@
 
   <view:template match="sql:reference" mode="container" sql:ns="ns">
     <fieldset js:class="sylma.crud.fieldset.Container">
-      <legend>
-        <tpl:read select="title()"/>
-      </legend>
-      <button type="button">
-        <js:event name="click">
-          %object%.addTemplate();
-        </js:event>
-        <tpl:text>+</tpl:text>
-      </button>
-      <div js:name="template" js:class="sylma.crud.fieldset.Template" class="form-reference clearfix sylma-hidder" style="display: none">
-        <tpl:apply select="static()" mode="empty"/>
-        <button type="button" class="right">
-          <js:event name="click">
-            %object%.remove();
-          </js:event>
-          <tpl:text>-</tpl:text>
-        </button>
-      </div>
+      <tpl:apply mode="legend"/>
+      <tpl:apply mode="template/add"/>
+      <tpl:apply mode="template"/>
       <div js:node="content">
         <tpl:apply select="ref()" mode="update"/>
       </div>
     </fieldset>
   </view:template>
+
+  <tpl:template match="sql:reference" mode="template/add">
+    <button type="button" js:class="sylma.ui.Base">
+      <js:event name="click">
+        %parent%.addTemplate();
+      </js:event>
+      <tpl:text>+</tpl:text>
+    </button>
+  </tpl:template>
+
+  <tpl:template match="sql:reference" mode="template">
+    <div js:name="template" js:class="sylma.crud.fieldset.Template" class="form-reference clearfix sylma-hidder" style="display: none">
+      <tpl:apply select="static()" mode="empty"/>
+      <button type="button" class="right">
+        <js:event name="click">
+          %object%.remove();
+        </js:event>
+        <tpl:text>-</tpl:text>
+      </button>
+    </div>
+  </tpl:template>
 
   <view:template match="*" mode="select-option">
     <option value="{id}">

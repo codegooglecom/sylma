@@ -1,0 +1,56 @@
+
+form.sylma-uploader
+{
+  display: none;
+}
+
+div.sylma-uploader ul
+{
+  margin-left: 2em;
+}
+
+.sylma-uploader-dropper
+{
+  margin: 2em auto 1em;
+  text-align: center;
+}
+
+div.sylma-uploader > span
+{
+  padding-left: 1em;
+  text-decoration: blink;
+}
+
+.field-file
+{
+  padding: 1.5em 0 1em 5em;
+  background: url(icones/file.png) no-repeat 0 50%;
+}
+
+.field-file-extension-rar,
+.field-file-extension-gzip,
+.field-file-extension-zip
+{
+  background-image: url(icones/zip.png);
+}
+
+.field-file-extension-jpg,
+.field-file-extension-jpeg,
+.field-file-extension-png
+{
+  background-image: url(icones/image.png);
+}
+
+.field-file-extension-pdf
+{
+  background-image: url(icones/pdf.png);
+}
+
+.field-file-extension-docx,
+.field-file-extension-doc
+{
+  background-image: url(icones/word.gif);
+}
+
+
+

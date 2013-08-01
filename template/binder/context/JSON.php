@@ -104,6 +104,17 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
 
   public function asString() {
 
+    header('Vary: Accept');
+
+    if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
+
+      \Sylma::getManager('init')->setHeaderContent('application/json');
+
+    } else {
+
+      \Sylma::getManager('init')->setHeaderContent('text/plain');
+    }
+
     if ($action = $this->getAction()) {
 
       $this->loadAction($action);

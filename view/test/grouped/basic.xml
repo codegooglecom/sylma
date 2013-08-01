@@ -134,6 +134,22 @@
       <div>id=2;name=admin</div>
     </tst:node>
   </tst:test>
+  <tst:test name="Slash in string">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1b.xql</view:schema>
+        <view:template>
+          <div><tpl:read select="'test/{name}'"/></div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>test/root</div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Expression in read">
     <tst:document>
       <view:view sql:ns="ns">
@@ -435,6 +451,14 @@
       <div><h4>world</h4></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Simple extends">
+    <tst:prepare>
+      $manager->setArgument('result', $manager->getScript('samples/extends1.vml'));
+    </tst:prepare>
+    <tst:node>
+      <div>world</div>
+    </tst:node>
+  </tst:test>
   <tst:test name="External parser">
     <tst:document>
       <view:view>
@@ -572,6 +596,36 @@
         </view:template>
         <view:template match="user:email">
           <tpl:argument name="test2" default="alias()"/>
+          <tpl:read/><br/><tpl:read select="$test2"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org<br/>email</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Argument with default content">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span>
+              <tpl:apply select="email"/>
+            </span>
+          </div>
+        </view:template>
+        <view:template match="user:email">
+          <tpl:argument name="test2">
+            <tpl:read select="alias()"/>
+          </tpl:argument>
           <tpl:read/><br/><tpl:read select="$test2"/>
         </view:template>
       </view:view>

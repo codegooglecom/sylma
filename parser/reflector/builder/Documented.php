@@ -45,7 +45,7 @@ class Documented extends Logger implements reflector\documented {
     }
   }
 
-  protected function setDocument(dom\handler $doc) {
+  protected function setDocument(dom\handler $doc, $bImport = true) {
 
     //$doc->registerNamespaces($this->getNS());
 
@@ -56,7 +56,7 @@ class Documented extends Logger implements reflector\documented {
       $this->throwException('Empty document');
     }
 
-    return $this->importDocument($doc, $this->getFile());
+    return $bImport ? $this->importDocument($doc, $this->getFile()) : $doc;
   }
 
   public function importDocument(dom\handler $doc, fs\file $file) {

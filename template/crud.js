@@ -153,6 +153,7 @@ sylma.crud.Form = new Class({
     if (!result.errors && redirect) {
 
       window.location.href = document.referrer;
+      //this.hideMask();
     }
     else {
 
@@ -493,6 +494,102 @@ sylma.crud.fieldset = {};
       return clone;
     }
   });
+
+  this.FileForm = new Class({
+
+    Extends : sylma.ui.Base,
+
+    update : function(body) {
+
+      var callback = this.get('callback');
+
+      if (callback) {
+
+        var text = document.all ? body.innerText : body.textContent;
+
+        callback(text);
+      }
+    },
+
+    setPosition : function(position) {
+
+      this.getNode('position').set('value', position);
+    }
+  });
+
+  this.FileDropper = new Class({
+
+    Extends : this.Template,
+    position : 1,
+
+    initialize : function(props) {
+
+      this.parent(props);
+      this.position = this.getNode().getAllNext().length + 1;
+    },
+
+    sendFile : function() {
+
+      var form = this.getParent(4).getObject('uploader');
+
+      form.getNode().grab(this.getNode().clone(true));
+      this.highlight();
+
+      form.setPosition(this.position);
+      form.set('callback', this.updateFile.bind(this));
+
+      form.getNode().submit();
+    },
+
+    getInput : function() {
+
+      return this.getNode().getElement('input');
+    },
+
+    updateFile : function(content) {
+
+      var response = JSON.parse(content);
+
+      sylma.ui.parseMessages(response);
+
+      if (response.content) {
+
+        sylma.ui.import(response.content).inject(this.getNode().getParent());
+
+        var obj = sylma.ui.createObject(this.import(response, this));
+        this.tmp.push(obj);
+
+        this.position++;
+      }
+      else {
+
+
+      }
+
+      this.getInput().set('value');
+      this.downlight();
+    },
+
+    highlight : function() {
+
+      this.getInput().set('disabled', true);
+      this.getNode('loading').addClass('sylma-visible');
+    },
+
+    downlight : function() {
+
+      this.getInput().set('disabled');
+      this.getNode('loading').removeClass('sylma-visible');
+    }
+
+  });
+
+  this.File = new Class({
+
+    Extends : sylma.crud.fieldset.Row
+  });
+
+
 
 }).call(sylma.crud.fieldset);
 

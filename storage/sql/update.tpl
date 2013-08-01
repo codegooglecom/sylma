@@ -72,9 +72,7 @@
       <js:name>
         <tpl:read select="alias('key')"/>
       </js:name>
-      <legend>
-        <tpl:read select="title()"/>
-      </legend>
+      <tpl:apply mode="legend"/>
       <tpl:apply mode="input/multiple/boolean/update"/>
     </fieldset>
   </tpl:template>

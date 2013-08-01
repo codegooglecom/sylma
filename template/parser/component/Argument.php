@@ -11,6 +11,8 @@ class Argument extends Variable implements parser\component, common\arrayable {
 
     $this->setNode($el);
     $this->loadName();
+
+    $this->allowForeign(true);
   }
 
   public function setContent($mContent) {
@@ -22,7 +24,20 @@ class Argument extends Variable implements parser\component, common\arrayable {
 
   public function getDefault() {
 
-    return $this->getTemplate()->applyPath($this->readx('@default', true), '');
+    if ($sDefault = $this->readx('@default')) {
+
+      $result = $this->getTemplate()->applyPath($sDefault, '');
+    }
+    else if ($this->getNode()->hasChildren()) {
+
+      $result = $this->parseComponentRoot($this->getNode());
+    }
+    else {
+
+      $this->launchException("Argument '{$this->getName()}' is missing");
+    }
+
+    return $result;
   }
 
   public function asArray() {

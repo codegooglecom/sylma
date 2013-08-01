@@ -162,7 +162,7 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
 
     if ($this->tree) {
 
-      $this->launchException('Tree ever assigned');
+      $this->launchException('Template is already assigned to a tree');
     }
 
     //$this->initComponents();
@@ -389,18 +389,18 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
     return $pather;
   }
 
-  public function readPath($sPath, $sMode) {
+  public function readPath($sPath, $sMode, array $aArguments = array()) {
 
     $pather = $this->getPather();
 
-    return $sPath ? $pather->readPath($sPath, $sMode) : $this->getTree()->reflectRead();
+    return $pather->readPath($sPath, $sMode, $aArguments);
   }
 
   public function applyPath($sPath, $sMode, array $aArguments = array()) {
 
     $pather = $this->getPather();
 
-    return $sPath ? $pather->applyPath($sPath, $sMode, $aArguments) : $this->getTree()->reflectApply($sMode, $aArguments);
+    return $pather->applyPath($sPath, $sMode, $aArguments);
   }
 
   public function parseValue($sValue) {
@@ -421,7 +421,7 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
 
         $sStart = substr($sValue, $iOffset, $iStart - $iOffset);
 
-        if ($i == count($aResult) - 1) {
+        if ($i == (count($aMatches) - 1)) {
 
           $mResult[] = array($sStart, $val, substr($sValue, $iStart + $iVarLength));
         }

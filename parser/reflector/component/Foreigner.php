@@ -197,5 +197,15 @@ class Foreigner extends reflector\basic\Reflector implements reflector\component
 
     $this->getParser()->stopComponentLog();
   }
+
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
+
+    if ($file = $this->getSourceFile()) {
+
+      $mSender[] = $file->asToken();
+    }
+
+    parent::launchException($sMessage, $aVars, $mSender);
+  }
 }
 

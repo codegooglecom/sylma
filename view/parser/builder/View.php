@@ -74,6 +74,7 @@ class View extends Variabled {
    */
   protected function prepareWindow(dom\handler $doc, $sMode) {
 
+    $this->setDocument($doc, false);
     $window = $this->createWindow();
 
     switch ($sMode) {
@@ -148,7 +149,7 @@ class View extends Variabled {
 
       $file = $this->getSourceFile($sPath);
       $new = $this->importDocument($file->getDocument(), $file);
-      $doc->add($new->getRoot()->getChildren());
+      $doc->shift($new->getRoot()->getChildren());
     }
 
     return $this->getMode();

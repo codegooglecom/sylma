@@ -141,6 +141,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       //case 'apply' : $result = $this->reflectApply(''); break;
       case 'name' : $result = $this->getName(); break;
       case 'title' : $result = $this->getTitle(); break;
+      case 'position' :$result = $this->getPosition();  break;
       case 'parent' :
 
         $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead);
@@ -153,6 +154,17 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     }
 
     return $result;
+  }
+
+  protected function getPosition() {
+
+    $window = $this->getWindow();
+
+    return $window->createExpression(array(
+      $this->getKey(),
+      $window->createOperator('+'),
+      $window->createNumeric(1),
+    ));
   }
 
   public function reflectApplyAll($sMode) {

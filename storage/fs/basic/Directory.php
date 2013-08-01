@@ -321,9 +321,11 @@ class Directory extends Resource implements fs\directory {
 
     if ($this->getControler()->mustSecure()) {
 
-      if (!$aRights = $this->getSettings()->getFile($file->getName())) $aRights = $this->getChildrenRights();
+      if (!$this->getSettings() or !$aRights = $this->getSettings()->getFile($file->getName())) {
 
-      $file->setRights($aRights);
+        $aRights = $this->getChildrenRights();
+        $file->setRights($aRights);
+      }
     }
     else {
 

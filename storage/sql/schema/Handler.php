@@ -59,7 +59,7 @@ class Handler extends xsd\Elemented {
 
   public function setArguments($mArguments = null, $bMerge = true) {
 
-    $this->log('Change schema arguments', array($mArguments));
+    $this->log('Change schema arguments');
     return parent::setArguments($mArguments, $bMerge);
   }
 

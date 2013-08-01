@@ -46,7 +46,7 @@ class Context extends core\module\Argumented implements window\action {
   public function asString() {
 
     $sResult = '';
-    $this->setHeader($this->getContext());
+    //$this->setHeader($this->getContext());
 
     if ($result = $this->getAction()->getContext($this->getContext())) {
 

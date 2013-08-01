@@ -17,7 +17,9 @@ class Read extends Child implements common\arrayable, parser\component {
 
     $this->log("Read [@select={$sSelect},@mode={$sMode}]");
 
-    $aResult = array($this->getTemplate()->readPath($sSelect, $sMode));
+    $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
+
+    $aResult = array($this->getTemplate()->readPath($sSelect, $sMode, $aArguments));
 
     return $aResult;
   }

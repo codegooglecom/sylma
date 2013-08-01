@@ -15,9 +15,9 @@ class File extends fs\basic\File implements fs\editable\file {
     return false;
   }
 
-  public function move($sDirectory, $sName = '') {
+  public function move(fs\directory $dir, $sName = '') {
 
-    return $this->moveSecured($sDirectory, $sName);
+    return $this->moveSecured($dir, $sName);
   }
 
   public function moveFree($sDirectory, $sName = '') {
@@ -41,65 +41,64 @@ class File extends fs\basic\File implements fs\editable\file {
    * @return null|string|XML_File If $bSecured is set to true, the resulting new XML_file if move success or null if not
    *    If $bSecured is set to false, then it will return (string) path if move success or null if not.
    */
-  protected function moveSecured($sDirectory, $sNewName = '', $bSecured = true) {
+  protected function moveSecured(fs\directory $dir, $sNewName = '', $bSecured = true) {
 
-    $oResult = null;
+    $result = null;
 
-    if ($this->checkRights(MODE_WRITE)) {
+    if ($this->checkRights(\Sylma::MODE_WRITE)) {
 
       $sName = $this->getName();
       if (!$sNewName) $sNewName = $sName;
 
-      if ((!$oDirectory = $this->getControler()->getDirectory($sDirectory)) ||
-        ($bSecured && !$oDirectory->checkRights(MODE_WRITE))) {
+      if ($bSecured && !$dir->checkRights(\Sylma::MODE_WRITE)) {
 
-        dspm(xt('Impossible de déplacer %s dans %s, le répertoire est introuvable ou privé',
-          $this->parse(), new HTML_Strong($sDirectory)), 'warning');
+        $this->throwException("Cannot write to directory : {$sDirectory}");
       }
-      else if (rename($this->getRealPath(), $oDirectory->getRealPath().'/'.$sNewName)) {
+
+      if (rename($this->getRealPath(), $dir->getRealPath().'/'.$sNewName)) {
 
 //        $this->update();
+/*
+        if ($dir != $this->getParent()) {
 
-        if ($oDirectory != $this->getParent()) {
+          if ($bSecured) {
 
-          if ($bSecured) $oDirectory->getSettings()->updateFile($sNewName,
-            $this->getOwner(), $this->getGroup(), $this->getMode()); // copy security attributes
+            $dir->getSettings()->updateFile($sNewName, $this->getOwner(), $this->getGroup(), $this->getMode()); // copy security attributes
+          }
 
           $this->getSettings()->deleteFile($sName);
         }
-
-        if ($bSecured) $oResult = $oDirectory->updateFile($sNewName);
-        else $oResult = $oDirectory.'/'.$sNewName; // if not secured, target file may be not readable
+*/
+        if ($bSecured) $result = $dir->updateFile($sNewName);
+        else $result = $dir.'/'.$sNewName; // if not secured, target file may be not readable
 
         // update directory settings
-        $this->getSettings()->updateFileName($this->getName(), $sName);
-
-      } else dspm(t('Impossible de déplacer le fichier !'), 'warning');
+        //$this->getSettings()->updateFileName($this->getName(), $sName);
+      }
     }
 
-    return $oResult;
+    return $result;
   }
 
   public function rename($sNewName) {
 
-    $oResult = null;
+    $result = null;
 
-    if ($this->checkRights(MODE_WRITE)) {
+    if (!$this->checkRights(\Sylma::MODE_WRITE)) {
 
-      if (rename($this->getRealPath(), $this->getParent()->getRealPath().'/'.$sNewName)) {
-
-//        $this->update();
-        $oResult = $this->getParent()->updateFile($sNewName);
-
-        \Controler::addMessage(t('Fichier renommé !'), 'success');
-
-        // update directory settings
-        $this->getSettings()->updateFileName($this->getName(), $sNewName);
-
-      } else \Controler::addMessage(t('Impossible de renommer le fichier !'), 'warning');
+      $this->throwException('No write access');
     }
 
-    return $oResult;
+    if (rename($this->getRealPath(), $this->getParent()->getRealPath().'/'.$sNewName)) {
+
+//        $this->update();
+      $result = $this->getParent()->updateFile($sNewName);
+
+      // update directory settings
+      //$this->getSettings()->updateFileName($this->getName(), $sNewName);
+    }
+
+    return $result;
   }
 
   public function delete($bMessage = true, $bUpdateDirectory = true) {

@@ -1,6 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\editable;
+use sylma\storage\fs;
 
 interface file {
 
@@ -12,11 +13,9 @@ interface file {
   /**
    * Move a file WITH security rights
    *
-   * @param string $sDirectory Targeted directory
-   * @param string $sName Optional new name
    * @return null|fs\file The resulting new file if move successed or NULL if not
    */
-  public function move($sDirectory, $sName = '');
+  public function move(fs\directory $dir, $sName = '');
 
   /**
    * Move a file WITHOUT security rights

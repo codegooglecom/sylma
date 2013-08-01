@@ -24,29 +24,28 @@ class Generator extends core\module\Domed {
     $hs = 20; // height margin
 
     // initialise image with dimensions of x, y pixels
-    $image = imagecreatetruecolor($w, $h);
     $file = $this->getFile($this->read('background'));
+    $image = imagecreatefromjpeg($file->getRealPath());
 
     // set background and allocate drawing colours
-	$captcha = imagecreatefrompng($file->getRealPath());
 
-    imagealphablending($captcha, true);
-    imagesavealpha($captcha , true);
+    //imagealphablending($captcha, true);
+    //imagesavealpha($captcha , true);
 
-    $background = imagecolorallocate($image, 0x66, 0xCC, 0xFF);
-    imagefill($image, 0, 0, $background);
+    //$background = imagecolorallocate($image, 0x66, 0xCC, 0xFF);
+    //imagefill($image, 0, 0, $background);
 
-    $linecolor = imagecolorallocate($image, 0x33, 0x99, 0xCC);
+    //$linecolor = imagecolorallocate($image, 0x33, 0x99, 0xCC);
     $textcolor1 = imagecolorallocate($image, 0x00, 0x00, 0x00);
     $textcolor2 = imagecolorallocate($image, 0xFF, 0xFF, 0xFF);
-
+/*
     // draw random lines on canvas
     for($i = 0; $i < 8; $i++) {
 
       imagesetthickness($image, rand(1,3));
       imageline($image, rand(0,$w), 0, rand(0,$w), $h, $linecolor);
     }
-
+*/
     // using a mixture of TTF fonts
     $fonts = array();
     $fonts[] = "DejaVuSerif-Bold.ttf";

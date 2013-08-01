@@ -262,7 +262,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
   protected function parseText(dom\text $node, $bTrim = true) {
 
-    $this->throwException('Mixed element (element and text) or multiple text node not allowed here', array($child->getParent()->asToken()));
+    $this->throwException('Mixed element (element and text) or multiple text node not allowed here', array($node->getParent()->asToken()));
   }
 
   protected function parseElementComplex(dom\element $el) {

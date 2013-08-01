@@ -15,7 +15,7 @@ class Builder extends reflector\builder\Documented {
     return parent::setFile($file);
   }
 
-  public function setDocument(dom\handler $doc) {
+  public function setDocument(dom\handler $doc, $bImport = true) {
 
     return $this->document = $doc;
   }

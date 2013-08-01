@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic;
-use \sylma\core, \sylma\dom, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs;
 
 abstract class Resource implements fs\resource {
 

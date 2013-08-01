@@ -154,23 +154,48 @@ class Pather extends component\Child {
     return $aResult;
   }
 
-  public function readPath($sPath, $sMode) {
+  public function readPath($sPath, $sMode, array $aArguments = array()) {
 
-    $sPath = trim($sPath);
-    $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode, true);
+    if ($sPath) {
+
+      $sPath = trim($sPath);
+      $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode, true, $aArguments);
+    }
+    else {
+
+      $aResult = $this->getSource()->reflectRead($aArguments);
+    }
 
     return $aResult;
   }
 
   protected function parsePaths($sPath) {
 
-    $aPaths = explode(',', $sPath);
-    return array_map('trim', $aPaths);
+    if ($sPath{0} == "'") {
+
+      $aResult = array($sPath);
+    }
+    else {
+
+      $aPaths = explode(',', $sPath);
+      $aResult = array_map('trim', $aPaths);
+    }
+
+    return $aResult;
   }
 
   protected function parsePath($sPath) {
 
-    return explode('/', $sPath);
+    if ($sPath{0} == "'") {
+
+      $aResult = array($sPath);
+    }
+    else {
+
+      $aResult = explode('/', $sPath);
+    }
+
+    return $aResult;
   }
 
   public function parsePathTokens(array $aPaths, $sMode, $bRead = false, array $aArguments = array()) {
@@ -217,7 +242,7 @@ class Pather extends component\Child {
     }
     else if ($sValue = $this->matchString($sPath) or !is_null($sValue)) {
 
-      $aResult = array($this->getTemplate()->parseValue($sValue));
+      $aResult = $this->getParser()->xmlize(array($this->getTemplate()->parseValue($sValue)));
     }
     else if ($aMatch = $this->matchFunction($sPath)) {
 

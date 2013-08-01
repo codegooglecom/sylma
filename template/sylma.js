@@ -457,7 +457,30 @@ sylma.ui = new sylma.classes.ui;
         this.getNode().destroy();
 
       }).delay(2000, this);
+    },
+
+    import : function(response, parent) {
+
+      if (response.classes) {
+
+        eval(response.classes);
+        Object.merge(sylma.binder.classes, classes);
+      }
+
+      var key = sylma.ui.extractFirst(response.objects);
+
+      if (!key) {
+
+        throw new Error('No root object found');
+      }
+
+      var result = response.objects[key];
+      result.parentObject = parent;
+      //result.parentKey = key;
+
+      return result;
     }
+
   });
 
   this.Container = new Class({
@@ -496,24 +519,7 @@ sylma.ui = new sylma.classes.ui;
       }
 
       sylma.ui.import(result.content, name).replaces(target);
-
-      //console.log(result.objects[sylma.ui.extractFirst(result.objects)]);
-
-      if (result.classes) {
-
-        eval(result.classes);
-        Object.merge(sylma.binder.classes, classes);
-      }
-
-      var key = sylma.ui.extractFirst(result.objects);
-
-      if (!key) {
-
-        throw new Error('No root object found');
-      }
-
-      var props = result.objects[key];
-      props.parentObject = this.getParent();
+      var props = this.import(result, this.getParent());
 
       this.initialize(props);
     },

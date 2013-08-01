@@ -53,6 +53,28 @@
       <div><a href="/test/2:admin@sylma.org">test</a></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Multiple values 2 in attribute">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <a href="/test/{email} hello">test</a>
+            <a href="{id}hello">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <a href="/test/admin@sylma.org hello">test</a>
+        <a href="2hello">test</a>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Simple token">
     <tst:document>
       <view:view user:ns="ns">
@@ -89,6 +111,27 @@
     </tst:document>
     <tst:node>
       <div class="/sylma/view/test/grouped/attributexml-complex-token-test"/>
+    </tst:node>
+  </tst:test>
+  <tst:test name="special chars in token">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:token name="class">
+              <tpl:read select="'{name}&amp;hello'"/>
+              <tpl:text>&amp;world</tpl:text>
+            </tpl:token>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="admin&amp;hello&amp;world"/>
     </tst:node>
   </tst:test>
   <tst:test name="html chars in attribute">

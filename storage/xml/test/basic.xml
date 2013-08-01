@@ -37,6 +37,26 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Cascading apply" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <li>hello</li>
+        </tpl:template>
+        <tpl:template>
+          <ul>
+            <tpl:apply/>
+          </ul>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>hello</li>
+      </ul>
+    </tst:node>
+  </tst:test>
   <tst:test name="Override class">
     <tst:document>
       <view:view user:ns="ns">

@@ -14,7 +14,7 @@
     return
       $controler->getDirectory('mydir', false) === null;
   </tst:test>
-  <tst:test name="Create a file" disabled="true">
+  <tst:test name="Create a file">
     $dir = $controler->getDirectory();
     $file = $dir->getFile('myfile.txt', \sylma\storage\fs\resource::DEBUG_EXIST);
     $file->saveText('abc');
@@ -23,15 +23,25 @@
       $file instanceof \sylma\storage\fs\file &amp;&amp;
       $file->read() == 'abc';
   </tst:test>
-  <tst:test name="Rename a file" disabled="true">
+  <tst:test name="Rename a file">
     $file = $controler->getFile('myfile.txt');
     $file->rename('newname.txt');
     $newFile = $controler->getFile('newname.txt');
-    
+
+    return
+      $newFile->getName() == 'newname.txt' &amp;&amp;
+      $newFile instanceof \sylma\storage\fs\file
+  </tst:test>
+  <tst:test name="Move a file">
+    $file = $controler->getFile('newname.txt');
+    $sub = $controler->getDirectory()->addDirectory('mydir2');
+
+    $file->move($sub);
+    $newFile = $controler->getFile('mydir2/newname.txt');
+
     return
       $file->getName() == 'newname.txt' &amp;&amp;
-      $newFile instanceof \sylma\storage\fs\file &amp;&amp;
-      (string) $newFile == 'newname.txt';
+      $newFile instanceof \sylma\storage\fs\file
   </tst:test>
 </tst:tests>
 

@@ -432,7 +432,8 @@ class Initializer extends module\Filed {
 
     if (!$sResult = $this->readArgument("mime/$sExtension", false)) {
 
-      $sResult = $this->readArgument("mime/default");
+      $this->launchException('Unknown content type');
+      //$sResult = $this->readArgument("mime/default");
     }
 
     return $sResult;
