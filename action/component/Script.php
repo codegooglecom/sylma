@@ -26,7 +26,7 @@ class Script extends Caller implements common\arrayable {
 
     if ($sMode === 'get') $sMode = 'arguments';
 
-    $args = $this->createObject('argument', array($this->loadArguments()), null, false);
+    $args = $this->createObject('argument', array(array_merge($path->getArguments()->query(), $this->loadArguments())), null, false);
 
     $result = $parser->call('load', array($fs->call('getFile', array((string) $path->asFile(true))), array(
       $sMode => $args,

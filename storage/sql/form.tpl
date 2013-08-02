@@ -122,11 +122,17 @@
     <tpl:if test="is-multiple()">
       <tpl:apply mode="container/multiple/empty"/>
       <tpl:else>
-        <tpl:apply mode="container/empty">
-          <tpl:text tpl:name="type">foreign</tpl:text>
-        </tpl:apply>
+        <tpl:apply mode="container/empty"/>
       </tpl:else>
     </tpl:if>
+
+  </view:template>
+
+  <view:template match="sql:foreign" mode="container/empty">
+
+    <tpl:apply mode="container/empty">
+      <tpl:text tpl:name="type">foreign</tpl:text>
+    </tpl:apply>
 
   </view:template>
 
@@ -182,7 +188,7 @@
     <div class="foreign-value">
 
       <tpl:apply mode="input/update">
-        <tpl:read tpl:name="alias" select="'{$alias}[]'"/>
+        <tpl:read tpl:name="alias" select="'{$alias}'"/>
         <tpl:read tpl:name="id" select="$id"/>
         <tpl:read tpl:name="type" select="'radio'"/>
         <tpl:read tpl:name="value" select="id"/>

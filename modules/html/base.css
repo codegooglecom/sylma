@@ -67,4 +67,15 @@
   min-height: 1%;
 }
 
+/*** Form ***/
 
+.pager .button
+{
+  float: left;
+  margin: 0 0 0 5px;
+}
+
+.pager-separator
+{
+  padding: 0 0.1em;
+}
