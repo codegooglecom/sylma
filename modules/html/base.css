@@ -42,6 +42,10 @@
   background: white;
 }
 
+.center { text-align: center; margin: auto; }
+.left { float: left; }
+.right { float: right; }
+
 /**
  * Markup free clearing.
  *

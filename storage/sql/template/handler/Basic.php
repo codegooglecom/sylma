@@ -34,7 +34,7 @@ class Basic extends sql\schema\Handler {
 
     foreach ($this->getTemplates() as $template) {
 
-      if ($this->getView()->checkTemplate($template, $element, false)) continue;
+      if ($this->getView()->checkTemplate($template, $element->asToken(), false)) continue;
 
       $iWeight = $template->getWeightSchema($element, $sContext, $sMode, $bRoot);
       if ($iWeight && $iWeight >= $iLast) {

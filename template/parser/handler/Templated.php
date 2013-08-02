@@ -5,8 +5,10 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template\parser;
 
 abstract class Templated extends reflector\handler\Elemented {
 
-  protected $aTemplates = array();
+  protected $aCurrentTemplates = array();
   protected $aCheckTemplates = array();
+
+  protected $aTemplates = array();
 
   public function lookupTemplate($sName, $sNamespace, $sMode, $bRoot = false) {
 
@@ -15,7 +17,8 @@ abstract class Templated extends reflector\handler\Elemented {
 
     foreach ($this->getTemplates() as $template) {
 
-      if ($this->checkTemplate($template, null, false)) continue;
+      $sToken = $sNamespace . ':' . $sName;
+      if ($this->checkTemplate($template, $sToken, false)) continue;
 
       $iWeight = $template->getWeight($sNamespace, $sName, $sMode, $bRoot);
       if ($iWeight && $iWeight >= $iLast) {
@@ -33,38 +36,57 @@ abstract class Templated extends reflector\handler\Elemented {
     return $result;
   }
 
-  public function getCurrentTemplate() {
+  public function getCurrentTemplate($bDebug = true) {
 
-    if (!$this->aTemplates) {
+    if (!$this->aCurrentTemplates) {
 
-      $this->launchException('No template defined');
+      if ($bDebug) $this->launchException('No template defined');
+      $result = null;
+    }
+    else {
+
+      $result = end($this->aCurrentTemplates);
     }
 
-    return end($this->aTemplates);
+    return $result;
   }
 
   public function startTemplate(parser\template $tpl) {
 
-    $this->aTemplates[] = $tpl;
-    $this->aCheckTemplates[$this->getTreeID($tpl, $tpl->getTree(false))] = true;
+    $this->aCurrentTemplates[] = $tpl;
+    $this->aCheckTemplates[$this->getTreeID($tpl, $this->getTreeToken($tpl))] = true;
 //echo 'start ' . $tpl->getID().'<br/>';
   }
 
   public function stopTemplate() {
 
-    $tpl = array_pop($this->aTemplates);
-    unset($this->aCheckTemplates[$this->getTreeID($tpl, $tpl->getTree(false))]);
+    $tpl = array_pop($this->aCurrentTemplates);
+    unset($this->aCheckTemplates[$this->getTreeID($tpl, $this->getTreeToken($tpl))]);
 //echo 'stop ' . $tpl->getID().'<br/>';
   }
 
-  protected function getTreeID(parser\template $tpl, parser\tree $tree = null) {
+  protected function getTreeToken(parser\template $tpl) {
 
-    return $tpl->getID() . ($tree ? $tree->asToken() : '');
+    if ($tree = $tpl->getTree(false)) {
+
+      $sResult = $tree->asToken();
+    }
+    else {
+
+      $sResult = '';
+    }
+
+    return  $sResult;
   }
 
-  public function checkTemplate(parser\template $tpl, parser\tree $tree = null, $bDebug = true) {
-//echo 'check ' . $tpl->getID() . '<br/>';
-    $bResult = isset($this->aCheckTemplates[$this->getTreeID($tpl, $tree)]);
+  protected function getTreeID(parser\template $tpl, $sToken) {
+
+    return $tpl->getID() . $sToken;
+  }
+
+  public function checkTemplate(parser\template $tpl, $sToken, $bDebug = true) {
+
+    $bResult = isset($this->aCheckTemplates[$this->getTreeID($tpl, $sToken)]);
 
     if ($bResult) {
 

@@ -37,16 +37,19 @@
       </ul>
     </tst:node>
   </tst:test>
-  <tst:test name="Cascading apply" disabled="true">
+  <tst:test name="Cascading apply">
     <tst:document>
       <view:view user:ns="ns">
         <xl:resource file="samples/users.xml"/>
         <tpl:template>
+          <tpl:apply mode="test"/>
+        </tpl:template>
+        <tpl:template mode="test">
           <li>hello</li>
         </tpl:template>
-        <tpl:template>
+        <tpl:template mode="test">
           <ul>
-            <tpl:apply/>
+            <tpl:apply mode="test"/>
           </ul>
         </tpl:template>
       </view:view>

@@ -19,7 +19,9 @@ class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\t
 
     if ($sFile = $this->readx('@file')) {
 
-      $options = $this->createOptions((string) $this->getSourceFile($sFile));
+      $this->setFile($this->getSourceFile($sFile));
+
+      $options = $this->createOptions((string) $this->getFile());
       $this->setOptions($options);
     }
   }
@@ -149,7 +151,7 @@ class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\t
 
   public function asToken() {
 
-    return "[Tree]" . $this->getNamespace() . ':' . $this->getName();
+    return $this->getNamespace() . ':' . $this->getName();
   }
 }
 

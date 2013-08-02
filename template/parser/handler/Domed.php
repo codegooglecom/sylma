@@ -8,9 +8,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   const NS = 'http://2013.sylma.org/template';
   const PREFIX = 'tpl';
 
-  protected $aTemplates = array();
   protected $aConstants = array();
-
   protected $bInternal = false;
 
   protected $result;
@@ -33,7 +31,13 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
 
   public function parseFromChild(dom\element $el) {
 
-    return $this->getCurrentTemplate()->parseComponent($el);
+    if (!$tpl = $this->getCurrentTemplate(false)) {
+
+      $aTemplates = $this->getTemplates();
+      $tpl = end($aTemplates);
+    }
+
+    return $tpl->parseComponent($el);
   }
 
   protected function checkInternal() {

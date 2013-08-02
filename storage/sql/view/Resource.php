@@ -39,7 +39,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     if ($id = $this->getx('sql:id')) {
 
       $query = $row->getQuery();
-      
+
       $this->parseID($id);
       $query->setWhere($row->getElement('id', $row->getNamespace()), '=', $this->getID());
       //$query->isMultiple(false);
@@ -122,9 +122,19 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
   public function getCurrentTree() {
 
-    $current = $this->getSchema()->getView()->getCurrentTemplate()->getTree(false);
+    $result = null;
 
-    return $current ? $current : $this->getTree();
+    if ($tpl = $this->getSchema()->getView()->getCurrentTemplate(false)) {
+
+      $result = $tpl->getTree(false);
+    }
+
+    if (!$result) {
+
+      $result = $this->getTree();
+    }
+
+    return $result;
   }
 
   protected function parseSource() {
