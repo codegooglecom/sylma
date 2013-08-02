@@ -55,7 +55,11 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
   public function getDirectory() {
 
     $el = null;
-    if ($this->getDocument()) $el = $this->getDocument()->getx('self', array(), false);
+
+    if ($this->getDocument()) {
+
+      $el = $this->getDocument()->getx(self::PREFIX . ":self", array(), false);
+    }
 
     return $this->extractRights($el);
   }

@@ -52,7 +52,7 @@ class File extends fs\basic\File implements fs\editable\file {
 
       if ($bSecured && !$dir->checkRights(\Sylma::MODE_WRITE)) {
 
-        $this->throwException("Cannot write to directory : {$sDirectory}");
+        $this->throwException("Cannot write to directory : {$dir}");
       }
 
       if (rename($this->getRealPath(), $dir->getRealPath().'/'.$sNewName)) {

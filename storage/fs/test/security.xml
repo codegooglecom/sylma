@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/storage/fs/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
   <tst:description>Basic manipulation methods</tst:description>
-  <tst:test name="Read tester01">
+  <tst:test name="Read file">
     <tst:prepare>
       $controler->setUser('tester01');
     </tst:prepare>
@@ -12,6 +12,19 @@
       return
         !$file->checkRights(\Sylma::MODE_EXECUTE) &amp;&amp;
         $file->checkRights(\Sylma::MODE_READ)
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Read directory">
+    <tst:prepare>
+      $controler->setUser('tester02');
+    </tst:prepare>
+    <tst:expected>
+      $controler = $controler->getControler('fs/test');
+      if (!$dir = $controler->getDirectory('/sample1/sub2')) return false;
+
+      return
+        !$dir->checkRights(\Sylma::MODE_EXECUTE) &amp;&amp;
+        $dir->checkRights(\Sylma::MODE_READ)
     </tst:expected>
   </tst:test>
 </tst:tests>

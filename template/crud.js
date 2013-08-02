@@ -532,7 +532,15 @@ sylma.crud.fieldset = {};
 
       var form = this.getParent(4).getObject('uploader');
 
-      form.getNode().grab(this.getNode().clone(true));
+      var input = this.getInput();
+      var clone = input.clone(true);
+
+      clone.cloneEvents(input);
+      this.prepareNodes(clone);
+
+      input.grab(clone, 'after');
+      form.getNode().grab(input);
+
       this.highlight();
 
       form.setPosition(this.position);
