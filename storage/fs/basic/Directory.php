@@ -23,8 +23,17 @@ class Directory extends Resource implements fs\directory {
     $this->parent = $parent;
     $this->sName = $sName;
 
-    $this->bExist = is_dir($this->getRealPath());
-//echo $this->getRealPath() . '<br/>';
+    // try open_basedir restriction
+
+    try {
+
+      $this->bExist = is_dir($this->getRealPath());
+    }
+    catch (core\exception $e) {
+
+      $this->bExist = true;
+    }
+
     $this->aRights = $this->aChildrenRights = $aRights;
 
     if ($this->doExist()) {
@@ -324,8 +333,9 @@ class Directory extends Resource implements fs\directory {
       if (!$this->getSettings() or !$aRights = $this->getSettings()->getFile($file->getName())) {
 
         $aRights = $this->getChildrenRights();
-        $file->setRights($aRights);
       }
+
+      $file->setRights($aRights);
     }
     else {
 

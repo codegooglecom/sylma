@@ -43,8 +43,8 @@
 }
 
 .center { text-align: center; margin: auto; }
-.left { float: left; }
-.right { float: right; }
+.left { float: left !important; }
+.right { float: right !important; }
 
 /**
  * Markup free clearing.
