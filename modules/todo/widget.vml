@@ -31,11 +31,7 @@
       </span>
       <div class="content">
         <a>
-          <tpl:token name="href">
-            <le:directory/>
-            <tpl:text>/index/insert?url=</tpl:text>
-            <le:manager name="path"/>
-          </tpl:token> 
+          <tpl:apply mode="href"/>
           <tpl:text>ADD</tpl:text>
         </a>
         <tpl:if test="has-children()">
@@ -63,6 +59,18 @@
     </li>
   </tpl:template>
 
+  <tpl:template mode="href">
 
+    <tpl:token name="href">
+      <tpl:apply mode="href/directory"/>
+      <tpl:text>/index/insert?url=</tpl:text>
+      <le:manager name="path"/>
+    </tpl:token>
+
+  </tpl:template>
+
+  <tpl:template mode="href/directory">
+    <le:directory/>
+  </tpl:template>
 
 </view:view>
