@@ -49,7 +49,7 @@
   <tpl:template match="todo:todo">
     <li>
       <a class="todo">
-        <tpl:if test="statut = 10">
+        <tpl:if test="statut >= 10">
           <tpl:token name="class">finished</tpl:token>
         </tpl:if>
         <tpl:token name="href">

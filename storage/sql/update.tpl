@@ -94,4 +94,10 @@
 
   </view:template>
 
+  <view:template match="sql:datetime" mode="input/update" sql:ns="ns">
+
+    <tpl:apply mode="date"/>
+
+  </view:template>
+
 </view:view>

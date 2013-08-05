@@ -8,7 +8,7 @@ class Pather extends component\Child {
   const ALL_TOKEN = '*';
 
   protected $source;
-  protected $aOperators = array('<', '>', '=', '!=', 'and', 'or', '+', '*', '/', 'in');
+  protected $aOperators = array('<', '>', '=', '<=', '>=', '!=', 'and', 'or', '+', '*', '/', 'in');
 
   public function setSource($source) {
 
