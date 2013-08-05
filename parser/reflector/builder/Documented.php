@@ -355,9 +355,25 @@ class Documented extends Logger implements reflector\documented {
 
   protected function createInstanciation(common\_window $window, array $aArguments) {
 
-    $new = $window->createInstanciate($window->getSelf()->getInstance(), $aArguments);
-    //$window->add($new);
-    $window->setReturn($new);
+    $sReturn = $this->getDocument()->getRoot()->readx('@build:return', $this->getNS(), false);
+
+    switch ($sReturn) {
+
+      case 'result' : $return = current($aArguments); break;
+      case 'array' : $return = $window->argToInstance($aArguments); break;
+
+      case '' :
+      case 'default' :
+
+        $return = $window->createInstanciate($window->getSelf()->getInstance(), $aArguments);
+        break;
+
+      default :
+
+        $this->launchException("Unknown @return value : $sReturn");
+    }
+
+    $window->setReturn($return);
   }
 
   public function getCurrentElement() {

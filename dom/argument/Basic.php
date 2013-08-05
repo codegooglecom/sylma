@@ -37,9 +37,10 @@ abstract class Basic extends core\module\Controled {
 
     if (!$this->getPrefix()) {
 
-      $sNamespace = $this->getNamespace() ? $this->getNamespace() : $doc->getRoot()->getNamespace();
+      $sNamespace = $doc->getRoot()->getNamespace();
 
       unset($this->aNamespaces['']);
+
       $this->setNamespace($sNamespace, 'self');
     }
 
@@ -195,7 +196,7 @@ abstract class Basic extends core\module\Controled {
   public function buildChild(dom\document $doc) {
 
     $result = new static();
-    $result->build($doc, $this->getNS());
+    $result->build($doc, array($this->getNamespace()));
     $result->setParent($this);
 
     return $result;

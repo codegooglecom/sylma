@@ -626,4 +626,4 @@ sylma.crud.Group = new Class({
     return result;
   }
 
-})
+});

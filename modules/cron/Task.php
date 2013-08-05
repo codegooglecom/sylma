@@ -43,6 +43,15 @@ class Task extends core\module\Domed {
 
   protected function compare($sCurrent, $sVal) {
 
+    if (strpos($sVal, '/') !== false) {
+
+
+    }
+    else {
+
+
+    }
+
     return $sVal == self::ALL || $sVal == $sCurrent;
   }
 

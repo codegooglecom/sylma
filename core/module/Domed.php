@@ -216,7 +216,7 @@ abstract class Domed extends Filed {
 
     if (is_string($mContent)) {
 
-      $result = $this->create('options', array($this->getDocument($mContent), $this->getNS()));
+      $result = $this->create('options', array($this->createDocument($mContent), array($this->getNamespace())));
     }
     else {
 

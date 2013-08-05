@@ -495,4 +495,35 @@
     <tpl:apply mode="input/checkbox/update"/>
   </view:template>
 
+  <view:template match="sql:datetime" mode="input/update" sql:ns="ns">
+
+    <tpl:apply mode="input/empty">
+      <tpl:read select="value()" tpl:name="value"/>
+    </tpl:apply>
+
+  </view:template>
+
+  <view:template match="sql:datetime" mode="input/empty" sql:ns="ns">
+
+    <div js:class="sylma.crud.Date">
+      <tpl:apply mode="input/content"/>
+    </div>
+
+  </view:template>
+
+  <view:template match="sql:datetime" mode="input/content" sql:ns="ns">
+
+    <tpl:argument name="value" default="''"/>
+
+    <tpl:apply mode="input/update">
+      <tpl:read tpl:name="alias" select="''"/>
+      <tpl:read tpl:name="id" select="alias('form')"/>
+    </tpl:apply>
+    <tpl:apply mode="input/empty">
+      <tpl:read tpl:name="type" select="'hidden'"/>
+      <tpl:read tpl:name="id" select="''"/>
+    </tpl:apply>
+
+  </view:template>
+
 </view:view>
