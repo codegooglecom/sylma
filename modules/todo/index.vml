@@ -49,6 +49,12 @@
 
   <crud:group name="view">
 
+    <tpl:import>/#sylma/modules/datepicker/init.tpl</tpl:import>
+
+    <tpl:template>
+      <tpl:apply mode="date/prepare"/>
+      <tpl:apply/>
+    </tpl:template>
 
   </crud:group>
 

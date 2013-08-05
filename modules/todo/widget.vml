@@ -49,8 +49,11 @@
   <tpl:template match="todo:todo">
     <li>
       <a class="todo">
+        <tpl:if test="statut = 10">
+          <tpl:token name="class">finished</tpl:token>
+        </tpl:if>
         <tpl:token name="href">
-          <le:directory/>
+          <tpl:apply mode="href/directory"/>
           <tpl:text>/index/update?id=</tpl:text>
           <tpl:read select="id"/>
         </tpl:token>
@@ -59,7 +62,7 @@
     </li>
   </tpl:template>
 
-  <tpl:template mode="href">
+  <tpl:template match="*" mode="href">
 
     <tpl:token name="href">
       <tpl:apply mode="href/directory"/>
@@ -69,7 +72,7 @@
 
   </tpl:template>
 
-  <tpl:template mode="href/directory">
+  <tpl:template match="*" mode="href/directory">
     <le:directory/>
   </tpl:template>
 

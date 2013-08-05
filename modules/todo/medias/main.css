@@ -96,3 +96,8 @@
   background-color: #ddd;
   color: black;
 }
+
+a.todo.finished
+{
+  text-decoration: line-through;
+}
