@@ -31,7 +31,13 @@
   padding-top: 5px;
 }
 
-#sylma-todo-widget .content > a
+#sylma-todo-widget .links .center
+{
+  margin: auto;
+  width: 160px;
+}
+
+#sylma-todo-widget .links a
 {
   display: block;
   padding: 5px 1em;
@@ -42,9 +48,11 @@
   color: #444;
   font-weight: bold;
   box-shadow: 2px 2px 0px #ddd;
+  float: left;
+  margin-right: 5px;
 }
 
-#sylma-todo-widget .content > a:hover
+#sylma-todo-widget .links a:hover
 {
   background-color: #ddd;
 }

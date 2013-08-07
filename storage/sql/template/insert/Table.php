@@ -11,6 +11,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
   protected $bElements = false;
 
   protected $aContent = array();
+  protected $aValidates = array();
 
   public function parseRoot(dom\element $el) {
 
@@ -58,7 +59,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     }
 
     $call = $handler->call('addElement', array($sName, $el->buildReflector(array($content, $aArguments))));
-    $this->aContent[] = $call;
+    $this->addContent($call);
 
 
     //$content = $window->createCall($arguments, 'addMessage', 'php-bool', array(sprintf(self::MSG_MISSING, $this->getName())));
@@ -107,6 +108,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
       $window->getVariable('contexts'),
       $this->getMode(),
       $token,
+      $this->isSub(),
     ));
 
     $this->setHandler($window->createVar($result));
@@ -117,7 +119,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $this->handler;
   }
 
-  protected function setHandler(common\_var $handler) {
+  public function setHandler(common\_var $handler) {
 
     $this->handler = $handler;
   }
@@ -165,10 +167,48 @@ class Table extends sql\template\component\Table implements common\argumentable 
       $aContent[] = $window->createGroup($aTriggers);
     }
 
-    return $window->createCondition($this->getHandler()->call('validate'), $aContent);
+    return $aContent;
   }
 
-  public function asArgument() {
+  public function addContent($mVal) {
+
+    $this->aContent[] = $mVal;
+  }
+
+  public function addValidate($mVal, $bLast = false) {
+
+    $this->aValidates[] = $mVal;
+
+    if (!$bLast) {
+
+      $this->aValidates[] = $this->getWindow()->createOperator('&&');
+    }
+  }
+
+  public function callValidate() {
+
+    $this->addValidate($this->getHandler()->call('validate'), true);
+
+    return $this->aValidates;
+  }
+
+  public function getValidation() {
+
+    $result = $this->getWindow()->createGroup($this->getContent());
+    $this->aContent = array();
+
+    return $result;
+  }
+
+  public function getExecution() {
+
+    $aResult = $this->aContent;
+    $aResult[] = $this->loadTriggers();
+
+    return $aResult;
+  }
+
+  protected function getContent() {
 
     if ($this->getHandler()) {
 
@@ -176,9 +216,17 @@ class Table extends sql\template\component\Table implements common\argumentable 
     }
 
     $aResult[] = $this->aContent;
-    $aResult[] = $this->loadTriggers();
 
-    return $this->getWindow()->createGroup($aResult);
+    return $aResult;
+  }
+
+  public function asArgument() {
+
+    $window = $this->getWindow();
+    $aContent = $this->getContent();
+    $aContent[] = $window->createCondition($this->callValidate(), $this->loadTriggers());
+
+    return $this->getWindow()->createGroup($aContent);
   }
 }
 

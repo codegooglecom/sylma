@@ -7,6 +7,7 @@ sylma.ui.tab.Main = new Class({
   tabs : {},
   width : 0,
   current : 0,
+  length : 0,
 
   initialize : function(props) {
 
@@ -22,13 +23,15 @@ sylma.ui.tab.Main = new Class({
   build : function(tabs) {
 
     this.prepareNode();
-    this.tabs = tabs;
+    //this.tabs = tabs;
+    this.length = tabs.length;
 
     //this.width = this.getNode().getSize().x;
     this.width = this.getObject('container').getWidth();
 
-    for (var i = 0; i < this.tabs.length; i++) {
+    for (var i = 0; i < tabs.length; i++) {
 
+      this.tabs[i] = tabs[i]
       this.tabs[i].setWidth(this.width);
     }
 
@@ -70,7 +73,7 @@ sylma.ui.tab.Main = new Class({
 
   goNext : function() {
 
-    if (this.current < this.tabs.length - 1) {
+    if (this.current < this.length - 1) {
 
       this.go(this.current + 1);
     }
@@ -241,4 +244,5 @@ sylma.ui.tab.Tab = new Class({
       this.update({}, this.get('path'));
     }
   }
+
 });

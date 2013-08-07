@@ -20,13 +20,13 @@ class Table extends sql\template\insert\Table {
 
     return $result;
   }
-  
+
   protected function loadTriggers() {
 
-    $result = parent::loadTriggers();
-    $result->addContent($this->getWindow()->toString('1', $this->getParser()->getView()->getResult()));
+    $aResult = parent::loadTriggers();
+    $aResult[] = $this->getWindow()->toString('1', $this->getParser()->getView()->getResult());
 
-    return $result;
+    return $aResult;
   }
 }
 

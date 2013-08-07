@@ -9,15 +9,21 @@
   xmlns:le="http://2013.sylma.org/action"
 
   xmlns:todo="http://2013.sylma,org/modules/todo"
+  xmlns:stat="http://2013.sylma,org/modules/todo/statut"
 
   extends="/#sylma/storage/sql/crud.tpl"
 >
 
-  <crud:global todo:ns="ns">
+  <crud:global todo:ns="ns" stat:ns="ns">
 
     <view:schema>schema.xql</view:schema>
-    <tpl:constant name="list-cols">description,url,insertion,priority,statut</tpl:constant>
-    <tpl:constant name="form-cols">description,url,insertion,priority,statut</tpl:constant>
+    <tpl:constant name="list-cols">description,url,update,priority,statut</tpl:constant>
+    <tpl:constant name="form-cols">description,url,priority,statut</tpl:constant>
+    <tpl:constant name="list-order">!update</tpl:constant>
+
+    <tpl:template match="stat:todo_statut" mode="select-option-value">
+      <tpl:read select="value"/>
+    </tpl:template>
 
   </crud:global>
 
@@ -31,19 +37,23 @@
       </tpl:template>
     </view:view>
 
-    <view name="do">
+    <view:view name="do">
 
       <tpl:template match="todo:insertion" mode="register">
         <tpl:register>#sylma-empty#</tpl:register>
       </tpl:template>
 
-    </view>
+    </view:view>
 
   </crud:route>
 
   <crud:group name="list">
 
     <le:context name="title">Tasks</le:context>
+
+    <tpl:template match="stat:todo_statut">
+      <tpl:read select="value"/>
+    </tpl:template>
 
   </crud:group>
 

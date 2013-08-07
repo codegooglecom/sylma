@@ -193,7 +193,25 @@ sylma.classes = {
       }
 
       return result;
+    },
+
+    send : function(path, args, get) {
+
+      args = args || {};
+      //var self = this;
+
+      var req = new Request.JSON({
+
+        url : path + '.json',
+        onSuccess: function(response) {
+
+          sylma.ui.parseMessages(response);
+        }
+      });
+
+      return get ? req.get(args) : req.post(args);
     }
+
   })
 }
 
@@ -413,19 +431,7 @@ sylma.ui = new sylma.classes.ui;
 
     send : function(path, args) {
 
-      args = args || {};
-      //var self = this;
-
-      var req = new Request.JSON({
-
-        url : path + '.json',
-        onSuccess: function(response) {
-
-          sylma.ui.parseMessages(response);
-        }
-      });
-
-      req.post(args);
+      return sylma.ui.send(path, args);
     },
 
     toggleLight : function() {

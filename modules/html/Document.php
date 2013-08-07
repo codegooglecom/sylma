@@ -148,11 +148,20 @@ class Document extends action\handler\Basic {
       $item = "$key : ($item)";
     });
 
+    $path = $this->getControler('path');
+
     $content = $this->createArgument(array(
       'ul' => array(
         '#li' => array(
           'user : ' . $this->getControler('user')->getName(),
           'time : ' . functions\numeric\formatFloat($this->getControler('init')->getElapsedTime()),
+          array(
+            'a' => array(
+              '@href' => '#',
+              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '{$path->getFile()}'}, true); return false;",
+              (string) $path->getFile(),
+            ),
+          ),
           'builded : ' . count($aBuilded),
           array(
             'ul' => array(

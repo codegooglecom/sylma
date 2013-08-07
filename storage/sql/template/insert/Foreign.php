@@ -33,6 +33,7 @@ class Foreign extends sql\template\component\Foreign {
     $val = $window->createVariable('', 'php-null');
     $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $val);
 
+    $junction->loadHandler();
     $junction->addElement($source, '', $this->loadID());
     $junction->addElement($target, '', $val);
 
