@@ -60,7 +60,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
   }
 
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
-
+$this->launchException('Called ?');
     $table = $this->getElementRef();
 
     return $this->getParser()->parsePathToken($table, $aPath, $sMode, $aArguments);

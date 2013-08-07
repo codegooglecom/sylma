@@ -37,7 +37,13 @@ abstract class Basic extends core\module\Controled {
 
     if (!$this->getPrefix()) {
 
-      $sNamespace = $doc->getRoot()->getNamespace();
+      if (!$sNamespace = $doc->getRoot()->getNamespace()) {
+
+        if ($this->getNamespace()) {
+
+          $sNamespace = $this->getNamespace();
+        }
+      }
 
       unset($this->aNamespaces['']);
 

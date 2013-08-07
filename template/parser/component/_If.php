@@ -63,7 +63,7 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
       $result = $this->getReflector();
 
       $result->setTest($test);
-      $result->setContent($aChildren);
+      $result->setContent($this->getWindow()->parseArrayables($aChildren));
     }
 
     return array($result);

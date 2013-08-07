@@ -158,4 +158,8 @@
     <tpl:apply select="ref()"/>
   </view:template>
 
+  <view:template match="sql:datetime">
+    <tpl:read select="format()"/>
+  </view:template>
+
 </crud:crud>

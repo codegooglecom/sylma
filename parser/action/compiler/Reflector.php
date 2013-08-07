@@ -507,7 +507,9 @@ class Reflector extends Argumented implements reflector_ns\elemented {
   protected function reflectScript(dom\element $el) {
 
     $window = $this->getWindow();
-    $path = $this->getControler()->create('path', array($el->readx('@path'), $this->getDirectory()));
+    $path = $this->getControler()->create('request', array($el->readx('@path'), $this->getDirectory()));
+    $path->parse();
+    
     $file = $path->asFile();
 
     //$this->getManager(self::PARSER_MANAGER)->load($file, array(), true, true);

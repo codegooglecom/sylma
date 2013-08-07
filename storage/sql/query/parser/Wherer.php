@@ -18,7 +18,10 @@ abstract class Wherer extends Basic {
 
       foreach ($this->aWheres as $aWhere) {
 
-        $this->addDynamicWhereCall($where->call('addStatic', array($this->toString($aWhere))));
+        $aTest = $aWhere[0];
+        $sSubLog = $aWhere[1];
+
+        $this->addDynamicWhereCall($where->call('addStatic', array($this->getWindow()->toString($aTest), $sSubLog)));
       }
 
       $this->clearWheres();
@@ -70,7 +73,7 @@ abstract class Wherer extends Basic {
 
     if ($where = $this->getDynamicWhere()) {
 
-      $this->addDynamicWhereCall($where->call('addStatic', array($this->toString(array($val1, $sOp, $val2)))));
+      $this->addDynamicWhereCall($where->call('addStatic', array($this->getWindow()->toString(array($val1, $sOp, $val2)))));
     }
     else {
 

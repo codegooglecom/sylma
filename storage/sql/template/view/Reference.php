@@ -5,13 +5,42 @@ use sylma\core, sylma\storage\sql, sylma\parser\languages\common, sylma\schema\p
 
 class Reference extends sql\template\component\Reference {
 
-  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
+  protected $collection;
+
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
+
+    switch ($sName) {
+
+      case 'collection' :
+
+        $result = $this->getParser()->parsePathToken($this->getCollection(), $aPath, $sMode, $aArguments);
+        break;
+
+      default :
+
+        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
+    }
+
+    return $result;
+  }
+
+  protected function getCollection() {
+
+    if (!$this->collection) {
+
+      $this->collection = $this->loadCollection();
+    }
+
+    return $this->collection;
+  }
+
+  protected function loadCollection() {
 
     $table = $this->getElementRef();
     $element = $this->getForeign();
 
-    $collection = $this->loadSimpleComponent('component/collection');
-    $collection->setTable($table);
+    $result = $this->loadSimpleComponent('component/collection');
+    $result->setTable($table);
 
     if ($element->getMaxOccurs(true)) {
 
@@ -21,6 +50,13 @@ class Reference extends sql\template\component\Reference {
 
       $table->getQuery()->setWhere($element, '=', $this->getParent()->getElement('id')->reflectRead());
     }
+
+    return $result;
+  }
+
+  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
+
+    $collection = $this->getCollection();
 
     if ($aPath) {
 

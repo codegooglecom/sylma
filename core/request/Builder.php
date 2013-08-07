@@ -9,6 +9,9 @@ class Builder extends Basic {
 
     $this->setArguments(array());
 
+    $aArguments = $this->extractArguments($sPath);
+    $this->setArguments($aArguments);
+
     if ($sPath) $this->setPath($this->resolvePath($sPath, $dir));
     $this->loadSettings();
   }
@@ -68,10 +71,10 @@ class Builder extends Basic {
 
         $this->launchException('No file neither path to render request');
       }
-
+/*
       $aArguments = $this->extractArguments($sPath);
       $this->setArguments($aArguments);
-
+*/
       $this->setPath($sPath);
       $this->parse();
 

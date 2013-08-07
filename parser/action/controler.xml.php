@@ -130,7 +130,9 @@
   'path' => array(
     'file' => '\sylma\core\request\Basic.php',
     'name' => '\sylma\core\request\Basic'),
+  'request' => array(
+    'file' => '\sylma\core\request\Builder.php',
+    'name' => '\sylma\core\request\Builder'),
   'context' => array(
     'file' => '\sylma\parser\context\Basic.php',
     'name' => '\sylma\parser\context\Basic'))));
-  

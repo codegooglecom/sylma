@@ -45,7 +45,7 @@
     <xs:restriction base="sql:string"/>
   </xs:simpleType>
 
-  <xs:simpleType name="datetime">
+  <xs:simpleType name="datetime" reflector-static="\sylma\schema\cached\view\Datetime">
     <xs:restriction base="xs:string">
       <xs:maxLength value="15"/>
     </xs:restriction>
