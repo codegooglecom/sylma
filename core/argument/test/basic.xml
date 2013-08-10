@@ -16,6 +16,23 @@
       return $arg->read('abc') === '123'
     </tst:expected>
   </tst:test>
+  <tst:test name="Unexisting read vs empty">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'abc' => '123',
+        'def' => '',
+      )));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+
+      $manager->assertEqual($arg->read('abc'), '123');
+      $manager->assertEqual($arg->read('def', false), '');
+      $manager->assertEqual($arg->read('ghi', false), null);
+      
+      return true;
+    </tst:expected>
+  </tst:test>
   <tst:test name="Get an object">
     <tst:prepare>
       $file = $controler->getFile('../samples/class.yml');

@@ -26,11 +26,11 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->getName();
   }
 
-  public function addElement(sql\schema\element $el, $sDefault = '', $content = null) {
+  public function addElement(sql\schema\element $el, $content = null, array $aArguments = array()) {
 
     if ($this->getHandler()) {
 
-      $this->addElementToHandler($el, $sDefault, $content);
+      $this->addElementToHandler($el, $content, $aArguments);
     }
     else {
 
@@ -40,18 +40,17 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->bElements = true;
   }
 
-  protected function addElementToHandler(sql\schema\element $el, $sDefault = '', $content = null) {
+  protected function addElementToHandler(sql\schema\element $el, $content = null, array $aArguments = array()) {
 
     $sName = $el->getAlias();
     $handler = $this->getHandler();
 
-    $aArguments = array(
+    $aArguments = array_merge(array(
       'alias' => $sName,
       'title' => $el->getTitle(),
-    );
+    ), $aArguments);
 
-    if ($el->isOptional()) $aArguments['optional'] = true;
-    if ($sDefault !== '') $aArguments['default'] = $sDefault;
+    array_filter($aArguments);
 
     if (is_null($content)) {
 

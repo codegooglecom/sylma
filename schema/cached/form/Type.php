@@ -5,11 +5,16 @@ use sylma\core;
 
 abstract class Type extends core\module\Domed {
 
-  const EMPTY_VALUE = '#sylma-empty#';
+  const MODE = 'default';
+
+  const MODE_NULL = 'null';
+  const MODE_EMPTY = 'empty';
+  const MODE_DEFAULT = 'default';
 
   protected $sValue;
   protected $handler;
   protected $bUsed = true;
+  protected $sMode = null;
 
   public function __construct($sValue, array $aSettings = array()) {
 
@@ -50,33 +55,72 @@ abstract class Type extends core\module\Domed {
     return $this->sValue;
   }
 
+  protected function getMode() {
+
+    if (is_null($this->sMode)) {
+
+      if (!$sMode = $this->read('mode', false)) {
+
+        $sMode = self::MODE;
+      }
+
+      $this->sMode = $sMode;
+    }
+
+    return $this->sMode;
+  }
+
+  protected function getDefault() {
+
+    return $this->read('default', false);
+  }
+
+  protected function isOptional() {
+
+    return $this->read('optional', false);
+  }
+
   public function validate() {
 
     $bResult = false;
 
-    if (!$this->getValue()) {
-
-      if (!$this->read('optional', false)) {
-
-        $this->addMessage($this->translate("The field '%s' must be filled", $this->read('title')), $this->asAlias());
-      }
-      else {
-
-        $this->isUsed(false);
-        $bResult = true;
-      }
-    }
-    else if ($this->getValue() === self::EMPTY_VALUE) {
-
-      $this->isUsed(true);
-      $bResult = true;
-      $this->setValue('');
-    }
-    else {
+    if ($this->getValue()) {
 
       if (!$bResult = $this->validateFormat()) {
 
         $this->addMessage($this->translate("The field '%s' is not valid", $this->read('title')), $this->asAlias());
+      }
+    }
+    else {
+
+      $bResult = $this->validateEmpty();
+    }
+
+    return $bResult;
+  }
+
+  protected function validateEmpty() {
+
+    $bResult = false;
+
+    if ($this->getMode() === self::MODE_NULL) {
+
+      $this->isUsed(false);
+      $bResult = true;
+    }
+    else if ($this->isOptional()) {
+
+      $bResult = true;
+    }
+    else {
+
+      if ($this->getMode() === self::MODE_EMPTY) {
+
+        $bResult = true;
+      }
+      else {
+
+        $this->addMessage($this->translate("The field '%s' must be filled", $this->read('title')), $this->asAlias());
       }
     }
 
@@ -92,16 +136,43 @@ abstract class Type extends core\module\Domed {
 
   public function escape() {
 
-    if ($this->getValue()) {
+    $val = $this->getValue();
 
-      $sResult = "'".addslashes($this->getValue())."'";
+    if ($val) {
+
+      $sResult = "'".addslashes($val)."'";
     }
     else {
 
-      $sResult = $this->read('default');
+      $sMode = $this->getMode();
+
+      switch ($sMode) {
+
+        case self::MODE_DEFAULT :
+
+          $sResult = $this->getDefault();
+          break;
+
+        case self::MODE_NULL :
+        case self::MODE_EMPTY :
+
+          $sResult = "null";
+          break;
+
+        default :
+
+          $this->launchException("Unknown input mode : $sMode");
+      }
     }
 
     return $sResult;
+  }
+
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
+
+    $aVars[] = $this->getSettings();
+
+    parent::launchException($sMessage, $aVars, $mSender);
   }
 }
 

@@ -17,9 +17,14 @@ class Foreign extends sql\template\component\Foreign {
     return null;
   }
 
-  protected function buildSingle() {
+  protected function buildSingle($sMode) {
 
-    $this->getParent()->addElement($this, $this->getDefault());
+    $this->getParent()->addElement($this, null, array(
+      'default' => $this->getDefault(),
+      'optional' => $this->isOptional(),
+      'mode' => $sMode,
+      'multiple' => $this->getMaxOccurs(true),
+    ));
   }
 
   protected function loadID() {
@@ -34,15 +39,15 @@ class Foreign extends sql\template\component\Foreign {
     $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $val);
 
     $junction->loadHandler();
-    $junction->addElement($source, '', $this->loadID());
-    $junction->addElement($target, '', $val);
+    $junction->addElement($source, $this->loadID());
+    $junction->addElement($target, $val);
 
     $loop->addContent($junction);
 
     return array($loop);
   }
 
-  public function reflectRegister() {
+  public function reflectRegister($content = null, $sReflector = '', $sMode = '') {
 
     if ($this->getMaxOccurs(true)) {
 
@@ -51,7 +56,7 @@ class Foreign extends sql\template\component\Foreign {
     }
     else {
 
-      $this->buildSingle();
+      $this->buildSingle($sMode);
     }
   }
 }

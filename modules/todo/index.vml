@@ -18,7 +18,7 @@
 
     <view:schema>schema.xql</view:schema>
     <tpl:constant name="list-cols">description,url,update,priority,statut</tpl:constant>
-    <tpl:constant name="form-cols">description,url,priority,statut</tpl:constant>
+    <tpl:constant name="form-cols">* ^ id,update,insert</tpl:constant>
     <tpl:constant name="list-order">!update</tpl:constant>
 
     <tpl:template match="stat:todo_statut" mode="select-option-value">
@@ -30,18 +30,18 @@
   <crud:route name="insert">
 
     <view:view>
+
       <tpl:template match="todo:url" mode="input/empty">
         <tpl:apply mode="input/update">
           <le:get-argument name="url" tpl:name="value" optional="x"/>
         </tpl:apply>
       </tpl:template>
+
     </view:view>
 
     <view:view name="do">
 
-      <tpl:template match="todo:insertion" mode="register">
-        <tpl:register>#sylma-empty#</tpl:register>
-      </tpl:template>
+      <tpl:constant name="form-cols">* ^ id,update</tpl:constant>
 
     </view:view>
 

@@ -167,12 +167,14 @@ class Form extends core\module\Argumented {
       $this->launchException('Cannot update table without registered field');
     }
 
+    $sResult = $this->getMode() === 'insert' ? $this->buildInsert() : $this->buildUpdate();
+
     if (!$this->isSub() && $this->getContext('messages', false)) {
 
       $this->addMessage('Datas has been ' . ($this->getMode() == 'insert' ? 'inserted' : 'updated'));
     }
 
-    return $this->getMode() === 'insert' ? $this->buildInsert() : $this->buildUpdate();
+    return $sResult;
   }
 }
 

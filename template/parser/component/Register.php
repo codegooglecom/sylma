@@ -13,6 +13,11 @@ class Register extends Child implements common\arrayable, parser\component {
     $this->allowForeign(true);
   }
 
+  protected function getMode() {
+
+    return $this->readx('@mode', false);
+  }
+
   protected function loadContent() {
 
     return $this->parseComponentRoot($this->getNode(), false);

@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\core\argument\test\controler;
-use sylma\core\argument\test, sylma\core, sylma\storage\fs, sylma\dom;
+use sylma\core\argument\test, sylma\core, sylma\storage\fs, sylma\dom, sylma\modules\tester;
 
-class Filed extends core\module\Filed implements test\controler {
+class Filed extends tester\Basic implements test\controler {
 
   protected $parent;
 
@@ -31,11 +31,6 @@ class Filed extends core\module\Filed implements test\controler {
     return parent::getDirectory();
   }
 
-  public function getNamespace($sPrefix = null) {
-
-    return parent::getNamespace($sPrefix);
-  }
-
   public function setArguments($mArguments = null, $bMerge = true) {
 
     parent::setArguments($mArguments, $bMerge);
@@ -54,11 +49,6 @@ class Filed extends core\module\Filed implements test\controler {
   public function set($sPath, $mVar = null) {
 
     return $this->getArguments()->set($sPath, $mVar);
-  }
-
-  public function compareNodes(dom\node $node1, dom\node $node2) {
-
-    return $this->getControler()->compareNodes($node1, $node2);
   }
 
   public function getFile($sPath = '', $bDebug = true) {

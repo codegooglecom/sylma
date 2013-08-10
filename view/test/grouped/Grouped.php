@@ -49,6 +49,10 @@ class Grouped extends tester\Parser implements core\argumentable {
 
       $result = $db->extract($sValue);
     }
+    else if ($iMode & 8) {
+
+      $result = $db->insert($sValue);
+    }
 
     return $result;
   }

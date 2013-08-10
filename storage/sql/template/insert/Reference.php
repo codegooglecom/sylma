@@ -38,7 +38,7 @@ class Reference extends sql\template\component\Reference {
     $loop = $window->createLoop($forms, $item);
 
     $table->setHandler($item);
-    $table->addElement($this->getForeign(), '', $this->reflectID());
+    $table->addElement($this->getForeign(), $this->reflectID());
 
     $loop->setContent(array($table->getExecution()));
     $parent->addValidate($valid);

@@ -192,7 +192,7 @@
   </xsl:template>
 
   <xsl:template match="php:operator">
-    <xsl:value-of select="."/>
+    <xsl:value-of select="concat(' ', ., ' ')"/>
   </xsl:template>
 
   <xsl:template match="php:string">

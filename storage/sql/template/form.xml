@@ -23,7 +23,7 @@
             </cls:class>
             <cls:class alias="foreign" name="Foreign">
               <cls:classes>
-                <cls:class alias="cached" name="\sylma\schema\cached\form\_Integer"/>
+                <cls:class alias="cached" name="\sylma\schema\cached\form\Foreign"/>
               </cls:classes>
             </cls:class>
             <cls:class alias="reference" name="Reference"/>
