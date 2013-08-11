@@ -67,6 +67,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $schema->setView($this->getParent());
 
     $root = $schema->getElement();
+    $root->init();
 
     if ($sTable = $this->readx('sql:table')) {
 

@@ -6,11 +6,14 @@ use sylma\core;
 class Form extends core\module\Argumented {
 
   protected $sMode;
+  protected $sName;
+  protected $iKey;
   protected $contexts;
   protected $aElements = array();
   protected $bSub = false;
+  protected $bValid = true;
 
-  public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token = null, $bSub = false) {
+  public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token = null) {
 
     if ($token) {
 
@@ -22,7 +25,6 @@ class Form extends core\module\Argumented {
     $this->setArguments($arguments);
     $this->setContexts($contexts);
     $this->setSettings($post);
-    $this->isSub($bSub);
   }
 
   protected function checkToken($sPath) {
@@ -30,11 +32,40 @@ class Form extends core\module\Argumented {
 
   }
 
+  public function setSub($sAlias, $iKey, $parent) {
+
+    $this->isSub(true);
+
+    $this->setName($sAlias);
+    $this->setKey($iKey);
+    $this->setParent($parent);
+  }
+
   protected function isSub($bVal = null) {
 
     if (is_bool($bVal)) $this->bSub = $bVal;
 
     return $this->bSub;
+  }
+
+  protected function setName($sName) {
+
+    $this->sName = $sName;
+  }
+
+  public function getName() {
+
+    return $this->sName;
+  }
+
+  protected function setKey($iKey) {
+
+    $this->iKey = $iKey;
+  }
+
+  public function getKey() {
+
+    return $this->iKey;
   }
 
   protected function setMode($sMode) {
@@ -67,17 +98,34 @@ class Form extends core\module\Argumented {
     return $result;
   }
 
+  protected function setParent(self $parent) {
+
+    $this->parent = $parent;
+  }
+
+  protected function getParent() {
+
+    return $this->parent;
+  }
+
   public function addMessage($sMessage, array $aArguments = array()) {
 
-    if (!$msg = $this->getContext('messages', false)) {
+    if ($this->isSub()) {
 
-      $this->launchException("Cannot send message '$sMessage', context not ready");
+      $this->getParent()->addMessage($sMessage, $aArguments);
     }
+    else {
 
-    $msg->add(array(
-      'content' => $sMessage,
-      'arguments' => $aArguments,
-    ));
+      if (!$msg = $this->getContext('messages', false)) {
+
+        $this->launchException("Cannot send message '$sMessage', context not ready");
+      }
+
+      $msg->add(array(
+        'content' => $sMessage,
+        'arguments' => $aArguments,
+      ));
+    }
   }
 
   public function addElement($sName, Type $element) {
@@ -124,7 +172,17 @@ class Form extends core\module\Argumented {
 
     if (!$bValid) {
 
-      $this->addMessage('Some fields are missing or invalids, they have been highlighted');
+      if ($this->isSub()) {
+
+        $this->getParent()->isValid(false);
+      }
+      else {
+
+        if (!$bValid || !$this->isValid()) {
+
+          $this->addMessage('Some fields are missing or invalids, they have been highlighted');
+        }
+      }
     }
 
     $this->aElements = $aResult;
@@ -158,6 +216,13 @@ class Form extends core\module\Argumented {
     }
 
     return implode(',', $aResult);
+  }
+
+  protected function isValid($bVal = null) {
+
+    if (is_bool($bVal)) $this->bValid = $bVal;
+
+    return $this->bValid;
   }
 
   public function asString() {

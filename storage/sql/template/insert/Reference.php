@@ -20,10 +20,11 @@ class Reference extends sql\template\component\Reference {
     $valid = $window->addVar($window->argToInstance(true));
 
     $item = $window->createVariable('', '\sylma\core\argument');
-    $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $item);
+    $key = $window->createVariable('', 'php-integer');
+    $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $item, $key);
 
     $table->setSource($item);
-    $table->loadHandler();
+    $table->init($key, $this->getParent()->getHandler());
 
     $aContent[] = $window->toString($this->getParser()->parsePathToken($table, $aPath, $sMode, false, $aArguments));
     $aContent[] = $table->getValidation();

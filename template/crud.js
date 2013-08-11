@@ -171,6 +171,26 @@ sylma.crud.Field = new Class({
 
     this.parent(props);
     this.props = props;
+
+    var inputs = this.getInputs();
+
+    if (this.change && inputs) {
+
+      this.prepareNodes(inputs);
+      inputs.addEvent('change', this.change.callback);
+    }
+  },
+
+  initEvent : function(event) {
+
+    if (event.name === 'change') {
+
+      this.change = event;
+    }
+    else {
+
+      this.parent(event);
+    }
   },
 
   setValue : function(val) {
@@ -178,9 +198,19 @@ sylma.crud.Field = new Class({
     this.getInput().set('value', val);
   },
 
+  getInputs : function() {
+
+    return this.getNode().getElements('input, select, textarea');
+  },
+
   getInput : function() {
 
     return this.getNode('input', false) || this.getNode().getElement('input, select, textarea');
+  },
+
+  resetHighlight : function() {
+
+
   },
 
   highlight : function() {
@@ -190,7 +220,13 @@ sylma.crud.Field = new Class({
 
   downlight : function() {
 
-    this.getNode().removeClass('field-statut-invalid');
+    var name = 'field-statut-invalid';
+
+    if (this.getNode().hasClass(name)) {
+
+      this.getNode().removeClass(name);
+      this.getParent().downlight();
+    }
   },
 
   clonePrepare : function() {
@@ -385,6 +421,58 @@ sylma.crud.Head = new Class({
   }
 });
 
+sylma.crud.Group = new Class({
+
+  Extends : sylma.ui.Container,
+  elements : [],
+  highlighted : 0,
+
+  initialize : function(props) {
+
+    this.parent(props);
+    this.elements = Object.keys(this.objects);
+  },
+
+  resetHighlight : function() {
+
+    this.highlighted = 0;
+  },
+
+  highlight : function(alias, sub) {
+
+    var obj = this.getObject(alias, false);
+
+    if (obj) {
+
+      obj.highlight(sub);
+      this.highlighted++;
+
+      if (this.getCaller) {
+
+        this.getCaller().getNode().addClass('field-statut-invalid');
+      }
+    }
+
+    return obj;
+  },
+
+  downlight : function() {
+
+    this.highlighted--;
+
+    if (!this.highlighted) {
+
+      this.getParent().downlight();
+
+      if (this.getCaller) {
+
+        this.getCaller().getNode().removeClass('field-statut-invalid');
+      }
+    }
+  }
+
+});
+
 sylma.crud.fieldset = {};
 
 (function() {
@@ -394,28 +482,75 @@ sylma.crud.fieldset = {};
   this.Container = new Class({
 
     Extends : sylma.ui.Container,
+    count : 0,
+
+    initialize : function(props) {
+
+      this.parent(props);
+
+      if (this.getObject('content', false)) {
+
+        this.count = this.getCount();
+      }
+    },
+
+    getContent : function() {
+
+      return this.getObject('content');
+    },
 
     getCount : function() {
 
-      return this.getNode('content').getChildren().length;
+      return this.getContent().getNode().getChildren().length;
     },
 
     addTemplate : function() {
 
-      var row = this.createTemplate(this.getCount() + 1);
-      this.getNode('content').grab(row.getNode());
+      var row = this.createTemplate(this.count);
+      this.count++;
+
+      this.getContent().getNode().grab(row.getNode());
+      this.getContent().tmp.push(row);
+
       setTimeout(function() {row.show()}, 1);
     },
 
     createTemplate : function(position) {
 
       return this.getObject('template').clone(position);
+    },
+
+    resetHighlight : function() {
+
+      var rows = this.getContent().tmp;
+
+      for (var i = 0; i < rows.length; i++) {
+
+        rows[i].resetHighlight();
+      }
+    },
+
+    highlight : function(sub) {
+
+      var group = this.getContent().tmp[sub.key];
+
+      if (!group) {
+
+        throw new Error('Unknown group id : ' + sub.key);
+      }
+
+      return group.highlight(sub.alias);
+    },
+
+    downlight : function() {
+
+      this.getParent().downlight();
     }
   });
 
   this.Row = new Class({
 
-    Extends : sylma.ui.Container,
+    Extends : sylma.crud.Group,
     position : 0,
 
     setPosition : function(pos) {
@@ -451,6 +586,11 @@ sylma.crud.fieldset = {};
       var result = obj.clone(this, this.getNode(), this.position);
 
       return result;
+    },
+
+    downlight : function() {
+
+      this.getParent().downlight();
     }
   });
 
@@ -597,33 +737,4 @@ sylma.crud.fieldset = {};
     Extends : sylma.crud.fieldset.Row
   });
 
-
-
 }).call(sylma.crud.fieldset);
-
-sylma.crud.Group = new Class({
-
-  Extends : sylma.ui.Container,
-  elements : [],
-
-  initialize : function(props) {
-
-    this.parent(props);
-    this.elements = Object.keys(this.objects);
-  },
-
-  highlight : function(alias) {
-
-    var result = false;
-    var obj = this.getObject(alias, false);
-
-    if (obj) {
-
-      result = true;
-      obj.highlight();
-    }
-
-    return result;
-  }
-
-});

@@ -8,6 +8,7 @@ sylma.ui.tab.Main = new Class({
   width : 0,
   current : 0,
   length : 0,
+  first : null,
 
   initialize : function(props) {
 
@@ -32,7 +33,7 @@ sylma.ui.tab.Main = new Class({
     for (var i = 0; i < tabs.length; i++) {
 
       this.tabs[i] = tabs[i]
-      this.tabs[i].setWidth(this.width);
+      this.tabs[i].prepare(this.width, i);
     }
 
     this.go(0);
@@ -41,23 +42,63 @@ sylma.ui.tab.Main = new Class({
   parseMessage : function(msg) {
 
     var alias = msg.arguments.alias;
-    this.highlightTab(alias);
+    var sub;
+
+    if (alias.indexOf('[') !== -1) {
+
+      var match = alias.match(/(.+)\[(\d+)\](.+)/);
+
+      sub = {
+        alias : match[3],
+        key : match[2]
+      };
+
+      alias = match[1];
+    }
+
+    return this.highlightTab(alias, sub);
   },
 
-  highlightTab : function(alias) {
+  highlightTab : function(alias, sub) {
+
+    var result;
 
     for (var i in this.tabs) {
 
-      if (this.tabs[i].highlight(alias)) {
+      if (this.tabs[i].highlight(alias, sub)) {
 
+        if (this.first === null || this.first > i) this.first = i;
         break;
       }
+    }
+
+    return result;
+  },
+
+  submitParse : function(response, args) {
+
+    for (var i in this.tabs) {
+
+      this.tabs[i].resetHighlight();
+    }
+
+    this.parent(response, args);
+
+    if (this.first !== null) {
+
+      this.go(this.first);
+      this.first = null;
     }
   },
 
   getTab : function(index) {
 
     return this.tabs[index];
+  },
+
+  getHead : function() {
+
+    return this.getObject('head');
   },
 
   go : function(index) {
@@ -208,6 +249,7 @@ sylma.ui.tab.Tab = new Class({
 
   Extends : sylma.crud.Group,
   width : 0,
+  position : 0,
 
   initialize : function(options) {
 
@@ -215,9 +257,11 @@ sylma.ui.tab.Tab = new Class({
     this.getNode().addClass('sylma-tab');
   },
 
-  setWidth : function(val) {
+  prepare : function(width, position) {
 
-    this.width = val;
+    this.width = width;
+    this.position = position;
+
     this.prepareNode();
   },
 
@@ -243,6 +287,11 @@ sylma.ui.tab.Tab = new Class({
 
       this.update({}, this.get('path'));
     }
+  },
+
+  getCaller : function() {
+
+    return this.getParent(1).getHead().getCaller(this.position);
   }
 
 });

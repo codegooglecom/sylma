@@ -37,7 +37,7 @@
     <tpl:argument name="value" default="''"/>
 
     <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
-      <js:event name="click">
+      <js:event name="change">
         %object%.downlight();
       </js:event>
       <js:name>
@@ -138,7 +138,7 @@
 
   <tpl:template match="sql:foreign" mode="container/multiple/empty">
     <fieldset class="field form-foreign" js:class="sylma.crud.Field">
-      <js:event name="click">
+      <js:event name="change">
         %object%.downlight();
       </js:event>
       <js:name>
@@ -382,10 +382,13 @@
 
   <view:template match="sql:reference" mode="container" sql:ns="ns">
     <fieldset js:class="sylma.crud.fieldset.Container">
+      <js:name>
+        <tpl:read select="alias()"/>
+      </js:name>
       <tpl:apply mode="legend"/>
       <tpl:apply mode="template/add"/>
       <tpl:apply mode="template"/>
-      <div js:node="content">
+      <div js:class="sylma.crud.Group" js:name="content">
         <tpl:apply select="ref()" mode="update"/>
       </div>
     </fieldset>

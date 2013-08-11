@@ -129,9 +129,19 @@ abstract class Type extends core\module\Domed {
 
   abstract protected function validateFormat();
 
+  public function getAlias() {
+
+    if ($sName = $this->getHandler()->getName()) {
+
+      $sName .= '['.$this->getHandler()->getKey().']';
+    }
+
+    return $sName . $this->read('alias');
+  }
+
   public function asAlias() {
 
-    return array('alias' => $this->read('alias'));
+    return array('alias' => $this->getAlias());
   }
 
   public function escape() {

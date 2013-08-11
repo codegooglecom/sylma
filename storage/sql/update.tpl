@@ -19,7 +19,7 @@
     <tpl:argument name="value" default="value()"/>
 
     <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
-      <js:event name="click">
+      <js:event name="change">
         %object%.downlight();
       </js:event>
       <js:name>
@@ -66,7 +66,7 @@
 
   <tpl:template match="sql:foreign" mode="container/multiple/update">
     <fieldset class="form-foreign" js:class="sylma.crud.Field">
-      <js:event name="click">
+      <js:event name="change">
         %object%.downlight();
       </js:event>
       <js:name>

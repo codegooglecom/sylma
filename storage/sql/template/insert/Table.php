@@ -16,14 +16,18 @@ class Table extends sql\template\component\Table implements common\argumentable 
   public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
-    $this->loadHandler();
 
     $this->setSource($this->getWindow()->getVariable('post'));
   }
 
+  public function init($key = null, $parent = null) {
+
+    $this->loadHandler($key, $parent);
+  }
+
   public function getAlias($sMode = '') {
 
-    $this->getName();
+    return $this->getName();
   }
 
   public function addElement(sql\schema\element $el, $content = null, array $aArguments = array()) {
@@ -43,7 +47,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
   protected function addElementToHandler(sql\schema\element $el, $content = null, array $aArguments = array()) {
 
     $sName = $el->getAlias();
-    $handler = $this->getHandler();
+    $handler = $this->getHandler(true);
 
     $aArguments = array_merge(array(
       'alias' => $sName,
@@ -86,7 +90,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $result;
   }
 
-  public function loadHandler() {
+  protected function loadHandler($key = null, $parent = null) {
 
     $window = $this->getWindow();
     $view = $this->getParser()->getView();
@@ -107,13 +111,25 @@ class Table extends sql\template\component\Table implements common\argumentable 
       $window->getVariable('contexts'),
       $this->getMode(),
       $token,
-      $this->isSub(),
     ));
 
-    $this->setHandler($window->createVar($result));
+    $handler = $window->createVar($result);
+
+    $this->setHandler($handler);
+    $this->addContent($handler->getInsert());
+
+    if ($this->isSub() && $this->getParent(false)) {
+
+      $this->addContent($handler->call('setSub', array($this->getParent()->getAlias(), $key, $parent)));
+    }
   }
 
-  public function getHandler() {
+  public function getHandler($bDebug = true) {
+
+    if ($bDebug && !$this->handler) {
+
+      $this->launchException('No handler defined');
+    }
 
     return $this->handler;
   }
@@ -174,21 +190,21 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->aContent[] = $mVal;
   }
 
-  public function addValidate($mVal, $bLast = false) {
+  public function addValidate($mVal) {
 
-    $this->aValidates[] = $mVal;
-
-    if (!$bLast) {
+    if ($this->aValidates) {
 
       $this->aValidates[] = $this->getWindow()->createOperator('&&');
     }
+
+    $this->aValidates[] = $mVal;
   }
 
   public function callValidate() {
 
-    $this->addValidate($this->getHandler()->call('validate'), true);
+    $this->addValidate($this->getHandler()->call('validate'));
 
-    return $this->aValidates;
+    return array_reverse($this->aValidates);
   }
 
   public function getValidation() {
@@ -208,12 +224,12 @@ class Table extends sql\template\component\Table implements common\argumentable 
   }
 
   protected function getContent() {
-
+/*
     if ($this->getHandler()) {
 
       $aResult[] = $this->getHandler()->getInsert();
     }
-
+*/
     $aResult[] = $this->aContent;
 
     return $aResult;

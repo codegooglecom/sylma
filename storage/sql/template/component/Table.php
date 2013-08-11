@@ -18,6 +18,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     parent::parseRoot($el);
   }
 
+  public function init() {
+
+    
+  }
+
   public function setParent(schema\parser\element $parent) {
 
     $this->parent = $parent;
