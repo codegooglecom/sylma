@@ -17,9 +17,9 @@ class Foreign extends sql\template\component\Foreign {
     return null;
   }
 
-  protected function buildSingle($sMode) {
+  protected function buildSingle($sMode, $content = null) {
 
-    $this->getParent()->addElement($this, null, array(
+    $this->getParent()->addElement($this, $content, array(
       'default' => $this->getDefault(),
       'optional' => $this->isOptional(),
       'mode' => $sMode,
@@ -57,7 +57,7 @@ class Foreign extends sql\template\component\Foreign {
     }
     else {
 
-      $this->buildSingle($sMode);
+      $this->buildSingle($sMode, $content);
     }
   }
 }

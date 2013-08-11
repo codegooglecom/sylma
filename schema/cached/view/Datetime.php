@@ -18,16 +18,25 @@ class Datetime extends _String {
       $sFormat = self::FORMAT;
     }
 
-    $date = new \DateTime($sValue);
+    if ($sValue) {
 
-    if ($date->getTimestamp() < 0) {
-/*
-      $e = new core\exception\Basic('Bad datetime');
-      $e->save(false);
- */
+      $date = new \DateTime($sValue);
+
+      if ($date->getTimestamp() < 0) {
+  /*
+        $e = new core\exception\Basic('Bad datetime');
+        $e->save(false);
+   */
+      }
+
+      $sResult = strftime($sFormat, $date->getTimestamp());
+    }
+    else {
+
+      $sResult = '-';
     }
 
-    return strftime($sFormat, $date->getTimestamp());
+    return $sResult;
   }
 }
 
