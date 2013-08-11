@@ -166,6 +166,7 @@ sylma.crud.Form = new Class({
 sylma.crud.Field = new Class({
 
   Extends : sylma.ui.Base,
+  highlightClass : 'field-statut-invalid',
 
   initialize : function(props) {
 
@@ -213,16 +214,21 @@ sylma.crud.Field = new Class({
 
   },
 
+  isHighlighted : function() {
+
+    return this.getNode().hasClass(this.highlightClass);
+  },
+
   highlight : function() {
 
-    this.getNode().addClass('field-statut-invalid');
+    this.getNode().addClass(this.highlightClass);
   },
 
   downlight : function() {
 
-    var name = 'field-statut-invalid';
+    var name = this.highlightClass;
 
-    if (this.getNode().hasClass(name)) {
+    if (this.isHighlighted()) {
 
       this.getNode().removeClass(name);
       this.getParent().downlight();
@@ -591,6 +597,19 @@ sylma.crud.fieldset = {};
     downlight : function() {
 
       this.getParent().downlight();
+    },
+
+    remove : function() {
+
+      for (var i in this.objects) {
+
+        if (this.objects[i].isHighlighted()) {
+
+          this.downlight();
+        }
+      }
+
+      this.parent();
     }
   });
 

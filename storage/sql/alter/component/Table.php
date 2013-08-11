@@ -1,11 +1,13 @@
 <?php
 
 namespace sylma\storage\sql\alter\component;
-use sylma\core, sylma\dom, sylma\storage\sql;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\storage\fs;
 
 class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
   const SQL_PARSER = 'mysql';
+
+  protected $bDepth = false;
 
   public function parseRoot(dom\element $el) {
 
@@ -34,6 +36,19 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
   public function asUpdate() {
 
+    if (!$this->useDepth()) {
+
+      $sql = $this->getManager('mysql');
+
+      $sQuery = $this->loadUpdate();
+
+      dsp($sQuery);
+      $sql->read($sQuery);
+    }
+  }
+
+  protected function loadUpdate() {
+
     $this->loadColumns();
 
     foreach ($this->getElements() as $element) {
@@ -50,15 +65,66 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
     return $element->asUpdate();
   }
 
-  public function asCreate() {
+  protected function useDepth($bDepth = null) {
+
+    if (is_bool($bDepth)) $this->bDepth = $bDepth;
+
+    return $this->bDepth;
+  }
+
+  public function asCreate($bDepth = false) {
+
+    $this->useDepth($bDepth);
+    $aReferences = $aForeigns = array();
 
     foreach ($this->getElements() as $element) {
 
-      if ($element instanceof sql\schema\reference) continue;
-      $aChildren[] = $this->createChild($element);
+      if ($element instanceof sql\schema\reference) {
+
+        $aReferences[] = $element;
+      }
+      else {
+
+        if ($element instanceof sql\schema\foreign) {
+
+          $aForeigns[] = $element;
+        }
+
+        if (!$element->getMaxOccurs(true)) {
+
+          $aChildren[] = $this->createChild($element);
+        }
+      }
     }
 
-    return "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ');';
+    $sQuery = "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ');';
+
+    $sql = $this->getManager('mysql');
+
+    $sql->read($sQuery);
+    dsp($sQuery);
+
+    foreach ($aReferences as $ref) {
+
+      $ref->asString();
+    }
+
+    foreach ($aForeigns as $ref) {
+
+      $ref->asJunction();
+    }
+  }
+
+  public function buildSchema(fs\file $file) {
+
+    if ($this->useDepth()) {
+
+      $handler = $this->create('handler');
+      $handler->useDepth(true);
+      $handler->setFile($file);
+
+      $handler->asString();
+    }
   }
 
   protected function createChild(sql\alter\alterable $element) {

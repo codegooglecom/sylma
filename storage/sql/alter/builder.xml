@@ -11,9 +11,14 @@
         <component>
           <cls:classes>
             <cls:base>\sylma\storage\sql\alter\component</cls:base>
-            <cls:class alias="table" name="Table"/>
+            <cls:class alias="table" name="Table">
+              <cls:classes>
+                <cls:class alias="handler" name="\sylma\storage\sql\alter\Handler"/>
+              </cls:classes>
+            </cls:class>
             <cls:class alias="field" name="Field"/>
             <cls:class alias="foreign" name="Foreign"/>
+            <cls:class alias="reference" name="Reference"/>
             <cls:class alias="complexType" name="Complex"/>
             <cls:class alias="simpleType" name="Simple"/>
             <cls:class alias="baseType" name="Simple"/>

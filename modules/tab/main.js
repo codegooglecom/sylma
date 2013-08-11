@@ -67,7 +67,11 @@ sylma.ui.tab.Main = new Class({
 
       if (this.tabs[i].highlight(alias, sub)) {
 
-        if (this.first === null || this.first > i) this.first = i;
+        if (this.first === null || this.first > i) {
+
+          this.first = i;
+        }
+
         break;
       }
     }
@@ -103,7 +107,7 @@ sylma.ui.tab.Main = new Class({
 
   go : function(index) {
 
-    this.current = index;
+    this.current = parseInt(index);
 
     this.getObject('container').go(index);
     this.getObject('head').downlightAll();

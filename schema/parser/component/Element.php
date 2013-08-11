@@ -185,8 +185,8 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
 
   protected function setOccurs($iMin, $iMax) {
 
-    $this->iMinOccurs = $iMin;
-    $this->iMaxOccurs = $iMax;
+    $this->iMinOccurs = intval($iMin);
+    $this->iMaxOccurs = intval($iMax);
   }
 
   protected function getMinOccurs() {

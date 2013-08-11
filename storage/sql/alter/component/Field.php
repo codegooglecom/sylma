@@ -35,9 +35,28 @@ class Field extends sql\schema\component\Field implements sql\alter\alterable {
       $sDefault = $this->getDefault();
     }
 
-    $sDefault = $this->isRequired() ? ' NOT NULL' : ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $sDefault : '');
+    $sContent = $sDefault ? ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $sDefault : '') : ' NOT NULL';
 
-    return $this->getType()->asString() . ($this->isID() ? ' AUTO_INCREMENT' : $sDefault);
+    $type = $this->getType();
+
+    if ($type->doExtends($this->getParser()->getType('datetime', $this->getNamespace('sql')))) {
+
+      if ($sDefault) {
+
+        $sType = 'DATETIME';
+      }
+      else {
+
+        $sType = 'TIMESTAMP';
+      }
+    }
+    else {
+
+      $sType = $type->asString();
+    }
+
+
+    return $sType . ($this->isID() ? ' AUTO_INCREMENT' : $sContent);
   }
 
   public function asString() {

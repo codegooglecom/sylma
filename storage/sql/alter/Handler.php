@@ -8,6 +8,9 @@ class Handler extends core\module\Domed implements core\stringable {
   const ARGUMENTS = 'builder.xml';
 
   protected $schema;
+  protected $bDepth = false;
+
+  protected static $aFiles = array();
 
   public function __construct() {
 
@@ -21,6 +24,19 @@ class Handler extends core\module\Domed implements core\stringable {
     $result = $builder->getSchema();
 
     $this->setSchema($result);
+
+    return parent::setFile($file);
+  }
+
+  /**
+   * @param type $bDepth
+   * @return boolean
+   */
+  public function useDepth($bDepth = null) {
+
+    if (!is_null($bDepth)) $this->bDepth = (bool) $bDepth;
+
+    return $this->bDepth;
   }
 
   protected function setSchema(schema\parser\schema $schema) {
@@ -46,18 +62,20 @@ class Handler extends core\module\Domed implements core\stringable {
 
   public function asString() {
 
-    $sql = $this->getManager('mysql');
+    $sFile = (string) $this->getFile('', false);
 
-    $schema = $this->getSchema();
-    $table = $schema->getElement();
+    if (!$sFile || !in_array($sFile, self::$aFiles)) {
 
-    dsp($table->asCreate());
+      self::$aFiles[] = $sFile;
 
-    $sql->read($table->asCreate());
+      $schema = $this->getSchema();
+      $table = $schema->getElement();
 
-    dsp($table->asUpdate());
+      dsp($sFile);
 
-    $sql->read($table->asUpdate());
+      $table->asCreate($this->useDepth());
+      $table->asUpdate();
+    }
   }
 }
 

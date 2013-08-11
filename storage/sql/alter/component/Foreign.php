@@ -13,14 +13,42 @@ class Foreign extends sql\schema\component\Foreign implements sql\alter\alterabl
   public function asCreate() {
 
     $ref = $this->getElementRef();
-    return $this->asString() . ",CONSTRAINT FOREIGN KEY ({$this->getName()}) REFERENCES {$ref->getName()} (id)";
+
+    if (!$this->getMaxOccurs(true)) {
+
+      if ($file = $this->getElementRefFile()) {
+
+        $this->getParent()->buildSchema($file);
+      }
+
+      $sResult = $this->asString() . ",CONSTRAINT FOREIGN KEY ({$this->getName()}) REFERENCES {$ref->getName()} (id)";
+    }
+    else {
+
+      $sResult = '';
+    }
+
+    return $sResult;
+  }
+
+  public function asJunction() {
+
+    if ($this->getMaxOccurs(true)) {
+
+      $this->loadJunction();
+    }
   }
 
   protected function typeAsString() {
 
-    $sDefault = $this->isRequired() ? ' NOT NULL' : ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $this->getDefault() : '');
+    if (!$sDefault = $this->readx('@alter-default')) {
 
-    return "BIGINT UNSIGNED" . $sDefault;
+      $sDefault = $this->getDefault();
+    }
+
+    $sContent = $sDefault ? ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $this->getDefault() : '') : ' NOT NULL';
+
+    return "BIGINT UNSIGNED" . $sContent;
   }
 
   public function asString() {

@@ -12,7 +12,11 @@
         </le:call-self>
       </le:validate>
     </le:argument>
+    <le:argument format="php-boolean" name="depth" required="false"/>
     <le:object class="Handler" le:set-variable="handler">
+      <le:call name="useDepth">
+        <le:get-argument name="depth"/>
+      </le:call>
       <le:call name="setFile">
         <le:get-argument name="path"/>
       </le:call>

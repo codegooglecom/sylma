@@ -7,11 +7,7 @@ class Simple extends schema\component\SimpleType {
 
   public function asString() {
 
-    if ($this->doExtends($this->getParser()->getType('datetime', $this->getNamespace('sql')))) {
-
-      $sValue = 'TIMESTAMP';
-    }
-    else if ($this->doExtends($this->getParser()->getType('text', $this->getNamespace('sql')))) {
+    if ($this->doExtends($this->getParser()->getType('text', $this->getNamespace('sql')))) {
 
       $sValue = 'MEDIUMTEXT';
     }

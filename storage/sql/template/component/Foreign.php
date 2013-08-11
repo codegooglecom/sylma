@@ -10,8 +10,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
   protected $bBuilded = false;
 
-  const JUNCTION_MODE = 'view';
-
   /**
    *
    * @return sql\query\parser\Select
@@ -110,69 +108,6 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     }
 
     return $result;
-  }
-
-  protected function loadJunction() {
-
-    $sName = $this->readx('@junction', true);
-
-    $field = $this->getElementRef();
-    $parent = $this->getParent();
-
-    $sSource = 'id_' . $parent->getName();
-    $sTarget = 'id_' . $field->getName();
-
-    $doc = $this->createArgument(array(
-      'schema' => array(
-        '@targetNamespace' => $this->getNamespace(),
-        'table' => array(
-          '@name' => $sName,
-          '#foreign' => array(
-            array(
-              '@name' => $sSource,
-              '@occurs' => '0..1',
-              '@table' => 't1:' . $parent->getName(),
-              '@import' => (string) $this->getSourceFile(),
-            ),
-            array(
-              '@name' => $sTarget,
-              '@occurs' => '0..1',
-              '@table' => 't2:' . $field->getName(),
-              '@import' => (string) $this->getSourceFile($this->readx('@import')),
-            ),
-          ),
-        ),
-      ),
-    ), $this->getNamespace('sql'))->asDOM();
-
-    $doc->registerNamespaces(array(
-      't1' => $this->getNamespace(),
-      't2' => $field->getNamespace(),
-    ));
-
-    $sql = $this->getManager(self::DB_MANAGER);
-
-    if (!$sql->get("show tables like '$sName'", false)) {
-
-      $handler = new sql\alter\Handler;
-      $handler->setDocument($doc);
-
-      $handler->asString();
-    }
-
-    $this->getParser()->changeMode(static::JUNCTION_MODE);
-
-    $sElement = $this->getParser()->addSchema($doc);
-
-    $table = $this->getParser()->getElement($sElement, $this->getNamespace());
-    $table->isSub(true);
-
-    $source = $table->getElement($sSource);
-    $target = $table->getElement($sTarget);
-
-    $this->getParser()->resetMode();
-
-    return array($table, $source, $target);
   }
 }
 
