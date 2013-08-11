@@ -14,9 +14,15 @@
   extends="/#sylma/storage/sql/crud.tpl"
 >
 
+
   <crud:global todo:ns="ns" stat:ns="ns">
 
+    <le:context name="css">
+      <le:file>medias/main.css</le:file>
+    </le:context>
+
     <view:schema>schema.xql</view:schema>
+
     <tpl:constant name="list-cols">description,url,update,priority,statut</tpl:constant>
     <tpl:constant name="form-cols">* ^ id,update,insert</tpl:constant>
     <tpl:constant name="list-order">!update</tpl:constant>
@@ -53,6 +59,13 @@
 
     <tpl:template match="stat:todo_statut">
       <tpl:read select="value"/>
+    </tpl:template>
+
+    <tpl:template match="*" mode="row/init">
+      <tpl:if test="statut/value() >= 10">
+        <tpl:token name="class">finished</tpl:token>
+      </tpl:if>
+      <tpl:apply mode="row/init"/>
     </tpl:template>
 
   </crud:group>

@@ -105,7 +105,8 @@
   color: black;
 }
 
-a.todo.finished
+.finished
 {
   text-decoration: line-through;
+  color: gray;
 }
