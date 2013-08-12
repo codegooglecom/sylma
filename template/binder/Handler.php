@@ -16,8 +16,8 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   const CONTEXT_JS = 'js';
 
-  const FILE_MOOTOOLS = '../mootools.js';
-  const FILE_SYLMA = '../sylma.js';
+  const FILE_MOOTOOLS = '../medias/mootools.js';
+  const FILE_SYLMA = '../medias/sylma.js';
 
   protected $window;
 

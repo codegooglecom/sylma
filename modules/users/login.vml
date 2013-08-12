@@ -23,7 +23,7 @@
       <view:template>
 
         <form js:class="sylma.crud.Form">
-          <js:include>/#sylma/template/crud.js</js:include>
+          <js:include>/#sylma/template/medias/crud.js</js:include>
           <tpl:token name="action"><le:path>login-do</le:path>.json</tpl:token>
           <tpl:apply mode="init"/>
           <tpl:apply use="form-cols" mode="container"/>

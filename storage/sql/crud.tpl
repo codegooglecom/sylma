@@ -80,7 +80,7 @@
 
   <crud:group name="view">
 
-    <js:include>/#sylma/template/crud.js</js:include>
+    <js:include>/#sylma/template/medias/crud.js</js:include>
 
     <view:template mode="form/token">
       <sql:token>

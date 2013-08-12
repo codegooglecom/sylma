@@ -13,7 +13,7 @@
 
   <view:template>
     <form js:class="sylma.crud.Form" class="sylma-form">
-      <js:include>/#sylma/template/crud.js</js:include>
+      <js:include>/#sylma/template/medias/crud.js</js:include>
       <tpl:apply mode="init"/>
       <tpl:apply mode="form"/>
       <tpl:apply mode="form/action"/>
