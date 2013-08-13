@@ -40,6 +40,7 @@
                 <cls:class alias="read" name="Read"/>
                 <cls:class alias="text" name="Text"/>
                 <cls:class alias="argument" name="Argument"/>
+                <cls:class alias="cdata" name="CData"/>
               </cls:classes>
             </cls:class>
           </cls:classes>

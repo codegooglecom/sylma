@@ -27,7 +27,16 @@ class Comment extends \DOMComment implements dom\node {
 
   public function remove() {
 
-    return $this->getParent()->removeChild($this);
+    try {
+
+      $result = $this->getParent()->removeChild($this);
+    }
+    catch (\DOMException $e) {
+
+      \Sylma::throwException($e->getMessage());
+    }
+
+    return $result;
   }
 
   public function asString($iMode = 0) {

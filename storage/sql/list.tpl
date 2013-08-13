@@ -140,7 +140,7 @@
   </view:template>
 
   <view:template match="*" mode="row/action">
-    <a title="Editer">
+    <a title="Editer" class="button">
       <tpl:token name="href">
         <le:path/>/update?id=<tpl:read select="id"/>
       </tpl:token>

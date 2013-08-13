@@ -76,6 +76,24 @@
       <div><h3>&lt;admin&gt;</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="cdata">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:cdata>hello <tpl:read select="name"/></tpl:cdata>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><![CDATA[hello admin]]></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="html chars in db">
     <tst:document>
       <view:view sql:ns="ns">

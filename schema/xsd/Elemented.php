@@ -231,8 +231,11 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
 
     foreach ($doc->getChildren() as $child) {
 
-      $sName = $this->addSchemaChild($child, $sNamespace);
-      if (!$sResult && $sName) $sResult = $sName;
+      if ($child->getType() !== $child::COMMENT) {
+        
+        $sName = $this->addSchemaChild($child, $sNamespace);
+        if (!$sResult && $sName) $sResult = $sName;
+      }
     }
 
     return $sResult;

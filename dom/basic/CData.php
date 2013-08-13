@@ -47,6 +47,13 @@ class CData extends \DOMCdataSection implements dom\node {
     return $this->data;
   }
 
+  public function compare(dom\node $element) {
+
+    if ($element->getType() == self::CDATA && $element->getValue() == $this->getValue()) return self::COMPARE_SUCCESS;
+
+    return self::COMPARE_BAD_ELEMENT;
+  }
+
   public function __toString() {
 
     return $this->asString();

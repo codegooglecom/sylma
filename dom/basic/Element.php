@@ -574,7 +574,11 @@ class Element extends \DOMElement implements dom\element {
 
       if ($this->hasChildren()) {
 
-        foreach ($this->getChildren() as $child) $child->remove();
+        foreach ($this->childNodes as $child) {
+
+          $this->removeChild($child);
+          //$child->remove();
+        }
       }
     }
 
