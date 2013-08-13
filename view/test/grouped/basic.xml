@@ -116,6 +116,28 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="html chars not converted">
+    <tst:document>
+      <view:view sql:ns="ns" build:return="result">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1b.xql</view:schema>
+        <view:template>
+          <tpl:read select="source/text()"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $result = $manager->read('result');
+
+      $manager->assertEqual($result, '&lt;span>root bloc&lt;/span>');
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
   <tst:test name="Apply value">
     <tst:document>
       <view:view sql:ns="ns">

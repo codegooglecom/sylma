@@ -86,15 +86,20 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     $this->launchException('Cannot reflect all on field');
   }
 
-  protected function reflectSelf() {
+  protected function reflectSelf($bHTML = false) {
 
     $aArguments = array($this->getAlias(), false);
 
-    if ($this->getType()->doExtends($this->getParser()->getType('html', $this->getNamespace('sql')))) {
+    if (!$bHTML) {
+
+      $bHTML = $this->getType()->doExtends($this->getParser()->getType('html', $this->getNamespace('sql')));
+    }
+
+    if ($bHTML) {
 
       $aArguments[] = true;
     }
-    
+
     return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', $aArguments);
   }
 

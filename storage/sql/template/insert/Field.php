@@ -17,7 +17,7 @@ class Field extends sql\template\component\Field {
     ));
   }
 
-  protected function reflectSelf() {
+  protected function reflectSelf($bHTML = false) {
 
     //return null;
     $this->launchException('No self reflect');

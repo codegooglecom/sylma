@@ -16,7 +16,6 @@ class Argument extends core\argument\Readable {
   public function read($sPath = '', $bDebug = true, $bHTML = false) {
 
     $sResult = parent::read($sPath, $bDebug);
-
     return $bHTML ? $sResult : htmlspecialchars($sResult);
   }
 }

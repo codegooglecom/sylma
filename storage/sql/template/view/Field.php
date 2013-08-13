@@ -52,6 +52,11 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
         break;
 
+      case 'text' :
+
+        $result = $this->reflectText();
+        break;
+
       default :
 
         $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments);
@@ -59,5 +64,13 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
     return $result;
   }
+
+  protected function reflectText() {
+
+    $this->addToQuery();
+
+    return $this->reflectSelf(true);
+  }
+
 }
 
