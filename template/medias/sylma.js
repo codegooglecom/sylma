@@ -195,7 +195,7 @@ sylma.classes = {
       return result;
     },
 
-    send : function(path, args, get) {
+    send : function(path, args, get, callback) {
 
       args = args || {};
       //var self = this;
@@ -206,6 +206,7 @@ sylma.classes = {
         onSuccess: function(response) {
 
           sylma.ui.parseMessages(response);
+          if (callback) callback(response);
         }
       });
 
@@ -429,9 +430,9 @@ sylma.ui = new sylma.classes.ui;
       return result;
     },
 
-    send : function(path, args) {
+    send : function(path, args, get, callback) {
 
-      return sylma.ui.send(path, args);
+      return sylma.ui.send(path, args, get, callback);
     },
 
     toggleLight : function() {
@@ -486,7 +487,6 @@ sylma.ui = new sylma.classes.ui;
 
       return result;
     }
-
   });
 
   this.Container = new Class({

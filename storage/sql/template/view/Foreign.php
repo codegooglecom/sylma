@@ -38,7 +38,7 @@ class Foreign extends sql\template\component\Foreign {
 
     $this->addToQuery();
 
-    return $this->getParent()->getSource()->call('read', array($this->getName()), 'php-string');
+    return $this->getParent()->getSource()->call('read', array($this->getAlias()), 'php-string');
   }
 
   protected function reflectValues() {
