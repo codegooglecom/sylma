@@ -35,12 +35,7 @@ class Foreign extends Element implements sql\schema\foreign {
 
     list($sNamespace, $sName) = $this->parseName($this->readx('@table', true));
 
-    if ($result = $this->getParser()->getElement($sName, $sNamespace, false)) {
-
-      $result->setParent($this);
-    }
-
-    return $result;
+    return $this->getParser()->getElement($sName, $sNamespace, false);
   }
 
   protected function getElementRefFile() {
@@ -84,7 +79,14 @@ class Foreign extends Element implements sql\schema\foreign {
       }
     }
 
-    return $this->elementRef;
+    $result = $this->elementRef;
+
+    if ($result) {
+
+      $result->setParent($this);
+    }
+
+    return $result;
   }
 
   public function setElementRef(Table $element) {
