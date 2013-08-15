@@ -503,9 +503,9 @@ class Initializer extends module\Filed {
     return $aResult;
   }
 
-  public function loadPOST() {
+  public function loadPOST($bArgument = false) {
 
-    return $_POST;
+    return $bArgument ? $this->createArgument($_POST) : $_POST;
   }
 
   /**

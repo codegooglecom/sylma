@@ -13,6 +13,11 @@ class Argument extends core\argument\Readable {
     $this->setArray($content);
   }
 
+  public function hasChildren() {
+
+    return (bool) $this->aArray;
+  }
+
   public function read($sPath = '', $bDebug = true, $bHTML = false) {
 
     $sResult = parent::read($sPath, $bDebug);

@@ -151,12 +151,14 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'has-children' :
 
+        $this->preBuild();
+
         $result = array();
 
         if ($this->insertQuery()) $result[] = $this->getQuery();
         $this->insertQuery(false);
 
-        $result[] = $this->getQuery()->getVar()->call('query');
+        $result[] = $this->getQuery()->getVar()->call('hasChildren');
 
         break;
 
