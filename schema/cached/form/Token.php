@@ -6,12 +6,12 @@ use sylma\core;
 class Token extends core\module\Sessioned {
 
   const TOKEN_PREFIX = 'sylma-token-';
-  const DURATION = 3600; // second(s)
 
   protected $sPath;
 
   public function __construct($sPath = '') {
 
+    $this->setSettings(\Sylma::get('schema/token'));
     if ($sPath) $this->setPath($sPath);
   }
 
@@ -23,7 +23,7 @@ class Token extends core\module\Sessioned {
   public function savePath($sPath) {
 
     $aSession = $this->getSession();
-    
+
     $aContent = array(
       self::TOKEN_PREFIX . $sPath => array('time' => microtime(true)),
     );
@@ -61,7 +61,7 @@ class Token extends core\module\Sessioned {
       $this->launchException('Bad token', get_defined_vars());
     }
 
-    if ((microtime(true) - $aSession[$sPath]['time']) > self::DURATION) {
+    if ((microtime(true) - $aSession[$sPath]['time']) > $this->read('duration')) {
 
       $this->launchException('Token expired');
     }

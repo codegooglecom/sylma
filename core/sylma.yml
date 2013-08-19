@@ -107,7 +107,9 @@ dom:
     token : true
   encoding:
     check: false
-
+schema :
+  token :
+    duration : 7200
 modules :
   captcha :
     fonts : fonts/truetype/ttf-dejavu
