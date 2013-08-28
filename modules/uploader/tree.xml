@@ -7,5 +7,5 @@
     <cls:base>\sylma\modules\uploader</cls:base>
     <cls:class alias="cached" name="Validate"/>
   </cls:classes>
-  <extensions arg:type="token">doc,docx,pdf,png,jpg,jpeg,rar,zip,gzip</extensions>
+  <extensions arg:type="token">doc,docx,pdf,png,jpg,jpeg</extensions>
 </arg:argument>
