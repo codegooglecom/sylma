@@ -8,6 +8,6 @@
 >
   <extensions>
     <executable arg:type="token">eml,vml</executable>
-    <readable arg:type="token">css,js,webm,jpg,jpeg,gif,png,pdf,eot,ttf,woff</readable>
+    <readable arg:type="token">css,js,webm,jpg,jpeg,gif,png,pdf,eot,ttf,woff,vcf</readable>
   </extensions>
 </arg:argument>

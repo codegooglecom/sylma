@@ -15,5 +15,6 @@
     'pdf',
     'eot',
     'ttf',
-    'woff'))));
+    'woff',
+    'vcf'))));
   

@@ -50,6 +50,7 @@ initializer :
     ttf : application/octet-stream
     eot : application/octet-stream
     woff : application/x-font-woff
+    vcf : text/x-vcard
   executables : [json, png, txt, xml]
   error :
     action : error.eml
