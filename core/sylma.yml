@@ -53,8 +53,7 @@ initializer :
     vcf : text/x-vcard
   executables : [json, png, txt, xml]
   error :
-    action : error.eml
-    html : error.html
+    path : /error
   window :
     html :
       default :

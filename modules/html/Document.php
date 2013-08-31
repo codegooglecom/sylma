@@ -14,7 +14,7 @@ class Document extends action\handler\Basic {
 
     // global context is usefull for free action (without parent)
 
-    if (!$this->getManager('parser')->getContext('errors', false)) {
+    if (!$messages = $this->getManager('parser')->getContext('errors', false)) {
 
       $messages = new context\Messages;
       $this->getManager('parser')->setContext('errors', $messages);
@@ -149,6 +149,7 @@ class Document extends action\handler\Basic {
     });
 
     $path = $this->getControler('path');
+    $file = $path->getFile('', false);
 
     $content = $this->createArgument(array(
       'ul' => array(
@@ -158,8 +159,8 @@ class Document extends action\handler\Basic {
           array(
             'a' => array(
               '@href' => '#',
-              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '{$path->getFile()}'}, true); return false;",
-              (string) $path->getFile(),
+              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, true); return false;",
+              (string) $file,
             ),
           ),
           'builded : ' . count($aBuilded),

@@ -79,9 +79,12 @@ class Manager extends compiler\Manager {
 
   public function build(fs\file $file, fs\directory $dir) {
 
-    if (!\Sylma::read('debug/enable')) {
+    $user = $this->getManager('user');
 
-      $this->throwException('This function is low performance and must not be used in production environnement');
+    if ($user->getName() !== 'root') {
+
+      //$this->throwException('This function is low performance and must not be used in production environnement');
+      $this->throwException('Unauthorized building access');
     }
 
     $builder = $this->loadBuilder($file, $dir);

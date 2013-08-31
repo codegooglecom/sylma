@@ -316,12 +316,7 @@ class Initializer extends module\Filed {
         header('HTTP/1.0 404 Not Found');
       }
 
-      $action = $this->create('action', array($this->getFile($this->readArgument('error/action'))));
-
-      $window->setArgument('content', $action);
-      $window->setArgument('current', $path);
-
-      $sResult = $window->asString();
+      $sResult = $this->getError();
     }
 
     //if ($action->doRedirect()) self::doHTTPRedirect($oResult);
@@ -425,7 +420,9 @@ class Initializer extends module\Filed {
 
   public function getError() {
 
-    return $this->getFile($this->readArgument('error/html'))->execute();
+    return $this->buildWindowAction($this->create('path', array(
+      $this->readArgument('error/path'),
+    )));
   }
 
   public function getMime($sExtension) {

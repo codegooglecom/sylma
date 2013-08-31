@@ -8,7 +8,7 @@ sylma.crud.Form = new Class({
 
   options : {
     mask : true,
-    method : 'post',
+    method : 'post'
   },
 
   initialize : function(options) {
