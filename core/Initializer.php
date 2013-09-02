@@ -53,11 +53,6 @@ class Initializer extends module\Filed {
 
   public function run($settings) {
 
-    if (\Sylma::read('debug/enable')) {
-
-      require_once('debug/Functions.php');
-    }
-
     $this->setArguments($settings);
     $this->setErrorReporting();
 
@@ -81,15 +76,23 @@ class Initializer extends module\Filed {
     $user = \Sylma::getControler('user');
     $user->load();
 
+    if (\Sylma::isAdmin()) {
+
+      require_once('debug/Functions.php');
+    }
+
     // load directory with security
     $fs = new fs\Controler(\Sylma::ROOT, false, true, true);
     $fs->loadDirectory();
     \Sylma::setControler('fs', $fs);
 
-    // Check for maintenance mode
-    if ($sMaintenance = $this->loadMaintenance()) return $sMaintenance;
-
     $this->setDirectory($fs->getDirectory());
+
+    // Check for maintenance mode
+    if ($sMaintenance = $this->loadMaintenance()) {
+
+      return $sMaintenance;
+    }
     //$this->getDirectory()->getSettings()->loadDocument();
 
     $aGET = $this->loadGET();
@@ -311,7 +314,7 @@ class Initializer extends module\Filed {
 
       $e->save(false);
 
-      if (!\Sylma::read('debug/enable')) {
+      if (!\Sylma::isAdmin()) {
 
         header('HTTP/1.0 404 Not Found');
       }
@@ -457,14 +460,17 @@ class Initializer extends module\Filed {
 
     $sResult = '';
 
-    if ($this->readArgument('maintenance/enable')) $sResult = 'site en maintenance';
+    if ($this->readArgument('maintenance/enable') && !\Sylma::isAdmin()) {
+
+      $sResult = $this->getFile($this->readArgument('maintenance/file'))->execute();
+    }
 
     return $sResult;
   }
 
   protected function setErrorReporting() {
 
-    if (\Sylma::read('debug/enable')) {
+    if (\Sylma::isAdmin()) {
 
       error_reporting(E_ALL);
 

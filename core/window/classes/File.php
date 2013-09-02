@@ -3,16 +3,13 @@
 namespace sylma\core\window\classes;
 use sylma\core, sylma\storage\fs;
 
-require_once('core/module/Controled.php');
-require_once('core/window/file.php');
-
-class File extends core\module\Controled implements core\window\file {
+class File extends core\module\Managed implements core\window\file {
 
   protected $file;
 
-  public function __construct(core\Initializer $controler) {
+  public function __construct(core\Initializer $manager) {
 
-    $this->setControler($controler);
+    $this->setManager($manager);
   }
 
   public function setFile(fs\file $file) {
@@ -27,11 +24,17 @@ class File extends core\module\Controled implements core\window\file {
 
   public function asString() {
 
-    $init = $this->getControler();
+    $init = $this->getManager();
     $file = $this->getFile();
 
-    if (\Sylma::read('debug/enable')) $init->setHeaderCache(0);
-    else $init->setHeaderCache(3600 * 24 * 7);
+    if (\Sylma::isAdmin()) {
+
+      $init->setHeaderCache(0);
+    }
+    else {
+
+      $init->setHeaderCache(3600 * 24 * 7);
+    }
 
     $init->setHeaderContent($init->getMime($file->getExtension()));
 

@@ -7,9 +7,7 @@
     <show>1</show>
   </debug>
   <cls:classes>
-    <cls:class alias="insert" name="query/Insert"/>
-    <cls:class alias="select" name="query/Select"/>
-    <cls:class alias="update" name="query/Update"/>
-    <cls:class alias="delete" name="query/Delete"/>
+    <cls:base>\sylma\storage\sql</cls:base>
+    <cls:class alias="connection" name="Connection"/>
   </cls:classes>
 </arg:argument>

@@ -13,14 +13,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   protected $loop;
 
-  public function parseRoot(dom\element $el) {
-
-    parent::parseRoot($el);
-  }
-
   public function init() {
 
-    
+    $this->loadConnection();
   }
 
   public function setParent(schema\parser\element $parent) {
@@ -36,6 +31,30 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     }
 
     return $this->parent;
+  }
+
+  protected function loadConnection() {
+
+    $aConnection = array();
+
+    if ($sConnection = $this->getConnectionAlias()) {
+
+      $aConnection[] = $sConnection;
+    }
+
+    $result = $this->getWindow()->addControler(self::DB_MANAGER)->call('getConnection', $aConnection);
+
+    return $result;
+  }
+
+  public function getConnection() {
+
+    if (!$this->connection) {
+
+      $this->connection = $this->loadConnection();
+    }
+
+    return $this->connection;
   }
 
   protected function getMode() {
@@ -62,7 +81,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   protected function buildQuery() {
 
-    return $this->createQuery($this->getMode());
+    $result = $this->createQuery($this->getMode());
+
+    return $result;
   }
 
   public function getSource() {
@@ -78,6 +99,8 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected function createQuery($sName) {
 
     $query = $this->loadSimpleComponent("template/$sName", $this);
+    
+    $query->setConnection($this->getConnection());
     $query->setTable($this);
 
     return $query;

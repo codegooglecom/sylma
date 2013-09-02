@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\query\parser;
-use sylma\core, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\parser\reflector, sylma\parser\languages\common, sylma\storage\sql;
 
 abstract class Basic extends reflector\component\Foreigner implements common\instruction {
 
@@ -12,6 +12,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
   protected $aTables = array();
   protected $aWheres = array();
 
+  protected $connection;
   protected $aMethods = array('get', 'query', 'insert', 'extract');
 
   protected $var;
@@ -21,6 +22,21 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     parent::__construct($parser, $arg, $aNamespaces);
 
     $this->getWindow()->addControler('mysql');
+  }
+
+  public function setConnection(common\_callable $var) {
+
+    $this->connection = $var;
+  }
+
+  protected function getConnection() {
+
+    if (!$this->connection) {
+
+      $this->launchException('No connection defined');
+    }
+
+    return $this->connection;
   }
 
   protected function implode($aArray, $sGlue = ', ') {
@@ -40,9 +56,14 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     return $aResult;
   }
 
-  public function setTable($val) {
+  public function setTable(sql\template\component\Table $table) {
 
-    $this->aTables[] = $val;
+    if (!$this->connection) {
+
+      $this->setConnection($table->getConnection());
+    }
+
+    $this->aTables[] = $table;
   }
 
   protected function getTables() {
@@ -101,10 +122,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
       $this->launchException('No table defined');
     }
 
-    $window = $this->getWindow();
-    $manager = $window->addControler('mysql');
-
-    return $manager->call($this->getMethod(), array(new Caller($this), false), '\sylma\core\argument');
+    return $this->getConnection()->call($this->getMethod(), array(new Caller($this), false), '\sylma\core\argument');
   }
 
   public function setMethod($sName) {

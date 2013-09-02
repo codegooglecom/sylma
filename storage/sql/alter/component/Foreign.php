@@ -21,7 +21,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\alter\alterabl
         $this->getParent()->buildSchema($file);
       }
 
-      $sResult = $this->asString() . ",CONSTRAINT FOREIGN KEY ({$this->getName()}) REFERENCES {$ref->getName()} (id)";
+      $sResult = $this->asString() . ",CONSTRAINT FOREIGN KEY (`{$this->getName()}`) REFERENCES `{$ref->getName()}` (id)";
     }
     else {
 

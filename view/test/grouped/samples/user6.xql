@@ -7,7 +7,7 @@
   xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
 
-  <table name="user2">
+  <table name="user2" connection="test">
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
     <field name="date-update" type="sql:datetime"/>

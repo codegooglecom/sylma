@@ -1,17 +1,23 @@
 <?php
 
 namespace sylma\storage\sql\cached;
-use sylma\core;
+use sylma\core, sylma\storage\sql;
 
 class Where extends core\module\Managed {
 
+  protected $db;
   protected $aValues = array();
+
+  public function __construct(sql\Connection $db) {
+
+    $this->db = $db;
+  }
 
   public function add($val1, $sOp, $val2, $sDefault = null) {
 
     if ($val2) {
 
-      $sql = $this->getManager('mysql');
+      $sql = $this->db;
 
       if (is_array($val2)) {
 

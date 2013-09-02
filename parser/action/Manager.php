@@ -115,10 +115,7 @@ class Manager extends compiler\Builder_old {
 
   public function build(fs\file $file, fs\directory $base = null) {
 
-    if (\Sylma::read('debug/enable')) {
-
-      $this->getManager(self::PARSER_MANAGER)->aBuilded[] = $file;
-    }
+    $this->getManager(self::PARSER_MANAGER)->aBuilded[] = $file;
 
     $this->setDirectory(__FILE__);
     $doc = $file->getDocument(array(), \Sylma::MODE_EXECUTE);

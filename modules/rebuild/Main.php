@@ -10,6 +10,8 @@ class Main extends core\module\Domed implements dom\domable {
   public function __construct() {
 
     $this->setDirectory(__file__);
+
+    $this->setSettings(\Sylma::get('modules/rebuild'));
   }
 
   /**
@@ -24,16 +26,19 @@ class Main extends core\module\Domed implements dom\domable {
 
     dsp("Rebuild : $sPath");
 
-    if ($file->getExtension() == 'eml') {
+    if (!in_array((string) $file, $this->get('exclude/run')->query())) {
 
-      $action = $this->getManager(self::PARSER_ACTION)->getAction((string) $file->asPath());
-      $action->getContext('default');
-    }
-    else {
+      if ($file->getExtension() == 'eml') {
 
-      $this->getManager(self::PARSER_MANAGER)->load($file, array(
-        'contexts' => $parent->getContexts(),
-      ), true, true);
+        $action = $this->getManager(self::PARSER_ACTION)->getAction((string) $file->asPath());
+        $action->getContext('default');
+      }
+      else {
+
+        $this->getManager(self::PARSER_MANAGER)->load($file, array(
+          'contexts' => $parent->getContexts(),
+        ), true, true);
+      }
     }
 //$parent->getContexts()->get('message');
     return '1';
@@ -41,16 +46,25 @@ class Main extends core\module\Domed implements dom\domable {
 
   public function asDOM() {
 
-    $files = $this->getDirectory('/')->browse($this->createArgument(array(
+    $this->loadDefaultSettings();
+
+    $common = $this->createArgument(array(
       'extensions' => array('eml','vml'),
-      'excluded' => array('/sylma', '/users'),
       'depth' => 99,
       'only-path' => false,
-    )));
+    ));
 
-    $this->loadDefaultArguments();
+    $root = $common;
+    $root->set('excluded', array('/sylma', '/users'));
 
-    return $this->getTemplate('source.xsl')->parseDocument($files->asDOM());
+    $files = $this->getDirectory('/')->browse($root);
+    $doc = $files->asDOM();
+
+    $modules = $common;
+    $modules->set('excluded', array('/sylma/modules/tester', 'test'));
+    $doc->add($this->getDirectory('/sylma')->browse($modules)->query());
+
+    return $this->getTemplate('source.xsl')->parseDocument($doc);
   }
 }
 

@@ -5,6 +5,9 @@ use \sylma\core, \sylma\dom, \sylma\storage\fs;
 
 abstract class Prepare extends Basic {
 
+  const DB_ARGUMENTS = '/#sylma/view/test/database.xml';
+  const DB_CONNECTION = 'test';
+
   protected function prepareTest(dom\element $test, $controler) {
 
     $bResult = true;
@@ -73,5 +76,13 @@ abstract class Prepare extends Basic {
   protected function onPrepared() {
 
 
+  }
+
+  public function resetDB() {
+
+    $arg = $this->createArgument(static::DB_ARGUMENTS);
+    $db = $this->getManager(static::DB_MANAGER)->getConnection(static::DB_CONNECTION);
+
+    $db->query($arg->read('script'), false);
   }
 }

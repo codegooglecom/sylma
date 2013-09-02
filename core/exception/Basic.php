@@ -315,7 +315,7 @@ class Basic extends \Exception implements core\exception {
       $aResult['trace'] = $this->loadTraces($bHTML);
     }
 
-    if (\Sylma::read('debug/enable')) {
+    if (\Sylma::isAdmin()) {
 
       if (\Sylma::read('exception/show')) {
 

@@ -9,12 +9,10 @@
   <le:context name="js">
     <lm:file path="/#sylma/template/medias/mootools.js"/>
     <lm:file path="/#sylma/template/medias/sylma.js"/>
-    <lm:file path="main.js"/>
+    <lm:file path="medias/main.js"/>
   </le:context>
   <le:context name="css">
-    .rebuild-ready { color: gray !important; }
-    .rebuild-load { color: blue !important; }
-    .rebuild-complete { color: green !important; }
+    <lm:file path="medias/main.css"/>
   </le:context>
   <le:object class="Main"/>
  </le:action>

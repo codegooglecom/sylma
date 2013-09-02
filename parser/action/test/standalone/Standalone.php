@@ -20,8 +20,7 @@ class Standalone extends tester\Prepare implements core\argumentable {
     if (!$controler) $controler = $this;
     //if (!$controler) $controler = \Sylma::getControler('action');
 
-    $arg = $this->createArgument('/#sylma/view/test/database.xml');
-    \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
+    $this->resetDB();
 
     $this->setControler($controler);
   }

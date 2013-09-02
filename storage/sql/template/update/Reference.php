@@ -26,6 +26,7 @@ class Reference extends sql\template\insert\Reference {
     $del = $this->loadSimpleComponent('template/delete');
 
     $del->setTable($el);
+    $del->setConnection($this->getParent()->getConnection());
     $del->setWhere($this->getForeign(), '=', $this->reflectID());
 
     $this->getParent()->addTrigger(array($del));

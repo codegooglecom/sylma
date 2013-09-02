@@ -9,6 +9,12 @@ use \sylma\dom, \sylma\core, sylma\storage\fs;
  */
 abstract class Domed extends Filed {
 
+  const ARGUMENTS = 'domed.yml';
+
+  const DOM_CONTROLER = 'dom';
+  const DOM_DOCUMENT_ALIAS = 'handler';
+  const DOM_ARGUMENT_ALIAS = 'argument';
+
   /**
    * @var dom\argument
    */
@@ -22,27 +28,27 @@ abstract class Domed extends Filed {
   protected static $sArgumentClass = 'sylma\core\argument\Readable';
   protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
-  const ARGUMENTS = 'domed.yml';
-
-  const DOM_CONTROLER = 'dom';
-  const DOM_DOCUMENT_ALIAS = 'handler';
-  const DOM_ARGUMENT_ALIAS = 'argument';
+  protected $aDefaultArguments = array('classes' => array(
+    'action' => array(
+      'name' => '\sylma\parser\action\handler\Basic'),
+    'template' => array(
+      'name' => '\sylma\parser\xslt\Processor'),
+    'options' => array(
+      'name' => '\sylma\dom\argument\Iterator'),
+    'document' => array(
+      'name' => '\sylma\dom\basic\handler\Rooted'),
+    'path' => array(
+      'name' => '\sylma\core\request\Basic'),
+  ));
 
   protected function loadDefaultArguments() {
 
-    $this->setArguments(array(
-    'classes' => array(
-      'action' => array(
-        'name' => '\sylma\parser\action\handler\Basic'),
-      'template' => array(
-        'name' => '\sylma\parser\xslt\Processor'),
-      'options' => array(
-        'name' => '\sylma\dom\argument\Iterator'),
-      'document' => array(
-        'name' => '\sylma\dom\basic\handler\Rooted'),
-      'path' => array(
-        'name' => '\sylma\core\request\Basic'),
-      )));
+    $this->setArguments($this->aDefaultArguments);
+  }
+
+  protected function loadDefaultSettings() {
+
+    $this->setSettings($this->aDefaultArguments);
   }
 
   /*protected function createArgument($mArguments, $sNamespace = '') {

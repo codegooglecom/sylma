@@ -9,6 +9,7 @@
 
   <xsl:template match="/">
     <div id="sylma-rebuild">
+      <h3><xsl:value-of select="count(*[1]/*)"/> fichiers</h3>
       <div style="-moz-columns: 3;">
         <xsl:apply-templates select="*"/>
       </div>

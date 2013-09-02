@@ -69,7 +69,7 @@ abstract class Manager extends core\module\Domed {
 
         $result = $this->createCache($cache, $aArguments, $bExternal);
 
-        if (\Sylma::read('debug/enable')) {
+        if (\Sylma::isAdmin()) {
 
           $sPath = (string) $cache;
           if (isset(self::$aLoaded[$sPath])) self::$aLoaded[$sPath]++;

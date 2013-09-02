@@ -17,7 +17,7 @@ class Manager extends compiler\Manager {
   protected $aContexts = array();
 
   /**
-   * For stats
+   * For stats, TODO set to protected as soon as parser\action has been removed
    */
   public $aBuilded = array();
 
@@ -79,9 +79,7 @@ class Manager extends compiler\Manager {
 
   public function build(fs\file $file, fs\directory $dir) {
 
-    $user = $this->getManager('user');
-
-    if ($user->getName() !== 'root') {
+    if (!\Sylma::isAdmin()) {
 
       //$this->throwException('This function is low performance and must not be used in production environnement');
       $this->throwException('Unauthorized building access');

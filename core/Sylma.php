@@ -71,7 +71,7 @@ class Sylma {
 
       $e->save();
 
-      if (!self::read('debug/enable')) {
+      if (!self::isAdmin()) {
 
         header('HTTP/1.0 404 Not Found');
         self::$result = $init->getError();
@@ -255,6 +255,21 @@ class Sylma {
     else return self::$settings;
   }
 
+  public static function isAdmin() {
+
+    $bResult = self::read('debug/enable');
+
+    if (!$bResult and $user = self::getManager('user', false)) {
+
+      if ($user->getName() === 'root') {
+
+        $bResult = true;
+      }
+    }
+
+    return $bResult;
+  }
+
   public static function read($sPath = '', $bDebug = true) {
 
     if (self::getSettings()) return self::getSettings()->read($sPath, $bDebug);
@@ -267,52 +282,6 @@ class Sylma {
     if (self::getSettings()) return self::getSettings()->get($sPath, $bDebug);
 
     return false;
-  }
-
-  /**
-   * Log system messages either in database or in a file defined in @settings /messages/log/file if db is not yet ready
-   * Arguments can be see as questions : Who, What, Where
-   */
-  public static function log($mPath, $mMessage, $sStatut = self::LOG_STATUT_DEFAULT) {
-
-    $aPath = (array) $mPath;
-    $aPath[] = '@time ' . date('Y-m-d H:m:s');
-
-    $sPath = implode(' ', array_reverse($aPath));
-
-    $aMessage = array($sPath, ' @message ', $mMessage);
-    $sMessage = implode('', $aMessage);
-    //print_r(debug_backtrace());
-    //if (class_exists('Controler') && Controler::isAdmin() && Controler::useMessages()) {
-
-      //if (self::read('messages/print/visible')) echo $sMessage."<br/>\n";
-      //Controler::addMessage($aMessage, $sStatut); // temp
-    //}
-
-    if (self::read('debug/enable')) {
-
-      echo $sMessage . "<br/>\n";
-    }
-
-    /*
-    if (class_exists('Logger')) {
-
-      // database is open log into
-
-
-    }
-    else if (self::read('messages/log/enable', false)) {
-
-      // no database instance, use a file
-
-      if ($sFile = self::read('messages/log/file', false)) {
-
-        $fp = fopen(MAIN_DIRECTORY.$sFile, 'a+');
-        fwrite($fp, "----\n" . $sMessage . ' -- ' . $sStatut . "\n"); //.Controler::getBacktrace()
-        fclose($fp);
-      }
-    }
-    */
   }
 
   public static function display($mValue) {
@@ -424,7 +393,7 @@ class Sylma {
 
   public static function render() {
 
-    if (!self::read('debug/enable') && self::read('render/gzip')) ob_start('ob_gzhandler');
+    if (!self::isAdmin() && self::read('render/gzip')) ob_start('ob_gzhandler');
 
     return self::$result;
   }

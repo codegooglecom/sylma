@@ -7,7 +7,7 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
 >
 
-  <table name="user">
+  <table name="user" connection="test">
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
     <field name="email" type="sql:string"/>

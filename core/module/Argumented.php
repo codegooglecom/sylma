@@ -36,7 +36,10 @@ abstract class Argumented extends Managed {
     if (!$this->factory && $bCreate) {
 
       //$args = $this->getSettings(false) ? $this->getSettings() : $this->getArguments();
-      $args = $this->getArguments();
+      if (!$args = $this->getSettings(false)) {
+
+        $args = $this->getArguments();
+      }
 
       $this->factory = $this->createFactory($args);
     }
@@ -98,7 +101,10 @@ abstract class Argumented extends Managed {
       }
     }
 
-    if ($factory = $this->getFactory(false)) $factory->setArguments($this->getArguments());
+    if ($factory = $this->getFactory(false)) {
+
+      $factory->setArguments($this->getArguments());
+    }
 
     return $this->getArguments();
   }
@@ -148,12 +154,31 @@ abstract class Argumented extends Managed {
 
   protected function setSettings($arg) {
 
-    if (!is_object($arg)) {
+    if (is_null($arg)) {
 
-      $arg = $this->createArgument($arg);
+      $this->arguments = null;
     }
+    else {
 
-    $this->settings = $arg;
+      if (!is_object($arg)) {
+
+        $arg = $this->createArgument($arg);
+      }
+
+      if ($this->settings) {
+
+        $this->settings->merge($arg);
+      }
+      else {
+
+        $this->settings = $arg;
+      }
+
+      if ($factory = $this->getFactory(false)) {
+
+        $factory->setArguments($this->getSettings());
+      }
+    }
   }
 
   protected function translate() {

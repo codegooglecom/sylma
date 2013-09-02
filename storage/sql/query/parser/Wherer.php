@@ -52,7 +52,7 @@ abstract class Wherer extends Basic {
 
     if (!$this->getDynamicWhere()) {
 
-      $where = $this->createObject('where');
+      $where = $this->createObject('where', array($this->getConnection()));
       $this->setDynamicWhere($where);
     }
 

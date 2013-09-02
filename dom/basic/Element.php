@@ -865,7 +865,7 @@ class Element extends \DOMElement implements dom\element {
     }
     else {
 
-      $sResult = " [Lost element {$this->getName()}]";
+      $sResult = " [Lost element]";
     }
 
     return $sResult;

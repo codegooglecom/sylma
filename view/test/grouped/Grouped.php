@@ -16,14 +16,6 @@ class Grouped extends tester\Parser implements core\argumentable {
     parent::__construct();
   }
 
-  public function resetDB() {
-
-    $arg = $this->createArgument('../database.xml');
-    \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
-
-    $this->runQuery($arg->read('script'));
-  }
-
   public function createArgument($mArguments, $sNamespace = '') {
 
     return parent::createArgument($mArguments, $sNamespace);
@@ -31,7 +23,7 @@ class Grouped extends tester\Parser implements core\argumentable {
 
   public function runQuery($sValue, $iMode = 1) {
 
-    $db = $this->getManager(self::DB_MANAGER);
+    $db = $this->getManager(self::DB_MANAGER)->getConnection(self::DB_CONNECTION);
 
     if (!$iMode) {
 

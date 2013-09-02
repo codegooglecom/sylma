@@ -117,7 +117,7 @@ class Document extends action\handler\Basic {
 
           $messages->add($context->asDOM());
         }
-        else if (\Sylma::read('debug/enable')) {
+        else if (\Sylma::isAdmin()) {
 
           echo '<h1>No container for messages</h1>';
         }
@@ -223,7 +223,7 @@ class Document extends action\handler\Basic {
 
       $result = $this->loadHeaders('text/html') . "\n" . $this->cleanResult($doc);
     }
-    else if (\Sylma::read('debug/enable')) {
+    else if (\Sylma::isAdmin()) {
 
       echo '<h2>No result document</h2>';
     }

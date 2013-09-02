@@ -5,18 +5,11 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\storage\fs;
 
 class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
-  const SQL_PARSER = 'mysql';
-
   protected $bDepth = false;
-
-  public function parseRoot(dom\element $el) {
-
-    parent::parseRoot($el);
-  }
 
   protected function loadColumns() {
 
-    $sql = $this->getManager(self::SQL_PARSER);
+    $sql = $this->getManager(self::DB_MANAGER);
     $cols = $sql->query("SHOW COLUMNS FROM `{$this->getName()}`", false);
     $aResult = array();
 
@@ -38,12 +31,12 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
     if (!$this->useDepth()) {
 
-      $sql = $this->getManager('mysql');
+      $sql = $this->getManager(self::DB_MANAGER);
 
       $sQuery = $this->loadUpdate();
 
       dsp($sQuery);
-      $sql->read($sQuery);
+      $sql->getConnection($this->getConnectionAlias())->read($sQuery, false);
     }
   }
 
@@ -99,9 +92,9 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
     $sQuery = "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ');';
 
-    $sql = $this->getManager('mysql');
+    $sql = $this->getManager(self::DB_MANAGER);
 
-    $sql->read($sQuery);
+    $sql->getConnection($this->getConnectionAlias())->read($sQuery, false);
     dsp($sQuery);
 
     foreach ($aReferences as $ref) {

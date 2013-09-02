@@ -114,12 +114,14 @@ class Foreign extends Element implements sql\schema\foreign {
 
     $sSource = 'id_' . $parent->getName();
     $sTarget = 'id_' . $field->getName();
+    $sConnection = $parent->getConnectionAlias();
 
     $doc = $this->createArgument(array(
       'schema' => array(
         '@targetNamespace' => $this->getNamespace(),
         'table' => array(
           '@name' => $sName,
+          '@connection' => $sConnection,
           '#foreign' => array(
             array(
               '@name' => $sSource,
@@ -143,7 +145,7 @@ class Foreign extends Element implements sql\schema\foreign {
       't2' => $field->getNamespace(),
     ));
 
-    $sql = $this->getManager(self::DB_MANAGER);
+    $sql = $this->getManager(self::DB_MANAGER)->getConnection($sConnection);
 
     if (!$sql->read("show tables like '$sName'", false)) {
 

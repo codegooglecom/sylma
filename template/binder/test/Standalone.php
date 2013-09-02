@@ -14,8 +14,7 @@ class Standalone extends tester\Parser implements dom\domable {
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
 
-    $arg = $this->createArgument('/#sylma/view/test/database.xml');
-    \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
+    $this->resetDB();
 
     $this->setFile($file);
     $this->setTestKey($iTest);

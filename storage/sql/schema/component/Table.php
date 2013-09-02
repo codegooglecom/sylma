@@ -5,9 +5,11 @@ use sylma\core, sylma\dom, sylma\storage\sql\schema;
 
 class Table extends Element implements schema\table {
 
+  protected $connection;
+
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el, false);
+    $this->setNode($el);
     $this->setName($el->readx('@name'));
 
     $parser = $this->getParser();
@@ -25,9 +27,15 @@ class Table extends Element implements schema\table {
     if ($this->getType(false)) $this->getType()->loadElements($this->getNamespace());
   }
 
+  public function getConnectionAlias() {
+
+    return $this->readx('@connection');
+  }
+
   public function asString() {
 
     return "`" . $this->getName() . "`";
   }
+
 }
 

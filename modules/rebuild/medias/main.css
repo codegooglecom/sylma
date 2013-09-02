@@ -1,0 +1,26 @@
+
+.rebuild-ready
+{
+  color: gray !important;
+}
+.rebuild-load
+{
+  color: blue !important;
+}
+
+.rebuild-complete
+{
+  font-style: italic;
+}
+
+.rebuild-success
+{
+  font-style: normal;
+  color: green !important;
+}
+
+.rebuild-error
+{
+  color: red !important;
+  text-decoration: line-through;
+}

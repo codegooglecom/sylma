@@ -13,11 +13,7 @@ class Grouped extends tester\Parser implements core\argumentable {
   public function __construct() {
 
     $this->setDirectory(__file__);
-
-    $arg = $this->createArgument('/#sylma/view/test/database.xml');
-    \Sylma::setControler(self::DB_MANAGER, new sql\Manager($arg));
-
-    $this->runQuery($arg->read('script'));
+    $this->resetDB();
 
     parent::__construct();
   }
@@ -65,7 +61,7 @@ class Grouped extends tester\Parser implements core\argumentable {
 
   public function runQuery($sValue, $bMultiple = true) {
 
-    $db = $this->getManager(self::DB_MANAGER);
+    $db = $this->getManager(self::DB_MANAGER)->getConnection(self::DB_CONNECTION);
     return $bMultiple ? $db->query($sValue) : $db->get($sValue);
   }
 }

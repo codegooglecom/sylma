@@ -13,7 +13,7 @@ abstract class Filed extends Sessioned {
 
   protected static $sArgumentClass = 'sylma\core\argument\Filed';
   protected static $sFactoryClass = '\sylma\core\factory\Reflector';
-  
+
   protected static $sArgumentXMLClass = '\sylma\core\argument\parser\Handler';
 
   protected function createArgument($mArguments, $sNamespace = '') {
@@ -51,21 +51,26 @@ abstract class Filed extends Sessioned {
 
   protected function setArguments($mArguments = null, $bMerge = true) {
 
-    if ($mArguments !== null) {
+    if (is_string($mArguments)) {
 
-      if (is_string($mArguments)) {
-
-        $mArguments = $this->createArgumentFromString($mArguments, $this->getNamespace());
-      }
-
-      parent::setArguments($mArguments, $bMerge);
+      $mArguments = $this->createArgumentFromString($mArguments, $this->getNamespace());
     }
-    else {
 
-      $this->arguments = null;
-    }
+    parent::setArguments($mArguments, $bMerge);
 
     return $this->getArguments();
+  }
+
+  protected function setSettings($args = null, $bMerge = true) {
+
+    if (is_string($args)) {
+
+      $args = $this->createArgumentFromString($args, $this->getNamespace());
+    }
+
+    parent::setSettings($args, $bMerge);
+
+    return $this->getSettings();
   }
 
   /**

@@ -77,6 +77,7 @@ initializer :
     lifetime : 403200
   maintenance :
     enable : false
+    file : maintenance.html
 users:
   root:
     # E_ALL | E_STRICT | E_NOTICE = 32767
@@ -115,3 +116,14 @@ modules :
     fonts : fonts/truetype/ttf-dejavu
     background : false
     session : sylma-captcha
+  rebuild :
+    exclude :
+      run :
+        - /sylma/modules/users/logout.eml
+
+database :
+  test :
+    host : localhost
+    user : tester
+    password : 1234
+    database : test

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\query\parser;
-use sylma\core, sylma\parser\languages\common;
+use sylma\core, sylma\parser\languages\common, sylma\storage\sql;
 
 class Insert extends Basic implements common\argumentable {
 
@@ -32,7 +32,7 @@ class Insert extends Basic implements common\argumentable {
     return $this->implode($this->aValues);
   }
 
-  public function setTable($val) {
+  public function setTable(sql\template\component\Table $val) {
 
     if (count($this->aTables) > 1) {
 

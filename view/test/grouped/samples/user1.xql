@@ -6,7 +6,7 @@
   xmlns:ssd="http://2013.sylma.org/schema"
 >
 
-  <table name="user">
+  <table name="user" connection="test">
     <field name="id" type="sql:id"/>
     <field name="name" type="xs:string"/>
     <field name="email" type="xs:string"/>

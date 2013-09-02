@@ -7,7 +7,7 @@
   xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
 
-  <table name="user">
+  <table name="user" connection="test">
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
     <foreign occurs="0..1" name="group_id" table="group:group" import="group.xql"/>
