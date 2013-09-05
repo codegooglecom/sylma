@@ -3,6 +3,9 @@
 namespace sylma\core\module;
 use \sylma\core;
 
+/**
+ * @deprecated must use Managed's class methods
+ */
 class Controled extends Namespaced implements core\controled {
 
   protected $controler;

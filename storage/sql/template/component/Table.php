@@ -12,10 +12,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected $bSub = false;
 
   protected $loop;
+  protected $connection;
 
   public function init() {
 
-    $this->loadConnection();
+    //$this->loadConnection();
   }
 
   public function setParent(schema\parser\element $parent) {
@@ -33,25 +34,30 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->parent;
   }
 
-  protected function loadConnection() {
+  public function loadConnection($sConnection = '') {
 
     $aConnection = array();
 
-    if ($sConnection = $this->getConnectionAlias()) {
+    if (!$sConnection) {
+
+      $sConnection = $this->getConnectionAlias();
+    }
+
+    if ($sConnection) {
 
       $aConnection[] = $sConnection;
     }
 
     $result = $this->getWindow()->addControler(self::DB_MANAGER)->call('getConnection', $aConnection);
 
-    return $result;
+    $this->connection = $result;
   }
 
   public function getConnection() {
 
     if (!$this->connection) {
 
-      $this->connection = $this->loadConnection();
+      $this->loadConnection();
     }
 
     return $this->connection;
@@ -99,7 +105,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected function createQuery($sName) {
 
     $query = $this->loadSimpleComponent("template/$sName", $this);
-    
+
     $query->setConnection($this->getConnection());
     $query->setTable($this);
 

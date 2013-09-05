@@ -3,6 +3,9 @@
 namespace sylma\parser\compiler;
 use sylma\core, sylma\parser\reflector, sylma\storage\fs, sylma\dom;
 
+/**
+ * @deprecated TODO, remove with parser\action
+ */
 class Builder_old extends Manager {
 
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';

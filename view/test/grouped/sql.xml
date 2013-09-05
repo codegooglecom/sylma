@@ -163,4 +163,26 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Change connection">
+    <tst:document>
+      <view:view user:ns="ns">
+
+        <sql:resource>
+          <sql:id>1</sql:id>
+          <sql:connection>test</sql:connection>
+        </sql:resource>
+
+        <view:schema>samples/user1d.xql</view:schema>
+
+        <view:template match="user:user">
+          <li>
+            <tpl:apply select="name"/>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <li>root</li>
+    </tst:node>
+  </tst:test>
 </tst:tests>

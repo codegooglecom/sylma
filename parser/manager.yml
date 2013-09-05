@@ -6,7 +6,6 @@ namespaces :
     'http://2013.sylma.org/parser/security' : security
     'http://www.sylma.org/parser/js/binder' : js/binder/compiler
     'http://2013.sylma.org/template/binder' : template/binder
-    #'http://www.sylma.org/parser/js/template' : js/template
     'http://2013.sylma.org/core/factory' : factory
     'http://2013.sylma.org/template' : template/elemented
     'http://2013.sylma.org/schema/ssd' : schema/ssd
@@ -61,18 +60,6 @@ classes :
         arguments : /#sylma/storage/xml/resource.xml
   security :
     name : \sylma\parser\security\Domed
-  js :
-    classes :
-      binder :
-        classes :
-          compiler :
-            name : \sylma\parser\js\binder\Main
-          cached :
-            name : \sylma\parser\js\binder\Cached
-          object :
-            name : \sylma\parser\js\binder\_Object
-          context :
-            name : \sylma\parser\js\binder\Context
   factory :
     name : \sylma\core\factory\parser\Main
   template :

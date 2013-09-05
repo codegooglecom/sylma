@@ -36,9 +36,9 @@ abstract class Argumented extends Managed {
     if (!$this->factory && $bCreate) {
 
       //$args = $this->getSettings(false) ? $this->getSettings() : $this->getArguments();
-      if (!$args = $this->getSettings(false)) {
+      if (!$args = $this->getArguments()) {
 
-        $args = $this->getArguments();
+        $args = $this->getSettings(false);
       }
 
       $this->factory = $this->createFactory($args);
@@ -72,6 +72,9 @@ abstract class Argumented extends Managed {
     return new static::$sArgumentClass($mArguments, $aNS);
   }
 
+  /**
+   * @deprecated, must use *Settings methods
+   */
   protected function setArguments($mArguments = null, $bMerge = true) {
 
     if (is_null($mArguments)) {
@@ -110,7 +113,7 @@ abstract class Argumented extends Managed {
   }
 
   /**
-   *
+   * @deprecated, must use *Settings methods
    * @return core\argument
    */
   protected function getArguments() {
@@ -118,6 +121,9 @@ abstract class Argumented extends Managed {
     return $this->arguments;
   }
 
+  /**
+   * @deprecated, must use *Settings methods
+   */
   protected function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
     $mResult = $mDefault;
@@ -130,6 +136,9 @@ abstract class Argumented extends Managed {
     return $mResult;
   }
 
+  /**
+   * @deprecated, must use *Settings methods
+   */
   protected function readArgument($sPath, $bDebug = true, $mDefault = null) {
 
     $mResult = $mDefault;
@@ -142,6 +151,9 @@ abstract class Argumented extends Managed {
     return $mResult;
   }
 
+  /**
+   * @deprecated, must use *Settings methods
+   */
   protected function setArgument($sPath, $mValue) {
 
     if (!$this->getArguments()) {

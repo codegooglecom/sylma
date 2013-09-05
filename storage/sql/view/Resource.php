@@ -69,9 +69,16 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $root = $schema->getElement();
     $root->init();
 
+    $this->setTree($root);
+
     if ($sTable = $this->readx('sql:table')) {
 
       $root->setName($sTable);
+    }
+
+    if ($connection = $this->getx('sql:connection')) {
+
+      $this->parseComponent($connection);
     }
 
     if ($this->readx('@multiple')) {
@@ -85,7 +92,6 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     }
     else {
 
-      $this->setTree($root);
       $this->addID();
     }
 

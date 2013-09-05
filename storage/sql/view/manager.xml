@@ -29,6 +29,7 @@
         <cls:class alias="trigger" name="view\component\Trigger"/>
         <cls:class alias="result" name="view\component\Result"/>
         <cls:class alias="token" name="view\component\Token"/>
+        <cls:class alias="connection" name="view\component\Connection"/>
       </cls:classes>
     </component>
   </cls:classes>

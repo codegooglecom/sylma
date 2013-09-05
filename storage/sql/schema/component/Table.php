@@ -5,8 +5,6 @@ use sylma\core, sylma\dom, sylma\storage\sql\schema;
 
 class Table extends Element implements schema\table {
 
-  protected $connection;
-
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
