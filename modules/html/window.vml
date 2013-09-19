@@ -46,6 +46,8 @@
 
     <tpl:apply mode="body/top"/>
 
+    <a id="user-login" ls:mode="710" ls:group="famous" ls:owner="root" href="/login">connexion</a>
+
     <div id="admin">
       <div id="messages"/>
       <tpl:read select="content()"/>

@@ -61,6 +61,9 @@ initializer :
     html :
       default :
         action : /sylma/modules/html/window.vml
+        sub :
+          default :
+            action : /sylma/modules/html/container.vml
     classes :
       action :
         name : \sylma\parser\action\handler\Basic

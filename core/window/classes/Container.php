@@ -134,7 +134,6 @@ class Container extends core\module\Domed {
       $content = $this->getError();
     }
 
-
     while (next($aPaths)) {
 
       $sPath = current($aPaths);

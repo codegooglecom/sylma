@@ -74,7 +74,7 @@ class Sylma {
       if (!self::isAdmin()) {
 
         header('HTTP/1.0 404 Not Found');
-        self::$result = $init->getError();
+        //self::$result = $init->getError();
       }
       else {
 
