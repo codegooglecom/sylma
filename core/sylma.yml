@@ -52,12 +52,18 @@ initializer :
     woff : application/x-font-woff
     vcf : text/x-vcard
   executables : [json, png, txt, xml]
-  error :
-    path : /error
   window :
+    error :
+      action : /#sylma/modules/html/error.vml
+    debug :
+      update : null
+      run : true
     html :
       default :
-        action : /sylma/modules/html/backend.eml
+        action : /sylma/modules/html/window.vml
+    classes :
+      action :
+        name : \sylma\parser\action\handler\Basic
   redirect :
     extension : redirect
   classes :

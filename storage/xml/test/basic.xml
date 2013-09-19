@@ -89,4 +89,20 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Override arguments">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:class settings="samples/settings01.xml">samples\Tree1</xl:class>
+        <xl:resource/>
+        <tpl:template>
+          <span>
+            <tpl:read select="test2()"/>
+          </span>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>def</span>
+    </tst:node>
+  </tst:test>
 </tst:tests>

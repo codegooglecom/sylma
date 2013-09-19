@@ -54,4 +54,6 @@ interface window extends common\_window {
   //function createTemplate(dom\node $node);
 
   function getKey($sPrefix);
+
+  function setReturn($value);
 }

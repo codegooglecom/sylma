@@ -12,7 +12,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   protected $bInternal = false;
 
   protected $result;
-
+  protected $return;
 
   public function parseRoot(dom\element $el) {
 
@@ -90,14 +90,6 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
     return $this->getNode()->lookupNamespace($sPrefix);
   }
 
-  protected function loadResult() {
-
-    $window = $this->getWindow();
-
-    $result = $window->addVar($window->argToInstance(''));
-    $this->result = $result;
-  }
-
   public function applyArrayTo($target, array $aPath, $sMode, array $aArguments = array()) {
 
     $pather = $this->getPather();
@@ -143,7 +135,6 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
     return $result;
   }
 
-
   public function createTree($sReflector) {
 
     $result = $this->checkTree(new $sReflector($this));
@@ -162,6 +153,19 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
     return parent::trimString($sValue);
   }
 
+  protected function loadResult() {
+
+    $window = $this->getWindow();
+
+    $result = $window->addVar($window->argToInstance(''));
+    $this->setResult($result);
+  }
+
+  public function setResult(common\usable $value) {
+
+    $this->result = $value;
+  }
+
   /**
    *
    * @return common\_var
@@ -174,6 +178,16 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   public function addToResult($mContent, $bAdd = true, $bFirst = false) {
 
     return $this->getWindow()->addToResult($mContent, $this->getResult(), $bAdd, $bFirst);
+  }
+
+  public function setReturn(common\usable $val) {
+
+    $this->return = $val;
+  }
+
+  protected function getReturn() {
+
+    return $this->return;
   }
 
   public function register($obj) {

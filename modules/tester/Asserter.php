@@ -16,10 +16,23 @@ abstract class Asserter extends core\module\Domed {
 
     if ($val1 !== $val2) {
 
-      $this->launchException("Values not equal in '{$this->getCount()}'", get_defined_vars());
+      $sPost = '';
+
+      if (is_string($val1) && is_string($val2)) {
+
+        $sPost = $this->findDiff($val1, $val2);
+      }
+
+      $this->launchException("Values not equal in '{$this->getCount()}'" . $sPost, get_defined_vars());
     }
 
     $this->updateCount();
+  }
+
+  protected function findDiff($sVal1, $sVal2) {
+
+    $iDiff = strspn($sVal1 ^ $sVal2, "\0");
+    return ' at char. ' . $iDiff . ' in the middle of : "' . substr($sVal2, $iDiff - 5, 11) . '"' . ', expecting : "' . substr($sVal1, $iDiff - 5, 11) . '"';
   }
 
   protected function updateCount() {

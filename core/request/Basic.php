@@ -129,7 +129,7 @@ class Basic extends core\module\Filed implements core\request {
         if (!$file) {
 
           $file = $this->findAction($dir, 'index');
-
+/*
           if (!$file) {
 
             if ($sSubPath) $sMessage = sprintf("No '%s' directory in %s", $sSubPath, $dir->asToken());
@@ -137,6 +137,7 @@ class Basic extends core\module\Filed implements core\request {
 
             $this->launchException($sMessage, get_defined_vars());
           }
+ */
         }
         else {
 
@@ -155,9 +156,12 @@ class Basic extends core\module\Filed implements core\request {
     }
     */
 
-    $this->setFile($file);
-    $this->setArguments($aPath, false);
-    $this->getArguments()->mergeArray($aArguments);
+    if ($file) {
+      
+      $this->setFile($file);
+      $this->setArguments($aPath, false);
+      $this->getArguments()->mergeArray($aArguments);
+    }
   }
 
   protected function loadIndexed(array $aPath) {

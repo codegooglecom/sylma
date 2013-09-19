@@ -59,7 +59,7 @@ class Security extends tester\Prepare implements core\argumentable {
       $this->throwException(sprintf('Unknown test user : %s', $sName));
     }
 
-    $user = $this->getControler('user')->getControler();
+    $user = $this->getManager('user')->getManager();
 
     $aGroups = $this->aUsers[$sName];
     $this->user = $user->create('user', array($user, $sName, $aGroups));

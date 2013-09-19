@@ -4,6 +4,8 @@ use sylma\core;
 
 interface request extends core\arrayable {
 
+  function parse();
+
   /**
    * @return \sylma\storage\fs\file
    */

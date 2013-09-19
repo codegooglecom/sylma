@@ -1,0 +1,7 @@
+debug :
+  enable : false
+initializer :
+  window :
+    html :
+      default :
+        action : /#sylma/core/test/samples/window01.vml

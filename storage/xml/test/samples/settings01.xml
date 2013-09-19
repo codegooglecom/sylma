@@ -1,0 +1,7 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/storage/xml/test/samples"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <abc>def</abc>
+</arg:argument>

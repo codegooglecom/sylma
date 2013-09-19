@@ -1,0 +1,11 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/core/test"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <class-alias>basic</class-alias>
+  <cls:classes>
+    <cls:base>\sylma\dom\basic</cls:base>
+    <cls:class alias="handler" name="handler\Rooted"/>
+  </cls:classes>
+</arg:argument>

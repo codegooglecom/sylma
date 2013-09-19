@@ -1,43 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/dom/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml">
+<tst:tests
+  xmlns:tst="http://www.sylma.org/dom/test"
+  xmlns="http://www.sylma.org"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+>
   <tst:description>Filed</tst:description>
   <tst:test name="Load a file">
-    $file = $controler->getFile('samples/hello.xml');
-    $doc = $controler->create('handler', array((string) $file));
+    <tst:expected>
 
-    return
-      $doc instanceof \sylma\dom\handler &amp;&amp;
-      ($root = $doc->getRoot()) &amp;&amp;
-      $root->getName() == 'root' &amp;&amp;
-      $root->getNamespace() == 'http://www.sylma.org/dom/test/samples';
+      $file = $controler->getFile('samples/hello.xml');
+      $doc = $controler->create('handler', array((string) $file));
+
+      $manager->assertTrue($doc instanceof \sylma\dom\handler);
+      $root = $doc->getRoot();
+      $manager->assertEqual($root->getName(), 'root');
+      $manager->assertEqual($root->getNamespace(), 'http://www.sylma.org/dom/test/samples');
+
+      return true;
+    </tst:expected>
   </tst:test>
   <tst:test name="Save a file">
-    $file = $controler->getFile('samples/hello.xml');
-    $doc = $controler->create('handler', array((string) $file));
+    <tst:expected>
+      $file = $controler->getFile('samples/hello.xml');
+      $doc = $controler->create('handler', array((string) $file));
 
-    $sDoc = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+      $sDoc = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;&lt;div&gt;hello&lt;/div&gt;&lt;/root&gt;';
 
-    return $doc->asString($doc::STRING_HEAD) === $sDoc;
+      $manager->assertEqual($doc->asString($doc::STRING_HEAD), $sDoc);
+      return true;
+    </tst:expected>
   </tst:test>
   <tst:test name="Create from node">
-    $doc1 = $controler->createDocument((string) $controler->getFile('samples/hello.xml'));
-    $doc2 = $controler->createDocument($doc1->getRoot());
+    <tst:expected>
+      $doc1 = $controler->createDocument((string) $controler->getFile('samples/hello.xml'));
+      $doc2 = $controler->createDocument($doc1->getRoot());
 
-    $sDoc = '&lt;?xml version="1.0" encoding="utf-8"?&gt;
+      $sDoc = '&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;&lt;div&gt;hello&lt;/div&gt;&lt;/root&gt;';
 
-    return $doc2->asString($doc1::STRING_HEAD) === $sDoc;
+      $manager->assertEqual($doc2->asString($doc1::STRING_HEAD), $sDoc);
+      return true;
+    </tst:expected>
   </tst:test>
   <tst:test name="Set content">
-    $doc1 = $controler->createDocument((string) $controler->getFile('samples/hello.xml'));
-    $doc2 = $controler->createDocument();
-    $doc2->set($doc1->getRoot());
+    <tst:expected>
+      $doc1 = $controler->createDocument((string) $controler->getFile('samples/hello.xml'));
+      $doc2 = $controler->createDocument();
+      $doc2->set($doc1->getRoot());
 
-    $sDoc = '&lt;?xml version="1.0" encoding="utf-8"?&gt;
+      $sDoc = '&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;&lt;div&gt;hello&lt;/div&gt;&lt;/root&gt;';
 
-    return $doc2->asString($doc1::STRING_HEAD) === $sDoc;
+      $manager->assertEqual($doc2->asString($doc1::STRING_HEAD), $sDoc);
+      return true;
+    </tst:expected>
   </tst:test>
 </tst:tests>
 

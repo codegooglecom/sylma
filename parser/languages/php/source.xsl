@@ -269,4 +269,10 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
 
+  <!--
+  <xsl:template match="text()">
+    \Sylma::launchException('Template error : text node "<xsl:value-of select="concat(., name(..))"/>" not allowed in PHP document');
+  </xsl:template>
+  -->
+
 </xsl:stylesheet>

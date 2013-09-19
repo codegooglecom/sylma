@@ -3,7 +3,7 @@
 namespace sylma\core;
 use sylma\parser\action, sylma\core, sylma\storage\fs;
 
-class Initializer extends module\Filed {
+class Initializer extends module\Domed {
 
   const NS = 'http://www.sylma.org/core/initializer';
   const EXTENSION_DEFAULT = 'html';
@@ -27,6 +27,7 @@ class Initializer extends module\Filed {
     $settings = new \sylma\core\argument\Filed($sSylma, array(\Sylma::NS));
 
     if ($sServer) $settings->mergeFile($sServer);
+    $this->setArguments($this->createArgument($settings->query()));
 
     return $settings;
   }
@@ -59,7 +60,7 @@ class Initializer extends module\Filed {
     //set_exception_handler("self::sendException");
     ini_set('session.gc_maxlifetime', $this->readArgument('session/lifetime'));
 
-    session_start();
+    $this->startSession();
 
     // if (\Sylma::read('db/enable')) $this->loadXDB();
 
@@ -70,10 +71,10 @@ class Initializer extends module\Filed {
     // load directory without security
     $fs = new fs\Controler(\Sylma::ROOT, false, false, false);
     $fs->loadDirectory();
-    \Sylma::setControler('fs', $fs);
+    \Sylma::setManager('fs', $fs);
 
     // load user
-    $user = \Sylma::getControler('user');
+    $user = \Sylma::getManager('user');
     $user->load();
 
     if (\Sylma::isAdmin()) {
@@ -84,7 +85,7 @@ class Initializer extends module\Filed {
     // load directory with security
     $fs = new fs\Controler(\Sylma::ROOT, false, true, true);
     $fs->loadDirectory();
-    \Sylma::setControler('fs', $fs);
+    \Sylma::setManager('fs', $fs);
 
     $this->setDirectory($fs->getDirectory());
 
@@ -95,9 +96,7 @@ class Initializer extends module\Filed {
     }
     //$this->getDirectory()->getSettings()->loadDocument();
 
-    $aGET = $this->loadGET();
-
-    $path = $this->create('path', array($aGET['path'], null, $aGET['arguments'], false));
+    $path = $this->loadPath();
     \Sylma::setManager('path', $path);
 
     // The extension specify the window type
@@ -119,6 +118,17 @@ class Initializer extends module\Filed {
     }
 
     return $sResult;
+  }
+
+  protected function startSession() {
+
+    session_start();
+  }
+
+  protected function loadPath() {
+
+    $aGET = $this->loadGET();
+    return $this->create('path', array($aGET['path'], null, $aGET['arguments'], false));
   }
 
   protected function runScript(core\request $path) {
@@ -152,8 +162,7 @@ class Initializer extends module\Filed {
     }
     else if (!$path->getExtension()) {
 
-      // HTML action
-      $sResult = $this->buildWindowAction($path);
+      $sResult = $this->buildWindow($path);
     }
     else {
 
@@ -173,24 +182,6 @@ class Initializer extends module\Filed {
     }
 
     return $sResult;
-  }
-
-  protected function loadObject(core\request $path, $window) {
-
-    $path->parse();
-    $file = $path->getFile();
-
-    switch ($file->getExtension()) {
-
-      case 'eml' : $result = $this->loadObjectAction($path, $window); break;
-      case 'vml' : $result = $this->loadObjectScript($path, $window); break;
-
-      default :
-
-        $this->launchException(sprintf('Unknown exectuable extension : %s', $file->getExtension()));
-    }
-
-    return $result;
   }
 
   protected function runExecutable(core\request $path) {
@@ -226,11 +217,6 @@ class Initializer extends module\Filed {
     return $sResult;
   }
 
-  public function getExtensions() {
-
-    return $this->getArgument('extensions')->query();
-  }
-
   protected function loadAction(core\request $path) {
 
     $path->parse();
@@ -243,115 +229,6 @@ class Initializer extends module\Filed {
     return $this->create('action', array($file, $aArguments));
   }
 
-  /**
-   * Window action is a action that load an action as argument
-   * @param string $sExtension
-   * @return parser\action
-   */
-  protected function buildWindowAction(core\request $path) {
-
-    $sExtension = strtolower($path->getExtension());
-    if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
-
-    $settings = $this->getArgument('window/' . $sExtension);
-
-    $sAlias = $sExtension;
-    $sCurrent = (string) $path;
-
-    $route = $this->lookupRoute($settings, $sCurrent);
-    $window = $this->create($sAlias, array($this->getFile($route->read('action'))));
-
-    //\Sylma::setManager('window', $window);
-
-    if ($sub = $route->get('sub', false)) {
-
-      $subRoute = $this->lookupRoute($sub, $sCurrent);
-      $content = $this->prepareAction($window, $this->getFile($subRoute->read('action')), $path->getArguments());
-      $window->setArgument('content', $content);
-
-      $result = $this->loadWindowContent($path, $window, $content);
-    }
-    else {
-
-      $result = $this->loadWindowContent($path, $window, $window);
-    }
-
-    return $result;
-  }
-
-  protected function lookupRoute(core\argument $args, $sCurrent) {
-
-    $result = null;
-
-    foreach ($args as $alt) {
-
-      $sPattern = $alt->read('pattern', false);
-
-      if (!$sPattern || preg_match($sPattern, $sCurrent)) {
-
-        $result = $alt;
-      }
-    }
-
-    if (!$result) {
-
-      $this->launchException('No route found', get_defined_vars());
-    }
-
-    return $result;
-  }
-
-  protected function loadWindowContent(core\request $path, action\handler $window, action\handler $container) {
-
-    try {
-
-      $path->parse();
-
-      $this->prepareWindowContent($path, $container);
-      $sResult = $window->asString();
-    }
-    catch (core\exception $e) {
-
-      $e->save(false);
-
-      if (!\Sylma::isAdmin()) {
-
-        header('HTTP/1.0 404 Not Found');
-      }
-
-      $sResult = $this->getError();
-    }
-
-    //if ($action->doRedirect()) self::doHTTPRedirect($oResult);
-
-    return $sResult;
-  }
-
-  protected function prepareWindowContent(core\request $path, action\handler $action) {
-
-    $path->parse();
-
-    $file = $path->asFile();
-    $args = $path->getArguments();
-
-    switch ($file->getExtension()) {
-
-      case 'eml' : $content = $this->prepareAction($action, $file, $args); break;
-      case 'vml' : $content = $this->prepareScript($file, $args, $action->getContexts()); break;
-      default :
-
-        $this->launchException('Unknown extension for window content');
-    }
-
-    if (!$content) {
-
-      $this->launchException('No content for main window');
-    }
-
-    $action->setArgument('content', $content);
-    $action->setArgument('current', $path);
-  }
-
   protected function prepareScript(fs\file $file, core\argument $args, core\argument $contexts = null) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
@@ -361,15 +238,6 @@ class Initializer extends module\Filed {
       'contexts' => $contexts,
       //'post' => $post,
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'), true);
-
-    return $result;
-  }
-
-  protected function prepareAction(action\handler $window, fs\file $file, core\argument $args) {
-
-    $result = $this->createAction($file, $args->asArray());
-    $result->setContexts($window->getContexts());
-    $result->setParentParser($window);
 
     return $result;
   }
@@ -405,6 +273,96 @@ class Initializer extends module\Filed {
     return $window->asString();
   }
 
+  public function getExtensions() {
+
+    return $this->getArgument('extensions')->query();
+  }
+
+  protected function buildWindow(core\request $path) {
+
+    $sExtension = strtolower($path->getExtension());
+    if (!$sExtension) $sExtension = self::EXTENSION_DEFAULT;
+
+    $settings = $this->getArgument('window/' . $sExtension);
+    $sCurrent = (string) $path;
+
+    $path->parse();
+
+    $aPaths = $this->buildWindowStack($settings, $sCurrent);
+    $aPaths[] = (string) $path->asFile();
+
+    $aPaths = array_reverse($aPaths);
+    $sMain = array_pop($aPaths);
+
+    $args = $path->getArguments();
+    $args->set('sylma-paths', $aPaths);
+
+    $builder = $this->getManager(self::PARSER_MANAGER);
+
+    return $builder->load($this->getFile($sMain), array(
+      'arguments' => $args,
+    ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'));
+  }
+
+  protected function buildWindowStack(core\argument $arg, $sPath) {
+
+    $aResult = array();
+
+    do {
+
+      $content = $this->lookupRoute($arg, $sPath);
+      $aResult[] = $content->read('action');
+
+      $arg = $content->get('sub', false);
+
+    } while ($arg);
+
+    return $aResult;
+  }
+
+  /**
+   * @return \sylma\core\argument
+   */
+  protected function lookupRoute(core\argument $args, $sCurrent) {
+
+    $result = null;
+
+    foreach ($args as $alt) {
+
+      $sPattern = $alt->read('pattern', false);
+
+      if (!$sPattern || preg_match($sPattern, $sCurrent)) {
+
+        $result = $alt;
+      }
+    }
+
+    if (!$result) {
+
+      $this->launchException('No route found', get_defined_vars());
+    }
+
+    return $result;
+  }
+
+  protected function loadObject(core\request $path, $window) {
+
+    $path->parse();
+    $file = $path->getFile();
+
+    switch ($file->getExtension()) {
+
+      case 'eml' : $result = $this->loadObjectAction($path, $window); break;
+      case 'vml' : $result = $this->loadObjectScript($path, $window); break;
+
+      default :
+
+        $this->launchException(sprintf('Unknown exectuable extension : %s', $file->getExtension()));
+    }
+
+    return $result;
+  }
+
   protected function loadObjectAction(core\request $path, core\window\action $window) {
 
     $action = $this->loadAction($path);
@@ -419,13 +377,6 @@ class Initializer extends module\Filed {
     $window->setScript($path, $this->createArgument($this->loadPOST()));
 
     return $window->asString();
-  }
-
-  public function getError() {
-
-    return $this->buildWindowAction($this->create('path', array(
-      $this->readArgument('error/path'),
-    )));
   }
 
   public function getMime($sExtension) {

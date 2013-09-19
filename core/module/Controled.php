@@ -58,7 +58,7 @@ class Controled extends Namespaced implements core\controled {
     }
     else {
 
-      $controler = \Sylma::getControler($sName);
+      $controler = \Sylma::getManager($sName);
     }
 
     return $controler;

@@ -19,6 +19,8 @@ interface node extends core\tokenable, core\stringable {
   const COMPARE_BAD_ATTRIBUTE = 2;
   const COMPARE_BAD_CHILD = 3;
 
+  const COMPARE_NS = 'http://2013.sylma.org/dom/compare';
+
   /**
    * @return dom\document The parent document
    */
@@ -27,7 +29,7 @@ interface node extends core\tokenable, core\stringable {
   function getType();
   function getParent();
   function remove();
-  
+
   /**
    * TODO : describe
    */

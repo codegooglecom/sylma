@@ -12,7 +12,7 @@ class Grouped extends tester\Basic implements core\argumentable {
 
   public function __construct($sFile = '') {
 
-    \Sylma::getControler('dom');
+    $this->getManager('dom');
 
     $this->setDirectory(__file__);
     $this->setNamespaces(array(
@@ -20,12 +20,12 @@ class Grouped extends tester\Basic implements core\argumentable {
         'le' => action\handler::NS,
     ));
 
-    $controler = \Sylma::getControler('action');
+    $controler = $this->getManager('action');
 
     if ($sFile) $this->setFiles(array($this->getFile($sFile)));
     $this->setControler($controler);
 
-    $cache = \Sylma::getControler('fs/cache');
+    $cache = $this->getManager('fs/cache');
     $this->exportDirectory = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
 
     $this->setArguments(array());

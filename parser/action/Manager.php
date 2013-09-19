@@ -39,7 +39,7 @@ class Manager extends compiler\Builder_old {
 
     require_once('core/functions/Path.php');
 
-    $fs = \Sylma::getControler('fs');
+    $fs = $this->getManager('fs');
 
     if ($bPath) {
 

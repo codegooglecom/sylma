@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+
+  xmlns:menus="http://2013.sylma.org/modules/menus"
+>
+
+  <xl:resource file="source.xml"/>
+  <tpl:import>/#sylma/modules/menus/main.tpl</tpl:import>
+
+  <le:context name="css">
+    <le:file>../medias/menus.css</le:file>
+  </le:context>
+
+  <tpl:template match="menus:menu" mode="title">
+    <tpl:if test="@href = '/'">
+      <tpl:apply mode="title/website"/>
+      <tpl:else>
+        <tpl:read select="@title"/>
+      </tpl:else>
+    </tpl:if>
+  </tpl:template>
+
+  <tpl:template match="menus:menu" mode="title/website">website</tpl:template>
+
+  <tpl:template match="menus:menus">
+    <div id="{@id}" ls:mode="710" ls:owner="root" ls:group="users">
+      <ul class="clearfix">
+        <tpl:apply select="*"/>
+        <li class="empty">.</li>
+        <a id="lemonav-logout" title="Déconnexion" href="/sylma/modules/users/logout.redirect"/>
+        <tpl:apply mode="shortcuts"/>
+      </ul>
+    </div>
+  </tpl:template>
+
+</view:view>

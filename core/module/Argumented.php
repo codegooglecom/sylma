@@ -6,6 +6,7 @@ use sylma\core;
 abstract class Argumented extends Managed {
 
   const FACTORY_MANAGER = 'factory';
+  const SETTINGS_FACTORY_PRIORITY = false;
 
   /**
    * Class manager
@@ -36,7 +37,7 @@ abstract class Argumented extends Managed {
     if (!$this->factory && $bCreate) {
 
       //$args = $this->getSettings(false) ? $this->getSettings() : $this->getArguments();
-      if (!$args = $this->getArguments()) {
+      if (static::SETTINGS_FACTORY_PRIORITY or !$args = $this->getArguments()) {
 
         $args = $this->getSettings(false);
       }

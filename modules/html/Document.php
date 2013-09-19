@@ -1,18 +1,19 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\parser\action, sylma\template\binder, sylma\dom, sylma\storage\fs, sylma\core\functions;
+use sylma\core, sylma\template\binder, sylma\dom;
 
-class Document extends action\handler\Basic {
+class Document extends core\window\classes\Container {
 
   private $head = null;
   protected $result = null;
 
-  protected static $sArgumentClass = 'sylma\core\argument\Readable';
+  public function __construct(core\argument $args, core\argument &$contexts) {
 
-  public function __construct(fs\file $file, array $aArguments = array(), fs\directory $base = null) {
+    $this->setDirectory(__FILE__);
 
-    // global context is usefull for free action (without parent)
+    $this->setArguments($args);
+    $this->setSettings($this->getManager('init')->getArgument('window'));
 
     if (!$messages = $this->getManager('parser')->getContext('errors', false)) {
 
@@ -35,11 +36,12 @@ class Document extends action\handler\Basic {
     $this->setContexts($contexts);
     $load->set('objects', new \sylma\template\binder\context\Objects());
 
+    $this->setPaths($this->getArgument(self::CONTENT_ARGUMENT)->query());
+    $this->setArgument(self::CONTENT_ARGUMENT, null);
+
     $this->setNamespaces(array(
       'html' => \Sylma::read('namespaces/html'),
     ));
-
-    parent::__construct($file, $aArguments, $base);
   }
 
   protected function addHeadContent($context) {
@@ -91,26 +93,12 @@ class Document extends action\handler\Basic {
     return $sResult;
   }
 
-  protected function loadContexts(dom\document $doc) {
-/*
-    $contexts = $this->getContexts();
-
-    if (!$contexts->get('js/load/objects', false)) {
-
-
-    }
-*/
-    foreach ($this->getContexts()->query() as $sName => $context) {
-
-      $this->loadContext($sName, $context, $doc);
-    }
-  }
-
   protected function loadContext($sName, $context, dom\document $doc) {
 
     switch ($sName) {
 
-      case action\cached::CONTEXT_DEFAULT : break;
+      case 'default' : break;
+      //case action\cached::CONTEXT_DEFAULT : break;
       case 'errors' :
 
         if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
@@ -128,56 +116,17 @@ class Document extends action\handler\Basic {
 
         if ($context instanceof dom\domable) $content = $context;
         else $content = $context->asArray();
-
+//dsp($sName);
+//dsp($content);
         if ($content) $this->addHeadContent($content);
     }
   }
 
-  protected function loadSystemInfos(dom\handler $doc) {
+  protected function buildInfos(dom\handler $doc) {
 
     $body = $doc->getx('//html:body');
 
-    require_once('core/functions/Numeric.php');
-    $parser = $this->getManager('parser');
-    $aBuilded = $parser->aBuilded;
-    $aLoaded = $parser::$aLoaded;
-
-    $iLoaded = 0;
-    array_walk($aLoaded, function (&$item, $key) use (&$iLoaded) {
-      $iLoaded += $item;
-      $item = "$key : ($item)";
-    });
-
-    $path = $this->getControler('path');
-    $file = $path->getFile('', false);
-
-    $content = $this->createArgument(array(
-      'ul' => array(
-        '#li' => array(
-          'user : ' . $this->getControler('user')->getName(),
-          'time : ' . functions\numeric\formatFloat($this->getControler('init')->getElapsedTime()),
-          array(
-            'a' => array(
-              '@href' => '#',
-              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, true); return false;",
-              (string) $file,
-            ),
-          ),
-          'builded : ' . count($aBuilded),
-          array(
-            'ul' => array(
-              '#li' => array_map('strval', $aBuilded),
-            ),
-          ),
-          'loaded : ' . $iLoaded,
-          array(
-            'ul' => array(
-              '#li' => $aLoaded,
-            ),
-          ),
-        ),
-      ),
-    ), $this->getNamespace('html'));
+    $content = $this->loadInfos($doc);
 
     $system = $body->addElement('div', null, array('id' => 'sylma-system'));
     $system->addElement('div', $content);
@@ -202,10 +151,10 @@ class Document extends action\handler\Basic {
     return $cleaner->clean($doc);
   }
 
-  public function asString() {
+  public function prepare($sContent) {
 
-    $result = null;
-    $doc = parent::asDOM();
+    $sContent = substr_replace($sContent, 'xmlns="' . $this->getNamespace('html') . '" ', 6, 0);
+    $doc = $this->createDocument($sContent);
 
     if ($doc && !$doc->isEmpty()) {
 
@@ -214,7 +163,7 @@ class Document extends action\handler\Basic {
 
       if ($this->getControler('user')->isPrivate()) {
 
-        $this->loadSystemInfos($doc);
+        $this->buildInfos($doc);
       }
 
       //$this->getContext('errors')->add(array('content' => $this->getManager('init')->getStats()));

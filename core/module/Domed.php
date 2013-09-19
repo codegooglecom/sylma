@@ -74,7 +74,7 @@ abstract class Domed extends Filed {
    */
   protected function createDocument($mContent = null) {
 
-    $dom = \Sylma::getControler(static::DOM_CONTROLER);
+    $dom = $this->getManager(static::DOM_CONTROLER);
     $result = $dom->create(static::DOM_DOCUMENT_ALIAS);
 
     $result->registerNamespaces($this->getNS());

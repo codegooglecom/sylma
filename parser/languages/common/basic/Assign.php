@@ -57,10 +57,12 @@ class Assign extends Controled implements common\argumentable, common\addable {
 
   public function asArgument() {
 
+    $val = $this->getValue();
+
     return $this->getControler()->createArgument(array(
       'assign' => array(
         'variable' => $this->getTarget(),
-        'value' => $this->getValue(),
+        'value' => $val,
         'prefix' => $this->getPrefix(),
       )));
   }

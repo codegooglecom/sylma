@@ -60,7 +60,7 @@ class Sylma {
     //xdebug_start_code_coverage();
 
     $init = self::$aControlers['init'] = new self::$sInitializerClass;
-    self::setControler('init', $init);
+    self::setManager('init', $init);
 
     try {
 
@@ -106,13 +106,13 @@ class Sylma {
     return str_replace('\\', '/', $sClass . '.php');
   }
 
-  public static function setControler($sName, $controler) {
+  public static function setManager($sName, $controler) {
 
     self::$aControlers[$sName] = $controler;
     return $controler;
   }
 
-  public static function getControler($sName, $bLoad = true, $bDebug = true) {
+  public static function getManager($sName, $bLoad = true, $bDebug = true) {
 
     $controler = array_key_exists($sName, self::$aControlers) ? self::$aControlers[$sName] : null;
 
@@ -129,14 +129,14 @@ class Sylma {
     return $controler;
   }
 
-  public static function setManager($sName, $controler) {
+  public static function getManagers() {
 
-    return self::setControler($sName, $controler);
+    return self::$aControlers;
   }
 
-  public static function getManager($sName, $bLoad = true, $bDebug = true) {
+  public static function setManagers(array $aManagers) {
 
-    return self::getControler($sName, $bLoad, $bDebug);
+    self::$aControlers = $aManagers;
   }
 
   protected static function loadControler($sName) {
@@ -244,15 +244,20 @@ class Sylma {
         $result = new storage\sql\Manager(new core\argument\Readable(self::get('database')->query()));
     }
 
-    if ($result) self::setControler($sName, $result);
+    if ($result) self::setManager($sName, $result);
 
     return $result;
   }
 
-  protected static function getSettings($sPath = '') {
+  public static function getSettings($sPath = '') {
 
     if ($sPath) return self::getSettings()->get($sPath);
     else return self::$settings;
+  }
+
+  public static function setSettings(core\argument $settings) {
+
+    self::$settings = $settings;
   }
 
   public static function isAdmin() {
@@ -313,7 +318,7 @@ class Sylma {
 
   public static function show($mVal, $bToken = true) {
 
-    $formater = self::getControler('formater');
+    $formater = self::getManager('formater');
 
     $result = $bToken ? $formater->asToken($mVal) : $formater->asHTML($mVal);
 

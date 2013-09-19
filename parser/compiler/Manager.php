@@ -65,21 +65,19 @@ abstract class Manager extends core\module\Domed {
 
     if ($this->readArgument('debug/run') && $bRun) {
 
-      if ($cache) {
+      if (!$cache) {
 
-        $result = $this->createCache($cache, $aArguments, $bExternal);
-
-        if (\Sylma::isAdmin()) {
-
-          $sPath = (string) $cache;
-          if (isset(self::$aLoaded[$sPath])) self::$aLoaded[$sPath]++;
-          else self::$aLoaded[$sPath] = 1;
-        }
+        $this->launchException('No cache file found');
       }
-    }
-    else {
 
-      $this->throwException(sprintf('No result, DEBUG_RUN set to TRUE for %s', $file->asToken()));
+      $result = $this->createCache($cache, $aArguments, $bExternal);
+
+      if (\Sylma::isAdmin()) {
+
+        $sPath = (string) $cache;
+        if (isset(self::$aLoaded[$sPath])) self::$aLoaded[$sPath]++;
+        else self::$aLoaded[$sPath] = 1;
+      }
     }
 
     return $result;

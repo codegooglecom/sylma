@@ -25,7 +25,7 @@ abstract class Basic extends core\module\Managed {
 
   public function __construct($mContent = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
 
-    $manager = \Sylma::getControler('dom');
+    $manager = \Sylma::getManager('dom');
 
     $this->setManager($manager);
     $this->setMode($iMode);
@@ -78,7 +78,7 @@ abstract class Basic extends core\module\Managed {
 
     if ($sValue{0} == '/') {
 
-      $fs = \Sylma::getControler('fs');
+      $fs = \Sylma::getManager('fs');
       $file = $fs->getFile($sValue);
 
       $this->setFile($file);

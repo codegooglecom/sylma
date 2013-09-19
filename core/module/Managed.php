@@ -14,5 +14,15 @@ class Managed extends Controled {
 
     return parent::getControler($sName, $bDebug);
   }
+
+  protected function setManagers(array $aManagers) {
+
+    $this->aControlers = $aManagers;
+  }
+
+  protected function getManagers() {
+
+    return $this->aControlers;
+  }
 }
 

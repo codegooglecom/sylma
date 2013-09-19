@@ -15,7 +15,7 @@ class Cached extends core\argument\Readable {
 
   protected function callFunction(\Closure $function) {
 
-    return $function(\Sylma::getControler(self::FILE_MANAGER_ALIAS));
+    return $function(\Sylma::getManager(self::FILE_MANAGER_ALIAS));
   }
 
   public function &getValue($sPath = null, $bDebug = true) {

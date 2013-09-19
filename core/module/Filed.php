@@ -70,7 +70,7 @@ abstract class Filed extends Sessioned {
 
     parent::setSettings($args, $bMerge);
 
-    return $this->getSettings();
+    return $this->getSettings(false);
   }
 
   /**

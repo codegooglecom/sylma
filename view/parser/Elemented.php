@@ -154,7 +154,11 @@ class Elemented extends template\parser\handler\Domed {
       default :
 
         $this->addToResult($content);
-        $result = $this->getResult();
+        
+        if (!$result = $this->getReturn()) {
+
+          $result = $this->getResult();
+        }
     }
 
     return $result;

@@ -59,7 +59,9 @@ class Filed extends Setable {
         $this->throwException(sprintf('Cannot find file @file %s to merge settings', $sPath));
       }
 
-      $this->merge(self::loadYAML($file->getRealPath(), false));
+      $sPath = $this->getControler() ? (string) $file : $file->getRealPath();
+
+      $this->merge(self::loadYAML($sPath, false));
     }
     else {
 
@@ -162,7 +164,7 @@ class Filed extends Setable {
    */
   protected function getControler() {
 
-    return \Sylma::getControler(self::FILE_CONTROLER, false, false);
+    return \Sylma::getManager(self::FILE_CONTROLER, false, false);
   }
 
   protected function setFile(fs\file $file) {

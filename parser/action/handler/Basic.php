@@ -29,7 +29,7 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $dir = null) {
 
     $this->setArguments($aArguments);
-    $this->setControler(\Sylma::getControler(self::CONTROLER_ALIAS));
+    $this->setManager(\Sylma::getManager(self::CONTROLER_ALIAS));
 
     $this->setNamespace($this->getControler()->getNamespace());
 

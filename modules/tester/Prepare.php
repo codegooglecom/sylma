@@ -52,22 +52,29 @@ abstract class Prepare extends Basic {
         }
         else {
 
-          $result = $this->getArgument('result');
-
-          if ($node = $this->getArgument('node', false)) {
-
-            $bResult = $this->compareNodes($result, $node);
-          }
-          else {
-
-            $bResult = true;
-          }
+          $bResult = $this->testNode();
         }
       }
     }
     catch (core\exception $e) {
 
       $bResult = $this->catchException($test, $e, $file);
+    }
+
+    return $bResult;
+  }
+
+  protected function testNode() {
+
+    $result = $this->getArgument('result');
+
+    if ($node = $this->getArgument('node', false)) {
+
+      $bResult = $this->compareNodes($node, $result);
+    }
+    else {
+
+      $bResult = true;
     }
 
     return $bResult;

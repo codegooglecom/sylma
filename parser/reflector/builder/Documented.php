@@ -8,6 +8,7 @@ class Documented extends Logger implements reflector\documented {
   protected $reflector;
   protected $sourceDir;
   protected $window;
+  protected $sReturn;
 
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
   const WINDOW_ARGS = 'php';
@@ -353,19 +354,32 @@ class Documented extends Logger implements reflector\documented {
     return $reflector->parseRoot($doc->getRoot());
   }
 
+  public function setReturn($sValue) {
+
+    $this->sReturn = $sValue;
+  }
+
+  protected function getReturn() {
+
+    if (is_null($this->sReturn)) {
+
+      $this->sReturn = $this->getDocument()->getRoot()->readx('@build:return', $this->getNS(), false);
+    }
+
+    return $this->sReturn;
+  }
+
   protected function createInstanciation(common\_window $window, array $aArguments) {
 
-    $sReturn = $this->getDocument()->getRoot()->readx('@build:return', $this->getNS(), false);
+    switch ($this->getReturn()) {
 
-    switch ($sReturn) {
-
-      case 'result' : $return = current($aArguments); break;
-      case 'array' : $return = $window->argToInstance($aArguments); break;
+      case 'result' : $sReturn = current($aArguments); break;
+      case 'array' : $sReturn = $window->argToInstance($aArguments); break;
 
       case '' :
       case 'default' :
 
-        $return = $window->createInstanciate($window->getSelf()->getInstance(), $aArguments);
+        $sReturn = $window->createInstanciate($window->getSelf()->getInstance(), $aArguments);
         break;
 
       default :
@@ -373,7 +387,7 @@ class Documented extends Logger implements reflector\documented {
         $this->launchException("Unknown @return value : $sReturn");
     }
 
-    $window->setReturn($return);
+    $window->setReturn($sReturn);
   }
 
   public function getCurrentElement() {

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+>
+
+  <xl:class>Tree</xl:class>
+  <xl:resource/>
+
+  <le:argument name="sylma-paths" format="php-array"/>
+
+  <tpl:template>
+
+    <!-- Contexts must be in template, to be intialized after object instanciation -->
+    <le:context name="js">
+      <le:file>/#sylma/template/medias/mootools.js</le:file>
+      <le:file>/#sylma/template/medias/sylma.js</le:file>
+    </le:context>
+
+    <html lang="fr">
+      <head>
+        <title><tpl:apply mode="title/content"/></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="robots" content="noindex,nofollow"/>
+        <link rel="icon" type="image/png" href="/images/favicon.png"/>
+        <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/infos.css" ls:owner="root" ls:group="user" ls:mode="710"/>
+        <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/base.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/backend.css"/>
+      </head>
+      <body>
+
+        <tpl:apply mode="body/content"/>
+
+      </body>
+    </html>
+  </tpl:template>
+
+  <tpl:template mode="title/content">Administration</tpl:template>
+
+  <tpl:template mode="body/content">
+
+    <tpl:apply mode="body/top"/>
+
+    <div id="admin">
+      <div id="messages"/>
+      <tpl:read select="content()"/>
+    </div>
+
+  </tpl:template>
+
+  <tpl:template mode="body/top">
+
+    <le:script path="menus"/>
+
+  </tpl:template>
+
+</view:view>

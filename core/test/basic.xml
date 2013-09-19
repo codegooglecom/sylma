@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:cmp="http://2013.sylma.org/dom/compare"
+>
+  <tst:description>Basic</tst:description>
+  <tst:test name="HTML window">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/modules/html/window.vml');
+      $manager->buildScript('/sylma/modules/html/container.vml');
+      $manager->buildScript('/sylma/modules/html/menus/index.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $manager->clearSylma($init);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config01.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'));
+
+      $manager->setArgument('result', $manager->createDocument($sResult, 103));
+
+    </tst:prepare>
+    <tst:node>
+      <html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+        <head>
+          <title>Administration</title>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+          <meta name="robots" content="noindex,nofollow"/>
+          <link rel="icon" type="image/png" href="/images/favicon.png"/>
+          <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/infos.css"/>
+          <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/base.css"/>
+          <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/backend.css"/>
+          <link href="/sylma/modules/html/medias/menus.css" rel="stylesheet" type="text/css" media="all"/>
+          <script type="text/javascript" src="/sylma/template/medias/mootools.js"> </script>
+          <script type="text/javascript" src="/sylma/template/medias/sylma.js"> </script>
+          <script type="text/javascript">//<![CDATA[
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+//]]>
+    </script>
+        </head>
+        <body>
+          <div id="lemonav">
+            <ul class="clearfix">
+              <li>
+                <a href="/">website</a>
+              </li>
+              <li>
+                <a href="/admin/contenu">gestion du contenu</a>
+              </li>
+              <li>
+                <a href="/admin/general">administration</a>
+              </li>
+              <li>
+                <a href="/admin/profil">profil</a>
+              </li>
+              <li class="empty">.</li>
+              <a id="lemonav-logout" title="Déconnexion" href="/sylma/modules/users/logout.redirect"/>
+            </ul>
+          </div>
+          <div id="admin">
+            <div id="messages"/>
+            <hello/>
+          </div>
+          <div id="sylma-system" cmp:ignore="x"/>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Override window">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $manager->clearSylma($init);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript">//<![CDATA[
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+//]]>
+    </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+          <div id="sylma-system" cmp:ignore="x"/>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Call action">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->createAction('/sylma/core/test/samples/action01.eml');
+
+      $init = $manager->create('init');
+      $manager->clearSylma($init);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/action01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript">//<![CDATA[
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+//]]>
+    </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello>world</hello>
+          <div id="sylma-system" cmp:ignore="x"/>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="PHP error">
+    <tst:prepare>
+
+      //$manager->buildScript('/sylma/core/test/samples/sample02.vml');
+      $manager->buildScript('/sylma/modules/html/error.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample02');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript">//<![CDATA[
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+//]]>
+    </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Restricted access">
+    <tst:prepare>
+
+      //$manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester02');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript">//<![CDATA[
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+//]]>
+    </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Directory without index">
+    <tst:prepare>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester02');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sub');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript">//<![CDATA[
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+//]]>
+    </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+</tst:tests>

@@ -5,7 +5,7 @@
   xmlns:lm="http://www.sylma.org/parser/action/basic"
   xmlns:tst="http://www.sylma.org/modules/tester"
 >
-  <le:context name="title">Test action</le:context>
+  <le:context name="title">Test storage XML</le:context>
   <le:action path="/#sylma/modules/tester/class">
     <le:document>
       <tst:tests>

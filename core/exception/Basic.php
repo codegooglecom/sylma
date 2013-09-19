@@ -96,7 +96,7 @@ class Basic extends \Exception implements core\exception {
 
     $aResult = array();
 
-    if ($fs = \Sylma::getControler('fs', false, false)) {
+    if ($fs = \Sylma::getManager('fs', false, false)) {
 
       if (preg_match_all('/@file [^\s]*/', $sValue, $aMatch, PREG_OFFSET_CAPTURE)) {
 

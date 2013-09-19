@@ -11,7 +11,7 @@ class Basic extends tester\Basic implements core\argumentable {
 
   public function __construct() {
 
-    \Sylma::getControler('dom');
+    $this->getManager('dom');
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');

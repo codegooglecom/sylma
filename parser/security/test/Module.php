@@ -27,7 +27,7 @@ class Module extends tester\Prepare implements core\argumentable {
 
   public function __construct(parser\action\Manager $controler = null) {
 
-    \Sylma::getControler('dom');
+    $this->getManager('dom');
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');

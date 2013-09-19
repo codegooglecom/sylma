@@ -117,20 +117,36 @@ class Basic extends core\module\Argumented implements core\user {
       }
       else {
 
-        $controler = $this->getControler();
+        $manager = $this->getManager();
 
         // no cookie, select the default user
 
-        $server = $controler->getArgument('server');
+        $server = $manager->getArgument('server');
 
-        if ($_SERVER['REMOTE_ADDR'] == $server->read('ip')) $options = $server;
-        else $options = $controler->getArgument(self::PUBLIC_ALIAS);
+        if ($_SERVER['REMOTE_ADDR'] == $server->read('ip')) {
 
-        $this->setName($options->read('name'));
-        $this->aGroups = $options->query('groups');
-        $this->setArguments($options->get('arguments'));
+          $options = $server;
+        }
+        else {
+
+          $options = $manager->getArgument(self::PUBLIC_ALIAS);
+        }
+
+        $this->loadSettings($options);
       }
     }
+  }
+
+  public function loadPublic() {
+
+    $this->loadSettings($this->getManager()->getArgument(self::PUBLIC_ALIAS));
+  }
+
+  protected function loadSettings(core\argument $args) {
+
+    $this->setName($args->read('name'));
+    $this->aGroups = $args->query('groups');
+    $this->setArguments($args->get('arguments'));
   }
 
   protected function setDirectory(fs\directory $dir) {

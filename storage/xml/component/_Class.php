@@ -10,8 +10,18 @@ class _Class extends reflector\component\Foreigner implements reflector\componen
     $this->setNode($el);
 
     \Sylma::load('/core/functions/Path.php');
+    $sName = path\toAbsolute($this->readx(), str_replace('/', '\\', (string) $this->getSourceDirectory()), '\\');
 
-    $this->getParser()->setReflector(path\toAbsolute($this->readx(), str_replace('/', '\\', (string) $this->getSourceDirectory()), '\\'));
+    $settings = $this->createArgument(array(
+      'name' => $sName,
+    ));
+
+    if ($sPath = $this->readx('@settings')) {
+
+      $settings->set('settings', $this->getScriptFile($this->getSourceFile($sPath)));
+    }
+
+    $this->getParser()->setReflector($settings);
   }
 
   public function asArray() {

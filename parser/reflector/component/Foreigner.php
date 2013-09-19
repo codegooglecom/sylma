@@ -21,6 +21,7 @@ class Foreigner extends reflector\basic\Reflector implements reflector\component
 
     $this->setParser($parser);
     $this->setArguments($arg);
+    $this->setSettings($arg);
 
     $this->setUsedNamespaces($aNamespaces);
 

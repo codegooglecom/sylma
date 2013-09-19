@@ -238,6 +238,20 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Array with dom content" catch="\sylma\core\exception" disabled="true">
+    <!-- exception on compile -->
+    <tst:document>
+      <view:view sql:ns="ns" build:output="array">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <abc/>
+        </view:template>
+      </view:view>
+    </tst:document>
+  </tst:test>
   <tst:test name="Multiple attribute values">
     <tst:document>
       <view:view sql:ns="ns">

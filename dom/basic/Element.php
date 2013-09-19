@@ -34,7 +34,7 @@ class Element extends \DOMElement implements dom\element {
 
   protected function getControler() {
 
-    return \Sylma::getControler(self::CONTROLER_ALIAS);
+    return \Sylma::getManager(self::CONTROLER_ALIAS);
   }
 
   public function getType() {
@@ -779,6 +779,11 @@ class Element extends \DOMElement implements dom\element {
 
       $this->compareBadNode = $this;
       return self::COMPARE_BAD_ELEMENT;
+    }
+
+    if ($this->readAttribute('ignore', self::COMPARE_NS, false)) {
+
+      return self::COMPARE_SUCCESS;
     }
 
     $attribute = self::compareAttributes($this, $element);

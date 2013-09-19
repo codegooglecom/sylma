@@ -15,7 +15,7 @@ class Readable extends Domed implements core\argument {
     else return $this->aArray;
   }
 
-  public function get($sPath = '', $bDebug = true) {
+  public function get($sPath = '', $bDebug = true, $mDefault = array()) {
 
     $mValue =& $this->getValue($sPath, $bDebug);
 
@@ -34,7 +34,7 @@ class Readable extends Domed implements core\argument {
         $this->throwException(sprintf('No argument or array found at path "%s"', $sPath));
       }
 
-      $mResult = array();
+      $mResult = $mDefault;
     }
 
     return $mResult;

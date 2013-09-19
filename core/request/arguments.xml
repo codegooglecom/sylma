@@ -1,6 +1,6 @@
 <arg:argument
   xmlns:arg="http://2013.sylma.org/core/argument"
-  xmlns="http://2013.sylma.org/parser/action"
+  xmlns="http://2013.sylma.org/core/request"
   xmlns:cls="http://2013.sylma.org/core/factory"
   xmlns:build="http://2013.sylma.org/parser/reflector/builder"
 

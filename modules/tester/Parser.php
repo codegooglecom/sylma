@@ -24,8 +24,9 @@ class Parser extends tester\Prepare {
       $samples->delete();
     }
 
-    $this->setArguments(array());
-    $this->setSettings($this->getArguments());
+    //$this->setArguments(array());
+    //$this->setSettings($this->getArguments());
+    $this->setSettings(array());
     //$this->setFiles(array($this->getFile('basic.xml')));
   }
 
@@ -145,9 +146,14 @@ class Parser extends tester\Prepare {
     return $this->getScriptFile($this->getFile(), $this->buildScriptArguments($aArguments, $aContexts, $aPosts));
   }
 
-  public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
+  public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array(), $bRun = true) {
 
-    return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $this->buildScriptArguments($aArguments, $aContexts, $aPosts), true);
+    return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $this->buildScriptArguments($aArguments, $aContexts, $aPosts), true, $bRun);
+  }
+
+  public function buildScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
+
+    return $this->getScript($sPath, $aArguments, $aContexts, $aPosts, false);
   }
 
   public function set($sPath, $mValue = null) {

@@ -42,7 +42,7 @@ abstract class Basic extends Asserter {
 
     $this->onFinish();
 
-    return $aResult;
+    return array_filter($aResult);
   }
 /*
   public function loadNext() {
@@ -66,19 +66,30 @@ abstract class Basic extends Asserter {
 
     $doc = $file->getDocument();
     $doc->registerNamespaces($this->getNS());
+    
+    if (!$doc->isEmpty()) {
 
-    if ($doc->isEmpty()) $this->throwException(sprintf('@file %s cannot be load'));
+      if ($doc->getRoot()->getNamespace() === static::NS) {
 
-    $aTests = $this->loadDocument($doc, $file);
+        //dsp($doc->getRoot()->getNamespace());
+        $aTests = $this->loadDocument($doc, $file);
 
-    $iDisabled = $aTests['disabled'];
-    unset($aTests['disabled']);
+        $iDisabled = $aTests['disabled'];
+        unset($aTests['disabled']);
 
-    return array(
-      'description' => $doc->readx('self:description', $this->getNS()),
-      '#test' => $aTests,
-      '@disabled' => $iDisabled,
-    );
+        $aResult = array(
+          'description' => $doc->readx('self:description', $this->getNS()),
+          '#test' => $aTests,
+          '@disabled' => $iDisabled,
+        );
+      }
+      else {
+
+        $aResult = array();
+      }
+    }
+
+    return $aResult;
   }
 
   protected function loadDocument(dom\handler $doc, fs\file $file) {
@@ -234,8 +245,10 @@ abstract class Basic extends Asserter {
     if ($iResult !== $el::COMPARE_SUCCESS) {
 
       $node = $el->compareBadNode;
+      $sNode = $node instanceof core\tokenable ? $node->asToken() : '[undefined]';
+
       //$this->throwException(sprintf('Node %s not equals with node %s', $el->asToken(), $node2->asToken()));
-      $this->launchException(sprintf('Nodes not equals'), get_defined_vars());
+      $this->launchException('Nodes not equals in ' . $sNode . $this->findDiff($node1->asString(), $node2->asString()), get_defined_vars());
     }
 
     return true;

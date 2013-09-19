@@ -27,9 +27,13 @@
     </li>
   </tpl:template>
 
+  <tpl:template match="menus:menu" mode="title">
+    <tpl:read select="@title"/>
+  </tpl:template>
+
   <tpl:template match="menus:menu" mode="content">
     <a href="{@href}">
-      <tpl:read select="@title"/>
+      <tpl:apply mode="title"/>
     </a>
   </tpl:template>
 

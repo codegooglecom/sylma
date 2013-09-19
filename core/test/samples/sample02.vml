@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:class="\sylma\core\test\samples\Render01"
+>
+
+  <xl:resource/>
+
+  <tpl:template>
+    <hello/>
+  </tpl:template>
+
+</view:view>

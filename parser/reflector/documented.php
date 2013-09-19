@@ -27,5 +27,7 @@ interface documented {
    */
   function getWindow();
   //function build();
+
+  //function setReturn($sValue);
 }
 

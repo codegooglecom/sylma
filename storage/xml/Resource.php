@@ -6,7 +6,7 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template;
 class Resource extends reflector\handler\Elemented implements reflector\elemented {
 
   protected $tree;
-  protected $sReflector;
+  protected $reflector;
 
   const NS = 'http://2013.sylma.org/storage/xml';
   const PREFIX = 'dom';
@@ -22,14 +22,14 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     return $this->parseElement($el);
   }
 
-  public function setReflector($sClass) {
+  public function setReflector(core\argument $arg) {
 
-    $this->sReflector = $sClass;
+    $this->reflector = $arg;
   }
 
   protected function getReflector() {
 
-    return $this->sReflector;
+    return $this->reflector;
   }
 
   protected function parseElementSelf(dom\element $el) {
@@ -57,9 +57,12 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     $view = $this->lookupParser(self::VIEW_NS);
 
-    if ($sClass = $this->getReflector()) {
+    if ($class = $this->getReflector()) {
 
-      $root = new $sClass($view);
+      $sName = $class->read('name');
+      $settings = $class->get('settings', false, null);
+
+      $root = new $sName($view, $settings);
     }
     else {
 
