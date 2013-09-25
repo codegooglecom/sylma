@@ -8,5 +8,5 @@
   <menu href="/"/>
   <menu href="/admin/contenu" title="gestion du contenu"/>
   <menu href="/admin/general" title="administration"/>
-  <menu href="/admin/profil" title="profil"/>
+  <menu href="/sylma/modules/users/crud" title="profil"/>
 </menus>

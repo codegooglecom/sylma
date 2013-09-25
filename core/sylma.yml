@@ -7,7 +7,7 @@ debug :
     enable : false
     default : example@example.org
   backtrace :
-    show : false
+    show : true
     html : true
   html :
     foreign : false
@@ -19,7 +19,7 @@ namespaces :
 render :
   gzip : true
 exception :
-  show : false
+  show : true
   send : false
   mail :
     enable : false

@@ -23,6 +23,7 @@ class Document extends core\window\classes\Container {
 
     $load = new binder\context\Load;
     $contexts = $this->createArgument(array(
+      'title' => array(),
       'css' => new context\CSS,
       'js' => new context\JS(array(
         'load' => $load,
@@ -112,6 +113,17 @@ class Document extends core\window\classes\Container {
             echo '<h1>No container for messages</h1>';
           }
         }
+
+        break;
+
+      case 'title' :
+
+        if (!$title = $this->getHead()->getx('//html:title', array(), false)) {
+
+          $title = $this->getHead()->addElement('title');
+        }
+
+        if ($context && $context->query()) $title->add(' - ' . $context->read(0));
 
         break;
 

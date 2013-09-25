@@ -24,7 +24,7 @@
 
     <view:schema>schema.xql</view:schema>
 
-    <tpl:constant name="list-cols">description,url,update,priority,statut</tpl:constant>
+    <tpl:constant name="list-cols">project,description,url,update,statut,priority</tpl:constant>
     <tpl:constant name="form-cols">* ^ id,update,insert</tpl:constant>
     <tpl:constant name="list-order">!update</tpl:constant>
 
@@ -76,6 +76,10 @@
 
     <tpl:template match="stat:todo_statut">
       <tpl:read select="value"/>
+    </tpl:template>
+
+    <tpl:template match="proj:todo_project">
+      <tpl:read select="name"/>
     </tpl:template>
 
     <tpl:template match="*" mode="row/init">

@@ -40,4 +40,8 @@
     </div>
   </tpl:template>
 
+  <tpl:template match="menus:menus" mode="shortcuts">
+    <le:script path="/#sylma/modules/todo/widget"/>
+  </tpl:template>
+
 </view:view>
