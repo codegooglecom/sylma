@@ -24,7 +24,7 @@
   <crud:group name="list">
 
     <le:context name="title">Users</le:context>
-    
+
   </crud:group>
 
   <crud:group name="form" user:ns="ns">
@@ -43,7 +43,7 @@
 
       <tpl:apply mode="container"/>
 
-      <tpl:apply mode="container">
+      <tpl:apply mode="container/empty">
         <tpl:text tpl:name="alias">password_confirm</tpl:text>
         <tpl:text tpl:name="title">confirm password</tpl:text>
       </tpl:apply>

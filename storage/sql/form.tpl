@@ -81,10 +81,15 @@
 
   <view:template match="*" mode="label">
 
+    <tpl:variable name="default-title">
+      <tpl:apply mode="label/value"/>
+    </tpl:variable>
+
     <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="title" default="$default-title"/>
 
     <label for="form-{$alias}">
-      <tpl:apply mode="label/value"/>
+      <tpl:read select="$title"/>
       <tpl:if test="!is-optional()">
         <tpl:text>*</tpl:text>
       </tpl:if>
