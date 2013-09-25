@@ -27,7 +27,7 @@ exception :
   file : error.log
 initializer :
   debug :
-    update : true
+    update : null
     run : true
     profile : false
     fatal : false

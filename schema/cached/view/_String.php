@@ -13,7 +13,7 @@ class _String extends Basic {
 
       $iLength = $aSettings['length'];
 
-      $sValue = mb_strlen($sValue) > $iLength ? mb_substr($sValue, 0, $iLength) . ' ...' : $sValue;
+      $sValue = mb_strlen($sValue) > $iLength ? htmlspecialchars(mb_substr(htmlspecialchars_decode($sValue), 0, $iLength)) . ' ...' : $sValue;
     }
 
     if (isset($aSettings['nl2br']) && $aSettings['nl2br']) {
