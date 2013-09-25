@@ -81,15 +81,13 @@
 
   <view:template match="*" mode="label">
 
-    <tpl:variable name="default-title">
-      <tpl:apply mode="label/value"/>
-    </tpl:variable>
-
     <tpl:argument name="alias" default="alias('form')"/>
-    <tpl:argument name="title" default="$default-title"/>
+    <tpl:argument name="title" default="title()"/>
 
     <label for="form-{$alias}">
-      <tpl:read select="$title"/>
+      <tpl:apply mode="label/value">
+        <tpl:read select="$title" tpl:name="title"/>
+      </tpl:apply>
       <tpl:if test="!is-optional()">
         <tpl:text>*</tpl:text>
       </tpl:if>
@@ -99,7 +97,8 @@
   </view:template>
 
   <tpl:template match="*" mode="label/value">
-    <tpl:read select="title()"/>
+    <tpl:argument name="title" default="title()"/>
+    <tpl:read select="$title"/>
   </tpl:template>
 
   <view:template match="*" mode="input">
