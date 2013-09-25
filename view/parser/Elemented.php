@@ -154,7 +154,7 @@ class Elemented extends template\parser\handler\Domed {
       default :
 
         $this->addToResult($content);
-        
+
         if (!$result = $this->getReturn()) {
 
           $result = $this->getResult();
@@ -190,10 +190,18 @@ class Elemented extends template\parser\handler\Domed {
 
     $this->loadResult();
 
-    $resource = $this->parseElement($this->getx('*[local-name() = "resource"]', true)->remove());
-    $resource->setMode($sMode);
+    $resources = $this->queryx('*[local-name() = "resource"]', true);
 
-    return $resource;
+    $result = $this->parseElement($resources->getLast());
+
+    foreach ($resources as $item) {
+
+      $item->remove();
+    }
+
+    $result->setMode($sMode);
+
+    return $result;
   }
 
   protected function loadSchema() {

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\test;
-use sylma\core, sylma\modules\tester, sylma\storage\fs;
+use sylma\core, sylma\modules\tester, sylma\dom;
 
 class Handler extends tester\Parser implements core\argumentable {
 
@@ -44,11 +44,11 @@ class Handler extends tester\Parser implements core\argumentable {
     return $this->create('action', array($this->getFile($sPath)));
   }
 
-  protected function testNode() {
+  protected function prepareTest(dom\element $test, $controler) {
 
     $this->restoreSylma();
 
-    return parent::testNode();
+    return parent::prepareTest($test, $controler);
   }
 
   public function createUser($sAlias = '') {
@@ -76,6 +76,11 @@ class Handler extends tester\Parser implements core\argumentable {
   }
 
   public function clearSylma(core\Initializer $init, core\user $user = null) {
+
+    if (!$user) {
+
+      $user = $this->createUser();
+    }
 
     \Sylma::setManagers(array(
       //'parser' => \Sylma::getManager('parser'),

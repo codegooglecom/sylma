@@ -49,7 +49,12 @@ class Type extends Basic implements core\tokenable {
     $this->define = $define;
   }
 
-  public function getDefine() {
+  public function getDefine($bDebug = true) {
+
+    if ($bDebug && !$this->define) {
+
+      $this->launchException('No define defined');
+    }
 
     return $this->define;
   }
@@ -62,7 +67,7 @@ class Type extends Basic implements core\tokenable {
 
   protected function getBase() {
 
-    return $this->getDefine() ? $this->getDefine()->getBase() : null;
+    return $this->getDefine(false) ? $this->getDefine()->getBase() : null;
   }
 
   public function getReflectorStatic() {

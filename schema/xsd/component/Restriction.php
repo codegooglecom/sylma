@@ -37,7 +37,7 @@ class Restriction extends schema\parser\component\Restriction {
 
     if ($this->getBase()) {
 
-      if ($define = $this->getBase()->getDefine()) {
+      if ($define = $this->getBase()->getDefine(false)) {
 
         $this->merge($define);
       }

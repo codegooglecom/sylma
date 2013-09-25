@@ -90,6 +90,13 @@ abstract class Domed extends Componented {
     $el->getHandler()->registerNamespaces($this->getNS());
   }
 
+  /**
+   *
+   * @param string $sPath
+   * @param bool $bDebug
+   * @param array $aNS
+   * @return dom\collection|null
+   */
   protected function queryx($sPath, $bDebug = false, array $aNS = array()) {
 
     return $this->getNode()->queryx($sPath, $aNS, $bDebug);

@@ -135,7 +135,7 @@ abstract class Resource implements fs\resource {
 
       if ($bOwner || $bGroup || $bMode) {
 
-        $user = \Sylma::getControler('user');
+        $user = \Sylma::getManager('user');
 
         // Check validity
 

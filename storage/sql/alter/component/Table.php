@@ -9,8 +9,7 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
   protected function loadColumns() {
 
-    $sql = $this->getManager(self::DB_MANAGER);
-    $cols = $sql->query("SHOW COLUMNS FROM `{$this->getName()}`", false);
+    $cols = $this->getConnection()->query("SHOW COLUMNS FROM `{$this->getName()}`", false);
     $aResult = array();
 
     foreach ($cols as $iPosition => $col) {
@@ -31,13 +30,18 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
     if (!$this->useDepth()) {
 
-      $sql = $this->getManager(self::DB_MANAGER);
-
       $sQuery = $this->loadUpdate();
 
       dsp($sQuery);
-      $sql->getConnection($this->getConnectionAlias())->read($sQuery, false);
+      $this->getConnection()->read($sQuery, false);
     }
+  }
+
+  protected function getConnection() {
+
+    $sql = $this->getManager(self::DB_MANAGER);
+
+    return $sql->getConnection($this->getConnectionAlias());
   }
 
   protected function loadUpdate() {

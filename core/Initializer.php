@@ -27,7 +27,6 @@ class Initializer extends module\Domed {
     $settings = new \sylma\core\argument\Filed($sSylma, array(\Sylma::NS));
 
     if ($sServer) $settings->mergeFile($sServer);
-    $this->setArguments($this->createArgument($settings->query()));
 
     return $settings;
   }
@@ -54,7 +53,8 @@ class Initializer extends module\Domed {
 
   public function run($settings) {
 
-    $this->setArguments($settings);
+    $this->setArguments($this->createArgument($settings->query()));
+    //$this->setArguments($settings);
     $this->setErrorReporting();
 
     //set_exception_handler("self::sendException");
@@ -421,14 +421,15 @@ class Initializer extends module\Domed {
 
   protected function setErrorReporting() {
 
-    if (\Sylma::isAdmin()) {
+    if (\Sylma::isAdmin() || $this->readArgument('debug/fatal', false)) {
 
       error_reporting(E_ALL);
-
+/*
 	    if (!ini_get('display_errors')) {
 
 	      \Sylma::log(self::NS, sprintf('php.ini : display_errors is Off. Fatal error will not be shown.'));
 	    }
+*/
     }
     else {
 

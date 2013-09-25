@@ -105,8 +105,7 @@ abstract class Documented extends Container {
     }
     else {
 
-      $formater = \Sylma::getControler('formater');
-      $this->throwException(sprintf('Object %s cannot be used in dom document', $formater->asToken($val)));
+      $this->launchException('$val cannot be used in dom document', get_defined_vars());
     }
 
     return $result;

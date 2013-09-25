@@ -13,9 +13,11 @@ class Simple extends schema\component\SimpleType {
     }
     else if ($this->doExtends($this->getParser()->getType('string', $this->getNamespace('xs')))) {
 
-      $iSize = $this->getDefine()->getRule('maxLength');
+      if ($define = $this->getDefine(false)) {
 
-      if (!$iSize) {
+        $iSize = $this->getDefine()->getRule('maxLength');
+      }
+      else {
 
         $this->launchException('No @maxLength defined');
       }

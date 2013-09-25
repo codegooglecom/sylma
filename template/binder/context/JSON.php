@@ -3,12 +3,11 @@
 namespace sylma\template\binder\context;
 use sylma\core, sylma\parser\context, sylma\parser\action, sylma\dom, sylma\core\window, sylma\modules\html, sylma\template;
 
-class JSON extends context\Basic implements dom\domable, window\scripted, window\action {
+class JSON extends window\classes\Container implements window\scripted, window\action {
 
   protected $action;
   const PARSER_MANAGER = 'parser';
 
-  //const PARSER_MANAGER = 'parser';
   public function __construct() {
 
     //parent::__construct($aArray, $aNS, $parent);
@@ -44,13 +43,27 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
       $e->save(false);
     }
 
+    if (\Sylma::isAdmin()) {
+
+      $errors = $contexts->get('errors');
+    }
+    else {
+
+      $errors = null;
+
+      if (!$contexts->get('errors')->isEmpty()) {
+
+        $messages->add('An error happened, the adminstrator has been informed.');
+      }
+    }
+
     $classes = $contexts->get('js/classes', false);
 
-    $this->setArray(array(
+    $this->setSettings(array(
       'content' => (string) $sResult,
       'objects' => $contexts->get('js/load/objects', false),
       'classes' => $classes ? $classes->asStringVar() : null,
-      'errors' => $contexts->get('errors'),
+      'errors' => $errors,
       'messages' => $contexts->get('messages'),
     ));
   }
@@ -67,8 +80,11 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
 
   protected function loadMessages() {
 
-    $result = new html\context\Messages;
-    \Sylma::getManager('parser')->setContext('errors', $result);
+    if (!$result = $this->getManager('parser')->getContext('errors', false)) {
+
+      $result = new html\context\Messages;
+      $this->getManager('parser')->setContext('errors', $result);
+    }
 
     return $result;
   }
@@ -95,7 +111,7 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
       $sResult = '';
     }
 
-    $this->setArray(array(
+    $this->setSettings(array(
       'content' => $sResult,
       'errors' => $contexts->get('errors'),
       'messages' => $contexts->get('messages'),
@@ -120,7 +136,7 @@ class JSON extends context\Basic implements dom\domable, window\scripted, window
       $this->loadAction($action);
     }
 
-    return $this->asJSON();
+    return $this->getSettings()->asJSON();
   }
 }
 

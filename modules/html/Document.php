@@ -101,13 +101,16 @@ class Document extends core\window\classes\Container {
       //case action\cached::CONTEXT_DEFAULT : break;
       case 'errors' :
 
-        if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
+        if (\Sylma::isAdmin()) {
 
-          $messages->add($context->asDOM());
-        }
-        else if (\Sylma::isAdmin()) {
+          if ($messages = $this->result->getx('//html:div[@id="messages"]', array(), false)) {
 
-          echo '<h1>No container for messages</h1>';
+            $messages->add($context->asDOM());
+          }
+          else {
+
+            echo '<h1>No container for messages</h1>';
+          }
         }
 
         break;

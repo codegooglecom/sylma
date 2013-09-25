@@ -11,15 +11,30 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
-  <view:template>
+  <tpl:import>/#sylma/modules/datepicker/init.tpl</tpl:import>
+
+  <tpl:template>
+
+    <tpl:apply mode="css"/>
+
     <form js:class="sylma.crud.Form" class="sylma-form">
       <js:include>/#sylma/template/medias/crud.js</js:include>
       <tpl:apply mode="init"/>
       <tpl:apply mode="form"/>
-      <tpl:apply mode="form/action"/>
+      <div class="form-actions">
+        <tpl:apply mode="form/action"/>
+      </div>
       <tpl:apply mode="form/token"/>
     </form>
-  </view:template>
+  </tpl:template>
+
+  <tpl:template mode="css">
+
+    <le:context name="css">
+      <le:file>/#sylma/modules/html/medias/form.css</le:file>
+    </le:context>
+
+  </tpl:template>
 
   <tpl:template mode="form">
     <tpl:apply use="form-cols" mode="container"/>
@@ -505,6 +520,8 @@
   </view:template>
 
   <view:template match="*" mode="date">
+
+    <tpl:apply mode="date/prepare"/>
 
     <div js:class="sylma.crud.Date">
 

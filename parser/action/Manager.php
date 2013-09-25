@@ -297,7 +297,7 @@ class Manager extends compiler\Builder_old {
 
     if (!$val instanceof $sInterface) {
 
-      $formater = \Sylma::getControler('formater');
+      $formater = \Sylma::getManager('formater');
       $this->throwException(sprintf('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
     }
 

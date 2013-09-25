@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\test;
 use sylma\core, sylma\modules\tester;
 
-class Handler extends tester\Parser implements core\argumentable {
+class Handler extends tester\Formed implements core\argumentable {
 
   protected $sTitle = 'SQL';
 

@@ -10,7 +10,7 @@
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:le="http://2013.sylma.org/action"
 >
-  <tst:description>Filter</tst:description>
+  <tst:description>SQL</tst:description>
   <tst:datas name="mysql://user">
     id;name;email
     1;root;root@sylma.org
@@ -183,6 +183,29 @@
     </tst:document>
     <tst:node>
       <li>root</li>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Change connection bis" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns">
+
+        <sql:connection>test</sql:connection>
+
+        <sql:resource>
+          <sql:id>3</sql:id>
+        </sql:resource>
+
+        <view:schema>samples/user1e.xql</view:schema>
+
+        <view:template match="user:user">
+          <li>
+            <tpl:apply select="name"/>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <li>webmaster</li>
     </tst:node>
   </tst:test>
 </tst:tests>

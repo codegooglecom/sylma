@@ -50,6 +50,11 @@ class Collection implements \Iterator, dom\collection {
     return $this->item(0);
   }
 
+  public function getLast() {
+
+    return $this->item($this->length - 1);
+  }
+
   public function valid() {
 
     return ($this->iIndex < count($this->aNodes));

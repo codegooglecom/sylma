@@ -33,15 +33,23 @@ class SimpleType extends parser\component\Simple {
     return $result;
   }
 
-  public function getDefine() {
+  public function getDefine($bDebug = true) {
 
-    if (is_null($this->define)) {
+    $result = parent::getDefine(false);
 
-      if ($define = $this->parseDefine()) $this->setDefine($define);
-      else $this->define = false;
+    if (is_null($result)) {
+
+      if ($define = $this->parseDefine()) {
+
+        $this->setDefine($define);
+      }
+      else {
+
+        $this->define = false;
+      }
     }
 
-    return parent::getDefine();
+    return parent::getDefine($bDebug);
   }
 
 }

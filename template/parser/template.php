@@ -14,5 +14,6 @@ interface template {
   function isCloned();
   function parseValue($sValue);
   //function loadElement(dom\element $el);
+  function useOnce();
 }
 

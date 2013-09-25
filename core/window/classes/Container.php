@@ -71,7 +71,7 @@ class Container extends core\module\Domed {
       $item = "$key : ($item)";
     });
 
-    $file = $path->getFile('', false);
+    $file = $path->asFile();
 
     $content = $this->createArgument(array(
       'ul' => array(

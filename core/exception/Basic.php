@@ -26,7 +26,9 @@ class Basic extends \Exception implements core\exception {
   protected $iOffset = 1;
 
   public function __construct($message, $code = 0, $previous = null) {
-
+//echo round(microtime(true), 2);
+//echo $message;
+//echo '<br/>';
     self::$iCount++;
 
     parent::__construct($message, $code, $previous);
@@ -315,12 +317,12 @@ class Basic extends \Exception implements core\exception {
       $aResult['trace'] = $this->loadTraces($bHTML);
     }
 
+    if (\Sylma::read('exception/show')) {
+
+      $this->show($aResult, $bPrint);
+    }
+
     if (\Sylma::isAdmin()) {
-
-      if (\Sylma::read('exception/show')) {
-
-        $this->show($aResult, $bPrint);
-      }
 
       if (\Sylma::read('exception/send')) {
 

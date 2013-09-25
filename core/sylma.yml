@@ -19,7 +19,7 @@ namespaces :
 render :
   gzip : true
 exception :
-  show : true
+  show : false
   send : false
   mail :
     enable : false
@@ -30,6 +30,7 @@ initializer :
     update : true
     run : true
     profile : false
+    fatal : false
   output :
     indent : true
   mime :

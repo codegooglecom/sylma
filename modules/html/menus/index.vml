@@ -34,7 +34,7 @@
       <ul class="clearfix">
         <tpl:apply select="*"/>
         <li class="empty">.</li>
-        <a id="lemonav-logout" title="Déconnexion" href="/sylma/modules/users/logout.redirect"/>
+        <a id="lemonav-logout" title="Logout" href="/sylma/modules/users/logout.redirect"/>
         <tpl:apply mode="shortcuts"/>
       </ul>
     </div>

@@ -21,14 +21,14 @@
       $manager->buildScript('/sylma/core/test/samples/sample01.vml');
 
       $init = $manager->create('init');
-      $manager->clearSylma($init);
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
 
       $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config01.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
       $init->setGET('/sylma/core/test/samples/sample01');
       $sResult = $init->run($settings->get('initializer'));
 
       $manager->setArgument('result', $manager->createDocument($sResult, 103));
-
     </tst:prepare>
     <tst:node>
       <html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
@@ -37,7 +37,6 @@
           <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
           <meta name="robots" content="noindex,nofollow"/>
           <link rel="icon" type="image/png" href="/images/favicon.png"/>
-          <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/infos.css"/>
           <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/base.css"/>
           <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/backend.css"/>
           <link href="/sylma/modules/html/medias/menus.css" rel="stylesheet" type="text/css" media="all"/>
@@ -49,29 +48,17 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     </script>
         </head>
         <body>
-          <div id="lemonav">
-            <ul class="clearfix">
-              <li>
-                <a href="/">website</a>
-              </li>
-              <li>
-                <a href="/admin/contenu">gestion du contenu</a>
-              </li>
-              <li>
-                <a href="/admin/general">administration</a>
-              </li>
-              <li>
-                <a href="/admin/profil">profil</a>
-              </li>
-              <li class="empty">.</li>
-              <a id="lemonav-logout" title="Déconnexion" href="/sylma/modules/users/logout.redirect"/>
-            </ul>
-          </div>
           <div id="admin">
             <div id="messages"/>
-            <hello/>
+            <div id="container">
+              <div id="containerWrapper">
+                <div id="content">
+                  <hello/>
+                </div>
+              </div>
+            </div>
+            <div id="sidebar"/>
           </div>
-          <div id="sylma-system" cmp:ignore="x"/>
         </body>
       </html>
     </tst:node>
@@ -85,7 +72,8 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
       $manager->buildScript('/sylma/core/test/samples/sample01.vml');
 
       $init = $manager->create('init');
-      $manager->clearSylma($init);
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
 
       $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
       $init->setGET('/sylma/core/test/samples/sample01');
@@ -105,21 +93,78 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
         <body>
           <div id="messages"/>
           <hello/>
-          <div id="sylma-system" cmp:ignore="x"/>
         </body>
       </html>
     </tst:node>
   </tst:test>
 
+  <tst:test name="JSON call">
+    <tst:prepare>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01.json');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $sResult = $manager->readArgument('result');
+
+      $manager->assertEqual(json_decode($sResult, true), array(
+        'content' => '&lt;hello/>',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+  <tst:test name="JSON PHP error">
+    <tst:prepare>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample02.json');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $sResult = $manager->readArgument('result');
+
+      $manager->assertEqual(json_decode($sResult, true), array(
+        'content' => '',
+        'messages' =>
+          array(
+            0 => 'An error happened, the adminstrator has been informed.',
+          ),
+        ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
   <tst:test name="Call action">
     <tst:prepare>
 
-      $manager->buildScript('/sylma/core/test/samples/window01.vml');
-      $manager->buildScript('/sylma/core/test/samples/container01.vml');
-      $manager->createAction('/sylma/core/test/samples/action01.eml');
+      $action = $manager->createAction('/sylma/core/test/samples/action01.eml');
+      $action->getContext('default');
 
       $init = $manager->create('init');
-      $manager->clearSylma($init);
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
 
       $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
       $init->setGET('/sylma/core/test/samples/action01');
@@ -139,7 +184,6 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
         <body>
           <div id="messages"/>
           <hello>world</hello>
-          <div id="sylma-system" cmp:ignore="x"/>
         </body>
       </html>
     </tst:node>

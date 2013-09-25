@@ -6,7 +6,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
 >
-  <tst:description>Basic</tst:description>
+  <tst:description>Schema API</tst:description>
   <tst:datas name="mysql://user">
   </tst:datas>
   <tst:test name="Default type and ssd type">

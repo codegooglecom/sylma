@@ -168,7 +168,7 @@ abstract class Filed extends Sessioned {
 
       if (!$this->file && $bDebug) {
 
-        $this->throwException('No file associated to this object');
+        $this->throwException('No file associated to this object [' . get_class($this) . ']');
       }
 
       $result = $this->file;

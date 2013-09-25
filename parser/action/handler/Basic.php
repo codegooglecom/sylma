@@ -24,7 +24,7 @@ class Basic extends core\module\Filed implements action\handler, core\stringable
   protected $action = null;
   protected $parentParser;
   protected $bRunned = false;
-  protected $bExceptions = false;
+  protected $bExceptions = true;
 
   public function __construct(fs\file $file, array $aArguments = array(), fs\directory $dir = null) {
 

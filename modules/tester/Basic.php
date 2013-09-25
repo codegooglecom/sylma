@@ -66,7 +66,7 @@ abstract class Basic extends Asserter {
 
     $doc = $file->getDocument();
     $doc->registerNamespaces($this->getNS());
-    
+
     if (!$doc->isEmpty()) {
 
       if ($doc->getRoot()->getNamespace() === static::NS) {
@@ -99,7 +99,14 @@ abstract class Basic extends Asserter {
 
     require_once('core/functions/Global.php');
 
-    foreach ($doc->queryx('self:test') as $test) {
+    $tests = $doc->queryx('self:test[@standalone]', array(), false);
+
+    if (!$tests->length) {
+
+      $tests = $doc->queryx('self:test');
+    }
+
+    foreach ($tests as $test) {
 
       if (!$test->testAttribute('disabled', false)) {
 

@@ -263,6 +263,13 @@ class Select extends Wherer implements common\argumentable {
     return $aResult;
   }
 
+  public function getCall($bDebug = false) {
+
+    $bDebug = $this->isMultiple() ? false: true;
+    
+    return parent::getCall($bDebug);
+  }
+
   public function clearOrder() {
 
     $this->order = null;

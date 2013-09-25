@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\formater;
-use \sylma\core, \sylma\dom;
+use sylma\core, sylma\dom;
 
 class Controler extends core\module\Domed {
 
@@ -56,7 +56,9 @@ class Controler extends core\module\Domed {
 
   protected function replaceLineBreak($sContent) {
 
-    return $this->createDocument('<pre xmlns="http://www.w3.org/1999/xhtml">' . htmlspecialchars($sContent) . '</pre>');
+      $result = $this->createDocument('<pre xmlns="http://www.w3.org/1999/xhtml">' . htmlspecialchars($sContent) . '</pre>');
+
+    return $result;
   }
 
   protected function loadObject($val) {
@@ -74,7 +76,7 @@ class Controler extends core\module\Domed {
 
         if (\Sylma::read('debug/html/show')) {
 
-          $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+            $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
         }
         else {
 

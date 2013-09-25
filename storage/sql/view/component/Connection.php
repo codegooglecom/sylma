@@ -15,5 +15,5 @@ class Connection extends Basic {
 
     return $tree->loadConnection($this->readx());
   }
-}
+  }
 

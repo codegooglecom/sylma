@@ -29,25 +29,42 @@ class Basic extends sql\schema\Handler {
 
   public function lookupTemplate(schema\parser\element $element, $sContext, $sMode, $bRoot = false) {
 
-    $iLast = 0;
     $result = null;
+    $current = (object) array(
+      'template' => null,
+      'weight' => 0,
+      'key' => 0,
+    );
 
-    foreach ($this->getTemplates() as $template) {
+    foreach ($this->getTemplates() as $iKey => $template) {
 
       if ($this->getView()->checkTemplate($template, $element->asToken(), false)) continue;
 
       $iWeight = $template->getWeightSchema($element, $sContext, $sMode, $bRoot);
-      if ($iWeight && $iWeight >= $iLast) {
+      if ($iWeight && $iWeight >= $current->weight) {
 
-        $result = $template;
-        $iLast = $iWeight;
+        $current->template = $template;
+        $current->weight = $iWeight;
+        $current->key = $iKey;
       }
     }
 
-    if ($result) {
+    if ($current->template) {
 
-      $result = clone $result;
+      $result = $this->loadTemplate($current->template, $current->key);
     }
+
+    return $result;
+  }
+
+  protected function loadTemplate(template\parser\template $tpl, $iKey) {
+
+    if ($tpl->useOnce()) {
+
+      unset($this->aTemplates[$iKey]);
+    }
+
+    $result = clone $tpl;
 
     return $result;
   }

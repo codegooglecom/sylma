@@ -10,12 +10,13 @@
 
   xmlns:todo="http://2013.sylma,org/modules/todo"
   xmlns:stat="http://2013.sylma,org/modules/todo/statut"
+  xmlns:proj="http://2013.sylma,org/modules/todo/project"
 
   extends="/#sylma/storage/sql/crud.tpl"
 >
 
 
-  <crud:global todo:ns="ns" stat:ns="ns">
+  <crud:global todo:ns="ns" stat:ns="ns" proj:ns="ns">
 
     <le:context name="css">
       <le:file>medias/main.css</le:file>
@@ -29,6 +30,10 @@
 
     <tpl:template match="stat:todo_statut" mode="select-option-value">
       <tpl:read select="value"/>
+    </tpl:template>
+
+    <tpl:template match="proj:todo_project" mode="select-option-value">
+      <tpl:read select="name"/>
     </tpl:template>
 
   </crud:global>
@@ -57,6 +62,18 @@
 
     <le:context name="title">Tasks</le:context>
 
+    <tpl:template mode="admin/actions">
+      <tpl:variable name="dir">
+        <le:directory/>
+      </tpl:variable>
+      <a class="button" href="{$dir}/statut">Statuts</a>
+      <a class="button" href="{$dir}/project">Projects</a>
+    </tpl:template>
+
+    <tpl:template match="todo:description">
+      <tpl:read select="format(length=120)"/>
+    </tpl:template>
+
     <tpl:template match="stat:todo_statut">
       <tpl:read select="value"/>
     </tpl:template>
@@ -66,17 +83,6 @@
         <tpl:token name="class">finished</tpl:token>
       </tpl:if>
       <tpl:apply mode="row/init"/>
-    </tpl:template>
-
-  </crud:group>
-
-  <crud:group name="view">
-
-    <tpl:import>/#sylma/modules/datepicker/init.tpl</tpl:import>
-
-    <tpl:template>
-      <tpl:apply mode="date/prepare"/>
-      <tpl:apply/>
     </tpl:template>
 
   </crud:group>

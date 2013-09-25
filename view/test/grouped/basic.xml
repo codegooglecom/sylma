@@ -76,6 +76,27 @@
       <div><h3>&lt;admin&gt;</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="multiple resources">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <sql:resource>
+          <sql:id>3</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <h3>
+            <tpl:read select="name"/>
+          </h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <h3>webmaster</h3>
+    </tst:node>
+  </tst:test>
   <tst:test name="cdata">
     <tst:document>
       <view:view sql:ns="ns">
@@ -154,6 +175,68 @@
     </tst:document>
     <tst:node>
       <div><h3>admin</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Template precedence">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="id,name"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="*">
+          <first>
+            <tpl:read/>
+          </first>
+        </tpl:template>
+        <tpl:template match="*">
+          <second>
+            <tpl:read/>
+          </second>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <second>2</second>
+        <second>admin</second>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Template once">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="id,name"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="*">
+          <first>
+            <tpl:read/>
+          </first>
+        </tpl:template>
+        <tpl:template match="*" once="x">
+          <second>
+            <tpl:read/>
+          </second>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <second>2</second>
+        <first>admin</first>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Value in string">

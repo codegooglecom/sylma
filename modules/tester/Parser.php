@@ -67,9 +67,9 @@ class Parser extends tester\Prepare {
 
       $manager = $this->getManager(self::PARSER_MANAGER);
       $result = $this->buildResult($test, $manager, $cache, $aArguments);
-    }
 
-    $this->set('result', $result);
+      $this->set('result', $result);
+    }
 
     return $result;
   }
@@ -122,8 +122,11 @@ class Parser extends tester\Prepare {
 
   protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
+    $this->set('result', null);
+
     try {
 
+      $this->prepareTest($test, $controler);
       $this->parseResult($test, $file);
     }
     catch (core\exception $e) {
@@ -149,6 +152,11 @@ class Parser extends tester\Prepare {
   public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array(), $bRun = true) {
 
     return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $this->buildScriptArguments($aArguments, $aContexts, $aPosts), true, $bRun);
+  }
+
+  public function getAction($sPath, array $aArguments = array()) {
+
+    return $this->getManager('action')->runAction($sPath, $aArguments);
   }
 
   public function buildScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {

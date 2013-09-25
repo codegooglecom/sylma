@@ -12,9 +12,9 @@ abstract class Prepare extends Basic {
 
     $bResult = true;
 
-    if ($sPrepare = $test->readx('self:prepare', array(), false)) {
+    if ($prepare = $test->getx('self:prepare', array(), false)) {
 
-      if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $sPrepare . '; };'))) {
+      if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $prepare->readx() . '; };'))) {
 
         $this->evaluate($closure, $controler);
         $this->onPrepared();
@@ -23,6 +23,8 @@ abstract class Prepare extends Basic {
 
         $bResult = false;
       }
+
+      $prepare->remove();
     }
 
     return $bResult;

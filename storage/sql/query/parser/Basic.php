@@ -115,14 +115,14 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     return $aResult;
   }
 
-  public function getCall() {
+  public function getCall($bDebug = true) {
 
     if (!$this->getTables()) {
 
       $this->launchException('No table defined');
     }
 
-    return $this->getConnection()->call($this->getMethod(), array(new Caller($this), false), '\sylma\core\argument');
+    return $this->getConnection()->call($this->getMethod(), array(new Caller($this), $bDebug), '\sylma\core\argument');
   }
 
   public function setMethod($sName) {

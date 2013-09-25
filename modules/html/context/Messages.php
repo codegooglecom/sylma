@@ -10,6 +10,11 @@ class Messages extends core\module\Domed implements core\argumentable, dom\domab
     $this->setArguments(array());
   }
 
+  public function isEmpty() {
+
+    return !$this->getArguments()->query();
+  }
+
   public function add($mVal) {
 //if (!is_array($mVal)) $this->launchException ('Bad message');
     $this->getArguments()->add($mVal);

@@ -376,6 +376,11 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
     return $iResult;
   }
 
+  public function useOnce() {
+
+    return $this->readx('@once');
+  }
+
   public function getPather() {
 
     //if (!$this->pather) {

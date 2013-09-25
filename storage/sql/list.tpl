@@ -31,6 +31,7 @@
           </tpl:token>
           Structure
         </a>
+        <tpl:apply mode="actions"/>
       </div>
       <table js:class="sylma.crud.Table" js:name="table" class="sylma-list sql-{static()/name()}">
         <tpl:apply select="static()" mode="head/row"/>
