@@ -52,7 +52,15 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
             <div id="messages"/>
             <div id="container">
               <div id="containerWrapper">
+                <div id="intro">
+                  <h3>Welcome,</h3>
+                  <p cmp:ignore="x">
+ This is your dashboard to manage all datas related to your website.<br/>
+ Choose a category for more options.
+ </p>
+                </div>
                 <div id="content">
+                  <div id="main"/>
                   <hello/>
                 </div>
               </div>

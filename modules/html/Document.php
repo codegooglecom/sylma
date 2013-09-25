@@ -118,12 +118,15 @@ class Document extends core\window\classes\Container {
 
       case 'title' :
 
-        if (!$title = $this->getHead()->getx('//html:title', array(), false)) {
+        if ($context && $context->query()) {
 
-          $title = $this->getHead()->addElement('title');
+          if (!$title = $this->getHead()->getx('//html:title', array(), false)) {
+
+            $title = $this->getHead()->addElement('title');
+          }
+
+          $title->add(' - ' . $context->read(0));
         }
-
-        if ($context && $context->query()) $title->add(' - ' . $context->read(0));
 
         break;
 
