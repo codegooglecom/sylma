@@ -53,6 +53,11 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     return $this;
   }
 
+  public function setSchema() {
+
+    $this->launchException('Not yet ready');
+  }
+
   protected function build() {
 
     $view = $this->lookupParser(self::VIEW_NS);

@@ -41,6 +41,16 @@ class _Class extends Basic implements common\arrayable {
     return $this->sName;
   }
 
+  protected function loadParent() {
+
+    return $this->readx('@js:parent');
+  }
+
+  protected function loadParentName() {
+
+    return $this->readx('@js:parent-name');
+  }
+
   protected function build() {
 
     $this->init();
@@ -87,7 +97,7 @@ class _Class extends Basic implements common\arrayable {
 
     $this->loadID();
 
-    $sParent = $this->readx('@js:parent');
+    $sParent = $this->loadParent();
 
     if ($this->isRoot()) {
 
@@ -95,11 +105,16 @@ class _Class extends Basic implements common\arrayable {
     }
     else if ($sParent) {
 
-      $this->throwException(sprintf('@attribute parent must only appears on root element'));
+      $this->throwException('@attribute parent must only appears on root element');
     }
 
     $this->setExtend($this->readx('@js:class'));
     $obj->setProperty('Extends', $this->getWindow()->createVariable($this->getExtend()));
+
+    if ($sParentName = $this->loadParentName()) {
+
+      $obj->setProperty('sylma.parentName', $sParentName);
+    }
     //$this->setExtend($this->readx('@js:class'));
 
     //$obj->setProperty('name', $bName);
@@ -167,6 +182,7 @@ class _Class extends Basic implements common\arrayable {
         $container = $this->getParser()->getContainer();
         $class = $this->getWindow()->createObject(array(), 'Class');
         $new = $this->getWindow()->createInstanciate($class, array($obj));
+
         $container->setProperty($this->getID(), $new);
       }
 

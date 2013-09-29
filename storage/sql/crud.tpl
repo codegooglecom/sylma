@@ -11,7 +11,7 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
-  <crud:route groups="list">
+  <crud:route groups="list,crud">
 
     <view:view mode="view" groups="view" _debug="x">
 
@@ -32,7 +32,7 @@
 
   </crud:route>
 
-  <crud:route name="insert" groups="form">
+  <crud:route name="insert" groups="form,crud">
 
     <view:view mode="hollow" groups="view" _debug="x">
 
@@ -43,11 +43,11 @@
 
     </view:view>
 
-    <view:view name="do" mode="insert"/>
+    <view:view name="do" mode="insert" groups="do"/>
 
   </crud:route>
 
-  <crud:route name="update" groups="form">
+  <crud:route name="update" groups="form,crud">
 
     <view:view mode="view" _debug="x" groups="view" sql:ns="ns">
 
@@ -63,7 +63,7 @@
 
     </view:view>
 
-    <view:view name="do" mode="update">
+    <view:view name="do" mode="update" groups="do">
       <sql:filter name="id"><le:get-argument name="id" source="post"/></sql:filter>
     </view:view>
 
@@ -104,5 +104,7 @@
     <crud:import>list.tpl</crud:import>
 
   </crud:group>
+
+  <crud:group name="do"/>
 
 </crud:crud>

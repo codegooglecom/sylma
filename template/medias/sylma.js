@@ -226,6 +226,8 @@ sylma.ui = new sylma.classes.ui;
 
     Implements : Options,
 
+    sylma : {},
+
     /**
      * List of unnamed sub-objects
      */
@@ -256,6 +258,8 @@ sylma.ui = new sylma.classes.ui;
 
       this.tmp = [];
 
+      //if (props.sylma) this.sylma = Object.merge(this.sylma, props.sylma);
+
       this.initBasic(props);
 
       //if (props.methods) this.initMethods(props.methods);
@@ -263,6 +267,10 @@ sylma.ui = new sylma.classes.ui;
       if (this.nodes) this.initNodes(this.nodes);
 
       if (props.options) this.initOptions(props.options);
+
+      this.initParents(props.sylma);
+      this.initParentName(this.sylma);
+
       if (props.objects) this.initObjects(props.objects);
     },
 
@@ -283,6 +291,22 @@ sylma.ui = new sylma.classes.ui;
       this.prepareNodes(this.node);
     },
 
+    initParents : function(props) {
+
+      this.sylma.parents = props && props.parents ? props.parents : {};
+    },
+
+    initParentName : function(props) {
+
+      var name = props.parentName;
+
+      if (name) {
+
+        this.sylma.parents[name] = this;
+        //console.log(this.getParents());
+      }
+    },
+
     initObjects : function(objects) {
 
       for (var key in objects) {
@@ -295,6 +319,9 @@ sylma.ui = new sylma.classes.ui;
 
       props.parentObject = this;
       props.parentKey = props.name ? key : this.tmp.length;
+      props.sylma = {
+        parents : this.getParents()
+      };
 
       var obj = ui.createObject(props);
 
@@ -401,14 +428,47 @@ sylma.ui = new sylma.classes.ui;
       return result;
     },
 
-    getParent : function(depth) {
+    getParent : function(key, debug) {
 
       var result;
+/*
+      if (!this.parentObject && debug === null) {
 
-      if (depth && this.parentObject) result = this.parentObject.getParent(--depth);
-      else result = this.parentObject;
+        throw new Error('No parent defined');
+      }
+*/
+      if (key && this.parentObject) {
+
+        if (typeOf(key) === 'string') {
+
+          result = this.getParentFromName(key);
+        }
+        else {
+
+          result = this.getParentFromDepth(key);
+        }
+      }
+      else {
+
+        result = this.parentObject;
+      }
 
       return result;
+    },
+
+    getParentFromDepth : function(depth) {
+
+      return this.parentObject.getParent(--depth);
+    },
+
+    getParentFromName : function(name) {
+
+      return this.sylma.parents[name];
+    },
+
+    getParents : function() {
+
+      return this.sylma.parents;
     },
 
     getObject : function(name, debug) {

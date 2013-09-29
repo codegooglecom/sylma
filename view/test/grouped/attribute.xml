@@ -53,7 +53,7 @@
       <div><a href="/test/2:admin@sylma.org">test</a></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Multiple values 2 in attribute">
+  <tst:test name="Multiple values in attributes 2">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource>
@@ -72,6 +72,26 @@
       <div>
         <a href="/test/admin@sylma.org hello">test</a>
         <a href="2hello">test</a>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple values in attributes 3">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <a href="/{id}*{email}|{name}"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <a href="/2*admin@sylma.org|admin"/>
       </div>
     </tst:node>
   </tst:test>

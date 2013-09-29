@@ -58,6 +58,12 @@ fieldset h3:first-letter
   border-bottom: 0;
 }
 
+legend
+{
+  font-size: 1.4em;
+  text-transform: capitalize;
+}
+
 div.field {
   margin-bottom: 0.5em;
 }

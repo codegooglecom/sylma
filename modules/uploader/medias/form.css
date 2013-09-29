@@ -27,6 +27,24 @@ div.sylma-uploader > span
   background: url(icones/file.png) no-repeat 0 50%;
 }
 
+.field-file img
+{
+  float: left;
+  margin-right: 1em;
+}
+
+.field-file .infos
+{
+  float: left;
+  padding-left: 1em;
+  border-left: 1px solid #ccc;
+}
+
+.field-file h4
+{
+  margin: 0;
+}
+
 .field-file-extension-rar,
 .field-file-extension-gzip,
 .field-file-extension-zip
@@ -38,7 +56,8 @@ div.sylma-uploader > span
 .field-file-extension-jpeg,
 .field-file-extension-png
 {
-  background-image: url(icones/image.png);
+  background: none;
+  padding-left: 0.5em;
 }
 
 .field-file-extension-pdf

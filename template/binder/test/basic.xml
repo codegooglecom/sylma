@@ -251,6 +251,34 @@
       return node.getChildren()[0].get('text') === 'bonsoir';
     </tst:expected>
   </tst:test>
+  <tst:test name="Parent named">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div la:class="sylma.ui.Base" la:parent="example" la:name="test" la:parent-name="hello">
+            <div>Hello world</div>
+            <div la:class="sylma.ui.Base" la:name="sub1">
+              <div la:class="sylma.ui.Base" la:name="sub2">
+                <h2>abc</h2>
+              </div>
+            </div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var sub1 = test.getObject('sub1');
+
+      return
+        test === sub1.getParent('hello') &amp;&amp;
+        test === sub1.getObject('sub2').getParent('hello');
+    </tst:expected>
+  </tst:test>
   <tst:test name="Sub object with dynamic name">
     <tst:document>
       <view:view user:ns="ns">

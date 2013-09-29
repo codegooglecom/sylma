@@ -689,7 +689,7 @@ sylma.crud.fieldset = {};
 
     sendFile : function() {
 
-      var form = this.getParent(4).getObject('uploader');
+      var form = this.getParent('uploader-container').getObject('uploader');
 
       var input = this.getInput();
       var clone = input.clone(true);

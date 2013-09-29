@@ -76,8 +76,6 @@
       <input type="hidden" name="{$prefix}[path]" value="{path}"/>
       <input type="hidden" name="{$prefix}[size]" value="{size}"/>
       <input type="hidden" name="{$prefix}[extension]" value="{extension}"/>
-      <h4><tpl:read select="name"/></h4>
-      <em><tpl:read select="size"/> Ko</em>
       <tpl:apply mode="file/view"/>
       <button type="button" class="right">
         <js:event name="click">
@@ -87,6 +85,13 @@
       </button>
     </div>
 
+  </tpl:template>
+
+  <tpl:template match="*" mode="file/view">
+    <div class="infos">
+      <h4><tpl:read select="name"/></h4>
+      <em><tpl:read select="size"/> Ko</em>
+    </div>
   </tpl:template>
 
 </view:view>

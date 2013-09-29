@@ -252,7 +252,7 @@ button.button
 .sylma-list th a.sylma-highlight
 {
   color: #ec008c;
-  background: url('/images/arrows.png') no-repeat;
+  background: url('arrows.png') no-repeat;
   background-position: 100% 16px;
 }
 

@@ -421,19 +421,21 @@ class Template extends Child implements common\arrayable, template_ns\parser\tem
 
         $iStart = $aResult[0][1];
 
-        $iVarLength = strlen($aResult[0][0]);
+        $iVarLength = mb_strlen($aResult[0][0]);
         $val = $this->applyPath($aResult[1][0], '');
 
-        $sStart = substr($sValue, $iOffset, $iStart - $iOffset);
+        $iDiff = $iStart - $iOffset;
+
+        $sStart = mb_substr($sValue, $iOffset, $iDiff);
 
         if ($i == (count($aMatches) - 1)) {
 
-          $mResult[] = array($sStart, $val, substr($sValue, $iStart + $iVarLength));
+          $mResult[] = array($sStart, $val, mb_substr($sValue, $iStart + $iVarLength));
         }
         else {
 
           $mResult[] = array($sStart, $val);
-          $iOffset += $iStart + $iVarLength;
+          $iOffset += $iDiff + $iVarLength;
         }
       }
     }
