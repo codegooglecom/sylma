@@ -67,15 +67,15 @@
   </tpl:template>
 
   <tpl:template match="*" mode="file/update">
-    <tpl:argument name="alias"/>
     <tpl:argument name="position" default="position()"/>
+    <tpl:argument name="alias"/>
     <tpl:argument name="prefix" default="'{$alias}[{$position}]'"/>
 
     <div js:class="sylma.crud.fieldset.File" class="field-file sylma-hidder sylma-visible form-reference field-file-extension-{extension}">
-      <input type="hidden" name="{$prefix}[name]" value="{name}"/>
-      <input type="hidden" name="{$prefix}[path]" value="{path}"/>
-      <input type="hidden" name="{$prefix}[size]" value="{size}"/>
-      <input type="hidden" name="{$prefix}[extension]" value="{extension}"/>
+      <tpl:apply mode="file/inputs">
+        <tpl:read select="$prefix" tpl:name="prefix"/>
+        <tpl:read select="$position" tpl:name="position"/>
+      </tpl:apply>
       <tpl:apply mode="file/view"/>
       <button type="button" class="right">
         <js:event name="click">
@@ -84,6 +84,17 @@
         <tpl:text>-</tpl:text>
       </button>
     </div>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="file/inputs">
+
+    <tpl:argument name="prefix"/>
+
+    <input type="hidden" name="{$prefix}[name]" value="{name}"/>
+    <input type="hidden" name="{$prefix}[path]" value="{path}"/>
+    <input type="hidden" name="{$prefix}[size]" value="{size}"/>
+    <input type="hidden" name="{$prefix}[extension]" value="{extension}"/>
 
   </tpl:template>
 

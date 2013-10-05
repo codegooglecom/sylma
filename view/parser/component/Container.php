@@ -3,7 +3,7 @@
 namespace sylma\view\parser\component;
 use sylma\core, sylma\dom, sylma\schema as schema_ns, sylma\template as template_ns;
 
-class Container extends template_ns\parser\component\Template {
+class Container extends template_ns\parser\template\Argumented {
 
   const CONTEXT_ELEMENT = 'element';
   const CONTEXT_TYPE = 'type';

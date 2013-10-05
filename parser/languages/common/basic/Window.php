@@ -217,6 +217,24 @@ return; // todo, decide to use or not
     return $result;
   }
 
+  public function parse($mContent) {
+
+    if (!$mContent) {
+
+      $mResult = $mContent;
+    }
+    else if (is_array($mContent)) {
+
+      $mResult = $this->parseArrayables($mContent);
+    }
+    else {
+
+      $mResult = current($this->parseArrayables(array($mContent)));
+    }
+
+    return $mResult;
+  }
+
   public function parseArrayables(array $aContent) {
 
     //$aContent =
@@ -324,7 +342,7 @@ return; // todo, decide to use or not
 
         if ($bDebug || !$target) {
 
-          $this->launchException('Structure not allowed here');
+          $this->launchException('Structure not allowed here', get_defined_vars());
         }
 
         $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);
@@ -335,13 +353,13 @@ return; // todo, decide to use or not
       }
       else if ($mVal instanceof common\basic\Assign) {
 
-        $this->launchException('Assign not allowed here');
+        $this->launchException('Assign not allowed here', get_defined_vars());
       }
       else if ($mVal instanceof common\instruction) {
 
         if ($bDebug || !$target) {
 
-          $this->launchException('Instruction not allowed here');
+          $this->launchException('Instruction not allowed here', get_defined_vars());
         }
 
         $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);

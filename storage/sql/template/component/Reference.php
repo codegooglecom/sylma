@@ -42,6 +42,9 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     return $result;
   }
 
+  /**
+   * @return sql\schema\foreign
+   */
   protected function getForeign() {
 
     if (is_null($this->foreign)) {

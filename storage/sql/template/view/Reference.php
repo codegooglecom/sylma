@@ -16,12 +16,39 @@ class Reference extends sql\template\component\Reference {
         $result = $this->getParser()->parsePathToken($this->getCollection(), $aPath, $sMode, $aArguments);
         break;
 
+      case 'join' : $result = $this->reflectFunctionJoin($aPath, $sMode, $aArguments); break;
+
       default :
 
         $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $result;
+  }
+
+  protected function reflectFunctionJoin(array $aPath, $sMode, array $aArguments = array()) {
+
+    $foreign = $this->getForeign();
+
+    if ($foreign->getMaxOccurs(true)) {
+
+      $this->launchException('Not implemented');
+    }
+    else {
+
+      $targetTable = $this->getElementRef();
+      $currentTable = $this->getParent();
+
+      $query = $currentTable->getQuery();
+
+      $targetTable->setSource($currentTable->getSource());
+      $targetTable->setQuery($query);
+      $targetTable->insertQuery(false);
+
+      $query->addJoin($targetTable, $foreign, $currentTable->getElement('id'));
+    }
+
+    return $this->getParser()->parsePathToken($targetTable, $aPath, $sMode, false, $aArguments);
   }
 
   protected function getCollection() {

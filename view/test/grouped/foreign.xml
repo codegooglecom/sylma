@@ -256,6 +256,88 @@
       <div><h3>root</h3><li>group01</li><li>group02</li></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Join">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x">
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <view:template match="user:user">
+          <h3><tpl:apply select="name"/></h3>
+          <tpl:apply select="group/join()"/>
+        </view:template>
+        <view:template match="group:group"/>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <h3>root</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Join with select">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x">
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <view:template match="user:user">
+          <h3><tpl:apply select="name"/></h3>
+          <tpl:apply select="group/join()"/>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:read select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <li>group01</li>
+        <h3>root</h3>
+        <li>group02</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Join with distinct">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x">
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <view:template match="user:user">
+          <sql:distinct name="id"/>
+          <h3><tpl:apply select="name"/></h3>
+          <tpl:apply select="group/join()"/>
+        </view:template>
+        <view:template match="group:group"/>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Foreign multiple values">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">

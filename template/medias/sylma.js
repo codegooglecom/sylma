@@ -91,7 +91,7 @@ sylma.classes = {
       return new parent(props);
     },
 
-    import : function(val, name) {
+    importNode : function(val, name) {
 
       name = name || 'div';
 
@@ -187,7 +187,7 @@ sylma.classes = {
 
           for (var i in result.errors) {
 
-            this.addMessage(this.import(result.errors[i].content), container);
+            this.addMessage(this.importNode(result.errors[i].content), container);
           }
         }
       }
@@ -526,7 +526,7 @@ sylma.ui = new sylma.classes.ui;
       }).delay(2000, this);
     },
 
-    import : function(response, parent) {
+    importResponse : function(response, parent) {
 
       if (response.classes) {
 
@@ -584,8 +584,8 @@ sylma.ui = new sylma.classes.ui;
         target = this.getNode();
       }
 
-      sylma.ui.import(result.content, name).replaces(target);
-      var props = this.import(result, this.getParent());
+      sylma.ui.importNode(result.content, name).replaces(target);
+      var props = this.importResponse(result, this.getParent());
 
       this.initialize(props);
     },

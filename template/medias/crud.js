@@ -721,9 +721,9 @@ sylma.crud.fieldset = {};
 
       if (response.content) {
 
-        sylma.ui.import(response.content).inject(this.getNode().getParent());
+        sylma.ui.importNode(response.content).inject(this.getNode().getParent());
 
-        var obj = sylma.ui.createObject(this.import(response, this));
+        var obj = sylma.ui.createObject(this.importResponse(response, this));
         this.tmp.push(obj);
 
         this.position++;

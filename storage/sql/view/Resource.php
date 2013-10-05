@@ -90,11 +90,8 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
       $this->setTree($collection);
     }
-    else {
 
-      $this->addID();
-    }
-
+    $this->addID();
     $this->getTree()->isRoot(true);
 
     return $schema;

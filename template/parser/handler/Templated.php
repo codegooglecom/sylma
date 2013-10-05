@@ -114,7 +114,7 @@ abstract class Templated extends reflector\handler\Elemented {
     return $this->aTemplates;
   }
 
-  protected function addTemplate(parser\component\Template $template) {
+  protected function addTemplate(parser\template $template) {
 
     $this->aTemplates[] = $template;
   }

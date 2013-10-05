@@ -18,7 +18,7 @@ class Select extends Wherer implements common\argumentable {
   protected $aClones = array();
   protected $main;
 
-  public function setElement(schema\parser\element $el) {
+  public function setElement(schema\parser\element $el, $bDistinct = false) {
 
     $sName = $el->getName();
     $bAdd = true;
@@ -41,7 +41,12 @@ class Select extends Wherer implements common\argumentable {
 
     if ($bAdd) {
 
-      $this->setColumn($el->asAlias());
+      $sName = $el->asAlias();
+
+      if ($bDistinct) $mContent = array('DISTINCT ', $sName);
+      else $mContent = $sName;
+      
+      $this->setColumn($mContent);
     }
 
     $this->aElements[] = $el;
@@ -266,7 +271,7 @@ class Select extends Wherer implements common\argumentable {
   public function getCall($bDebug = false) {
 
     $bDebug = $this->isMultiple() ? false: true;
-    
+
     return parent::getCall($bDebug);
   }
 

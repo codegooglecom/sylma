@@ -7,13 +7,6 @@
       <mode>744</mode>
     </security>
   </file>
-  <file name="login.js">
-    <security>
-      <owner>root</owner>
-      <group>admin</group>
-      <mode>744</mode>
-    </security>
-  </file>
   <file name="crud.vml">
     <security>
       <owner>root</owner>

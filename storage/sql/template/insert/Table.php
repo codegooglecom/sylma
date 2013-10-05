@@ -95,6 +95,11 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $window = $this->getWindow();
     $view = $this->getParser()->getView();
 
+    if ($key) {
+
+      $this->setKey($key);
+    }
+
     if (!$view->isInternal()) {
 
       $sToken = (string) $view->getRoot()->asPath();
@@ -122,6 +127,11 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
       $this->addContent($handler->call('setSub', array($this->getParent()->getAlias(), $key, $parent)));
     }
+  }
+
+  protected function getPosition() {
+
+    return $this->getKey();
   }
 
   public function getHandler($bDebug = true) {

@@ -105,10 +105,14 @@ class Directory extends Resource implements fs\directory {
 
   public function browse(core\argument $arg = null, $bRoot = true) {
 
+    $tmp = $this->getControler()->getArgument('browse');
+
     if ($arg) {
 
-      $tmp = $this->getControler()->getArgument('browse');
       $tmp->merge($arg);
+      $arg = $tmp;
+    }
+    else {
 
       $arg = $tmp;
     }
@@ -118,8 +122,8 @@ class Directory extends Resource implements fs\directory {
 
     $bOnlyPath = $arg->read('only-path');
     $iDepth = $arg->read('depth');
-    $aExtensions = $arg->query('extensions');
-    $aPaths = $arg->query('excluded');
+    $aExtensions = $arg->query('extensions', false);
+    $aPaths = $arg->query('excluded', false);
     $bInsertRoot = $bRoot ? $arg->read('root') : false;
 
     if ($iDepth) {

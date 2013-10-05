@@ -20,6 +20,7 @@ class Foreign extends sql\template\component\Foreign {
     switch ($sName) {
 
       case 'values' : $result = $this->reflectValues(); break;
+      case 'join' : $result = $this->reflectFunctionJoin($aPath, $sMode, $aArguments); break;
 
       default :
 
@@ -61,6 +62,25 @@ class Foreign extends sql\template\component\Foreign {
     $result = $this->applyElement($aPath, $sMode, $aArguments);
 
     return $result;
+  }
+
+  protected function reflectFunctionJoin(array $aPath, $sMode, array $aArguments = array()) {
+
+    $targetTable = $this->getElementRef();
+    $currentTable = $this->getParent();
+
+    $query = $currentTable->getQuery();
+
+    $targetTable->setSource($currentTable->getSource());
+    $targetTable->setQuery($query);
+    $targetTable->insertQuery(false);
+
+    list($junctionTable, $junctionCurrent, $junctionTarget) = $this->loadJunction();
+
+    $query->addJoin($junctionTable, $junctionCurrent, $currentTable->getElement('id'));
+    $query->addJoin($targetTable, $junctionTarget, $targetTable->getElement('id'));
+
+    return $this->getParser()->parsePathToken($targetTable, $aPath, $sMode, false, $aArguments);
   }
 
   protected function buildSingle() {

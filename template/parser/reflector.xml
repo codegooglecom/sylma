@@ -17,7 +17,7 @@
             <cls:class alias="constant" name="component\Constant"/>
             <cls:class alias="import" name="component\Import"/>
 
-            <cls:class alias="template" name="Template">
+            <cls:class alias="template" name="template\Argumented">
               <cls:classes>
                 <cls:base>\sylma\template\parser\component</cls:base>
                 <cls:class alias="pather" name="\sylma\template\parser\Pather"/>

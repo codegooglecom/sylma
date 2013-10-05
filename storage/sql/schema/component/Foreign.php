@@ -105,15 +105,18 @@ class Foreign extends Element implements sql\schema\foreign {
     $this->setOccurs($iMin, $iMax);
   }
 
+  /**
+   * @return array A an array containing element of the junction table : (table, current foreign, target foreign)
+   */
   protected function loadJunction() {
 
     $sName = $this->readx('@junction', true);
 
-    $field = $this->getElementRef();
+    $ref = $this->getElementRef();
     $parent = $this->getParent();
 
-    $sSource = 'id_' . $parent->getName();
-    $sTarget = 'id_' . $field->getName();
+    $sCurrent = 'id_' . $parent->getName();
+    $sTarget = 'id_' . $ref->getName();
     $sConnection = $parent->getConnectionAlias();
 
     $doc = $this->createArgument(array(
@@ -124,7 +127,7 @@ class Foreign extends Element implements sql\schema\foreign {
           '@connection' => $sConnection,
           '#foreign' => array(
             array(
-              '@name' => $sSource,
+              '@name' => $sCurrent,
               '@occurs' => '0..1',
               '@table' => 't1:' . $parent->getName(),
               '@import' => (string) $this->getSourceFile(),
@@ -132,7 +135,7 @@ class Foreign extends Element implements sql\schema\foreign {
             array(
               '@name' => $sTarget,
               '@occurs' => '0..1',
-              '@table' => 't2:' . $field->getName(),
+              '@table' => 't2:' . $ref->getName(),
               '@import' => (string) $this->getSourceFile($this->readx('@import')),
             ),
           ),
@@ -142,7 +145,7 @@ class Foreign extends Element implements sql\schema\foreign {
 
     $doc->registerNamespaces(array(
       't1' => $this->getNamespace(),
-      't2' => $field->getNamespace(),
+      't2' => $ref->getNamespace(),
     ));
 
     $sql = $this->getManager(self::DB_MANAGER)->getConnection($sConnection);
@@ -162,12 +165,12 @@ class Foreign extends Element implements sql\schema\foreign {
     $table = $this->getParser()->getElement($sElement, $this->getNamespace());
     $table->isSub(true);
 
-    $source = $table->getElement($sSource);
+    $current = $table->getElement($sCurrent);
     $target = $table->getElement($sTarget);
 
     $this->getParser()->resetMode();
 
-    return array($table, $source, $target);
+    return array($table, $current, $target);
   }
 
 }

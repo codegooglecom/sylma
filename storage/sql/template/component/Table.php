@@ -168,7 +168,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     $this->launchException('Cannot read table');
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
@@ -184,7 +184,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
       default :
 
-        $this->launchException(sprintf('Uknown function "%s()"', $sName), get_defined_vars());
+        $result = $this->getParser()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
     }
 
     return $result;
@@ -192,10 +192,16 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   protected function getPosition() {
 
+    if (!$key = $this->getKey()) {
+
+      //$key = $this->getParent()->getKey();
+      $this->launchException('No key defined, maybe not in a loop');
+    }
+
     $window = $this->getWindow();
 
     return $window->createExpression(array(
-      $this->getKey(),
+      $key,
       $window->createOperator('+'),
       $window->createNumeric(1),
     ));
