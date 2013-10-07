@@ -30,7 +30,7 @@ abstract class Argumented extends Managed {
 
   /**
    *
-   * @return \sylma\core\factory
+   * @return core\factory
    */
   protected function getFactory($bCreate = true) {
 

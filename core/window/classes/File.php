@@ -3,23 +3,17 @@
 namespace sylma\core\window\classes;
 use sylma\core, sylma\storage\fs;
 
-class File extends core\module\Managed implements core\window\file {
+class File extends core\module\Filed implements core\window\file {
 
-  protected $file;
-
-  public function __construct(core\Initializer $manager) {
+  public function __construct(core\Initializer $manager, core\argument $args = null) {
 
     $this->setManager($manager);
+    $this->setSettings($args);
   }
 
   public function setFile(fs\file $file) {
 
-    $this->file = $file;
-  }
-
-  protected function getFile() {
-
-    return $this->file;
+    return parent::setFile($file);
   }
 
   public function asString() {

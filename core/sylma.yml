@@ -53,6 +53,22 @@ initializer :
     woff : application/x-font-woff
     vcf : text/x-vcard
   executables : [json, png, txt, xml]
+  images :
+    extensions : [jpg, jpeg, png, gif]
+    rebuild : false
+    size :
+      small :
+        width : 200
+        height : 150
+      medium :
+        width : 400
+        height : 300
+      large :
+        width : 800
+        height : 600
+    classes :
+      builder :
+        name : \sylma\core\window\classes\ImageBuilder
   window :
     error :
       action : /#sylma/modules/html/error.vml
@@ -71,6 +87,8 @@ initializer :
   redirect :
     extension : redirect
   classes :
+    images :
+      name : \sylma\core\window\classes\Image
     html :
       name : \sylma\modules\html\Document
     redirect :

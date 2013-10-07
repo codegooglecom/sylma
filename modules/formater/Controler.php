@@ -158,7 +158,7 @@ class Controler extends core\module\Domed {
 
   protected function loadString($sVal) {
 
-    return array('string' => $sVal);
+    return array('string' => mb_check_encoding($sVal) ? $sVal : '[invalid utf-8]');
   }
 
   protected function loadNumeric($iVal) {

@@ -106,5 +106,6 @@
   </crud:group>
 
   <crud:group name="do"/>
+  <crud:group name="crud"/>
 
 </crud:crud>

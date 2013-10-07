@@ -24,5 +24,5 @@ class Init01 extends core\Initializer {
 
     return $this->aGET;
   }
-}
+  }
 

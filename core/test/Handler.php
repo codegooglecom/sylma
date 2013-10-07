@@ -89,6 +89,11 @@ class Handler extends tester\Parser implements core\argumentable {
     ));
   }
 
+  public function getFile($sPath = '', $bDebug = true) {
+
+    return parent::getFile($sPath, $bDebug);
+  }
+
   public function restoreSylma() {
 
     \Sylma::setManagers($this->getManagers());
@@ -103,6 +108,8 @@ class Handler extends tester\Parser implements core\argumentable {
     $result = parent::asArgument();
 
     $this->restoreSylma();
+    $init = $this->getManager('init');
+    $init->setHeaderContent($init->getMime('html'));
     $args->set('debug/enable', true);
 
     return $result;

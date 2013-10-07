@@ -14,4 +14,11 @@
       <mode>710</mode>
     </security>
   </file>
+  <file name="image01.jpg">
+    <security>
+      <owner>root</owner>
+      <group>test01</group>
+      <mode>740</mode>
+    </security>
+  </file>
 </directory>

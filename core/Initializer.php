@@ -54,6 +54,8 @@ class Initializer extends module\Domed {
   public function run($settings) {
 
     $this->setArguments($this->createArgument($settings->query()));
+    $this->setSettings($this->getArguments());
+
     //$this->setArguments($settings);
     $this->setErrorReporting();
 
@@ -109,8 +111,15 @@ class Initializer extends module\Domed {
 
     if ($file = $path->asFile()) {
 
-      // A file
-      $sResult = $this->createWindowFile($file);
+      if (in_array($file->getExtension(), $this->query('images/extensions'))) {
+
+        $window = $this->create('images', array($this, $this->get('images')));
+        $sResult = $this->loadWindowFile($file, $window);
+      }
+      else {
+
+        $sResult = $this->createWindowFile($file);
+      }
     }
     else {
 
