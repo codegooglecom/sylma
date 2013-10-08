@@ -43,12 +43,12 @@
           <script type="text/javascript" src="/sylma/template/medias/mootools.js"> </script>
           <script type="text/javascript" src="/sylma/template/medias/sylma.js"> </script>
           <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
 //]]>
     </script>
         </head>
         <body>
-          <div>
+          <div id="body">
             <div id="messages"/>
             <div id="container">
               <div id="containerWrapper">
@@ -94,7 +94,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
       <html anyclass="x">
         <head>
           <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
 //]]>
     </script>
         </head>
@@ -184,10 +184,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     <tst:node>
       <html anyclass="x">
         <head>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
-//]]>
-    </script>
+          <script type="text/javascript" cmp:ignore="x"/>
         </head>
         <body>
           <div id="messages"/>
@@ -218,10 +215,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     <tst:node>
       <html anyclass="x">
         <head>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
-//]]>
-    </script>
+          <script type="text/javascript" cmp:ignore="x"/>
         </head>
         <body>
           <div id="messages"/>
@@ -256,10 +250,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     <tst:node>
       <html anyclass="x">
         <head>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
-//]]>
-    </script>
+          <script type="text/javascript" cmp:ignore="x"/>
         </head>
         <body>
           <div id="messages"/>
@@ -292,10 +283,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     <tst:node>
       <html anyclass="x">
         <head>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) });
-//]]>
-    </script>
+          <script type="text/javascript" cmp:ignore="x"/>
         </head>
         <body>
           <div id="messages"/>

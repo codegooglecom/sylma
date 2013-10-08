@@ -1,16 +1,9 @@
 
-@font-face
-{
-  font-family: 'CABNDRegular';
-  src: url('/html/webfonts/20019D_3_0.eot');
-  src: url('/html/webfonts/20019D_3_0.eot?') format('embedded-opentype'),url('/html/webfonts/20019D_3_0.woff') format('woff'),url('/html/webfonts/20019D_3_0.ttf') format('truetype');
-}
-
 #lemonav
 {
   width: 100%;
-  background: url('background.gif') repeat-x;
-  font-family: CABNDRegular;
+  background: url('background.gif');
+  font-family: CABNDRegular, Helvetica;
   font-weight: normal;
 }
 
@@ -80,4 +73,42 @@
 #lemonav-logout:hover
 {
   background-position: 0 -42px;
+}
+
+@media screen and (max-width: 700px)
+{
+  #lemonav
+  {
+    background: none;
+  }
+
+  #lemonav ul li
+  {
+    font-size: 85%;
+  }
+
+  #lemonav ul li a
+  {
+    padding: 0.5em;
+    height: auto;
+  }
+
+  #lemonav-logout
+  {
+    height: 2em;
+    width: 2em;
+    -webkit-background-size: cover;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: cover;
+  }
+}
+
+@media screen and (max-width: 460px)
+{
+  #lemonav ul li
+  {
+    font-size: 70%;
+  }
 }

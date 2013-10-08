@@ -28,9 +28,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <meta name="robots" content="noindex,nofollow"/>
         <link rel="icon" type="image/png" href="/images/favicon.png"/>
-        <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/infos.css" ls:owner="root" ls:group="user" ls:mode="710"/>
-        <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/base.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/backend.css"/>
+        <tpl:apply mode="head/css"/>
       </head>
       <body>
         <!--[if lt IE 7]>
@@ -46,6 +44,16 @@
     </html>
   </tpl:template>
 
+  <tpl:template mode="head/css">
+    <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/infos.css" ls:owner="root" ls:group="user" ls:mode="710"/>
+    <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/base.css"/>
+    <tpl:apply mode="head/css/backend"/>
+  </tpl:template>
+
+  <tpl:template mode="head/css/backend">
+    <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/backend.css"/>
+  </tpl:template>
+
   <tpl:template mode="title/content">Sylma</tpl:template>
 
   <tpl:template mode="body/content">
@@ -54,9 +62,9 @@
 
     <a id="user-login" ls:mode="710" ls:group="famous" ls:owner="root" href="/sylma/modules/users/login">login</a>
 
-    <div>
+    <div id="body">
       <div id="messages"/>
-      <tpl:read select="content()"/>
+      <tpl:apply mode="body/action"/>
     </div>
 
   </tpl:template>
@@ -65,6 +73,10 @@
 
     <le:script path="menus"/>
 
+  </tpl:template>
+
+  <tpl:template mode="body/action">
+    <tpl:read select="content()"/>
   </tpl:template>
 
 </view:view>

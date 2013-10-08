@@ -21,10 +21,26 @@ class CSS extends context\Basic implements dom\domable {
 
           $aStyle = array('link' => array(
             '@href' => $sFile,
-            '@rel' => 'stylesheet',
             '@type' => 'text/css',
             '@media' => 'all',
           ));
+
+          switch ($mValue->getExtension()) {
+
+            case 'css' :
+
+              $aStyle['link']['@rel'] = 'stylesheet';
+              break;
+
+            case 'less' :
+
+              $aStyle['link']['@rel'] = 'stylesheet/less';
+              break;
+
+            default :
+
+              $this->launchException('Unknown css type', get_defined_vars());
+          }
 
           $aFiles[$sFile] = true;
         }

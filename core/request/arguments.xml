@@ -6,6 +6,8 @@
 
   build:target="[current()]"
 >
+  <!-- TODO : file temporary unusefull, until args are stored in sylma.yml/path -->
+  <<<
   <extensions>
     <executable arg:type="token">eml,vml</executable>
     <readable arg:type="token">css,js,webm,jpg,jpeg,gif,png,pdf,eot,ttf,woff,vcf</readable>

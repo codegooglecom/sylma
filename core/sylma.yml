@@ -42,6 +42,7 @@ initializer :
     js : application/javascript
     webm : video/webm
     css : text/css
+    less : text/css
     xml : text/xml
     xsl : text/xml
     htm : text/html
@@ -148,7 +149,10 @@ modules :
     exclude :
       run :
         - /sylma/modules/users/logout.eml
-
+path :
+  extensions :
+    executable : [eml, vml]
+    readable : [css, js, webm, jpg, jpeg, gif, png, pdf, eot, ttf, woff, vcf, less]
 database :
   test :
     host : localhost

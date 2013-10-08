@@ -57,7 +57,8 @@ class Basic extends core\module\Filed implements core\request {
 
   protected function loadSettings() {
 
-    $this->setSettings(include('arguments.xml.php'));
+    //$this->setSettings(include('arguments.xml.php'));
+    $this->setSettings(\Sylma::get('path'));
   }
 
   public function getFile($sPath = '', $bDebug = true) {
@@ -157,7 +158,7 @@ class Basic extends core\module\Filed implements core\request {
     */
 
     if ($file) {
-      
+
       $this->setFile($file);
       $this->setArguments($aPath, false);
       $this->getArguments()->mergeArray($aArguments);

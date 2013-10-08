@@ -13,6 +13,9 @@ sylma.classes = {
 
   ui : new Class({
 
+    roots : [],
+    windowLoaded : false,
+
     cookie : {
 
       name : 'sylma-main'
@@ -61,9 +64,14 @@ sylma.classes = {
 
     loadMultiple : function(objects, parent) {
 
+      var result;
+
       for (var obj in objects) {
 
-        parent[obj] = this.createObject(objects[obj]);
+        result = this.createObject(objects[obj]);
+        parent[obj] = result;
+
+        this.loadResult(result);
       }
     },
 
@@ -75,7 +83,22 @@ sylma.classes = {
     loadOne : function(objects, parent) {
 
       var first = this.extractFirst(objects);
-      parent[first] = this.createObject(objects[first]);
+      var result = this.createObject(objects[first]);
+
+      parent[first] = result;
+      this.loadResult(result);
+    },
+
+    loadResult : function(result) {
+
+      if (this.windowLoaded) {
+
+        if (result.onLoad) result.onLoad();
+      }
+      else {
+
+        this.roots.push(result);
+      }
     },
 
     createObject : function(props) {
@@ -89,6 +112,25 @@ sylma.classes = {
       var parent = this.loadPath(props.extend);
 
       return new parent(props);
+    },
+
+    onWindowLoad : function() {
+
+      this.windowLoaded = true;
+      this.loadArray(this.roots);
+    },
+
+    loadArray : function(objs) {
+
+      var obj, len = objs.length;
+
+      for (var i = 0; i < len; i++) {
+
+        obj = objs[i];
+
+        if (obj.onWindowLoad) obj.onWindowLoad();
+        if (obj.onLoad) obj.onLoad();
+      }
     },
 
     importNode : function(val, name) {
@@ -391,6 +433,14 @@ sylma.ui = new sylma.classes.ui;
 
         this.options[option] = options[option]
       }
+    },
+
+    onWindowLoad : function() {
+
+      sylma.ui.loadArray(this.tmp);
+      var objs = [];
+      Object.each(this.objects, function(item) { objs.push(item) });
+      sylma.ui.loadArray(Array.from(objs));
     },
 
     prepareNodes : function(nodes) {
