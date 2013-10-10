@@ -2,13 +2,20 @@ sylma.tester = {
 
   test : function(result) {
 
-    if (result) {
+    $(document.body).grab(new Element('input', {
+      //type : 'hidden',
+      id : 'sylma-standalone-result',
+      value : result ? 1 : ''
+    }));
+  },
 
-      $(document.body).grab(new Element('input', {
-        //type : 'hidden',
-        id : 'sylma-standalone-result',
-        value : result ? 1 : ''
-      }));
+  assertEquals : function(val1, val2) {
+
+    if (val1 !== val2) {
+
+      this.test(false);
+      console.log(val1, val2);
+      throw new Error('Values not equals');
     }
   },
 
@@ -17,6 +24,7 @@ sylma.tester = {
     Main : new Class({
 
       test : null,
+      timeMax : 2000,
 
       run : function(test, bind, callback) {
 
@@ -43,23 +51,29 @@ sylma.tester = {
       loop : function() {
 
         var timeStart = new Date().getTime();
-        var timeMax = 1000;
         var input;
+        var self = this;
 
-        while (!input && (new Date().getTime() - timeStart) < timeMax) {
+        var loop = window.setInterval(function() {
 
           input = $('sylma-standalone-result');
-        }
 
-        var result = {
-          value : false,
-          timemax : false
-        };
+          if (input || (new Date().getTime() - timeStart) > self.timeMax) {
 
-        if (input) result.value = (input.value);
-        else result.timemax = true;
+            window.clearInterval(loop);
 
-        this.grabResult(result);
+            var result = {
+              value : false,
+              timemax : false
+            };
+
+            if (input) result.value = (input.value);
+            else result.timemax = true;
+
+            self.grabResult(result);
+          }
+
+        }, 200);
       },
 
       grabResult : function(result) {

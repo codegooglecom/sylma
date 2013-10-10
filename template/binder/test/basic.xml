@@ -10,12 +10,14 @@
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
   <tst:description>JS</tst:description>
+
   <tst:test name="Base object">
     <tst:document>
       <view:view>
@@ -419,6 +421,58 @@
 
       var test = example.test;
       test.node.fireEvent('click');
+
+    </tst:callback>
+  </tst:test>
+  <tst:test name="Update">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <la:include>samples/update01.js</la:include>
+          <div la:class="sylma.samples.Sample2" la:parent="example" la:name="test">
+            <la:option name="path">
+              <le:directory/>
+              <tpl:text>/samples/update01</tpl:text>
+            </la:option>
+            <la:option name="sylma-inside">1</la:option>
+            <button>
+              <la:event name="click">%object%.update();</la:event>
+            </button>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:callback>
+
+      var test = example.test;
+      test.node.getElement('button').fireEvent('click');
+
+    </tst:callback>
+  </tst:test>
+  <tst:test name="Update collection">
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <view:template>
+          <la:include>samples/update02.js</la:include>
+          <div la:class="sylma.samples.Sample2" la:parent="example" la:name="test">
+            <la:option name="path">
+              <le:directory/>
+              <tpl:text>/samples/update02</tpl:text>
+            </la:option>
+            <la:option name="sylma-inside">1</la:option>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:callback>
+
+      var test = example.test;
+      test.run();
 
     </tst:callback>
   </tst:test>

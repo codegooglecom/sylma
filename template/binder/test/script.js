@@ -8,6 +8,7 @@ sylma.classes.binder = new Class({
   tests : {},
   id : '',
   url : '',
+  timeMax : 2000,
 
   initialize : function() {
 
@@ -30,6 +31,9 @@ sylma.classes.binder = new Class({
 
   runTest : function(test) {
 
+    var self = this;
+    console.log('test ' + test.key);
+
     var frame = new IFrame({
 
       src : this.standalone + '?file=' + test.file + '&key=' + test.key,
@@ -45,32 +49,45 @@ sylma.classes.binder = new Class({
           if (doc && doc.getElement) {
 
             var timeStart = new Date().getTime();
-            var timeMax = 2000;
             var input;
 
-            while (!input && (new Date().getTime() - timeStart) < timeMax) {
+            var loop = window.setInterval(function() {
 
               input = doc.getElement('#sylma-test-result');
-            }
-          }
 
-          var value;
+              if (input || (new Date().getTime() - timeStart) > self.timeMax) {
 
-          if (!input) {
+                window.clearInterval(loop);
+                self.finishLoop(test, frame, input);
+              }
 
-            value = {value : false}
+            }, 200);
           }
           else {
 
-            value = JSON.decode(input.get('value'));
+            self.finishLoop(test, frame);
           }
-
-          sylma.binder.loadResult(test, value, frame.src);
         }
       }
     });
 
     this.node.grab(frame);
+  },
+
+  finishLoop : function(test, frame, input) {
+
+    var value;
+
+    if (!input) {
+
+      value = {value : false}
+    }
+    else {
+
+      value = JSON.decode(input.get('value'));
+    }
+
+    sylma.binder.loadResult(test, value, frame.src);
   },
 
   loadResult : function(test, result, href) {

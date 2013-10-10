@@ -26,6 +26,10 @@ sylma.classes = {
     load : function(parent, objects) {
 
       this.loadMessages();
+      this.loadObjects(parent, objects);
+    },
+
+    loadObjects : function(parent, objects) {
 
       if (parent && objects) {
 
@@ -253,8 +257,18 @@ sylma.classes = {
       });
 
       return get ? req.get(args) : req.post(args);
-    }
+    },
 
+    isTouched : function() {
+
+      return 'ontouchstart' in document.documentElement;
+    },
+
+    getHash : function() {
+
+      var hash = window.location.hash;
+      return hash.indexOf('#') == 0 ? hash.substr(1) : hash;
+    }
   })
 }
 
@@ -321,7 +335,10 @@ sylma.ui = new sylma.classes.ui;
       this.parentObject = props.parentObject;
       this.parentKey = props.parentKey;
 
-      if (!props.id && !props.node) throw 'No node associated';
+      if (!props.id && !props.node) {
+
+        throw new Error('No node associated');
+      }
 
       this.node = props.node ? $(props.node) : $(props.id);
 
@@ -438,9 +455,7 @@ sylma.ui = new sylma.classes.ui;
     onWindowLoad : function() {
 
       sylma.ui.loadArray(this.tmp);
-      var objs = [];
-      Object.each(this.objects, function(item) { objs.push(item) });
-      sylma.ui.loadArray(Array.from(objs));
+      sylma.ui.loadArray(Object.values(this.objects));
     },
 
     prepareNodes : function(nodes) {
@@ -576,7 +591,7 @@ sylma.ui = new sylma.classes.ui;
       }).delay(2000, this);
     },
 
-    importResponse : function(response, parent) {
+    importResponse : function(response, parent, target) {
 
       if (response.classes) {
 
@@ -584,16 +599,23 @@ sylma.ui = new sylma.classes.ui;
         Object.merge(sylma.binder.classes, classes);
       }
 
-      var key = sylma.ui.extractFirst(response.objects);
+      if (target) {
 
-      if (!key) {
-
-        throw new Error('No root object found');
+        result = response;
       }
+      else {
 
-      var result = response.objects[key];
-      result.parentObject = parent;
-      //result.parentKey = key;
+        var key = sylma.ui.extractFirst(response.objects);
+
+        if (!key) {
+
+          throw new Error('No root object found');
+        }
+
+        var result = response.objects[key];
+        result.parentObject = parent;
+        //result.parentKey = key;
+      }
 
       return result;
     }
@@ -605,7 +627,7 @@ sylma.ui = new sylma.classes.ui;
 
     update : function(args, path, inside) {
 
-      this.set('sylma-inside', inside);
+      if (inside !== undefined) this.set('sylma-inside', inside);
 
       var self = this;
       var path = path || this.get('path');
@@ -634,10 +656,25 @@ sylma.ui = new sylma.classes.ui;
         target = this.getNode();
       }
 
-      sylma.ui.importNode(result.content, name).replaces(target);
-      var props = this.importResponse(result, this.getParent());
+      var node = sylma.ui.importNode(result.content, name);
+      this.updateContent(result, node, target);
+    },
 
-      this.initialize(props);
+    updateContent : function(result, node, target) {
+
+      if (target) {
+
+        node.replaces(target);
+
+        var props = this.importResponse(result, this.getParent());
+        this.initialize(props);
+      }
+      else {
+
+        this.getNode().adopt(node);
+        var props = this.importResponse(result, this.getParent(), true);
+        if (props.objects) this.initObjects(props.objects);
+      }
     },
 
     show : function() {
