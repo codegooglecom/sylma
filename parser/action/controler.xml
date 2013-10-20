@@ -38,6 +38,6 @@
     <cls:class alias="document" name="\sylma\dom\basic\handler\Rooted"/>
     <cls:class alias="path" name="\sylma\core\request\Basic"/>
     <cls:class alias="request" name="\sylma\core\request\Builder"/>
-    <cls:class alias="context" name="\sylma\parser\context\Basic"/>
-  </cls:classes>
+    <cls:class alias="context" name="\sylma\modules\html\context\Basic"/>
+  </cls:classes>   
 </arg:argument>

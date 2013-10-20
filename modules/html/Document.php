@@ -21,13 +21,15 @@ class Document extends core\window\classes\Container {
       $this->getManager('parser')->setContext('errors', $messages);
     }
 
+    $fusion = $this->get('fusion');
+
     $load = new binder\context\Load;
     $contexts = $this->createArgument(array(
       'title' => array(),
-      'css' => new context\CSS,
+      'css' => new context\Less(array(), $fusion),
       'js' => new context\JS(array(
         'load' => $load,
-      )),
+      ), $fusion),
       //'js-classes' => new binder\context\Classes,
       //'js/load' => new js\context\Load,
       'errors' =>  $messages,

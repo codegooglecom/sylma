@@ -45,8 +45,10 @@
   </tpl:template>
 
   <tpl:template mode="head/css">
+    <le:context name="css">
+      <le:file>medias/base.css</le:file>
+    </le:context>
     <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/infos.css" ls:owner="root" ls:group="user" ls:mode="710"/>
-    <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/base.css"/>
     <tpl:apply mode="head/css/backend"/>
   </tpl:template>
 
@@ -55,7 +57,9 @@
   </tpl:template>
 
   <tpl:template mode="head/css/backend">
-    <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/backend.css"/>
+    <le:context name="css">
+      <le:file>medias/backend.css</le:file>
+    </le:context>
   </tpl:template>
 
   <tpl:template mode="title/content">Sylma</tpl:template>

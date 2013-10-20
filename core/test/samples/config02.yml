@@ -4,6 +4,9 @@ initializer :
   debug :
     fatal : true
   window :
+    fusion :
+      enable : true
+      update : true
     html :
       default :
         action : /#sylma/core/test/samples/window01.vml

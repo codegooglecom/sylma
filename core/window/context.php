@@ -1,6 +1,6 @@
 <?php
 
-namespace sylma\parser;
+namespace sylma\core\window;
 
 interface context {
 

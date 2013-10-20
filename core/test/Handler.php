@@ -94,6 +94,16 @@ class Handler extends tester\Parser implements core\argumentable {
     return parent::getFile($sPath, $bDebug);
   }
 
+  public function getManager($sName = '', $bDebug = true) {
+
+    return parent::getManager($sName, $bDebug);
+  }
+
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
+  }
+
   public function restoreSylma() {
 
     \Sylma::setManagers($this->getManagers());

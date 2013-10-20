@@ -134,5 +134,5 @@
     'file' => '\sylma\core\request\Builder.php',
     'name' => '\sylma\core\request\Builder'),
   'context' => array(
-    'file' => '\sylma\parser\context\Basic.php',
-    'name' => '\sylma\parser\context\Basic'))));
+    'file' => '\sylma\modules\html\context\Basic.php',
+    'name' => '\sylma\modules\html\context\Basic'))));

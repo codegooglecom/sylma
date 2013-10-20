@@ -207,24 +207,7 @@ sylma.classes = {
 
           for (var i in result.messages) {
 
-            msg = result.messages[i];
-            el = new Element('div', {html : msg.content, 'class' : 'sylma-message sylma-hidder'});
-
-            this.addMessage(el, $('sylma-messages'));
-            window.getComputedStyle(el).opacity;
-            el.addClass('sylma-visible');
-
-            (function() {
-
-              this.removeClass('sylma-visible');
-
-              (function() {
-
-                this.destroy();
-
-              }).bind(this).delay(2000);
-
-            }).bind(el).delay(5000);
+            this.showMessage(result.messages[i].content);
             //el.addClass('sylma-visible');
           }
         }
@@ -239,6 +222,27 @@ sylma.classes = {
       }
 
       return result;
+    },
+
+    showMessage : function(msg) {
+
+      var el = new Element('div', {html : msg, 'class' : 'sylma-message sylma-hidder'});
+
+      this.addMessage(el, $('sylma-messages'));
+      window.getComputedStyle(el).opacity;
+      el.addClass('sylma-visible');
+
+      (function() {
+
+        el.removeClass('sylma-visible');
+
+        (function() {
+
+          el.destroy();
+
+        }).delay(2000);
+
+      }).delay(5000);
     },
 
     send : function(path, args, get, callback) {

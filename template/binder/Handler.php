@@ -84,7 +84,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $content = $window->createCall($window->getSylma(), 'throwException', 'php-boolean', array('No context sent'));
     $window->add($window->createCondition($window->createNot($isset), $content));
 
-    $js = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\parser\context', true);
+    $js = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\core\window\context', true);
 
     $this->setDirectory(__FILE__);
 
@@ -98,7 +98,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   protected function checkContext(common\_var $contexts, $sPath, $sAlias, $window) {
 
-    $result = $contexts->call('get', array($sPath, false), '\sylma\parser\context')->getVar();
+    $result = $contexts->call('get', array($sPath, false), '\sylma\core\window\context')->getVar();
     $if = $window->createCondition($window->createNot($result));
 
     $new = $this->createObject($sAlias, array(), $window, false);

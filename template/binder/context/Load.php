@@ -3,7 +3,7 @@
 namespace sylma\template\binder\context;
 use sylma\core, sylma\dom, sylma\modules;
 
-class Load extends modules\html\context\JS implements core\stringable {
+class Load extends core\argument\Readable implements core\stringable {
 
   public function asString() {
 

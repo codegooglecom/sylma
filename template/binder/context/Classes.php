@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\binder\context;
-use sylma\core, sylma\dom, sylma\modules;
+use sylma\core;
 
-class Classes extends modules\html\context\JS implements core\stringable {
+class Classes extends core\argument\Readable implements core\stringable {
 
   const PARENT_PATH = 'sylma.binder.classes';
 

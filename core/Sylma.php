@@ -192,6 +192,13 @@ class Sylma {
 
       break;
 
+      case 'fs/tmp' :
+
+        $result = new storage\fs\Controler(self::read('directory/tmp'), true, true, false, 'tmp');
+        $result->loadDirectory('');
+
+      break;
+
       case 'fs/root' :
 
         $result = new storage\fs\Controler('/', true, true, false, '/');

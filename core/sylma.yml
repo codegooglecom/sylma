@@ -71,6 +71,9 @@ initializer :
       builder :
         name : \sylma\core\window\classes\ImageBuilder
   window :
+    fusion :
+      enable : true
+      update : false
     error :
       action : /#sylma/modules/html/error.vml
     debug :
@@ -153,6 +156,10 @@ path :
   extensions :
     executable : [eml, vml]
     readable : [css, js, webm, jpg, jpeg, gif, png, pdf, eot, ttf, woff, vcf, less]
+
+directory :
+  tmp : tmp
+
 database :
   test :
     host : localhost

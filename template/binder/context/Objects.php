@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\binder\context;
-use sylma\core, sylma\dom, sylma\modules;
+use sylma\core;
 
-class Objects extends modules\html\context\JS implements core\stringable {
+class Objects extends core\argument\Readable implements core\stringable {
 
   const PARENT_PATH = 'sylma.tmp';
 

@@ -21,4 +21,25 @@
       <mode>740</mode>
     </security>
   </file>
+  <file name="style01.css">
+    <security>
+      <owner>root</owner>
+      <group>test01</group>
+      <mode>740</mode>
+    </security>
+  </file>
+  <file name="style02.css">
+    <security>
+      <owner>root</owner>
+      <group>test01</group>
+      <mode>740</mode>
+    </security>
+  </file>
+  <file name="script01.js">
+    <security>
+      <owner>root</owner>
+      <group>test01</group>
+      <mode>740</mode>
+    </security>
+  </file>
 </directory>

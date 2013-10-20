@@ -37,11 +37,8 @@
           <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
           <meta name="robots" content="noindex,nofollow"/>
           <link rel="icon" type="image/png" href="/images/favicon.png"/>
-          <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/base.css"/>
-          <link rel="stylesheet" type="text/css" media="all" href="/sylma/modules/html/medias/backend.css"/>
-          <link href="/sylma/modules/html/medias/menus.css" rel="stylesheet" type="text/css" media="all"/>
-          <script type="text/javascript" src="/sylma/template/medias/mootools.js"> </script>
-          <script type="text/javascript" src="/sylma/template/medias/sylma.js"> </script>
+          <link href="/tmp/3565291498.css" type="text/css" media="all" rel="stylesheet"/>
+          <script src="/tmp/2624720383.js" type="text/javascript"> </script>
           <script type="text/javascript">//<![CDATA[
 window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
 //]]>
@@ -104,6 +101,69 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
         </body>
       </html>
     </tst:node>
+  </tst:test>
+
+  <tst:test name="Import multiple resources">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->buildScript('/sylma/core/test/samples/resources01.vml');
+
+      $css = new \sylma\modules\html\context\Less(array(
+        $manager->getFile('samples/style01.css'),
+        $manager->getFile('samples/style02.less'),
+      ), $manager->createArgument(array(
+        'enable' => true,
+        'update' => true,
+      )));
+
+      $css->asDOM();
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/resources01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <link href="/tmp/1538782558.css" type="text/css" media="all" rel="stylesheet"/>
+          <script src="/tmp/4216214821.js" type="text/javascript"> </script>
+          <script type="text/javascript">//<![CDATA[
+window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
+//]]>
+    </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+        </body>
+      </html>
+    </tst:node>
+    <tst:expected>
+
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      $manager->compareNodes($result, $node);
+
+      $css = $manager->getFile('samples/result01.css');
+
+      $fs = $manager->getManager('fs/tmp');
+      $tmp = $fs->getFile('1538782558.css');
+
+      $manager->assertEqual($tmp->read(), $css->read());
+
+      return true;
+
+    </tst:expected>
   </tst:test>
 
   <tst:test name="JSON call">
