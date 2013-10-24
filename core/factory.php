@@ -23,5 +23,5 @@ interface factory {
    * @param string $sName
    * @return \sylma\core\argument
    */
-  function findClass($sName);
+  function findClass($sName, $sDirectory = '', $bDebug = true);
 }

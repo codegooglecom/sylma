@@ -6,9 +6,14 @@
   xmlns:xl="http://2013.sylma.org/storage/xml"
   xmlns:le="http://2013.sylma.org/action"
   xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 >
 
-  <xl:class>Tree</xl:class>
+  <xl:settings>
+    <cls:classes>
+      <cls:class alias="tree" name="\sylma\modules\uploader\Tree"/>
+    </cls:classes>
+  </xl:settings>
   <xl:resource/>
 
   <tpl:import>form.tpl</tpl:import>

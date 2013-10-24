@@ -8,7 +8,7 @@
     <cls:class alias="tree" name="\sylma\template\parser\ArgumentTree"/>
     <component>
       <cls:classes>
-        <cls:class alias="class" name="component\_Class"/>
+        <cls:class alias="settings" name="component\Settings"/>
       </cls:classes>
     </component>
   </cls:classes>

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\compiler;
-use sylma\core, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs;
 
 abstract class Manager extends core\module\Domed {
 
@@ -105,19 +105,13 @@ abstract class Manager extends core\module\Domed {
   }
 
   abstract function build(fs\file $file, fs\directory $dir);
-  /*
-  protected function build(fs\file $file, fs\directory $dir, $bUpdate = false) {
 
-    $builder = $this->createBuilder('documented', $file, $dir);
-    return $builder->build();
-  }
-*/
-  protected function createBuilder($sClass, fs\file $file = null, fs\directory $dir = null, core\argument $args = null) {
+  protected function createBuilder($sClass, fs\file $file = null, fs\directory $dir = null, core\argument $args = null, dom\document $doc = null) {
 
     //$class = $this->getFactory()->findClass($sClass);
     //$class->merge($args);
     $class = $args ? $args : $this->getFactory()->findClass($sClass);
-    $result = $this->create($sClass, array($this, $file, $dir, $class));
+    $result = $this->create($sClass, array($this, $file, $dir, $class, $doc));
 
     return $result;
   }

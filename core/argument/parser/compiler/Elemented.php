@@ -6,6 +6,7 @@ use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common
 class Elemented extends reflector\handler\Elemented implements reflector\elemented {
 
   const NS = 'http://2013.sylma.org/core/argument';
+  const DEFAULT_NS = 'http://2013.sylma.org/core/argument/default';
   const FACTORY_NS = 'http://2013.sylma.org/core/factory';
   const PARSER_MANAGER = 'parser';
   const DEFAULT_PREFIX = 'default';
@@ -18,7 +19,13 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
   public function parseRoot(dom\element $el) {
 
     $this->registerNamespaces($el);
-    $this->setNamespace(self::loadDefaultNamespace($el), self::DEFAULT_PREFIX);
+
+    if (!$sDefault = self::loadDefaultNamespace($el)) {
+
+      $sDefault = self::DEFAULT_NS;
+    }
+    
+    $this->setNamespace($sDefault, self::DEFAULT_PREFIX);
 
     if ($el->getName() !== 'argument') {
 

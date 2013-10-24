@@ -3,7 +3,7 @@
 namespace sylma\template\parser;
 use sylma\core, sylma\dom, sylma\template as tpl, sylma\parser\reflector;
 
-class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\tree {
+class ArgumentTree extends ObjectTree {
 
   protected $handler;
   protected $options;
@@ -13,9 +13,7 @@ class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\t
 
   public function parseRoot(dom\element $el) {
 
-    $this->setNode($el);
-    $this->setDirectory(__FILE__);
-    $this->loadDefaultArguments();
+    parent::parseRoot($el);
 
     if ($sFile = $this->readx('@file')) {
 
@@ -92,7 +90,7 @@ class ArgumentTree extends reflector\component\Foreigner implements tpl\parser\t
 
       default :
 
-        $this->launchException("Function '$sName' unknown in argument tree");
+        $aResult = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $aResult;

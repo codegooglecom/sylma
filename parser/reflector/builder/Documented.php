@@ -26,8 +26,14 @@ class Documented extends Logger implements reflector\documented {
 
     $this->setNamespace(self::BUILD_NS, self::BUILD_PREFIX);
 
-    if ($doc) $this->setDocument($doc);
-    else if ($file) $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
+    if ($doc) {
+
+      $this->setDocument($doc);
+    }
+    else if ($file) {
+
+      $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
+    }
 
     $this->loadDefaultArguments();
     if ($args) $this->setArguments($args);
@@ -162,7 +168,12 @@ class Documented extends Logger implements reflector\documented {
 
     return $this->buildDefault();
   }
+/*
+  public function reflect() {
 
+    return $this->reflectMain($this->getDocument());
+  }
+*/
   protected function buildDefault(common\_window $window = null) {
 
     $file = $this->getFile();

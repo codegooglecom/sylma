@@ -59,13 +59,20 @@ class Cached extends core\module\Argumented implements core\factory {
 
     if (!$this->getArguments()) {
 
-      $this->throwException(sprintf('Cannot build object @class %s. No argument defined', $sName));
+      if ($bDebug) {
+
+        $this->throwException(sprintf('Cannot build object @class %s. No argument defined', $sName));
+      }
+
+      $result = null;
     }
+    else {
 
-    if ($result = $this->loadClass($sName, $this->getArguments(), $bDebug)) {
+      if ($result = $this->loadClass($sName, $this->getArguments(), $bDebug)) {
 
-      $this->loadClassBase($result);
-      $this->loadFileBase($result, $sDirectory);
+        $this->loadClassBase($result);
+        $this->loadFileBase($result, $sDirectory);
+      }
     }
 
     return $result;

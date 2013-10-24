@@ -30,6 +30,7 @@
   <tpl:template match="menus:menu" mode="title/website">website</tpl:template>
 
   <tpl:template match="menus:menus">
+    <tpl:apply mode="init"/>
     <div id="{@id}" ls:mode="710" ls:owner="root" ls:group="users">
       <ul class="clearfix">
         <tpl:apply select="*"/>

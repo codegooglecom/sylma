@@ -22,16 +22,6 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     return $this->parseElement($el);
   }
 
-  public function setReflector(core\argument $arg) {
-
-    $this->reflector = $arg;
-  }
-
-  protected function getReflector() {
-
-    return $this->reflector;
-  }
-
   protected function parseElementSelf(dom\element $el) {
 
     if ($el->getName() === 'resource') {
@@ -58,21 +48,15 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     $this->launchException('Not yet ready');
   }
 
+  public function setSettings($args = null, $bMerge = true) {
+
+    return parent::setSettings($args, $bMerge);
+  }
+
   protected function build() {
 
     $view = $this->lookupParser(self::VIEW_NS);
-
-    if ($class = $this->getReflector()) {
-
-      $sName = $class->read('name');
-      $settings = $class->get('settings', false, null);
-
-      $root = new $sName($view, $settings);
-    }
-    else {
-
-      $root = $this->loadSimpleComponent('tree', $view);
-    }
+    $root = $this->loadSimpleComponent("tree", $view);
 
     $this->initTree($root);
   }

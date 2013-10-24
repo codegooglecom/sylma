@@ -285,7 +285,7 @@ class Pather extends component\Child {
     return $aResult;
   }
 
-  public function parseArguments($sArguments, $sMode, $bRead, $bApply = true) {
+  public function parseArguments($sArguments, $sMode = '', $bRead = false, $bApply = true) {
 
     $aResult = array();
 

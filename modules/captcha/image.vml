@@ -6,12 +6,16 @@
   xmlns:xl="http://2013.sylma.org/storage/xml"
   xmlns:le="http://2013.sylma.org/action"
   xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 
   build:class="\sylma\modules\captcha\Generator"
   build:output="array"
 >
-
-  <xl:class>Reflector</xl:class>
+  <xl:settings>
+    <cls:classes>
+      <cls:class alias="tree" name="\sylma\modules\captcha\Reflector"/>
+    </cls:classes>
+  </xl:settings>
   <xl:resource/>
 
   <tpl:template/>

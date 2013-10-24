@@ -1,15 +1,20 @@
 <?php
 
 namespace sylma\core\argument\parser\compiler;
-use sylma\core, sylma\parser\reflector, sylma\dom, sylma\parser\languages\common, sylma\storage\fs;
+use sylma\core, sylma\parser\reflector, sylma\dom, sylma\storage\fs;
 
 class Documented extends reflector\builder\Documented implements reflector\documented {
 
   //const PHP_TEMPLATE = 'basic.xsl';
 
-  public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null) {
+  public function __construct($manager, fs\file $file, fs\directory $dir, core\argument $args = null, dom\document $doc = null) {
 
-    parent::__construct($manager, $file, $dir, include('builder.xml.php'));
+    parent::__construct($manager, $file, $dir, include('builder.xml.php'), $doc);
+  }
+
+  public function buildStatic() {
+
+    return $this->reflectMain($this->getDocument());
   }
 
   protected function parseReflector(reflector\domed $reflector, dom\document $doc) {

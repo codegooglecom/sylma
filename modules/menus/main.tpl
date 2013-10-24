@@ -5,12 +5,22 @@
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 
   xmlns:xl="http://2013.sylma.org/storage/xml"
   xmlns:menus="http://2013.sylma.org/modules/menus"
 >
 
-  <xl:class>Main</xl:class>
+  <xl:settings>
+    <cls:classes>
+      <cls:base>\sylma\modules\menus</cls:base>
+      <cls:class alias="tree" name="Main">
+        <cls:classes>
+          <cls:class alias="cached" name="Cached"/>
+        </cls:classes>
+      </cls:class>
+    </cls:classes>
+  </xl:settings>
 
   <tpl:template match="menus:menus">
     <ul id="{@id}">

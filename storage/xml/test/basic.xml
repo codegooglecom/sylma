@@ -9,6 +9,8 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
 
+  xmlns:cls="http://2013.sylma.org/core/factory"
+
   xmlns:user="http://2013.sylma.org/action/test/sample1"
   xmlns:group="http://2013.sylma.org/action/test/sample2"
 >
@@ -63,7 +65,11 @@
   <tst:test name="Override class">
     <tst:document>
       <view:view user:ns="ns">
-        <xl:class>samples\Tree1</xl:class>
+        <xl:settings>
+          <cls:classes>
+            <cls:class alias="tree" name="\sylma\storage\xml\test\samples\Tree1"/>
+          </cls:classes>
+        </xl:settings>
         <xl:resource file="samples/users.xml"/>
         <tpl:template>
           <ul>
@@ -89,20 +95,51 @@
       </ul>
     </tst:node>
   </tst:test>
-  <tst:test name="Override arguments">
+  <tst:test name="Call">
     <tst:document>
       <view:view user:ns="ns">
-        <xl:class settings="samples/settings01.xml">samples\Tree1</xl:class>
+        <xl:settings>
+          <cls:classes>
+            <cls:class alias="tree">
+              <cls:classes>
+                <cls:class alias="cached" name="\sylma\storage\xml\test\samples\Cached01"/>
+              </cls:classes>
+            </cls:class>
+          </cls:classes>
+        </xl:settings>
         <xl:resource/>
         <tpl:template>
-          <span>
-            <tpl:read select="test2()"/>
-          </span>
+          <span><tpl:apply select="getPaths()"/></span>
         </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <span>def</span>
+      <span>/abc,/def</span>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Parse result">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource/>
+        <xl:settings>
+          <cls:classes>
+            <cls:class alias="tree">
+              <cls:classes>
+                <cls:class alias="cached" name="\sylma\storage\xml\test\samples\Cached02"/>
+              </cls:classes>
+            </cls:class>
+          </cls:classes>
+        </xl:settings>
+        <tpl:template>
+          <span>hello world</span>
+          <tpl:apply select="return('parse')"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="result">
+        <span>hello world</span>
+      </div>
     </tst:node>
   </tst:test>
 </tst:tests>

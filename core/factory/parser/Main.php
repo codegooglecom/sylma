@@ -139,7 +139,7 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
   protected function reflectClass(dom\element $el) {
 
     $content = null;
-    $sClass = $this->getClassName($el);
+    $sClass = $this->parseClassName($el);
 
     if ($el->hasChildren()) $content = $this->parseChildren($el->getChildren());
 
@@ -165,12 +165,15 @@ class Main extends core\argument\parser\compiler\Elemented implements reflector\
     return $sResult;
   }
 
-  protected function getClassName(dom\element $el) {
+  protected function parseClassName(dom\element $el) {
 
-    $sName = $el->readAttribute('name');
+    $sResult = '';
 
-    if ($sName{0} == '\\') $sResult = $sName;
-    else $sResult = $this->getClassBase() . '\\' . $sName;
+    if ($sName = $el->readx('@name', array(), false)) {
+
+      if ($sName{0} == '\\') $sResult = $sName;
+      else $sResult = $this->getClassBase() . '\\' . $sName;
+    }
 
     return $sResult;
   }

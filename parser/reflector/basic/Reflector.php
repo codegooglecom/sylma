@@ -1,11 +1,18 @@
 <?php
 
 namespace sylma\parser\reflector\basic;
-use \sylma\core, sylma\dom, sylma\storage\fs;
+use \sylma\core, sylma\core\functions\path;
 
 abstract class Reflector extends Foreigner {
 
   protected $sourceFile;
+
+  protected function getClassName($sName) {
+
+    \Sylma::load('/core/functions/Path.php');
+
+    return path\toAbsolute($sName, str_replace('/', '\\', (string) $this->getSourceDirectory()), '\\');
+  }
 
   public function getSourceDirectory($sPath = '') {
 

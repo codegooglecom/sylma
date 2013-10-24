@@ -105,6 +105,10 @@ abstract class Basic extends Asserter {
 
       $tests = $doc->queryx('self:test');
     }
+    else {
+
+      dsp('WARNING : @standalone activated on ' . $file->asToken());
+    }
 
     foreach ($tests as $test) {
 

@@ -9,7 +9,7 @@ abstract class Componented extends Namespaced {
 
   protected function createClass($sAlias = 'cached') {
 
-    $sClass = $this->parseClassName($sAlias);
+    $sClass = $this->lookupClassName($sAlias);
     $window = $this->getWindow();
 
     $result = $window->createClass($sClass);
@@ -17,7 +17,7 @@ abstract class Componented extends Namespaced {
     return $result;
   }
 
-  protected function parseClassName($sName) {
+  protected function lookupClassName($sName) {
 
     if ($sName{0} == '\\') {
 
@@ -33,7 +33,7 @@ abstract class Componented extends Namespaced {
 
   protected function createObject($sAlias = 'cached', array $aArguments = array(), $window = null, $bVar = true) {
 
-    $sClass = $this->parseClassName($sAlias);
+    $sClass = $this->lookupClassName($sAlias);
     if (!$window) $window = $this->getWindow();
 
     $result = $window->createInstanciate($window->tokenToInstance($sClass), $aArguments);

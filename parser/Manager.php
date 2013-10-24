@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser;
-use sylma\core, sylma\storage\fs, sylma\parser\compiler, sylma\parser\reflector;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\compiler, sylma\parser\reflector;
 
 class Manager extends compiler\Manager {
 
@@ -47,31 +47,28 @@ class Manager extends compiler\Manager {
     return $result;
   }
 
-  public function loadBuilder(fs\file $file, fs\directory $dir = null, core\argument $args = null) {
+  public function loadBuilder(fs\file $file, fs\directory $dir = null, core\argument $args = null, dom\document $doc = null) {
 
     if (!$dir) $dir = $file->getParent();
-    $doc = $file->getDocument();
+    if (!$doc) $doc = $file->getDocument();
 
-    $result = $this->loadBuilderFromNS($doc->getRoot()->getNamespace(), $file, $dir, $args);
+    $result = $this->loadBuilderFromNS($doc->getRoot()->getNamespace(), $file, $dir, $args, $doc);
 
     return $result;
   }
 
-  public function loadBuilderFromNS($sNamespace, fs\file $file = null, fs\directory $dir = null, core\argument $args = null) {
+  public function loadBuilderFromNS($sNamespace, fs\file $file = null, fs\directory $dir = null, core\argument $args = null, dom\document $doc = null) {
 
     if (!$dir) $dir = $this->getDirectory();
 
-    if (!$result = $this->getParserManager($sNamespace)) {
+    if (array_key_exists($sNamespace, $this->aNamespaces[self::MANAGER_PATH])) {
 
-      if (array_key_exists($sNamespace, $this->aNamespaces[self::MANAGER_PATH])) {
+      $sClass = $this->aNamespaces[self::MANAGER_PATH][$sNamespace];
+      $result = $this->createBuilder($sClass, $file, $dir, $args, $doc);
+    }
+    else {
 
-        $sClass = $this->aNamespaces[self::MANAGER_PATH][$sNamespace];
-        $result = $this->createBuilder($sClass, $file, $dir, $args);
-      }
-      else {
-
-        $this->throwException(sprintf('No builder associated to namespace %s', $sNamespace));
-      }
+      $this->throwException(sprintf('No builder associated to namespace %s', $sNamespace));
     }
 
     return $result;
@@ -89,17 +86,6 @@ class Manager extends compiler\Manager {
     $this->aBuilded[] = $file;
 
     return $builder->build($dir);
-  }
-
-  /**
-   *
-   * @param type $sNamespace
-   * @param boolean $bDebug
-   * @return \sylma\parser\compiler\Manager
-   */
-  public function getParserManager($sNamespace, $bDebug = true) {
-
-    return array_key_exists($sNamespace, $this->aParserManagers) ? $this->aParserManagers[$sNamespace] : null;
   }
 
   public function getCachedParser($sNamespace, $parent, $bDebug = true) {

@@ -7,14 +7,27 @@
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  
 >
 
-  <xl:class>Tree</xl:class>
   <xl:resource/>
+
+  <xl:settings>
+    <cls:classes>
+      <cls:class alias="tree">
+        <cls:classes>
+          <cls:class alias="cached" name="\sylma\modules\html\Document"/>
+        </cls:classes>
+      </cls:class>
+    </cls:classes>
+  </xl:settings>
 
   <le:argument name="sylma-paths" format="php-array"/>
 
   <tpl:template>
+
+    <tpl:apply select="return('prepare')"/>
 
     <!-- Contexts must be in template, to be intialized after object instanciation -->
     <le:context name="js">
@@ -84,7 +97,7 @@
   </tpl:template>
 
   <tpl:template mode="body/action">
-    <tpl:read select="content()"/>
+    <tpl:read select="getContent()"/>
   </tpl:template>
 
 </view:view>
