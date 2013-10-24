@@ -31,10 +31,17 @@ class Cached extends core\module\Argumented implements core\factory {
     return $result;
   }
 
-  public function setArguments($mArguments = null, $bMerge = true) {
+  public function setArguments($mArguments = null, $bMerge = true, $bReplace = true) {
 
-    $this->aClasses = array();
-    return parent::setArguments($mArguments, $bMerge);
+    $result = null;
+
+    if ($bReplace) {
+
+      $this->aClasses = array();
+      $result = parent::setArguments($mArguments, $bMerge);
+    }
+
+    return $result;
   }
 
   protected function getClass($sName, $sDirectory) {

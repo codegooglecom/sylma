@@ -15,7 +15,7 @@ interface factory {
   const CLASSBASE_TOKEN = '§sylma-classbase';
 
   function create($sName, array $aArguments = array(), $sDirectory = '');
-  function setArguments($mArguments);
+  function setArguments($mArguments, $bMerge = true, $bReplace = true);
   static function includeClass($sClass, $sFile = '');
 
   /**

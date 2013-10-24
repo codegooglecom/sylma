@@ -6,6 +6,7 @@ use sylma\core;
 abstract class Argumented extends Managed {
 
   const FACTORY_MANAGER = 'factory';
+  const FACTORY_RELOAD = true;
   const SETTINGS_FACTORY_PRIORITY = false;
 
   /**
@@ -107,7 +108,7 @@ abstract class Argumented extends Managed {
 
     if ($factory = $this->getFactory(false)) {
 
-      $factory->setArguments($this->getArguments());
+      $factory->setArguments($this->getArguments(), static::FACTORY_RELOAD);
     }
 
     return $this->getArguments();
@@ -165,7 +166,7 @@ abstract class Argumented extends Managed {
     return $this->getArguments()->set($sPath, $mValue);
   }
 
-  protected function setSettings($arg) {
+  protected function setSettings($arg, $bMerge = true) {
 
     if (is_null($arg)) {
 
@@ -178,7 +179,7 @@ abstract class Argumented extends Managed {
         $arg = $this->createArgument($arg);
       }
 
-      if ($this->settings) {
+      if ($this->settings && $bMerge) {
 
         $this->settings->merge($arg);
       }
@@ -189,7 +190,7 @@ abstract class Argumented extends Managed {
 
       if ($factory = $this->getFactory(false)) {
 
-        $factory->setArguments($this->getSettings());
+        $factory->setArguments($this->getSettings(), $bMerge, static::FACTORY_RELOAD);
       }
     }
   }

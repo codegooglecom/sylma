@@ -47,7 +47,7 @@ class Option extends Basic implements common\arrayable {
     }
 
     $this->setName($el->readx('@name'));
-    $this->setValue($this->getPHPWindow()->toString($content));
+    $this->setValue($content);
   }
 
   public function asArray() {
@@ -56,7 +56,10 @@ class Option extends Basic implements common\arrayable {
 
     $var = $this->getParser()->getObjects();
     $window = $this->getPHPWindow();
-    $content = current($window->parseArrayables(array($window->createCast($this->getValue()))));
+
+    $value = $this->readx('@cast') ? $window->createCast($window->toString($this->getValue())) : $this->getValue();
+
+    $content = $window->parse($value);
 
     return array($window->createInstruction($var->call('addOption', array($this->getName(), $content))));
 

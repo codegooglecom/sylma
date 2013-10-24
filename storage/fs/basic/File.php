@@ -134,9 +134,14 @@ class File extends Resource implements fs\file {
     return $result;
   }
 
-  public function getDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
+  public function asDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
     return $this->getFreeDocument($aNS, $iMode, true);
+  }
+
+  public function getDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
+
+    return $this->asDocument($aNS, $iMode);
   }
 
   public function getArgument() {

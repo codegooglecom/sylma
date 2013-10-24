@@ -11,6 +11,12 @@ sylma.tester = {
 
   assertEquals : function(val1, val2) {
 
+    if (typeOf(val1) === 'object' && typeOf(val2) === 'object') {
+
+      val1 = JSON.stringify(val1);
+      val2 = JSON.stringify(val2)
+    }
+
     if (val1 !== val2) {
 
       this.test(false);

@@ -85,6 +85,9 @@ abstract class Basic extends core\module\Controled {
     $this->document = $document;
   }
 
+  /**
+   * @return dom\handler
+   */
   public function getDocument() {
 
     return $this->document;
@@ -147,22 +150,7 @@ abstract class Basic extends core\module\Controled {
 
   public function validate() {
 
-    $bResult = false;
-
-    if (!$this->getSchema()) {
-
-      $this->dspm(xt('Cannot validate, no schema defined'), 'warning');
-    }
-    else if (!$this->getDocument() || $this->getDocument()->isEmpty()) {
-
-      $this->dspm(xt('Cannot validate, document empty or not defined'), 'warning');
-    }
-    else {
-
-      $bResult = $this->getDocument()->validate($this->schema);
-    }
-
-    return $bResult;
+    $this->launchException('Not implemented');
   }
 
   public function &locateValue(array &$aPath = array(), $bDebug = true, $bReturn = false) {

@@ -70,7 +70,7 @@
 
     return
       $file instanceof sylma\storage\fs\file &amp;&amp;
-      ($doc = $file->getDocument()) &amp;&amp;
+      ($doc = $file->asDocument()) &amp;&amp;
       $doc instanceof sylma\dom\handler &amp;&amp;
       ($root = $doc->getRoot()) &amp;&amp;
       $root->read() == 'hello';
