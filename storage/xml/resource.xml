@@ -5,7 +5,7 @@
 >
   <cls:classes>
     <cls:base>\sylma\storage\xml</cls:base>
-    <cls:class alias="tree" name="\sylma\template\parser\ArgumentTree"/>
+    <cls:class alias="tree" name="tree\Templated"/>
     <component>
       <cls:classes>
         <cls:class alias="settings" name="component\Settings"/>

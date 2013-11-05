@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\view\test\grouped\samples;
-use sylma\core, sylma\dom, sylma\template;
+use sylma\core, sylma\dom, sylma\storage\xml;
 
-class Reflector1 extends template\parser\ArgumentTree {
+class Reflector1 extends xml\tree\Argument {
 
   const NS = 'http://2013.sylma.org/view/parser/test/grouped/samples/reflector1';
   const NAME = 'sample1';

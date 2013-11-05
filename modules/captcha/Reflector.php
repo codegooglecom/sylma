@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\modules\captcha;
-use sylma\core, sylma\dom, sylma\template, sylma\storage\sql\schema;
+use sylma\core, sylma\dom, sylma\storage\xml, sylma\storage\sql\schema;
 
-class Reflector extends template\parser\ArgumentTree {
+class Reflector extends xml\tree\Argument {
 
   const NS = 'http://2013.sylma.org/modules/captcha';
   const NAME = 'root';

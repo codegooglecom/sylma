@@ -44,14 +44,10 @@ class Basic extends core\argument\Readable implements window\context {
 
   protected function loadContent() {
 
-    $aResult = $aContent = array();
-    $aFiles = array();
-
+    $aFiles = $aResultFiles = $aResultTexts = array();
     $bFusion = $this->getFusion() ? $this->getFusion()->read('enable') : false;
 
     foreach ($this->query() as $mValue) {
-
-      $aDOM = array();
 
       if ($mValue instanceof fs\file) {
 
@@ -63,28 +59,26 @@ class Basic extends core\argument\Readable implements window\context {
 
           if ($bFusion) {
 
-            $aContent[] = $this->readFile($mValue);
+            $aResultFiles[] = $this->readFile($mValue);
           }
           else {
 
-            $aDOM = $this->addFile($mValue);
+            $aResultFiles[] = $this->addFile($mValue);
           }
         }
       }
       else {
 
-        $aDOM = $this->addText($mValue);
+        $aResultTexts[] = $this->addText($mValue);
       }
-
-      if ($aDOM) $aResult[] = $aDOM;
     }
 
     if ($bFusion && $aFiles) {
 
-      $aResult = array($this->getCache($aFiles, $aContent), $aResult);
+      $aResultFiles = $this->getCache($aFiles, $aResultFiles);
     }
 
-    return $aResult;
+    return array_filter(array($aResultFiles, $aResultTexts));
   }
 
   protected function readFile(fs\file $file) {
@@ -92,6 +86,9 @@ class Basic extends core\argument\Readable implements window\context {
     return $file->read();
   }
 
+  /**
+   * @return array
+   */
   protected function getCache(array $aFiles, $aContent) {
 
     $sName = crc32(implode('', array_keys($aFiles))) . '.' . static::EXTENSION;
@@ -136,6 +133,9 @@ class Basic extends core\argument\Readable implements window\context {
     return $bResult;
   }
 
+  /**
+   * @return array
+   */
   protected function addFile(fs\file $file) {
 
     $this->launchException('Must be overrided');

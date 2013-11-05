@@ -112,6 +112,9 @@ abstract class Domed extends Componented {
     return $this->getNode()->readx($sPath, $aNS, $bDebug);
   }
 
+  /**
+   * @return dom\handler
+   */
   protected function getDocumentContainer() {
 
     if (!$this->documentContainer) {
@@ -123,14 +126,14 @@ abstract class Domed extends Componented {
     return $this->documentContainer;
   }
 
-  protected function createElement($sName, $mContent = null, array $aAttributes = array(), $sNamespace = '') {
+  protected function createElement($sName, $mContent = null, array $aAttributes = array(), $sNamespace = '', $bPrefix = true) {
 
     if (!$sNamespace) {
 
       $this->throwException('Element without namespace vorbidden');
     }
 
-    $el = $this->getDocumentContainer()->createElement($sName, $mContent, $aAttributes, $sNamespace);
+    $el = $this->getDocumentContainer()->createElement($sName, $mContent, $aAttributes, $sNamespace, $bPrefix);
 
     return $el;
   }

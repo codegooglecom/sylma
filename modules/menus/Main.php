@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\modules\menus;
-use sylma\core, sylma\template;
+use sylma\core, sylma\storage\xml;
 
-class Main extends template\parser\ArgumentTree {
+class Main extends xml\tree\Argument {
 
   protected function loadChild(core\argument $content) {
 

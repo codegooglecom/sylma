@@ -37,7 +37,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
       $tpl = end($aTemplates);
     }
 
-    return $tpl->parseComponent($el);
+    return $tpl->parseElement($el);
   }
 
   protected function checkInternal() {

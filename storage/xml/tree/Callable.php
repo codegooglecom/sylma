@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\template\parser;
+namespace sylma\storage\xml\tree;
 use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template as tpl, sylma\parser\reflector;
 
-class ObjectTree extends reflector\component\Foreigner implements tpl\parser\tree {
+class Callable extends reflector\component\Foreigner implements tpl\parser\tree {
 
   protected $var;
 

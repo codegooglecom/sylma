@@ -9,7 +9,7 @@ interface window extends common\_window {
   function createObject(array $aProperties = array());
   function createGhost($sInterface);
   function createProperty($parent, $sName, $mReturn = null);
-  function createCall(common\_function $function, array $aArguments = array(), $mReturn = null);
-  
+  function createCall($function, array $aArguments = array(), $mReturn = null);
+
 }
 

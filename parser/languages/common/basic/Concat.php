@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\common\basic;
 use sylma\core, sylma\parser\languages\common;
 
-class Concat extends common\basic\Controled implements common\addable {
+class Concat extends common\basic\Controled implements common\addable, common\argumentable {
 
   protected $aValues = array();
 

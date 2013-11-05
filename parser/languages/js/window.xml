@@ -17,10 +17,12 @@
         <cls:class alias="object" name="js\basic\instance\_Object"/>
         <cls:class alias="function" name="js\basic\instance\_Function"/>
         <cls:class alias="string" name="js\basic\instance\_String"/>
+        <cls:class alias="concat" name="common\basic\Concat"/>
         <cls:class alias="array" name="js\basic\instance\_Array"/>
         <cls:class alias="numeric" name="js\basic\instance\_Numeric"/>
         <cls:class alias="null" name="js\basic\instance\_Null"/>
         <cls:class alias="boolean" name="js\basic\instance\_Boolean"/>
+        <cls:class alias="return" name="common\basic\_Return"/>
       </cls:classes>
     </cls:class>
   </cls:classes>

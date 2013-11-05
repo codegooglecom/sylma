@@ -3,6 +3,7 @@
   xmlns="http://2013.sylma.org/core/test"
   xmlns:cls="http://2013.sylma.org/core/factory"
 >
+  <parser>0</parser>
   <cls:classes>
     <cls:base>\sylma</cls:base>
     <cls:class alias="init" name="core\test\samples\Init01"/>

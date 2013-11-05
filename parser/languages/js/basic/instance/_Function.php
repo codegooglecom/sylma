@@ -32,7 +32,7 @@ class _Function extends _Object implements common\scope {
     }
     else {
 
-      $this->aContent[] = $this->getControler()->createInstruction($this->getControler(), $mVar);
+      $this->aContent[] = $this->getControler()->createInstruction($mVar);
     }
 
     return end($this->aContent);

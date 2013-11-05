@@ -184,13 +184,36 @@ class Window extends common\basic\Window implements php\window {
 
   protected function argToString($mValue) {
 
-    if ($mValue instanceof core\stringable || $mValue instanceof Cast) {
+    if ($mValue instanceof Cast) {
 
       $result = $this->create('string', array($this, $mValue));
     }
     else {
 
-      $result = $this->create('concat', array($this, $mValue));
+      $result = parent::argToString($mValue);
+    }
+
+    return $result;
+  }
+
+  protected function prepareToString($val) {
+
+    if ($val instanceof common\usable) {
+
+      $instance = $this->lookupInstanceObject($val);
+
+      if ($instance instanceof common\_object && $instance->getInterface()->isInstance('\sylma\core\stringable')) {
+
+        $result = $this->createCast($val);
+      }
+      else {
+
+        $result = $val;
+      }
+    }
+    else {
+
+      $result = parent::prepareToString($val);
     }
 
     return $result;

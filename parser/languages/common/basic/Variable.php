@@ -18,6 +18,18 @@ class Variable extends Returned implements common\_var {
     if ($return) $this->setReturn($return);
   }
 
+  public function getProperty($sName, $mReturn = null) {
+
+    return $this->getWindow()->createProperty($this, $sName, $mReturn);
+  }
+
+  public function call($sMethod, array $aArguments = array(), $mReturn = null, $bVar = false) {
+
+    $call = $this->getControler()->createCall($this->getProperty($sMethod), $aArguments, $mReturn);
+
+    return $bVar ? $call->getVar() : $call;
+  }
+
   protected function setName($sName) {
 
     $this->sName = $sName;

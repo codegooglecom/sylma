@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\template\parser;
-use sylma\core, sylma\dom, sylma\template as tpl, sylma\parser\reflector;
+namespace sylma\storage\xml\tree;
+use sylma\core, sylma\dom;
 
-class ArgumentTree extends ObjectTree {
+class Argument extends Callable {
 
   protected $handler;
   protected $options;
@@ -70,7 +70,7 @@ class ArgumentTree extends ObjectTree {
 
       if (!$sMode) {
 
-        $this->launchException('Cannot apply tree');
+        $this->launchException('No template found, cannot apply tree');
       }
     }
 

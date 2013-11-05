@@ -39,6 +39,24 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Filtered collection">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <li>
+            <tpl:apply select="user[@name='root']"/>
+          </li>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <tpl:read select="email"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <li>root@sylma.org</li>
+    </tst:node>
+  </tst:test>
   <tst:test name="Cascading apply">
     <tst:document>
       <view:view user:ns="ns">

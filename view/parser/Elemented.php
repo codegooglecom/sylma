@@ -84,6 +84,11 @@ class Elemented extends template\parser\handler\Domed {
     return $this->sMode;
   }
 
+  public function getParser($sNamespace) {
+
+    return parent::getParser($sNamespace);
+  }
+
   public function setNamespace($sNamespace, $sPrefix = null, $bDefault = true) {
 
     return parent::setNamespace($sNamespace, $sPrefix, $bDefault);

@@ -71,14 +71,22 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     return $result;
   }
 
+  public function createConcat($mValue) {
+
+    return $this->create('concat', array($this, $mValue));
+  }
+
   public function createFunction(array $aArguments = array(), $sContent = '', $mReturn = null) {
 
     return $this->create('function', array($this, $aArguments, $sContent, $this->loadReturn($mReturn)));
   }
 
-  public function createCall(common\_function $function, array $aArguments = array(), $mReturn = null) {
+  public function createCall($function, array $aArguments = array(), $mReturn = null) {
 
-    return $this->create('call', array($this, $function, $aArguments, $this->loadReturn($mReturn)));
+    return $this->createArgument(array('call' => array(
+      'called' => $function,
+      '#argument' => $aArguments,
+    )));
   }
 
   public function createDeclare(common\_var $var) {
@@ -166,7 +174,7 @@ class Window extends common\basic\Window implements js\window, core\stringable {
     $doc = $this->createDocument();
     $doc->addElement('window', null, array(), $this->getNamespace('self'));
     $doc->add($node->getx('self:items', $this->getNS(), false));
-
+//dsp($doc);
     if (!$doc->isEmpty()) {
 
       $result = $this->getTemplate(static::PHP_TEMPLATE)->parseDocument($doc);

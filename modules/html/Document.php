@@ -22,14 +22,15 @@ class Document extends core\window\classes\Container {
     }
 
     $fusion = $this->get('fusion');
-
     $load = new binder\context\Load;
+    $js = new context\JS(array(
+      'load' => $load,
+    ), $fusion);
+
     $contexts = $this->createArgument(array(
       'title' => array(),
-      'css' => new context\Less(array(), $fusion),
-      'js' => new context\JS(array(
-        'load' => $load,
-      ), $fusion),
+      'css' => new context\Less(array(), $fusion, $js),
+      'js' => $js,
       //'js-classes' => new binder\context\Classes,
       //'js/load' => new js\context\Load,
       'errors' =>  $messages,

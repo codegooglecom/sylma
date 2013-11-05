@@ -23,6 +23,7 @@
     <cls:class alias="interface" name="_Interface"/>
     <cls:class alias="method" name="Method"/>
     <cls:class alias="line" name="_Line"/>
+    <cls:class alias="instruction" name="\sylma\parser\languages\common\basic\Instruction"/>
     <cls:class alias="null" name="instance\_Null"/>
     <cls:class alias="boolean" name="instance\_Boolean"/>
     <cls:class alias="concat" name="Concat"/>
@@ -35,5 +36,6 @@
     <cls:class alias="operator" name="\sylma\parser\languages\common\basic\Operator"/>
     <cls:class alias="group" name="\sylma\parser\languages\common\basic\Group"/>
     <cls:class alias="expression" name="\sylma\parser\languages\common\basic\Expression"/>
+    <cls:class alias="caller" name="\sylma\parser\languages\common\basic\Caller"/>
   </cls:classes>
 </arg:argument>

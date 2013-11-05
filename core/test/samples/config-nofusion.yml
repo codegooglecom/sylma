@@ -1,0 +1,10 @@
+initializer :
+  debug :
+    fatal : true
+  window :
+    fusion :
+      enable : false
+    html :
+      default :
+        action : /#sylma/core/test/samples/window01.vml
+        sub : null

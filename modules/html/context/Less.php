@@ -5,12 +5,19 @@ use sylma\core, sylma\parser\context, sylma\dom, sylma\storage\fs;
 
 class Less extends CSS {
 
+  public function __construct(array $aArray = array(), core\argument $fusion = null, core\window\context $js = null) {
+
+    parent::__construct($aArray, $fusion);
+    $this->js = $js; // TODO : change to context getter
+  }
+
   protected function addFile(fs\file $file, $bReal = false) {
 
     $aResult = parent::addFile($file, $bReal);
 
     if ($file->getExtension() === 'less') {
 
+      $this->js->add(\Sylma::getManager('fs')->getFile('/#sylma/modules/html/medias/less.js'));
       $aResult['link']['@rel'] = 'stylesheet/less';
     }
 

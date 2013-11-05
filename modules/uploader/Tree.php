@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\modules\uploader;
-use sylma\core, sylma\dom, sylma\template, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\storage\xml, sylma\parser\languages\common;
 
-class Tree extends template\parser\ArgumentTree {
+class Tree extends xml\tree\Argument {
 
   protected $reflector;
 

@@ -47,8 +47,15 @@
     </xsl:for-each>
   </xsl:template>
 
+  <xsl:template match="js:concat">
+    <xsl:for-each select="*">
+      <xsl:apply-templates select="."/>
+      <xsl:if test="position() != last()"> + </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
   <xsl:template match="js:item">
-    <xsl:apply-templates select="@key"/>
+    <xsl:value-of select="@key"/>
     <xsl:text> : </xsl:text>
     <xsl:apply-templates/>
   </xsl:template>
@@ -100,7 +107,7 @@
   </xsl:template>
 
   <xsl:template match="js:argument">
-    <xsl:value-of select="."/>
+    <xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template name="js:arguments" match="js:arguments">

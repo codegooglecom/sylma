@@ -27,6 +27,17 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
    * Stack of builded objects
    */
   protected $aObjects = array();
+
+  /**
+   * List of all classes
+   */
+  protected $aClasses = array();
+
+  /**
+   * Stack of script var
+   */
+  protected $aSources = array();
+
   protected $context;
 
   /**
@@ -35,6 +46,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
    */
   protected $objects;
   protected $bInit = false;
+  protected $bTemplate = false;
   protected $rootElement;
 
   public function init() {
@@ -120,6 +132,10 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return $this->objects;
   }
 
+  public function getParent($bDebug = true) {
+
+    return parent::getParent($bDebug);
+  }
   /**
    * @return common\_var
    */
@@ -143,6 +159,11 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return $el->readx('@js:node', $this->getNS(), false);
   }
 
+  protected function elementIsTemplate(dom\element $el) {
+
+    return $el->readx('@js:alias', $this->getNS(), false);
+  }
+
   public function parseAttributes(dom\element $el, $resultElement, $result) {
 
     $result = null;
@@ -156,7 +177,11 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     $el->getHandler()->registerNamespaces($this->getNS());
 
-    if ($this->elementIsObject($el)) {
+    if ($this->elementIsTemplate($el)) {
+
+      $result = $this->reflectTemplate($el, $resultElement);
+    }
+    else if ($this->elementIsObject($el)) {
 
       $result = $this->reflectObject($el, $resultElement);
     }
@@ -172,7 +197,22 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     if ($newElement instanceof Basic && $this->rootElement === $el) {
 
+      $this->buildClasses();
       $this->getPHPWindow()->add($this->getContainer());
+    }
+  }
+
+  protected function addClass(_Class $class) {
+
+    $this->aClasses[] = $class;
+
+  }
+
+  protected function buildClasses() {
+
+    foreach ($this->aClasses as $class) {
+
+      $class->addTo($this->getContainer());
     }
   }
 
@@ -209,21 +249,37 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return end($this->aObjects);
   }
 
-  public function stopObject() {
+  public function stopObject($bBuild = true) {
 
-    return array_pop($this->aObjects);
+    $result = array_pop($this->aObjects);
+/*
+    if ($bBuild && !$this->aObjects) {
+
+      $this->onFinish();
+    }
+*/
+    return $result;
   }
 
+  public function onFinish() {
+
+    $this->buildClasses();
+    parent::onFinish();
+  }
+
+  /**
+   * @return _Class
+   */
   protected function reflectObject(dom\element $el, template\element $resultElement) {
 
-    $obj = $this->loadComponent('class', $el);
+    $result = $this->loadComponent('class', $el);
 
-    $obj->isRoot(!count($this->aObjects));
-    $obj->setElement($resultElement);
+    $result->isRoot(!count($this->aObjects));
+    $result->setElement($resultElement);
 
-    //$this->setContainer($obj);
+    $this->addClass($result);
 
-    return $obj;
+    return $result;
   }
 
   protected function reflectNode(dom\element $el, template\element $resultElement) {
@@ -234,5 +290,36 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return $obj;
   }
 
+  protected function reflectTemplate(dom\element $el, template\element $resultElement) {
+
+    $result = $this->reflectObject($el, $resultElement);
+    $result->useTemplate(true);
+
+    return $result;
+  }
+
+  /**
+   * @usedby _Class children
+   */
+  public function startSource(common\_var $source) {
+
+    $this->aSources[] = $source;
+  }
+
+  /**
+   * @see startSource()
+   */
+  public function stopSource() {
+
+    array_pop($this->aSources);
+  }
+
+  /**
+   * @usedby foreign parser JS
+   */
+  public function getSource() {
+
+    return end($this->aSources);
+  }
 }
 

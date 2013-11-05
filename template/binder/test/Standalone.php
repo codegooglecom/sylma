@@ -6,6 +6,7 @@ use sylma\core, sylma\dom, sylma\storage\fs, sylma\modules\tester, sylma\storage
 class Standalone extends tester\Parser implements dom\domable {
 
   //const NS = 'http://www.sylma.org/parser/js/binder/test';
+  //const DEBUG_RUN = false;
 
   protected $iTestKey;
 

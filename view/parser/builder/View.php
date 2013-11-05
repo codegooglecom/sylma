@@ -5,13 +5,11 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\storage\fs, sylma\parse
 
 class View extends Variabled {
 
-  const MODE_DEFAULT = 'view';
   const ARGUMENT_METHOD = 'getFirst';
 
   const DO_ARGUMENTS = '../do.xml';
   const VIEW_ARGUMENTS = '../view.xml';
 
-  protected $sMode = self::MODE_DEFAULT;
   protected $reflector;
 
   public function build() {
@@ -68,8 +66,6 @@ class View extends Variabled {
   }
 
   /**
-   *
-   * @param type $sMode
    * @return common\_window
    */
   protected function prepareWindow(dom\handler $doc, $sMode) {
@@ -107,16 +103,6 @@ class View extends Variabled {
   public function getExternal() {
 
     return $this->getWindow()->getVariable('bSylmaExternal');
-  }
-
-  protected function getMode() {
-
-    return $this->sMode;
-  }
-
-  protected function setMode($sMode) {
-
-    $this->sMode = $sMode;
   }
 
   protected function getReflector() {

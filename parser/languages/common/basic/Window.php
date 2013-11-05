@@ -191,6 +191,11 @@ return; // todo, decide to use or not
     return $this->create('cast', array($this, $content, $sType));
   }
 
+  public function createCaller($mContent) {
+
+    return $this->create('caller', array($mContent));
+  }
+
   protected function lookupInstanceObject(common\usable $val) {
 
     if ($val instanceof common\_call) {
@@ -217,7 +222,7 @@ return; // todo, decide to use or not
     return $result;
   }
 
-  public function parse($mContent) {
+  public function parse($mContent, $bArray = false) {
 
     if (!$mContent) {
 
@@ -229,7 +234,8 @@ return; // todo, decide to use or not
     }
     else {
 
-      $mResult = current($this->parseArrayables(array($mContent)));
+      $aResult = $this->parseArrayables(array($mContent));
+      $mResult = $bArray ? $aResult : current($aResult);
     }
 
     return $mResult;
@@ -303,7 +309,16 @@ return; // todo, decide to use or not
 
   protected function argToString($mValue) {
 
-    return $this->create('string', array($this, $mValue));
+    if ($mValue instanceof core\stringable || $mValue instanceof Cast) {
+
+      $result = $this->create('string', array($this, $mValue));
+    }
+    else {
+
+      $result = $this->create('concat', array($this, $mValue));
+    }
+
+    return $result;
   }
 
   public function setMode($iMode) {
@@ -411,25 +426,7 @@ return; // todo, decide to use or not
 
   protected function prepareToString($val) {
 
-    if ($val instanceof common\usable) {
-
-      $instance = $this->lookupInstanceObject($val);
-
-      if ($instance instanceof common\_object && $instance->getInterface()->isInstance('\sylma\core\stringable')) {
-
-        $result = $this->createCast($val);
-      }
-      else {
-
-        $result = $val;
-      }
-    }
-    else {
-
-      $result = $val;
-    }
-
-    return $result;
+    return $val;
   }
 
   public function toString($mContent, common\_var $target = null, $bDebug = false, $bFirst = false) {
@@ -502,7 +499,7 @@ return; // todo, decide to use or not
 
   public function createInstruction(common\argumentable $content) {
 
-    return $this->create('line', array($this, $content));
+    return $this->create('instruction', array($this, $content));
   }
 
   public function createGroup(array $aContent) {
@@ -543,6 +540,11 @@ return; // todo, decide to use or not
   public function createExpression($val) {
 
     return $this->create('expression', array($this, $val));
+  }
+
+  public function createReturn($content) {
+
+    return $this->create('return', array($this, $content));
   }
 
   public function setVariable(common\_var $var, $bDebug = true) {

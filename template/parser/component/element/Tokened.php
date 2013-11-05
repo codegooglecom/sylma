@@ -147,7 +147,7 @@ class Tokened extends Attributed implements common\arrayable, common\argumentabl
 
     foreach ($aChildren as $child) {
 
-      $aContent[] = $this->getWindow()->parseArrayables(array($child));
+      $aContent[] = $this->getWindow()->parse($child, true);
     }
 
     list($aContent, $aBefore) = $this->extractTokens($aContent);

@@ -13,24 +13,28 @@ class Module extends core\module\Domed implements dom\domable {
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-
-    $this->setFile($this->getFile('basic.xml'));
   }
 
   public function asDOM() {
 
-    $doc = $this->getFile()->getDocument($this->getNS());
+
     $aTests = array();
+    $files = $this->getDirectory()->getFiles(array('xml'));
 
-    foreach ($doc->queryx('self:test') as $test) {
+    foreach ($files as $file) {
 
-      $iKey = $test->readx('count(preceding-sibling::*)');
+      $doc = $file->getDocument($this->getNS());
 
-      $aTests[] = array(
-        'name' => $test->readx('@name'),
-        'file' => (string) $this->getFile()->getName(),
-        'key' => $iKey,
-      );
+      foreach ($doc->queryx('self:test') as $test) {
+
+        $iKey = $test->readx('count(preceding-sibling::*)');
+
+        $aTests[] = array(
+          'name' => $test->readx('@name'),
+          'file' => (string) $file->getName(),
+          'key' => $iKey,
+        );
+      }
     }
 
     $sParent = 'sylma.binder';

@@ -15,6 +15,7 @@ sylma.classes = {
 
     roots : [],
     windowLoaded : false,
+    uID : 1,
 
     cookie : {
 
@@ -157,7 +158,18 @@ sylma.classes = {
 
       return JSON.parse(val);
     },
+/*
+    arrayToObject : function(val) {
 
+      var result = {};
+
+      val.each(function(item, key) {
+        result[key] = item;
+      });
+
+      return result;
+    },
+*/
     loadMessages : function() {
 
       var val = Cookie.read(this.cookie.name);
@@ -272,6 +284,11 @@ sylma.classes = {
 
       var hash = window.location.hash;
       return hash.indexOf('#') == 0 ? hash.substr(1) : hash;
+    },
+
+    generateID : function(prefix) {
+
+      return prefix + this.uID++;
     }
   })
 }
@@ -293,7 +310,7 @@ sylma.ui = new sylma.classes.ui;
      */
     tmp : [],
     node : null,
-    nodes : [],
+    nodes : {},
     settings : {},
     options : [],
 
@@ -321,10 +338,7 @@ sylma.ui = new sylma.classes.ui;
       //if (props.sylma) this.sylma = Object.merge(this.sylma, props.sylma);
 
       this.initBasic(props);
-
-      //if (props.methods) this.initMethods(props.methods);
-      if (this.events) this.initEvents(this.events);
-      if (this.nodes) this.initNodes(this.nodes);
+      this.initNode(props);
 
       if (props.options) this.initOptions(props.options);
 
@@ -332,6 +346,12 @@ sylma.ui = new sylma.classes.ui;
       this.initParentName(this.sylma);
 
       if (props.objects) this.initObjects(props.objects);
+
+      this.onReady();
+    },
+
+    onReady : function() {
+
     },
 
     initBasic : function(props) {
@@ -339,19 +359,33 @@ sylma.ui = new sylma.classes.ui;
       this.parentObject = props.parentObject;
       this.parentKey = props.parentKey;
 
+      if (props.onLoad) {
+
+        this.onLoad = props.onLoad;
+      }
+    },
+
+    initNode : function(props) {
+
       if (!props.id && !props.node) {
 
         throw new Error('No node associated');
       }
 
-      this.node = props.node ? $(props.node) : $(props.id);
+      var node = props.node ? props.node : $(props.id);
 
-      if (!this.node) {
+      if (!node) {
 
+        console.log(props);
         throw new Error('Main node [@id=' + props.id + '] not found');
       }
 
+      this.node = node;
+
       this.prepareNodes(this.node);
+
+      this.initEvents(this.events);
+      this.initNodes(this.nodes);
     },
 
     initParents : function(props) {
@@ -396,7 +430,14 @@ sylma.ui = new sylma.classes.ui;
 
       for (var key in nodes) {
 
-        this.nodes[key] = this.getNode().getElement('.' + nodes[key]);
+        var node = this.getNode().getElement('.' + nodes[key]);
+
+        if (!node) {
+
+          throw new Error('Node ' + key + ' not found');
+        }
+
+        this.nodes[key] = node.length ? node[0] : node;
       }
     },
 
@@ -681,6 +722,31 @@ sylma.ui = new sylma.classes.ui;
       }
     },
 
+    buildObject : function(_class, props) {
+
+      props = Object.merge({
+        extend : _class.name,
+        template : true
+      }, props);
+
+      var result = sylma.ui.createObject(props);
+      this.tmp.push(result);
+
+      return result;
+    },
+
+    add : function(alias, args) {
+
+      var _class = this.classes[alias];
+
+      var result = this.buildObject(_class, args._init_);
+      result.initTemplate(args);
+
+      result.addTo(this.getNode().getElement('.' + _class.node));
+
+      return result;
+    },
+
     show : function() {
 
       this.getNode().addClass('sylma-visible');
@@ -692,5 +758,64 @@ sylma.ui = new sylma.classes.ui;
     }
   });
 
+  this.Template = new Class({
 
+    Extends : this.Container,
+
+    initTemplate : function(options) {
+
+      var el = sylma.ui.importNode(this.buildTemplate(options));
+      this.initNode({node : el});
+    },
+
+    buildObjects : function(alias, objects) {
+
+      var result = [];
+
+      objects.each(function(item) {
+
+        var obj = this.buildObject(this.classes[alias], item._init_);
+        result.push(obj.buildTemplate(item));
+
+      }.bind(this));
+
+      return result.join();
+    },
+
+    initNode : function(props) {
+
+      if (!props) {
+
+        this.parent({
+          id : this.id
+        });
+      }
+      else if (props.template) {
+
+        this.id = sylma.ui.generateID('sylma');
+      }
+      else {
+
+        this.parent(props);
+      }
+    },
+
+    onLoad : function() {
+
+    },
+
+    addTo : function(node) {
+
+      var el = this.getNode();
+      node.adopt(el, 'before');
+
+      this.tmp.each(function(item) {
+
+        item.initNode();
+      });
+
+      sylma.ui.loadArray([this]);
+    }
+
+  })
 }).call(sylma.ui);

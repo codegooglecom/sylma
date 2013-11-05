@@ -122,7 +122,12 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
       $this->launchException('No table defined');
     }
 
-    return $this->getConnection()->call($this->getMethod(), array(new Caller($this), $bDebug), '\sylma\core\argument');
+    $self = $this;
+    $caller = $this->getWindow()->createCaller(function() use ($self) {
+      return $self->getString();
+    });
+
+    return $this->getConnection()->call($this->getMethod(), array($caller, $bDebug), '\sylma\core\argument');
   }
 
   public function setMethod($sName) {

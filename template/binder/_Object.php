@@ -38,19 +38,12 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     return $this->name;
   }
 
-  protected function getClass() {
+  /**
+   * Called from child classes
+   */
+  public function getClass() {
 
     return $this->class;
-  }
-
-  protected function getJSClass() {
-
-    return $this->sJSClass;
-  }
-
-  protected function setJSClass($sName) {
-
-    $this->sJSClass = $sName;
   }
 
   protected function isRoot($mValue = null) {
@@ -81,10 +74,15 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     $this->sParent = $sParent;
   }
 
-  protected function buildObject() {
+  public function buildObject() {
+
+    $window = $this->getParser()->getPHPWindow();
+    $self = $this;
 
     $aResult = array(
-      'extend' => $this->getClass()->getExtend(),
+      'extend' => $window->createCaller(function() use ($self, $window) {
+        return $window->argToInstance($self->getClass()->getExtend());
+      }),
       //'binder' => $this->getClass()->getID(),
       'id' => $this->getID(),
     );
@@ -169,16 +167,16 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $var = $this->getParser()->getObjects();
 
-    //$element->addBefore($element->getAttribute('class')->getVar()->getInsert());
-    //$element->addBefore($element->addToken('class', $this->getID()));
-    $content = $window->parseArrayables(array($element));
+    $content = $window->parse($element, true);
 
     if ($this->isRoot() and $sParent = $this->getParentName()) {
 
       $aResult[] = $this->getParser()->getObjects()->call('setParentPath', array($sParent))->getInsert();
     }
 
+
     $aResult[] = $var->call('startObject', $this->buildObject())->getInsert();
+
     $aResult[] = $content;
     $aResult[] = $var->call('stopObject')->getInsert();
 

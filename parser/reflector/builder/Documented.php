@@ -5,16 +5,19 @@ use \sylma\core, sylma\parser\languages\common, sylma\dom, sylma\parser\reflecto
 
 class Documented extends Logger implements reflector\documented {
 
-  protected $reflector;
-  protected $sourceDir;
-  protected $window;
-  protected $sReturn;
-
   const PHP_TEMPLATE = '/#sylma/parser/languages/php/source.xsl';
   const WINDOW_ARGS = 'php';
 
   const BUILD_NS = 'http://2013.sylma.org/parser/reflector/builder';
   const BUILD_PREFIX = 'build';
+
+  const MODE_DEFAULT = 'view';
+  
+  protected $reflector;
+  protected $sourceDir;
+  protected $window;
+  protected $sReturn;
+  protected $sMode = self::MODE_DEFAULT;
 
   protected $bThrow = true;
   protected $aElements = array();
@@ -421,6 +424,16 @@ class Documented extends Logger implements reflector\documented {
 
     //$this->stopComponentLog();
     array_pop($this->aElements);
+  }
+
+  public function getMode() {
+
+    return $this->sMode;
+  }
+
+  public function setMode($sMode) {
+
+    $this->sMode = $sMode;
   }
 
   public function throwExceptions($mValue = null) {

@@ -13,11 +13,12 @@
         <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
-
+<!--
+TODO : recursive loop with common.xsl and formater
   <xsl:template match="@*">
     <xsl:copy/>
   </xsl:template>
-
+-->
   <xsl:template match="js:window">
     <php:concat>
       <xsl:apply-templates/>

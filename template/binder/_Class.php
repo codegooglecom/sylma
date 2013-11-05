@@ -7,14 +7,25 @@ class _Class extends Basic implements common\arrayable {
 
   const CONTEXT_ALIAS = 'js/binder/context';
   const JS_OBJECTS_PATH = 'sylma.ui.tmp';
+  const TEMPLATE_MODE = 'script';
 
   protected $object;
   protected $element;
   protected $bRoot = false;
+  protected $template = null;
 
   protected $sExtend = '';
   protected $sID;
   protected $bAdded = false;
+  protected $bExtended = false;
+  protected $bTemplate = false;
+
+  protected $aAliases = array();
+
+  /**
+   * Script var
+   */
+  protected $source;
 
   public function parseRoot(dom\element $el) {
 
@@ -60,7 +71,7 @@ class _Class extends Basic implements common\arrayable {
 
     $this->getElement()->parseRoot($this->cleanAttributes($this->getNode()));
 
-    $this->getParser()->stopObject();
+    $this->getParser()->stopObject(false);
     $this->stopLog();
 
     //$this->addToWindow();
@@ -109,6 +120,7 @@ class _Class extends Basic implements common\arrayable {
     }
 
     $this->setExtend($this->readx('@js:class'));
+
     $obj->setProperty('Extends', $this->getWindow()->createVariable($this->getExtend()));
 
     if ($sParentName = $this->loadParentName()) {
@@ -169,31 +181,154 @@ class _Class extends Basic implements common\arrayable {
     $this->getObject()->setProperty($sName, $val);
   }
 
-  public function asArray() {
+  protected function getAlias() {
 
+    return $this->readx('@js:alias');
+  }
+
+  /**
+   * Called from child classes
+   */
+  public function addAlias($sAlias, $sName) {
+
+    $sPath = "classes.$sAlias";
     $obj = $this->getObject();
 
-    if (!$this->bAdded) {
+    if (!$obj->getProperty($sPath, false)) {
 
-      if (count($obj->getProperties()) > 1) {
+      $sID = uniqid('sylma');
 
-        $this->setExtend('sylma.binder.classes.' . $this->getID());
+      $obj->setProperty($sPath, $this->getWindow()->createObject(array(
+        'name' => $sName,
+        'node' => $sID,
+      )));
+    }
+    else {
 
-        $container = $this->getParser()->getContainer();
-        $class = $this->getWindow()->createObject(array(), 'Class');
-        $new = $this->getWindow()->createInstanciate($class, array($obj));
-
-        $container->setProperty($this->getID(), $new);
-      }
-
-      $this->bAdded = true;
+      $sID = $obj->getProperty("$sPath.node");
     }
 
-    $obj = $this->loadSimpleComponent('object');
-    $obj->setClass($this);
+    return $sID;
+  }
 
-    $obj->parseRoot($this->getNode());
-    $aResult[] = $obj->asArray();
+  public function useTemplate($bValue = null) {
+
+    if (is_bool($bValue)) $this->bTemplate = $bValue;
+
+    return $this->bTemplate;
+  }
+
+  protected function loadExtend() {
+
+    if (!$this->bExtended) {
+
+      $this->setExtend('sylma.binder.classes.' . $this->getID());
+      $this->bExtended = true;
+    }
+  }
+
+  public function addTo(common\_object $container) {
+
+    $js = $this->getObject();
+
+    if ($this->useTemplate()) {
+
+      $js->setProperty('buildTemplate', $this->template);
+    }
+
+    if (count($js->getProperties()) > 1) {
+
+      $this->loadExtend();
+
+      $class = $this->getWindow()->createObject(array(), 'Class');
+      $new = $this->getWindow()->createInstanciate($class, array($js));
+
+      $container->setProperty($this->getID(), $new);
+    }
+  }
+
+  protected function prepareParent(self $class) {
+
+    return $class->addAlias($this->getAlias(), $this->getExtend());
+  }
+
+  protected function setSource(common\_var $source) {
+
+    $this->source = $source;
+  }
+
+  protected function getSource() {
+
+    return $this->source;
+  }
+
+  public function asArray() {
+
+    $aResult = array();
+    $bTemplate = $this->useTemplate();
+    $bTemplateView = $this->getRoot()->getMode() === self::TEMPLATE_MODE;
+
+    if ($bTemplate || $bTemplateView) {
+
+      if (!$this->bAdded) {
+
+        $this->loadExtend();
+        $obj = $this->getParser()->getObject();
+        $class = $bTemplateView ? $obj : $obj->getClass();
+
+        $sID = $this->prepareParent($class);
+
+        $window = $this->getWindow();
+
+        $source = $window->createVariable('item');
+        $self = $window->createVariable('this');
+
+        $this->setSource($source);
+        $this->getParser()->startSource($source);
+        $this->getParser()->startObject($this);
+
+
+        if (!$bTemplateView) {
+
+          $root = $this->getRoot();
+          $sMode = $root->getMode();
+
+          $root->setMode(self::TEMPLATE_MODE);
+        }
+        else {
+
+          $sAlias = $this->getAlias();
+          $aResult[] = $self->call('buildObjects', array($window->toString($sAlias), $source->getProperty($sAlias)));
+        }
+
+        $parser = $this->getParser()->getParent();
+        $aResult[] = $parser->parseFromChild($this->createElement('span', null, array('class' => $sID), \Sylma::read('namespaces/html'), false));
+
+        $this->getElement()->setAttribute('id', $self->getProperty('id'));
+        $content = $window->toString($this->getElement());
+
+        $this->template = $window->createFunction(array($source->getName()));
+        $this->template->addContent($window->createReturn($content));
+
+        $this->getParser()->stopSource();
+        $this->getParser()->stopObject();
+
+        if (!$bTemplateView) {
+
+          $root->setMode($sMode);
+        }
+
+        $this->bAdded = true;
+      }
+    }
+    else {
+
+      $obj = $this->loadSimpleComponent('object');
+      $obj->setClass($this);
+
+      $obj->parseRoot($this->getNode());
+      $aResult[] = $obj->asArray();
+    }
 
     return $aResult;
   }

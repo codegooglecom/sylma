@@ -165,9 +165,7 @@ abstract class Basic extends core\module\Controled {
 
   public function get($sPath = '', $bDebug = true, $bExpand = true) {
 
-    $result = null;
     $dom = $this->getControler();
-
     $sRealPath = $this->parsePath($sPath);
 
     $result = $this->getDocument()->getx($sRealPath, array(), $bDebug);
@@ -198,7 +196,13 @@ abstract class Basic extends core\module\Controled {
 
   public function query($sPath = '', $bDebug = true) {
 
-    $this->launchException('Not implemented');
+    //$dom = $this->getControler();
+    $sRealPath = $this->parsePath($sPath);
+
+    $result = $this->getDocument()->queryx($sRealPath, array(), $bDebug);
+    $this->useAttribute(false);
+
+    return $result;
   }
 
   public function read($sPath = '', $bDebug = true) {

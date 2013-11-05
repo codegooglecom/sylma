@@ -27,7 +27,7 @@ class Handler extends tester\Parser implements core\argumentable {
   public function __construct() {
 
     $this->setDirectory(__file__);
-    $this->setArguments('settings.xml');
+    $this->setSettings('settings.xml');
 
     parent::__construct();
   }
@@ -83,7 +83,7 @@ class Handler extends tester\Parser implements core\argumentable {
     }
 
     \Sylma::setManagers(array(
-      //'parser' => \Sylma::getManager('parser'),
+      'parser' => $this->read('parser') ? \Sylma::getManager('parser') : null,
       'init' => $init,
       'user' => $user,
     ));

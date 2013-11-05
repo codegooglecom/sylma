@@ -81,6 +81,9 @@
     'line' => array(
       'file' => '\sylma\parser\languages\php\basic\_Line.php',
       'name' => '\sylma\parser\languages\php\basic\_Line'),
+    'instruction' => array(
+      'file' => '\sylma\parser\languages\common\basic\Instruction.php',
+      'name' => '\sylma\parser\languages\common\basic\Instruction'),
     'null' => array(
       'file' => '\sylma\parser\languages\php\basic\instance\_Null.php',
       'name' => '\sylma\parser\languages\php\basic\instance\_Null'),
@@ -116,5 +119,8 @@
       'name' => '\sylma\parser\languages\common\basic\Group'),
     'expression' => array(
       'file' => '\sylma\parser\languages\common\basic\Expression.php',
-      'name' => '\sylma\parser\languages\common\basic\Expression')))));
+      'name' => '\sylma\parser\languages\common\basic\Expression'),
+    'caller' => array(
+      'file' => '\sylma\parser\languages\common\basic\Caller.php',
+      'name' => '\sylma\parser\languages\common\basic\Caller')))));
   

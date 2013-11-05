@@ -7,6 +7,7 @@ class Parser extends tester\Prepare {
 
   const NS = 'http://www.sylma.org/modules/tester/parser';
   const TRASH_MANAGER = 'fs/trash';
+  const DEBUG_RUN = true;
 
   protected static $sArgumentClass = 'sylma\core\argument\Readable';
   protected $exportDirectory;
@@ -93,7 +94,7 @@ class Parser extends tester\Prepare {
 
     $this->setFile($file);
 
-    $result = $manager->load($file, $aArguments, false);
+    $result = $manager->load($file, $aArguments, false, static::DEBUG_RUN);
     if ($bDelete) $file->delete();
 
     return $result;

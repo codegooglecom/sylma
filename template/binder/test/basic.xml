@@ -5,8 +5,6 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:le="http://2013.sylma.org/action"
-  xmlns:lm="none"
-  xmlns:la="http://2013.sylma.org/template/binder"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
@@ -16,7 +14,7 @@
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
-  <tst:description>JS</tst:description>
+  <tst:description>Basic</tst:description>
 
   <tst:test name="Base object">
     <tst:document>
@@ -26,7 +24,7 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">world</div>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">world</div>
         </view:template>
       </view:view>
     </tst:document>
@@ -45,7 +43,7 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div id="hello" la:class="sylma.ui.Base" la:parent="example" la:name="test">world</div>
+          <div id="hello" js:class="sylma.ui.Base" js:parent="example" js:name="test">world</div>
         </view:template>
       </view:view>
     </tst:document>
@@ -64,8 +62,8 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:event name="click">sylma.tester.test(true);</la:event>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <js:event name="click">sylma.tester.test(true);</js:event>
             <p>hello</p>
           </div>
         </view:template>
@@ -86,9 +84,9 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <strong>
-              <la:event name="click">sylma.tester.test(true);</la:event>
+              <js:event name="click">sylma.tester.test(true);</js:event>
               world
             </strong>
             <p>hello</p>
@@ -111,9 +109,9 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <strong class="myclass">
-              <la:event name="click">sylma.tester.test(this.tagName == 'STRONG');</la:event>
+              <js:event name="click">sylma.tester.test(this.tagName == 'STRONG');</js:event>
               world
             </strong>
             <p>hello</p>
@@ -136,8 +134,8 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:method name="update">return 'abc';</la:method>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <js:method name="update">return 'abc';</js:method>
             <p>hello</p>
           </div>
         </view:template>
@@ -158,8 +156,8 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:method name="myTest" arguments="myarg">return myarg + 'world';</la:method>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <js:method name="myTest" arguments="myarg">return myarg + 'world';</js:method>
             <p>hello</p>
           </div>
         </view:template>
@@ -180,9 +178,9 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <la:include>samples/sample1.js</la:include>
-          <div la:class="sylma.samples.Sample1" la:parent="example" la:name="test">
-            <la:method name="hello">return this.parent() + 'world';</la:method>
+          <js:include>samples/sample1.js</js:include>
+          <div js:class="sylma.samples.Sample1" js:parent="example" js:name="test">
+            <js:method name="hello">return this.parent() + 'world';</js:method>
             <p>hello</p>
           </div>
         </view:template>
@@ -195,122 +193,7 @@
 
     </tst:expected>
   </tst:test>
-  <tst:test name="Sub object">
-    <tst:document>
-      <view:view>
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <div>Hello world</div>
-            <div la:class="sylma.ui.Base" la:name="sub">yup</div>
-          </div>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:expected>
-      var test = example.test;
-      var node = test.getObject('sub').getNode();
 
-      return node.get('text') === 'yup';
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Replace sub object" disabled="true">
-    <tst:prepare>
-      $manager->set('result', $manager->getScript('samples/crud1.vml'));
-    </tst:prepare>
-    <tst:callback>
-
-      var test = example.test.tmp[0];
-      test.update();
-
-    </tst:callback>
-  </tst:test>
-  <tst:test name="Sub object without name">
-    <tst:document>
-      <view:view>
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <div>Hello world</div>
-            <div la:class="sylma.ui.Base">
-              <la:event name="mouseover">return %object%.getNode();</la:event>
-              <span>bonsoir</span>
-            </div>
-          </div>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:expected>
-      var tmp = example.test.tmp;
-      var node = tmp[0].node.fireEvent('mouseover');
-
-      return node.getChildren()[0].get('text') === 'bonsoir';
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Parent named">
-    <tst:document>
-      <view:view>
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test" la:parent-name="hello">
-            <div>Hello world</div>
-            <div la:class="sylma.ui.Base" la:name="sub1">
-              <div la:class="sylma.ui.Base" la:name="sub2">
-                <h2>abc</h2>
-              </div>
-            </div>
-          </div>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:expected>
-      var test = example.test;
-      var sub1 = test.getObject('sub1');
-
-      return
-        test === sub1.getParent('hello') &amp;&amp;
-        test === sub1.getObject('sub2').getParent('hello');
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Sub object with dynamic name">
-    <tst:document>
-      <view:view user:ns="ns">
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <div>Hello world</div>
-            <tpl:apply select="name,email" mode="field"/>
-          </div>
-        </view:template>
-        <view:template match="user:*" mode="field">
-          <div la:class="sylma.ui.Base">
-            <la:name>
-              <tpl:read select="alias()"/>
-            </la:name>
-            <tpl:read/>
-          </div>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:expected>
-      var test = example.test;
-      var node = test.getObject('email').getNode();
-
-      return node.get('text') === 'admin@sylma.org';
-    </tst:expected>
-  </tst:test>
   <tst:test name="Simple property">
     <tst:document>
       <view:view>
@@ -319,8 +202,8 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:option name="mykey">mytest</la:option>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <js:option name="mykey">mytest</js:option>
             <div>Hello world</div>
           </div>
         </view:template>
@@ -341,14 +224,14 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:option name="mykey">
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <js:option name="mykey">
               <le:array>
                 <tpl:text>abc</tpl:text>
                 <tpl:text>def</tpl:text>
                 <tpl:text le:name="hello">world</tpl:text>
               </le:array>
-            </la:option>
+            </js:option>
           </div>
         </view:template>
       </view:view>
@@ -372,8 +255,8 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <la:option name="directory" cast="x"><le:directory/></la:option>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <js:option name="directory" cast="x"><le:directory/></js:option>
             <div>Hello world</div>
           </div>
         </view:template>
@@ -394,8 +277,8 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
-            <div la:node="hello">Hello</div>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <div js:node="hello">Hello</div>
             <div>World</div>
           </div>
         </view:template>
@@ -415,10 +298,10 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <div la:class="sylma.ui.Base" la:parent="example" la:name="test">
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <p>Bla bla bla</p>
-            <div la:node="hello">Hello</div>
-            <div la:node="world">World</div>
+            <div js:node="hello">Hello</div>
+            <div js:node="world">World</div>
           </div>
         </view:template>
       </view:view>
@@ -439,10 +322,10 @@
         <view:template>
           <div>
             <tpl:if test="name = 'admin'">
-              <h3 la:class="sylma.ui.Base" la:parent="example" la:name="test">
-                <la:event name="click">
+              <h3 js:class="sylma.ui.Base" js:parent="example" js:name="test">
+                <js:event name="click">
                   sylma.tester.test(true);
-                </la:event>
+                </js:event>
                 <tpl:text>is-admin</tpl:text>
               </h3>
             </tpl:if>
@@ -457,6 +340,7 @@
 
     </tst:callback>
   </tst:test>
+
   <tst:test name="Update">
     <tst:document>
       <view:view>
@@ -465,15 +349,15 @@
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
         <view:template>
-          <la:include>samples/update01.js</la:include>
-          <div la:class="sylma.samples.Sample2" la:parent="example" la:name="test">
-            <la:option name="path" cast="x">
+          <js:include>samples/update01.js</js:include>
+          <div js:class="sylma.samples.Sample2" js:parent="example" js:name="test">
+            <js:option name="path" cast="x">
               <le:directory/>
               <tpl:text>/samples/update01</tpl:text>
-            </la:option>
-            <la:option name="sylma-inside">1</la:option>
+            </js:option>
+            <js:option name="sylma-inside">1</js:option>
             <button>
-              <la:event name="click">%object%.update();</la:event>
+              <js:event name="click">%object%.update();</js:event>
             </button>
           </div>
         </view:template>
@@ -491,13 +375,13 @@
       <view:view>
         <xl:resource/>
         <view:template>
-          <la:include>samples/update02.js</la:include>
-          <div la:class="sylma.samples.Sample2" la:parent="example" la:name="test">
-            <la:option name="path" cast="x">
+          <js:include>samples/update02.js</js:include>
+          <div js:class="sylma.samples.Sample2" js:parent="example" js:name="test">
+            <js:option name="path" cast="x">
               <le:directory/>
               <tpl:text>/samples/update02</tpl:text>
-            </la:option>
-            <la:option name="sylma-inside">1</la:option>
+            </js:option>
+            <js:option name="sylma-inside">1</js:option>
           </div>
         </view:template>
       </view:view>

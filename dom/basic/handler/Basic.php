@@ -96,7 +96,7 @@ abstract class Basic extends core\module\Managed {
     return $bResult;
   }
 
-  public function createElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null) {
+  public function createElement($sName, $mContent = '', array $aAttributes = array(), $sNamespace = null, $bPrefix = true) {
 
     $doc = $this->getDocument();
 
@@ -107,7 +107,7 @@ abstract class Basic extends core\module\Managed {
       if ($sNamespace) {
 
         // always add prefix if namespace, see @method dom\basic\Document::importNode() for more details
-        if (!strpos($sName, ':')) {
+        if ($bPrefix && !strpos($sName, ':')) {
 
           $sName = $this->generateName($sName, $sNamespace);
         }

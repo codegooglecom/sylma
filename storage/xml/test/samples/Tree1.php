@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\xml\test\samples;
-use sylma\core, sylma\template;
+use sylma\core, sylma\storage\xml;
 
-class Tree1 extends template\parser\ArgumentTree {
+class Tree1 extends xml\tree\Argument {
 
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
