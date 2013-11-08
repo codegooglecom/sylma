@@ -98,7 +98,7 @@ sylma.classes = {
 
       if (this.windowLoaded) {
 
-        if (result.onLoad) result.onLoad();
+        this.loadArray([result]);
       }
       else {
 
@@ -133,8 +133,13 @@ sylma.classes = {
 
         obj = objs[i];
 
-        if (obj.onWindowLoad) obj.onWindowLoad();
-        if (obj.onLoad) obj.onLoad();
+        if (!obj.windowLoaded) {
+
+          if (obj.onWindowLoad) obj.onWindowLoad();
+          if (obj.onLoad) obj.onLoad();
+
+          obj.windowLoaded = true;
+        }
       }
     },
 
@@ -313,6 +318,7 @@ sylma.ui = new sylma.classes.ui;
     nodes : {},
     settings : {},
     options : [],
+    windowLoaded : false,
 
     objects : {},
 
@@ -408,11 +414,11 @@ sylma.ui = new sylma.classes.ui;
 
       for (var key in objects) {
 
-        this.initObject(key, objects[key]);
+        this.initObject(objects[key], key);
       }
     },
 
-    initObject : function(key, props) {
+    initObject : function(props, key) {
 
       props.parentObject = this;
       props.parentKey = props.name ? key : this.tmp.length;
@@ -420,10 +426,12 @@ sylma.ui = new sylma.classes.ui;
         parents : this.getParents()
       };
 
-      var obj = ui.createObject(props);
+      var obj = sylma.ui.createObject(props);
 
       if (props.name) this.objects[key] = obj;
       else this.tmp.push(obj);
+
+      return obj;
     },
 
     initNodes : function(nodes) {
@@ -729,20 +737,37 @@ sylma.ui = new sylma.classes.ui;
         template : true
       }, props);
 
-      var result = sylma.ui.createObject(props);
-      this.tmp.push(result);
-
-      return result;
+      return this.initObject(props);
     },
 
     add : function(alias, args) {
 
       var _class = this.classes[alias];
 
-      var result = this.buildObject(_class, args._init_);
+      if (args) {
+
+        var _init = args._init || {};
+        delete args._init;
+
+        _init.options = args;
+      }
+      else {
+
+        args = {};
+      }
+
+      var result = this.buildObject(_class, _init);
+
       result.initTemplate(args);
 
-      result.addTo(this.getNode().getElement('.' + _class.node));
+      var target = this.getNode().getElement('.' + _class.node);
+
+      if (!target) {
+
+        throw new Error('Target node ".' + _class.node + '" not found for sub object');
+      }
+
+      result.addTo(target);
 
       return result;
     },
@@ -764,17 +789,18 @@ sylma.ui = new sylma.classes.ui;
 
     initTemplate : function(options) {
 
-      var el = sylma.ui.importNode(this.buildTemplate(options));
-      this.initNode({node : el});
+      var el = sylma.ui.importNode(this.buildTemplate(options))[0];
+      this.node = el;
     },
 
     buildObjects : function(alias, objects) {
 
       var result = [];
+      objects = objects || [];
 
       objects.each(function(item) {
 
-        var obj = this.buildObject(this.classes[alias], item._init_);
+        var obj = this.buildObject(this.classes[alias], item._init);
         result.push(obj.buildTemplate(item));
 
       }.bind(this));
@@ -782,7 +808,22 @@ sylma.ui = new sylma.classes.ui;
       return result.join();
     },
 
-    initNode : function(props) {
+    buildObjectsAll : function(objects) {
+
+      var result = [];
+      objects = objects || [];
+
+      objects.each(function(item) {
+
+        var obj = this.buildObject(this.classes[item._alias], item._init);
+        result.push(obj.buildTemplate(item));
+
+      }.bind(this));
+
+      return result.join();
+    },
+
+    initNode : function(props, deep) {
 
       if (!props) {
 
@@ -798,6 +839,14 @@ sylma.ui = new sylma.classes.ui;
 
         this.parent(props);
       }
+
+      if (deep) {
+
+        this.tmp.each(function(item) {
+
+          item.initNode(null, deep);
+        });
+      }
     },
 
     onLoad : function() {
@@ -806,13 +855,10 @@ sylma.ui = new sylma.classes.ui;
 
     addTo : function(node) {
 
-      var el = this.getNode();
-      node.adopt(el, 'before');
+      var el = this.node;
+      el.inject(node, 'before');
 
-      this.tmp.each(function(item) {
-
-        item.initNode();
-      });
+      this.initNode({node : el}, true);
 
       sylma.ui.loadArray([this]);
     }

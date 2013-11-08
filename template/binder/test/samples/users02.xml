@@ -1,0 +1,8 @@
+<users
+  xmlns="http://2013.sylma.org/view/test/sample1"
+>
+  <user name="root">
+    <email>root@sylma.org</email>
+    <city>metropolis</city>
+  </user>
+</users>

@@ -53,9 +53,9 @@ class Callable extends reflector\component\Foreigner implements tpl\parser\tree 
   /**
    * @return common\_callable
    */
-  protected function getVar() {
+  protected function getVar($bDebug = true) {
 
-    if (!$this->var) {
+    if (!$this->var && $bDebug) {
 
       $this->launchException('No object associated');
     }
@@ -80,6 +80,11 @@ class Callable extends reflector\component\Foreigner implements tpl\parser\tree 
   }
 
   protected function reflectCall($sName, array $aArguments) {
+
+    if (!$this->getVar(false)) {
+
+      $this->launchException("Function '$sName()' unknown or object undefined");
+    }
 
     return $this->getVar()->call($sName, $aArguments);
   }

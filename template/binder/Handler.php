@@ -208,6 +208,9 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   }
 
+  /**
+   * @uses _class\Builder::addTo()
+   */
   protected function buildClasses() {
 
     foreach ($this->aClasses as $class) {

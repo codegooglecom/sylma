@@ -9,7 +9,7 @@
   </debug>
   <cls:classes>
     <cls:base>\sylma\template\binder</cls:base>
-    <cls:class alias="class" name="_Class">
+    <cls:class alias="class" name="_class\Template">
       <cls:classes>
         <cls:class alias="object" name="_Object"/>
       </cls:classes>

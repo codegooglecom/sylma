@@ -24,7 +24,7 @@
 
     </tst:expected>
   </tst:test>
-  <tst:test name="Duplicated name">
+  <tst:test name="Duplicated name with #">
     <tst:prepare>
       $controler->set('arg', $controler->createArgument(array(
         'div' => array(
@@ -32,6 +32,27 @@
             'hello',
             'world',
           ),
+        ),
+      ), 'http://www.w3.org/1999/xhtml'));
+    </tst:prepare>
+    <tst:node>
+      <div xmlns="http://www.w3.org/1999/xhtml"><span>hello</span><span>world</span></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->get('arg')->asDOM();
+      $node = $controler->get('node');
+
+      return
+        $controler->compareNodes($result, $node);
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Duplicated name with array">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument(array(
+        'div' => array(
+          array('span' => array('hello')),
+          array('span' => array('world')),
         ),
       ), 'http://www.w3.org/1999/xhtml'));
     </tst:prepare>

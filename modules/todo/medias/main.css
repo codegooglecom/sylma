@@ -7,7 +7,6 @@
   padding-top: 42px;
   float:right;
   overflow: hidden;
-  position: absolute;
   right: 42px;
   z-index: 3;
   font-size: 12px;
@@ -19,6 +18,7 @@
   height: auto;
   background-color: #4D4D4D;
   overflow: visible;
+  position: absolute;
   width: 300px;
 }
 

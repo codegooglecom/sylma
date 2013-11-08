@@ -165,6 +165,29 @@
       );
     </tst:expected>
   </tst:test>
+  <tst:test name="Iterate with query" disabled="true">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument('simple.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $aResult = array();
+
+      foreach ($arg->query('def') as $sName => $val) {
+
+        $manager->assertEquals(get_class($val), 'sylma\dom\argument\Filed');
+        $aResult[$sName] = $val->read();
+      }
+
+      $manager->assertEquals($aResult, array(
+        'sub' => '456',
+        'item' => 'item2',
+        'other' => 'other',
+      ));
+
+      return true;
+    </tst:expected>
+  </tst:test>
   <tst:test name="Iterate over 1 item">
     <tst:prepare>
       $controler->set('arg', $controler->createArgument('single-item.xml'));
@@ -174,14 +197,16 @@
       $aResult = array();
 
       foreach ($arg as $sName => $val) {
-      //dspf($val->asString());
-      //dspf($val->read('@name'));
+
         $aResult[$sName] = $val->read('@name');
       }
-//dspf($aResult);
-      return $aResult === array(
+
+      $manager->assertEquals($aResult, array(
         'argument' => 'path',
-      );
+      ));
+      $manager->assertEquals(get_class($val), 'sylma\dom\argument\Filed');
+
+      return true;
     </tst:expected>
   </tst:test>
 </tst:tests>

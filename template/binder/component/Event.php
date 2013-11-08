@@ -14,7 +14,7 @@ class Event extends Method {
     $this->addToObject($this->getParser()->getObject());
   }
 
-  protected function addToObject(binder\_Class $target) {
+  protected function addToObject(binder\_class $target) {
 
     $window = $this->getWindow();
 

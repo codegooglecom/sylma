@@ -197,7 +197,13 @@ sylma.ui.tab.Caller = new Class({
     node.set({
       href : '#',
       events : {
-        click : function() { this.blur(); self.go(); return false; }
+        click : function(e) {
+
+          this.blur();
+          self.go();
+
+          e.preventDefault();
+        }
       }
     });
   },

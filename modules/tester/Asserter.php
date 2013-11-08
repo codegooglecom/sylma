@@ -12,7 +12,15 @@ abstract class Asserter extends core\module\Domed {
     $this->iCount = 1;
   }
 
+  /**
+   * @deprecated use assertEquals() instead
+   */
   public function assertEqual($val1, $val2) {
+
+    return $this->assertEquals($val1, $val2);
+  }
+
+  public function assertEquals($val1, $val2) {
 
     if ($val1 !== $val2) {
 

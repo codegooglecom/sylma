@@ -2,7 +2,7 @@
 #lemonav
 {
   width: 100%;
-  background: url('background.gif');
+  background: url('background.gif') repeat-x;
   font-family: CABNDRegular, Helvetica;
   font-weight: normal;
 }

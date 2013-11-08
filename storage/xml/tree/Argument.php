@@ -122,7 +122,7 @@ class Argument extends Callable {
 
     if ($aPath) {
 
-      $this->launchException('Not ready, should avoid path parsing');
+      $this->launchException('Not ready, todo : avoid path parsing');
     }
 
     if ($bRead) {

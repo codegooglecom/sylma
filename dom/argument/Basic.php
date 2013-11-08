@@ -205,6 +205,11 @@ abstract class Basic extends core\module\Controled {
     return $result;
   }
 
+  public function getName() {
+
+    return $this->getDocument()->getRoot()->getName();
+  }
+
   public function read($sPath = '', $bDebug = true) {
 
     if ($sPath) {
@@ -231,9 +236,12 @@ abstract class Basic extends core\module\Controled {
     return $mResult;
   }
 
+  /**
+   * @deprecated use getName() instead
+   */
   public function getRoot() {
 
-    return $this->getDocument()->getRoot()->getName();
+    return $this->getName();
   }
 
   protected function readElement(dom\element $el) {
