@@ -295,4 +295,9 @@ abstract class Basic extends core\module\Controled {
 
     parent::throwException($sMessage, $mSender, $iOffset);
   }
+
+  public function asDOM() {
+
+    return $this->getDocument();
+  }
 }

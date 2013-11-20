@@ -220,7 +220,7 @@ class Initializer extends module\Domed {
        $this->launchException('Can execute only view');
      }
 
-     $sResult = (string) $this->prepareScript($file, $path->getArguments());
+     $sResult = (string) $this->prepareScript($file, $this->loadPOST(true), $path->getArguments());
     }
 
     return $sResult;
@@ -238,14 +238,14 @@ class Initializer extends module\Domed {
     return $this->create('action', array($file, $aArguments));
   }
 
-  protected function prepareScript(fs\file $file, core\argument $args, core\argument $contexts = null) {
+  protected function prepareScript(fs\file $file, core\argument $args, core\argument $post, core\argument $contexts = null) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
     $result = $builder->load($file, array(
       'arguments' => $args,
-      'contexts' => $contexts,
       //'post' => $post,
+      'contexts' => $contexts,
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'), true);
 
     return $result;
@@ -310,6 +310,7 @@ class Initializer extends module\Domed {
 
     return $builder->load($this->getFile($sMain), array(
       'arguments' => $args,
+      //'post' => $this->loadPost(true),
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'));
   }
 
@@ -383,7 +384,7 @@ class Initializer extends module\Domed {
 
   protected function loadObjectScript(core\request $path, core\window\scripted $window) {
 
-    $window->setScript($path, $this->createArgument($this->loadPOST()));
+    $window->setScript($path, $this->loadPOST(true));
 
     return $window->asString();
   }

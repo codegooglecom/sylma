@@ -9,19 +9,39 @@ sylma.tester = {
     }));
   },
 
-  assertEquals : function(val1, val2) {
+  assertStrictEquals : function(val1, val2) {
 
-    if (typeOf(val1) === 'object' && typeOf(val2) === 'object') {
+    val1 = JSON.stringify(val1);
+    val2 = JSON.stringify(val2)
 
-      val1 = JSON.stringify(val1);
-      val2 = JSON.stringify(val2)
+    return val1 === val2;
+  },
+
+  assertEquals : function(val1, val2, log) {
+
+    var result = true;
+
+    var type1 = typeOf(val1);
+    var type2 = typeOf(val2);
+
+    if (type1 === 'object' && type2 === 'object') {
+
+      result = val1 == val2;
+    }
+    else if (type1 === 'array' && type2 === 'array') {
+
+      result = val1.toString() === val2.toString();
+    }
+    else {
+
+      result = val1 === val2;
     }
 
-    if (val1 !== val2) {
+    if (!result) {
 
       this.test(false);
       console.log(val1, val2);
-      throw new Error('Values not equals');
+      throw new Error('Values not equals in ' + log);
     }
   },
 

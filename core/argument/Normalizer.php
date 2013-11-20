@@ -123,8 +123,8 @@ abstract class Normalizer extends Basic {
     return $this->normalizeArray($this->query(), $iMode);
   }
 
-  public function asJSON() {
+  public function asJSON($iMode = \JSON_FORCE_OBJECT) {
 
-    return json_encode($this->asArray(true), \JSON_FORCE_OBJECT);
+    return json_encode($this->asArray(true), $iMode);
   }
 }

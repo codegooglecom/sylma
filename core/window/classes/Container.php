@@ -12,9 +12,10 @@ class Container extends core\module\Domed {
 
   protected $aPaths = array();
 
-  public function __construct(core\argument $args, core\argument &$contexts) {
+  public function __construct(core\argument $args, core\argument $post, core\argument &$contexts) {
 
     $this->setArguments($args);
+    $this->setPost($post);
 
     $this->setPaths($this->getArgument(self::CONTENT_ARGUMENT)->query());
     $this->setArgument(self::CONTENT_ARGUMENT, null);
@@ -38,6 +39,16 @@ class Container extends core\module\Domed {
   protected function setContexts(core\argument $contexts) {
 
     $this->contexts = $contexts;
+  }
+
+  protected function setPost(core\argument $val) {
+
+    $this->post = $val;
+  }
+
+  protected function getPost() {
+
+    return $this->post;
   }
 
   protected function loadContexts(dom\document $doc) {
@@ -117,10 +128,11 @@ class Container extends core\module\Domed {
   protected function buildWindowScript(array $aPaths) {
 
     $args = $this->getArguments();
+    $post = $this->getPost();
 
     try {
 
-      $content = $this->prepareMain($this->getFile(current($aPaths)), $args, true);
+      $content = $this->prepareMain($this->getFile(current($aPaths)), $args, $post);
     }
     catch (core\exception $e) {
 
@@ -141,6 +153,7 @@ class Container extends core\module\Domed {
       $args->set(self::CONTENT_SUB, $content);
       $content = $this->getScriptFile($this->getFile($sPath), array(
         'arguments' => $args,
+        'post' => $post,
         'contexts' => $this->getContexts(),
       ));
     }
@@ -155,12 +168,12 @@ class Container extends core\module\Domed {
     return $this->runScript($this->getFile($this->read('error/action')));
   }
 
-  protected function prepareMain(fs\file $file, core\argument $args) {
+  protected function prepareMain(fs\file $file, core\argument $args, core\argument $post) {
 
     switch ($file->getExtension()) {
 
-      case 'eml' : $result = $this->runAction($file, $args); break;
-      case 'vml' : $result = $this->runScript($file, $args); break;
+      case 'eml' : $result = $this->runAction($file, $args, $post); break;
+      case 'vml' : $result = $this->runScript($file, $args, $post); break;
       default :
 
         $this->launchException('Unknown extension for window content');
@@ -175,14 +188,14 @@ class Container extends core\module\Domed {
     return $result;
   }
 
-  protected function runScript(fs\file $file, core\argument $args = null) {
+  protected function runScript(fs\file $file, core\argument $args = null, core\argument $post = null) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
     $result = $builder->load($file, array(
       'arguments' => $args,
+      'post' => $post,
       'contexts' => $this->getContexts(),
-      //'post' => $post,
     ), $this->read('debug/update', false), $this->read('debug/run'), true);
 
     return $result;

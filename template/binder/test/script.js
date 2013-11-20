@@ -9,11 +9,7 @@ sylma.classes.binder = new Class({
   id : '',
   url : '',
   timeMax : 2000,
-
-  initialize : function() {
-
-
-  },
+  file : '',
 
   run : function() {
 
@@ -24,6 +20,16 @@ sylma.classes.binder = new Class({
   loadNext : function() {
 
     var test = this.tests[this.current];
+
+    if (this.file !== test.file) {
+
+      this.node.grab(new Element('h4', {
+        html : test.file
+      }));
+
+      this.file = test.file;
+    }
+
     if (test) this.runTest(test);
 
     this.current++;
@@ -34,12 +40,15 @@ sylma.classes.binder = new Class({
     var self = this;
     console.log('test ' + test.key);
 
+
     var frame = new IFrame({
 
       src : this.standalone + '?file=' + test.file + '&key=' + test.key,
       name : 'testframe',
       styles : {
-        display : 'none'
+        opacity: 0,
+        position: 'absolute',
+        'pointer-events': 'none'
       },
       events : {
         load : function() {
@@ -96,7 +105,6 @@ sylma.classes.binder = new Class({
     if (result.timemax) content += ' (time elapsed)';
 
     var className = 'sylma-test-' + (result.value ? 'success' : 'failed');
-
 
     this.node.grab(new Element('div', {
       html : '<li class="' + className + '"><a href="' + href + '">' + test.name + '</a> - <span class="sylma-tester-result">' + content + '</span></li>',

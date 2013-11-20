@@ -14,9 +14,6 @@ sylma.samples.Sample2 = new Class({
 
     this.parent(response);
 
-    //sylma.tester.test(true);
-    //console.log(this.objects);
-
     sylma.tester.assertEquals(this.tmp.length, 2);
     sylma.tester.assertEquals(this.getNode().get('text'), 'HelloWorld');
     sylma.tester.test(true);

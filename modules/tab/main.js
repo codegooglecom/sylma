@@ -210,7 +210,7 @@ sylma.ui.tab.Caller = new Class({
 
   go : function() {
 
-    this.getParent(1).go(this.parentKey);
+    this.getParent(1).go(this.sylma.key);
   }
 });
 

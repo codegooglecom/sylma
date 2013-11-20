@@ -45,6 +45,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     </script>
         </head>
         <body>
+          <div id="sylma-messages"/>
           <div id="body">
             <div id="messages"/>
             <div id="container">

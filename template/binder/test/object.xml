@@ -70,6 +70,7 @@
     </tst:document>
     <tst:expected>
       var tmp = example.test.tmp;
+      
       var node = tmp[0].node.fireEvent('mouseover');
 
       return node.getChildren()[0].get('text') === 'bonsoir';
@@ -98,9 +99,44 @@
       var test = example.test;
       var sub1 = test.getObject('sub1');
 
-      return
-        test === sub1.getParent('hello') &amp;&amp;
-        test === sub1.getObject('sub2').getParent('hello');
+      sylma.tester.assertEquals(test, sub1.getParent('hello'));
+      sylma.tester.assertEquals(test, sub1.getObject('sub2').getParent('hello'));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple parent named">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <block js:class="sylma.ui.Base" js:name="test" js:parent="example">
+            <div js:class="sylma.ui.Base" js:name="test1" js:parent-name="hello">
+              <span js:class="sylma.ui.Base" js:name="sub">abc</span>
+            </div>
+            <div js:class="sylma.ui.Base" js:name="test2" js:parent-name="hello">
+              <span js:class="sylma.ui.Base" js:name="sub">def</span>
+            </div>
+          </block>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      var test1 = example.test.getObject('test1');
+      var sub = test1.getObject('sub');
+      sylma.tester.assertEquals(test1, sub.getParent('hello'));
+
+      var test2 = example.test.getObject('test2');
+      var sub = test2.getObject('sub');
+      sylma.tester.assertEquals(test2, sub.getParent('hello'));
+
+      return true;
+
     </tst:expected>
   </tst:test>
   <tst:test name="Sub object with dynamic name">
@@ -132,182 +168,5 @@
 
       return node.get('text') === 'admin@sylma.org';
     </tst:expected>
-  </tst:test>
-  <tst:test name="Template">
-    <tst:document>
-      <view:view user:ns="ns">
-        <xl:resource file="samples/users01.xml"/>
-        <tpl:template>
-          <div js:class="sylma.ui.Container" js:parent="example" js:name="users">
-            <span>Hello</span>
-            <tpl:apply select="user[@name='root']"/>
-          </div>
-        </tpl:template>
-        <tpl:template match="user:user">
-          <div js:class="sylma.ui.Template" js:name="sub" js:alias="user">
-            <js:event name="click">
-              sylma.tester.test(true);
-            </js:event>
-            <div js:node="hello">World</div>
-            <span>
-              <tpl:read select="email"/>
-            </span>
-          </div>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:callback>
-      var test = example.users;
-      test.add('user', {
-        email : 'hello@world.com',
-        _init : {
-          onLoad : function() {
-
-            sylma.tester.assertEquals(this.getNode('hello').get('text'), 'World');
-            sylma.tester.assertEquals(this.getNode().getElement('span').get('text'), 'hello@world.com');
-            sylma.tester.assertEquals(this.getParent().id, test.id);
-
-            this.getNode().fireEvent('click');
-        }}});
-    </tst:callback>
-  </tst:test>
-  <tst:test name="Template with sub objects">
-    <tst:document>
-      <view:view user:ns="ns">
-        <xl:resource file="samples/users01.xml"/>
-        <tpl:template>
-          <div js:class="sylma.ui.Container" js:parent="example" js:name="users">
-            <div js:class="sylma.ui.Template" js:name="container" js:alias="container">
-              <tpl:apply select="user"/>
-            </div>
-          </div>
-        </tpl:template>
-        <tpl:template match="user:user">
-          <span js:class="sylma.ui.Template" js:name="sub" js:alias="user">
-            <js:event name="click">
-              sylma.tester.test(true);
-            </js:event>
-            <tpl:read select="email"/>
-          </span>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:callback>
-      var test = example.users;
-
-      var sub = test.add('container', {
-        user : [{
-          email : 'hello@world.com',
-          _init : {
-            onLoad : function() {
-
-              sylma.tester.assertEquals(this.getNode().get('text'), 'hello@world.com');
-
-              this.getNode().fireEvent('click');
-          }}}]});
-    </tst:callback>
-  </tst:test>
-  <tst:test name="Same child for various container">
-    <tst:document>
-      <view:view user:ns="ns">
-        <xl:resource file="samples/users01.xml"/>
-        <tpl:template>
-          <div js:class="sylma.ui.Container" js:parent="example" js:name="users">
-            <tpl:apply select="user"/>
-          </div>
-        </tpl:template>
-        <tpl:template match="user:user">
-          <div js:class="sylma.ui.Template" js:alias="user1">
-            <tpl:apply mode="mask"/>
-          </div>
-          <ul js:class="sylma.ui.Template" js:alias="user2">
-            <tpl:apply mode="mask"/>
-          </ul>
-        </tpl:template>
-
-        <tpl:template match="user:user" mode="mask">
-          <span js:class="sylma.ui.Template" js:alias="mask">World</span>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:callback>
-      var users = example.users;
-
-      var sub = users.add('user2', {
-        _init : {
-          onLoad : function() {
-
-            this.add('mask');
-
-            sylma.tester.assertEquals(this.tmp[0].getNode().get('text'), 'World');
-
-            sylma.tester.test(true);
-          }
-        }});
-    </tst:callback>
-  </tst:test>
-  <tst:test name="Template with various sub objects">
-    <tst:document>
-      <view:view user:ns="ns">
-        <xl:resource file="samples/users02.xml"/>
-        <tpl:template>
-          <div js:class="sylma.ui.Container" js:parent="example" js:name="users">
-            <tpl:apply select="*"/>
-          </div>
-        </tpl:template>
-        <tpl:template match="user:user">
-          <div js:class="sylma.ui.Template" js:alias="user" js:all="x">
-            <tpl:apply select="*"/>
-          </div>
-        </tpl:template>
-        <tpl:template match="user:email">
-          <span js:class="sylma.ui.Template" js:alias="email">
-            <js:method name="testEmail">
-              return this.getNode().get('text');
-            </js:method>
-            <tpl:read/>
-          </span>
-        </tpl:template>
-        <tpl:template match="user:city">
-          <em js:class="sylma.ui.Template" js:alias="city">
-            <js:method name="testCity">
-              return this.getNode().get('text');
-            </js:method>
-            <tpl:read/>
-          </em>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:callback>
-      var test = example.users;
-
-      var sub = test.add('user', {
-        _all : [{
-          _alias : 'city',
-          value : 'ny'
-        },{
-          _alias : 'email',
-          value : 'hello@world.com'
-        }],
-        _init : {
-          onLoad : function() {
-
-            var user = test.tmp[0];
-
-            sylma.tester.assertEquals(user.tmp[0].testCity(), 'ny');
-            sylma.tester.assertEquals(this.tmp[1].testEmail(), 'hello@world.com');
-
-            this.add('email', {
-              value : 'ny@sylma.org',
-              _init : {
-                onLoad : function() {
-
-                  sylma.tester.assertEquals(this.testEmail(), 'ny@sylma.org');
-                  sylma.tester.test(true);
-                }
-              }
-            });
-        }}});
-    </tst:callback>
   </tst:test>
 </tst:tests>

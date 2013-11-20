@@ -11,7 +11,10 @@
         <xsl:when test="text()">
           <xsl:text disable-output-escaping="yes">//&lt;![CDATA[</xsl:text>
           <xsl:value-of select="$break"/>
+          <!--
           <xsl:value-of select="normalize-space(text())" disable-output-escaping="yes"/>
+          -->
+          <xsl:value-of select="text()" disable-output-escaping="yes"/>
           <xsl:value-of select="$break"/>
           <xsl:text disable-output-escaping="yes">//]]&gt;</xsl:text>
         </xsl:when>
@@ -49,7 +52,6 @@
   </xsl:template>
 
   <xsl:template match="html:*">
-    <xsl:variable name="break" select="' '"/>
     <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
       <xsl:apply-templates select="@* | * | text()"/>
       <xsl:if test="not(normalize-space(.))"><![CDATA[]]></xsl:if>

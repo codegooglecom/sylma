@@ -44,12 +44,20 @@ class Template extends Builder {
    */
   protected $aChildren = array();
 
+  protected $aAutoloads = array();
+
+  protected function init() {
+
+    parent::init();
+    $this->useAll((bool) $this->readx('@js:all'));
+  }
+
   protected function getAlias() {
 
     return $this->readx('@js:alias');
   }
 
-  public function addChild($sAlias, $sClass) {
+  public function addChild($sAlias, $sClass, $bAutoload) {
 
     $aResult = array();
 
@@ -61,8 +69,7 @@ class Template extends Builder {
       $self = $window->createVariable('this');
       $sID = $this->getSpacerID();
 
-      $obj = $this->addAlias($sAlias, $sClass);
-      $obj->setProperty('node', $sID);
+      $this->prepareFactory($sAlias, $sClass, $sID, $bAutoload);
 
       if ($this->useTemplate()) {
 
@@ -93,16 +100,38 @@ class Template extends Builder {
     return $aResult;
   }
 
-  protected function addAlias($sAlias, $sClass) {
+  protected function prepareFactory($sAlias, $sClass, $sID, $bAutoload) {
 
-    $sPath = "classes.$sAlias";
-    $obj = $this->getObject();
-
-    $result = $obj->setProperty($sPath, $this->getWindow()->createObject(array(
+    $sPath = "sylma.template.classes.$sAlias";
+    $aValues = array(
       'name' => $sClass,
-    )));
+      'node' => $sID,
+    );
+
+    if ($bAutoload) {
+
+      $this->aAutoloads[] = $sAlias;
+    }
+
+    $obj = $this->getObject();
+    $result = $obj->setProperty($sPath, $this->getWindow()->createObject($aValues));
 
     return $result;
+  }
+
+  public function addTo(common\_object $container) {
+
+    if ($this->aAutoloads) {
+
+      $this->getObject()->setProperty('sylma.template.autoloaded', $this->getWindow()->createObject($this->aAutoloads));
+    }
+
+    if ($this->useAll()) {
+
+      $this->getObject()->setProperty('sylma.template.mixed', true);
+    }
+
+    return parent::addTo($container);
   }
 
   public function useTemplate($bValue = null) {
@@ -169,7 +198,12 @@ class Template extends Builder {
   protected function createSpacer($sID) {
 
     $parser = $this->getParser()->getParent();
-    return $parser->parseFromChild($this->createElement('span', null, array('class' => $sID), \Sylma::read('namespaces/html'), false));
+    return $parser->parseFromChild($this->createElement('span', '.', array('class' => "$sID spacer"), \Sylma::read('namespaces/html'), false));
+  }
+
+  protected function getAutoload() {
+
+    return $this->readx('@js:autoload');
   }
 
   /**
@@ -177,7 +211,7 @@ class Template extends Builder {
    */
   protected function prepareParent(self $class) {
 
-    return $class->addChild($this->getAlias(), $this->getExtend());
+    return $class->addChild($this->getAlias(), $this->getExtend(), $this->getAutoload());
   }
 
   /**
@@ -190,6 +224,8 @@ class Template extends Builder {
     $bTemplateChild = $this->getRoot()->getMode() === self::TEMPLATE_MODE;
 
     if ($bTemplate || $bTemplateChild) {
+
+      $this->isUsed(true);
 
       $this->loadExtend();
 

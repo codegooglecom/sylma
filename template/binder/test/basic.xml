@@ -239,7 +239,7 @@
     <tst:expected>
       var test = example.test;
 
-      sylma.tester.assertEquals(test.get('mykey'), {
+      sylma.tester.assertStrictEquals(test.get('mykey'), {
         0 : 'abc',
         1 : 'def',
         hello : 'world'

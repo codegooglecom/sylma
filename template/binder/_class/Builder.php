@@ -10,6 +10,11 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
    */
   protected $element;
 
+  /**
+   * TRUE if an object extending this class is added
+   */
+  protected $bUsed = false;
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, true);
@@ -64,7 +69,6 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
     }
 
     $this->setExtend($this->readx('@js:class'));
-    $this->useAll((bool) $this->readx('@js:all'));
 
     $obj->setProperty('Extends', $this->getWindow()->createVariable($this->getExtend()));
 
@@ -77,6 +81,13 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
     //$obj->setProperty('name', $bName);
   }
 
+  protected function isUsed($bValue = null) {
+
+    if (is_bool($bValue)) $this->bUsed = $bValue;
+
+    return $this->bUsed;
+  }
+
   public function addTo(common\_object $container) {
 
     $js = $this->getObject();
@@ -86,7 +97,7 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
       $js->setProperty('buildTemplate', $this->template);
     }
 
-    if (count($js->getProperties()) > 1) {
+    if ($this->isUsed()) {
 
       $this->loadExtend();
 
@@ -101,6 +112,8 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
    * @uses _Object::setClass() parseRoot() and asArray()
    */
   public function asArray() {
+
+    $this->isUsed(true);
 
     $aResult = array();
 

@@ -19,12 +19,23 @@ p { margin: 1em 0; }
   -webkit-transition-delay: 0s;
 }
 
+.destroy
+{
+  height: 0;
+  opacity : 0;
+}
+
+.spacer
+{
+  display: none;
+}
+
 #sylma-messages {
   position: fixed;
   padding-top: 1em;
   overflow: hidden;
   width: 100%;
-  z-index: 5;
+  z-index: 100;
   pointer-events:none;
   color: #444;
 }

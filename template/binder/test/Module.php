@@ -17,7 +17,6 @@ class Module extends core\module\Domed implements dom\domable {
 
   public function asDOM() {
 
-
     $aTests = array();
     $files = $this->getDirectory()->getFiles(array('xml'));
 

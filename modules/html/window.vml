@@ -8,7 +8,7 @@
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:cls="http://2013.sylma.org/core/factory"
-  
+
 >
 
   <xl:resource/>
@@ -51,6 +51,7 @@
         </a>
         </div>
         <![endif]-->
+        <div id="sylma-messages"/>
         <tpl:apply mode="body/content"/>
 
       </body>

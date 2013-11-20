@@ -133,7 +133,12 @@ class Argument extends Callable {
 
       $el = $args->get($sPath, false, false);
 
-      if ($el->getType() == $el::ELEMENT && $el->isComplex()) {
+      if (!$el) {
+
+        $this->launchException("Unknown value : '$sPath'");
+      }
+
+      if ($el->getType() == $el::ELEMENT) { // && $el->isComplex()
 
         $tree = $this->loadChild($args->get($sPath));
         $result = $this->getParser()->applyArrayTo($tree, $aPath, $sMode);

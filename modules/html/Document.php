@@ -8,11 +8,13 @@ class Document extends core\window\classes\Container {
   private $head = null;
   protected $result = null;
 
-  public function __construct(core\argument $args, core\argument &$contexts) {
+  public function __construct(core\argument $args, core\argument $post, core\argument &$contexts) {
 
     $this->setDirectory(__FILE__);
 
     $this->setArguments($args);
+    $this->setPost($post);
+    
     $this->setSettings($this->getManager('init')->getArgument('window'));
 
     if (!$messages = $this->getManager('parser')->getContext('errors', false)) {

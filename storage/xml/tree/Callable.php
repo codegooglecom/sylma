@@ -29,9 +29,10 @@ class Callable extends reflector\component\Foreigner implements tpl\parser\tree 
     $window = $this->getWindow();
 
     $args = $window->getVariable('arguments');
+    $post = $window->getVariable('post');
     $contexts = $window->getVariable('contexts');
 
-    $var = $this->createObject('cached', array($args, $contexts));
+    $var = $this->createObject('cached', array($args, $post, $contexts));
     $this->setVar($var);
 
     $var->insert();

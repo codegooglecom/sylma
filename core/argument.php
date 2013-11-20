@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\core;
-use sylma\core;
+use sylma\core, sylma\dom;
 
-interface argument extends \Iterator {
+interface argument extends \Iterator, dom\domable {
 
   const NORMALIZE_EMPTY_ARRAY = 1;
   const NORMALIZE_ARGUMENT = 2;
