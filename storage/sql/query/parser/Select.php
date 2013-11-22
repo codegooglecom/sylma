@@ -45,7 +45,7 @@ class Select extends Wherer implements common\argumentable {
 
       if ($bDistinct) $mContent = array('DISTINCT ', $sName);
       else $mContent = $sName;
-      
+
       $this->setColumn($mContent);
     }
 
@@ -270,7 +270,7 @@ class Select extends Wherer implements common\argumentable {
 
   public function getCall($bDebug = false) {
 
-    $bDebug = $this->isMultiple() ? false: true;
+    $bDebug = $this->isMultiple() || $this->isOptional() ? false: true;
 
     return parent::getCall($bDebug);
   }

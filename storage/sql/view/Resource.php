@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\view;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs, sylma\storage\sql;
 
 /**
  * Load query
@@ -91,6 +91,11 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
       $this->setTree($collection);
     }
 
+    if ($this->readx('@optional')) {
+
+      $root->setOptional(true);
+    }
+
     $this->addID();
     $this->getTree()->isRoot(true);
 
@@ -109,7 +114,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     return $this->getSchema();
   }
 
-  protected function setTree(template\parser\tree $tree) {
+  protected function setTree(sql\template\component\Rooted $tree) {
 
     $this->tree = $tree;
   }

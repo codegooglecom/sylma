@@ -130,7 +130,7 @@ class Connection extends core\module\Argumented {
     return $result ? current($result) : $result;
   }
 
-  public function get($sQuery, $bDebug = true) {
+  public function get($sQuery, $bDebug = true, $bArgument = true) {
 
     $result = $this->getDatabase()->query($sQuery);
     $this->logQuery($sQuery);
@@ -141,7 +141,12 @@ class Connection extends core\module\Argumented {
 
     if (!$result && $bDebug) $this->launchExceptionEmpty();
 
-    return $result ? new Argument($result) : new Argument;
+    if ($bArgument) {
+
+      $result = $result ? new Argument($result) : new Argument;
+    }
+    
+    return $result;
   }
 
   public function escape($mVal) {

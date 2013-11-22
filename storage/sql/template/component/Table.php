@@ -5,6 +5,8 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema;
 
 class Table extends Rooted implements sql\template\pathable, schema\parser\element {
 
+  const MODE_EMPTY = 'sylma:empty';
+
   protected $sMode = 'select';
 
   protected $bBuilded = false;
@@ -144,11 +146,39 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
       if (!$bStatic && $this->insertQuery()) {
 
-        $aResult[] = $this->getQuery();
         $this->insertQuery(false);
-      }
 
-      $aResult[] = $tpl;
+        $query = $this->getQuery();
+
+        if ($this->isOptional()) {
+
+          $query->isOptional($this->isOptional());
+
+          $window = $this->getWindow();
+          $view = $this->getParser()->getView();
+          $condition = $window->createCondition($query->getVar()->call('query'), $view->addToResult($tpl, false));
+
+          if ($empty = $this->lookupTemplate(self::MODE_EMPTY)) {
+
+            $empty->setTree($this);
+            $empty->sendArguments($aArguments);
+
+            $condition->addElse($view->addToResult($empty, false));
+          }
+
+          $aResult[] = $query;
+          $aResult[] = $condition;
+        }
+        else {
+
+          $aResult[] = $query;
+          $aResult[] = $tpl;
+        }
+      }
+      else {
+
+        $aResult[] = $tpl;
+      }
     }
     else {
 

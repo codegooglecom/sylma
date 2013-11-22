@@ -177,6 +177,29 @@
       <div><h3>admin</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="No result">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource optional="x">
+          <sql:id>999</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name/value()"/></h3>
+          </div>
+        </view:template>
+        <view:template mode="sylma:empty">
+          <div>
+            <strong>No "<tpl:read select="name()"/>" result</strong>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><strong>No "user" result</strong></div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Template precedence">
     <tst:document>
       <view:view>

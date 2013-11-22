@@ -10,6 +10,7 @@ class Rooted extends sql\schema\component\Table {
 
   protected $query;
   protected $bInsertQuery = true;
+  protected $bOptional = false;
 
   protected $aTriggers = array();
 
@@ -48,6 +49,9 @@ class Rooted extends sql\schema\component\Table {
     return $this->query;
   }
 
+  /**
+   * @todo rename to isQueried()
+   */
   public function insertQuery($bVal = null) {
 
     if (is_bool($bVal)) $this->bInsertQuery = $bVal;
@@ -81,6 +85,11 @@ class Rooted extends sql\schema\component\Table {
   protected function getTriggers() {
 
     return $this->aTriggers;
+  }
+
+  public function setOptional($bValue) {
+
+    $this->bOptional = $bValue;
   }
 
   public function getResult() {

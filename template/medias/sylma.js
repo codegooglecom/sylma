@@ -404,7 +404,7 @@ sylma.ui.Base = new Class({
 
     for (var key in objects) {
 
-      this.initObject(objects[key], key, true);
+      this.initObject(objects[key], key);
     }
   },
 
@@ -438,7 +438,7 @@ sylma.ui.Base = new Class({
     }
     else {
 
-      result = this.initObjectSplice(this.tmp, key);
+      result = this.initObjectSplice(this.tmp, typeOf(key) === 'number' ? key : undefined);
     }
 
     return result;
@@ -939,7 +939,7 @@ sylma.ui.Container = new Class({
 
     if (!target) {
 
-      throw new Error('Target node ".' + _class.node + '" not found for sub object');
+      throw new Error('Target node ".' + _class.node + '" not found for sub object "' + alias + '"');
     }
 
     result.addTo(target);

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test
+  xmlns="http://2013.sylma.org/modules/stepper"
+>
+  <page url="/sylma/modules/stepper/test/samples/content01">
+    <element>#body</element>
+    <exclude>
+      <path></path>
+    </exclude>
+    <steps>
+      <event name="click" element="">
+
+      </event>
+      <watcher element="">
+        <property name=""/>
+      </watcher>
+      <snapshot element="">
+
+      </snapshot>
+    </steps>
+  </page>
+</test>

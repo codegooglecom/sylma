@@ -7,6 +7,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
 
   protected $sMethod = 'get';
   protected $bMultiple = false;
+  protected $bOptional = false;
 
   protected $aColumns = array();
   protected $aTables = array();
@@ -169,6 +170,12 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
 
     if (!is_null($mValue)) $this->bMultiple = $mValue;
     return $this->bMultiple;
+  }
+
+  public function isOptional($mValue = null) {
+
+    if (!is_null($mValue)) $this->bOptional = $mValue;
+    return $this->bOptional;
   }
 
   abstract public function getString();

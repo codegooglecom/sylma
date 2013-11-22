@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:test="http://2013.sylma.org/modules/stepper"
+>
+
+  <xl:resource file="schema.xml"/>
+
+  <xl:settings>
+    <cls:classes>
+      <cls:class alias="tree">
+        <cls:classes>
+          <cls:class alias="cached" name="\sylma\modules\stepper\Browser"/>
+        </cls:classes>
+      </cls:class>
+    </cls:classes>
+  </xl:settings>
+
+  <le:context name="css">
+    <le:file>medias/main.less</le:file>
+  </le:context>
+
+  <le:context name="js">
+    <le:file>medias/Listed.js</le:file>
+    <le:file>medias/Main.js</le:file>
+    <le:file>medias/Framed.js</le:file>
+    <le:file>medias/Test.js</le:file>
+    <le:file>medias/Page.js</le:file>
+    <le:file>medias/Step.js</le:file>
+    <le:file>medias/Snapshot.js</le:file>
+    <le:file>medias/Event.js</le:file>
+    <le:file>medias/Watcher.js</le:file>
+    <le:file>medias/Property.js</le:file>
+    <le:file>medias/Element.js</le:file>
+    <le:file>medias/Selector.js</le:file>
+  </le:context>
+
+  <tpl:template>
+
+    <div id="tester" js:class="sylma.stepper.Main" js:parent-name="main">
+      <js:option name="path">
+        <le:path>save</le:path>
+      </js:option>
+      <js:option name="file" cast="x">
+        <tpl:apply select="getFile()"/>
+      </js:option>
+      <js:option name="tests">
+        <tpl:apply select="getTests()"/>
+      </js:option>
+      <div js:node="board" class="board">
+        <div class="actions">
+          <button>
+            <js:event name="click">%object%.record();</js:event>
+            <tpl:text>●</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.test();</js:event>
+            <tpl:text>▶</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.getFrame().toggleClass('sylma-visible');</js:event>
+            <tpl:text>◑</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.addWatcher();</js:event>
+            <tpl:text>⌚</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.save();</js:event>
+            <tpl:text>⇥</tpl:text>
+          </button>
+        </div>
+        <tpl:apply mode="test"/>
+      </div>
+      <iframe js:node="frame" class="sylma-hidder">
+      </iframe>
+    </div>
+
+  </tpl:template>
+
+  <tpl:template mode="test">
+    <div js:class="sylma.stepper.Test" js:alias="test" class="test" js:parent-name="test">
+      <tpl:read select="file"/>
+      <tpl:apply select="*"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="test:page">
+    <ul js:class="sylma.stepper.Page" js:alias="page" class="page" js:parent-name="page">
+      <a href="{@url}">
+        <js:event name="click">
+          e.preventDefault();
+          %object%.go();
+        </js:event>
+        <tpl:read select="@url"/>
+      </a>
+      <tpl:apply mode="actions"/>
+      <tpl:apply select="steps"/>
+    </ul>
+  </tpl:template>
+
+  <tpl:template match="test:steps">
+    <div js:class="sylma.ui.Template" js:alias="steps" js:all="x" js:autoload="x">
+      <tpl:apply select="*"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="test:*" mode="title">
+    <strong><tpl:read select="name()"/></strong>
+  </tpl:template>
+
+  <tpl:template match="test:*" mode="selector">
+    <div js:class="sylma.stepper.Selector" js:alias="selector">
+      <tpl:read select="@element"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="test:*" mode="actions">
+    <tpl:apply mode="delete"/>
+    <tpl:apply mode="edit"/>
+  </tpl:template>
+
+  <tpl:template match="test:*" mode="delete">
+    <button type="button" js:class="sylma.ui.Template" js:alias="delete" js:autoload="x" class="delete">
+      <js:event name="click">%parent%.remove();</js:event>
+      <tpl:text>✕</tpl:text>
+    </button>
+  </tpl:template>
+
+  <tpl:template match="test:*" mode="edit">
+    <button js:class="sylma.ui.Template" js:alias="edit" js:autoload="x" class="edit">
+      <js:event name="click">this.blur(); %parent%.go();</js:event>
+      <span>▶</span>
+    </button>
+  </tpl:template>
+
+  <tpl:template match="test:event">
+    <li js:class="sylma.stepper.Event" js:alias="event">
+      <tpl:apply mode="actions"/>
+      <tpl:apply mode="title"/>
+      <span>
+        <tpl:read select="@name"/>
+      </span>
+      <tpl:apply mode="selector"/>
+    </li>
+  </tpl:template>
+
+  <tpl:template match="test:watcher">
+    <li js:class="sylma.stepper.Watcher" js:alias="watcher">
+      <tpl:apply mode="actions"/>
+      <tpl:apply mode="title"/>
+      <tpl:apply mode="selector"/>
+      <form>
+        <button type="button">
+          <js:event name="click">%object%.addProperty();</js:event>
+          <tpl:text>+</tpl:text>
+        </button>
+        <tpl:apply select="property"/>
+      </form>
+    </li>
+  </tpl:template>
+
+  <tpl:template match="test:property">
+    <div js:class="sylma.stepper.Property" js:alias="property">
+      <select js:node="name">
+        <js:event name="change">%object%.onChange()</js:event>
+        <option>domready</option>
+        <option>opacity</option>
+        <option>margin-top</option>
+        <option>margin-right</option>
+        <option>margin-bottom</option>
+        <option>margin-left</option>
+        <option>top</option>
+        <option>right</option>
+        <option>bottom</option>
+        <option>left</option>
+        <option>scroll</option>
+      </select>
+      <span>
+        <tpl:read/>
+      </span>
+      <tpl:apply mode="delete"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="test:snapshot">
+    <li js:class="sylma.stepper.Snapshot" js:alias="snapshot">
+      <tpl:apply mode="actions"/>
+      <tpl:apply mode="title"/>
+      <tpl:apply mode="selector"/>
+    </li>
+  </tpl:template>
+
+</view:view>

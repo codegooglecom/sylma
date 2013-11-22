@@ -43,4 +43,5 @@ interface _window extends scope {
    * @return _instance
    */
   function argToInstance($mVar);
+  //function createTest($val1, $val2, $op = '==');
 }
