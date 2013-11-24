@@ -2,7 +2,14 @@
 
 var sylma = {};
 
+sylma.debug = {
+  log : false
+}
+
 sylma.modules = {};
+sylma.factory = {
+  debug : false
+};
 
 sylma.binder = {
   classes : {},
@@ -110,7 +117,7 @@ sylma.classes = {
 
       if (!props.extend) {
 
-        console.log(props);
+        sylma.log(props);
         throw new Error('No path defined');
       }
 
@@ -202,7 +209,7 @@ sylma.classes = {
 
       if (result.errors && delay) {
 
-        console.log('Cannot redirect while exception occured');
+        sylma.log('Cannot redirect while exception occured');
       }
 
       if (!result.errors && delay) {
@@ -299,6 +306,13 @@ sylma.classes = {
 }
 
 sylma.ui = new sylma.classes.ui;
+sylma.log = function(msg) {
+
+  if (sylma.debug.log) {
+
+    console.log(msg);
+  }
+}
 
 
 sylma.ui.Base = new Class({
@@ -372,7 +386,7 @@ sylma.ui.Base = new Class({
 
     if (!node) {
 
-      //console.log(props);
+      //sylma.log(props);
       throw new Error('Main node [@id=' + props.id + '] not found');
     }
 
@@ -396,7 +410,7 @@ sylma.ui.Base = new Class({
     if (name) {
 
       this.sylma.parents[name] = this;
-      //console.log(this.getParents());
+      //sylma.log(this.getParents());
     }
   },
 
@@ -510,7 +524,8 @@ sylma.ui.Base = new Class({
         throw new Error('Node ' + key + ' not found');
       }
 
-      this.nodes[key] = node.length ? node[0] : node;
+      this.nodes[key] = node; //.length ? node[0] : node;
+
     }
   },
 
@@ -924,6 +939,11 @@ sylma.ui.Container = new Class({
     var target;
     var _class = this.sylma.template.classes[alias];
     var result = this.buildObject(alias, args, key);
+
+    if (sylma.factory.debug) {
+
+      sylma.log('Create "' + alias + '" to [' + key + ']');
+    }
 
     if (result.sylma.splice) {
 

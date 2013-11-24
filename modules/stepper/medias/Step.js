@@ -15,7 +15,7 @@ sylma.stepper.Step = new Class({
 
     msg = msg || 'Test ' + this.asToken();
 
-    console.log(msg);
+    sylma.log(msg);
   },
 
   isReady : function(val) {

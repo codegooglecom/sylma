@@ -165,7 +165,7 @@
       );
     </tst:expected>
   </tst:test>
-  <tst:test name="Iterate with query" disabled="true">
+  <tst:test name="Iterate with query">
     <tst:prepare>
       $controler->set('arg', $controler->createArgument('simple.xml'));
     </tst:prepare>
@@ -173,16 +173,14 @@
       $arg = $controler->get('arg');
       $aResult = array();
 
-      foreach ($arg->query('def') as $sName => $val) {
+      foreach ($arg->query('def/item') as $val) {
 
-        $manager->assertEquals(get_class($val), 'sylma\dom\argument\Filed');
-        $aResult[$sName] = $val->read();
+        $manager->assertTrue($val instanceof sylma\core\argument);
+        $aResult[] = $val->read();
       }
 
       $manager->assertEquals($aResult, array(
-        'sub' => '456',
-        'item' => 'item2',
-        'other' => 'other',
+        'item1', 'item2',
       ));
 
       return true;

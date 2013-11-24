@@ -5,6 +5,7 @@ sylma.stepper.Test = new Class({
   Implements : sylma.stepper.Listed,
 
   currentKey : undefined,
+  events : {},
 
   getSample : function() {
 
@@ -76,67 +77,67 @@ sylma.stepper.Test = new Class({
 
   record : function() {
 
-    var callback = this.prepareRecord.bind(this);
-
     if (!this.getPage()) {
 
       var page = this.addPage();
-      page.addSnapshot(callback);
+      page.addSnapshot();
     }
     else {
 
       this.getPage().go();
-      callback();
     }
 
     this.getPage().record();
   },
 
-  resetFrame : function() {
+  startLoad : function() {
 
-    this.getParent('main').resetFrame();
   },
 
-  prepareRecord : function() {
+  startCapture: function() {
+sylma.log('start record');
+    this.events = {
 
-    var win = this.getWindow();
-    var frame = this.getFrame();
+      window : function(e) {
 
-    win.removeEvents();
+        this.getPage().addEvent(e);
 
-    win.addEvent('click', function(e) {
+      }.bind(this),
+      frame : function() {
 
-      this.getPage().addEvent(e);
+        this.addPage();
+        this.getPage().addSnapshot();
 
-    }.bind(this));
+      }.bind(this)
+    };
 
-    frame.removeEvents();
+    this.getFrame().addEvent('load', this.events.frame);
+    this.getWindow().addEvent('click', this.events.window);
+  },
 
-    frame.addEvent('load', function() {
-
-      this.addPage();
-      this.getPage().addSnapshot(function() {
-
-        this.record();
-
-      }.bind(this));
-
-    }.bind(this));
+  stopCapture: function() {
+sylma.log('stop record');
+    this.getFrame().removeEvent('load', this.events.frame);
+    this.getWindow().removeEvent('click', this.events.window);
   },
 
   preparePage : function(callback) {
 
-    this.getFrame().addEvent('load', function() {
+    var frame = this.getFrame();
 
-      this.resetFrame();
+    this.events.test = function() {
+
+      frame.removeEvent('load', this.events.test);
       if (callback) callback();
 
-    }.bind(this));
+    }.bind(this);
+
+    frame.addEvent('load', this.events.test)
   },
 
   test : function(callback) {
 
-    this.setCurrent();
+    //this.setCurrent();
 
     this.testItems(this.getPages(), 0, callback);
   },

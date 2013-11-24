@@ -322,6 +322,7 @@
                 sylma.tester.assertEquals(this.tmp.length, 1, 'tmp2');
 
                 /* @todo dom compare */
+                sylma.tester.assertEquals(second.after.getKey(), 0);
                 sylma.tester.assertEquals(this.getNode().get('text'), 'admin@sylma.org.');
                 sylma.tester.assertEquals(this.getNode().getChildren().length, 2, 'node1');
 

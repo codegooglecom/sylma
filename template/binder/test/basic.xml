@@ -269,7 +269,7 @@
       return true;
     </tst:expected>
   </tst:test>
-  <tst:test name="Simple sub node" disabled="true">
+  <tst:test name="Simple sub node">
     <tst:document>
       <view:view>
         <sql:resource>
@@ -310,6 +310,32 @@
       var test = example.test;
 
       return test.getNode('hello').get('text') === 'Hello' &amp;&amp; test.getNode('world').get('text') === 'World';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Sub node select box" disabled="true">
+    <!-- node use a length property that interfere with node lookup -->
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <view:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <p>Bla bla bla</p>
+            <select js:node="select">
+              <option>abc</option>
+              <option selected="selected">def</option>
+            </select>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var select = test.getNode('select');
+
+      sylma.tester.assertEquals(select.get('tag'), 'select');
+      sylma.tester.assertEquals(select.getSelected().get('value')[0], 'def');
+
+      return true;
     </tst:expected>
   </tst:test>
   <tst:test name="Event in view condition" disabled="true">

@@ -15,21 +15,26 @@ sylma.stepper.Page = new Class({
 
     this.resetSteps(this.mode.ready);
     var current = this.getCurrent();
+    this.getParent('main').pauseRecord();
 
     this.test(function() {
 
       ++current;
-      var step = callback.call(this, current);
-      step.go();
+      var step = callback.call(this, current, function() {
 
+        this.getParent('main').resumeRecord();
+
+      }.bind(this));
+
+      step.go();
       this.setCurrent(current);
 
     }.bind(this), current, true);
   },
 
-  addSnapshot : function(callback) {
+  addSnapshot : function() {
 
-    this.addStep(function(key) {
+    this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('snapshot', {}, key);
       result.activate(callback);
@@ -40,9 +45,10 @@ sylma.stepper.Page = new Class({
 
   addEvent : function(e) {
 
-    this.addStep(function(key) {
+    this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('event', {event : e}, key);
+      if (callback) callback();
 
       return result;
     });
@@ -50,9 +56,11 @@ sylma.stepper.Page = new Class({
 
   addWatcher : function() {
 
-    this.addStep(function(key) {
+    this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('watcher', {}, key);
+      result.activate(callback);
+
       return result;
     });
   },
@@ -71,7 +79,7 @@ sylma.stepper.Page = new Class({
 
     this.go(function() {
 
-      console.log('test page ' + this.options.url);
+      sylma.log('test page ' + this.options.url);
 
       var all = this.getSteps().tmp;
 
@@ -116,15 +124,16 @@ sylma.stepper.Page = new Class({
             var start = current < 1 ? 0 : current - 1;
             var end = to + 1;
           }
-  console.log(current, to, start, end, this.getCurrent());
+sylma.log(current, to, start, end, this.getCurrent());
         this.testNextItem(all.slice(start, end), 0, callback, record);
         }
       }
       else {
-        
+
         this.setCurrent(all.length - 1);
         this.testNextItem(all, 0, callback);
       }
+
     }.bind(this));
   },
 
@@ -178,7 +187,7 @@ sylma.stepper.Page = new Class({
   goStep: function(step, callback) {
 
     var key = step.getKey();
-//console.log(key);
+//sylma.log(key);
     this.test(function() {
 
       step.isReady(true);
@@ -188,12 +197,12 @@ sylma.stepper.Page = new Class({
   },
 
   select : function() {
-
+console.log('select');
     this.getNode().addClass('activated');
   },
 
   unselect : function() {
-
+console.log('unselect');
     this.getNode().removeClass('activated');
     this.resetSteps(this.mode.all);
   },
@@ -203,9 +212,12 @@ sylma.stepper.Page = new Class({
     var item = items[key];
     var all = this.getSteps().tmp;
 
-    if (!record && item == all.getLast()) {
+    var test = this.getParent('test');
+    var lastTest = test.getParent().getObject('test').getLast();
 
-      this.getParent('test').preparePage(callback);
+    if (!record && item == all.getLast() && test != lastTest) {
+
+      //this.getParent('test').preparePage(callback);
       this.testItem(items, key);
     }
     else {

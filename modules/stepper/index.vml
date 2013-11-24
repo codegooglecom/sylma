@@ -57,9 +57,9 @@
       </js:option>
       <div js:node="board" class="board">
         <div class="actions">
-          <button>
+          <button class="record">
             <js:event name="click">%object%.record();</js:event>
-            <tpl:text>●</tpl:text>
+            <span>●</span>
           </button>
           <button>
             <js:event name="click">%object%.test();</js:event>
@@ -172,6 +172,7 @@
     <div js:class="sylma.stepper.Property" js:alias="property">
       <select js:node="name">
         <js:event name="change">%object%.onChange()</js:event>
+        <option>&lt;choose&gt;</option>
         <option>domready</option>
         <option>opacity</option>
         <option>margin-top</option>
@@ -184,7 +185,7 @@
         <option>left</option>
         <option>scroll</option>
       </select>
-      <span>
+      <span js:node="value">
         <tpl:read/>
       </span>
       <tpl:apply mode="delete"/>

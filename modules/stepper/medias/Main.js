@@ -1,4 +1,6 @@
 sylma.stepper = sylma.stepper || {};
+sylma.factory.debug = true;
+sylma.debug.log = true;
 
 sylma.stepper.Main = new Class({
 
@@ -10,9 +12,11 @@ sylma.stepper.Main = new Class({
     y : 1024
   },
 
+  recording : false,
+
   onReady : function() {
 
-console.log(this.get('tests'));
+sylma.log(this.get('tests'));
 
     if (!this.getTest(false)) {
 
@@ -61,11 +65,6 @@ console.log(this.get('tests'));
     return result;
   },
 
-  resetFrame : function() {
-
-    this.getFrame().removeEvents();
-  },
-
   addTest : function(props) {
 
     var result = this.add('test', props);
@@ -88,10 +87,35 @@ console.log(this.get('tests'));
 
   record : function() {
 
-    this.resetFrame();
-    var test = this.getTest();
+    if (!this.recording) {
 
-    test.record();
+      this.getTest().record();
+      this.recording = true;
+    }
+    else {
+
+      this.getFrame().removeEvents();
+      this.getWindow().removeEvents();
+      this.recording = false;
+    }
+
+    this.getNode().toggleClass('record', this.recording);
+  },
+
+  pauseRecord: function() {
+
+    if (this.recording) {
+
+      this.getTest().stopCapture();
+    }
+  },
+
+  resumeRecord: function() {
+
+    if (this.recording) {
+
+      this.getTest().startCapture();
+    }
   },
 
   addWatcher : function() {
@@ -101,7 +125,7 @@ console.log(this.get('tests'));
 
   test : function() {
 
-    this.resetFrame();
+    this.pauseRecord();
 
     this.testItems(this.getTests(), 0, function() {
 
@@ -112,7 +136,7 @@ console.log(this.get('tests'));
   save : function() {
 
     var test = JSON.stringify(this.getTests());
-//console.log(test); return;
+//sylma.log(test); return;
     this.send(this.get('path'), {
       file : this.get('file'),
       test : test

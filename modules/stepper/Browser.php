@@ -60,6 +60,15 @@ class Browser extends core\module\Domed {
             case 'watcher' :
 
               $aStep['element'] = $step->read('@element');
+
+              foreach ($step->query('property', false) as $property) {
+
+                $aStep['property'][] = array(
+                  'name' => $property->read('@name'),
+                  'value' => $property->read(),
+                );
+              }
+
               break;
 
             case 'snapshot' :

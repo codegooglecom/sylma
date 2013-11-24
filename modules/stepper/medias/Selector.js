@@ -8,6 +8,7 @@ sylma.stepper.Selector = new Class({
     target : null, // dom node
     element : null // string
   },
+  events : {},
 
   onReady : function() {
 
@@ -44,30 +45,47 @@ sylma.stepper.Selector = new Class({
     document.body.adopt(mask, overlay);
     overlay.tween('opacity', 0.35);
 
-    this.resetWindow();
+    this.startCapture();
   },
 
-  resetWindow : function() {
+  startCapture : function() {
 
-    var win = this.getWindow();
-    var self = this;
+    this.getParent('main').pauseRecord();
 
-    win.removeEvents();
-
-    win.addEvents({
-      mousemove : function(e) {
-
-        self.selectElement(e.target);
-
-      },
+    this.events = {
       click : function(e) {
 
-        self.selectElement(e.target);
-        self.select(e.target);
+        this.selectElement(e.target);
+        this.select(e.target);
 
         e.preventDefault();
-      }
-    });
+
+      }.bind(this),
+      mousemove : function(e) {
+
+        this.selectElement(e.target);
+
+      }.bind(this)
+    };
+
+    this.getWindow().addEvents(this.events);
+  },
+
+  stopCapture: function() {
+
+    this.getParent('main').resumeRecord();
+
+    this.getWindow().removeEvent('click', this.events.click);
+    this.getWindow().removeEvent('move', this.events.mousemove);
+  },
+
+  windowMove : function(e) {
+
+
+  },
+
+  windowClick : function(e) {
+
   },
 
   selectElement : function(target) {
@@ -89,7 +107,7 @@ sylma.stepper.Selector = new Class({
     //this.set('target', target);
     this.set('element', this.buildPath(target));
 
-    this.getWindow().removeEvents();
+    this.stopCapture();
     this.mask.remove();
 
     new Fx.Morph(this.overlay, {
@@ -118,21 +136,10 @@ sylma.stepper.Selector = new Class({
 
   getElement : function() {
 
-    //if (!this.options.target) {
-
-      var path = this.options.element;
-
-      if (!path) {
-
-        throw new Error("Cannot get selector's path while no element neither path are defined");
-      }
-
-      //this.options.target = this.getWindow().document.body.getElement(path);
-      var result = this.getWindow().document.body.getElement(path);
-    //}
+    var path = this.options.element;
+    var result = this.getWindow().document.body.getElement(path);
 
     return result;
-    //return this.options.target;
   },
 
   getPath : function() {

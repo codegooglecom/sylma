@@ -58,7 +58,7 @@ sylma.stepper.Snapshot = new Class({
 
   addDifference : function(type, el, expected) {
 
-    console.log(type, el, expected);
+    sylma.log(this.asToken(), type, el, expected);
   },
 
   toJSON : function() {

@@ -165,7 +165,6 @@ abstract class Basic extends core\module\Controled {
 
   public function get($sPath = '', $bDebug = true, $bExpand = true) {
 
-    $dom = $this->getControler();
     $sRealPath = $this->parsePath($sPath);
 
     $result = $this->getDocument()->getx($sRealPath, array(), $bDebug);
@@ -179,10 +178,17 @@ abstract class Basic extends core\module\Controled {
     }
     else {
 
-      if ($bExpand) $result = $this->buildChild($dom->create('handler', array($result)));
+      if ($bExpand) $result = $this->buildChildElement($result);
     }
 
     return $result;
+  }
+
+  public function buildChildElement(dom\element $el) {
+
+    $dom = $this->getControler();
+
+    return $this->buildChild($dom->create('handler', array($el)));
   }
 
   public function buildChild(dom\document $doc) {
@@ -199,10 +205,17 @@ abstract class Basic extends core\module\Controled {
     //$dom = $this->getControler();
     $sRealPath = $this->parsePath($sPath);
 
-    $result = $this->getDocument()->queryx($sRealPath, array(), $bDebug);
+    $collection = $this->getDocument()->queryx($sRealPath, array(), $bDebug);
     $this->useAttribute(false);
 
-    return $result;
+    $aResult = array();
+
+    foreach ($collection as $item) {
+
+      $aResult[] = $this->buildChildElement($item);
+    }
+
+    return $aResult;
   }
 
   public function getName() {
