@@ -28,6 +28,8 @@
     <le:file>medias/main.less</le:file>
   </le:context>
 
+  <le:context name="title">Stepper</le:context>
+
   <le:context name="js">
     <le:file>medias/Listed.js</le:file>
     <le:file>medias/Main.js</le:file>
@@ -37,6 +39,7 @@
     <le:file>medias/Step.js</le:file>
     <le:file>medias/Snapshot.js</le:file>
     <le:file>medias/Event.js</le:file>
+    <le:file>medias/Input.js</le:file>
     <le:file>medias/Watcher.js</le:file>
     <le:file>medias/Property.js</le:file>
     <le:file>medias/Element.js</le:file>
@@ -46,11 +49,14 @@
   <tpl:template>
 
     <div id="tester" js:class="sylma.stepper.Main" js:parent-name="main">
-      <js:option name="path">
+      <js:option name="directory" cast="x">
+        <tpl:apply select="getDirectory()"/>
+      </js:option>
+      <js:option name="save">
         <le:path>save</le:path>
       </js:option>
-      <js:option name="file" cast="x">
-        <tpl:apply select="getFile()"/>
+      <js:option name="load">
+        <le:path>load</le:path>
       </js:option>
       <js:option name="tests">
         <tpl:apply select="getTests()"/>
@@ -66,12 +72,20 @@
             <tpl:text>▶</tpl:text>
           </button>
           <button>
+            <js:event name="click">%object%.createTest();</js:event>
+            <tpl:text>+</tpl:text>
+          </button>
+          <button>
             <js:event name="click">%object%.getFrame().toggleClass('sylma-visible');</js:event>
             <tpl:text>◑</tpl:text>
           </button>
           <button>
-            <js:event name="click">%object%.addWatcher();</js:event>
+            <js:event name="click">%object%.getTest().getPage().addWatcher();</js:event>
             <tpl:text>⌚</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.getTest().getPage().addSnapshot();</js:event>
+            <tpl:text>⚀</tpl:text>
           </button>
           <button>
             <js:event name="click">%object%.save();</js:event>
@@ -88,13 +102,30 @@
 
   <tpl:template mode="test">
     <div js:class="sylma.stepper.Test" js:alias="test" class="test" js:parent-name="test">
-      <tpl:read select="file"/>
-      <tpl:apply select="*"/>
+      <button class="edit">
+        <js:event name="click">%object%.editName(%object%.options.file);</js:event>
+        <tpl:text>...</tpl:text>
+      </button>
+      <button class="edit">
+        <js:event name="click">this.blur(); %object%.toggleSelect();</js:event>
+        <span>▶</span>
+      </button>
+      <h4 js:node="name">
+        <tpl:read select="file"/>
+      </h4>
+      <div js:node="pages" class="sylma-hidder zoom pages">
+        <tpl:apply select="*"/>
+      </div>
     </div>
   </tpl:template>
 
   <tpl:template match="test:page">
     <ul js:class="sylma.stepper.Page" js:alias="page" class="page" js:parent-name="page">
+      <tpl:apply mode="delete"/>
+      <button js:class="sylma.ui.Template" js:alias="edit" js:autoload="x" class="edit">
+        <js:event name="click">this.blur(); %parent%.go(null, false, true);</js:event>
+        <span>▶</span>
+      </button>
       <a href="{@url}">
         <js:event name="click">
           e.preventDefault();
@@ -102,7 +133,6 @@
         </js:event>
         <tpl:read select="@url"/>
       </a>
-      <tpl:apply mode="actions"/>
       <tpl:apply select="steps"/>
     </ul>
   </tpl:template>
@@ -118,8 +148,14 @@
   </tpl:template>
 
   <tpl:template match="test:*" mode="selector">
-    <div js:class="sylma.stepper.Selector" js:alias="selector">
-      <tpl:read select="@element"/>
+    <div js:class="sylma.stepper.Selector" js:alias="selector" class="selector clearfix" title="{@element}">
+      <button js:node="toggle" class="sylma-hidder edit">
+        <js:event name="click">%object%.toggleMask();</js:event>
+        <tpl:text>◌</tpl:text>
+      </button>
+      <a title="{@element}">
+        <tpl:read select="@element"/>
+      </a>
     </div>
   </tpl:template>
 
@@ -146,6 +182,7 @@
     <li js:class="sylma.stepper.Event" js:alias="event">
       <tpl:apply mode="actions"/>
       <tpl:apply mode="title"/>
+      <tpl:text> </tpl:text>
       <span>
         <tpl:read select="@name"/>
       </span>
@@ -158,7 +195,7 @@
       <tpl:apply mode="actions"/>
       <tpl:apply mode="title"/>
       <tpl:apply mode="selector"/>
-      <form>
+      <form js:node="form" class="sylma-hidder zoom options">
         <button type="button">
           <js:event name="click">%object%.addProperty();</js:event>
           <tpl:text>+</tpl:text>
@@ -197,6 +234,22 @@
       <tpl:apply mode="actions"/>
       <tpl:apply mode="title"/>
       <tpl:apply mode="selector"/>
+    </li>
+  </tpl:template>
+
+  <tpl:template match="test:input">
+    <li js:class="sylma.stepper.Input" js:alias="input">
+      <tpl:apply mode="actions"/>
+      <tpl:apply mode="title"/>
+      <tpl:apply mode="selector"/>
+      <form js:node="form" class="sylma-hidder zoom options">
+        <textarea js:node="input" type="text">
+          <js:event name="keyup">
+            %object%.updateElement();
+          </js:event>
+          <tpl:read/>
+        </textarea>
+      </form>
     </li>
   </tpl:template>
 

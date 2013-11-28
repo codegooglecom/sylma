@@ -117,17 +117,20 @@ sylma.stepper.Element = new Class({
       result = false;
     }
 
-    this.getChildren().each(function(item) {
+    if (result) {
 
-      result = item.compare() && result;
-    });
+      this.getChildren().each(function(item) {
+
+        result = item.compare() && result;
+      });
+    }
 
     return result;
   },
 
   addDifference : function(type, el, expected) {
 
-    //console.log('difference', type, el, expected);
+    console.log('difference', type, el, expected);
   },
 
   getAttributes : function() {

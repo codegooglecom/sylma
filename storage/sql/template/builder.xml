@@ -36,6 +36,7 @@
             <cls:class alias="select" name="query\parser\Select">
               <cls:classes>
                 <cls:class alias="where" name="cached\Where"/>
+                <cls:class alias="order" name="cached\Order"/>
               </cls:classes>
             </cls:class>
             <cls:class alias="update" name="query\parser\Update"/>

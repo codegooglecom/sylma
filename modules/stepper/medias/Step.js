@@ -11,19 +11,29 @@ sylma.stepper.Step = new Class({
     }.bind(this));
   },
 
-  log: function(msg) {
-
-    msg = msg || 'Test ' + this.asToken();
-
-    sylma.log(msg);
-  },
-
   isReady : function(val) {
 
     var node = this.getNode();
     var name = 'ready';
 
-    return val === undefined ? node.hasClass(name) : node.toggleClass(name, val);
+    if (val !== undefined) {
+
+      node.toggleClass(name, val);
+    }
+
+    return node.hasClass(name);
+  },
+
+  hasError : function(value) {
+
+    var node = this.getNode();
+
+    if (value !== undefined) {
+
+      node.toggleClass('error', value);
+    }
+
+    return node.hasClass('error');
   },
 
   isPlayed : function(val) {

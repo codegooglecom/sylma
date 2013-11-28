@@ -16,5 +16,25 @@ sylma.stepper.Framed = new Class({
 
     return this.getObject('selector')[0];
   },
+
+  getElement : function() {
+
+    return this.getSelector().getElement();
+  },
+
+  log: function(msg) {
+
+    console.log(msg + ' ' + this.asToken(), this.options);
+  },
+
+  toggleActivation : function(val) {
+
+    this.getNode().toggleClass('activated', val);
+  },
+
+  asToken : function() {
+
+    return this.getAlias();
+  }
 });
 

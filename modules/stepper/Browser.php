@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\stepper;
-use sylma\core;
+use sylma\core, sylma\dom;
 
 class Browser extends core\module\Domed {
 
@@ -19,74 +19,105 @@ class Browser extends core\module\Domed {
     $this->setSettings($post);
     $this->setSettings($args);
 
-    $this->setFile($this->getFile($this->read('file')));
+    if ($sDirectory = $this->read('dir', false)) {
+
+      $this->setDirectory($this->getDirectory($sDirectory));
+    }
   }
 
-  public function getFile($sPath = '', $bDebug = true) {
+  public function getDirectory($sPath = '', $bDebug = true) {
 
-    return parent::getFile($sPath, $bDebug);
+    return parent::getDirectory($sPath, $bDebug);
   }
 
   public function getTests() {
 
-    //foreach ($this->query('test') as $test) {
+    $aResult = array();
 
-      $aTest = array();
-      $test = $this->createOptions($this->read('file'), false);
+    foreach ($this->getDirectory()->getFiles(array('tml')) as $file) {
 
-      foreach ($test as $page) {
+      $aResult['test'][] = array(
+        'file' => (string) $file,
+      );
+    }
 
-        $aPage = array(
-          'url' => $page->read('@url'),
-          //'element' => $page->read('element'),
+    return $aResult;
+  }
+
+  public function load() {
+
+    $sFile = $this->read('file');
+//    $aResult = array();
+
+//    if ($file = $this->getFile($sFile, false)) {
+
+      $test = $this->createOptions($sFile, false);
+      $aResult = $this->buildTest($test);
+//    }
+
+    return $aResult;
+  }
+
+  protected function buildTest(core\argument $test) {
+
+    $aResult = array();
+
+    foreach ($test as $page) {
+
+      $aPage = array(
+        'url' => $page->read('@url'),
+        //'element' => $page->read('element'),
+      );
+
+      $aSteps = array();
+
+      foreach ($page->get('steps') as $step) {
+
+        $aStep = array(
+          '_alias' => $step->getName(),
         );
 
-        $aSteps = array();
+        switch ($step->getName()) {
 
-        foreach ($page->get('steps') as $step) {
+          case 'event' :
 
-          $aStep = array(
-            '_alias' => $step->getName(),
-          );
+            $aStep['name'] = $step->read('@name');
+            $aStep['element'] = $step->read('@element');
+            break;
 
-          switch ($step->getName()) {
+          case 'input' :
 
-            case 'event' :
+            $aStep['element'] = $step->read('@element');
+            $aStep['value'] = $step->read();
+            break;
 
-              $aStep['name'] = $step->read('@name');
-              $aStep['element'] = $step->read('@element');
-              break;
+          case 'watcher' :
 
-            case 'watcher' :
+            $aStep['element'] = $step->read('@element');
 
-              $aStep['element'] = $step->read('@element');
+            foreach ($step->query('property', false) as $property) {
 
-              foreach ($step->query('property', false) as $property) {
+              $aStep['property'][] = array(
+                'name' => $property->read('@name'),
+                'value' => $property->read(),
+              );
+            }
 
-                $aStep['property'][] = array(
-                  'name' => $property->read('@name'),
-                  'value' => $property->read(),
-                );
-              }
+            break;
 
-              break;
+          case 'snapshot' :
 
-            case 'snapshot' :
-
-              $aStep['element'] = $step->read('@element');
-              $aStep['content'] = $step->read('content', false);
-              break;
-          }
-
-          $aSteps[] = $aStep;
+            $aStep['element'] = $step->read('@element');
+            $aStep['content'] = $step->read('content', false);
+            break;
         }
 
-        $aPage['steps'][] = array('_all' => $aSteps);
-        $aTest['page'][] = $aPage;
+        $aSteps[] = $aStep;
       }
 
-      $aResult['test'][] = $aTest;
-    //}
+      $aPage['steps'][] = array('_all' => $aSteps);
+      $aResult['page'][] = $aPage;
+    }
 
     return $aResult;
   }

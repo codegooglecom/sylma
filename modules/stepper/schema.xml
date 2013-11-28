@@ -11,6 +11,9 @@
       <event name="click" element="">
 
       </event>
+      <input name="input" element="">
+
+      </input>
       <watcher element="">
         <property name=""/>
       </watcher>

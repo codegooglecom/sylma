@@ -31,7 +31,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
 
     try {
 
-      $sResult = $parser->load($path->getFile(), array(
+      $result = $parser->load($path->getFile(), array(
         'arguments' => $path->getArguments(),
         'contexts' => $contexts,
         'post' => $post,
@@ -39,7 +39,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     }
     catch (core\exception $e) {
 
-      $sResult = false;
+      $result = '';
       $e->save(false);
     }
 
@@ -60,7 +60,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     $classes = $contexts->get('js/classes', false);
 
     $this->setSettings(array(
-      'content' => (string) $sResult,
+      'content' => $result instanceof dom\document ? (string) $result : $result,
       'objects' => $contexts->get('js/load/objects', false),
       'classes' => $classes ? $classes->asStringVar() : null,
       'errors' => $errors,

@@ -13,6 +13,7 @@ class Order extends reflector\component\Foreigner implements reflector\component
     $this->allowForeign(true);
     $this->allowText(true);
   }
+
   public function asArray() {
 
     $tree = $this->getParser()->getCurrentTree();
@@ -21,17 +22,16 @@ class Order extends reflector\component\Foreigner implements reflector\component
     if ($this->getNode()->isComplex()) {
 
       $content = $this->parseComponentRoot($this->getNode());
+      $query->setOrderDynamic($content);
     }
     else {
 
-      $content = ($this->readx('@dir') == 'desc' ? '!' : '') . $this->readx();
+      $sElement = $this->readx();
+
+      $query->setOrderPath($sElement);
     }
 
-    $result = $this->createObject('cached', array($content));
-
     $this->log('SQL : order');
-
-    $query->setOrder($result);
 
     return array();
   }

@@ -172,7 +172,7 @@ abstract class Basic extends core\module\Controled {
 
     $bElement = $result instanceof dom\element;
 
-    if (!$bElement || ($result->hasChildren() && !$result->isComplex())) {
+    if (!$bElement) { // || ($result->hasChildren() && !$result->isComplex())
 
       if ($bDebug) $this->throwException(sprintf('Cannot use @path %s as complex element', $sPath));
     }

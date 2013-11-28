@@ -7,27 +7,27 @@ sylma.stepper.Main = new Class({
   Extends : sylma.ui.Container,
   Implements : sylma.stepper.Listed,
 
+  path : '/',
+
   screen : {
     x : 1280,
     y : 1024
   },
 
+  events : {},
+
   recording : false,
+  events : {},
 
   onReady : function() {
 
-sylma.log(this.get('tests'));
+    Object.each(this.get('tests').test, function(item) {
 
-    if (!this.getTest(false)) {
+      this.addTest(item);
 
-      var props = Object.merge(this.get('tests').test[0], {
-        file : this.get('file')
-      });
+    }.bind(this));
 
-      this.addTest(props);
-    }
-
-    this.buildFrame('/');
+    this.buildFrame(this.path);
   },
 
   getFrame : function() {
@@ -65,7 +65,17 @@ sylma.log(this.get('tests'));
     return result;
   },
 
-  addTest : function(props) {
+  createTest : function() {
+
+    var result = this.addTest({}, true);
+
+    result.toggleSelect(true);
+    this.record(true);
+  },
+
+  addTest : function(props, nofile) {
+
+    props.nofile = nofile;
 
     var result = this.add('test', props);
     this.setCurrent(result.getKey());
@@ -82,14 +92,25 @@ sylma.log(this.get('tests'));
 
     var tests = this.getTests(debug);
 
-    return tests && tests[this.currentKey];
+    return tests && tests[this.getCurrent()];
   },
 
-  record : function() {
+  goTest : function(test) {
 
-    if (!this.recording) {
+    var key = test.getKey();
+    this.setCurrent(key);
 
-      this.getTest().record();
+    this.getTests().each(function(item, sub) {
+
+      if (sub !== key) item.toggleSelect(false);
+    });
+  },
+
+  record : function(force) {
+
+    if (force || !this.recording) {
+
+      this.getTest().record(this.startCapture.bind(this));
       this.recording = true;
     }
     else {
@@ -102,11 +123,73 @@ sylma.log(this.get('tests'));
     this.getNode().toggleClass('record', this.recording);
   },
 
+  isInput : function(el) {
+
+    var tag = el.get('tag');
+
+    return ['input','textarea'].indexOf(tag) > -1 && ['checkbox', 'radio', 'button'].indexOf(el.getAttribute('type')) === -1;
+  },
+
+  startCapture: function() {
+
+    this.stopCapture();
+
+    var test = this.getTest();
+
+    var events = this.events = {
+
+      window : {
+        click : function(e) {
+
+          if (!this.isInput(e.target)) {
+
+            this.getTest().getPage().addEvent(e);
+          }
+
+        }.bind(this),
+        keyup : function(e) {
+
+          var target = e.target;
+
+          if (this.isInput(target)) {
+
+            if (!this.input || this.input.getElement() != target) {
+
+              this.input = this.getTest().getPage().addInput(e);
+            }
+
+            this.input.updateValue();
+          }
+        }.bind(this)
+      },
+      frame : {
+
+        load : function() {
+
+          this.addPage();
+          this.getPage().addSnapshot();
+
+        }.bind(test)
+      }
+    };
+
+    this.getFrame().addEvents(events.frame);
+    this.getWindow().addEvents(events.window);
+  },
+
+  stopCapture: function() {
+
+    var events = this.events;
+
+    this.getFrame().removeEvents(events.frame);
+    this.getWindow().removeEvents(events.window);
+  },
+
   pauseRecord: function() {
 
     if (this.recording) {
 
-      this.getTest().stopCapture();
+      this.stopCapture();
     }
   },
 
@@ -114,13 +197,14 @@ sylma.log(this.get('tests'));
 
     if (this.recording) {
 
-      this.getTest().startCapture();
+      this.stopCapture();
+      this.startCapture();
     }
   },
 
-  addWatcher : function() {
+  loadTest : function(file, callback) {
 
-    this.getTest().getPage().addWatcher();
+    this.send(this.get('load'), {file : file}, false, callback);
   },
 
   test : function() {
@@ -135,12 +219,7 @@ sylma.log(this.get('tests'));
 
   save : function() {
 
-    var test = JSON.stringify(this.getTests());
-//sylma.log(test); return;
-    this.send(this.get('path'), {
-      file : this.get('file'),
-      test : test
-    });
+    var test = this.getTest().save();
   }
 
 });

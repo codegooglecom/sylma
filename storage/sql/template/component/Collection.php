@@ -29,7 +29,7 @@ class Collection extends Rooted implements sql\template\pathable {
     //$this->loadNamespace($table->getNamespace());
   }
 
-  protected function getTable() {
+  public function getTable() {
 
     return $this->table;
   }

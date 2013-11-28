@@ -9,10 +9,10 @@
   <p>You will find here access to the main tools to update and customize Sylma.</p>
   <ul class="sylma-tools">
     <li>
-      <a href="/sylma/modules/explorer">Explorer</a>
+      <a href="/sylma/modules/rebuild">Rebuild</a>
     </li>
     <li>
-      <a href="/sylma/modules/inspector">Inspector</a>
+      <a href="/sylma/modules/stepper">Stepper</a>
     </li>
     <li>
       <a href="/sylma/modules/tester">Tests</a>

@@ -46,6 +46,23 @@
       (2, 'admin', 'admin@sylma.org', 'a'),
       (3, 'webmaster', 'webmaster@sylma.org', 'b');
 
+    CREATE TABLE IF NOT EXISTS `user1e` (
+      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `name` varchar(255) COLLATE utf8_bin NOT NULL,
+      `email` varchar(65) COLLATE utf8_bin NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
+
+    DELETE FROM `user1e`;
+    INSERT INTO `user1e` (`id`, `name`, `email`) VALUES
+      (1, 'alpha', 'alpha@sylma.org'),
+      (2, 'Alpha2', 'Alpha2@sylma.org'),
+      (3, 'beta', 'alpha@sylma.org'),
+      (4, 'Beta', 'beta@sylma.org'),
+      (5, 'Beta', 'charlie@sylma.org'),
+      (6, 'beta3', 'beta3@sylma.org'),
+      (7, 'charlie', 'charlie@sylma.org');
+
     CREATE TABLE IF NOT EXISTS `user2` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `name` varchar(85) COLLATE utf8_bin NOT NULL,

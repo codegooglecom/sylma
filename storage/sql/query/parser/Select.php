@@ -14,6 +14,8 @@ class Select extends Wherer implements common\argumentable {
   protected $offset = '0';
   protected $count;
   protected $order;
+  protected $orderPath;
+  protected $orderDynamic;
 
   protected $aClones = array();
   protected $main;
@@ -219,9 +221,24 @@ class Select extends Wherer implements common\argumentable {
     $this->offset = $this->count = null;
   }
 
-  public function setOrder($val) {
+  public function setOrderPath($sValue) {
 
-    $this->order = $val;
+    $this->orderPath = $sValue;
+  }
+
+  protected function getOrderPath() {
+
+    return $this->orderPath;
+  }
+
+  public function setOrderDynamic($content) {
+
+    $this->orderDynamic = $content;
+  }
+
+  protected function getOrderDynamic() {
+
+    return $this->orderDynamic;
   }
 
   protected function getOrder() {
@@ -231,9 +248,43 @@ class Select extends Wherer implements common\argumentable {
 
   protected function prepareOrder() {
 
-    $aResult = $aJoins = $aElements = array();
+    $aResult = array();
+    $obj = null;
 
-    if ($this->getOrder()) {
+    $string = $this->getParser()->getType('string', $this->getParser()->getNamespace('sql'));
+
+    if ($sPath = $this->getOrderPath()) {
+
+      $obj = $this->createObject('order', array($sPath));
+      $order = $this->create('order', array($sPath));
+      $table = $this->aTables[0];
+
+      $aElements = array();
+
+      foreach ($order->extractPath() as $aElement) {
+
+        $field = $table->getElement($aElement['name']);
+
+        $aElements[$field->getName()] = array(
+          'alias' => $field,
+          'string' => $field->getType()->doExtends($string),
+        );
+      }
+
+      $aResult[] = $obj->getInsert();
+      $aResult[] = $obj->call('setElements', array($aElements));
+    }
+    else if ($content = $this->getOrderDynamic()) {
+
+      foreach ($this->getElements() as $field) {
+
+        $aElements[$field->getName()] = array(
+          'alias' => $field,
+          'string' => $field->getType()->doExtends($string),
+        );
+      }
+
+      $obj = $this->createObject('order', array($content));
 
       // On join, only first element is used as order, maybe todo
 
@@ -251,19 +302,21 @@ class Select extends Wherer implements common\argumentable {
 
           if ($el->getParent() === $ref->getParent()) {
 
-            $aElements[$foreign->getName()] = $el;
+            $aElements[$foreign->getName()] = array(
+              'alias' => $el,
+              'string' => $el->getType()->doExtends($string),
+            );
+
             break;
           }
         }
       }
 
-      $aResult[] = $this->getOrder()->getInsert();
-
-      if ($aElements) {
-
-        $aResult[] = $this->getOrder()->call('setForeigns', array($aElements));
-      }
+      $aResult[] = $obj->getInsert();
+      $aResult[] = $obj->call('setElements', array($aElements));
     }
+
+    $this->order = $obj;
 
     return $aResult;
   }

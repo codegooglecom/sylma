@@ -200,11 +200,6 @@ sylma.classes = {
       container.adopt(content);
     },
 
-    toggleVisibility : function() {
-
-
-    },
-
     parseMessages : function(result, container, delay) {
 
       if (result.errors && delay) {
@@ -673,7 +668,7 @@ sylma.ui.Base = new Class({
 
     var result;
 
-    if (debug === undefined) debug = true;
+    if (debug === undefined) debug = false;
 
     if (!this.objects[name]) {
 
@@ -716,7 +711,8 @@ sylma.ui.Base = new Class({
       //duration : 'long',
       onComplete : function() {
 
-        node.destroy();
+        // TODO : node.destroy() send "too much recursion" error, maybe too much events
+        node.dispose();
         this.destroy();
 
       }.bind(this)
@@ -756,7 +752,7 @@ sylma.ui.Base = new Class({
 
     var parent = this.getParent();
 
-    return parent && parent.destroyChild(this.sylma.key);
+    return parent && parent.destroyChild(this.getKey());
   },
 
   destroyChild : function(key) {
@@ -770,9 +766,9 @@ sylma.ui.Base = new Class({
 
       this.tmp.splice(key, 1);
 
-      this.tmp.slice(key).each(function(item, key) {
+      this.tmp.slice(key).each(function(item, sub) {
 
-        item.setKey(key);
+        item.setKey(sub + key);
       });
     }
     else {
@@ -989,21 +985,44 @@ sylma.ui.Container = new Class({
     }
   },
 
-  show : function() {
+  show : function(el) {
 
-    this.getNode().addClass('sylma-visible');
+    el = el || this.getNode();
+
+    el.addClass('sylma-visible');
   },
 
-  hide : function() {
+  hide : function(el) {
 
-    this.getNode().removeClass('sylma-visible');
+    el = el || this.getNode();
+
+    el.removeClass('sylma-visible');
+  },
+
+  toggleShow : function(el, val) {
+
+    var result;
+    el = el || this.getNode();
+
+    if (val === false || (val === undefined && el.hasClass('sylma-visible'))) {
+
+      result = false;
+      this.hide(el);
+    }
+    else {
+
+      result = true;
+      this.show(el);
+    }
+
+    return result;
   },
 
   destroyChild : function(key, alias) {
 
     var container;
 
-    if (this.isMixed()) {
+    if (!this.useTemplate() || this.isMixed()) {
 
       this.parent(key);
     }

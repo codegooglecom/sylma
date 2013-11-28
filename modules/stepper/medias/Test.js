@@ -5,7 +5,54 @@ sylma.stepper.Test = new Class({
   Implements : sylma.stepper.Listed,
 
   currentKey : undefined,
-  events : {},
+
+  onReady : function() {
+
+    if (!this.options.file) {
+
+      this.editName(this.getParent('main').get('directory') + '/', false);
+    }
+  },
+
+  editName : function(path, update) {
+
+    update = update === undefined ? true : false;
+
+    var result = window.prompt('Please choose a file name', path);
+
+    if (result) {
+
+      this.options.file = result;
+
+      if (update) {
+
+        this.getNode('name').set('html', result);
+      }
+    }
+  },
+
+  initPages : function(callback) {
+
+    if (!this.loaded) {
+
+      this.loaded = true;
+      this.getParent('main').loadTest(this.get('file'), function(response) {
+
+        Object.each(response.content.page, function(item) {
+
+          this.add('page', item);
+
+        }.bind(this));
+
+        callback && callback();
+
+      }.bind(this));
+    }
+    else {
+
+      callback && callback();
+    }
+  },
 
   getSample : function() {
 
@@ -37,7 +84,7 @@ sylma.stepper.Test = new Class({
 
   getPages : function() {
 
-    return this.getObject('page');
+    return this.getObject('page', false);
   },
 
   getPage : function() {
@@ -67,15 +114,40 @@ sylma.stepper.Test = new Class({
 
     if (key !== this.getCurrent()) {
 
-      this.getPages().each(function(item) {
-        item.unselect();
+      this.getPages().each(function(item, sub) {
+
+        if (sub !== key) item.unselect();
       });
 
       this.setCurrent(key);
     }
   },
 
-  record : function() {
+  toggleSelect : function(val, callback) {
+
+    var el = this.getNode('pages');
+
+    if (this.toggleShow(el, val)) {
+
+      if (!this.options.nofile) {
+
+        this.initPages(callback);
+      }
+
+      this.go();
+    }
+
+    this.toggleActivation(val);
+  },
+
+  go : function() {
+
+    this.getParent('main').goTest(this);
+  },
+
+  record : function(callback) {
+
+    this.toggleSelect(true);
 
     if (!this.getPage()) {
 
@@ -84,41 +156,10 @@ sylma.stepper.Test = new Class({
     }
     else {
 
-      this.getPage().go();
+      this.getPage().go(callback);
     }
 
     this.getPage().record();
-  },
-
-  startLoad : function() {
-
-  },
-
-  startCapture: function() {
-sylma.log('start record');
-    this.events = {
-
-      window : function(e) {
-
-        this.getPage().addEvent(e);
-
-      }.bind(this),
-      frame : function() {
-
-        this.addPage();
-        this.getPage().addSnapshot();
-
-      }.bind(this)
-    };
-
-    this.getFrame().addEvent('load', this.events.frame);
-    this.getWindow().addEvent('click', this.events.window);
-  },
-
-  stopCapture: function() {
-sylma.log('stop record');
-    this.getFrame().removeEvent('load', this.events.frame);
-    this.getWindow().removeEvent('click', this.events.window);
   },
 
   preparePage : function(callback) {
@@ -132,6 +173,7 @@ sylma.log('stop record');
 
     }.bind(this);
 
+    frame.removeEvent('load', this.events.test);
     frame.addEvent('load', this.events.test)
   },
 
@@ -139,7 +181,23 @@ sylma.log('stop record');
 
     //this.setCurrent();
 
-    this.testItems(this.getPages(), 0, callback);
+    this.log('Test');
+
+    this.toggleSelect(true, function() {
+
+      this.testItems(this.getPages(), 0, callback);
+
+    }.bind(this));
+  },
+
+  save : function() {
+
+    var content = JSON.stringify(this);
+//console.log(test); return;
+    this.send(this.getParent('main').get('save'), {
+      file : this.get('file'),
+      test : content
+    });
   },
 
   toJSON : function() {

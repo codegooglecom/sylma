@@ -7,6 +7,13 @@
       <mode>710</mode>
     </security>
   </propagate>
+  <file name="window02.vml">
+    <security>
+      <owner>root</owner>
+      <group>test01</group>
+      <mode>700</mode>
+    </security>
+  </file>
   <file name="sample01.vml">
     <security>
       <owner>root</owner>

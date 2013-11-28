@@ -16,25 +16,27 @@ sylma.stepper.Page = new Class({
     this.resetSteps(this.mode.ready);
     var current = this.getCurrent();
     this.getParent('main').pauseRecord();
-
-    this.test(function() {
+//var key = current < 0 ? current : current - 1;
+    //this.test(function() {
 
       ++current;
-      var step = callback.call(this, current, function() {
+
+      var result = callback.call(this, current, function() {
 
         this.getParent('main').resumeRecord();
 
       }.bind(this));
 
-      step.go();
+      result.isReady(true);
       this.setCurrent(current);
 
-    }.bind(this), current, true);
+    //}.bind(this), current, true);
+    return result;
   },
 
   addSnapshot : function() {
 
-    this.addStep(function(key, callback) {
+    return this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('snapshot', {}, key);
       result.activate(callback);
@@ -45,7 +47,7 @@ sylma.stepper.Page = new Class({
 
   addEvent : function(e) {
 
-    this.addStep(function(key, callback) {
+    return this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('event', {event : e}, key);
       if (callback) callback();
@@ -54,9 +56,20 @@ sylma.stepper.Page = new Class({
     });
   },
 
+  addInput: function(e) {
+
+    return this.addStep(function(key, callback) {
+
+      var result = this.getSteps().add('input', {event : e}, key);
+      if (callback) callback();
+
+      return result;
+    });
+  },
+
   addWatcher : function() {
 
-    this.addStep(function(key, callback) {
+    return this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('watcher', {}, key);
       result.activate(callback);
@@ -79,40 +92,28 @@ sylma.stepper.Page = new Class({
 
     this.go(function() {
 
-      sylma.log('test page ' + this.options.url);
+      console.log('test page ' + this.options.url);
 
       var all = this.getSteps().tmp;
 
       if (to !== undefined) {
 
         var current = this.getCurrent();
+//console.log('current,to', current, to);
+        if (to <= current) {
 
-        if (to < current - 1) {
+          //this.resetSteps(this.mode.all);
 
           this.go(function() {
 
-            this.setCurrent(to + 1);
             this.testNextItem(all.slice(0, to + 1), 0, callback);
+            this.setCurrent(to);
 
           }.bind(this), true);
         }
         else {
-/*
- c  t  s  e  f current/to/start/end/futur current
 
--1 -1  0  0  0 activate 1
--1  0  0  1  1 activate 2
--1  1  0  2  2 activate 3
--1 -1  0  0  0 record
- 0 -1  0  0  1 activate 1 after record
- 1  0  0  1  1 activate 2 from 1
- 1  2  1  1  2 activate 3 from 2
- 0  2  0  2  2 activate 3 from 1
- 1  0  0  1  1 record from 1
- 2  1  0  1  2 record from 2
- */
-
-          this.setCurrent(to + 1);
+          this.setCurrent(to);
 
           if (to < 0) {
 
@@ -121,10 +122,10 @@ sylma.stepper.Page = new Class({
           }
           else {
 
-            var start = current < 1 ? 0 : current - 1;
+            var start = current + 1;
             var end = to + 1;
           }
-sylma.log(current, to, start, end, this.getCurrent());
+//console.log('start,end,current', start, end, this.getCurrent());
         this.testNextItem(all.slice(start, end), 0, callback, record);
         }
       }
@@ -155,7 +156,7 @@ sylma.log(current, to, start, end, this.getCurrent());
     }.bind(this));
   },
 
-  go : function(callback, reload) {
+  go : function(callback, reload, reset) {
 
     this.getParent('test').goPage(this);
     var current = this.getWindow().location.pathname;
@@ -165,45 +166,69 @@ sylma.log(current, to, start, end, this.getCurrent());
     if (reload || diff) {
 
       this.resetSteps(this.mode.all);
-      this.setCurrent();
+      this.setCurrent(-1);
 
       this.getWindow().location.href = url;
       this.getFrame().removeEvents().addEvent('load', function() {
 
-        this.select();
-        if (callback) callback();
+        this.select(callback, reset);
 
       }.bind(this));
 
-      if (reload && !diff) this.getWindow().location.reload();
+      if (reload && !diff) {
+
+        this.getWindow().location.reload();
+      }
     }
     else {
 
-      this.select();
-      if (callback) callback();
+      this.select(callback, reset);
     }
   },
 
   goStep: function(step, callback) {
 
     var key = step.getKey();
-//sylma.log(key);
-    this.test(function() {
+    this.resetSteps(this.mode.ready);
+
+    this.getParent('main').pauseRecord();
+
+    var select = function() {
 
       step.isReady(true);
       if (callback) callback();
 
-    }, key - 1);
+      this.getParent('main').resumeRecord();
+    }.bind(this);
+
+    if (key !== this.getCurrent()) {
+
+      this.test(select, key);
+    }
+    else {
+
+      select();
+    }
   },
 
-  select : function() {
-console.log('select');
-    this.getNode().addClass('activated');
+  select : function(callback, reset) {
+
+    if (reset) {
+
+      this.setCurrent(-1);
+      this.test(callback, -1);
+    }
+    else if (callback) {
+
+      callback();
+    }
+
+    this.toggleActivation(true);
   },
 
   unselect : function() {
-console.log('unselect');
-    this.getNode().removeClass('activated');
+
+    this.toggleActivation(false);
     this.resetSteps(this.mode.all);
   },
 
@@ -213,11 +238,11 @@ console.log('unselect');
     var all = this.getSteps().tmp;
 
     var test = this.getParent('test');
-    var lastTest = test.getParent().getObject('test').getLast();
+    var lastPage = test.getObject('page').getLast();
 
-    if (!record && item == all.getLast() && test != lastTest) {
+    if (!record && item == all.getLast() && this != lastPage) {
 
-      //this.getParent('test').preparePage(callback);
+      this.getParent('test').preparePage(callback);
       this.testItem(items, key);
     }
     else {

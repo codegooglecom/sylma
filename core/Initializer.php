@@ -303,12 +303,20 @@ class Initializer extends module\Domed {
     $aPaths = array_reverse($aPaths);
     $sMain = array_pop($aPaths);
 
+    $file = $this->getFile($sMain);
+
+    if (!$file->checkRights(\Sylma::MODE_EXECUTE)) {
+
+      $file = $this->getFile($this->read('window/error/window'));
+      $aPaths = array($this->read('window/error/action'));
+    }
+
     $args = $path->getArguments();
     $args->set('sylma-paths', $aPaths);
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
-    return $builder->load($this->getFile($sMain), array(
+    return $builder->load($file, array(
       'arguments' => $args,
       //'post' => $this->loadPost(true),
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'));

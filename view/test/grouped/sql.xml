@@ -50,11 +50,41 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Order case insensitive">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="x"/>
+        <sql:order>name</sql:order>
+        <view:schema>samples/user1e.xql</view:schema>
+        <view:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </view:template>
+        <view:template match="user:user1e">
+          <li value="{id}">
+            <tpl:apply select="name"/>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li value="1">alpha</li>
+        <li value="2">Alpha2</li>
+        <li value="3">beta</li>
+        <li value="4">Beta</li>
+        <li value="5">Beta</li>
+        <li value="6">beta3</li>
+        <li value="7">charlie</li>
+      </ul>
+    </tst:node>
+  </tst:test>
   <tst:test name="Order inverted">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource multiple="x"/>
-        <sql:order dir="desc">name</sql:order>
+        <sql:order>!name</sql:order>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <ul>
@@ -84,14 +114,14 @@
           <le:default>name</le:default>
         </le:argument>
         <sql:order><le:get-argument name="order"/></sql:order>
-        <view:schema>samples/user1.xql</view:schema>
+        <view:schema>samples/user1e.xql</view:schema>
         <view:template>
           <ul>
             <tpl:apply select="*"/>
           </ul>
         </view:template>
-        <view:template match="user:user">
-          <li>
+        <view:template match="user:user1e">
+          <li value="{id}">
             <tpl:apply select="name"/>
           </li>
         </view:template>
@@ -99,9 +129,13 @@
     </tst:document>
     <tst:node>
       <ul>
-        <li>admin</li>
-        <li>root</li>
-        <li>webmaster</li>
+        <li value="1">alpha</li>
+        <li value="2">Alpha2</li>
+        <li value="3">beta</li>
+        <li value="4">Beta</li>
+        <li value="5">Beta</li>
+        <li value="6">beta3</li>
+        <li value="7">charlie</li>
       </ul>
     </tst:node>
   </tst:test>
@@ -131,6 +165,39 @@
         <li>3-</li>
         <li>2-group01</li>
         <li>1-group02</li>
+      </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple dynamic order">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="x"/>
+        <le:argument name="order">
+          <le:default>name,!email</le:default>
+        </le:argument>
+        <sql:order><le:get-argument name="order"/></sql:order>
+        <view:schema>samples/user1e.xql</view:schema>
+        <view:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </view:template>
+        <view:template match="user:user1e">
+          <li value="{id}">
+            <tpl:apply select="name"/>,<tpl:apply select="email"/>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li value="1">alpha,alpha@sylma.org</li>
+        <li value="2">Alpha2,Alpha2@sylma.org</li>
+        <li value="5">Beta,charlie@sylma.org</li>
+        <li value="4">Beta,beta@sylma.org</li>
+        <li value="3">beta,alpha@sylma.org</li>
+        <li value="6">beta3,beta3@sylma.org</li>
+        <li value="7">charlie,charlie@sylma.org</li>
       </ul>
     </tst:node>
   </tst:test>

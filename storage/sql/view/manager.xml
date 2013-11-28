@@ -20,11 +20,7 @@
             <cls:class alias="cached" name="cached\Pager"/>
           </cls:classes>
         </cls:class>
-        <cls:class alias="order" name="view\component\Order">
-          <cls:classes>
-            <cls:class alias="cached" name="cached\Order"/>
-          </cls:classes>
-        </cls:class>
+        <cls:class alias="order" name="view\component\Order"/>
         <cls:class alias="limit" name="view\component\Limit"/>
         <cls:class alias="trigger" name="view\component\Trigger"/>
         <cls:class alias="result" name="view\component\Result"/>

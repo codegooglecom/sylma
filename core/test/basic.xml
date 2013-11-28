@@ -104,6 +104,42 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     </tst:node>
   </tst:test>
 
+  <tst:test name="Window unauthorized access">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/window02.vml');
+      $manager->buildScript('/sylma/modules/html/error.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config03.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript" cmp:ignore="x"/>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
   <tst:test name="Import multiple resources">
     <tst:prepare>
 

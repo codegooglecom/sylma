@@ -1,0 +1,12 @@
+debug :
+  enable : false
+initializer :
+  debug :
+    fatal : true
+  window :
+    error :
+      window : /#sylma/core/test/samples/window01.vml
+    html :
+      default :
+        action : /#sylma/core/test/samples/window02.vml
+        sub : null

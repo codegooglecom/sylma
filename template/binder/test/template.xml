@@ -294,55 +294,63 @@
 
                 if (this.current === undefined) {
 
-                  this.current = 0;
-                  this.testFirst(test, destroy);
+                  this.current = 1;
+                  this.testFirst(test, destroy, this.current);
                 }
                 else {
 
-                  this.testSecond(test, destroy);
+                  this.testSecond(test, destroy, this.current);
                 }
 
               </js:method>
-              <js:method name="testFirst" arguments="test,destroy">
+              <js:method name="testFirst" arguments="test,destroy,current">
 
-                var self = this.tmp[this.current];
+                var self = this.tmp[current];
 
                 sylma.tester.assertEquals(self, test, 'self1');
-                sylma.tester.assertEquals(this.tmp.length, 2, 'tmp1');
+                sylma.tester.assertEquals(this.tmp.length, 3, 'tmp1');
 
-                var second = {
-                  before : this.tmp[1]
+                var before = {
+                   first : this.tmp[0],
+                   last : this.tmp[2]
                 };
 
                 destroy();
 
-                second.after = this.tmp[0];
-                sylma.tester.assertEquals(second.before, second.after, 'second');
+                after = {
+                  first : this.tmp[0],
+                  last : this.tmp[1]
+                };
 
-                sylma.tester.assertEquals(this.tmp.length, 1, 'tmp2');
+                sylma.tester.assertEquals(before.first, after.first, 'check first');
+                sylma.tester.assertEquals(before.last, after.last, 'check last');
+
+                sylma.tester.assertEquals(this.tmp.length, 2, 'tmp2');
 
                 /* @todo dom compare */
-                sylma.tester.assertEquals(second.after.getKey(), 0);
-                sylma.tester.assertEquals(this.getNode().get('text'), 'admin@sylma.org.');
-                sylma.tester.assertEquals(this.getNode().getChildren().length, 2, 'node1');
+                sylma.tester.assertEquals(after.first.getKey(), 0, 'key 0');
+                sylma.tester.assertEquals(after.last.getKey(), 1, 'key 1');
 
-                second.after.remove();
+                sylma.tester.assertEquals(this.getNode().get('text'), 'webmaster@sylma.orgadmin@sylma.org.');
+                sylma.tester.assertEquals(this.getNode().getChildren().length, 3, 'node1');
+
+                after.last.remove();
 
               </js:method>
-              <js:method name="testSecond" arguments="test,destroy">
+              <js:method name="testSecond" arguments="test,destroy,current">
 
-                var self = this.tmp[this.current];
+                var self = this.tmp[current];
 
                 sylma.tester.assertEquals(self, test, 'self2');
-                sylma.tester.assertEquals(this.tmp.length, 1, 'tmp2');
+                sylma.tester.assertEquals(this.tmp.length, 2, 'tmp2');
 
                 destroy();
 
-                sylma.tester.assertEquals(this.tmp, [], 'tmp3');
+                //sylma.tester.assertEquals(this.tmp, [], 'tmp3');
 
                 /* @todo dom compare */
-                sylma.tester.assertEquals(this.getNode().get('text'), '.');
-                sylma.tester.assertEquals(this.getNode().getChildren().length, 1, 'node2');
+                sylma.tester.assertEquals(this.getNode().get('text'), 'webmaster@sylma.org.');
+                sylma.tester.assertEquals(this.getNode().getChildren().length, 2, 'node2');
 
                 sylma.tester.test(true);
 
@@ -373,6 +381,10 @@
         _all : [
           {
             _alias : 'user',
+            email : 'webmaster@sylma.org'
+          },
+          {
+            _alias : 'user',
             email : 'root@sylma.org',
             _init : {
               onLoad : function() {
@@ -385,10 +397,10 @@
                   _init : {
                     onLoad : function() {
 
-                      sylma.tester.assertEquals(parent.tmp.length, 2);
+                      sylma.tester.assertEquals(parent.tmp.length, 3, 'callback1');
 
                       /* @todo dom compare */
-                      sylma.tester.assertEquals(test.getNode().get('text').replace(/\s*/g, ''), 'root@sylma.orgadmin@sylma.org..');
+                      sylma.tester.assertEquals(test.getNode().get('text').replace(/\s*/g, ''), 'webmaster@sylma.orgroot@sylma.orgadmin@sylma.org..');
 
                       user1.remove();
                     }

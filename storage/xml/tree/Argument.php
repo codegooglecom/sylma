@@ -88,6 +88,8 @@ class Argument extends Callable {
         $aResult[] = $this->getOptions()->getRoot();
         break;
 
+      case 'read' : $aResult[] = $this->reflectRead($aArguments); break;
+
       default :
 
         $aResult = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);

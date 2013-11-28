@@ -10,8 +10,11 @@ sylma.stepper.Watcher = new Class({
 
       this.add('selector', {element : element});
     }
-  },
+    else {
 
+      this.isPlayed(true);
+    }
+  },
 
   activate: function(callback) {
 
@@ -25,6 +28,22 @@ sylma.stepper.Watcher = new Class({
     this.add('property');
   },
 
+  isReady: function(value) {
+
+    var result = this.parent(value);
+
+    if (result) {
+
+      this.show(this.getNode('form'));
+    }
+    else {
+
+      this.hide(this.getNode('form'));
+    }
+
+    return result;
+  },
+
   getProperties: function() {
 
     return this.getObject('property', false);
@@ -32,48 +51,56 @@ sylma.stepper.Watcher = new Class({
 
   test : function(callback) {
 
+    this.hasError(false);
+
     this.isPlayed(true);
     this.isReady(false);
+
+    this.log('Test');
 
     var selector = this.getSelector();
     var properties = this.getProperties();
 
-    var count = 0;
-    var maxCount = 100;
+    var loop1;
 
-    var loop1 = window.setInterval(function() {
+    var timeout1 = window.setTimeout(function() {
 
-      count++;
+      this.addDifference('timeout, no element found');
+      window.clearInterval(loop1);
+
+    }.bind(this), 1000);
+
+    loop1 = window.setInterval(function() {
+
       var el = selector.getElement();
 
-      if (count > maxCount) {
+      if (el) {
 
         window.clearInterval(loop1);
-        this.addDifference('timeout, no element found');
-      }
-      else if (el) {
+        window.clearTimeout(timeout1);
 
-        window.clearInterval(loop1);
-        count = 0;
+        var loop2;
 
-        var loop2 = window.setInterval(function() {
+        var timeout2 = window.setTimeout(function() {
 
-          count++;
+          this.addDifference('timeout, bad properties');
+          window.clearInterval(loop2);
+
+          callback();
+
+        }.bind(this), 1000);
+
+        loop2 = window.setInterval(function() {
+
           var notready = properties && properties.some(function(item) {
 
             return !item.test(el);
           });
 
-          if (count > maxCount) {
+          if (!notready) {
 
             window.clearInterval(loop2);
-            this.addDifference('timeout, bad properties');
-
-            callback();
-          }
-          else if (!notready) {
-
-            window.clearInterval(loop2);
+            window.clearTimeout(timeout2);
 
             callback();
           }
@@ -82,11 +109,14 @@ sylma.stepper.Watcher = new Class({
       }
 
     }.bind(this), 10);
+
   },
 
   addDifference : function(msg) {
 
-    sylma.log(this.asToken(), msg);
+    this.hasError(true);
+
+    console.log(this.asToken(), msg);
   },
 
   toJSON : function() {

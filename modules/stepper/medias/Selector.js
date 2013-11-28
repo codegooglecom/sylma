@@ -4,6 +4,7 @@ sylma.stepper.Selector = new Class({
 
   mask : null,
   activated : false,
+  masked : false,
   options : {
     target : null, // dom node
     element : null // string
@@ -32,20 +33,34 @@ sylma.stepper.Selector = new Class({
     this.onSelect = callback;
     this.activated = true;
 
-    var mask = this.mask = new Element('div', {
-      id : 'selector'
-    });
-
+    var mask = this.getMask();
+    mask.fade('in');
     var overlay = this.overlay = new Element('div', {
       id : 'overlay',
     });
 
     this.getFrame().setStyle('z-index', 70);
 
-    document.body.adopt(mask, overlay);
+    document.body.adopt(overlay);
     overlay.tween('opacity', 0.35);
 
     this.startCapture();
+  },
+
+  getMask : function() {
+
+    var result = this.getParent('main').selectorMask;
+
+    if (!result) {
+
+      var result = this.getParent('main').selectorMask = new Element('div', {
+        'class' : 'selector-mask'
+      });
+
+      document.body.adopt(result);
+    }
+
+    return result;
   },
 
   startCapture : function() {
@@ -88,9 +103,26 @@ sylma.stepper.Selector = new Class({
 
   },
 
+  toggleMask : function() {
+
+    var mask = this.getMask();
+
+    if (!this.masked) {
+
+      this.selectElement(this.getElement());
+      mask.fade('in');
+    }
+    else {
+
+      mask.fade('out');
+    }
+
+    this.masked = !this.masked;
+  },
+
   selectElement : function(target) {
 
-    var el = this.mask;
+    var el = this.getMask();
 
     el.setPosition(target.getPosition());
     var size = target.getSize();
@@ -108,7 +140,7 @@ sylma.stepper.Selector = new Class({
     this.set('element', this.buildPath(target));
 
     this.stopCapture();
-    this.mask.remove();
+    this.getMask().fade('out');
 
     new Fx.Morph(this.overlay, {
       onComplete : function() {

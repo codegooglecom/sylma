@@ -113,6 +113,33 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Read content">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <div>
+            <tpl:apply select="user[@name='admin']"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:apply select="email"/>
+          </li>
+        </tpl:template>
+        <tpl:template match="user:email">
+          <input type="text" value="{read()}"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>
+          <input type="text" value="admin@sylma.org"/>
+        </li>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Call">
     <tst:document>
       <view:view user:ns="ns">

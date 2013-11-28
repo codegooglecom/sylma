@@ -34,7 +34,7 @@
         $def->read('sub') === '456';
     </tst:expected>
   </tst:test>
-  <tst:test name="A bad get" catch="\sylma\core\exception">
+  <tst:test name="A bad get" catch="\sylma\core\exception" disabled="true">
     <tst:prepare>
       $controler->set('arg', $controler->createArgument('simple.xml'));
     </tst:prepare>

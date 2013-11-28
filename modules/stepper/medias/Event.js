@@ -28,18 +28,17 @@ sylma.stepper.Event = new Class({
     else {
 
       this.isPlayed(true);
-      this.isReady(true);
     }
   },
 
   test : function(callback) {
 
     this.isReady(false);
-    this.log();
+    //this.log();
 
     if (!this.isPlayed()) {
 
-      this.log('Run ' + this.asToken());
+      this.log('Run');
       this.isPlayed(true);
       var el = this.getSelector().getElement();
 

@@ -5,63 +5,88 @@ use sylma\core;
 
 class Order extends core\module\Managed {
 
-  protected $sElement = '';
-  protected $aForeigns = array();
-  protected $bDir = true; // true = asc and false = desc
+  protected $sPath = '';
+  protected $aElements = array();
+  protected $content = '';
 
   public function __construct($sElement) {
 
-    if ($sElement && $sElement{0} == '!') {
+    $this->setPath($sElement);
+  }
 
-      $sElement = substr($sElement, 1);
-      $this->setDir(false);
+  protected function setPath($sPath) {
+
+    $this->sPath = $sPath;
+  }
+
+  protected function getPath() {
+
+    return $this->sPath;
+  }
+
+  public function setElements(array $aElements) {
+
+    $this->aElements = $aElements;
+    $this->content = $this->build();
+  }
+
+  protected function getElement($sName) {
+
+    if (!isset($this->aElements[$sName])) {
+
+      $this->launchException("Unknown order alias : $sName");
     }
 
-    $this->setElement($sElement);
+    return $this->aElements[$sName];
   }
 
-  protected function setDir($bVal) {
+  public function extractPath() {
 
-    $this->bDir = $bVal;
+    $aElements = explode(',', $this->getPath());
+    $aResult = array();
+
+    foreach ($aElements as $sKey => $sElement) {
+
+      $bDirection = true;
+
+      if ($sElement{0} == '!') {
+
+        $sElement = substr($sElement, 1);
+        $bDirection = false;
+      }
+
+      $aResult[$sKey] = array(
+        'name' => $sElement,
+        'direction' => $bDirection,
+      );
+    }
+
+    return $aResult;
   }
 
-  protected function getDir() {
+  protected function build() {
 
-    return $this->bDir ? '' : ' DESC';
-  }
+    foreach ($this->extractPath() as $aPath) {
 
-  protected function setElement($sElement) {
+      $aElement = $this->getElement($aPath['name']);
+      $sValue = $aElement['alias'];
 
-    $this->sElement = $sElement;
-  }
+      if (isset($aElement['string'])) {
 
-  public function setForeigns(array $aForeigns) {
+        $sValue = 'LOWER(' . $sValue . ')';
+      }
 
-    $this->aForeigns = $aForeigns;
-  }
+      $aResult[] = $sValue . ($aPath['direction'] ? '' : ' DESC');
+    }
 
-  protected function getForeign($sName) {
-
-    return isset($this->aForeigns[$sName]) ? $this->aForeigns[$sName] : null;
-  }
-
-  protected function getElement() {
-
-    return $this->sElement;
+    return implode(',', $aResult);
   }
 
   public function __toString() {
 
-    if (!$sValue = $this->getForeign($this->getElement())) {
+    $sContent = $this->content;
 
-      $sValue = '`' . $this->getElement() . '`';
-
-    } else if (!preg_match('/[\-a-z0-9\_A-Z_]/', $sValue)) {
-
-      $this->launchException('Uncompatible field name, possible attack');
-    }
-
-    return $this->getElement() ? ' ORDER BY ' . $sValue . $this->getDir(): '';
+    return $sContent ? ' ORDER BY ' . $sContent : '';
   }
 }
 
