@@ -92,7 +92,7 @@ class Container extends core\module\Domed {
           array(
             'a' => array(
               '@href' => '#',
-              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, true); return false;",
+              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, null, false); return false;",
               (string) $file,
             ),
           ),
@@ -188,7 +188,12 @@ class Container extends core\module\Domed {
     return $result;
   }
 
-  protected function runScript(fs\file $file, core\argument $args = null, core\argument $post = null) {
+  protected function runScript(fs\file $file, core\argument $args = null, core\argument $post = null, $debug = null) {
+
+    if (!$debug) {
+
+      $debug = $this->getSettings();
+    }
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
@@ -196,7 +201,7 @@ class Container extends core\module\Domed {
       'arguments' => $args,
       'post' => $post,
       'contexts' => $this->getContexts(),
-    ), $this->read('debug/update', false), $this->read('debug/run'), true);
+    ), $debug->read('debug/update', false), $debug->read('debug/run'), true);
 
     return $result;
   }

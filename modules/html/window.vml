@@ -29,12 +29,6 @@
 
     <tpl:apply select="return('prepare')"/>
 
-    <!-- Contexts must be in template, to be intialized after object instanciation -->
-    <le:context name="js">
-      <le:file>/#sylma/template/medias/mootools.js</le:file>
-      <le:file>/#sylma/template/medias/sylma.js</le:file>
-    </le:context>
-
     <html lang="fr">
       <head>
         <title><tpl:apply mode="title/content"/></title>

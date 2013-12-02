@@ -13,11 +13,16 @@ class Load extends core\argument\Readable implements core\stringable {
 
       if ($child instanceof core\argument) {
 
-        $aValues[] = $child->asString();
+        $mResult = $child->asString();
       }
       else {
 
-        $aValues[] = $child;
+        $mResult = $child;
+      }
+
+      if ($mResult) {
+
+        $aValues[] = $mResult;
       }
     }
 

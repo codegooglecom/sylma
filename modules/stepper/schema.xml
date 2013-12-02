@@ -8,12 +8,18 @@
       <path></path>
     </exclude>
     <steps>
+      <query creation="" timeshift="">
+
+      </query>
       <event name="click" element="">
 
       </event>
-      <input name="input" element="">
+      <input element="">
 
       </input>
+      <captcha element="">
+
+      </captcha>
       <watcher element="">
         <property name=""/>
       </watcher>

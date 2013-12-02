@@ -130,20 +130,58 @@ sylma.stepper.Main = new Class({
     return ['input','textarea'].indexOf(tag) > -1 && ['checkbox', 'radio', 'button'].indexOf(el.getAttribute('type')) === -1;
   },
 
+  preparePage : function(callback) {
+
+    var frame = this.getFrame();
+
+    this.events.test = function() {
+
+      frame.removeEvent('load', this.events.test);
+      if (callback) callback();
+
+    }.bind(this);
+
+    frame.removeEvent('load', this.events.test);
+    frame.addEvent('load', this.events.test);
+  },
+
+  addInput : function(e) {
+
+    var target = e.target;
+
+    if (!this.input || this.input.getElement() != target) {
+
+      this.input = this.getTest().getPage().addInput(e);
+    }
+
+    this.input.updateValue();
+  },
+
   startCapture: function() {
 
     this.stopCapture();
 
     var test = this.getTest();
 
-    var events = this.events = {
+    Object.append(this.events, {
 
       window : {
         click : function(e) {
 
-          if (!this.isInput(e.target)) {
+          var tag = e.target.get('tag');
+
+          if (tag === 'select') {
+
+            //do nothing
+          }
+          else if (tag === 'option') {
+
+            this.addInput(e);
+          }
+          else if (!this.isInput(e.target)) {
 
             this.getTest().getPage().addEvent(e);
+            this.input = null;
           }
 
         }.bind(this),
@@ -151,15 +189,11 @@ sylma.stepper.Main = new Class({
 
           var target = e.target;
 
-          if (this.isInput(target)) {
+          if (this.isInput(target) && target.get('value')) {
 
-            if (!this.input || this.input.getElement() != target) {
-
-              this.input = this.getTest().getPage().addInput(e);
-            }
-
-            this.input.updateValue();
+            this.addInput(e);
           }
+
         }.bind(this)
       },
       frame : {
@@ -171,7 +205,9 @@ sylma.stepper.Main = new Class({
 
         }.bind(test)
       }
-    };
+    });
+
+    var events = this.events;
 
     this.getFrame().addEvents(events.frame);
     this.getWindow().addEvents(events.window);
@@ -204,7 +240,7 @@ sylma.stepper.Main = new Class({
 
   loadTest : function(file, callback) {
 
-    this.send(this.get('load'), {file : file}, false, callback);
+    this.send(this.get('load'), {file : file}, callback);
   },
 
   test : function() {

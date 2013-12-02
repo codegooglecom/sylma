@@ -13,7 +13,9 @@
 
   <tpl:template match="*" mode="date/prepare">
     <le:context name="js">
-      <le:file>/#sylma/template/medias/mootools-more.js</le:file>
+      <le:file>/#sylma/ui/Extras.js</le:file>
+      <le:file>/#sylma/ui/Locale.js</le:file>
+      <le:file>/#sylma/ui/Date.js</le:file>
       <le:file>arian/Locale.fr-FR.DatePicker.js</le:file>
       <le:file>arian/Picker.js</le:file>
       <le:file>arian/Picker.Attach.js</le:file>

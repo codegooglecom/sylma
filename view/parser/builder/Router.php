@@ -158,6 +158,7 @@ class Router extends View {
     $doc = $view->asDocument();
     $file = $this->getPathFile($view);
     $this->setView($view);
+    $this->setReturn(null);
 
     try {
 

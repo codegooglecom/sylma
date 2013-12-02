@@ -10,7 +10,6 @@ class JSON extends window\classes\Container implements window\scripted, window\a
 
   public function __construct() {
 
-    //parent::__construct($aArray, $aNS, $parent);
   }
 
   public function setScript(core\request $path, core\argument $post, $sContext = '') {
@@ -27,15 +26,13 @@ class JSON extends window\classes\Container implements window\scripted, window\a
       )),
     ));
 
+    $this->setContexts($contexts);
     $parser->setContext('messages', $messages);
+    $debug = $this->getManager('init')->getArgument('window');
 
     try {
 
-      $result = $parser->load($path->getFile(), array(
-        'arguments' => $path->getArguments(),
-        'contexts' => $contexts,
-        'post' => $post,
-      ));
+      $result = $this->runScript($path->getFile(), $path->getArguments(), $post, $debug);
     }
     catch (core\exception $e) {
 

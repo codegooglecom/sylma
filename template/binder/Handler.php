@@ -16,10 +16,17 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   const CONTEXT_JS = 'js';
 
-  const FILE_MOOTOOLS = '../medias/mootools.js';
-  const FILE_SYLMA = '../medias/sylma.js';
+  const TEMPLATE_FILE = '/#sylma/ui/Template.js';
 
   protected $window;
+  protected $bInitTemplate = false;
+
+  protected $aFiles = array(
+    '/#sylma/ui/mootools.js',
+    '/#sylma/ui/Main.js',
+    '/#sylma/ui/Base.js',
+    '/#sylma/ui/Container.js',
+  );
 
   protected $container;
 
@@ -96,16 +103,26 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $content = $window->createCall($window->getSylma(), 'throwException', 'php-boolean', array('No context sent'));
     $window->add($window->createCondition($window->createNot($isset), $content));
 
-    $js = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\core\window\context', true);
-
     $this->setDirectory(__FILE__);
 
-    $fs = $window->addControler('fs');
-    $window->add($js->call('add', array($fs->call('getFile', array((string) $this->getFile(self::FILE_MOOTOOLS))))));
-    $window->add($js->call('add', array($fs->call('getFile', array((string) $this->getFile(self::FILE_SYLMA))))));
+    foreach ($this->aFiles as $sFile) {
+
+      $this->addScript($sFile);
+    }
 
     $this->setContext($this->checkContext($contexts, self::CLASSES_PATH, self::CLASSES_CONTEXT, $window));
     $this->setObjects($this->checkContext($contexts, self::OBJECTS_PATH, self::OBJECTS_CONTEXT, $window));
+  }
+
+  public function addScript($sPath) {
+
+    $window = $this->getPHPWindow();
+    $contexts = $window->getVariable('contexts');
+
+    $fs = $window->addControler('fs');
+    $js = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\core\window\context', true);
+
+    $window->add($js->call('add', array($fs->call('getFile', array($sPath)))));
   }
 
   protected function checkContext(common\_var $contexts, $sPath, $sAlias, $window) {
@@ -294,6 +311,12 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
   }
 
   protected function reflectTemplate(dom\element $el, template\element $resultElement) {
+
+    if (!$this->bInitTemplate) {
+
+      $this->addScript(self::TEMPLATE_FILE);
+      $this->bInitTemplate = true;
+    }
 
     $result = $this->reflectObject($el, $resultElement);
     $result->useTemplate(true);

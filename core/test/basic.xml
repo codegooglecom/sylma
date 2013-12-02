@@ -38,11 +38,7 @@
           <meta name="robots" content="noindex,nofollow"/>
           <link rel="icon" type="image/png" href="/images/favicon.png"/>
           <link href="/tmp/3565291498.css" type="text/css" media="all" rel="stylesheet"/>
-          <script src="/tmp/2624720383.js" type="text/javascript"> </script>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
-//]]>
-    </script>
+          <script type="text/javascript"> </script>
         </head>
         <body>
           <div id="sylma-messages"/>
@@ -91,10 +87,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
     <tst:node>
       <html anyclass="x">
         <head>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
-//]]>
-    </script>
+          <script type="text/javascript"> </script>
         </head>
         <body>
           <div id="messages"/>
@@ -169,10 +162,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
           <link href="/sylma/core/test/samples/style02.less" type="text/css" media="all" rel="stylesheet/less"/>
           <script src="/sylma/core/test/samples/script01.js" type="text/javascript"> </script>
           <script src="/sylma/modules/html/medias/less.js" type="text/javascript"> </script>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
-//]]>
-    </script>
+          <script type="text/javascript"> </script>
         </head>
         <body>
           <div id="messages"/>
@@ -236,10 +226,7 @@ window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}
         <head>
           <link href="/tmp/1538782558.css" type="text/css" media="all" rel="stylesheet"/>
           <script src="/tmp/4216214821.js" type="text/javascript"> </script>
-          <script type="text/javascript">//<![CDATA[
-window.addEvent && window.addEvent('domready', function() { sylma.ui.load('', {}) }) && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });
-//]]>
-    </script>
+          <script type="text/javascript"> </script>
         </head>
         <body>
           <div id="messages"/>

@@ -11,10 +11,6 @@ sylma.stepper.Snapshot = new Class({
 
       this.add('selector', {element : element});
     }
-    else {
-
-      this.isPlayed(true);
-    }
   },
 
   activate: function(callback) {
@@ -24,7 +20,6 @@ sylma.stepper.Snapshot = new Class({
     selector.activate(function(target) {
 
       this.options.content = this.shot(target);
-      //this.isReady(true);
       callback();
 
     }.bind(this));
@@ -32,11 +27,7 @@ sylma.stepper.Snapshot = new Class({
 
   test : function(callback) {
 
-    this.isPlayed(true);
-    this.isReady(false);
     this.log('Test');
-
-    this.hasError(false);
 
     var tree = JSON.decode(this.options.content);
     var el = this.getSelector().getElement();

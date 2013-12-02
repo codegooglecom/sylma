@@ -7,8 +7,8 @@
 >
   <le:context name="title">Rebuild</le:context>
   <le:context name="js">
-    <lm:file path="/#sylma/template/medias/mootools.js"/>
-    <lm:file path="/#sylma/template/medias/sylma.js"/>
+    <lm:file path="/#sylma/ui/mootools.js"/>
+    <lm:file path="/#sylma/ui/Main.js"/>
     <lm:file path="medias/main.js"/>
   </le:context>
   <le:context name="css">

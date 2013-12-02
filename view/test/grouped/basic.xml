@@ -344,6 +344,26 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Return result">
+    <tst:document>
+      <view:view sql:ns="ns" build:return="result">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <tpl:read select="email"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $manager->assertEqual($manager->read('result'), 'admin@sylma.org');
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
   <tst:test name="Array with dom content" catch="\sylma\core\exception" disabled="true">
     <!-- exception on compile -->
     <tst:document>

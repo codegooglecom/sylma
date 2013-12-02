@@ -15,13 +15,27 @@ sylma.stepper.Step = new Class({
 
     var node = this.getNode();
     var name = 'ready';
+    var result;
 
     if (val !== undefined) {
 
       node.toggleClass(name, val);
+
+      var form = this.getNode('form', false);
+
+      if (form) {
+
+        this.toggleShow(form, val);
+      }
+
+      result = val;
+    }
+    else {
+
+      result = node.hasClass(name);
     }
 
-    return node.hasClass(name);
+    return result;
   },
 
   hasError : function(value) {

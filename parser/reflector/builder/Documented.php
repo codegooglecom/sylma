@@ -12,7 +12,7 @@ class Documented extends Logger implements reflector\documented {
   const BUILD_PREFIX = 'build';
 
   const MODE_DEFAULT = 'view';
-  
+
   protected $reflector;
   protected $sourceDir;
   protected $window;

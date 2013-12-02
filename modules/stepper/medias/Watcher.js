@@ -10,10 +10,6 @@ sylma.stepper.Watcher = new Class({
 
       this.add('selector', {element : element});
     }
-    else {
-
-      this.isPlayed(true);
-    }
   },
 
   activate: function(callback) {
@@ -28,33 +24,12 @@ sylma.stepper.Watcher = new Class({
     this.add('property');
   },
 
-  isReady: function(value) {
-
-    var result = this.parent(value);
-
-    if (result) {
-
-      this.show(this.getNode('form'));
-    }
-    else {
-
-      this.hide(this.getNode('form'));
-    }
-
-    return result;
-  },
-
   getProperties: function() {
 
     return this.getObject('property', false);
   },
 
   test : function(callback) {
-
-    this.hasError(false);
-
-    this.isPlayed(true);
-    this.isReady(false);
 
     this.log('Test');
 
@@ -68,6 +43,8 @@ sylma.stepper.Watcher = new Class({
       this.addDifference('timeout, no element found');
       window.clearInterval(loop1);
 
+      callback();
+
     }.bind(this), 1000);
 
     loop1 = window.setInterval(function() {
@@ -76,8 +53,8 @@ sylma.stepper.Watcher = new Class({
 
       if (el) {
 
-        window.clearInterval(loop1);
         window.clearTimeout(timeout1);
+        window.clearInterval(loop1);
 
         var loop2;
 
@@ -99,8 +76,8 @@ sylma.stepper.Watcher = new Class({
 
           if (!notready) {
 
-            window.clearInterval(loop2);
             window.clearTimeout(timeout2);
+            window.clearInterval(loop2);
 
             callback();
           }

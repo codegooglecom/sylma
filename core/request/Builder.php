@@ -50,15 +50,15 @@ class Builder extends Basic {
 
   protected function implodeArguments(array $aArguments) {
 
-    $aResult = array();
+    $aIndexed = $aAssoc = array();
 
-    foreach ($aArguments as $sKey => $mToken) {
+    foreach ($aArguments as $sKey => $sValue) {
 
-      if ($mToken) $aResult[] = $mToken[0] . '=' . $mToken[1];
-      else $aResult[] = $sKey;
+      if (is_numeric($sKey)) $aIndexed[] = $sValue;
+      else $aAssoc[$sKey] = $sValue;
     }
 
-    return $aResult ? '?' . implode('&', $aResult) : '';
+    return ($aIndexed ? '/' . implode('/', $aIndexed) : '') . ($aAssoc ? '?' . implode('&', $aAssoc) : '');
   }
 
   public function asString() {

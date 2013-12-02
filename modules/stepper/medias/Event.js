@@ -9,6 +9,7 @@ sylma.stepper.Event = new Class({
     if (e) {
 
       this.options = {
+        event : e,
         name : e.type,
         selector : [{
           target : e.target
@@ -25,26 +26,22 @@ sylma.stepper.Event = new Class({
 
       this.add('selector', {element : element});
     }
-    else {
-
-      this.isPlayed(true);
-    }
   },
 
   test : function(callback) {
 
-    this.isReady(false);
-    //this.log();
+    this.log('Run');
 
-    if (!this.isPlayed()) {
+    var el = this.getSelector().getElement();
 
-      this.log('Run');
-      this.isPlayed(true);
-      var el = this.getSelector().getElement();
+    if (el) {
 
       el.click();
     }
-    //el.fireEvent(this.get('name'));
+    else {
+
+      this.hasError(true);
+    }
 
     callback();
   },
@@ -53,7 +50,7 @@ sylma.stepper.Event = new Class({
 
     return {event : {
       '@name' : this.get('name'),
-      '@element' : this.getObject('selector')[0]
+      '@element' : this.getSelector()
     }};
   }
 });

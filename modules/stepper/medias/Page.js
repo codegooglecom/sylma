@@ -16,21 +16,20 @@ sylma.stepper.Page = new Class({
     this.resetSteps(this.mode.ready);
     var current = this.getCurrent();
     this.getParent('main').pauseRecord();
-//var key = current < 0 ? current : current - 1;
-    //this.test(function() {
 
-      ++current;
+    ++current;
 
-      var result = callback.call(this, current, function() {
+    var result = callback.call(this, current, function() {
 
-        this.getParent('main').resumeRecord();
+      this.getParent('main').resumeRecord();
 
-      }.bind(this));
+    }.bind(this));
 
-      result.isReady(true);
-      this.setCurrent(current);
+    result.isReady(true);
+    result.isPlayed(true);
 
-    //}.bind(this), current, true);
+    this.setCurrent(current);
+
     return result;
   },
 
@@ -50,7 +49,7 @@ sylma.stepper.Page = new Class({
     return this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('event', {event : e}, key);
-      if (callback) callback();
+      callback && callback();
 
       return result;
     });
@@ -61,7 +60,7 @@ sylma.stepper.Page = new Class({
     return this.addStep(function(key, callback) {
 
       var result = this.getSteps().add('input', {event : e}, key);
-      if (callback) callback();
+      callback && callback();
 
       return result;
     });
@@ -73,6 +72,28 @@ sylma.stepper.Page = new Class({
 
       var result = this.getSteps().add('watcher', {}, key);
       result.activate(callback);
+
+      return result;
+    });
+  },
+
+  addCaptcha : function() {
+
+    return this.addStep(function(key, callback) {
+
+      var result = this.getSteps().add('captcha', {}, key);
+      result.activate(callback);
+
+      return result;
+    });
+  },
+  
+  addQuery : function() {
+
+    return this.addStep(function(key, callback) {
+
+      var result = this.getSteps().add('query', {}, key);
+      callback && callback();
 
       return result;
     });
@@ -169,7 +190,7 @@ sylma.stepper.Page = new Class({
       this.setCurrent(-1);
 
       this.getWindow().location.href = url;
-      this.getFrame().removeEvents().addEvent('load', function() {
+      this.getParent('main').preparePage(function() {
 
         this.select(callback, reset);
 
@@ -199,6 +220,7 @@ sylma.stepper.Page = new Class({
       if (callback) callback();
 
       this.getParent('main').resumeRecord();
+
     }.bind(this);
 
     if (key !== this.getCurrent()) {
@@ -232,6 +254,17 @@ sylma.stepper.Page = new Class({
     this.resetSteps(this.mode.all);
   },
 
+  testItem : function(items, key, callback, record) {
+
+    var item = items[key];
+
+    item.hasError(false);
+    item.isPlayed(true);
+    item.isReady(false);
+
+    this.testItems(items, key, callback, record);
+  },
+
   testLast : function(items, key, callback, record) {
 
     var item = items[key];
@@ -242,7 +275,7 @@ sylma.stepper.Page = new Class({
 
     if (!record && item == all.getLast() && this != lastPage) {
 
-      this.getParent('test').preparePage(callback);
+      this.getParent('main').preparePage(callback);
       this.testItem(items, key);
     }
     else {

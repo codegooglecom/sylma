@@ -162,21 +162,6 @@ sylma.stepper.Test = new Class({
     this.getPage().record();
   },
 
-  preparePage : function(callback) {
-
-    var frame = this.getFrame();
-
-    this.events.test = function() {
-
-      frame.removeEvent('load', this.events.test);
-      if (callback) callback();
-
-    }.bind(this);
-
-    frame.removeEvent('load', this.events.test);
-    frame.addEvent('load', this.events.test)
-  },
-
   test : function(callback) {
 
     //this.setCurrent();

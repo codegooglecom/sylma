@@ -40,10 +40,12 @@
     <le:file>medias/Snapshot.js</le:file>
     <le:file>medias/Event.js</le:file>
     <le:file>medias/Input.js</le:file>
+    <le:file>medias/Captcha.js</le:file>
     <le:file>medias/Watcher.js</le:file>
     <le:file>medias/Property.js</le:file>
     <le:file>medias/Element.js</le:file>
     <le:file>medias/Selector.js</le:file>
+    <le:file>medias/Query.js</le:file>
   </le:context>
 
   <tpl:template>
@@ -52,11 +54,17 @@
       <js:option name="directory" cast="x">
         <tpl:apply select="getDirectory()"/>
       </js:option>
+      <js:option name="captcha">
+        <le:path>interface/captcha</le:path>
+      </js:option>
+      <js:option name="query">
+        <le:path>interface/query</le:path>
+      </js:option>
       <js:option name="save">
-        <le:path>save</le:path>
+        <le:path>interface/save</le:path>
       </js:option>
       <js:option name="load">
-        <le:path>load</le:path>
+        <le:path>interface/load</le:path>
       </js:option>
       <js:option name="tests">
         <tpl:apply select="getTests()"/>
@@ -73,12 +81,17 @@
           </button>
           <button>
             <js:event name="click">%object%.createTest();</js:event>
-            <tpl:text>+</tpl:text>
+            <tpl:text>✚</tpl:text>
           </button>
           <button>
             <js:event name="click">%object%.getFrame().toggleClass('sylma-visible');</js:event>
             <tpl:text>◑</tpl:text>
           </button>
+          <button>
+            <js:event name="click">%object%.save();</js:event>
+            <tpl:text>⇥</tpl:text>
+          </button>
+          <br/>
           <button>
             <js:event name="click">%object%.getTest().getPage().addWatcher();</js:event>
             <tpl:text>⌚</tpl:text>
@@ -88,8 +101,12 @@
             <tpl:text>⚀</tpl:text>
           </button>
           <button>
-            <js:event name="click">%object%.save();</js:event>
-            <tpl:text>⇥</tpl:text>
+            <js:event name="click">%object%.getTest().getPage().addCaptcha();</js:event>
+            <tpl:text>✍</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.getTest().getPage().addQuery();</js:event>
+            <tpl:text>♦</tpl:text>
           </button>
         </div>
         <tpl:apply mode="test"/>
@@ -237,6 +254,14 @@
     </li>
   </tpl:template>
 
+  <tpl:template match="test:captcha">
+    <li js:class="sylma.stepper.Captcha" js:alias="captcha">
+      <tpl:apply mode="actions"/>
+      <tpl:apply mode="title"/>
+      <tpl:apply mode="selector"/>
+    </li>
+  </tpl:template>
+
   <tpl:template match="test:input">
     <li js:class="sylma.stepper.Input" js:alias="input">
       <tpl:apply mode="actions"/>
@@ -249,6 +274,17 @@
           </js:event>
           <tpl:read/>
         </textarea>
+      </form>
+    </li>
+  </tpl:template>
+
+  <tpl:template match="test:query">
+    <li js:class="sylma.stepper.Query" js:alias="query">
+      <tpl:apply mode="actions"/>
+      <tpl:apply mode="title"/>
+      <form js:node="form" class="sylma-hidder zoom options">
+        <input js:node="value" type="text" value="{read()}"/>
+        <input js:node="creation" type="text" value="{@creation}"/>
       </form>
     </li>
   </tpl:template>

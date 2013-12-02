@@ -110,6 +110,18 @@ class Browser extends core\module\Domed {
             $aStep['element'] = $step->read('@element');
             $aStep['content'] = $step->read('content', false);
             break;
+
+          case 'captcha' :
+
+            $aStep['element'] = $step->read('@element');
+            break;
+
+          case 'query' :
+
+            $aStep['value'] = $step->read();
+            $aStep['creation'] = $step->read('@creation');
+            $aStep['timeshift'] = $step->read('@timeshift');
+            break;
         }
 
         $aSteps[] = $aStep;
@@ -131,6 +143,18 @@ class Browser extends core\module\Domed {
     $doc->saveFile($file, true);
 
     $this->getManager(self::PARSER_MANAGER)->getContext('messages')->add(array('content' => 'File saved'));
+  }
+
+  public function getCaptcha() {
+
+    $captcha = new \sylma\modules\captcha\Type('');
+
+    return $captcha->getKey();
+  }
+
+  public function runQuery() {
+
+    $sFile = $this->read('file');
   }
 }
 

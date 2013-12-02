@@ -67,7 +67,7 @@ class Basic extends core\argument\Readable implements window\context {
           }
         }
       }
-      else {
+      else if ($mValue) {
 
         $aResultTexts[] = $this->addText($mValue);
       }

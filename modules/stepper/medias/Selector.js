@@ -185,7 +185,7 @@ sylma.stepper.Selector = new Class({
 
     var useID = false;
 
-    var result = $$(target).append(target.getParents()).map(function(el) {
+    var result = $$([target]).append(target.getParents()).map(function(el) {
 
       var result = null;
 

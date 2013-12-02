@@ -12,9 +12,14 @@ class Type extends schema\cached\form\_String {
     return \Sylma::read('modules/captcha/session');
   }
 
+  public function getKey() {
+
+    return $this->getSession();
+  }
+
   public function validate() {
 
-    $sValue = $this->getSession();
+    $sValue = $this->getKey();
 
     if ($this->getValue() === $sValue) {
 

@@ -5,8 +5,8 @@
   </le:settings>
   <le:context name="title">Test Binder</le:context>
   <le:context name="js">
-    <lm:file path="../../medias/mootools.js"/>
-    <lm:file path="../../medias/sylma.js"/>
+    <lm:file path="/#sylma/ui/mootools.js"/>
+    <lm:file path="/#sylma/ui/Main.js"/>
     <lm:file path="script.js"/>
     <le:string>sylma.binder.standalone = '<lm:directory/>/standalone'; sylma.binder.id = '<le:get-variable name="id"/>';</le:string>
   </le:context>

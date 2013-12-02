@@ -1,32 +1,16 @@
 sylma.stepper.Input = new Class({
 
-  Extends : sylma.stepper.Step,
+  Extends : sylma.stepper.Event,
 
   onReady : function() {
 
+    this.parent();
+
     var e = this.options.event;
 
-    if (e) {
+    if (e && e.target.get('tag') === 'option') {
 
-      this.options = {
-        selector : [{
-          target : e.target
-        }]
-      };
-    }
-  },
-
-  onLoad : function() {
-
-    var element = this.options.element;
-
-    if (element) {
-
-      this.add('selector', {element : element});
-    }
-    else {
-
-      this.isPlayed(true);
+      this.options.selector[0].target = e.target.getParent();
     }
   },
 
@@ -70,17 +54,9 @@ sylma.stepper.Input = new Class({
 
   test : function(callback) {
 
-    this.isReady(false);
-    //this.log();
+    this.log('Run');
 
-    if (!this.isPlayed()) {
-
-      this.log('Run');
-      this.isPlayed(true);
-
-      var el = this.getElement();
-      el.set('value', this.getValue());
-    }
+    this.updateElement();
 
     callback();
   },
@@ -88,7 +64,7 @@ sylma.stepper.Input = new Class({
   toJSON : function() {
 
     return {input : {
-      '@element' : this.getObject('selector')[0],
+      '@element' : this.getSelector(),
       0 : this.getValue()
     }};
   }

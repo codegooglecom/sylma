@@ -90,7 +90,7 @@
       return true;
     </tst:expected>
   </tst:test>
-  <tst:test name="Simple action">
+  <tst:test name="Call action">
     <tst:document>
       <view:view>
         <sql:resource>
@@ -117,7 +117,7 @@
 
     </tst:expected>
   </tst:test>
-  <tst:test name="Action with arguments">
+  <tst:test name="Call action with arguments">
     <tst:document>
       <view:view>
         <sql:resource>
@@ -147,7 +147,7 @@
 
     </tst:expected>
   </tst:test>
-  <tst:test name="Simple script call">
+  <tst:test name="Call script">
     <tst:document>
       <view:view sql:ns="ns">
         <sql:resource>
@@ -166,7 +166,7 @@
       <div><h3>admin</h3><a href="mailto:email">test</a></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Script call with arguments">
+  <tst:test name="Call script with arguments">
     <tst:document>
       <view:view sql:ns="ns">
         <sql:resource>
@@ -252,6 +252,42 @@
         <h3>admin</h3>
         <span>hello-world</span>
       </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Path">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <span>
+            <le:path>samples/view1</le:path>
+          </span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>/sylma/action/test/samples/view1</span>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Path with arguments">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <span>
+            <le:path>samples/view1/myarg</le:path>
+          </span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>/sylma/action/test/samples/view1/myarg</span>
     </tst:node>
   </tst:test>
 </tst:tests>

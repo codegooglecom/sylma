@@ -80,7 +80,7 @@ class Objects extends core\argument\Readable implements core\stringable {
 
     $sParent = $this->query() ? $this->getParentPath() : "''";
 
-    return 'sylma.ui.load(' . $sParent . ', ' . $this->asJSON() . ')';
+    return $this->query() ? 'sylma.ui.load(' . $sParent . ', ' . $this->asJSON() . ')' : null;
   }
 }
 
