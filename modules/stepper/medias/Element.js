@@ -1,5 +1,10 @@
 sylma.stepper.Element = new Class({
 
+  children : [],
+  content : undefined,
+  ignore : undefined,
+  ignoreMatch : /\d{2}\.\d{2}\.\d{4}/,
+
   initialize : function(el, options) {
 
     this.element = el;
@@ -11,6 +16,9 @@ sylma.stepper.Element = new Class({
 
         this.loadChildrenOptions(el, options);
       }
+
+      this.ignore = options.ignore;
+      this.content = options.content;
     }
     else {
 
@@ -30,15 +38,34 @@ sylma.stepper.Element = new Class({
 
   loadChildren : function(el) {
 
-    var children = [];
     var self = this;
+    var children = el.getChildren();
 
-    el.getChildren().each(function(item) {
+    if (!children.length) {
 
-      children.push(self.createElement(item));
-    });
+      var text = el.get('text');
+//console.log(text, text.match(/\d{2}\.\d{2}\.\d{4}/));
+      if (text && text.match(this.ignoreMatch)) {
 
-    this.setChildren(children);
+        this.ignore = true;
+      }
+      else {
+
+        this.content = text;
+      }
+    } else {
+
+      var result = [];
+
+      children.each(function(item) {
+
+        result.push(self.createElement(item));
+      });
+
+      this.setChildren(result);
+    }
+
+
   },
 
   loadChildrenOptions : function(el, options) {
@@ -80,8 +107,9 @@ sylma.stepper.Element = new Class({
     var el = this.element;
     var opt = this.options;
 
-    if (!opt) {
-
+    if (!opt)
+    {
+      this.addDifference('No options');
       return false;
     }
 /*
@@ -99,7 +127,6 @@ sylma.stepper.Element = new Class({
     };
 
     if (diff.x || diff.y) {
-
       this.addDifference('size', el, diff);
       result = false;
     }
@@ -117,7 +144,28 @@ sylma.stepper.Element = new Class({
       result = false;
     }
 
-    if (result) {
+    var content = this.content;
+
+    if (content) {
+
+      if (el.getChildren().length) {
+
+        this.addDifference('text expected', el, content);
+      }
+      else {
+
+        if (!this.ignore) {
+
+          result = el.get('text') === content;
+
+          if (!result) {
+
+            this.addDifference('text different', el, content)
+          }
+        }
+      }
+    }
+    else {
 
       this.getChildren().each(function(item) {
 
@@ -130,7 +178,7 @@ sylma.stepper.Element = new Class({
 
   addDifference : function(type, el, expected) {
 
-    console.log('difference', type, el, expected);
+    console.log('Difference : ', type, el, expected);
   },
 
   getAttributes : function() {
@@ -160,15 +208,22 @@ sylma.stepper.Element = new Class({
   toJSON : function() {
 
     var el = this.element;
+    var children = this.getChildren();
+    var attributes = this.getAttributes();
+    var result;
 
-    return {
+    result = {
       name : el.get('tag'),
       //namespace : el.namespaceURI,
-      attributes : this.getAttributes(),
-      children : this.getChildren(),
+      children : children.length ? children : undefined,
+      content : this.content,
+      ignore : this.ignore,
+      attributes : attributes.length ? attributes : undefined,
       position : this.getPosition(),
       size : this.getSize()
-    }
+    };
+
+    return result;
   },
 
   toString : function() {

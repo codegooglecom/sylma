@@ -1,5 +1,5 @@
 sylma.stepper = sylma.stepper || {};
-sylma.factory.debug = true;
+sylma.factory.debug = false;
 sylma.debug.log = true;
 
 sylma.stepper.Main = new Class({
@@ -14,19 +14,23 @@ sylma.stepper.Main = new Class({
     y : 1024
   },
 
-  events : {},
-
   recording : false,
   events : {},
 
   onReady : function() {
 
-    Object.each(this.get('tests').test, function(item) {
+    var tests = this.get('tests');
 
-      this.addTest(item);
+    if (tests) {
 
-    }.bind(this));
+      Object.each(tests.test, function(item) {
 
+        this.addTest(item);
+
+      }.bind(this));
+    }
+
+    this.setCurrent(-1);
     this.buildFrame(this.path);
   },
 
@@ -240,7 +244,10 @@ sylma.stepper.Main = new Class({
 
   loadTest : function(file, callback) {
 
-    this.send(this.get('load'), {file : file}, callback);
+    this.send(this.get('load'), {
+      file : file,
+      dir : this.get('directory')
+    }, callback);
   },
 
   test : function() {

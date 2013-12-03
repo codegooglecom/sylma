@@ -12,7 +12,7 @@ class Browser extends core\module\Domed {
 
   public function __construct(core\argument $args, core\argument $post) {
 
-    $this->setDirectory(__DIR__);
+    //$this->setDirectory(__DIR__);
     $this->setNamespace(self::NS);
     $this->loadDefaultSettings();
 
@@ -21,7 +21,7 @@ class Browser extends core\module\Domed {
 
     if ($sDirectory = $this->read('dir', false)) {
 
-      $this->setDirectory($this->getDirectory($sDirectory));
+      $this->setDirectory($this->getManager(self::FILE_MANAGER)->getDirectory($sDirectory));
     }
   }
 
@@ -37,7 +37,7 @@ class Browser extends core\module\Domed {
     foreach ($this->getDirectory()->getFiles(array('tml')) as $file) {
 
       $aResult['test'][] = array(
-        'file' => (string) $file,
+        'file' => $file->getName(),
       );
     }
 
@@ -46,12 +46,12 @@ class Browser extends core\module\Domed {
 
   public function load() {
 
-    $sFile = $this->read('file');
+    $file = $this->getDirectory()->getFile($this->read('file'));
 //    $aResult = array();
 
 //    if ($file = $this->getFile($sFile, false)) {
 
-      $test = $this->createOptions($sFile, false);
+      $test = $this->createOptions($file->getDocument(), false);
       $aResult = $this->buildTest($test);
 //    }
 
@@ -120,7 +120,7 @@ class Browser extends core\module\Domed {
 
             $aStep['value'] = $step->read();
             $aStep['creation'] = $step->read('@creation');
-            $aStep['timeshift'] = $step->read('@timeshift');
+            $aStep['timeshift'] = $step->read('@timeshift', false);
             break;
         }
 
@@ -138,11 +138,13 @@ class Browser extends core\module\Domed {
 
     $aTest = json_decode($this->read('test'), true);
     $doc = $this->createArgument($aTest)->asDOM();
-    $file = $this->getFile($this->read('file'));
+    $file = $this->getDirectory()->createFile($this->read('file'));
 
     $doc->saveFile($file, true);
 
     $this->getManager(self::PARSER_MANAGER)->getContext('messages')->add(array('content' => 'File saved'));
+
+    return true;
   }
 
   public function getCaptcha() {
@@ -154,7 +156,23 @@ class Browser extends core\module\Domed {
 
   public function runQuery() {
 
-    $sFile = $this->read('file');
+    $file = $this->getFile($this->read('file'));
+    $creation = new \DateTime($this->read('creation'));
+    $diff = $creation->diff(new \DateTime());
+
+    $sContent = preg_replace_callback('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', function($aMatch) use($diff) {
+
+      //dsp($sMatch);
+      $date = new \DateTime($aMatch[0]);
+      $new = $date->add($diff);
+
+      return $new->format('Y-m-d H:i:s');
+
+    }, $file->read());
+
+    $this->getManager(self::DB_MANAGER)->getConnection()->execute($sContent);
+
+    return true;
   }
 }
 

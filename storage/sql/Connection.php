@@ -21,6 +21,7 @@ class Connection extends core\module\Argumented {
     $this->setArguments($arg);
 
     $this->db = $this->connect($this->getArguments());
+    $this->getDatabase()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
   }
 
   protected function connect(core\argument $arg) {
@@ -45,15 +46,6 @@ class Connection extends core\module\Argumented {
     return $this->db;
   }
 
-  protected function catchError(array $aVars = array()) {
-
-    if ($this->getDatabase()->errorCode() !== self::SUCCESS_CODE) {
-
-      $aError = $this->getDatabase()->errorInfo();
-      $this->launchException(sprintf('SQL Error : %s', "$aError[2] ({$aError[0]}, {$aError[1]})"), $aVars);
-    }
-  }
-
   protected function launchExceptionEmpty() {
 
     $this->launchException("Empty query result");
@@ -74,19 +66,42 @@ class Connection extends core\module\Argumented {
 
   public function query($sQuery, $bDebug = true, $iFormat = \PDO::FETCH_ASSOC) {
 
-    $result = $this->getDatabase()->query($sQuery);
+    try {
+
+      $result = $this->getDatabase()->query($sQuery);
+
+      if (!$result) {
+
+        if ($bDebug) $this->launchExceptionEmpty();
+        $result = array();
+      }
+      else {
+
+        $result = new Argument($result->fetchAll($iFormat));
+      }
+    }
+    catch (\PDOException $e) {
+
+      \Sylma::loadException($e);
+    }
+
     $this->logQuery($sQuery);
 
-    $this->catchError();
+    //$this->catchError();
 
-    if (!$result) {
+    return $result;
+  }
 
-      if ($bDebug) $this->launchExceptionEmpty();
-      $result = array();
+  public function execute($sQuery, $bDebug = true) {
+
+    try {
+
+      // https://bugs.php.net/bug.php?id=61613 : Cannot handle errors with multiple request
+      $result = $this->getDatabase()->query($sQuery);
     }
-    else {
+    catch (\PDOException $e) {
 
-      $result = new Argument($result->fetchAll($iFormat));
+      throw \Sylma::loadException($e);
     }
 
     return $result;
@@ -94,8 +109,14 @@ class Connection extends core\module\Argumented {
 
   public function insert($sQuery, $bDebug = true) {
 
-    $bResult = $this->getDatabase()->exec($sQuery);
-    $this->catchError();
+    try {
+
+      $bResult = $this->getDatabase()->exec($sQuery);
+    }
+    catch (\PDOException $e) {
+
+      throw \Sylma::loadException($e);
+    }
 
     if ($bResult) {
 
@@ -112,19 +133,24 @@ class Connection extends core\module\Argumented {
 
   public function read($sQuery, $bDebug = true) {
 
-    $stat = $this->getDatabase()->query($sQuery);
-    $this->logQuery($sQuery);
+    try {
 
-    $this->catchError();
+      $stat = $this->getDatabase()->query($sQuery);
+      $this->logQuery($sQuery);
 
-    if (!$stat) {
+      if (!$stat) {
 
-      if ($bDebug) $this->launchExceptionEmpty();
-      $result = $stat;
+        if ($bDebug) $this->launchExceptionEmpty();
+        $result = $stat;
+      }
+      else {
+
+        $result = $stat->columnCount() ? $stat->fetch() : array($stat->rowCount());
+      }
     }
-    else {
+    catch (\PDOException $e) {
 
-      $result = $stat->fetch();
+      throw \Sylma::loadException($e);
     }
 
     return $result ? current($result) : $result;
@@ -132,12 +158,17 @@ class Connection extends core\module\Argumented {
 
   public function get($sQuery, $bDebug = true, $bArgument = true) {
 
-    $result = $this->getDatabase()->query($sQuery);
-    $this->logQuery($sQuery);
+    try {
 
-    $this->catchError();
+      $result = $this->getDatabase()->query($sQuery);
+      $this->logQuery($sQuery);
 
-    $result = is_object($result) ? $result->fetch(\PDO::FETCH_ASSOC) : null;
+      $result = is_object($result) ? $result->fetch(\PDO::FETCH_ASSOC) : null;
+    }
+    catch (\PDOException $e) {
+
+      throw \Sylma::loadException($e);
+    }
 
     if (!$result && $bDebug) $this->launchExceptionEmpty();
 
@@ -145,7 +176,7 @@ class Connection extends core\module\Argumented {
 
       $result = $result ? new Argument($result) : new Argument;
     }
-    
+
     return $result;
   }
 

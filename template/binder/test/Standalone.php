@@ -52,6 +52,7 @@ class Standalone extends tester\Parser implements dom\domable {
     $doc = $this->getFile()->getDocument($this->getNS());
 
     $test = $this->loadTest($doc);
+    $this->prepareTest($test, $this);
 
     if (!$result = $this->parseResult($test, $this->getFile(), array('contexts' => $this->getActionContexts()))) {
 

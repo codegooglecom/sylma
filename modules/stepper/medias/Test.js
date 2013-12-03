@@ -10,15 +10,15 @@ sylma.stepper.Test = new Class({
 
     if (!this.options.file) {
 
-      this.editName(this.getParent('main').get('directory') + '/', false);
+      this.editName(false);
     }
   },
 
-  editName : function(path, update) {
+  editName : function(update) {
 
     update = update === undefined ? true : false;
 
-    var result = window.prompt('Please choose a file name', path);
+    var result = window.prompt('Please choose a file name', this.options.file || '');
 
     if (result) {
 
@@ -101,7 +101,7 @@ sylma.stepper.Test = new Class({
 
     var result = this.add('page', {
       url : this.getWindow().location.pathname
-    });
+    }, this.getCurrent() + 1);
 
     result.go();
 
@@ -180,6 +180,7 @@ sylma.stepper.Test = new Class({
     var content = JSON.stringify(this);
 //console.log(test); return;
     this.send(this.getParent('main').get('save'), {
+      dir : this.getParent('main').get('directory'),
       file : this.get('file'),
       test : content
     });

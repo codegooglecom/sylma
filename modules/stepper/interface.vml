@@ -44,8 +44,7 @@
   </view:view>
 
   <view:view name="save"
-    build:class="\sylma\core\argument\Readable"
-    build:output="array"
+    build:return="result"
   >
 
     <tpl:template>

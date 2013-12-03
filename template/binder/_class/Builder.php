@@ -134,7 +134,7 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
       $val->setProperty('node', $sName);
     }
 
-    $this->getObject()->setProperty('events.' . $sName, $val);
+    $this->getObject()->setProperty('sylma.events.' . $sName, $val);
   }
 
   public function setMethod($sName, js\basic\instance\_Object $val) {

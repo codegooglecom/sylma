@@ -98,7 +98,7 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
     $sql = $this->getManager(self::DB_MANAGER);
 
-    $sql->getConnection($this->getConnectionAlias())->read($sQuery, false);
+    $sql->getConnection($this->getConnectionAlias())->execute($sQuery, false);
     dsp($sQuery);
 
     foreach ($aReferences as $ref) {

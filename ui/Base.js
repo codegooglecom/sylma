@@ -1,7 +1,3 @@
-/**
- *
- */
-
 sylma.ui.Base = new Class({
 
   Implements : Options,
@@ -81,7 +77,7 @@ sylma.ui.Base = new Class({
 
     this.prepareNodes(this.node);
 
-    this.initEvents(this.events);
+    this.initEvents(this.sylma.events);
     this.initNodes(this.nodes);
   },
 

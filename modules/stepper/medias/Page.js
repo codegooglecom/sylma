@@ -87,7 +87,7 @@ sylma.stepper.Page = new Class({
       return result;
     });
   },
-  
+
   addQuery : function() {
 
     return this.addStep(function(key, callback) {
@@ -223,6 +223,8 @@ sylma.stepper.Page = new Class({
 
     }.bind(this);
 
+    this.isgo = true;
+
     if (key !== this.getCurrent()) {
 
       this.test(select, key);
@@ -273,13 +275,14 @@ sylma.stepper.Page = new Class({
     var test = this.getParent('test');
     var lastPage = test.getObject('page').getLast();
 
-    if (!record && item == all.getLast() && this != lastPage) {
+    if (!this.isgo && !record && item == all.getLast() && this != lastPage) {
 
       this.getParent('main').preparePage(callback);
       this.testItem(items, key);
     }
     else {
 
+      this.isgo = false;
       this.testItem(items, key, callback);
     }
   },

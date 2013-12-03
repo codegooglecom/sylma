@@ -9,7 +9,7 @@ sylma.stepper.Query = new Class({
     if (!creation) {
 
       this.options.value = '';
-      this.options.creation = new Date();
+      this.options.creation = new Date().format('%Y-%m-%d %H:%M:%S');
     }
   },
 
@@ -29,6 +29,7 @@ sylma.stepper.Query = new Class({
 
     this.send(this.getParent('main').get('query'), {
       file : this.getValue(),
+      dir : this.getParent('main').get('directory'),
       creation : this.getCreation()
       //timeshift : this.getTimeshift(),
     }, function(response) {

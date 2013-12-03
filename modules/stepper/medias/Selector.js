@@ -9,7 +9,6 @@ sylma.stepper.Selector = new Class({
     target : null, // dom node
     element : null // string
   },
-  events : {},
 
   onReady : function() {
 
@@ -89,9 +88,7 @@ sylma.stepper.Selector = new Class({
   stopCapture: function() {
 
     this.getParent('main').resumeRecord();
-
-    this.getWindow().removeEvent('click', this.events.click);
-    this.getWindow().removeEvent('move', this.events.mousemove);
+    this.getWindow().removeEvents(this.events);
   },
 
   windowMove : function(e) {
@@ -137,7 +134,7 @@ sylma.stepper.Selector = new Class({
     this.activated = false;
 
     //this.set('target', target);
-    this.set('element', this.buildPath(target));
+    this.updateElement(target);
 
     this.stopCapture();
     this.getMask().fade('out');
@@ -164,6 +161,51 @@ sylma.stepper.Selector = new Class({
       this.onSelectAdd();
       delete this.onSelectAdd;
     }
+  },
+
+  updateElement : function(target) {
+
+    this.set('element', this.buildPath(target));
+  },
+
+  changeElement: function(target) {
+
+    if (!target) {
+
+      sylma.ui.showMessage('No element found');
+    }
+    else {
+
+      this.selectElement(target);
+      this.updateElement(target);
+
+      var path = this.get('element');
+
+      this.getNode('display').set({
+        html : path,
+        title : path
+      });
+    }
+  },
+
+  selectParent : function() {
+
+    this.changeElement(this.getElement().getParent());
+  },
+
+  selectChild : function() {
+
+    this.changeElement(this.getElement().getFirst());
+  },
+
+  selectNext : function() {
+
+    this.changeElement(this.getElement().getNext());
+  },
+
+  selectPrevious : function() {
+
+    this.changeElement(this.getElement().getPrevious());
   },
 
   getElement : function() {

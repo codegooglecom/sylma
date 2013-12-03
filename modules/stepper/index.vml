@@ -31,6 +31,9 @@
   <le:context name="title">Stepper</le:context>
 
   <le:context name="js">
+    <le:file>/#sylma/ui/Extras.js</le:file>
+    <le:file>/#sylma/ui/Locale.js</le:file>
+    <le:file>/#sylma/ui/Date.js</le:file>
     <le:file>medias/Listed.js</le:file>
     <le:file>medias/Main.js</le:file>
     <le:file>medias/Framed.js</le:file>
@@ -80,10 +83,6 @@
             <tpl:text>▶</tpl:text>
           </button>
           <button>
-            <js:event name="click">%object%.createTest();</js:event>
-            <tpl:text>✚</tpl:text>
-          </button>
-          <button>
             <js:event name="click">%object%.getFrame().toggleClass('sylma-visible');</js:event>
             <tpl:text>◑</tpl:text>
           </button>
@@ -92,6 +91,10 @@
             <tpl:text>⇥</tpl:text>
           </button>
           <br/>
+          <button>
+            <js:event name="click">%object%.createTest();</js:event>
+            <tpl:text>✚</tpl:text>
+          </button>
           <button>
             <js:event name="click">%object%.getTest().getPage().addWatcher();</js:event>
             <tpl:text>⌚</tpl:text>
@@ -120,7 +123,7 @@
   <tpl:template mode="test">
     <div js:class="sylma.stepper.Test" js:alias="test" class="test" js:parent-name="test">
       <button class="edit">
-        <js:event name="click">%object%.editName(%object%.options.file);</js:event>
+        <js:event name="click">%object%.editName();</js:event>
         <tpl:text>...</tpl:text>
       </button>
       <button class="edit">
@@ -170,7 +173,23 @@
         <js:event name="click">%object%.toggleMask();</js:event>
         <tpl:text>◌</tpl:text>
       </button>
-      <a title="{@element}">
+      <button class="sylma-hidder edit">
+        <js:event name="click">%object%.selectNext();</js:event>
+        <tpl:text>▹</tpl:text>
+      </button>
+      <button class="sylma-hidder edit">
+        <js:event name="click">%object%.selectPrevious();</js:event>
+        <tpl:text>◃</tpl:text>
+      </button>
+      <button class="sylma-hidder edit">
+        <js:event name="click">%object%.selectChild();</js:event>
+        <tpl:text>▿</tpl:text>
+      </button>
+      <button class="sylma-hidder edit">
+        <js:event name="click">%object%.selectParent();</js:event>
+        <tpl:text>▵</tpl:text>
+      </button>
+      <a title="{@element}" js:node="display">
         <tpl:read select="@element"/>
       </a>
     </div>

@@ -28,7 +28,7 @@ sylma.stepper.Property = new Class({
 
   test : function(el) {
 
-    return el.getStyle(this.options.name).toInt() === this.options.value.toInt();
+    return el.getComputedStyle(this.options.name).toInt() === this.options.value.toInt();
   },
 
   updateValue : function() {

@@ -389,6 +389,9 @@
         </view:template>
       </view:view>
     </tst:document>
+    <tst:prepare>
+      $manager->buildScript('samples/update01.vml');
+    </tst:prepare>
     <tst:callback>
 
       var test = example.test;
@@ -412,6 +415,9 @@
         </view:template>
       </view:view>
     </tst:document>
+    <tst:prepare>
+      $manager->buildScript('samples/update02.vml');
+    </tst:prepare>
     <tst:callback>
 
       var test = example.test;

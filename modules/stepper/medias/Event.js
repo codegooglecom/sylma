@@ -2,6 +2,8 @@ sylma.stepper.Event = new Class({
 
   Extends : sylma.stepper.Step,
 
+  isgo : false,
+
   onReady : function() {
 
     var e = this.options.event;
@@ -28,15 +30,33 @@ sylma.stepper.Event = new Class({
     }
   },
 
-  test : function(callback) {
+  go: function() {
 
-    this.log('Run');
+    var page = this.getParent('page'),
+        steps = page.getSteps().tmp,
+        length = steps.length;
+
+    if (this.getKey() === length - 1) {
+
+      this.isgo = true;
+    }
+
+    this.parent();
+  },
+
+  test : function(callback) {
 
     var el = this.getSelector().getElement();
 
     if (el) {
 
-      el.click();
+      if (!this.isgo) {
+
+        this.log('Run');
+        el.click();
+      }
+
+      this.isgo = false;
     }
     else {
 

@@ -335,7 +335,7 @@ class Sylma {
 
   public static function loadException(Exception $e) {
 
-    $newException = new Sylma::$exception;
+    $newException = new Sylma::$sExceptionClass($e->getMessage());
     $newException->loadException($e);
 
     return $newException;
