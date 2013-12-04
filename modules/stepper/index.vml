@@ -79,8 +79,12 @@
             <span>●</span>
           </button>
           <button>
-            <js:event name="click">%object%.test();</js:event>
+            <js:event name="click">%object%.test(0);</js:event>
             <tpl:text>▶</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.test();</js:event>
+            <span>▹</span>
           </button>
           <button>
             <js:event name="click">%object%.getFrame().toggleClass('sylma-visible');</js:event>
@@ -246,7 +250,7 @@
       <select js:node="name">
         <js:event name="change">%object%.onChange()</js:event>
         <option>&lt;choose&gt;</option>
-        <option>domready</option>
+        <option>reload</option>
         <option>opacity</option>
         <option>margin-top</option>
         <option>margin-right</option>

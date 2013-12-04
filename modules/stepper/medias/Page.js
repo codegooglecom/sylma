@@ -190,8 +190,10 @@ sylma.stepper.Page = new Class({
       this.setCurrent(-1);
 
       this.getWindow().location.href = url;
+      this.getParent('main').pauseRecord();
       this.getParent('main').preparePage(function() {
 
+        this.getParent('main').resumeRecord();
         this.select(callback, reset);
 
       }.bind(this));
@@ -252,6 +254,7 @@ sylma.stepper.Page = new Class({
 
   unselect : function() {
 
+    this.setCurrent(-1);
     this.toggleActivation(false);
     this.resetSteps(this.mode.all);
   },

@@ -45,7 +45,7 @@
           </js:option>
           <js:event name="click">
             %parent%.update({page : %object%.get('prev')});
-            return false;
+            e.preventDefault();
           </js:event>
           &lt;&lt;
         </a>
@@ -58,7 +58,7 @@
             </tpl:if>
             <js:event name="click">
               %parent%.update({page : 1});
-              return false;
+              e.preventDefault();
             </js:event>
             <tpl:read select="current"/>
           </a>
@@ -74,7 +74,7 @@
             </js:option>
             <js:event name="click">
               %parent%.update({page : %object%.get('last')});
-              return false;
+              e.preventDefault();
             </js:event>
             <tpl:read select="last"/>
           </a>
@@ -90,7 +90,7 @@
           </js:option>
           <js:event name="click">
             %parent%.update({page : %object%.get('next')});
-            return false;
+            e.preventDefault();
           </js:event>
           &gt;&gt;
         </a>

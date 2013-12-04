@@ -190,7 +190,16 @@ sylma.stepper.Selector = new Class({
 
   selectParent : function() {
 
-    this.changeElement(this.getElement().getParent());
+    var parent = this.getElement().getParent();
+
+    if (parent.get('tag') !== 'body') {
+
+      this.changeElement(parent);
+    }
+    else {
+
+      sylma.ui.showMessage('Top elements reached');
+    }
   },
 
   selectChild : function() {
@@ -227,7 +236,7 @@ sylma.stepper.Selector = new Class({
 
     var useID = false;
 
-    var result = $$([target]).append(target.getParents()).map(function(el) {
+    var result = $$([target]).append(target.getParents().slice(0, -2)).map(function(el, key, array) {
 
       var result = null;
 
@@ -250,6 +259,8 @@ sylma.stepper.Selector = new Class({
           }
 
           result = name + previous;
+
+          if (key === array.length - 1) result = ' > ' + result;
         }
       }
 

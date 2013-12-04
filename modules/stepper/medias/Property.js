@@ -15,6 +15,11 @@ sylma.stepper.Property = new Class({
     return this.getNode('name');
   },
 
+  getName: function() {
+
+    return this.options.name;
+  },
+
   onChange : function() {
 
     var el = this.getParent().getSelector().getElement();

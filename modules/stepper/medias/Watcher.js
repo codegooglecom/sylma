@@ -33,41 +33,94 @@ sylma.stepper.Watcher = new Class({
 
     this.log('Test');
 
-    var selector = this.getSelector();
-    var properties = this.getProperties();
+    var properties = (this.getProperties() || []).slice();
 
-    var loop1;
+    var reloads = properties && properties.filter(function(item) {
 
-    var timeout1 = window.setTimeout(function() {
+      return item.getName() === 'reload';
+    });
 
-      this.addDifference('timeout, no element found');
-      window.clearInterval(loop1);
+    if (reloads.length) {
+
+      if (reloads.length > 1) {
+
+        throw new Error('Cannot handle more than one reload property');
+      }
+
+      var el = this.getSelector().getElement();
+
+      if (!el) {
+
+        this.addDifference('no element found');
+      }
+      else {
+
+        var timeout1, previous;
+        var interval1 = window.setInterval(function() {
+
+          el = this.getSelector().getElement();
+
+          if (previous && el && el != previous) {
+
+            window.clearTimeout(timeout1);
+            window.clearInterval(interval1);
+
+            var key = reloads.pick().getKey();
+            delete(properties[key]);
+
+            this.testMultiple(callback, properties);
+          }
+
+          previous = el;
+
+        }.bind(this), 10);
+
+        timeout1 = this.bad(callback, interval1, 'timeout, element must reload');
+      }
+    }
+    else {
+
+      this.testMultiple(callback, properties);
+    }
+  },
+
+  bad : function(callback, loop, text) {
+
+    return window.setTimeout(function() {
+
+      this.addDifference(text);
+      window.clearInterval(loop);
 
       callback();
 
     }.bind(this), 1000);
+  },
 
-    loop1 = window.setInterval(function() {
+  badElement : function(callback, loop) {
+
+    return this.bad(callback, loop, 'timeout, no element found');
+  },
+
+  badProperties : function(callback, loop) {
+
+    return this.bad(callback, loop, 'timeout, bad properties');
+  },
+
+  testMultiple : function(callback, properties) {
+
+    var selector = this.getSelector();
+    var timeout1, timeout2;
+
+    var interval1 = window.setInterval(function() {
 
       var el = selector.getElement();
 
       if (el) {
 
         window.clearTimeout(timeout1);
-        window.clearInterval(loop1);
+        window.clearInterval(interval1);
 
-        var loop2;
-
-        var timeout2 = window.setTimeout(function() {
-
-          this.addDifference('timeout, bad properties');
-          window.clearInterval(loop2);
-
-          callback();
-
-        }.bind(this), 1000);
-
-        loop2 = window.setInterval(function() {
+        var interval2 = window.setInterval(function() {
 
           var notready = properties && properties.some(function(item) {
 
@@ -77,15 +130,19 @@ sylma.stepper.Watcher = new Class({
           if (!notready) {
 
             window.clearTimeout(timeout2);
-            window.clearInterval(loop2);
+            window.clearInterval(interval2);
 
             callback();
           }
 
         }.bind(this), 10);
+
+        timeout2 = this.badProperties(callback, interval2);
       }
 
     }.bind(this), 10);
+
+    timeout1 = this.badElement(callback, interval1);
 
   },
 

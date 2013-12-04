@@ -92,7 +92,7 @@ class Container extends core\module\Domed {
           array(
             'a' => array(
               '@href' => '#',
-              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, null, false); return false;",
+              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, null, true); return false;",
               (string) $file,
             ),
           ),

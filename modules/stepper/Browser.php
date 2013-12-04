@@ -142,7 +142,7 @@ class Browser extends core\module\Domed {
 
     $doc->saveFile($file, true);
 
-    $this->getManager(self::PARSER_MANAGER)->getContext('messages')->add(array('content' => 'File saved'));
+    $this->getManager(self::PARSER_MANAGER)->getContext('messages')->add(array('content' => "File <strong>$file</strong> saved"));
 
     return true;
   }
@@ -169,7 +169,7 @@ class Browser extends core\module\Domed {
       return $new->format('Y-m-d H:i:s');
 
     }, $file->read());
-
+//$this->getDirectory()->createFile('temp')->saveText($sContent);
     $this->getManager(self::DB_MANAGER)->getConnection()->execute($sContent);
 
     return true;

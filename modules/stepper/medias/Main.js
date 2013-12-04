@@ -250,11 +250,22 @@ sylma.stepper.Main = new Class({
     }, callback);
   },
 
-  test : function() {
+  test : function(key) {
 
+    var tests;
     this.pauseRecord();
 
-    this.testItems(this.getTests(), 0, function() {
+    if (key === undefined) {
+      // only one
+      var current = this.getCurrent();
+      tests = this.getTests().slice(current < 0 ? 0 : current, current + 1);
+    }
+    else {
+      // all
+      tests = this.getTests();
+    }
+
+    this.testItems(tests, 0, function() {
 
       sylma.ui.showMessage('All tests passed');
     });

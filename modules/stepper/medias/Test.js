@@ -4,8 +4,6 @@ sylma.stepper.Test = new Class({
   Extends : sylma.stepper.Framed,
   Implements : sylma.stepper.Listed,
 
-  currentKey : undefined,
-
   onReady : function() {
 
     if (!this.options.file) {
