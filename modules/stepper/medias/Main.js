@@ -16,6 +16,7 @@ sylma.stepper.Main = new Class({
 
   recording : false,
   events : {},
+  variables : {},
 
   onReady : function() {
 
@@ -46,27 +47,58 @@ sylma.stepper.Main = new Class({
 
   buildFrame : function(url) {
 
-    var result = this.getFrame();
-    var win = this.getWindow();
+    var frame = this.getFrame();
 
-    result.set({
-      src       : url,
+    frame.set({
+      src       : this.path,
       styles : {
         width : this.screen.x,
         height : this.screen.y
-      }
-      /*,
+      },
       events : {
         load : function() {
 
-          this.setStyle('height', $(win.document.body).scrollHeight);
-        }
-      }*/
+          var win = frame.contentWindow;
+
+          if (!win.addEvents) {
+
+            console.log('Add mootools to iframe');
+
+            var script = document.createElement("script");
+            script.type = 'text/javascript';
+            script.src = '/sylma/ui/mootools.js';
+
+            script.addEventListener('load', function() {
+
+              this.callTest();
+
+            }.bind(this));
+
+            win.document.body.appendChild(script);
+          }
+          else {
+
+            this.callTest();
+          }
+
+          //frame.setStyle('height', $(win.document.body).scrollHeight);
+
+        }.bind(this)
+      }
     });
 
-    result.addClass('sylma-visible');
+    frame.addClass('sylma-visible');
+  },
 
-    return result;
+  callTest : function() {
+
+    if (this.events.callback) {
+
+      var callback = this.events.callback;
+      this.events.callback = undefined;
+
+      callback();
+    }
   },
 
   createTest : function() {
@@ -110,43 +142,16 @@ sylma.stepper.Main = new Class({
     });
   },
 
-  record : function(force) {
-
-    if (force || !this.recording) {
-
-      this.getTest().record(this.startCapture.bind(this));
-      this.recording = true;
-    }
-    else {
-
-      this.getFrame().removeEvents();
-      this.getWindow().removeEvents();
-      this.recording = false;
-    }
-
-    this.getNode().toggleClass('record', this.recording);
-  },
-
   isInput : function(el) {
 
     var tag = el.get('tag');
 
-    return ['input','textarea'].indexOf(tag) > -1 && ['checkbox', 'radio', 'button'].indexOf(el.getAttribute('type')) === -1;
+    return ['input','textarea'].indexOf(tag) > -1 && ['checkbox', 'radio', 'button', 'submit'].indexOf(el.getAttribute('type')) === -1;
   },
 
   preparePage : function(callback) {
 
-    var frame = this.getFrame();
-
-    this.events.test = function() {
-
-      frame.removeEvent('load', this.events.test);
-      if (callback) callback();
-
-    }.bind(this);
-
-    frame.removeEvent('load', this.events.test);
-    frame.addEvent('load', this.events.test);
+    this.events.callback = callback;
   },
 
   addInput : function(e) {
@@ -159,6 +164,38 @@ sylma.stepper.Main = new Class({
     }
 
     this.input.updateValue();
+  },
+
+  addVariable : function(item) {
+
+    this.variables[item.getName()] = item;
+  },
+
+  getVariable: function(name) {
+
+    if (!this.variables[name]) {
+
+      console.log('Variable "' + name + '"not found');
+    }
+
+    return this.variables[name];
+  },
+
+  record : function(force) {
+
+    if (force || !this.recording) {
+
+      this.recording = true;
+      this.resumeRecord();
+      this.getTest().record();
+    }
+    else {
+
+      //this.getFrame().removeEvents();
+      //this.getWindow().removeEvents();
+      this.pauseRecord();
+      this.recording = false;
+    }
   },
 
   startCapture: function() {
@@ -221,8 +258,8 @@ sylma.stepper.Main = new Class({
 
     var events = this.events;
 
-    this.getFrame().removeEvents(events.frame);
-    this.getWindow().removeEvents(events.window);
+    if (events.frame) this.getFrame().removeEvents(events.frame);
+    if (events.window) this.getWindow().removeEvents(events.window);
   },
 
   pauseRecord: function() {
@@ -230,6 +267,7 @@ sylma.stepper.Main = new Class({
     if (this.recording) {
 
       this.stopCapture();
+      this.toggleRecord(false);
     }
   },
 
@@ -239,7 +277,14 @@ sylma.stepper.Main = new Class({
 
       this.stopCapture();
       this.startCapture();
+
+      this.toggleRecord(true);
     }
+  },
+
+  toggleRecord: function(val) {
+
+    this.getNode().toggleClass('record', val);
   },
 
   loadTest : function(file, callback) {

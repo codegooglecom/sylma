@@ -14,22 +14,6 @@ sylma.stepper.Input = new Class({
     }
   },
 
-  isReady: function(value) {
-
-    var result = this.parent(value);
-
-    if (result) {
-
-      this.show(this.getNode('form'));
-    }
-    else {
-
-      this.hide(this.getNode('form'));
-    }
-
-    return result;
-  },
-
   updateValue : function() {
 
     var val = this.getElement().get('value');
@@ -39,7 +23,15 @@ sylma.stepper.Input = new Class({
 
   updateElement: function() {
 
-    this.getElement().set('value', this.getValue());
+    var val = this.getValue();
+    var name = this.isVariable(val);
+
+    if (name) {
+
+      val = this.getParent('main').getVariable(name);
+    }
+
+    this.getElement().set('value', val);
   },
 
   getInput: function() {

@@ -103,16 +103,6 @@ class Directory extends Resource implements fs\directory {
     return $oResult;
   }
 
-  /**
-   *
-   * @param core\argument $arg argument containing parameters :
-   *        only-path => false // if true, only file path will be returned
-   *        depth => false // 0 : only current directory, 1..n : nb. of levels to retrieve
-   *        extensions => array() // if empty, all extensions. If extensions, get only that ones
-   *        excluded => array() // if empty, no exclusion. If excluded dir, compare with name or path if it begins with /
-   * @param type $bRoot if TRUE, <browse> root will be added
-   * @return core\argument
-   */
   public function browse(core\argument $arg = null, $bRoot = true) {
 
     $tmp = $this->getControler()->getArgument('browse');
@@ -130,15 +120,16 @@ class Directory extends Resource implements fs\directory {
     //array $aExtensions = array(), array $aPaths = array(), $iDepth = null, $bRender = true
     $aResult = array();
 
-    $bOnlyPath = $arg->read('only-path');
+    $sMode = $arg->read('mode', false);
+
     $iDepth = $arg->read('depth');
     $aExtensions = $arg->query('extensions', false);
     $aPaths = $arg->query('excluded', false);
     $bInsertRoot = $bRoot ? $arg->read('root') : false;
 
-    if ($iDepth) {
+    if ($iDepth || is_null($iDepth)) {
 
-      $iDepth--;
+      if (is_integer($iDepth)) $iDepth--;
 
       $aFiles = scandir($this->getRealPath(), 0);
 
@@ -150,8 +141,24 @@ class Directory extends Resource implements fs\directory {
 
             if (!$aExtensions || in_array(strtolower($file->getExtension()), $aExtensions)) {
 
-              if ($bOnlyPath) $aResult[] = (string) $file;
-              else $aResult[] = $file->asArgument();
+              switch ($sMode) {
+
+                case 'path' :
+
+                  $aResult[] = (string) $file;
+                  break;
+
+                case 'argument' :
+
+                  $aResult[] = $file->asArgument();
+                  break;
+
+                case 'file' :
+                default :
+
+                  $aResult[] = $file;
+                  break;
+              }
             }
           }
           else if ($dir = $this->getDirectory($sFile)) {
@@ -170,13 +177,13 @@ class Directory extends Resource implements fs\directory {
             if ($bValid) {
 
               $arg->set('depth', $iDepth);
-              $aResult = array_merge($aResult, $dir->browse($arg, false)->asArray());
+              $aResult = array_merge($aResult, $dir->browse($arg, false)->query());
             }
           }
         }
       }
     }
-
+    
     return $this->getControler()->createArgument($bInsertRoot ? array('browse' => $aResult) : $aResult);
   }
 

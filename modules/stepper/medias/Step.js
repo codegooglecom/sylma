@@ -28,6 +28,9 @@ sylma.stepper.Step = new Class({
         this.toggleShow(form, val);
       }
 
+      var selector = this.getSelector(false);
+      selector && selector.toggleMask(val);
+
       result = val;
     }
     else {
@@ -56,6 +59,23 @@ sylma.stepper.Step = new Class({
     var name = 'played';
 
     return val === undefined ? node.hasClass(name) : node.toggleClass(name, val);
+  },
+
+  isVariable : function(val) {
+
+    return val[0] === '$' ? val.slice(1) : undefined;
+  },
+
+  addVariable : function() {
+
+    var result = this.add('variable');
+  },
+
+  getVariable : function() {
+
+    var vars = this.getObject('variable');
+
+    return vars && vars.pick();
   },
 
   asToken: function() {

@@ -76,14 +76,15 @@ sylma.crud.Form = new Class({
       if (this.get('method') === 'get') req.get(datas);
       else req.post(datas);
     }
-    catch (e) {
+    catch (error) {
 
-      console.log(e.message);
+      console.log(error.message);
       return false;
     }
 
     this.showMask();
 
+    if (e) e.preventDefault();
     return false;
   },
 

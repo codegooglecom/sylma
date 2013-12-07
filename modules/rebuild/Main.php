@@ -50,8 +50,7 @@ class Main extends core\module\Domed implements dom\domable {
 
     $common = $this->createArgument(array(
       'extensions' => array('eml','vml'),
-      'depth' => 99,
-      'only-path' => false,
+      'mode' => 'argument',
     ));
 
     $root = $common;

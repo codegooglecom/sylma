@@ -17,9 +17,9 @@
       <input element="">
 
       </input>
-      <captcha element="">
-
-      </captcha>
+      <call path="">
+        <variable name=""/>
+      </call>
       <watcher element="">
         <property name=""/>
       </watcher>

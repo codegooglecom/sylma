@@ -25,8 +25,14 @@ interface directory extends fs\resource {
   function getFile($sName, $iDebug = self::DEBUG_LOG);
 
   /**
-   * @param $arg
-   * @return \sylma\core\argument
+   *
+   * @param core\argument $arg argument containing parameters :
+   *        mode => 'file' // path, argument or file
+   *        depth => null // null : no restriction, 0 : only current directory, 1..n : nb. of levels to retrieve
+   *        extensions => array() // if empty, all extensions. If extensions, get only that ones
+   *        excluded => array() // if empty, no exclusion. If excluded dir, compare with name or path if it begins with /
+   * @param type $bRoot if TRUE, <browse> root will be added
+   * @return core\argument
    */
   function browse(core\argument $arg = null);
 }

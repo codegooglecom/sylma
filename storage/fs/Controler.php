@@ -185,12 +185,14 @@ class Controler extends core\module\Argumented {
     return $aResult;
   }
 
-  public function getFile($sPath, $mSource = null, $bDebug = true) {
+  public function getFile($sPath, $mSource = null, $iDebug = null) {
 
     $aPath = $this->parsePath($sPath, $mSource);
 
-    $iDebug = 0;
-    if ($bDebug) $iDebug = fs\resource::DEBUG_LOG;
+    if (is_bool($iDebug)) {
+
+      $iDebug = $iDebug ? fs\resource::DEBUG_LOG : 0;
+    }
 
     return $this->getDirectory()->getDistantFile($aPath, $iDebug);
   }

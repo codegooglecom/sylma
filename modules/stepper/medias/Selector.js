@@ -33,7 +33,7 @@ sylma.stepper.Selector = new Class({
     this.activated = true;
 
     var mask = this.getMask();
-    mask.fade('in');
+    //this.show(mask);
     var overlay = this.overlay = new Element('div', {
       id : 'overlay',
     });
@@ -53,7 +53,7 @@ sylma.stepper.Selector = new Class({
     if (!result) {
 
       var result = this.getParent('main').selectorMask = new Element('div', {
-        'class' : 'selector-mask'
+        'class' : 'selector-mask sylma-hidder'
       });
 
       document.body.adopt(result);
@@ -88,7 +88,7 @@ sylma.stepper.Selector = new Class({
   stopCapture: function() {
 
     this.getParent('main').resumeRecord();
-    this.getWindow().removeEvents(this.events);
+    if (this.events) this.getWindow().removeEvents(this.events);
   },
 
   windowMove : function(e) {
@@ -100,21 +100,17 @@ sylma.stepper.Selector = new Class({
 
   },
 
-  toggleMask : function() {
+  toggleMask : function(val) {
 
     var mask = this.getMask();
+    var element = this.getElement();
 
-    if (!this.masked) {
+    if (val && element) {
 
-      this.selectElement(this.getElement());
-      mask.fade('in');
-    }
-    else {
-
-      mask.fade('out');
+      this.selectElement(element);
     }
 
-    this.masked = !this.masked;
+    this.toggleShow(mask, val);
   },
 
   selectElement : function(target) {
@@ -124,8 +120,8 @@ sylma.stepper.Selector = new Class({
     el.setPosition(target.getPosition());
     var size = target.getSize();
     el.setStyles({
-      width: size.x,
-      height: size.y
+      width: size.x + 2,
+      height: size.y + 2
     });
   },
 
@@ -137,7 +133,6 @@ sylma.stepper.Selector = new Class({
     this.updateElement(target);
 
     this.stopCapture();
-    this.getMask().fade('out');
 
     new Fx.Morph(this.overlay, {
       onComplete : function() {
@@ -242,7 +237,9 @@ sylma.stepper.Selector = new Class({
 
       if (!useID) {
 
-        if (el.id && !el.id.match(/^sylma/)) {
+        var id = el.get('id');
+
+        if (id && !id.match(/^sylma/) && id.indexOf('[') === -1) {
 
           result = '#' + el.id;
           useID = true;

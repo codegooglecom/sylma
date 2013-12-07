@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\stepper;
-use sylma\core, sylma\dom;
+use sylma\core, sylma\dom, sylma\storage\fs;
 
 class Browser extends core\module\Domed {
 
@@ -34,10 +34,16 @@ class Browser extends core\module\Domed {
 
     $aResult = array();
 
-    foreach ($this->getDirectory()->getFiles(array('tml')) as $file) {
+    $args = $this->createArgument(array(
+      'extensions' => array('tml'),
+    ));
+
+    $iBase = strlen((string) $this->getDirectory()) + 1;
+
+    foreach ($this->getDirectory()->browse($args, false) as $file) {
 
       $aResult['test'][] = array(
-        'file' => $file->getName(),
+        'file' => substr($file, $iBase),
       );
     }
 
@@ -47,13 +53,9 @@ class Browser extends core\module\Domed {
   public function load() {
 
     $file = $this->getDirectory()->getFile($this->read('file'));
-//    $aResult = array();
 
-//    if ($file = $this->getFile($sFile, false)) {
-
-      $test = $this->createOptions($file->getDocument(), false);
-      $aResult = $this->buildTest($test);
-//    }
+    $test = $this->createOptions($file->asDocument(array(), \Sylma::MODE_EXECUTE), false);
+    $aResult = $this->buildTest($test);
 
     return $aResult;
   }
@@ -111,9 +113,17 @@ class Browser extends core\module\Domed {
             $aStep['content'] = $step->read('content', false);
             break;
 
-          case 'captcha' :
+          case 'call' :
 
-            $aStep['element'] = $step->read('@element');
+            $aStep['path'] = $step->read('@path');
+
+            if ($var = $step->get('variable', false)) {
+
+              $aStep['variable'][] = array(
+                'name' => $var->read('@name'),
+              );
+            }
+
             break;
 
           case 'query' :
@@ -138,7 +148,7 @@ class Browser extends core\module\Domed {
 
     $aTest = json_decode($this->read('test'), true);
     $doc = $this->createArgument($aTest)->asDOM();
-    $file = $this->getDirectory()->createFile($this->read('file'));
+    $file = $this->getManager(self::FILE_MANAGER)->getFile($this->read('file'), $this->getDirectory(), fs\file::DEBUG_EXIST);
 
     $doc->saveFile($file, true);
 
@@ -168,7 +178,7 @@ class Browser extends core\module\Domed {
 
       return $new->format('Y-m-d H:i:s');
 
-    }, $file->read());
+    }, $file->execute());
 //$this->getDirectory()->createFile('temp')->saveText($sContent);
     $this->getManager(self::DB_MANAGER)->getConnection()->execute($sContent);
 

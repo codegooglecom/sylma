@@ -19,10 +19,16 @@ sylma.stepper.Snapshot = new Class({
 
     selector.activate(function(target) {
 
-      this.options.content = this.shot(target);
+      this.shot(target);
       callback();
 
     }.bind(this));
+  },
+
+  refresh : function() {
+
+    this.shot(this.getSelector().getElement());
+    this.hasError(false);
   },
 
   test : function(callback) {
@@ -32,10 +38,17 @@ sylma.stepper.Snapshot = new Class({
     var tree = JSON.decode(this.options.content);
     var el = this.getSelector().getElement();
 
-    var test = new sylma.stepper.Element(el, tree);
-    var result = test.compare();
+    if (el) {
 
-    this.hasError(!result);
+      var test = new sylma.stepper.Element(el, tree);
+      var result = test.compare();
+      
+      this.hasError(!result);
+    }
+    else {
+
+      this.hasError(true);
+    }
 
     callback();
   },
@@ -43,7 +56,7 @@ sylma.stepper.Snapshot = new Class({
   shot : function(el) {
 
     var element = new sylma.stepper.Element(el);
-    return element.toString();
+    this.options.content = element.toString();
   },
 
   addDifference : function(type, el, expected) {
