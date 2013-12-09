@@ -131,6 +131,7 @@ sylma.stepper.Watcher = new Class({
 
             window.clearTimeout(timeout2);
             window.clearInterval(interval2);
+            this.loadVariable();
 
             callback();
           }
@@ -146,6 +147,28 @@ sylma.stepper.Watcher = new Class({
 
   },
 
+  loadVariable: function() {
+
+    var variable = this.getVariable();
+
+    if (variable) {
+
+      var el = this.getElement();
+      var result;
+
+      if (this.getParent('main').isInput(el)) {
+
+        result = el.get('value');
+      }
+      else {
+
+        result = el.get('text');
+      }
+
+      variable.setValue(result);
+    }
+  },
+
   addDifference : function(msg) {
 
     this.hasError(true);
@@ -157,7 +180,8 @@ sylma.stepper.Watcher = new Class({
 
     return {watcher : {
       '@element' : this.getSelector(),
-      '#property' : this.getProperties()
+      '#property' : this.getProperties(),
+      0 : this.getVariable()
     }};
   }
 

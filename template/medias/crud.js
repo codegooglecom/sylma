@@ -643,6 +643,7 @@ sylma.crud.fieldset = {};
 
       var props = this.props;
       props.objects = {};
+      props.sylma.key = null;
 
       props.node = this.getNode().clone(true);
 

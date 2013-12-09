@@ -190,12 +190,7 @@
 
               var parent = this.getParent();
 
-              var self = {
-                name : parent.getObject('user1')[0],
-                index : parent.tmp[0]
-              };
-
-              sylma.tester.assertEquals(self.name, self.index);
+              sylma.tester.assertEquals(parent.getObject('user1')[0], this, 'self1');
 
               var second = {
                 before : parent.tmp[1]
@@ -203,16 +198,16 @@
 
               this.parent();
 
-              second = Object.append(second, {
+              Object.append(second, {
                 name : parent.getObject('user2')[0],
                 index : parent.tmp[0]
               });
 
-              sylma.tester.assertEquals(second.name, second.before);
-              sylma.tester.assertEquals(second.name, second.index);
+              sylma.tester.assertEquals(second.name, second.before, 'second before');
+              sylma.tester.assertEquals(second.name, second.index, 'second index');
 
-              sylma.tester.assertEquals(parent.tmp.length, 1);
-              sylma.tester.assertEquals(Object.getLength(parent.objects), 1);
+              sylma.tester.assertEquals(parent.tmp.length, 1, 'tmp1');
+              sylma.tester.assertEquals(Object.getLength(parent.objects), 1, 'object1');
 
               /* @todo dom compare */
               sylma.tester.assertEquals(parent.getNode().get('text'), 'admin@sylma.org');
@@ -238,12 +233,12 @@
                 index : parent.tmp[0]
               };
 
-              sylma.tester.assertEquals(self.name, self.index);
+              sylma.tester.assertEquals(self.name, self.index, 'self2');
 
               this.parent();
 
-              sylma.tester.assertEquals(parent.tmp, []);
-              sylma.tester.assertEquals(parent.objects.user, {});
+              sylma.tester.assertEquals(parent.tmp, [], 'tmp2');
+              sylma.tester.assertEquals(parent.objects.user, {}, 'user2');
 
               /* @todo dom compare */
               sylma.tester.assertEquals(parent.getNode().get('text'), 'admin@sylma.org');
@@ -266,16 +261,19 @@
       var user1 = test.add('user1', {
         email : 'root@sylma.org'
       });
+      var user1 = test.add('user1', {
+        email : 'webmaster@sylma.org'
+      });
 
       test.add('user2', {
         email : 'admin@sylma.org',
         _init : {
           onLoad : function() {
 
-            sylma.tester.assertEquals(test.tmp.length, 2);
+            sylma.tester.assertEquals(test.tmp.length, 0, 'callback tmp');
 
             /* @todo dom compare */
-            sylma.tester.assertEquals(test.getNode().get('text').replace(/\s*/g, ''), 'root@sylma.org.admin@sylma.org.');
+            sylma.tester.assertEquals(test.getNode().get('text').replace(/\s*/g, ''), 'root@sylma.org.webmaster@sylma.org.admin@sylma.org.');
 
             user1.remove();
           }

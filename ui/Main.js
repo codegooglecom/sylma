@@ -248,8 +248,19 @@ sylma.classes = {
     showMessage : function(msg) {
 
       var el = new Element('div', {html : msg, 'class' : 'sylma-message sylma-hidder'});
+      var id = 'sylma-messages';
+      var container = $(id);
 
-      this.addMessage(el, $('sylma-messages'));
+      if (!container) {
+
+        container = new Element('div', {
+          id : id
+        });
+
+        window.document.body.grab(container, 'top');
+      }
+
+      this.addMessage(el, container);
       window.getComputedStyle(el).opacity;
       el.addClass('sylma-visible');
 

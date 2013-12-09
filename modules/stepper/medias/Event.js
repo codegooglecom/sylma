@@ -53,6 +53,7 @@ sylma.stepper.Event = new Class({
       if (!this.isgo) {
 
         this.log('Run');
+        el.focus();
         el.click();
       }
 

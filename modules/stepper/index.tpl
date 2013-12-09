@@ -85,7 +85,11 @@
     <div js:class="sylma.stepper.Test" js:alias="test" class="test" js:parent-name="test">
       <tpl:apply mode="rename"/>
       <button class="edit">
-        <js:event name="click">this.blur(); %object%.toggleSelect();</js:event>
+        <js:event name="click">%object%.testFrom();</js:event>
+        <span>▷</span>
+      </button>
+      <button class="edit">
+        <js:event name="click">%object%.toggleSelect();</js:event>
         <span>▶</span>
       </button>
       <h4 js:node="name">
@@ -100,8 +104,8 @@
   <tpl:template match="test:page">
     <ul js:class="sylma.stepper.Page" js:alias="page" class="page" js:parent-name="page">
       <tpl:apply mode="delete"/>
-      <button js:class="sylma.ui.Template" js:alias="edit" js:autoload="x" class="edit">
-        <js:event name="click">this.blur(); %parent%.go(null, false, true);</js:event>
+      <button class="edit">
+        <js:event name="click">%object%.select(null, true);</js:event>
         <span>▶</span>
       </button>
       <tpl:apply mode="rename"/>
@@ -202,7 +206,12 @@
           <js:event name="click">%object%.addProperty();</js:event>
           <tpl:text>+</tpl:text>
         </button>
+        <button type="button">
+          <js:event name="click">%object%.addVariable();</js:event>
+          <tpl:text>$</tpl:text>
+        </button>
         <tpl:apply select="property"/>
+        <tpl:apply select="variable"/>
       </form>
     </li>
   </tpl:template>
@@ -213,6 +222,7 @@
         <js:event name="change">%object%.onChange()</js:event>
         <option>&lt;choose&gt;</option>
         <option>reload</option>
+        <option>children</option>
         <option>opacity</option>
         <option>height</option>
         <option>width</option>
@@ -253,7 +263,7 @@
         <input type="text" js:node="path" value="{@path}"/>
         <button type="button">
           <js:event name="click">%object%.addVariable();</js:event>
-          <tpl:text>+</tpl:text>
+          <tpl:text>$</tpl:text>
         </button>
         <tpl:apply select="variable"/>
       </form>

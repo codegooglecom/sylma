@@ -82,7 +82,7 @@ sylma.stepper.Test = new Class({
 
   getPages : function() {
 
-    return this.getObject('page', false);
+    return this.getObject('page', false) || [];
   },
 
   getPage : function() {
@@ -125,6 +125,8 @@ sylma.stepper.Test = new Class({
 
     var el = this.getNode('pages');
 
+    this.toggleActivation(val);
+
     if (this.toggleShow(el, val)) {
 
       if (!this.options.nofile) {
@@ -134,8 +136,13 @@ sylma.stepper.Test = new Class({
 
       this.go();
     }
+    else {
 
-    this.toggleActivation(val);
+      this.getPages().each(function(item) {
+
+        item.unselect();
+      });
+    }
   },
 
   go : function() {
@@ -171,6 +178,11 @@ sylma.stepper.Test = new Class({
       this.testItems(this.getPages(), 0, callback);
 
     }.bind(this));
+  },
+
+  testFrom: function() {
+
+    this.getParent('main').test(this.getKey());
   },
 
   save : function() {

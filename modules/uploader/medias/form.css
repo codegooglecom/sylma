@@ -57,7 +57,7 @@ div.sylma-uploader > span
 .field-file-extension-png
 {
   background-image: url(icones/image.png);
-  padding-left: 0.5em;
+  /*padding-left: 0.5em;*/
 }
 
 .field-file-extension-pdf

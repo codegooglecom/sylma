@@ -31,7 +31,16 @@ sylma.stepper.Input = new Class({
       val = this.getParent('main').getVariable(name);
     }
 
-    this.getElement().set('value', val);
+    var el = this.getElement();
+
+    if (!el) {
+
+      this.log('Element not found');
+    }
+    else {
+
+      el.set('value', val);
+    }
   },
 
   getInput: function() {

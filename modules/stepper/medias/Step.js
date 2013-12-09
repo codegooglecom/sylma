@@ -41,18 +41,6 @@ sylma.stepper.Step = new Class({
     return result;
   },
 
-  hasError : function(value) {
-
-    var node = this.getNode();
-
-    if (value !== undefined) {
-
-      node.toggleClass('error', value);
-    }
-
-    return node.hasClass('error');
-  },
-
   isPlayed : function(val) {
 
     var node = this.getNode();

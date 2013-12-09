@@ -185,7 +185,7 @@ class Controler extends core\module\Argumented {
     return $aResult;
   }
 
-  public function getFile($sPath, $mSource = null, $iDebug = null) {
+  public function getFile($sPath, $mSource = null, $iDebug = true) {
 
     $aPath = $this->parsePath($sPath, $mSource);
 

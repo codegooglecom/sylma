@@ -67,7 +67,7 @@ class Browser extends core\module\Domed {
     foreach ($test as $page) {
 
       $aPage = array(
-        'url' => $page->read('@url'),
+        'url' => $page->read('@url', false),
         //'element' => $page->read('element'),
       );
 
@@ -105,6 +105,8 @@ class Browser extends core\module\Domed {
               );
             }
 
+            $this->loadVariable($step, $aStep);
+
             break;
 
           case 'snapshot' :
@@ -116,14 +118,7 @@ class Browser extends core\module\Domed {
           case 'call' :
 
             $aStep['path'] = $step->read('@path');
-
-            if ($var = $step->get('variable', false)) {
-
-              $aStep['variable'][] = array(
-                'name' => $var->read('@name'),
-              );
-            }
-
+            $this->loadVariable($step, $aStep);
             break;
 
           case 'query' :
@@ -141,7 +136,17 @@ class Browser extends core\module\Domed {
       $aResult['page'][] = $aPage;
     }
 
-    return $aResult;
+    return array_filter($aResult);
+  }
+
+  protected function loadVariable(core\argument $step, array &$aStep) {
+
+    if ($var = $step->get('variable', false)) {
+
+      $aStep['variable'][] = array(
+        'name' => $var->read('@name'),
+      );
+    }
   }
 
   public function saveTest() {

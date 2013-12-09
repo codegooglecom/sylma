@@ -15,10 +15,17 @@ sylma.stepper.Call = new Class({
   submit : function(callback) {
 
     var result;
+    var path = this.getPath();
 
-    if (this.getPath()) {
+    if (this.hasError()) {
 
-      this.send(this.getPath(), {}, function(response) {
+      this.log('Cannot build call path');
+    }
+    else if (path) {
+
+      var route = this.parseArguments(this.getPath());
+
+      this.send(route.path, route.arguments, function(response) {
 
         this.options.value = response.content;
         this.loadVariable(this.options.value);
@@ -30,7 +37,7 @@ sylma.stepper.Call = new Class({
     else {
 
       this.hasError(true);
-      console.log('Cannot call without path');
+      this.log('Cannot call without path');
 
       callback && callback();
     }
@@ -39,6 +46,13 @@ sylma.stepper.Call = new Class({
   },
 
   getPath: function() {
+
+    var result = this.getValue();
+
+    return this.parseVariables(result);
+  },
+
+  getValue: function() {
 
     return this.getNode('path').get('value');
   },
@@ -63,7 +77,7 @@ sylma.stepper.Call = new Class({
   toJSON : function() {
 
     return {call : {
-      '@path' : this.getPath(),
+      '@path' : this.getValue(),
       0 : this.getVariable()
     }};
   },

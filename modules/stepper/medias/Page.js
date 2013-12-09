@@ -11,6 +11,14 @@ sylma.stepper.Page = new Class({
     all : 3
   },
 
+  onLoad : function() {
+
+    if (!this.options.url) {
+
+      this.updateName();
+    }
+  },
+
   addStep : function(callback) {
 
     this.resetSteps(this.mode.ready);
@@ -111,6 +119,8 @@ sylma.stepper.Page = new Class({
 
   test : function(callback, to, record) {
 
+    var current = this.getCurrent();
+
     this.go(function() {
 
       console.log('test page ' + this.options.url);
@@ -119,18 +129,17 @@ sylma.stepper.Page = new Class({
 
       if (to !== undefined) {
 
-        var current = this.getCurrent();
 //console.log('current,to', current, to);
         if (to <= current) {
 
           //this.resetSteps(this.mode.all);
 
-          this.go(function() {
+          //this.go(function() {
 
-            this.testNextItem(all.slice(0, to + 1), 0, callback);
+            this.testNextItem(all.slice(0, to + 1), 0, callback, record);
             this.setCurrent(to);
 
-          }.bind(this), true);
+          //}.bind(this), true);
         }
         else {
 
@@ -156,7 +165,7 @@ sylma.stepper.Page = new Class({
         this.testNextItem(all, 0, callback);
       }
 
-    }.bind(this));
+    }.bind(this), to <= current);
   },
 
   selectStep : function(step) {
@@ -179,27 +188,35 @@ sylma.stepper.Page = new Class({
 
   go : function(callback, reload, reset) {
 
+    var location = this.getWindow().location;
+
     this.getParent('test').goPage(this);
-    var current = this.getWindow().location.pathname;
-    var url = this.get('url');
+
+    var current = location.pathname + location.search;
+    var url = this.getUrl();
+//console.log('mypath', current, this.getWindow().location);
     var diff = current !== url;
 
-    if (reload || diff) {
+    if ((url || reload) && !this.hasError() && (reload || diff)) {
 
       this.resetSteps(this.mode.all);
       this.setCurrent(-1);
-
-      this.getWindow().location.href = url;
+//console.log(url, this.hasError(), reload, diff);
+      location.href = url || location.href;
       this.getParent('main').pauseRecord();
 
       this.getParent('main').preparePage(function() {
 
-        this.getParent('main').resumeRecord();
-        this.select(callback, reset);
+        this.select(function() {
+
+          callback && callback();
+          this.getParent('main').resumeRecord();
+
+        }.bind(this), reset);
 
       }.bind(this));
 
-      if (reload && !diff) {
+      if (reload && !diff || !url) {
 
         this.getWindow().location.reload();
       }
@@ -238,24 +255,47 @@ sylma.stepper.Page = new Class({
     }
   },
 
+  getUrl : function() {
+
+    return this.parseVariables(this.get('url'), function(val, vars) {
+
+      if (vars) {
+
+        this.getNode('name').set('href', val);
+      }
+      else if (!val) {
+
+        this.getNode('name').set('href', this.getWindow().location.href);
+      }
+
+    }.bind(this));
+  },
+
   editName : function(update) {
 
     update = update === undefined ? true : false;
 
     var result = window.prompt('Please choose a page path', this.options.url || '');
 
-    if (result) {
+    if (result !== null) {
 
       this.options.url = result;
 
       if (update) {
 
-        this.getNode('name').set({
-          html : result,
-          href : result
-        });
+        this.updateName();
       }
     }
+  },
+
+  updateName: function() {
+
+    var result = this.options.url;
+
+    this.getNode('name').set({
+      html : result ? result : '[any]',
+      href : result ? result : '#'
+    });
   },
 
   select : function(callback, reset) {

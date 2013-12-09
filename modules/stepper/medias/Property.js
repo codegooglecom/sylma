@@ -23,17 +23,46 @@ sylma.stepper.Property = new Class({
   onChange : function() {
 
     var el = this.getParent().getSelector().getElement();
-    var style = this.getSelect().getSelected().get('value')[0];
+    var key = this.getSelect().getSelected().get('value')[0];
+    var result;
 
-    this.options.name = style;
-    this.options.value = el.getStyle(style).toInt();
+    switch (key) {
+
+      case 'children' :
+
+        result = el.getChildren().length;
+
+        break;
+
+      default :
+
+        result = el.getStyle(key).toInt();
+    }
+
+    this.options.name = key;
+    this.options.value = result;
 
     this.updateValue();
   },
 
   test : function(el) {
 
-    return el.getComputedStyle(this.options.name).toInt() === this.options.value.toInt();
+    var value = this.options.value.toInt();
+    var result;
+
+    switch (this.options.name) {
+
+      case 'children' :
+
+        result = el.getChildren().length === value;
+        break;
+
+      default :
+
+        result = el.getComputedStyle(this.options.name).toInt() === value;
+    }
+
+    return result;
   },
 
   updateValue : function() {

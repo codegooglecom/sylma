@@ -15,6 +15,7 @@ sylma.stepper.Main = new Class({
   },
 
   recording : false,
+  pauses : 0,
   events : {},
   variables : {},
 
@@ -186,16 +187,46 @@ sylma.stepper.Main = new Class({
     if (force || !this.recording) {
 
       this.recording = true;
-      this.resumeRecord();
-      this.getTest().record();
+      this.getTest().record(function() {
+
+        this.stopCapture();
+        this.startCapture();
+
+      }.bind(this));
     }
     else {
 
-      //this.getFrame().removeEvents();
-      //this.getWindow().removeEvents();
-      this.pauseRecord();
+      this.stopCapture();
       this.recording = false;
     }
+
+    this.toggleRecord(this.recording);
+  },
+
+  pauseRecord: function() {
+//console.log('pause', this.pauses);
+    if (this.recording && !this.pauses) {
+
+      this.stopCapture();
+    }
+
+    this.pauses++;
+  },
+
+  resumeRecord: function() {
+//console.log('resume', this.pauses);
+    this.pauses--;
+
+    if (this.recording && !this.pauses) {
+
+      this.stopCapture();
+      this.startCapture();
+    }
+  },
+
+  toggleRecord: function(val) {
+
+    this.getNode().toggleClass('record', val);
   },
 
   startCapture: function() {
@@ -262,31 +293,6 @@ sylma.stepper.Main = new Class({
     if (events.window) this.getWindow().removeEvents(events.window);
   },
 
-  pauseRecord: function() {
-
-    if (this.recording) {
-
-      this.stopCapture();
-      this.toggleRecord(false);
-    }
-  },
-
-  resumeRecord: function() {
-
-    if (this.recording) {
-
-      this.stopCapture();
-      this.startCapture();
-
-      this.toggleRecord(true);
-    }
-  },
-
-  toggleRecord: function(val) {
-
-    this.getNode().toggleClass('record', val);
-  },
-
   loadTest : function(file, callback) {
 
     this.send(this.get('load'), {
@@ -307,7 +313,7 @@ sylma.stepper.Main = new Class({
     }
     else {
       // all
-      tests = this.getTests();
+      tests = this.getTests().slice(key);
     }
 
     this.testItems(tests, 0, function() {
