@@ -238,7 +238,7 @@ class Initializer extends module\Domed {
     return $this->create('action', array($file, $aArguments));
   }
 
-  protected function prepareScript(fs\file $file, core\argument $args, core\argument $post, core\argument $contexts = null) {
+  protected function prepareScript(fs\file $file, core\argument $post, core\argument $args, core\argument $contexts = null) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
