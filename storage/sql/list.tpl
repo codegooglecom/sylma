@@ -121,7 +121,7 @@
   </view:template>
 
   <tpl:template match="*" mode="row/init">
-    <js:option name="url">
+    <js:option name="url" cast="x">
       <le:path/>/update?id=<tpl:read select="id"/>
     </js:option>
   </tpl:template>

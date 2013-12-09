@@ -66,6 +66,8 @@ class Connection extends core\module\Argumented {
 
   public function query($sQuery, $bDebug = true, $iFormat = \PDO::FETCH_ASSOC) {
 
+    $result = null;
+
     try {
 
       $result = $this->getDatabase()->query($sQuery);

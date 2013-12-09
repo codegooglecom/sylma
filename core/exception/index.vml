@@ -24,7 +24,7 @@
     <le:context name="title">Exception</le:context>
 
     <tpl:template match="*" mode="row/init">
-      <js:option name="url">
+      <js:option name="url" cast="x">
         <le:path/>/view?id=<tpl:read select="id"/>
       </js:option>
     </tpl:template>
