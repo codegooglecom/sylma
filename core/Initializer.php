@@ -217,7 +217,9 @@ class Initializer extends module\Domed {
 
      if ($file->getExtension() !== 'vml') {
 
-       $this->launchException('Can execute only view');
+       $this->send404();
+       $file = $this->getFile($this->getErrorPath());
+       //$this->launchException('Can execute only view');
      }
 
      $sResult = (string) $this->prepareScript($file, $this->loadPOST(true), $path->getArguments());
@@ -307,8 +309,9 @@ class Initializer extends module\Domed {
 
     if (!$file->checkRights(\Sylma::MODE_EXECUTE)) {
 
-      $file = $this->getFile($this->read('window/error/window'));
-      $aPaths = array($this->read('window/error/action'));
+      $this->send404();
+      $file = $this->getErrorWindow();
+      $aPaths = array($this->getErrorPath());
     }
 
     $args = $path->getArguments();
@@ -320,6 +323,21 @@ class Initializer extends module\Domed {
       'arguments' => $args,
       //'post' => $this->loadPost(true),
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'));
+  }
+
+  protected function getErrorWindow() {
+
+    return $this->getFile($this->read('window/error/window'));
+  }
+
+  protected function getErrorPath() {
+
+    return $this->read('window/error/action');
+  }
+
+  public function send404() {
+
+    header('HTTP/1.0 404 Not Found');
   }
 
   protected function buildWindowStack(core\argument $arg, $sPath) {

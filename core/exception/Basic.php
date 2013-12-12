@@ -359,6 +359,7 @@ class Basic extends \Exception implements core\exception {
 
         $this->mail($aResult);
       }
+
     }
     catch (core\exception $e) {
 
@@ -381,7 +382,9 @@ class Basic extends \Exception implements core\exception {
         'backtrace' => $aContent['trace'],
         'session' => $this->dump($_SESSION),
         'request' => $this->dump($_REQUEST),
+        'files' => $this->dump($_FILES),
         'server' => $this->dump($_SERVER),
+        //'browser' => $this->dump(get_browser(null, true)),
       )),
       //'contexts' => array('messages' => $parser->getContext('messages')),
     ), false);

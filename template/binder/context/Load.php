@@ -32,7 +32,7 @@ class Load extends core\argument\Readable implements core\stringable {
 
       $sCalls = join(";\n", $aValues);
       $sResult = "window.addEvent && window.addEvent('domready', function() { $sCalls })";
-      $sResult.= " && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });";
+      $sResult.= " && typeof sylma != 'undefined' && window.addEvent('load', function() { sylma.ui.onWindowLoad(); });";
     }
 
     return $sResult;

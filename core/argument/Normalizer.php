@@ -40,6 +40,14 @@ abstract class Normalizer extends Basic {
       if ($iMode & self::NORMALIZE_ARGUMENT) $mResult = $this->normalizeArgument($val, $iMode);
       else $mResult = $val;
     }
+    else if ($val instanceof core\stringable) {
+
+      $mResult = $val->asString();
+    }
+    else if ($val instanceof core\arrayable) {
+
+      $mResult = $val->asArray();
+    }
     else {
 
       $mResult = $this->normalizeObjectUnknown($val, $iMode);

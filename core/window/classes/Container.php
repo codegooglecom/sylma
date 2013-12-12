@@ -73,6 +73,10 @@ class Container extends core\module\Domed {
     $user = $this->getManager('user');
     $init = $this->getManager('init');
 
+    $js = $this->getContexts()->get('js');
+    $js->add($this->getFile('/#sylma/ui/mootools.js'));
+    $js->add($this->getFile('/#sylma/ui/Main.js'));
+
     $aBuilded = $parser->aBuilded;
     $aLoaded = $parser::$aLoaded;
 
@@ -125,25 +129,32 @@ class Container extends core\module\Domed {
     return $this->buildWindowScript($this->getPaths());
   }
 
+  protected function send404() {
+
+    $this->getManager('init')->send404();
+  }
+
   protected function buildWindowScript(array $aPaths) {
 
     $args = $this->getArguments();
     $post = $this->getPost();
 
-    try {
+    if (!$file = $this->getFile(current($aPaths), false)) {
 
-      $content = $this->prepareMain($this->getFile(current($aPaths)), $args, $post);
-    }
-    catch (core\exception $e) {
-
-      $e->save(false);
-
-      if (!\Sylma::isAdmin()) {
-
-        header('HTTP/1.0 404 Not Found');
-      }
-
+      $this->send404();
       $content = $this->getError();
+    }
+    else {
+
+      try {
+
+        $content = $this->prepareMain($file, $args, $post);
+      }
+      catch (core\exception $e) {
+
+        $e->save(false);
+        $content = $this->getError();
+      }
     }
 
     while (next($aPaths)) {

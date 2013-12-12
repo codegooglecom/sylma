@@ -19,7 +19,7 @@ namespaces :
 render :
   gzip : true
 exception :
-  show : true
+  show : false
   send : false
   mail :
     enable : false

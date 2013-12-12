@@ -71,9 +71,15 @@ class Validate extends core\module\Domed implements core\stringable {
 
   public function validate() {
 
-    $this->load();
+    $bResult = false;
 
-    return !$this->read('error', false);
+    if (array_key_exists('files', $_FILES)) {
+
+      $this->load($_FILES['files']);
+      $bResult = !$this->read('error', false);
+    }
+
+    return $bResult;
   }
 
   public function read($sPath, $bDebug = true) {

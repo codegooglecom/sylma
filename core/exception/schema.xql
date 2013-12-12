@@ -15,7 +15,8 @@
     <field name="session" type="sql:string-long"/>
     <field name="request" type="sql:string-long"/>
     <field name="server" type="sql:string-long"/>
-    <field name="archive" type="sql:boolean"/>
+    <field name="files" type="sql:string-long"/>
+    <field name="archive" type="sql:boolean" default="null"/>
     <field name="insert" type="sql:datetime"/>
   </table>
 
