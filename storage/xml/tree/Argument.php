@@ -3,7 +3,7 @@
 namespace sylma\storage\xml\tree;
 use sylma\core, sylma\dom;
 
-class Argument extends Callable {
+class Argument extends _Callable {
 
   protected $handler;
   protected $options;
