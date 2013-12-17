@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\tester;
-use \sylma\core, \sylma\dom, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs;
 
 abstract class Prepare extends Basic {
 
@@ -92,6 +92,12 @@ abstract class Prepare extends Basic {
     $arg = $this->createArgument(static::DB_ARGUMENTS);
     $db = $this->getManager(static::DB_MANAGER)->getConnection(static::DB_CONNECTION);
 
-    $db->query($arg->read('script'), false);
+    try {
+
+      $db->query($arg->read('script'), false);
+    }
+    catch (core\exception $e) {
+
+    }
   }
 }

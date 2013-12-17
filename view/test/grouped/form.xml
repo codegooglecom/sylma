@@ -662,7 +662,7 @@
       $manager->setArgument('id', $sID);
 
       $user = $manager->runQuery("SELECT id_group FROM user_group WHERE id_user = $sID", 4);
-      $manager->runQuery("DELETE FROM user WHERE id = $sID");
+      $manager->runQuery("DELETE FROM user WHERE id = $sID", 2);
 
       $manager->assertEqual($user->asArray(), array('2', '3'));
 

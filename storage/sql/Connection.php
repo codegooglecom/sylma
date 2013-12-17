@@ -84,7 +84,7 @@ class Connection extends core\module\Argumented {
     }
     catch (\PDOException $e) {
 
-      \Sylma::loadException($e);
+      throw \Sylma::loadException($e);
     }
 
     $this->logQuery($sQuery);

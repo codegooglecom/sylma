@@ -12,6 +12,8 @@ class Controler extends core\module\Domed {
   const NS = 'http://www.sylma.org/dom';
   const SETTINGS = 'settings.xml.php';
 
+  const FILE_MANAGER = 'fs/free';
+
   protected $aDefaultClasses = array();
 
   protected $aClasses = array(

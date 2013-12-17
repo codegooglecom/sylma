@@ -42,21 +42,9 @@ sylma.ui.tab.Main = new Class({
   parseMessage : function(msg) {
 
     var alias = msg.arguments.alias;
-    var sub;
+    var path = this.parseMessageAlias(alias);
 
-    if (alias.indexOf('[') !== -1) {
-
-      var match = alias.match(/(.+)\[(\d+)\](.+)/);
-
-      sub = {
-        alias : match[3],
-        key : match[2]
-      };
-
-      alias = match[1];
-    }
-
-    return this.highlightTab(alias, sub);
+    return this.highlightTab(path.alias, path.sub);
   },
 
   highlightTab : function(alias, sub) {

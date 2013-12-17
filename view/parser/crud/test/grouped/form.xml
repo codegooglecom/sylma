@@ -33,15 +33,15 @@
         <crud:global user:ns="ns">
           <sql:resource/>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <form>
               <stp:apply select="name, email"/>
             </form>
-          </view:template>
-          <view:template match="user:*">
+          </tpl:template>
+          <tpl:template match="user:*">
             <tpl:register/>
             <input type="text" name="{alias()}" value="{apply()}"/>
-          </view:template>
+          </tpl:template>
         </crud:global>
       </crud:crud>
     </tst:document>
@@ -99,15 +99,15 @@
         <crud:global user:ns="ns">
           <sql:resource/>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <form>
               <stp:apply select="name, email"/>
             </form>
-          </view:template>
-          <view:template match="user:*">
+          </tpl:template>
+          <tpl:template match="user:*">
             <tpl:register/>
             <input type="text" name="{alias()}" value="{apply()}"/>
-          </view:template>
+          </tpl:template>
         </crud:global>
       </crud:crud>
     </tst:document>
@@ -146,6 +146,257 @@
         $manager->compareNodes($view, $node) &amp;&amp;
         $user->read('name') === 'tester_crud2' &amp;&amp;
         $user->read('email') === 'tester_crud2@sylma.org';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Reference insert">
+    <tst:document>
+      <crud:crud>
+
+        <crud:route name="insert">
+
+          <view:view mode="hollow">
+
+            <sql:token>
+              <crud:path/>
+              <tpl:text>/do</tpl:text>
+            </sql:token>
+
+            <tpl:template match="sql:table" mode="static">
+              <block>
+                <tpl:apply select="name,email"/>
+              </block>
+            </tpl:template>
+
+            <tpl:template match="sql:table" mode="ref"/>
+
+          </view:view>
+
+          <view:view name="do" mode="insert">
+
+            <tpl:template match="sql:table" mode="static"/>
+
+            <tpl:template match="sql:table" mode="ref">
+              <tpl:apply select="name,email"/>
+            </tpl:template>
+
+          </view:view>
+
+        </crud:route>
+
+        <crud:global user:ns="ns" sql:ns="ns">
+
+          <sql:resource/>
+          <view:schema>/#sylma/view/test/grouped/samples/group2.xql</view:schema>
+
+          <tpl:template>
+            <form>
+              <tpl:apply select="name,users"/>
+            </form>
+          </tpl:template>
+          <tpl:template match="sql:reference" sql:ns="ns">
+            <fieldset>
+              <tpl:apply select="static()" mode="static"/>
+              <tpl:apply select="ref()" mode="ref"/>
+            </fieldset>
+          </tpl:template>
+          <tpl:template match="*">
+            <input name="{alias('form')}"/>
+            <tpl:register/>
+          </tpl:template>
+
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <input name="name"/>
+        <fieldset>
+          <block>
+            <input name="users[][name]"/>
+            <input name="users[][email]"/>
+          </block>
+        </fieldset>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $view = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'insert',
+        )),
+      ));
+      $node = $manager->getArgument('node');
+
+      $aUsers = array(
+        array(
+          'name' => 'test_ref1',
+          'email' => 'test_ref1@sylma.org',
+        ),
+        array(
+          'name' => 'test_ref2',
+          'email' => 'test_ref2@sylma.org',
+        ),
+      );
+
+      $sID = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'insert', 'do'
+        )),
+        'post' => $manager->createArgument(array(
+          'name' => 'group_crud',
+          'users' => $aUsers,
+        )),
+      ));
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $group = $manager->runQuery("SELECT name FROM `group` WHERE id = $sID", false);
+      $users = $manager->runQuery("SELECT name,email FROM user2 WHERE `group_id` = $sID", true);
+      $manager->set('idref', $sID);
+
+      $manager->compareNodes($view, $node);
+
+      $manager->assertEquals($group->read('name'), 'group_crud');
+      $manager->assertEquals($users->query(), $aUsers);
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Reference update">
+    <tst:document>
+      <crud:crud>
+
+        <crud:route name="update">
+
+          <view:view mode="view">
+
+            <sql:filter name="id">
+              <le:get-argument name="id"/>
+            </sql:filter>
+
+            <sql:token>
+              <crud:path/>
+              <tpl:text>/do</tpl:text>
+            </sql:token>
+
+            <tpl:template match="sql:table" mode="static"/>
+
+            <tpl:template match="sql:table" mode="ref">
+              <tpl:apply/>
+            </tpl:template>
+
+            <tpl:template match="sql:table">
+              <block>
+                <tpl:apply select="name,email"/>
+              </block>
+            </tpl:template>
+
+          </view:view>
+
+          <view:view name="do" mode="update">
+
+            <sql:filter name="id"><le:get-argument name="id" source="post"/></sql:filter>
+            <tpl:template match="sql:table" mode="static"/>
+
+          </view:view>
+
+        </crud:route>
+
+        <crud:global user:ns="ns">
+
+          <sql:resource/>
+          <view:schema>/#sylma/view/test/grouped/samples/group2.xql</view:schema>
+
+          <tpl:template>
+            <form>
+              <tpl:apply select="name,users"/>
+            </form>
+          </tpl:template>
+          <tpl:template match="sql:reference" sql:ns="ns">
+            <fieldset>
+              <tpl:apply select="static()" mode="static"/>
+              <div>
+                <tpl:apply select="ref()" mode="ref"/>
+              </div>
+            </fieldset>
+          </tpl:template>
+          <tpl:template match="*">
+            <input name="{alias('form')}" value="{value()}"/>
+            <tpl:register/>
+          </tpl:template>
+
+          <tpl:template match="sql:table" mode="ref">
+            <tpl:apply select="name,email"/>
+          </tpl:template>
+
+        </crud:global>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <form>
+        <input name="name" value="group_crud"/>
+        <fieldset>
+          <div>
+            <block>
+              <input name="users[0][name]" value="test_ref1"/>
+              <input name="users[0][email]" value="test_ref1@sylma.org"/>
+            </block>
+            <block>
+              <input name="users[1][name]" value="test_ref2"/>
+              <input name="users[1][email]" value="test_ref2@sylma.org"/>
+            </block>
+          </div>
+        </fieldset>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $sID = $manager->read('idref');
+
+      $view = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update',
+          'id' => $sID,
+        )),
+      ));
+
+      $node = $manager->getArgument('node');
+
+      $aUsers = array(
+        array(
+          'name' => 'test_ref1b',
+          'email' => 'test_ref1b@sylma.org',
+        ),
+        array(
+          'name' => 'test_ref2b',
+          'email' => 'test_ref2b@sylma.org',
+        ),
+      );
+
+      $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'update', 'do'
+        )),
+        'post' => $manager->createArgument(array(
+          'id' => $sID,
+          'name' => 'group_crud_new',
+          'users' => $aUsers,
+        )),
+      ));
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $group = $manager->runQuery("SELECT name FROM `group` WHERE id = $sID", false);
+      $users = $manager->runQuery("SELECT name,email FROM user2 WHERE `group_id` = $sID", true);
+
+      $manager->compareNodes($view, $node);
+
+      $manager->assertEquals($group->read('name'), 'group_crud_new');
+      $manager->assertEquals($users->query(), $aUsers);
+
+      return true;
+
     </tst:expected>
   </tst:test>
 </tst:tests>

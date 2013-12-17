@@ -183,7 +183,7 @@ class Directory extends Resource implements fs\directory {
         }
       }
     }
-    
+
     return $this->getControler()->createArgument($bInsertRoot ? array('browse' => $aResult) : $aResult);
   }
 

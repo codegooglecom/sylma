@@ -127,7 +127,7 @@
     </tst:node>
     <tst:expected>
 
-      $sID = $manager->read('id');
+      $sID = $manager->read('id'); // TODO : depends on previous? insert
       $node = $manager->getArgument('node');
 
       $view1 = $manager->loadScript();

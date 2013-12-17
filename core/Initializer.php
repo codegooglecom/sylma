@@ -74,6 +74,7 @@ class Initializer extends module\Domed {
     $fs = new fs\Controler(\Sylma::ROOT, false, false, false);
     $fs->loadDirectory();
     \Sylma::setManager('fs', $fs);
+    \Sylma::setManager('fs/free', $fs);
 
     // load user
     $user = \Sylma::getManager('user');
@@ -346,10 +347,15 @@ class Initializer extends module\Domed {
 
     do {
 
-      $content = $this->lookupRoute($arg, $sPath);
-      $aResult[] = $content->read('action');
+      if ($content = $this->lookupRoute($arg, $sPath)) {
 
-      $arg = $content->get('sub', false);
+        $aResult[] = $content->read('action');
+        $arg = $content->get('sub', false);
+      }
+      else {
+
+        $arg = null;
+      }
 
     } while ($arg);
 
@@ -365,19 +371,22 @@ class Initializer extends module\Domed {
 
     foreach ($args as $alt) {
 
-      $sPattern = $alt->read('pattern', false);
+      if (is_object($alt)) {
 
-      if (!$sPattern || preg_match($sPattern, $sCurrent)) {
+        $sPattern = $alt->read('pattern', false);
 
-        $result = $alt;
+        if (!$sPattern || preg_match($sPattern, $sCurrent)) {
+
+          $result = $alt;
+        }
       }
     }
-
+/*
     if (!$result) {
 
       $this->launchException('No route found', get_defined_vars());
     }
-
+*/
     return $result;
   }
 

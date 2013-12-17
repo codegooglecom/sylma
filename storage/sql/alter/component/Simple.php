@@ -46,6 +46,10 @@ class Simple extends schema\component\SimpleType {
 
       $sValue = "TINYINT(1)";
     }
+    else if ($this->doExtends($this->getParser()->getType('float', $this->getNamespace('xs')))) {
+
+      $sValue = "FLOAT";
+    }
     else if ($this->doExtends ($this->getParser ()->getType('id', $this->getNamespace ('sql')))) {
 
       $sValue = 'BIGINT UNSIGNED';

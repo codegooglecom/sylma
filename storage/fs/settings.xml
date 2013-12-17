@@ -9,7 +9,7 @@
 >
   <rights>
     <owner>root</owner>
-    <group>0</group>
+    <group>admin</group>
     <mode>711</mode>
     <user-mode></user-mode>
   </rights>

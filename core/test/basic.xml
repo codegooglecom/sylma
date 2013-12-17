@@ -498,4 +498,33 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Window container not patterned">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config04.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript"> </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
 </tst:tests>

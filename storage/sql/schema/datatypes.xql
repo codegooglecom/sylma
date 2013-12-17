@@ -21,6 +21,13 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="float" reflector="\sylma\schema\cached\form\_Float">
+    <xs:restriction base="xs:float">
+      <xs:fractionDigits value="6"/>
+      <xs:totalDigits value="6"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="boolean" type="xs:boolean"/>
 
   <xs:simpleType name="string" reflector-static="\sylma\schema\cached\view\_String">

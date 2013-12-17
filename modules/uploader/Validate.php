@@ -23,9 +23,8 @@ class Validate extends core\module\Domed implements core\stringable {
     $msg->add(array('content' => $sMessage));
   }
 
-  protected function load() {
+  protected function load(array $aFile) {
 
-    $aFile = $_FILES['files'];
     $this->setSettings($aFile);
 
     preg_match('/\.(\w+)$/', $this->read('name'), $aMatch);
@@ -59,8 +58,6 @@ class Validate extends core\module\Domed implements core\stringable {
         $this->set('error', true);
         $this->addMessage("An error occured when adding <em>{$this->read('name')}</em>");
       }
-
-
     }
   }
 
@@ -69,14 +66,18 @@ class Validate extends core\module\Domed implements core\stringable {
     return $file->move($this->getDirectory(), $sName);
   }
 
-  public function validate() {
+  public function validate($sAlias) {
 
     $bResult = false;
 
-    if (array_key_exists('files', $_FILES)) {
+    if (array_key_exists($sAlias, $_FILES)) {
 
-      $this->load($_FILES['files']);
+      $this->load($_FILES[$sAlias]);
       $bResult = !$this->read('error', false);
+    }
+    else {
+
+      $this->throwException('No file received');
     }
 
     return $bResult;

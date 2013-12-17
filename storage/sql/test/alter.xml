@@ -48,7 +48,7 @@
     <tst:expected>
 
       $tests = $manager->runQuery('SELECT * FROM test1', 0);
-      $manager->runQuery('DROP TABLE test1');
+      $manager->runQuery('DROP TABLE test1', 2);
 
       $manager->assertEqual($tests->asArray(), array(
         'id' => '1',
@@ -57,7 +57,7 @@
       ));
 
       return true;
-      
+
     </tst:expected>
   </tst:test>
 </tst:tests>

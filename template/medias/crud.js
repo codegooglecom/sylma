@@ -124,6 +124,8 @@ sylma.crud.Form = new Class({
 
   parseMessages : function(response) {
 
+    var msg;
+
     if (response.messages) {
 
       for (var i in response.messages) {
@@ -142,7 +144,41 @@ sylma.crud.Form = new Class({
 
   parseMessage : function(msg) {
 
-    this.getObject(msg.arguments.alias).highlight();
+    var alias = msg.arguments.alias;
+    var path = this.parseMessageAlias(alias);
+
+    if (path.sub) {
+
+      this.getObject(path.alias).highlight(path.sub);
+    }
+    else {
+
+      this.getObject(alias).highlight();
+    }
+
+    sylma.ui.showMessage(msg.content);
+  },
+
+  parseMessageAlias: function(alias) {
+
+    var sub;
+
+    if (alias.indexOf('[') !== -1) {
+
+      var match = alias.match(/(.+)\[(\d+)\](.+)/);
+
+      sub = {
+        alias : match[3],
+        key : match[2]
+      };
+
+      alias = match[1];
+    }
+
+    return {
+      alias : alias,
+      sub : sub
+    };
   },
 
   submitReturn : function(response, args) {
@@ -732,7 +768,8 @@ sylma.crud.fieldset = {};
       }
       else {
 
-
+        sylma.ui.showMessage('No valid response');
+        //throw new Error('No valid response');
       }
 
       this.getInput().set('value');

@@ -58,7 +58,12 @@ class Tree extends xml\tree\Argument {
 
     switch ($sName) {
 
-      case 'validate' : $result = $this->getReflector()->call('validate'); break;
+      case 'validate' :
+
+        $aFunctionArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
+        $result = $this->getReflector()->call('validate', $aFunctionArguments);
+        
+        break;
       case 'max-size' : $result = ini_get('upload_max_filesize'); break;
       case 'extensions' : $result = implode(', ', $this->getExtensions()); break;
       case 'directory' : $result = $this->reflectDirectory($aArguments); break;

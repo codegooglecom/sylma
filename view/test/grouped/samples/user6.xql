@@ -10,6 +10,7 @@
   <table name="user2" connection="test">
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
+    <field name="email" type="sql:string-short"/>
     <field name="date-update" type="sql:datetime"/>
     <foreign occurs="0..1" name="group_id" table="group:group" import="group2.xql"/>
   </table>

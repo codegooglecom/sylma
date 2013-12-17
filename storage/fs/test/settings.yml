@@ -1,0 +1,41 @@
+rights:
+  owner: root
+  group: 0
+  mode: 711
+  user-mode:
+browse :
+  excluded : [.svn]
+  depth : 1
+  extensions : []
+  only-path : true
+tokens :
+  sylma :
+    path : sylma
+  tmp :
+    path : .sylma-tmp
+    propagate : true
+  trash :
+    path : trash
+classes :
+  §sylma-classbase : \sylma\storage\fs
+  controler :
+    name : Controler
+  file :
+    name : basic\File
+    classes :
+      document :
+        name : \sylma\dom\basic\handler\Rooted
+      editable :
+        name : basic\editable\File
+  directory :
+    name : basic\tokened\Directory
+    classes :
+      editable :
+        name : basic\editable\Directory
+  security :
+    name : basic\security\Manager
+    classes :
+      document :
+        name : \sylma\dom\basic\handler\Rooted
+system :
+  rights : 0770

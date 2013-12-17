@@ -50,6 +50,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     $this->loadBaseTypes(array(
       'string' => self::NS,
       'integer' => self::NS,
+      'float' => self::NS,
       'boolean' => self::NS,
     ));
 
@@ -232,7 +233,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     foreach ($doc->getChildren() as $child) {
 
       if ($child->getType() !== $child::COMMENT) {
-        
+
         $sName = $this->addSchemaChild($child, $sNamespace);
         if (!$sResult && $sName) $sResult = $sName;
       }

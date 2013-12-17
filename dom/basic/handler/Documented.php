@@ -31,9 +31,12 @@ abstract class Documented extends Container {
 
         $mResult = $this->setArray($mValue);
       }
-      else if (is_string($mValue) && $mValue) {
+      else if (is_string($mValue)) {
 
-        $mResult = $this->startString($mValue);
+        if (trim($mValue)) {
+
+          $mResult = $this->startString($mValue);
+        }
       }
     }
     else if (func_num_args() > 1) {

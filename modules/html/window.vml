@@ -76,8 +76,6 @@
 
     <tpl:apply mode="body/top"/>
 
-    <a id="user-login" ls:mode="710" ls:group="famous" ls:owner="root" href="/sylma/modules/users/login">login</a>
-
     <div id="body">
       <div id="messages"/>
       <tpl:apply mode="body/action"/>
@@ -85,9 +83,14 @@
 
   </tpl:template>
 
+  <tpl:template mode="login">
+    <a id="user-login" ls:mode="710" ls:group="famous" ls:owner="root" href="/sylma/modules/users/login">login</a>
+  </tpl:template>
+
   <tpl:template mode="body/top">
 
     <le:script path="menus"/>
+    <tpl:apply mode="login"/>
 
   </tpl:template>
 
