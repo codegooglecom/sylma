@@ -35,6 +35,31 @@
       return node.get('text') === 'world';
     </tst:expected>
   </tst:test>
+  <tst:test name="Multiple root objects">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <div js:class="sylma.ui.Base" class="first">hello</div>
+            <div js:class="sylma.ui.Base" class="second">world</div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var first = $$('.first').pick().retrieve('sylma-object');
+      var second = $$('.second').pick().retrieve('sylma-object');
+
+      sylma.tester.assertEquals(first.getNode().get('text'), 'hello');
+      sylma.tester.assertEquals(second.getNode().get('text'), 'world');
+
+      return true;
+    </tst:expected>
+  </tst:test>
   <tst:test name="Base object with @id">
     <tst:document>
       <view:view>

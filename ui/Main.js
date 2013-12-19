@@ -43,7 +43,7 @@ sylma.classes = {
 
       if (parent && objects) {
 
-        var length = objects.length;
+        var length = Object.getLength(objects);
 
         if (length > 1) {
 

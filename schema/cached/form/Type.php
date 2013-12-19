@@ -154,25 +154,33 @@ abstract class Type extends core\module\Domed {
     }
     else {
 
-      $sMode = $this->getMode();
+      $sResult = $this->escapeEmpty();
+    }
 
-      switch ($sMode) {
+    return $sResult;
+  }
 
-        case self::MODE_DEFAULT :
+  protected function escapeEmpty() {
 
-          $sResult = $this->getDefault();
-          break;
+    $sResult = '';
+    $sMode = $this->getMode();
 
-        case self::MODE_NULL :
-        case self::MODE_EMPTY :
+    switch ($sMode) {
 
-          $sResult = "null";
-          break;
+      case self::MODE_DEFAULT :
 
-        default :
+        $sResult = $this->getDefault();
+        break;
 
-          $this->launchException("Unknown input mode : $sMode");
-      }
+      case self::MODE_NULL :
+      case self::MODE_EMPTY :
+
+        $sResult = "null";
+        break;
+
+      default :
+
+        $this->launchException("Unknown input mode : $sMode");
     }
 
     return $sResult;

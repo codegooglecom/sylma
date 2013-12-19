@@ -9,5 +9,21 @@ class _Integer extends Type {
 
     return is_numeric($this->getValue());
   }
+
+  public function escape() {
+
+    $val = $this->getValue();
+
+    if ($val) {
+
+      $sResult = $val;
+    }
+    else {
+
+      $sResult = $this->escapeEmpty();
+    }
+
+    return $sResult;
+  }
 }
 

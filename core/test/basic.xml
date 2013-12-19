@@ -42,7 +42,7 @@
         </head>
         <body>
           <div id="sylma-messages"/>
-          <div id="body">
+          <div id="body" class="clearfix">
             <div id="messages"/>
             <div id="container">
               <div id="containerWrapper">

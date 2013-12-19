@@ -15,6 +15,12 @@
 
   <tpl:template>
 
+    <tpl:apply mode="form/build"/>
+
+  </tpl:template>
+
+  <tpl:template match="sql:table" mode="form/build">
+
     <tpl:apply mode="css"/>
 
     <form js:class="sylma.crud.Form" class="sylma-form">
@@ -26,9 +32,10 @@
       </div>
       <tpl:apply mode="form/token"/>
     </form>
+
   </tpl:template>
 
-  <tpl:template mode="css">
+  <tpl:template match="sql:table" mode="css">
 
     <le:context name="css">
       <le:file>/#sylma/modules/html/medias/form.css</le:file>
@@ -36,11 +43,11 @@
 
   </tpl:template>
 
-  <tpl:template mode="form">
+  <tpl:template match="sql:table" mode="form">
     <tpl:apply use="form-cols" mode="container"/>
   </tpl:template>
 
-  <view:template mode="form/action">
+  <view:template match="sql:table" mode="form/action">
     <input type="submit" value="Envoyer"/>
   </view:template>
 
@@ -111,6 +118,20 @@
     <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="type" default="'text'"/>
 
+    <tpl:apply mode="input/empty/build">
+      <tpl:read tpl:name="alias" select="$alias"/>
+      <tpl:read tpl:name="id" select="$id"/>
+      <tpl:read tpl:name="type" select="$type"/>
+    </tpl:apply>
+
+  </view:template>
+
+  <view:template match="*" mode="input/empty/build">
+
+    <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="id" default="$alias"/>
+    <tpl:argument name="type" default="'text'"/>
+
     <input class="field-input field-input-element" type="{$type}" id="form-{$id}" name="{$alias}"/>
 
   </view:template>
@@ -124,6 +145,12 @@
 
     <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}"/>
 
+  </view:template>
+
+  <view:template match="*" mode="input/hidden">
+    <tpl:apply mode="input/empty/build">
+      <tpl:read select="'hidden'" tpl:name="type"/>
+    </tpl:apply>
   </view:template>
 
   <view:template match="sql:string-long" mode="input/empty" sql:ns="ns">

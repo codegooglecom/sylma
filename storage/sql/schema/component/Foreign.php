@@ -57,7 +57,7 @@ class Foreign extends Element implements sql\schema\foreign {
     if (!$result = $this->loadElementRef()) {
 
       $file = $this->getElementRefFile();
-      $this->getParser()->addSchema($file->getDocument());
+      $this->getParser()->addSchema($file->getDocument(), $file);
 
       $result = $this->loadElementRef($file);
     }

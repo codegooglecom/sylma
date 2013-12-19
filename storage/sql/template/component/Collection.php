@@ -72,7 +72,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode) {
 
-    $this->launchException('No default value defined');
+    $this->launchException('Cannot reflect collection default path');
   }
 
   public function reflectApply($sMode = '', array $aArguments = array()) {

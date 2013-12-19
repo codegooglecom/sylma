@@ -3,7 +3,7 @@
 namespace sylma\schema\cached\form;
 use sylma\core;
 
-class Form extends core\module\Argumented {
+class Form extends core\module\Domed {
 
   protected $sMode;
   protected $sName;
@@ -15,10 +15,7 @@ class Form extends core\module\Argumented {
 
   public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token = null) {
 
-    if ($token) {
-
-      $token->isValid();
-    }
+    $this->validateToken($token);
 
     $this->setMode($sMode);
 
@@ -27,9 +24,12 @@ class Form extends core\module\Argumented {
     $this->setSettings($post);
   }
 
-  protected function checkToken($sPath) {
+  protected function validateToken(Token $token = null) {
 
+    if ($token) {
 
+      $token->isValid();
+    }
   }
 
   public function setSub($sAlias, $iKey, $parent) {
@@ -208,6 +208,11 @@ class Form extends core\module\Argumented {
 
   protected function buildUpdate() {
 
+    if (!$this->getElements()) {
+
+      $this->launchException('Cannot update table without registered field');
+    }
+
     $aResult = array();
 
     foreach ($this->getElements() as $sName => $el) {
@@ -226,11 +231,6 @@ class Form extends core\module\Argumented {
   }
 
   public function asString() {
-
-    if (!$this->getElements()) {
-
-      $this->launchException('Cannot update table without registered field');
-    }
 
     $sResult = $this->getMode() === 'insert' ? $this->buildInsert() : $this->buildUpdate();
 

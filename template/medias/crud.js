@@ -153,7 +153,7 @@ sylma.crud.Form = new Class({
     }
     else {
 
-      this.getObject(alias).highlight();
+      this.getObject(alias, true).highlight();
     }
 
     sylma.ui.showMessage(msg.content);

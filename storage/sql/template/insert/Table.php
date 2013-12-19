@@ -161,11 +161,6 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   protected function loadQuery() {
 
-    if (!$this->useElements()) {
-
-      $this->launchException('Cannot insert no element');
-    }
-
     $view = $this->getParser()->getView();
     $call = $this->getQuery()->getCall();
 
