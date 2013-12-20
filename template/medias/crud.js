@@ -236,6 +236,11 @@ sylma.crud.Field = new Class({
     this.getInput().set('value', val);
   },
 
+  getValue : function() {
+
+    return this.getInput().get('value');
+  },
+
   getInputs : function() {
 
     return this.getNode().getElements('input, select, textarea');
@@ -304,7 +309,8 @@ sylma.crud.Field = new Class({
     var name = input.get('data-name').replace(/\[\]/, '[' + id + ']');
     input.set('name', name);
     input.set('id', name);
-    this.getNode().getElement('label').set('for', name);
+    var label = this.getNode().getElement('label', false);
+    if (label) label.set('for', name);
   },
 });
 
@@ -646,7 +652,24 @@ sylma.crud.fieldset = {};
         }
       }
 
-      this.parent();
+      var fieldset = this.getParent('fieldset');
+
+      if (fieldset.get('useID')) {
+
+        var id = this.getObject('id');
+
+        id.setValue(- parseInt(id.getValue()));
+
+        this.hide(null, function() {
+
+          this.getNode().inject(fieldset.getNode());
+
+        }.bind(this));
+      }
+      else {
+
+        this.parent();
+      }
     }
   });
 

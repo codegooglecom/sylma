@@ -15,7 +15,31 @@ class Table extends sql\template\insert\Table {
     }
     else {
 
-      $result = parent::loadQuery();
+      if ($this->isSub() and $id = $this->getElement('id', null, false)) {
+
+        $window = $this->getWindow();
+        $source = $this->getHandler()->call('getID');
+
+        $update = $this->getQuery();
+        $update->setWhere($id, '=', $source);
+
+        $insert = $this->createQuery('insert');
+        $insert->setHandler($this->getHandler());
+
+        $delete = $this->createQuery('delete');
+        $delete->setHandler($this->getHandler());
+        $delete->setWhere($id, '=', $source);
+
+        $result = $window->createSwitch($this->getHandler()->call('getMode'));
+
+        $result->addCase('insert', $insert->getCall()->getInsert());
+        $result->addCase('update', $update->getCall()->getInsert());
+        $result->addCase('delete', $delete->getCall()->getInsert());
+      }
+      else {
+
+        $result = parent::loadQuery();
+      }
     }
 
     return $result;
@@ -24,7 +48,11 @@ class Table extends sql\template\insert\Table {
   protected function loadTriggers() {
 
     $aResult = parent::loadTriggers();
-    $aResult[] = $this->getWindow()->toString('1', $this->getParser()->getView()->getResult());
+
+    if (!$this->isSub()) {
+
+      $aResult[] = $this->getWindow()->toString('1', $this->getParser()->getView()->getResult());
+    }
 
     return $aResult;
   }

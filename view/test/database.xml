@@ -13,7 +13,7 @@
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
-    DELETE FROM `user`;
+    TRUNCATE TABLE `user`;
     INSERT INTO `user` (`id`, `name`, `email`, `group_id`) VALUES
       (1, 'root', 'root@sylma.org', 2),
       (2, 'admin', 'admin@sylma.org', 1),
@@ -26,7 +26,7 @@
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
-    DELETE FROM `user1b`;
+    TRUNCATE TABLE `user1b`;
     INSERT INTO `user1b` (`id`, `name`, `source`) VALUES
       (1, 'root', '&lt;span&gt;root bloc&lt;/span&gt;'),
       (2, 'admin', 'a'),
@@ -40,7 +40,7 @@
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
-    DELETE FROM `user1c`;
+    TRUNCATE TABLE `user1c`;
     INSERT INTO `user1c` (`id`, `name`, `email`, `source`) VALUES
       (1, 'root', 'root@sylma.org', '&lt;span&gt;root bloc&lt;/span&gt;'),
       (2, 'admin', 'admin@sylma.org', 'a'),
@@ -53,7 +53,7 @@
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
-    DELETE FROM `user1e`;
+    TRUNCATE TABLE `user1e`;
     INSERT INTO `user1e` (`id`, `name`, `email`) VALUES
       (1, 'alpha', 'alpha@sylma.org'),
       (2, 'Alpha2', 'Alpha2@sylma.org'),
@@ -72,7 +72,7 @@
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
-    DELETE FROM `user2`;
+    TRUNCATE TABLE `user2`;
     INSERT INTO `user2` (`id`, `name`, `email`, `group_id`, `date-update`) VALUES
       (1, 'root', 'root@sylma.org', 2, '2010-10-01 00:00:00'),
       (2, 'admin', 'admin@sylma.org', 1, '2030-06-02 00:00:00'),
@@ -87,7 +87,7 @@
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
-    DELETE FROM `user_multi`;
+    TRUNCATE TABLE `user_multi`;
     INSERT INTO `user_multi` (`id`, `name`, `email`, `group_id`) VALUES
     (1, 'root', 'root@sylma.org', 2),
     (2, 'admin', 'admin@sylma.org', 1),
@@ -106,13 +106,13 @@
       `id_group` int(10) unsigned NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-    DELETE FROM `group`;
+    TRUNCATE TABLE `group`;
     INSERT INTO `group` (`id`, `name`, `url`) VALUES
     (1, 'group01', 'http://sylma.org/groupe01'),
     (2, 'group02', 'http://sylma.org/groupe02'),
     (3, 'group03', 'http://sylma.org/groupe03');
 
-    DELETE FROM `user_group`;
+    TRUNCATE TABLE `user_group`;
     INSERT INTO `user_group` (`id_user`, `id_group`) VALUES
     (1, 1),
     (1, 2),

@@ -6,11 +6,8 @@ use sylma\core;
 class Form extends core\module\Domed {
 
   protected $sMode;
-  protected $sName;
-  protected $iKey;
   protected $contexts;
   protected $aElements = array();
-  protected $bSub = false;
   protected $bValid = true;
 
   public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token = null) {
@@ -32,48 +29,12 @@ class Form extends core\module\Domed {
     }
   }
 
-  public function setSub($sAlias, $iKey, $parent) {
-
-    $this->isSub(true);
-
-    $this->setName($sAlias);
-    $this->setKey($iKey);
-    $this->setParent($parent);
-  }
-
-  protected function isSub($bVal = null) {
-
-    if (is_bool($bVal)) $this->bSub = $bVal;
-
-    return $this->bSub;
-  }
-
-  protected function setName($sName) {
-
-    $this->sName = $sName;
-  }
-
-  public function getName() {
-
-    return $this->sName;
-  }
-
-  protected function setKey($iKey) {
-
-    $this->iKey = $iKey;
-  }
-
-  public function getKey() {
-
-    return $this->iKey;
-  }
-
   protected function setMode($sMode) {
 
     $this->sMode = $sMode;
   }
 
-  protected function getMode() {
+  public function getMode() {
 
     return $this->sMode;
   }
@@ -98,34 +59,17 @@ class Form extends core\module\Domed {
     return $result;
   }
 
-  protected function setParent(self $parent) {
-
-    $this->parent = $parent;
-  }
-
-  protected function getParent() {
-
-    return $this->parent;
-  }
-
   public function addMessage($sMessage, array $aArguments = array()) {
 
-    if ($this->isSub()) {
+    if (!$msg = $this->getContext('messages', false)) {
 
-      $this->getParent()->addMessage($sMessage, $aArguments);
+      $this->launchException("Cannot send message '$sMessage', context not ready");
     }
-    else {
 
-      if (!$msg = $this->getContext('messages', false)) {
-
-        $this->launchException("Cannot send message '$sMessage', context not ready");
-      }
-
-      $msg->add(array(
-        'content' => $sMessage,
-        'arguments' => $aArguments,
-      ));
-    }
+    $msg->add(array(
+      'content' => $sMessage,
+      'arguments' => $aArguments,
+    ));
   }
 
   public function addElement($sName, Type $element) {
@@ -159,35 +103,32 @@ class Form extends core\module\Domed {
     return $this->aElements;
   }
 
-  public function validate() {
+  protected function validateElements() {
 
-    $bValid = true;
+    $bResult = true;
     $aResult = array();
 
     foreach ($this->getElements() as $sName => $element) {
 
-      if (!$element->validate()) $bValid = false;
+      if (!$element->validate()) $bResult = false;
       if ($element->isUsed()) $aResult[$sName] = $element;
-    }
-
-    if (!$bValid) {
-
-      if ($this->isSub()) {
-
-        $this->getParent()->isValid(false);
-      }
-      else {
-
-        if (!$bValid || !$this->isValid()) {
-
-          $this->addMessage('Some fields are missing or invalids, they have been highlighted');
-        }
-      }
     }
 
     $this->aElements = $aResult;
 
-    return $bValid;
+    return $bResult;
+  }
+
+  public function validate() {
+
+    $bResult = $this->validateElements();
+
+    if (!$bResult || !$this->isValid()) {
+
+      $this->addMessage('Some fields are missing or invalids, they have been highlighted');
+    }
+
+    return $bResult;
   }
 
   protected function buildInsert() {
@@ -234,7 +175,7 @@ class Form extends core\module\Domed {
 
     $sResult = $this->getMode() === 'insert' ? $this->buildInsert() : $this->buildUpdate();
 
-    if (!$this->isSub() && $this->getContext('messages', false)) {
+    if ($this->getContext('messages', false)) {
 
       $this->addMessage('Datas has been ' . ($this->getMode() == 'insert' ? 'inserted' : 'updated'));
     }

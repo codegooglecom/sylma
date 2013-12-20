@@ -3,9 +3,9 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\languages\common;
 
-class Delete extends Select {
+class Delete extends Update {
 
-  protected $sMethod = 'read';
+  protected $sMethod = 'execute';
 
   public function getString() {
 
@@ -20,6 +20,7 @@ class Delete extends Select {
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }
+
 
   public function asArgument() {
 

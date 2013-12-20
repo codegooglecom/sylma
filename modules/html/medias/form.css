@@ -16,11 +16,22 @@ textarea[disabled]
   border-width: 1px;
 }
 
+.form-reference.sylma-hidder
+{
+  max-height: 0;
+  transition: all 0.5s;
+}
+
 .form-reference
 {
   border-bottom: 2px dotted #ddd;
   padding: 1em 0;
   overflow: hidden;
+}
+
+.form-reference.sylma-visible
+{
+  max-height: 300em;
 }
 
 .foreign

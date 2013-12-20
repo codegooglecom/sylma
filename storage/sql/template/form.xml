@@ -14,6 +14,7 @@
             <cls:class alias="table" name="Table">
               <cls:classes>
                 <cls:class alias="cached" name="\sylma\schema\cached\form\Form"/>
+                <cls:class alias="sub" name="\sylma\schema\cached\form\Sub"/>
               </cls:classes>
             </cls:class>
             <cls:class alias="field" name="Field">

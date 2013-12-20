@@ -22,6 +22,11 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
 
     return $result;
   }
+  
+  protected function useID() {
+
+    return $this->readx('@use-id');
+  }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
@@ -32,6 +37,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
       case 'title' : $result = $this->getTitle(); break;
       case 'static' : $result = $this->reflectStatic($aPath, $sMode); break;
+      case 'use-id' : $result = $this->useID(); break;
 
       default :
 

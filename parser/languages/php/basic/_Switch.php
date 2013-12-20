@@ -45,6 +45,24 @@ class _Switch extends common\basic\Controled implements common\argumentable, com
     $this->test = $test;
   }
 
+  public function getContents() {
+
+    $aResult = array_map(function($item) {
+      return $item->getContent();
+    }, $this->aCases);
+
+    return $aResult;
+  }
+
+  public function setContents($aContents) {
+
+    foreach ($aContents as $sKey => $item) {
+
+      $case = $this->aCases[$sKey];
+      $case->setContent($item);
+    };
+  }
+
   public function asArgument() {
 
     return $this->getControler()->createArgument(array(

@@ -6,23 +6,10 @@ use sylma\core, sylma\parser\languages\common;
 class Update extends Insert {
 
   protected $sMethod = 'read';
-  protected $aSets = array();
 
   public function addSet($field, $val) {
 
     $this->aSets[] = array($field, $val);
-  }
-
-  protected function _getSets() {
-
-    $aResult = array();
-
-    foreach ($this->aSets as $aSet) {
-
-      $aResult[] = array($aSet[0], ' = ', $aSet[1]);
-    }
-
-    return array(' SET ', $this->implode($aResult));
   }
 
   public function getString() {

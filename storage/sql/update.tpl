@@ -100,4 +100,10 @@
 
   </view:template>
 
+  <view:template match="*" mode="input/hidden">
+    <tpl:apply mode="input/update/build">
+      <tpl:read select="'hidden'" tpl:name="type"/>
+    </tpl:apply>
+  </view:template>
+
 </view:view>

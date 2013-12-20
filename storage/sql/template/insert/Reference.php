@@ -10,6 +10,15 @@ class Reference extends sql\template\component\Reference {
     return $this->getParent()->getResult();
   }
 
+  protected function importElementRef() {
+
+    $this->getParser()->changeMode($this->useID() ? 'update' : 'insert');
+    $result = parent::importElementRef();
+    $this->getParser()->resetMode();
+
+    return $result;
+  }
+
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
     $table = $this->getElementRef();

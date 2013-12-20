@@ -143,11 +143,31 @@
     <tpl:argument name="value" default="value()"/>
     <tpl:argument name="type" default="'text'"/>
 
+    <tpl:apply mode="input/update/build">
+      <tpl:read tpl:name="alias" select="$alias"/>
+      <tpl:read tpl:name="id" select="$id"/>
+      <tpl:read tpl:name="value" select="$value"/>
+      <tpl:read tpl:name="type" select="$type"/>
+    </tpl:apply>
+
+  </view:template>
+
+  <view:template match="*" mode="input/update/build">
+
+    <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="id" default="$alias"/>
+    <tpl:argument name="value" default="value()"/>
+    <tpl:argument name="type" default="'text'"/>
+
     <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}"/>
 
   </view:template>
 
   <view:template match="*" mode="input/hidden">
+    <tpl:apply mode="input/hidden/empty"/>
+  </view:template>
+
+  <view:template match="*" mode="input/hidden/empty">
     <tpl:apply mode="input/empty/build">
       <tpl:read select="'hidden'" tpl:name="type"/>
     </tpl:apply>
@@ -414,8 +434,19 @@
     <tpl:apply select="* ^ sql:foreign" mode="container"/>
   </view:template>
 
+  <tpl:template match="sql:id" mode="label"/>
+  <tpl:template match="sql:id" mode="input/empty">
+    <tpl:register/>
+    <tpl:apply mode="input/hidden/empty"/>
+  </tpl:template>
+
+  <tpl:template match="sql:id" mode="input">
+    <tpl:register/>
+    <tpl:apply mode="input/hidden"/>
+  </tpl:template>
+
   <view:template match="sql:table" sql:ns="ns" mode="update">
-    <div js:class="sylma.crud.fieldset.Row" class="form-reference clearfix">
+    <div js:class="sylma.crud.fieldset.Row" class="form-reference clearfix sylma-hidder sylma-visible">
       <tpl:apply/>
       <button type="button" class="right">
         <js:event name="click">
@@ -427,10 +458,13 @@
   </view:template>
 
   <view:template match="sql:reference" mode="container" sql:ns="ns">
-    <fieldset js:class="sylma.crud.fieldset.Container">
+    <fieldset js:class="sylma.crud.fieldset.Container" js:parent-name="fieldset">
       <js:name>
         <tpl:read select="alias()"/>
       </js:name>
+      <js:option name="useID">
+        <tpl:read select="use-id()"/>
+      </js:option>
       <tpl:apply mode="legend"/>
       <tpl:apply mode="template/add"/>
       <tpl:apply mode="template"/>

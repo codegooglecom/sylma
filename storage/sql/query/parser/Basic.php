@@ -16,6 +16,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
   protected $connection;
   protected $aMethods = array('get', 'query', 'insert', 'extract');
 
+  protected $handler;
   protected $var;
 
   public function __construct(reflector\domed $parser, core\argument $arg = null, array $aNamespaces = array()) {
@@ -38,6 +39,16 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     }
 
     return $this->connection;
+  }
+
+  public function setHandler(common\_var $handler) {
+
+    $this->handler = $handler;
+  }
+
+  protected function getHandler() {
+
+    return $this->handler;
   }
 
   protected function implode($aArray, $sGlue = ', ') {

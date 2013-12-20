@@ -224,7 +224,7 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
     $this->sReflector = $sName;
   }
 
-  public function buildReflector(array $aArguments = array()) {
+  public function buildReflector(array $aArguments = array(), $sAlias = 'cached') {
 
     if ($sClass = $this->loadReflector()) {
 
@@ -234,7 +234,7 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
 
       if (!$this->getType(false) || !$result = $this->getType()->buildReflector($aArguments)) {
 
-        $result = $this->createObject('cached', $aArguments, null, false);
+        $result = $this->createObject($sAlias, $aArguments, null, false);
       }
     }
 

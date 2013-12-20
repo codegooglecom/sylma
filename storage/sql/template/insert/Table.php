@@ -110,22 +110,32 @@ class Table extends sql\template\component\Table implements common\argumentable 
       $token = null;
     }
 
-    $result = $this->buildReflector(array(
+    $aArguments = array(
       $window->getVariable('arguments'),
       $window->getVariable('post'),
       $window->getVariable('contexts'),
       $this->getMode(),
       $token,
-    ));
+    );
 
-    $handler = $window->createVar($result);
+    if ($this->isSub()) {
 
-    $this->setHandler($handler);
-    $this->addContent($handler->getInsert());
+      $form = $this->buildReflector($aArguments, 'sub');
+    }
+    else {
+
+      $form = $this->buildReflector($aArguments);
+    }
+
+    $var = $window->createVar($form);
+
+    $this->setHandler($var);
+    $this->addContent($var->getInsert());
 
     if ($this->isSub() && $this->getParent(false)) {
 
-      $this->addContent($handler->call('setSub', array($this->getParent()->getAlias(), $key, $parent)));
+      $id = $this->getElement('id', null, false);
+      $this->addContent($var->call('setSub', array($this->getParent()->getAlias(), $key, $parent, $id ? $id->getName() : null)));
     }
   }
 

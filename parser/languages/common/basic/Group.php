@@ -43,7 +43,7 @@ class Group extends Controled implements common\argumentable, common\instruction
 
           foreach ($mValue->getContents() as $sKey => $mContent) {
 
-            $aContents[$sKey] = $this->toInstruction($this->getWindow()->parseArrayables($mContent));
+            $aContents[$sKey] = $this->toInstruction($this->getWindow()->parse($mContent));
           }
 
           $mValue->setContents($aContents);

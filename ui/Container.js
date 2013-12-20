@@ -216,9 +216,20 @@ sylma.ui.Container = new Class({
     el.addClass('sylma-visible');
   },
 
-  hide : function(el) {
+  hide : function(el, callback) {
 
     el = el || this.getNode();
+
+    if (callback) {
+
+      var name = 'MozTransition' ? 'transitionend' : el.browserSupportVendorStyle('transition') + 'End';
+
+      var event = el.addEventListener(name, function() {
+
+        this.removeEvent(name, event);
+        callback();
+      });
+    }
 
     el.removeClass('sylma-visible');
   },

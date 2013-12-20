@@ -10,26 +10,20 @@ class Reference extends sql\template\insert\Reference {
     return $this->getParent()->getElementArgument('id');
   }
 
-  protected function importElementRef() {
-
-    $this->getParser()->changeMode('insert');
-    $result = parent::importElementRef();
-    $this->getParser()->resetMode();
-
-    return $result;
-  }
-
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
     $el = $this->getElementRef();
 
-    $del = $this->loadSimpleComponent('template/delete');
+    if (!$this->useID()) {
 
-    $del->setTable($el);
-    $del->setConnection($this->getParent()->getConnection());
-    $del->setWhere($this->getForeign(), '=', $this->reflectID());
+      $del = $this->loadSimpleComponent('template/delete');
 
-    $this->getParent()->addTrigger(array($del));
+      $del->setTable($el);
+      $del->setConnection($this->getParent()->getConnection());
+      $del->setWhere($this->getForeign(), '=', $this->reflectID());
+
+      $this->getParent()->addTrigger(array($del));
+    }
 
     parent::reflectFunctionRef($aPath, $sMode, $aArguments);
   }
