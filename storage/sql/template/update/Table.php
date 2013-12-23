@@ -1,12 +1,17 @@
 <?php
 
 namespace sylma\storage\sql\template\update;
-use sylma\core, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
+use sylma\core, sylma\storage\sql, sylma\parser\languages\common;
 
 class Table extends sql\template\insert\Table {
 
   protected $sMode = 'update';
 
+  /**
+   * @uses sql\query\parser\Basic::setHandler()
+   * @uses Reference::secureQuery()
+   * @return array|common\argumentable
+   */
   protected function loadQuery() {
 
     if (!$this->useElements()) {
@@ -18,19 +23,21 @@ class Table extends sql\template\insert\Table {
       if ($this->isSub() and $id = $this->getElement('id', null, false)) {
 
         $window = $this->getWindow();
-        $source = $this->getHandler()->call('getID');
+        $source = $this->getDummy()->call('getID');
 
         $update = $this->getQuery();
         $update->setWhere($id, '=', $source);
+        $this->getParent()->secureQuery($update);
 
         $insert = $this->createQuery('insert');
-        $insert->setHandler($this->getHandler());
+        $insert->setHandler($this->getDummy());
 
         $delete = $this->createQuery('delete');
-        $delete->setHandler($this->getHandler());
+        $delete->setHandler($this->getDummy());
         $delete->setWhere($id, '=', $source);
+        $this->getParent()->secureQuery($delete);
 
-        $result = $window->createSwitch($this->getHandler()->call('getMode'));
+        $result = $window->createSwitch($this->getDummy()->call('getMode'));
 
         $result->addCase('insert', $insert->getCall()->getInsert());
         $result->addCase('update', $update->getCall()->getInsert());

@@ -64,6 +64,13 @@ class Foreign extends sql\template\component\Foreign {
     return $result;
   }
 
+  protected function reflectFunctionCollection(array $aPath, $sMode, array $aArguments = array()) {
+
+    $collection = $this->buildMultiple();
+
+    return $collection->reflectApply($sMode, $aArguments);
+  }
+
   protected function reflectFunctionJoin(array $aPath, $sMode, array $aArguments = array()) {
 
     $targetTable = $this->getElementRef();

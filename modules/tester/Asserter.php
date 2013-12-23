@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\tester;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
+use sylma\core;
 
 abstract class Asserter extends core\module\Domed {
 

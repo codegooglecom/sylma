@@ -20,7 +20,7 @@
 
     <xl:resource file="schema.xml"/>
 
-    <xl:settings>
+    <tpl:settings>
       <cls:classes>
         <cls:class alias="tree">
           <cls:classes>
@@ -28,7 +28,7 @@
           </cls:classes>
         </cls:class>
       </cls:classes>
-    </xl:settings>
+    </tpl:settings>
 
   </crud:global>
 

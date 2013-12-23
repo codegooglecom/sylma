@@ -5,7 +5,7 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\parser\languages\common;
 
 class Table extends sql\template\component\Table implements common\argumentable {
 
-  protected $handler;
+  protected $dummy;
   protected $sMode = 'insert';
   protected $bInsertQuery = false;
   protected $bElements = false;
@@ -22,7 +22,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function init($key = null, $parent = null) {
 
-    $this->loadHandler($key, $parent);
+    $this->loadDummy($key, $parent);
   }
 
   public function getAlias($sMode = '') {
@@ -32,9 +32,9 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function addElement(sql\schema\element $el, $content = null, array $aArguments = array()) {
 
-    if ($this->getHandler()) {
+    if ($this->getDummy()) {
 
-      $this->addElementToHandler($el, $content, $aArguments);
+      $this->addElementToDummy($el, $content, $aArguments);
     }
     else {
 
@@ -44,10 +44,10 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->bElements = true;
   }
 
-  protected function addElementToHandler(sql\schema\element $el, $content = null, array $aArguments = array()) {
+  protected function addElementToDummy(sql\schema\element $el, $content = null, array $aArguments = array()) {
 
     $sName = $el->getAlias();
-    $handler = $this->getHandler(true);
+    $handler = $this->getDummy(true);
 
     $aArguments = array_merge(array(
       'alias' => $sName,
@@ -82,15 +82,15 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     $result = parent::buildQuery();
 
-    if ($this->getHandler()) {
+    if ($this->getDummy()) {
 
-      $result->setHandler($this->getHandler());
+      $result->setHandler($this->getDummy());
     }
 
     return $result;
   }
 
-  protected function loadHandler($key = null, $parent = null) {
+  protected function loadDummy($key = null, $parent = null) {
 
     $window = $this->getWindow();
     $view = $this->getParser()->getView();
@@ -129,7 +129,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     $var = $window->createVar($form);
 
-    $this->setHandler($var);
+    $this->setDummy($var);
     $this->addContent($var->getInsert());
 
     if ($this->isSub() && $this->getParent(false)) {
@@ -144,19 +144,27 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $this->getKey();
   }
 
-  public function getHandler($bDebug = true) {
+  /**
+   * @usedby Foreign::buildMultiple()
+   * @usedby Reference::reflectFunctionRef()
+   * @return common\_var
+   */
+  public function getDummy($bDebug = true) {
 
-    if ($bDebug && !$this->handler) {
+    if ($bDebug && !$this->dummy) {
 
-      $this->launchException('No handler defined');
+      $this->launchException('No dummy defined');
     }
 
-    return $this->handler;
+    return $this->dummy;
   }
 
-  public function setHandler(common\_var $handler) {
+  /**
+   * @usedby Reference::reflectFunctionRef()
+   */
+  public function setDummy(common\_var $handler) {
 
-    $this->handler = $handler;
+    $this->dummy = $handler;
   }
 
   public function addTrigger(array $aContent) {
@@ -217,7 +225,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function callValidate() {
 
-    $this->addValidate($this->getHandler()->call('validate'));
+    $this->addValidate($this->getDummy()->call('validate'));
 
     return array_reverse($this->aValidates);
   }
@@ -239,12 +247,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
   }
 
   protected function getContent() {
-/*
-    if ($this->getHandler()) {
 
-      $aResult[] = $this->getHandler()->getInsert();
-    }
-*/
     $aResult[] = $this->aContent;
 
     return $aResult;

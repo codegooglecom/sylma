@@ -83,11 +83,11 @@
   <tst:test name="Override class">
     <tst:document>
       <view:view user:ns="ns">
-        <xl:settings>
+        <tpl:settings>
           <cls:classes>
             <cls:class alias="tree" name="\sylma\storage\xml\test\samples\Tree1"/>
           </cls:classes>
-        </xl:settings>
+        </tpl:settings>
         <xl:resource file="samples/users.xml"/>
         <tpl:template>
           <ul>
@@ -143,7 +143,7 @@
   <tst:test name="Call">
     <tst:document>
       <view:view user:ns="ns">
-        <xl:settings>
+        <tpl:settings>
           <cls:classes>
             <cls:class alias="tree">
               <cls:classes>
@@ -151,7 +151,7 @@
               </cls:classes>
             </cls:class>
           </cls:classes>
-        </xl:settings>
+        </tpl:settings>
         <xl:resource/>
         <tpl:template>
           <span><tpl:apply select="getPaths()"/></span>
@@ -166,7 +166,7 @@
     <tst:document>
       <view:view user:ns="ns">
         <xl:resource/>
-        <xl:settings>
+        <tpl:settings>
           <cls:classes>
             <cls:class alias="tree">
               <cls:classes>
@@ -174,7 +174,7 @@
               </cls:classes>
             </cls:class>
           </cls:classes>
-        </xl:settings>
+        </tpl:settings>
         <tpl:template>
           <span>hello world</span>
           <tpl:apply select="return('parse')"/>

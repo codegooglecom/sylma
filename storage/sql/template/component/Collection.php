@@ -10,6 +10,13 @@ class Collection extends Rooted implements sql\template\pathable {
   protected $counter;
   protected $key;
 
+  protected $dummy;
+
+  /**
+   * Before loop
+   */
+  protected $aStart = array();
+
   public function getElement($sName, $sNamespace = null) {
 
     return $this->getTable()->getElement($sName, $sNamespace);
@@ -17,9 +24,9 @@ class Collection extends Rooted implements sql\template\pathable {
 
   public function setTable(Table $table) {
 
-    $sNamespace = $this->getParser()->getNamespace('sql');
+    $sNamespace = $this->getHandler()->getNamespace('sql');
 
-    $this->setType($this->getParser()->getType('collection', $sNamespace));
+    $this->setType($this->getHandler()->getType('collection', $sNamespace));
     $this->setNamespace($sNamespace);
     //$this->setNamespace($table->getNamespace(), 'element', false);
     $this->setName('[collection]');
@@ -113,15 +120,50 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->getTable()->setSource($this->getSource());
     $this->getTable()->setKey($this->getKey());
     $this->getTable()->setQuery($this->getQuery());
+    $this->getTable()->setCollection($this);
 
     $content = $this->getTable()->reflectApply($sMode, $aArguments);
 
-    if ($this->insertQuery()) $aResult[] = $this->getQuery();
+    if ($this->insertQuery()) {
+
+      $aResult[] = $this->getQuery();
+    }
+
+    $collection = $this;
+    $window = $this->getWindow();
+
+    $aResult[] = $window->createCaller(function() use ($collection, $window) {
+
+      return $window->createGroup($collection->getStart());
+    });
+
     $aResult[] = $this->postBuild($content);
 
     $this->insertQuery(false);
 
     return $aResult;
+  }
+
+  /**
+   * @usedby self::reflectApplyAll() dummy callback
+   * @return array
+   */
+  public function getStart() {
+
+    return $this->aStart;
+  }
+
+  protected function getDummy() {
+
+    if (!$this->dummy) {
+
+      $result = $this->getWindow()->createVar($this->buildReflector(array(), 'dummy'));
+      $this->aStart[] = $result->getInsert();
+
+      $this->dummy = $result;
+    }
+
+    return $this->dummy;
   }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
@@ -130,7 +172,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'static' :
 
-        $result = $aPath ? $this->getParser()->parsePathToken($this->getTable(), $aPath, $sMode, true, $aArguments) : $this->getTable()->reflectApply($sMode, $aArguments);
+        $result = $aPath ? $this->getHandler()->parsePathToken($this->getTable(), $aPath, $sMode, true, $aArguments) : $this->getTable()->reflectApply($sMode, $aArguments);
         break;
 
       case 'count' :
@@ -143,9 +185,14 @@ class Collection extends Rooted implements sql\template\pathable {
         $result = $this->getPager()->reflectApply($sMode);
         break;
 
+      case 'dummy' :
+
+        $result = $this->reflectDummy($aPath, $aArguments);
+        break;
+
       case 'distinct' :
 
-        $aFunctionArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
+        $aFunctionArguments = $this->getHandler()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
         $result = $this->getDistinct($aFunctionArguments, $aPath, $sMode, $aArguments);
         break;
 
@@ -165,6 +212,23 @@ class Collection extends Rooted implements sql\template\pathable {
       default :
 
         $this->launchException("Function '$sName' unknown", get_defined_vars());
+    }
+
+    return $result;
+  }
+
+  protected function reflectDummy(array $aPath, array $aArguments = array()) {
+
+    $dummy = $this->getDummy();
+
+    if ($aPath) {
+
+      $sFunction = current($aPath);
+      $result = $dummy->call($sFunction, $aArguments);
+    }
+    else {
+
+      $result = $dummy;
     }
 
     return $result;
@@ -198,7 +262,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $collection->getQuery()->setWhere($table->getElement('id'), 'IN', $sIDS);
 
     $aResult[] = $query;
-    $aResult[] = $aPath ? $this->getParser()->parsePath($collection, implode('/', $aPath), $sMode, $aArguments) : $collection->reflectApply($sMode, $aArguments);
+    $aResult[] = $aPath ? $this->getHandler()->parsePath($collection, implode('/', $aPath), $sMode, $aArguments) : $collection->reflectApply($sMode, $aArguments);
 
     return $aResult;
   }
@@ -211,7 +275,7 @@ class Collection extends Rooted implements sql\template\pathable {
   public function setPager(sql\template\Pager $pager) {
 
     $pager->setCollection($this);
-    $pager->setParser($this->getParser()->getView());
+    $pager->setParser($this->getHandler()->getView());
 
     $this->pager = $pager;
   }

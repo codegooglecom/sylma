@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\insert;
-use sylma\core, sylma\storage\sql, sylma\parser\languages\common;
+use sylma\core, sylma\storage\sql, sylma\storage\sql\query;
 
 class Reference extends sql\template\component\Reference {
 
@@ -19,6 +19,15 @@ class Reference extends sql\template\component\Reference {
     return $result;
   }
 
+  public function secureQuery(query\parser\Basic $query) {
+
+    $query->setWhere($this->getForeign(), '=', $this->getParent()->getElementArgument('id'));
+  }
+
+  /**
+   * @uses Table::getDummy()
+   * @uses Table::setDummy()
+   */
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
     $table = $this->getElementRef();
@@ -33,13 +42,13 @@ class Reference extends sql\template\component\Reference {
     $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $item, $key);
 
     $table->setSource($item);
-    $table->init($key, $this->getParent()->getHandler());
+    $table->init($key, $this->getParent()->getDummy());
 
     $aContent[] = $window->toString($this->getParser()->parsePathToken($table, $aPath, $sMode, false, $aArguments));
     $aContent[] = $table->getValidation();
     $test = $window->createNot($table->callValidate());
     $aContent[] = $window->createCondition($test, $window->createAssign($valid, $window->argToInstance(false)));
-    $aContent[] = $window->callFunction('array_push', 'php-boolean', array($forms, $table->getHandler()));
+    $aContent[] = $window->callFunction('array_push', 'php-boolean', array($forms, $table->getDummy()));
 
     $loop->setContent($aContent);
     $parent->addContent($loop);
@@ -47,7 +56,7 @@ class Reference extends sql\template\component\Reference {
     $item = $window->createVariable('', '\sylma\core\argument');
     $loop = $window->createLoop($forms, $item);
 
-    $table->setHandler($item);
+    $table->setDummy($item);
     $table->addElement($this->getForeign(), $this->reflectID());
 
     $loop->setContent(array($table->getExecution()));

@@ -32,6 +32,10 @@ class Foreign extends sql\template\component\Foreign {
     return $this->getParser()->getView()->getResult();
   }
 
+  /**
+   * @uses Table::getDummy()
+   * @return array
+   */
   protected function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
 
     $window = $this->getWindow();
@@ -39,7 +43,7 @@ class Foreign extends sql\template\component\Foreign {
     $key = $window->createVariable('', 'php-integer');
     $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $val, $key);
 
-    $junction->init($key, $this->getParent()->getHandler());
+    $junction->init($key, $this->getParent()->getDummy());
     $junction->addElement($source, $this->loadID());
     $junction->addElement($target, $val);
 

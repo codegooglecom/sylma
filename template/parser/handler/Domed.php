@@ -64,7 +64,10 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
     $this->log("Import : " . $file->asToken());
 
     $doc = $this->getRoot()->importDocument($file->getDocument(), $file);
-    $this->parseChildren($doc->getChildren());
+    $aResult = $this->parseChildren($doc->getChildren());
+
+    $this->getWindow()->parse($aResult);
+    //return $aResult;
   }
 
   protected function parseElementSelf(dom\element $el) {

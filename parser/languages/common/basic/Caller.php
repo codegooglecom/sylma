@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\common\basic;
 use sylma\core, sylma\parser\languages\common;
 
-class Caller implements common\argumentable {
+class Caller implements common\argumentable, common\instruction {
 
   protected $closure;
 

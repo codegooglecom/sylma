@@ -10,6 +10,7 @@
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
   xmlns:le="http://2013.sylma.org/action"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 >
   <tst:description>Collection</tst:description>
   <tst:datas name="mysql://user">
@@ -218,6 +219,38 @@
         <a href="admin@sylma.org">admin</a>
         <a href="admin2@sylma.org">admin</a>
         <span>2</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Collection reflector">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/product.xql</view:schema>
+        <view:template>
+          <tpl:settings>
+            <cls:classes>
+              <cls:class alias="dummy" name="\sylma\view\test\grouped\samples\Product"/>
+            </cls:classes>
+          </tpl:settings>
+          <div>
+            <tpl:apply select="*"/>
+            <span><tpl:apply select="dummy()/sum"/></span>
+          </div>
+        </view:template>
+        <view:template match="user:product">
+          <li value="{price}"><tpl:read select="name"/></li>
+          <tpl:apply select="collection()/dummy()/add">
+            <tpl:read select="price" tpl:name="val"/>
+          </tpl:apply>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li value="12.5">flower</li>
+        <li value="5">card</li>
+        <span>17.5</span>
       </div>
     </tst:node>
   </tst:test>

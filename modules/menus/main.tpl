@@ -11,7 +11,7 @@
   xmlns:menus="http://2013.sylma.org/modules/menus"
 >
 
-  <xl:settings>
+  <tpl:settings>
     <cls:classes>
       <cls:base>\sylma\modules\menus</cls:base>
       <cls:class alias="tree" name="Main">
@@ -20,7 +20,7 @@
         </cls:classes>
       </cls:class>
     </cls:classes>
-  </xl:settings>
+  </tpl:settings>
 
   <tpl:template match="menus:menus">
     <ul id="{@id}">

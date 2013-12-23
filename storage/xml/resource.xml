@@ -7,9 +7,7 @@
     <cls:base>\sylma\storage\xml</cls:base>
     <cls:class alias="tree" name="tree\Templated"/>
     <component>
-      <cls:classes>
-        <cls:class alias="settings" name="component\Settings"/>
-      </cls:classes>
+      <cls:classes/>
     </component>
   </cls:classes>
 </arg:argument>

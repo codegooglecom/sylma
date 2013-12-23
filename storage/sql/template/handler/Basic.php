@@ -12,6 +12,9 @@ class Basic extends sql\schema\Handler {
 
   protected $aTemplates = array();
 
+  /**
+   * @return \sylma\view\parser\Elemented
+   */
   public function getView() {
 
     if (!$this->view) {
@@ -96,6 +99,9 @@ class Basic extends sql\schema\Handler {
     return $this->loadSimpleComponent('component/collection');
   }
 
+  /**
+   * @return sql\template\Pather
+   */
   public function getPather() {
 
     return $this->getView()->getCurrentTemplate()->getPather();

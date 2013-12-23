@@ -64,7 +64,7 @@ class Group extends Controled implements common\argumentable, common\instruction
   }
 
   public function asArgument() {
-
+    
     return $this->getControler()->createArgument(array(
       'group' => array(
         $this->getValues(),

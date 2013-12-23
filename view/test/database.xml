@@ -117,5 +117,23 @@
     (1, 1),
     (1, 2),
     (2, 1);
+
+    TRUNCATE TABLE `product`;
+    CREATE TABLE IF NOT EXISTS `product` (
+      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `name` varchar(64) NOT NULL,
+      `price` float NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+    --
+    -- Dumping data for table `product`
+    --
+
+    INSERT INTO `product` (`id`, `name`, `price`) VALUES
+    (1, 'flower', 12.5),
+    (2, 'card', 5);
+
+
   </script>
 </arg:argument>

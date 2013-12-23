@@ -1,12 +1,12 @@
 <?php
 
-namespace sylma\storage\xml\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\core\functions\path;
+namespace sylma\template\parser\component;
+use sylma\core, sylma\dom, sylma\template, sylma\parser\languages\common;
 
-class Settings extends reflector\component\Foreigner implements reflector\component, common\arrayable {
+class Settings extends Child implements common\arrayable, template\parser\component {
 
   const ARGUMENT_NS = 'http://2013.sylma.org/core/argument';
-
+static $test = 1;
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
@@ -19,14 +19,30 @@ class Settings extends reflector\component\Foreigner implements reflector\compon
 
     $doc = $this->createDocument();
     $doc->addElement('arg:argument', $el->getFirst(), array(), self::ARGUMENT_NS);
-
     $builder = $manager->loadBuilder($this->getSourceFile(), $this->getSourceDirectory(), null, $doc);
     $args = $builder->buildStatic();
 
-    $this->getParser()->setSettings($args);
+    $this->setSettings($args);
+  }
+
+  protected function build() {
+
+    if (!$target = $this->getTree(false)) {
+
+      $target = $this->getHandler()->getResource();
+    }
+
+    $target->setSettings($this->getSettings());
   }
 
   public function asArray() {
+/*if (self::$test == 3) {
+    $this->launchException('test');
+  }
+  self::$test++;
+ *
+ */
+    $this->build();
 
     return array();
   }

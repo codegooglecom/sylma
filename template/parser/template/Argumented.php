@@ -14,7 +14,14 @@ class Argumented extends Pathed {
 
     foreach ($children as $child) {
 
-      $aResult[$this->parseElementKey($child)] = $this->parseElement($child);
+      if ($sKey = $this->parseElementKey($child)) {
+
+        $aResult[$sKey] = $this->parseElement($child);
+      }
+      else {
+
+        $aResult[] = $this->parseElement($child);
+      }
     }
 
     return $aResult;

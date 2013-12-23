@@ -9,6 +9,7 @@
     <cls:base>\sylma\template\parser</cls:base>
     <cls:class alias="elemented" name="handler\Elemented">
       <cls:classes>
+        <cls:class alias="settings" name="component\Settings"/>
         <component>
           <cls:classes>
             <cls:base>\sylma\template\parser</cls:base>
@@ -16,6 +17,7 @@
             <cls:class alias="tree" name="\sylma\storage\xml\tree\Argument"/>
             <cls:class alias="constant" name="component\Constant"/>
             <cls:class alias="import" name="component\Import"/>
+            <cls:class alias="settings" name="component\Settings"/>
 
             <cls:class alias="template" name="template\Argumented">
               <cls:classes>
@@ -41,6 +43,8 @@
                 <cls:class alias="text" name="Text"/>
                 <cls:class alias="argument" name="Argument"/>
                 <cls:class alias="cdata" name="CData"/>
+                <cls:class alias="settings" name="Settings"/>
+
               </cls:classes>
             </cls:class>
           </cls:classes>

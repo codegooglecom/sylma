@@ -1,9 +1,11 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema\parser, sylma\parser\languages\common;
+use sylma\core, sylma\storage\sql, sylma\parser\reflector, sylma\parser\languages\common;
 
 class Rooted extends sql\schema\component\Table {
+
+  protected $handler;
 
   protected $source;
   protected $key;
@@ -57,6 +59,29 @@ class Rooted extends sql\schema\component\Table {
     if (is_bool($bVal)) $this->bInsertQuery = $bVal;
 
     return $this->bInsertQuery;
+  }
+
+  /**
+   * Set handler with self::setHandler()
+   * @todo completely replace
+   */
+  protected function setParser(reflector\domed $val) {
+
+    parent::setParser($val);
+    $this->setHandler($val);
+  }
+
+  protected function setHandler(sql\template\handler\Basic $val) {
+
+    $this->handler = $val;
+  }
+
+  /**
+   * @return sql\template\handler\Basic
+   */
+  protected function getHandler() {
+
+    return $this->handler;
   }
 
   protected function parsePaths($sPath, $sMode) {

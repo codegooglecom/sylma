@@ -46,8 +46,14 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       case 'value' : $result = $this->reflectRead(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
+      case 'collection' : $result = $this->reflectFunctionCollection($aPath, $sMode, $aArguments); break;
       case 'title' : $result = $this->getTitle(); break;
 
+      case 'parent' :
+
+        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
+        break;
+      
       default :
 
         $this->launchException("Invalid function name : '{$sName}'");
@@ -58,6 +64,11 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
   }
 
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
+
+    $this->launchException('Should not be called');
+  }
+
+  protected function reflectFunctionCollection(array $aPath, $sMode, array $aArguments = array()) {
 
     $this->launchException('Should not be called');
   }

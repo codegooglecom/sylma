@@ -59,6 +59,8 @@ class Elemented extends template\parser\handler\Domed {
       $this->setSchema($schema);
     }
 
+    $this->resource = $resource;
+
     $aContent = $this->parseChildren($el->queryx('*'));
 
     if ($schemaElement) {
@@ -233,6 +235,11 @@ class Elemented extends template\parser\handler\Domed {
   public function getSchema() {
 
     return $this->schema;
+  }
+
+  public function getResource() {
+
+    return $this->resource;
   }
 }
 

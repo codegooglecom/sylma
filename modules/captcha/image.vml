@@ -11,11 +11,11 @@
   build:class="\sylma\modules\captcha\Generator"
   build:output="array"
 >
-  <xl:settings>
+  <tpl:settings>
     <cls:classes>
       <cls:class alias="tree" name="\sylma\modules\captcha\Reflector"/>
     </cls:classes>
-  </xl:settings>
+  </tpl:settings>
   <xl:resource/>
 
   <tpl:template/>

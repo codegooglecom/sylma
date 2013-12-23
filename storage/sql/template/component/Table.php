@@ -15,6 +15,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   protected $loop;
   protected $connection;
+  protected $collection;
 
   public function init() {
 
@@ -63,6 +64,16 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     }
 
     return $this->connection;
+  }
+
+  public function setCollection(Collection $val) {
+
+    $this->collection = $val;
+  }
+
+  protected function getCollection() {
+
+    return $this->collection;
   }
 
   protected function getMode() {
@@ -206,10 +217,14 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       case 'name' : $result = $this->getName(); break;
       case 'title' : $result = $this->getTitle(); break;
       case 'position' :$result = $this->getPosition();  break;
+      case 'collection' :
+
+        $result = $this->getParser()->parsePathToken($this->getCollection(), $aPath, $sMode, $bRead, $aArguments);
+        break;
+
       case 'parent' :
 
-        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead);
-
+        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
         break;
 
       default :

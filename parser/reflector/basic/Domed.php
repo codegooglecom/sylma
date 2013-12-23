@@ -191,7 +191,7 @@ abstract class Domed extends Componented {
 
   protected function parseElementKey(dom\element $el) {
 
-    return $el->readx('@tpl:name');
+    return $el->readx('@tpl:name', array(), false);
   }
 
   protected function parseElementSelf(dom\element $el) {

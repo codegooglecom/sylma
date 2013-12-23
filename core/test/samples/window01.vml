@@ -9,8 +9,8 @@
 >
 
   <xl:resource/>
-  
-  <xl:settings>
+
+  <tpl:settings>
     <cls:classes>
       <cls:class alias="tree">
         <cls:classes>
@@ -18,7 +18,7 @@
         </cls:classes>
       </cls:class>
     </cls:classes>
-  </xl:settings>
+  </tpl:settings>
 
   <tpl:template>
     <tpl:apply select="return('prepare')"/>
