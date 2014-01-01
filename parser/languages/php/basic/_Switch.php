@@ -24,15 +24,23 @@ class _Switch extends common\basic\Controled implements common\argumentable, com
     $this->launchException('Cannot manipulate switch content');
   }
 
-  public function addCase($sName, $content) {
+  public function addCase($sName = null, $content = null) {
 
-    if (!isset($this->aCases[$sName])) $this->aCases[$sName] = $this->createCase($sName, $content);
-    else $this->aCases[$sName]->addContent($content);
+    if (!$sName) $sName = '';
+
+    if (!isset($this->aCases[$sName])) {
+
+      $this->aCases[$sName] = $this->createCase($sName, $content);
+    }
+    else {
+
+      $this->aCases[$sName]->addContent($content);
+    }
   }
 
   protected function createCase($sName, $content = null) {
 
-    return $this->getControler()->createCase($sName, $content);
+    return $this->getControler()->createCase($sName, $content, $sName && $content);
   }
 
   public function getTest() {

@@ -95,7 +95,7 @@
     <xsl:apply-templates select="php:test/*"/>
     <xsl:text>) {</xsl:text>
     <xsl:value-of select="$break"/>
-    <xsl:apply-templates select="php:case"/>
+    <xsl:apply-templates select="php:case | php:default"/>
     <xsl:text>}</xsl:text>
     <xsl:value-of select="$break"/>
   </xsl:template>
@@ -106,8 +106,18 @@
     <xsl:text> :</xsl:text>
     <xsl:value-of select="$break"/>
     <xsl:apply-templates select="php:content/*"/>
-    <xsl:text>break;</xsl:text>
     <xsl:value-of select="$break"/>
+  </xsl:template>
+
+  <xsl:template match="php:default">
+    <xsl:text>default :</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates select="php:content/*"/>
+    <xsl:value-of select="$break"/>
+  </xsl:template>
+
+  <xsl:template match="php:break">
+    <xsl:text>break;</xsl:text>
   </xsl:template>
 
   <xsl:template name="php:call">

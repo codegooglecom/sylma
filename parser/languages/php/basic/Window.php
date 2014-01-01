@@ -229,9 +229,9 @@ class Window extends common\basic\Window implements php\window {
     return $this->create('switch', array($this, $test));
   }
 
-  public function createCase($test, $content = null) {
+  public function createCase($test, $content = null, $bBreak = true) {
 
-    return $this->create('case', array($this, $test, $content));
+    return $this->create('case', array($this, $test, $content, $bBreak));
   }
 
   protected function lookupInstance($val) {

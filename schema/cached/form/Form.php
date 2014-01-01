@@ -9,6 +9,7 @@ class Form extends core\module\Domed {
   protected $contexts;
   protected $aElements = array();
   protected $bValid = true;
+  protected $sName;
 
   public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token = null) {
 
@@ -27,6 +28,16 @@ class Form extends core\module\Domed {
 
       $token->isValid();
     }
+  }
+
+  protected function setName($sName) {
+
+    $this->sName = $sName;
+  }
+
+  public function getName() {
+
+    return $this->sName;
   }
 
   protected function setMode($sMode) {

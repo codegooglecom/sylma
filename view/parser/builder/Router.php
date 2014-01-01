@@ -46,7 +46,6 @@ class Router extends View {
   protected function buildCrud () {
 
     $reflector = $this->buildCrudReflector();
-    //$window = $this->getWindow();
 
     if (!$aPaths = $reflector->getPaths()) {
 
@@ -56,45 +55,42 @@ class Router extends View {
     $this->setPaths($aPaths);
 
     $window = $this->prepareWindow($this->getDocument(), self::MODE_DEFAULT);
-    //$this->setWindow($window);
-
-    //$window->createVariable('arguments', '\sylma\core\argument');
     $result = $window->addVar($window->createVar($window->argToInstance(null), 'result'));
 
     $switch = $this->createSwitch($window);
 
-    if ($path = $reflector->getDefault()) {
-
-      $arguments = $window->getVariable(self::ARGUMENTS_NAME);
-
-      $if = $window->createCondition(
-              $window->createNot($arguments->call('query')),
-              $arguments->call('add', array($path->getAlias())));
-
-      $window->add($if);
-    }
-
     foreach ($aPaths as $path) {
 
-      if (!$path->isDisabled()) {
+      if (!$path->isDisabled() && $path->getName()) {
 
-        if ($path instanceof crud\Route) {
-
-          $content = $this->reflectRoute($path, $window);
-        }
-        else {
-
-          $content = $this->reflectViewComponent($path, $window);
-        }
-
-        $switch->addCase($path->getAlias(), $content);
+        $switch->addCase($path->getAlias(), $this->reflectView($path, $window));
       }
+    }
+
+    if ($path = $this->getDefault()) {
+
+      $switch->addCase($path->getAlias());
+      $switch->addCase(null, $this->reflectView($path, $window));
     }
 
     $window->add($switch);
     $window->setReturn($result);
 
     return $this->createFile($this->loadTarget($this->getDocument(), $this->getFile()), $this->buildWindow($window));
+  }
+
+  protected function reflectView(crud\Pathed $path, common\_window $window) {
+
+    if ($path instanceof crud\Route) {
+
+      $result = $this->reflectRoute($path, $window);
+    }
+    else {
+
+      $result = $this->reflectViewComponent($path, $window);
+    }
+
+    return $result;
   }
 
   protected function setPaths(array $aPaths) {

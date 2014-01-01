@@ -547,6 +547,11 @@ return; // todo, decide to use or not
     return $this->create('return', array($this, $content));
   }
 
+  public function createBreak() {
+
+    return $this->create('break', array($this));
+  }
+
   public function setVariable(common\_var $var, $bDebug = true) {
 
     $sName = $var->getName();

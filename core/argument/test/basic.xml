@@ -200,5 +200,48 @@
       );
     </tst:expected>
   </tst:test>
+  <tst:test name="Shift">
+    <tst:prepare>
+      $controler->set('arg1', $controler->createArgument(array(
+        0 => 'hello',
+        1 => 'world',
+      )));
+      $controler->set('arg2', $controler->createArgument(array(
+        'id' => 23,
+        0 => 'hello',
+        1 => 'world',
+      )));
+      $controler->set('arg3', $controler->createArgument(array(
+        'id' => 24,
+        'name' => 'world',
+      )));
+    </tst:prepare>
+    <tst:expected>
+
+      $arg1 = $controler->get('arg1');
+      $arg2 = $controler->get('arg2');
+      $arg3 = $controler->get('arg3');
+
+      $manager->assertEquals($arg1->shift(), 'hello');
+      $manager->assertEquals($arg2->shift(), 'hello');
+      $manager->assertEquals($arg3->shift(), null);
+
+      $manager->assertEquals($arg1->query(), array(
+        1 => 'world',
+      ), 'arg1');
+      $manager->assertEquals($arg2->query(), array(
+        'id' => 23,
+        1 => 'world',
+      ), 'arg2');
+      $manager->assertEquals($arg3->query(), array(
+        'id' => 24,
+        'name' => 'world',
+      ), 'arg3');
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
 </tst:tests>
 

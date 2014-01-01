@@ -6,7 +6,6 @@ use sylma\core;
 class Sub extends Form {
 
   protected $bID = false;
-  protected $sName;
   protected $iKey;
 
   public function setSub($sAlias, $iKey, $parent, $sID) {
@@ -27,16 +26,6 @@ class Sub extends Form {
   public function getID() {
 
     return $this->getElement('id')->getValue();
-  }
-
-  protected function setName($sName) {
-
-    $this->sName = $sName;
-  }
-
-  public function getName() {
-
-    return $this->sName;
   }
 
   protected function setKey($iKey) {

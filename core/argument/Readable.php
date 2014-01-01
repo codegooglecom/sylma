@@ -105,9 +105,29 @@ class Readable extends Domed implements core\argument {
 
   public function shift() {
 
-    $mVal = array_shift($this->aArray);
+    $aArray =& $this->aArray;
+    $mResult = null;
+    $sFinal = null;
 
-    return $mVal;
+    do {
+
+      $sKey = key($aArray);
+
+      if (is_integer($sKey)) {
+
+        $sFinal = $sKey;
+        break;
+      }
+
+    } while (next($aArray));
+    
+    if (!is_null($sFinal)) {
+
+      $mResult = $aArray[$sFinal];
+      unset($aArray[$sFinal]);
+    }
+
+    return $mResult;
   }
 
   public function getFirst() {

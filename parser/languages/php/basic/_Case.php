@@ -7,12 +7,13 @@ class _Case extends common\basic\Structured implements common\argumentable, comm
 
   protected $test;
 
-  public function __construct(common\_window $controler, $test, $content) {
+  public function __construct(common\_window $controler, $test, $content, $bBreak = true) {
 
     $this->setControler($controler);
     $this->setTest($test);
 
     if ($content) $this->addContent($content);
+    if ($bBreak) $this->aContent[] = $this->getWindow()->createBreak();
   }
 
   public function getTest() {
@@ -22,16 +23,32 @@ class _Case extends common\basic\Structured implements common\argumentable, comm
 
   public function setTest($test) {
 
-    $this->test = $this->getControler()->argToInstance($test);
+    $this->test = $test ? $this->getControler()->argToInstance($test) : $test;
   }
 
   public function asArgument() {
 
-    return $this->getControler()->createArgument(array(
-       'case' => array(
-         'test' => $this->test,
+    $test = $this->getTest();
+
+    if ($test === '') {
+
+      $aResult = array(
+       'default' => array(
          'content' => $this->getContent(),
-       )
-    ));
+       ),
+      );
+    }
+    else {
+
+      $aResult = array(
+       'case' => array(
+         'test' => $test,
+         'content' => $this->getContent(),
+       ),
+      );
+
+    }
+
+    return $this->getControler()->createArgument($aResult);
   }
 }

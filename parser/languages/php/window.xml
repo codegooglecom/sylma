@@ -37,5 +37,6 @@
     <cls:class alias="group" name="\sylma\parser\languages\common\basic\Group"/>
     <cls:class alias="expression" name="\sylma\parser\languages\common\basic\Expression"/>
     <cls:class alias="caller" name="\sylma\parser\languages\common\basic\Caller"/>
+    <cls:class alias="break" name="\sylma\parser\languages\common\basic\_Break"/>
   </cls:classes>
 </arg:argument>

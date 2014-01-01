@@ -233,6 +233,8 @@ sylma.crud.Field = new Class({
 
   setValue : function(val) {
 
+    val = val === undefined ? '' : val;
+    
     this.getInput().set('value', val);
   },
 
