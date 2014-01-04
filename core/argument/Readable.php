@@ -74,11 +74,11 @@ class Readable extends Domed implements core\argument {
       $mPrevious =& $mCurrent;
       $mCurrent =& $mCurrent[$sKey];
 
-    } while(next($aPath));
+    } while(next($aPath) !== false);
 
-    if (each($aPath)) {
+    if (current($aPath) !== false) {
 
-      $this->throwException(sprintf('Cannot find path "%s" to set value', $sPath));
+      $this->throwException(sprintf('Cannot find path "%s" to set value', implode('/', $aPath)));
     }
 
     if ($bNULL) {
@@ -120,7 +120,7 @@ class Readable extends Domed implements core\argument {
       }
 
     } while (next($aArray));
-    
+
     if (!is_null($sFinal)) {
 
       $mResult = $aArray[$sFinal];

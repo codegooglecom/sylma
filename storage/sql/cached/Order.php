@@ -71,7 +71,7 @@ class Order extends core\module\Managed {
       $aElement = $this->getElement($aPath['name']);
       $sValue = $aElement['alias'];
 
-      if (isset($aElement['string'])) {
+      if (isset($aElement['string']) && $aElement['string']) {
 
         $sValue = 'LOWER(' . $sValue . ')';
       }

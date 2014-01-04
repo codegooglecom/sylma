@@ -59,7 +59,10 @@ class Foreign extends Element implements sql\schema\foreign {
       $file = $this->getElementRefFile();
       $this->getParser()->addSchema($file->getDocument(), $file);
 
-      $result = $this->loadElementRef($file);
+      if (!$result = $this->loadElementRef($file)) {
+
+        $this->launchException('Cannot find foreign table');
+      }
     }
 
     return $result;

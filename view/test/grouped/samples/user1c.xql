@@ -10,6 +10,7 @@
     <field name="id" type="sql:id"/>
     <field name="name" type="xs:string"/>
     <field name="email" type="xs:string" default="'mymail'"/>
+    <field name="age" type="sql:float"/>
     <field name="source" type="xs:string" default="'hello'"/>
   </table>
 

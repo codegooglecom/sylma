@@ -15,9 +15,9 @@ class Basic extends sql\schema\Handler {
   /**
    * @return \sylma\view\parser\Elemented
    */
-  public function getView() {
+  public function getView($bDebug = true) {
 
-    if (!$this->view) {
+    if (!$this->view && $bDebug) {
 
       $this->launchException('No view defined');
     }
@@ -86,7 +86,7 @@ class Basic extends sql\schema\Handler {
 
     if (!$sPrefix) $sPrefix = self::TARGET_PREFIX;
 
-    if (!$sNamespace = parent::lookupNamespace($sPrefix, $context) and $sPrefix) {
+    if (!$sNamespace = parent::lookupNamespace($sPrefix, $context) and $sPrefix and $this->getView(false)) {
 
       $sNamespace = $this->getView()->lookupNamespace($sPrefix);
     }

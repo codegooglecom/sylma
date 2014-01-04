@@ -36,15 +36,16 @@
       `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
       `name` varchar(255) COLLATE utf8_bin NOT NULL,
       `email` varchar(65) COLLATE utf8_bin NOT NULL,
+      `age` FLOAT NOT NULL,
       `source` varchar(255) COLLATE utf8_bin NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
     TRUNCATE TABLE `user1c`;
-    INSERT INTO `user1c` (`id`, `name`, `email`, `source`) VALUES
-      (1, 'root', 'root@sylma.org', '&lt;span&gt;root bloc&lt;/span&gt;'),
-      (2, 'admin', 'admin@sylma.org', 'a'),
-      (3, 'webmaster', 'webmaster@sylma.org', 'b');
+    INSERT INTO `user1c` (`id`, `name`, `email`, `age`, `source`) VALUES
+      (1, 'root', 'root@sylma.org', 20, '&lt;span&gt;root bloc&lt;/span&gt;'),
+      (2, 'admin', 'admin@sylma.org', 12, 'a'),
+      (3, 'webmaster', 'webmaster@sylma.org', 8, 'b');
 
     CREATE TABLE IF NOT EXISTS `user1e` (
       `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,

@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\schema\parser\component;
-use sylma\core, sylma\dom, sylma\schema\parser, sylma\parser\reflector;
+use sylma\core, sylma\dom, sylma\schema, sylma\parser\reflector;
 
 class Basic extends reflector\component\Foreigner {
 
@@ -53,6 +53,14 @@ class Basic extends reflector\component\Foreigner {
     }
 
     return $result;
+  }
+
+  /**
+   * @return schema\parser\schema
+   */
+  protected function getHandler() {
+
+    return $this->getParser();
   }
 }
 

@@ -228,16 +228,8 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     }
 
     $sNamespace = $this->parseTargetNamespace($doc);
-    $sResult = '';
 
-    foreach ($doc->getChildren() as $child) {
-
-      if ($child->getType() !== $child::COMMENT) {
-
-        $sName = $this->addSchemaChild($child, $sNamespace);
-        if (!$sResult && $sName) $sResult = $sName;
-      }
-    }
+    $sResult = $this->browseSchemaChild($doc->getRoot(), $sNamespace);
 
     return $sResult;
   }
@@ -251,6 +243,7 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
       case 'element' :
 
         $sName = $this->addSchemaElement($el, $sNamespace);
+        //$this->browseSchemaChild($el, $sNamespace);
         break;
 
       case 'complexType' :
@@ -265,6 +258,26 @@ class Elemented extends schema\parser\Handler implements reflector\elemented, sc
     }
 
     return $sName;
+  }
+
+  protected function browseSchemaChild(dom\element $parent, $sNamespace) {
+
+    $sResult = '';
+
+    foreach ($parent->getChildren() as $child) {
+
+      if ($child->getType() !== $child::COMMENT) {
+
+        $sName = $this->addSchemaChild($child, $sNamespace);
+
+        if (!$sResult && $sName) {
+
+          $sResult = $sName;
+        }
+      }
+    }
+
+    return $sResult;
   }
 
   protected function addSchemaElement(dom\element $el, $sNamespace) {

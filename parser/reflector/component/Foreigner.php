@@ -201,11 +201,7 @@ class Foreigner extends reflector\basic\Reflector implements reflector\component
 
   protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
 
-    if ($this->getNode(false)) {
-
-      $mSender[] = $this->getNode()->asToken();
-    }
-    else if ($file = $this->getSourceFile()) {
+    if (!$this->getNode(false) and $file = $this->getSourceFile()) {
 
       $mSender[] = $file->asToken();
     }
