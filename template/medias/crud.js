@@ -234,7 +234,7 @@ sylma.crud.Field = new Class({
   setValue : function(val) {
 
     val = val === undefined ? '' : val;
-    
+
     this.getInput().set('value', val);
   },
 
@@ -557,7 +557,7 @@ sylma.crud.fieldset = {};
 
     addTemplate : function() {
 
-      var row = this.createTemplate(this.count);
+      var row = this.createTemplate(this.count, this.getContent());
       this.count++;
 
       this.getContent().getNode().grab(row.getNode());
@@ -566,9 +566,9 @@ sylma.crud.fieldset = {};
       setTimeout(function() {row.show()}, 1);
     },
 
-    createTemplate : function(position) {
+    createTemplate : function(position, parent) {
 
-      return this.getObject('template').clone(position);
+      return this.getObject('template').clone(position, parent);
     },
 
     resetHighlight : function() {
@@ -700,9 +700,14 @@ sylma.crud.fieldset = {};
       }
     },
 
-    clone : function(position) {
+    clone : function(position, parent) {
 
       var props = this.props;
+      parent = parent || this;
+
+      //props.parentObject = parent;
+      //props.sylma.parents = Object.append({}, this.getParents()),
+
       props.objects = {};
       props.sylma.key = null;
 
@@ -715,109 +720,6 @@ sylma.crud.fieldset = {};
 
       return clone;
     }
-  });
-
-  this.FileForm = new Class({
-
-    Extends : sylma.ui.Base,
-
-    update : function(body) {
-
-      var callback = this.get('callback');
-
-      if (callback) {
-
-        var text = document.all ? body.innerText : body.textContent;
-
-        callback(text);
-      }
-    },
-
-    setPosition : function(position) {
-
-      this.getNode('position').set('value', position);
-    }
-  });
-
-  this.FileDropper = new Class({
-
-    Extends : this.Template,
-    position : 1,
-
-    initialize : function(props) {
-
-      this.parent(props);
-      this.position = this.getNode().getAllNext().length + 1;
-    },
-
-    sendFile : function() {
-
-      var form = this.getParent('uploader-container').getObject('uploader');
-
-      var input = this.getInput();
-      var clone = input.clone(true);
-
-      clone.cloneEvents(input);
-      this.prepareNodes(clone);
-
-      input.grab(clone, 'after');
-      form.getNode().grab(input);
-
-      this.highlight();
-
-      form.setPosition(this.position);
-      form.set('callback', this.updateFile.bind(this));
-
-      form.getNode().submit();
-    },
-
-    getInput : function() {
-
-      return this.getNode().getElement('input');
-    },
-
-    updateFile : function(content) {
-
-      var response = JSON.parse(content);
-
-      sylma.ui.parseMessages(response);
-
-      if (response.content) {
-
-        sylma.ui.importNode(response.content).inject(this.getNode().getParent());
-
-        var obj = sylma.ui.createObject(this.importResponse(response, this));
-        this.tmp.push(obj);
-
-        this.position++;
-      }
-      else {
-
-        sylma.ui.showMessage('No valid response');
-        //throw new Error('No valid response');
-      }
-
-      this.getInput().set('value');
-      this.downlight();
-    },
-
-    highlight : function() {
-
-      this.getInput().set('disabled', true);
-      this.getNode('loading').addClass('sylma-visible');
-    },
-
-    downlight : function() {
-
-      this.getInput().set('disabled');
-      this.getNode('loading').removeClass('sylma-visible');
-    }
-
-  });
-
-  this.File = new Class({
-
-    Extends : sylma.crud.fieldset.Row
   });
 
 }).call(sylma.crud.fieldset);

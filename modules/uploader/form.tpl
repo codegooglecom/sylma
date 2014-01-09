@@ -13,7 +13,14 @@
 >
 
   <tpl:template match="*" mode="file">
-    <div js:name="template" js:class="sylma.crud.fieldset.FileDropper" class="clearfix sylma-uploader">
+
+    <le:context name="js">
+      <le:file>Form.js</le:file>
+      <le:file>Dropper.js</le:file>
+      <le:file>File.js</le:file>
+    </le:context>
+
+    <div js:name="template" js:class="sylma.uploader.Dropper" class="clearfix sylma-uploader">
       <tpl:apply reflector="Tree"/>
       <div class="sylma-uploader-dropper">
         <input type="file" name="{alias('form')}">
@@ -29,9 +36,9 @@
 
   <tpl:template match="*" mode="file/form">
     <le:context name="css">
-      <le:file>medias/form.css</le:file>
+      <le:file>form.less</le:file>
     </le:context>
-    <form js:name="uploader" js:class="sylma.crud.fieldset.FileForm" class="sylma-uploader" target="sylma-uploader-iframe" enctype="multipart/form-data" method="post">
+    <form js:name="uploader" js:class="sylma.uploader.Form" class="sylma-uploader" target="sylma-uploader-iframe" enctype="multipart/form-data" method="post">
       <input js:node="position" type="hidden" name="position"/>
       <tpl:apply mode="file/form/init"/>
       <iframe name="sylma-uploader-iframe">
@@ -78,18 +85,26 @@
     <tpl:argument name="alias"/>
     <tpl:argument name="prefix" default="'{$alias}[{$position}]'"/>
 
-    <div js:class="sylma.crud.fieldset.File" class="field-file sylma-hidder sylma-visible form-reference field-file-extension-{extension}">
+    <div js:class="sylma.uploader.File" class="field-file sylma-hidder sylma-visible form-reference field-file-extension-{extension}">
       <tpl:apply mode="file/inputs">
         <tpl:read select="$prefix" tpl:name="prefix"/>
         <tpl:read select="$position" tpl:name="position"/>
       </tpl:apply>
       <tpl:apply mode="file/view"/>
-      <button type="button" class="right">
-        <js:event name="click">
-          %object%.remove();
-        </js:event>
-        <tpl:text>-</tpl:text>
-      </button>
+      <div class="actions">
+        <button type="button">
+          <js:event name="click">
+            %object%.remove(e);
+          </js:event>
+          <tpl:text>-</tpl:text>
+        </button>
+        <button type="button" js:node="move">
+          <js:event name="mousedown">
+            %object%.move(e);
+          </js:event>
+          <tpl:text>↕</tpl:text>
+        </button>
+      </div>
     </div>
 
   </tpl:template>

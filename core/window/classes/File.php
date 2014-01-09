@@ -32,6 +32,6 @@ class File extends core\module\Filed implements core\window\file {
 
     $init->setHeaderContent($init->getMime($file->getExtension()));
 
-    return $file->read();
+    return $file->checkRights(\Sylma::MODE_EXECUTE) ? $file->execute() : $file->read();
   }
 }
