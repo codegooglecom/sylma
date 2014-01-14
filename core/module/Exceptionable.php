@@ -5,6 +5,8 @@ use \sylma\core;
 
 class Exceptionable {
 
+  const DB_MANAGER = 'mysql';
+  
   /**
    * Throw a customized exception to the main controler
    *
@@ -14,6 +16,20 @@ class Exceptionable {
    */
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
+    $mSender = (array) $mSender;
+    $mSender[] = '@class ' . get_class($this);
+
     \Sylma::throwException($sMessage, $mSender, $iOffset);
+  }
+
+  /**
+   * Tmp alias
+   */
+  protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
+
+    $mSender = (array) $mSender;
+    $mSender[] = '@class ' . get_class($this);
+
+    \Sylma::throwException($sMessage, $mSender, 3, $aVars);
   }
 }

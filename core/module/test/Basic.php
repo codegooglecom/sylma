@@ -3,9 +3,7 @@
 namespace sylma\core\module\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('modules/tester/Prepare.php');
-
-class Basic extends tester\Prepare {
+class Basic extends tester\Prepare implements core\argumentable {
 
   const NS = 'http://www.sylma.org/core/module/test';
   protected $sTitle = 'Module';
@@ -16,13 +14,13 @@ class Basic extends tester\Prepare {
     $this->setNamespace(self::NS, 'self');
 
     $this->setArguments('settings.yml');
-    
+
     $this->setControler($this);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   public function setArgument($sPath, $mValue) {

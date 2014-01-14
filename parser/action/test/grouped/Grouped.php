@@ -1,36 +1,32 @@
 <?php
 
 namespace sylma\parser\action\test\grouped;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
 
-require_once('modules/tester/Basic.php');
-
-class Grouped extends tester\Basic {
+class Grouped extends tester\Basic implements core\argumentable {
 
   const NS = 'http://www.sylma.org/parser/action/test/grouped';
-  const FS_CONTROLER = 'fs/editable';
 
   protected $sTitle = 'Grouped';
   protected $exportDirectory;
 
   public function __construct($sFile = '') {
 
-    \Sylma::getControler('dom');
-
-    require_once('parser/action.php');
+    $this->getManager('dom');
 
     $this->setDirectory(__file__);
     $this->setNamespaces(array(
         'self' => self::NS,
-        'le' => parser\action::NS,
+        'le' => action\handler::NS,
     ));
 
-    $controler = \Sylma::getControler('action');
+    $controler = $this->getManager('action');
 
     if ($sFile) $this->setFiles(array($this->getFile($sFile)));
     $this->setControler($controler);
 
-    $this->exportDirectory = $this->getDirectory()->addDirectory('#tmp');
+    $cache = $this->getManager('fs/cache');
+    $this->exportDirectory = $cache->getDirectory()->addDirectory((string) $this->getDirectory());
 
     $this->setArguments(array());
     //$this->setFiles(array($this->getFile('basic.xml')));
@@ -48,7 +44,12 @@ class Grouped extends tester\Basic {
       case 'array' : $result = $action->asArray(); break;
       default :
 
-        $this->throwException(txt('Unknown action type : %s', $sType));
+        $this->throwException(sprintf('Unknown action type : %s', $sType));
+    }
+
+    if (is_null($result)) {
+
+      $this->launchException('No result', get_defined_vars());
     }
 
     return $result;
@@ -73,7 +74,7 @@ class Grouped extends tester\Basic {
 
     $aResult = array();
 
-    if ($args = $this->getArgument('arguments')) {
+    if ($args = $this->getArgument('arguments', false)) {
 
       $this->setArgument('arguments', array());
       $aResult = $args->query();
@@ -81,7 +82,8 @@ class Grouped extends tester\Basic {
 
     return $aResult;
   }
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     $bResult = null;
     $node = $test->getx('le:action');
@@ -91,14 +93,14 @@ class Grouped extends tester\Basic {
 
     if ($sException = $test->readAttribute('catch', null, false)) {
 
-      $bResult = false;
-
       try {
 
         $this->prepareTest($test);
         $aArguments = $this->loadArguments();
 
-        $action = $controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $file->getParent(), $sName);
+        $action = $controler->buildAction($this->createDocument($node), $aArguments, $this->exportDirectory, $this->getDirectory(), $sName);
+        $action->useExceptions(true);
+
         $action->asArray();
 
         $bResult = false;
@@ -125,7 +127,7 @@ class Grouped extends tester\Basic {
 
         if ($expected = $test->getx('self:expected', array(), false)) {
 
-          $bResult = parent::test($expected, $this, $doc, $file);
+          $bResult = parent::test($test, $expected->read(), $this, $doc, $file);
         }
         else {
 
@@ -135,7 +137,7 @@ class Grouped extends tester\Basic {
       }
       catch (core\exception $e) {
 
-        $e->save();
+        $e->save(false);
       }
     }
 
@@ -151,14 +153,14 @@ class Grouped extends tester\Basic {
     return parent::getDirectory($sPath, $bDebug);
   }
 
-  public function getFile($sPath, $bDebug = true) {
+  public function getFile($sPath = '', $bDebug = true) {
 
     return parent::getFile($sPath, $bDebug);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   public function setArgument($sPath, $mValue) {

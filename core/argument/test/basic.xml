@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tst:tests xmlns:tst="http://www.sylma.org/core/argument/test" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:arg="http://www.sylma.org/core/argument/test" arg:class="basic">
+<tst:tests
+  xmlns:tst="http://www.sylma.org/core/argument/test"
+  xmlns="http://www.sylma.org"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:arg="http://www.sylma.org/core/argument/test"
+  arg:class="basic"
+>
   <tst:description>Basic</tst:description>
   <tst:test name="A basic get()">
     <tst:prepare>
@@ -10,109 +16,106 @@
       return $arg->read('abc') === '123'
     </tst:expected>
   </tst:test>
-  <tst:test name="A basic set()">
+  <tst:test name="Unexisting read vs empty">
     <tst:prepare>
-      $arg = $controler->createArgument();
-      $arg->set('abc', '123');
-      $controler->set('arg', $arg);
+      $controler->set('arg', $controler->createArgument(array(
+        'abc' => '123',
+        'def' => '',
+      )));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
-      return $arg->read('abc') === '123'
+
+      $manager->assertEqual($arg->read('abc'), '123');
+      $manager->assertEqual($arg->read('def', false), '');
+      $manager->assertEqual($arg->read('ghi', false), null);
+
+      return true;
     </tst:expected>
   </tst:test>
-  <tst:test name="A set() of array">
+  <tst:test name="Get an object">
     <tst:prepare>
-      $arg = $controler->createArgument();
-      $arg->set('abc', array('def' => '123', 'ghi' => '456'));
-      $controler->set('arg', $arg);
+      $file = $controler->getFile('../samples/class.yml');
+      $controler->set('arg', $controler->createArgument(array('abc' => $file)));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
-      return
-        $arg->read('abc/def') === '123' &amp;&amp;
-        $arg->read('abc/ghi') === '456'
+      $file = $controler->getFile('../samples/class.yml');
+
+      return $arg->read('abc') === $file
     </tst:expected>
   </tst:test>
-  <tst:test name="A set() of array with stepped get">
+  <tst:test name="Get an argument">
     <tst:prepare>
-      $arg = $controler->createArgument();
-      $arg->set('abc', array('def' => '123', 'ghi' => '456'));
-      $controler->set('arg', $arg);
+      $file = $controler->getFile('../samples/class.yml');
+      $controler->set('arg', $controler->createArgument(array(
+        'abc' => 123,
+        'def' => $controler->createArgument(array(
+          'ghi' => 456
+        )),
+      )));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
+      $file = $controler->getFile('../samples/class.yml');
+
       return
-        $arg->get('abc')->read('def') === '123' &amp;&amp;
-        $arg->get('abc')->read('ghi') === '456'
+        $arg->read('abc') === 123 &amp;&amp;
+        $arg->get('def/lmn', false) === array() &amp;&amp;
+        $arg->get('def') instanceof \sylma\core\argument &amp;&amp;
+        $arg->read('def/ghi') === 456
     </tst:expected>
   </tst:test>
-  <tst:test name="A two levels depth set()">
+  <tst:test name="Read an non-existing key" catch="\sylma\core\exception">
     <tst:prepare>
-      $arg = $controler->createArgument();
-      $arg->set('abc/def', '123');
-      $controler->set('arg', $arg);
+      $controler->set('arg', $controler->createArgument(array('abc' => 123)));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
-      return $arg->read('abc/def') === '123'
+      $arg->read('def');
+
+      return 0
     </tst:expected>
   </tst:test>
-  <tst:test name="A two levels depth set() of array">
+  <tst:test name="Get an non-existing key">
     <tst:prepare>
-      $arg = $controler->createArgument();
-      $arg->set('abc/def', array('ghi' => '123', 'jkl' => '456'));
-      $controler->set('arg', $arg);
+      $controler->set('arg', $controler->createArgument(array('abc' => 123)));
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
-      return
-        $arg->read('abc/def/ghi') === '123' &amp;&amp;
-        $arg->read('abc/def/jkl') === '456'
-      </tst:expected>
-  </tst:test>
-  <tst:test name="Two two levels depth set()">
-    <tst:prepare>
-      $arg = $controler->createArgument();
-      $arg->set('abc/def', '123');
-      $arg->set('abc/ghi', '345');
-      $controler->set('arg', $arg);
-    </tst:prepare>
-    <tst:expected>
-      $arg = $controler->get('arg');
-      return
-        $arg->read('abc/def') === '123' &amp;&amp;
-        $arg->read('abc/ghi') === '345'
+
+      $manager->assertEqual($arg->get('def', false), array());
+      $manager->assertEqual($arg->get('def', false, null), null);
+      return true;
     </tst:expected>
   </tst:test>
-  <tst:test name="Two two levels depth set() with floats">
+  <tst:test name="Set an object">
     <tst:prepare>
-      $arg = $controler->createArgument();
-      $arg->set('abc/def', 1.23);
-      $arg->set('abc/ghi', 3.45);
+      $file = $controler->getFile('../samples/class.yml');
+      $arg = $controler->createArgument(array('abc' => 123));
+      $arg->set('def', $file);
+
       $controler->set('arg', $arg);
+
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
+      $file = $controler->getFile('../samples/class.yml');
+
       return
-        $arg->read('abc/def') === 1.23 &amp;&amp;
-        $arg->read('abc/ghi') === 3.45
+        $arg->read('abc') === 123 &amp;&amp;
+        $arg->read('def') === $file
     </tst:expected>
   </tst:test>
-  <tst:test name="A two levels depth set() with array and tmp object">
+  <tst:test name="A null query" disabled="true">
     <tst:prepare>
-      $arg = $controler->createArgument();
-      $test = $arg->set('abc/def', array('ghi' => '123'));
-      $test->set('lmn', '456');
-      $arg->get('abc/def')->set('opq', 789);
+      $arg = $controler->createArgument(array('abc' => 123));
+      $arg->set(null);
       $controler->set('arg', $arg);
     </tst:prepare>
     <tst:expected>
       $arg = $controler->get('arg');
-      return
-        $arg->read('abc/def/ghi') === '123' &amp;&amp;
-        $arg->read('abc/def/lmn') === '456' &amp;&amp;
-        $arg->read('abc/def/opq') === 789
+      return $arg->query() === array(null)
     </tst:expected>
   </tst:test>
   <tst:test name="Merge">
@@ -190,12 +193,55 @@
       foreach ($arg as $sKey => $sub) {
         $aResult[$sKey] = $sub;
       }
-      
+
       return $aResult == array(
         'abc' => '123',
         'def' => 456,
       );
     </tst:expected>
   </tst:test>
+  <tst:test name="Shift">
+    <tst:prepare>
+      $controler->set('arg1', $controler->createArgument(array(
+        0 => 'hello',
+        1 => 'world',
+      )));
+      $controler->set('arg2', $controler->createArgument(array(
+        'id' => 23,
+        0 => 'hello',
+        1 => 'world',
+      )));
+      $controler->set('arg3', $controler->createArgument(array(
+        'id' => 24,
+        'name' => 'world',
+      )));
+    </tst:prepare>
+    <tst:expected>
+
+      $arg1 = $controler->get('arg1');
+      $arg2 = $controler->get('arg2');
+      $arg3 = $controler->get('arg3');
+
+      $manager->assertEquals($arg1->shift(), 'hello');
+      $manager->assertEquals($arg2->shift(), 'hello');
+      $manager->assertEquals($arg3->shift(), null);
+
+      $manager->assertEquals($arg1->query(), array(
+        1 => 'world',
+      ), 'arg1');
+      $manager->assertEquals($arg2->query(), array(
+        'id' => 23,
+        1 => 'world',
+      ), 'arg2');
+      $manager->assertEquals($arg3->query(), array(
+        'id' => 24,
+        'name' => 'world',
+      ), 'arg3');
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
 </tst:tests>
 

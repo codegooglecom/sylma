@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<le:action xmlns:le="http://www.sylma.org/execution" xmlns:li="http://www.sylma.org/interface" xmlns="http://www.w3.org/1999/xhtml" xmlns:tst="http://www.sylma.org/modules/tester">
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic" xmlns:li="http://www.sylma.org/parser/caller" xmlns:tst="http://www.sylma.org/modules/tester">
   <le:settings>
-    <le:name>Test actions grouped</le:name>
     <le:argument format="php-string" name="file" required="false"/>
   </le:settings>
+  <le:context name="title">Test actions grouped</le:context>
   <le:action path="/sylma/modules/tester/class">
     <le:document>
       <tst:tests>
-        <le:action path="interface">
+        <le:object class="Grouped">
           <le:get-argument name="file"/>
-        </le:action>
+        </le:object>
       </tst:tests>
     </le:document>
   </le:action>

@@ -1,35 +1,38 @@
 <?php
 
 namespace sylma\parser\action\test\standalone;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use sylma\modules\tester, sylma\core, sylma\dom, sylma\storage\fs, sylma\parser\action, sylma\storage\sql;
 
-require_once('modules/tester/Prepare.php');
-
-class Standalone extends tester\Prepare {
+class Standalone extends tester\Prepare implements core\argumentable {
 
   const NS = 'http://www.sylma.org/parser/action/test/standalone';
 
   protected $sTitle = 'Standalone';
 
-  public function __construct(parser\action\Controler $controler = null) {
+  public function __construct(parser\action\Manager $controler = null) {
 
-    \Sylma::getControler('dom');
-
-    require_once('parser/action.php');
+    $this->getManager('dom');
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-    $this->setNamespace(parser\action::NS, 'le', false);
+    $this->setNamespace(action\handler::NS, 'le', false);
 
     if (!$controler) $controler = $this;
     //if (!$controler) $controler = \Sylma::getControler('action');
 
+    $this->resetDB();
+
     $this->setControler($controler);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getDirectory($sPath = '', $bDebug = true) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getDirectory($sPath, $bDebug);
+  }
+
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
+
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   public function setArgument($sPath, $mValue) {
@@ -37,19 +40,24 @@ class Standalone extends tester\Prepare {
     return parent::setArgument($sPath, $mValue);
   }
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     if ($node = $test->getx('self:node', array(), false)) {
 
       $this->setArgument('node', $node->getFirst());
     }
 
-    return parent::test($test, $controler, $doc, $file);
+    return parent::test($test, $sContent, $controler, $doc, $file);
+  }
+
+  public function createArgument($mArguments, $sNamespace = '') {
+
+    return parent::createArgument($mArguments, $sNamespace);
   }
 
   public function getAction($sPath, array $aArguments = array()) {
 
-    return parent::getAction($sPath, $aArguments);
+    return parent::readAction($sPath, $aArguments);
   }
 }
 

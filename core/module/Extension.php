@@ -2,106 +2,96 @@
 
 namespace sylma\core\module;
 
+require_once('Domed.php');
+
 class Extension extends Domed {
-  
-  // All the modules directories listed in the extends stack, added with @method addDirectory()
-  // concerned methods are getDirectory(), getFile(), getDocument() and runAction()
+
   private $aDirectories = array();
-  
+
   /**
-   * Set the working directory for this module. It can be retrieve with @method getDirectory()
-   * Multiple directories can be used, see @method addDirectory() for more details
-   * @param string $sPath The path to directory, mainly read with __file__ and send to @function extractDirectory()
+   * Add a directory to the directories stack
+   *
+   * @param string $mDirectory The new directory
    */
-  protected function setDirectory($mPath) {
-    
-    $this->aDirectories[] = array();
-    $this->addDirectory($mPath);
+  protected function setDirectory($mDirectory) {
+
+    parent::setDirectory($mDirectory);
+    array_unshift($this->aDirectories, parent::getDirectory());
   }
-  
+
   /**
-   * Add a directory to the directories stack. When loading a file or an action
-   * directories will be scan from last to first to find corresponding file.
-   * 
-   * @param string|XML_Path $mPath The absolute path where is located the directory
-   * @param string $sClass The class to link to the directory added
-   * 
-   * @return string|XML_Directory The added directory
+   * Get the last directory or a child of one of dir in the stack
+   *
+   * @return fs\directory First corresponding child dir in dirs stack, or last dir if path is empty
    */
-  protected function addDirectory($mPath, $sClass = '') {
-    
-    if (!$sClass) $sClass = get_class($this);
-    if (is_string($mPath)) $mPath = extractDirectory($mPath);
-    
-    $this->aDirectories[$sClass] = $mPath;
-    return $mPath;
-  }
-  
-  /**
-   * Load one of the working directories
-   * @param string $sClass The corresponding class name
-   * @return XML_Directory If $sClass is set, look for the directory corresponding to this class in directories stack
-   *  else return last directory
-   */
-  public function getDirectory($sClass = '') {
-    
-    if ($sClass) return array_val($sClass, $this->getDirectories());
-    else return array_last($this->getDirectories());
-  }
-  
-  protected function getDirectories() {
-    
-    return $this->aDirectories;
-  }
-  
-  protected function getFile($sPath, $bDebug = true) {
-    
-    $oFile = null;
-    $aReverse = array_reverse($this->getDirectories());
-    
-    foreach ($aReverse as $oDirectory) {
-      
-      if ($oFile = Controler::getFile(Controler::getAbsolutePath($sPath, $oDirectory))) {
-        
-        break;
+  protected function getDirectory($sPath = '', $bDebug = true) {
+
+    if (!$sPath) {
+
+      $result = parent::getDirectory($sPath, $bDebug);
+    }
+    else {
+
+      $result = null;
+      $aDirs = $this->getDirectories();
+
+      $fs = $this->getControler(static::FILE_MANAGER);
+
+      foreach ($aDirs as $dir) {
+
+        if ($result = $fs->getDirectory($sPath, $dir, false)) break;
+      }
+
+      if (!$result && $bDebug) {
+
+        $this->throwException(sprintf('@directory %s does not exist', $result->getRealPath()));
       }
     }
-    
-    if (!$oFile && $bDebug) {
-      
-      $this->dspm(xt('Fichier %s introuvable', new HTML_Strong($sPath)), 'file/warning');
+
+    return $result;;
+  }
+
+  private function getDirectories() {
+
+    return $this->aDirectories;
+  }
+
+  protected function getFile($sPath, $bDebug = true) {
+
+    $file = null;
+    $aDirs = $this->getDirectories();
+
+    $fs = $this->getControler(static::FILE_MANAGER);
+
+    foreach ($aDirs as $dir) {
+
+      if ($file = $fs->getFile($sPath, $dir, false)) break;
     }
-    
-    return $oFile;
+
+    if (!$file && $bDebug) {
+
+      $this->throwException(sprintf('@file %s does not exist', $sPath));
+    }
+
+    return $file;
   }
-  
-  protected function getTemplate($sPath) {
-    
-    if ($oFile = $this->getFile($sPath, false)) return parent::getTemplate((string) $oFile);
-    else return null;  
-  }
-  
-  protected function getDocument($sPath, $iMode = MODE_READ) {
-    
-    if ($oFile = $this->getFile($sPath, false)) return parent::getDocument((string) $oFile, $iMode);
-    else return null;
-  }
-  
+/*
   protected function runAction($sPath, $aArguments = array()) {
-    
-    $aReverse = array_reverse($this->getDirectories());
-    
+
+    $aReverse = $this->getDirectories();
+
     foreach ($aReverse as $oDirectory) {
-      
+
       $sRealPath = Controler::getAbsolutePath($sPath, $oDirectory);
       $oPath = new XML_Path($sRealPath, $aArguments, true, false, false);
-      
+
       if ($oPath->getPath()) break;
     }
-    
+
     if ($oPath->getPath()) return new XML_Action($oPath);
     return null;
   }
+*/
 }
 
 

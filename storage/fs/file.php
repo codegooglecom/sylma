@@ -13,6 +13,11 @@ interface file extends fs\resource {
    * @return dom\document|null An XML document loaded with the content of this file
    *
    */
+  function asDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ);
+
+  /**
+   * @deprecated use asDocument() instead
+   */
   function getDocument();
 
   /**
@@ -27,7 +32,11 @@ interface file extends fs\resource {
 
   /**
    * Get file name without extension
-   * ex : /sylma/index.eml => index
+   * ex : /sylma/index.eml will output index
    */
   function getSimpleName();
+
+  function getExtension();
+
+  function asPath();
 }

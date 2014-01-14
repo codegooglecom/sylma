@@ -1,43 +1,103 @@
 <?php
 
 namespace sylma\modules\tester;
-use \sylma\core, \sylma\dom, \sylma\storage\fs;
-
-require_once('Basic.php');
+use sylma\core, sylma\dom, sylma\storage\fs;
 
 abstract class Prepare extends Basic {
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  const DB_ARGUMENTS = '/#sylma/view/test/database.xml';
+  const DB_CONNECTION = 'test';
 
-    $bResult = false;
+  protected function prepareTest(dom\element $test, $controler) {
 
-    $sPrepare = $test->readx('self:prepare');
-    $sExpected = $test->readx('self:expected');
+    $bResult = true;
 
-    try {
+    if ($prepare = $test->getx('self:prepare', array(), false)) {
 
-      if (eval('$closure = function($controler) { ' . $sPrepare . '; };') === null) {
+      if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $prepare->readx() . '; };'))) {
 
-        $mResult = $this->evaluate($closure, $controler);
-
-        $this->onPrepared($mResult);
-
-        if (eval('$closure = function($controler) { ' . $sExpected . '; };') === null) {
-
-          $bResult = $this->evaluate($closure, $controler);
-        }
+        $this->evaluate($closure, $controler);
+        $this->onPrepared();
       }
-    }
-    catch (core\exception $e) {
+      else {
 
-      $bResult = $this->catchException($test, $e);
+        $bResult = false;
+      }
+
+      $prepare->remove();
     }
 
     return $bResult;
   }
 
-  protected function onPrepared($mResult) {
+  protected function test(dom\element $test, $sExpected, $controler, dom\document $doc, fs\file $file) {
+
+    $bResult = false;
+    $bReady = true;
+
+    $this->resetCount();
+
+    $sExpected = $test->readx('self:expected', array(), false);
+
+    try {
+
+      $this->prepareTest($test, $controler);
+
+      if ($bReady) {
+
+        if ($sExpected) {
+
+          if (is_null(eval('$closure = function($controler) { $manager = $controler; ' . $sExpected . '; };'))) {
+
+            $bResult = $this->evaluate($closure, $controler);
+          }
+        }
+        else {
+
+          $bResult = $this->testNode();
+        }
+      }
+    }
+    catch (core\exception $e) {
+
+      $bResult = $this->catchException($test, $e, $file);
+    }
+
+    return $bResult;
+  }
+
+  protected function testNode() {
+
+    $result = $this->getArgument('result');
+
+    if ($node = $this->getArgument('node', false)) {
+
+      $bResult = $this->compareNodes($node, $result);
+    }
+    else {
+
+      $bResult = true;
+    }
+
+    return $bResult;
+  }
+
+  protected function onPrepared() {
 
 
+  }
+
+  public function resetDB() {
+
+    $arg = $this->createArgument(static::DB_ARGUMENTS);
+    $db = $this->getManager(static::DB_MANAGER)->getConnection(static::DB_CONNECTION);
+
+    try {
+
+      $db->query($arg->read('script'), false);
+    }
+    catch (core\exception $e) {
+
+    }
   }
 }

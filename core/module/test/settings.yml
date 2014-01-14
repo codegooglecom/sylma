@@ -1,6 +1,6 @@
 class-alias : basic
 classes :
-  @sylma-classbase : \sylma\core\module\test\samples
+  §sylma-classbase : \sylma\core\module\test\samples
   namespaced :
     name : Namespaced
   exceptionable :

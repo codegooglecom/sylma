@@ -1,95 +1,121 @@
 <?php
 
 namespace sylma\core\module;
-use \sylma\core;
+use sylma\core;
 
-require_once('core/argument/Domed.php');
-require_once('Controled.php');
-//require_once('core/factory.php');
+abstract class Argumented extends Managed {
 
-//require_once('core/Reflector.php');
-
-abstract class Argumented extends Controled {
-
-  const FACTORY_CONTROLER = 'factory';
+  const FACTORY_MANAGER = 'factory';
+  const FACTORY_RELOAD = true;
+  const SETTINGS_FACTORY_PRIORITY = false;
 
   /**
    * Class manager
    */
-  private $reflector;
-  private $aClasses = array();
+  protected $factory;
 
-  protected static $argumentClass = 'sylma\core\argument\Domed';
+  protected static $sArgumentClass = '\sylma\core\argument\Readable';
+  protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
   /**
    * Argument object linked to this module, contains various parameters for the module
    * @var core\argument
    */
   protected $arguments = null;
+  protected $settings;
 
   public function create($sName, array $aArguments = array(), $sDirectory = '') {
 
-    $factory = $this->getControler(self::FACTORY_CONTROLER);
+    return $this->getFactory()->create($sName, $aArguments, $sDirectory);
+  }
 
-    if (array_key_exists($sName, $this->aClasses)) {
+  /**
+   *
+   * @return core\factory
+   */
+  protected function getFactory($bCreate = true) {
 
-      $class = $this->aClasses[$sName];
-    }
-    else {
+    if (!$this->factory && $bCreate) {
 
-      if (!$this->getArguments()) {
+      //$args = $this->getSettings(false) ? $this->getSettings() : $this->getArguments();
+      if (static::SETTINGS_FACTORY_PRIORITY or !$args = $this->getArguments()) {
 
-        $this->throwException(txt('Cannot build object @class %s. No settings defined', $sName));
+        $args = $this->getSettings(false);
       }
 
-      $factory->setSettings($this->getArguments());
-      $class = $factory->findClass($sName, $aArguments, $sDirectory);
-
-      $this->aClasses[$sName] = $class;
+      $this->factory = $this->createFactory($args);
     }
 
-    $result = $factory->createObject($class, $aArguments);
+    return $this->factory;
+  }
+
+  protected function createFactory(core\argument $arg = null) {
+
+    //\Sylma::load(static::$sFactoryFile);
+    $result = new static::$sFactoryClass($arg);
 
     return $result;
   }
 
+  /**
+   *
+   * @param array $mArguments
+   * @param string $sNamespace
+   * @return \sylma\core\argument
+   */
   protected function createArgument($mArguments, $sNamespace = '') {
+
+    //\Sylma::load(static::$sArgumentFile);
 
     if ($sNamespace) $aNS = array($sNamespace);
     else if ($this->getNamespace()) $aNS = array($this->getNamespace());
     else $aNS = array();
 
-    return new static::$argumentClass($mArguments, $aNS);
+    return new static::$sArgumentClass($mArguments, $aNS);
   }
 
+  /**
+   * @deprecated, must use *Settings methods
+   */
   protected function setArguments($mArguments = null, $bMerge = true) {
 
-    if ($mArguments !== null) {
+    if (is_null($mArguments)) {
 
-      if (is_array($mArguments)) {
-
-        if ($this->getArguments() && $bMerge) $this->getArguments()->mergeArray($mArguments);
-        else $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
-      }
-      else if (is_object($mArguments)) {
-
-        if ($this->getArguments() && $bMerge) {
-
-          $this->getArguments()->merge($mArguments);
-        }
-        else $this->arguments = $mArguments;
-      }
+      $this->arguments = null;
     }
     else {
 
-      $this->arguments = null;
+      if ($this->getArguments() && $bMerge) {
+
+        $this->getArguments()->merge($mArguments);
+      }
+      else {
+
+        if (is_array($mArguments)) {
+
+          $this->arguments = $this->createArgument($mArguments, $this->getNamespace());
+        }
+        else if ($mArguments instanceof core\argument) {
+
+          $this->arguments = $mArguments;
+        }
+        else {
+
+          $this->throwException('Illegal argument sent');
+        }
+      }
+    }
+
+    if ($factory = $this->getFactory(false)) {
+
+      $factory->setArguments($this->getArguments(), static::FACTORY_RELOAD);
     }
 
     return $this->getArguments();
   }
 
   /**
-   *
+   * @deprecated, must use *Settings methods
    * @return core\argument
    */
   protected function getArguments() {
@@ -97,11 +123,14 @@ abstract class Argumented extends Controled {
     return $this->arguments;
   }
 
-  protected function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  /**
+   * @deprecated, must use *Settings methods
+   */
+  protected function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
     $mResult = $mDefault;
 
-    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
+    if (!$this->getArguments()) $this->throwException('No arguments has been defined');
 
     $mResult = $this->getArguments()->get($sPath, $bDebug);
     if ($mResult === null && $mDefault !== null) $mResult = $mDefault;
@@ -109,11 +138,14 @@ abstract class Argumented extends Controled {
     return $mResult;
   }
 
-  protected function readArgument($sPath, $mDefault = null, $bDebug = false) {
+  /**
+   * @deprecated, must use *Settings methods
+   */
+  protected function readArgument($sPath, $bDebug = true, $mDefault = null) {
 
     $mResult = $mDefault;
 
-    if (!$this->getArguments()) $this->throwException(t('No arguments has been defined'));
+    if (!$this->getArguments()) $this->throwException('No arguments has been defined');
 
     $mResult = $this->getArguments()->read($sPath, $bDebug);
     if ($mResult === null && $mDefault !== null) $mResult = $mDefault;
@@ -121,6 +153,9 @@ abstract class Argumented extends Controled {
     return $mResult;
   }
 
+  /**
+   * @deprecated, must use *Settings methods
+   */
   protected function setArgument($sPath, $mValue) {
 
     if (!$this->getArguments()) {
@@ -131,14 +166,91 @@ abstract class Argumented extends Controled {
     return $this->getArguments()->set($sPath, $mValue);
   }
 
-  /**
-   * Log a message
-   * @param mixed|DOMNode|string|array $mMessage The message to send, will be parsed or stringed
-   * @param string $sStatut The statut of the message : see @file /system/allowed-messages.xml for more infos
-   */
-  protected function log($mMessage, $sStatut = \Sylma::LOG_STATUT_DEFAULT) {
+  protected function setSettings($arg, $bMerge = true) {
 
-    return \Sylma::log($this->getNamespace(), $mMessage, $sStatut);
+    if (is_null($arg)) {
+
+      $this->arguments = null;
+    }
+    else {
+
+      if (!is_object($arg)) {
+
+        $arg = $this->createArgument($arg);
+      }
+
+      if ($this->settings && $bMerge) {
+
+        $this->settings->merge($arg);
+      }
+      else {
+
+        $this->settings = $arg;
+      }
+
+      if ($factory = $this->getFactory(false)) {
+
+        $factory->setArguments($this->getSettings(), $bMerge, static::FACTORY_RELOAD);
+      }
+    }
+  }
+
+  protected function translate() {
+
+    $aArguments = func_get_args();
+    $sValue = array_shift($aArguments);
+
+    // translate !
+
+    array_unshift($aArguments, $sValue);
+
+    return call_user_func_array('sprintf', $aArguments);
+  }
+
+  /**
+   * @return core\argument
+   */
+  protected function getSettings($bDebug = true) {
+
+    if (!$this->settings && $bDebug) {
+
+      $this->launchException('No settings defined');
+    }
+
+    return $this->settings;
+  }
+
+  protected function get($sPath, $bDebug = true) {
+
+    return $this->getSettings()->get($sPath, $bDebug);
+  }
+
+  protected function read($sPath, $bDebug = true) {
+
+    return $this->getSettings()->read($sPath, $bDebug);
+  }
+
+  protected function query($sPath, $bDebug = true) {
+
+    return $this->getSettings()->query($sPath, $bDebug);
+  }
+
+  protected function set($sPath, $mValue = null) {
+
+    return $this->getSettings()->set($sPath, $mValue);
+  }
+
+  protected function dsp() {
+
+    $mArgument = func_get_args();
+    if (count($mArgument) == 1) $mArgument = current ($mArgument);
+
+    \Sylma::dsp($mArgument);
+  }
+
+  protected function show($mVar, $bToken = true) {
+
+    return \Sylma::show($mVar, $bToken);
   }
 }
 

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  extends="/#sylma/storage/sql/crud.tpl"
+>
+
+  <crud:global>
+
+    <view:schema>schema.xql</view:schema>
+    <tpl:constant name="list-cols">message,insert,archive</tpl:constant>
+    <tpl:constant name="form-cols">* ^ id</tpl:constant>
+
+  </crud:global>
+
+  <crud:group name="list">
+
+    <le:context name="title">Exception</le:context>
+
+    <sql:order>!insert</sql:order>
+
+    <tpl:template match="*" mode="row/init">
+      <js:option name="url" cast="x">
+        <le:path/>/view?id=<tpl:read select="id"/>
+      </js:option>
+    </tpl:template>
+
+  </crud:group>
+
+  <crud:group name="form">
+
+    <view:template>
+
+      <le:context name="title">
+        <tpl:read select="title()"/>
+      </le:context>
+
+      <tpl:apply/>
+
+    </view:template>
+
+  </crud:group>
+
+  <view:view name="view">
+
+    <sql:resource>
+      <sql:id>
+        <le:get-argument name="id"/>
+      </sql:id>
+    </sql:resource>
+
+    <tpl:template>
+      <ul class="sylma-error">
+        <tpl:apply select="message_html,context,backtrace"/>
+        <tpl:apply select="insert,request,session,server,files" mode="container"/>
+      </ul>
+    </tpl:template>
+
+    <tpl:template match="*" mode="container">
+      <div>
+        <h3><tpl:read select="title()"/> : </h3>
+        <pre>
+          <tpl:read/>
+        </pre>
+      </div>
+    </tpl:template>
+
+    <tpl:template match="*" mode="content">
+      <tpl:read/>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

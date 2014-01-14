@@ -1,18 +1,27 @@
 <?php
 
 namespace sylma\modules\tester;
-use \sylma\core, \sylma\dom, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
 
-require_once('modules/tester/test.php');
-require_once('core/module/Domed.php');
+abstract class Basic extends Asserter {
 
-abstract class Basic extends core\module\Domed implements test {
+  protected static $sArgumentClass = 'sylma\core\argument\Filed';
+  protected static $sFactoryClass = '\sylma\core\factory\Reflector';
 
   const NS = 'http://www.sylma.org/modules/tester';
+  const PREFIX = 'self';
+
   protected $sTitle;
   protected $aFiles = array();
 
+  const FILE_MANAGER = 'fs/editable';
+
   protected function getFiles() {
+
+    if (!$this->aFiles) {
+
+      $this->aFiles = $this->getDirectory()->getFiles(array('xml'), null, 1);
+    }
 
     return $this->aFiles;
   }
@@ -22,35 +31,63 @@ abstract class Basic extends core\module\Domed implements test {
     $this->aFiles = $aFiles;
   }
 
-  public function load() {
+  public function loadAll() {
 
     $aResult = array();
 
-    if (!$aFiles = $this->getFiles()) {
+    foreach ($this->getFiles() as $file) {
 
-      $aFiles = $this->getDirectory()->getFiles(array('xml'), null, 0);
-    }
-
-    foreach ($aFiles as $file) {
-
-      $doc = $file->getDocument();
-      $doc->registerNamespaces($this->getNS());
-
-      if (!$doc || $doc->isEmpty()) $this->throwException(txt('@file %s cannot be load'));
-
-      $aTests = $this->loadDocument($doc, $file);
-
-      $iDisabled = $aTests['disabled'];
-      unset($aTests['disabled']);
-
-      $aResult[] = array(
-        'description' => $doc->readx('self:description', $this->getNS()),
-        '#test' => $aTests,
-        '@disabled' => $iDisabled,
-      );
+      $aResult[] = $this->loadFile($file);
     }
 
     $this->onFinish();
+
+    return array_filter($aResult);
+  }
+/*
+  public function loadNext() {
+
+    if ($params = $this->getSession()) {
+
+    }
+    else {
+
+      $aFiles = $this->getFiles();
+
+      $param = $this->createArgument(array(
+        'file' => array_shift($aFiles),
+      ))
+
+      $this->setSession($params);
+    }
+  }
+*/
+  protected function loadFile(fs\file $file) {
+
+    $doc = $file->getDocument();
+    $doc->registerNamespaces($this->getNS());
+
+    if (!$doc->isEmpty()) {
+
+      if ($doc->getRoot()->getNamespace() === static::NS) {
+
+        //dsp($doc->getRoot()->getNamespace());
+        $aTests = $this->loadDocument($doc, $file);
+
+        $iDisabled = $aTests['disabled'];
+        unset($aTests['disabled']);
+
+        $aResult = array(
+          'description' => $doc->readx('self:description', $this->getNS()),
+          '#test' => $aTests,
+          '@disabled' => $iDisabled,
+        );
+      }
+      else {
+
+        $aResult = array();
+      }
+    }
 
     return $aResult;
   }
@@ -60,20 +97,24 @@ abstract class Basic extends core\module\Domed implements test {
     $aResult = array();
     $iDisabled = 0;
 
-    foreach ($doc->queryx('self:test') as $test) {
+    require_once('core/functions/Global.php');
+
+    $tests = $doc->queryx('self:test[@standalone]', array(), false);
+
+    if (!$tests->length) {
+
+      $tests = $doc->queryx('self:test');
+    }
+    else {
+
+      dsp('WARNING : @standalone activated on ' . $file->asToken());
+    }
+
+    foreach ($tests as $test) {
 
       if (!$test->testAttribute('disabled', false)) {
-        //dspf($test->readAttribute('disabled'));
-        $bResult = $this->test($test, $this->getControler(), $doc, $file);
 
-        $aTest = array(
-          '@name' => $test->getAttribute('name'),
-          'result' => booltostr($bResult),
-        );
-
-        if (!$bResult) $aTest['message'] = ''; // ? TODO suspicious..
-
-        $aResult[] = $aTest;
+        $aResult[] = $this->loadElement($test, $doc, $file);
       }
       else {
 
@@ -86,9 +127,32 @@ abstract class Basic extends core\module\Domed implements test {
     return $aResult;
   }
 
+  protected function loadElement(dom\element $el, dom\handler $doc, fs\file $file) {
+
+    $bResult = $this->test($el, $el->read(), $this->getControler(), $doc, $file);
+
+    $aResult = array(
+      '@name' => $el->getAttribute('name'),
+      'result' => functions\booltostr($bResult),
+    );
+
+    if (!$bResult) $aResult['message'] = ''; // ? TODO suspicious..
+
+    return $aResult;
+  }
+
   protected function evaluate($closure, $controler) {
 
-    return $closure($controler);
+    if (!is_callable($closure)) {
+
+      $this->throwException('Cannot call test');
+    }
+
+    //core\exception\Basic::throwError(false);
+    $mResult = $closure($controler);
+    //core\exception\Basic::throwError(true);
+
+    return $mResult;
   }
 
   /**
@@ -99,26 +163,27 @@ abstract class Basic extends core\module\Domed implements test {
    * @param fs\file $file
    * @return boolean
    */
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
+    $this->resetCount();
     $bResult = false;
 
     try {
 
-      if (eval('$closure = function($controler) { ' . $test->read() . '; };') === null) {
+      if (eval('$closure = function($controler) { ' . $sContent . '; };') === null) {
 
         $bResult = $this->evaluate($closure, $controler);
       }
     }
     catch (core\exception $e) {
 
-      $bResult = $this->catchException($test, $e);
+      $bResult = $this->catchException($test, $e, $file);
     }
 
     return $bResult;
   }
 
-  protected function catchException(dom\element $test, core\exception $e) {
+  protected function catchException(dom\element $test, core\exception $e, fs\file $file) {
 
     $bResult = false;
 
@@ -130,7 +195,13 @@ abstract class Basic extends core\module\Domed implements test {
     }
     else {
 
-      $e->save();
+      $e->addPath($file->asToken());
+      $e->addPath('Test ID : ' . $test->readAttribute('name'));
+
+      if ($sCatch) $e->addPath(sprintf('Exception of type %s expected', $sCatch));
+      //$e->addPath($test->asString());
+
+      $e->save(false);
     }
 
     return $bResult;
@@ -154,29 +225,56 @@ abstract class Basic extends core\module\Domed implements test {
 
     if (!$result) {
 
-      $this->throwException(t('No result node'));
+      $this->throwException('No result node');
     }
 
     return $result;
   }
 
-  public function compareNodes(dom\node $node1, dom\node $node2) {
+  public function compareNodes($node1, $node2) {
+
+    if ($node1 instanceof dom\collection) {
+
+      if (!$node2 instanceof dom\collection) {
+
+        $this->launchException('Nodes are not equal types');
+      }
+
+      $root1 = $this->createDocument('root')->getRoot();
+      $root2 = $this->createDocument('root')->getRoot();
+
+      $root1->set($node1);
+      $root2->set($node2);
+
+      $node1 = $root1;
+      $node2 = $root2;
+    }
 
     $el = $this->loadDomElement($node1);
+    $iResult = $el->compare($this->loadDomElement($node2));
 
-    return $el->compare($this->loadDomElement($node2)) === $el::COMPARE_SUCCESS;
+    if ($iResult !== $el::COMPARE_SUCCESS) {
+
+      $node = $el->compareBadNode;
+      $sNode = $node instanceof core\tokenable ? $node->asToken() : '[undefined]';
+
+      //$this->throwException(sprintf('Node %s not equals with node %s', $el->asToken(), $node2->asToken()));
+      $this->launchException('Nodes not equals in ' . $sNode . $this->findDiff($node1->asString(), $node2->asString()), get_defined_vars());
+    }
+
+    return true;
   }
 
-  public function parse() {
+  public function asArgument() {
 
     $result = $this->createArgument(array(
       'group' => array(
-        'description' => t($this->sTitle),
-        '#group' => $this->load(),
+        'description' => $this->sTitle,
+        '#group' => $this->loadAll(),
       ),
     ), self::NS);
 
-    return $result->asDOM();
+    return $result;
   }
 
   protected function onFinish() {

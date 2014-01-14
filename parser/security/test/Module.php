@@ -1,13 +1,11 @@
 <?php
 
 namespace sylma\parser\security\test;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
 
-require_once('modules/tester/Prepare.php');
+class Module extends tester\Prepare implements core\argumentable {
 
-class Module extends tester\Prepare {
-
-  const NS = 'http://www.sylma.org/parser/security/test';
+  const NS = 'http://2013.sylma.org/parser/security/test';
 
   protected $sTitle = 'Security';
   protected $user;
@@ -27,15 +25,13 @@ class Module extends tester\Prepare {
     ),
   );
 
-  public function __construct(parser\action\Controler $controler = null) {
+  public function __construct(parser\action\Manager $controler = null) {
 
-    \Sylma::getControler('dom');
-
-    require_once('parser/action.php');
+    $this->getManager('dom');
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-    $this->setNamespace(parser\action::NS, 'le', false);
+    $this->setNamespace(action\handler::NS, 'le', false);
 
     if (!$controler) $controler = $this;
     //if (!$controler) $controler = \Sylma::getControler('action');
@@ -43,9 +39,9 @@ class Module extends tester\Prepare {
     $this->setControler($controler);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   public function setArgument($sPath, $mValue) {
@@ -53,17 +49,17 @@ class Module extends tester\Prepare {
     return parent::setArgument($sPath, $mValue);
   }
 
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
 
     if ($node = $test->getx('self:node', array(), false)) {
 
       $this->setArgument('node', $node->getFirst());
     }
 
-    return parent::test($test, $controler, $doc, $file);
+    return parent::test($test, $sContent, $controler, $doc, $file);
   }
 
-  public function onPrepared($mResult) {
+  public function onPrepared() {
 
     if ($action = $this->getArgument('action')) {
 
@@ -80,18 +76,18 @@ class Module extends tester\Prepare {
 
     if (!array_key_exists($sName, $this->aUsers)) {
 
-      $this->throwException(txt('Unknown test user : %s', $sName));
+      $this->throwException(sprintf('Unknown test user : %s', $sName));
     }
 
     $user = $this->getControler('user')->getControler();
 
     $aGroups = $this->aUsers[$sName];
-    $this->user = $user->create('user', array($user, $sName, $aGroups));
+    $this->user = $user->create('user', array($user, $sName, $aGroups, true));
   }
 
   public function getAction($sPath, array $aArguments = array()) {
 
-    return parent::getAction($sPath, $aArguments);
+    return parent::readAction($sPath, $aArguments);
   }
 }
 

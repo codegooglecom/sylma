@@ -1,10 +1,11 @@
 <?php
 
 namespace sylma\core;
+use sylma\core;
 
-class Redirect {
+class Redirect extends core\module\Argumented {
 
-  private $oPath = null; // URL cible
+  private $sPath = null; // URL cible
   private $oSource = null; // URL de provenance
   private $sExtension = 'html';
 
@@ -27,12 +28,12 @@ class Redirect {
 
   public function getPath() {
 
-    return $this->oPath;
+    return $this->sPath;
   }
 
-  public function setPath($oPath) {
+  public function setPath($sPath) {
 
-    $this->oPath = $oPath;
+    $this->sPath = $sPath;
   }
 
   public function getSource() {
@@ -55,6 +56,17 @@ class Redirect {
     return $this->sExtension;
   }
 
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
+
+    if (!$this->getArguments()) return false;
+    return parent::getArgument($sPath, $bDebug, $mDefault);
+  }
+
+  public function setArgument($sPath, $mValue) {
+
+    return parent::setArgument($sPath, $mValue);
+  }
+
   public function setExtension($sExtension) {
 
     $this->sExtension = $sExtension;
@@ -62,18 +74,18 @@ class Redirect {
 
   public function __sleep() {
 
-    foreach ($this->aDocuments as $sKey => $oDocument) $this->aDocuments[$sKey] = (string) $oDocument;
+    //foreach ($this->aDocuments as $sKey => $oDocument) $this->aDocuments[$sKey] = (string) $oDocument;
     return array_keys(get_object_vars($this)); // TODO Ref or not ?
   }
 
   public function __wakeup() {
 
-    foreach ($this->aDocuments as $sKey => $sDocument) $this->aDocuments[$sKey] = new XML_Document($sDocument);
+    //foreach ($this->aDocuments as $sKey => $sDocument) $this->aDocuments[$sKey] = new XML_Document($sDocument);
   }
 
   public function __toString() {
 
-    return (string) $this->oPath;
+    return (string) $this->sPath;
   }
 }
 

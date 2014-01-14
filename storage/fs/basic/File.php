@@ -1,10 +1,7 @@
 <?php
 
 namespace sylma\storage\fs\basic;
-use \sylma\storage\fs;
-
-require_once('Resource.php');
-require_once('storage/fs/file.php');
+use sylma\storage\fs, sylma\core\functions;
 
 class File extends Resource implements fs\file {
 
@@ -28,10 +25,6 @@ class File extends Resource implements fs\file {
    */
   private $iChanged = null;
 
-  private $oSettings = null;
-
-  private $bFileSecured = false;
-
   public function __construct($sName, fs\directory $parent, array $aRights, $iDebug) {
 
     $this->sFullPath = (string) $parent . '/' . $sName;
@@ -39,6 +32,8 @@ class File extends Resource implements fs\file {
     $this->parent = $parent;
 
     $this->bExist = is_file($this->getRealPath());
+
+    //\Sylma::getManager('init')->addStat($this->getRealPath());
 
     if ($this->doExist() || $iDebug & self::DEBUG_EXIST) {
 
@@ -49,26 +44,23 @@ class File extends Resource implements fs\file {
     }
     else if ($iDebug & self::DEBUG_LOG) {
 
-      $this->throwException(txt('@file %s does not exist', $this->getRealPath()), array(), 16); // todo too depth !
+      $this->throwException(sprintf('@file %s does not exist', $this->getRealPath()));
     }
   }
 
   public function getLastChange() {
 
-    if ($this->iChanged === null && $this->doExist()) $this->iChanged = filemtime($this->getRealPath());
+    //return filemtime($this->getRealPath());
+    if (is_null($this->iChanged) && $this->doExist()) $this->iChanged = filemtime($this->getRealPath());
 
     return $this->iChanged;
+
   }
 
   // public function getActionPath() {
 
     // $sPath = substr($this->getFullPath(), 0, strlen($this->getFullPath()) - strlen($this->getExtension()) - 1);
     // return $this->getName() == 'index.eml' ? substr($sPath, 0, -6) : $sPath;
-  // }
-
-  // public function getSimpleName() {
-
-    // return substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1);
   // }
 
   // public function getDisplayName() {
@@ -105,14 +97,23 @@ class File extends Resource implements fs\file {
 
   public function getSimpleName() {
 
-    return substr($this->getName(), 0, strlen($this->getName()) - strlen($this->getExtension()) - 1);
+    if ($sExt = $this->getExtension()) {
+
+      $sResult = substr($this->getName(), 0, strlen($this->getName()) - (strlen($sExt) + 1));
+    }
+    else {
+
+      $sResult = $this->getName();
+    }
+
+    return $sResult;
   }
 
   /**
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
    */
-  public function getFreeDocument(array $aNS = array()) {
+  public function getFreeDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ, $bSecured = false) {
 
     $result = null;
 
@@ -121,23 +122,26 @@ class File extends Resource implements fs\file {
       \Sylma::throwException(t('File controler is not ready'), array(), 0);
     }
 
-    $dom = $this->getControler('dom');
-    //if ($dom = \Sylma::getControler(self::DOM_CONTROLER, false, false)) {
+    $this->getControler('dom');
 
-      $result = $this->getControler()->create('file/document');
+    $result = $this->getControler()->create('file/document', array(null, $iMode));
 
-      $result->setFile($this);
-      $result->registerNamespaces($aNS);
-      $result->loadFile();
-      
-    //}
+    $result->setFile($this);
+    $result->registerNamespaces($aNS);
+
+    $result->loadFile($bSecured);
 
     return $result;
   }
 
-  public function getDocument(array $aNS = array()) {
+  public function asDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
-    return $this->getFreeDocument($aNS);
+    return $this->getFreeDocument($aNS, $iMode, true);
+  }
+
+  public function getDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
+
+    return $this->asDocument($aNS, $iMode);
   }
 
   public function getArgument() {
@@ -161,13 +165,6 @@ class File extends Resource implements fs\file {
     return $result;
   }
 
-  public function checkRights($iMode) {
-
-    if (!$this->isSecured() || ($iMode & $this->getUserMode())) return true;
-
-    return false;
-  }
-
   public function getSettings($bRecursive = false) {
 
     return $this->getParent()->getSettings($bRecursive);
@@ -178,14 +175,39 @@ class File extends Resource implements fs\file {
     return file($this->getRealPath(), FILE_SKIP_EMPTY_LINES);
   }
 
-  public function read() {
+  public function freeRead() {
 
     return file_get_contents($this->getRealPath());
+  }
+
+  public function read() {
+
+    if (!$this->checkRights(\Sylma::MODE_READ)) {
+
+      $this->throwException(sprintf('No read access to file %s', (string) $this));
+    }
+
+    return $this->freeRead();
+  }
+
+  public function execute() {
+
+    if (!$this->checkRights(\Sylma::MODE_EXECUTE)) {
+
+      $this->throwException(sprintf('No execute access to file %s', (string) $this));
+    }
+
+    return $this->freeRead();
   }
 
   public function asToken() {
 
     return '@file ' . (string) $this;
+  }
+
+  public function asPath() {
+
+    return $this->getParent() . '/' . $this->getSimpleName();
   }
 
   public function asArgument() {
@@ -194,22 +216,25 @@ class File extends Resource implements fs\file {
 
     if ($iSize < 1) $iSize = 1;
 
+    require_once('core/functions/Global.php');
+
     return $this->getControler()->createArgument(array(
       'file' => array(
-        'full-path' => $this->getFullPath(),
+        'path' => $this->getFullPath(),
+        'action-path' => $this->asPath(),
         'name' => $this->getName(),
         'simple-name' => $this->getSimpleName(),
         //'display-name' => $this->getDisplayName(),
         'owner' => $this->getOwner(),
         'group' => $this->getGroup(),
         'mode' => $this->getMode(),
-        'read' => booltostr($this->checkRights(MODE_READ)),
-        'write' => booltostr($this->checkRights(MODE_WRITE)),
-        'execution' => booltostr($this->checkRights(MODE_EXECUTION)),
+        'read' => functions\booltostr($this->checkRights(\Sylma::MODE_READ)),
+        'write' => functions\booltostr($this->checkRights(\Sylma::MODE_WRITE)),
+        'execution' => functions\booltostr($this->checkRights(\Sylma::MODE_EXECUTE)),
         'size' => $iSize,
         'extension' => $this->getExtension(),
       ),
-    ), self::NS);
+    ), $this->getControler()->getNamespace());
   }
 }
 

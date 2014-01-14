@@ -1,9 +1,7 @@
 <?php
 
 namespace sylma\modules\formater;
-use \sylma\core, \sylma\dom;
-
-require_once('core/module/Domed.php');
+use sylma\core, sylma\dom;
 
 class Controler extends core\module\Domed {
 
@@ -16,13 +14,13 @@ class Controler extends core\module\Domed {
     $this->loadDefaultArguments();
   }
 
-  protected function loadArray(array $aVal) {
+  protected function loadArray(array $aVal, $bDeep = true) {
 
     $aItems = array();
 
     foreach ($aVal as $mKey => $mVal) {
 
-      $mVal = $this->loadVar($mVal);
+      if($bDeep) $mVal = $this->loadVar($mVal);
       $mKey = $this->loadVar($mKey);
 
       $aItems[] = array(
@@ -36,19 +34,89 @@ class Controler extends core\module\Domed {
     ));
   }
 
+  /**
+   *
+   * @param \sylma\dom\node $val
+   * @return array
+   */
+  protected function loadObjectElement($val, $mContent) {
+
+    $aResult = array('object' => array(
+      '@class' => get_class($val),
+      $mContent,
+    ));
+
+    if ($val instanceof core\argument) {
+
+      $aResult['object']['note'] = "namespace : {$val->getNamespace()}";
+    }
+
+    return $aResult;
+  }
+
+  protected function replaceLineBreak($sContent) {
+
+      $result = $this->createDocument('<pre xmlns="http://www.w3.org/1999/xhtml">' . htmlspecialchars($sContent) . '</pre>');
+
+    return $result;
+  }
+
   protected function loadObject($val) {
 
     $result = null;
 
-    if ($val instanceof core\argument\Basic) {
+    if ($val instanceof core\argument) {
 
-      $aResult = $val->query();
-      $result = $this->loadArray($aResult);
+      $aResult = $val instanceof dom\argument\Basic ? $val->asArray() : $val->query();
+      $result = is_array($aResult) ? $this->loadArray($aResult) : $this->loadVar($aResult);
     }
     else if ($val instanceof dom\handler) {
 
-      $result = $val;
+      if ($val->getRoot(false)) {
+
+        if (\Sylma::read('debug/html/show')) {
+
+            $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+        }
+        else {
+
+          $result = '[]';
+        }
+      }
+      else {
+
+        $result = '[EMPTY]';
+      }
+
     }
+    else if ($val instanceof dom\node) {
+
+      if ($val->getDocument()) {
+
+        if (\Sylma::read('debug/html/show')) {
+
+          $result = $this->replaceLineBreak($val->asString(dom\handler::STRING_INDENT));
+        }
+        else {
+
+          $result = '[]';
+        }
+      }
+      else {
+
+        $result = '[Lost DOM Element]';
+      }
+    }
+    else if ($val instanceof dom\collection) {
+
+      $result = $this->loadDOMCollection($val);
+    }
+    else if ($val instanceof core\tokenable) {
+
+      $result = $val->asToken();
+    }
+
+    /*
     else if ($val instanceof core\argumentable) {
 
       $arg = $val->asArgument();
@@ -56,10 +124,31 @@ class Controler extends core\module\Domed {
     }
     else if ($val instanceof dom\domable) {
 
-      $result = $val->asDOM();
+      if ($val instanceof parser\action\cached ||
+        $val instanceof parser\action) {
+
+        $result = '[Action]';
+      }
+      else {
+
+        $result = $val->asDOM();
+      }
+
+    }*/
+
+    return $this->loadObjectElement($val, $result);
+  }
+
+  protected function loadDOMCollection(dom\collection $collection) {
+
+    $aResult = array();
+
+    foreach ($collection as $node) {
+
+      $aResult[] = $this->loadObject($node);
     }
 
-    return $result;
+    return $this->loadArray($aResult, false);
   }
 
   protected function loadArgument(core\argument $arg) {
@@ -69,12 +158,19 @@ class Controler extends core\module\Domed {
 
   protected function loadString($sVal) {
 
-    return array('string' => $sVal);
+    return array('string' => mb_check_encoding($sVal) ? $sVal : '[invalid utf-8]');
   }
 
   protected function loadNumeric($iVal) {
 
     return array('numeric' => $iVal);
+  }
+
+  protected function loadBoolean($bVar) {
+
+    $content = $bVar ? '[TRUE]' : '[FALSE]';
+
+    return array('boolean' => $content);
   }
 
   protected function loadVar($mVar) {
@@ -85,6 +181,8 @@ class Controler extends core\module\Domed {
     else if (is_object($mVar)) $aResult = $this->loadObject ($mVar);
     else if (is_string($mVar)) $aResult = $this->loadString($mVar);
     else if (is_numeric($mVar)) $aResult = $this->loadNumeric($mVar);
+    else if (is_bool($mVar)) $aResult = $this->loadBoolean($mVar);
+    else if (is_null($mVar)) $aResult = $aResult = array('null' => array());
     else {
 
       $aResult = array('unknown' => array('@type' => gettype($mVar)));
@@ -92,6 +190,16 @@ class Controler extends core\module\Domed {
 
     return $aResult;
     //else if ()
+  }
+
+  public function errorAsHTML(array $aError) {
+
+    $sFile = array_key_exists('file', $aError) ? $aError['file'] : '-unknown-';
+    $sLine = array_key_exists('line', $aError) ? $aError['line'] : '-unknown-';
+    $sClass = array_key_exists('class', $aError) ? $aError['class'] : '-unknown-';
+    $sFunction = array_key_exists('function', $aError) ? $aError['function'] : '-unknown-';
+
+    return "<a href=\"netbeans://$sFile:$sLine\">$sFile [$sLine] - $sClass->$sFunction()</a><br/>";
   }
 
   public function asHTML($mVal) {
@@ -105,7 +213,6 @@ class Controler extends core\module\Domed {
 
         $template = $this->getTemplate('default.xsl');
         $result = $template->parseDocument($doc);
-        //dspm($result->asString());
       }
     }
 
@@ -122,7 +229,14 @@ class Controler extends core\module\Domed {
     }
     else if (is_object($mVal)) {
 
-      $sResult = '[object, @class = ' . get_class($mVal) . ']';
+      if ($mVal instanceof core\tokenable) {
+
+        $sResult = $mVal->asToken();
+      }
+      else {
+
+        $sResult = '[object, @class = ' . get_class($mVal) . ']';
+      }
     }
     else if (is_array($mVal)) {
 
@@ -136,8 +250,16 @@ class Controler extends core\module\Domed {
 
       $sResult = '[numeric = ' . $mVal . ']';
     }
+    else if (is_bool($mVal)) {
 
-    return '@var ' . $sResult;
+      $sResult = '[boolean = ' . ($mVal ? 'TRUE' : 'FALSE') . ']';
+    }
+    else {
+
+      $sResult = '[' . gettype($mVal) . ']';
+    }
+
+    return '@var ' . htmlentities($sResult);
   }
 
   public function limitString($mValue, $iLength = 50, $bXML = false) {

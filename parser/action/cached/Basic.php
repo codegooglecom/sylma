@@ -1,68 +1,58 @@
 <?php
 
 namespace sylma\parser\action\cached;
-use sylma\core, sylma\parser, sylma\storage\fs;
+use sylma\core, sylma\parser\action, sylma\storage\fs;
 
-require_once('core/module/Domed.php');
-
-require_once(dirname(__dir__) . '/cached.php');
-require_once('core/stringable.php');
-
-abstract class Basic extends core\module\Domed implements parser\action\cached, core\stringable {
+abstract class Basic extends core\module\Domed implements action\cached {
 
   //protected $bTemplate = false;
   protected $aActionArguments = array();
 
-  public function __construct(fs\directory $dir, parser\action $controler, array $aArguments) {
+  protected $aResults = array();
+  protected $bRunned = false;
 
-    require_once('parser/action.php');
+  protected $contexts;
+  protected $handler;
 
-    $this->setControler($controler);
-    $this->setDirectory($dir);
-    $this->setNamespace(parser\action::NS);
+  public function __construct(fs\file $file, fs\directory $dir, action\handler $handler, core\argument $contexts = null, array $aArguments = array(), array $aManagers = array()) {
 
-    $this->loadDefaultArguments();
-    $this->aActionArguments = $aArguments;
-  }
+    foreach ($aManagers as $sName => $manager) {
 
-  /**
-   *
-   * @return array
-   */
-  abstract protected function runAction();
-
-  /**
-   *
-   * @return array|mixed
-   */
-  protected function parseAction() {
-
-    return $this->runAction();
-  }
-
-  protected function loadArgumentable(core\argumentable $val = null) {
-
-    if (!$val) return null;
-
-    $arg = $val->asArgument();
-
-    return $this->loadDomable($arg);
-  }
-
-  protected function loadStringable(core\stringable $val, $iMode = 0) {
-
-    return $val->asString($iMode);
-  }
-
-  protected function validateString($sVal) {
-
-    if (!is_string($sVal)) {
-
-      $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : string expected, %s given', $formater->asToken($sVal)));
+      $this->setControler($manager, $sName);
     }
 
-    return $sVal;
+    if (!$contexts) $contexts = $this->createArgument(array());
+
+    if (!isset($contexts[self::CONTEXT_DEFAULT])) {
+
+      $contexts[self::CONTEXT_DEFAULT] = $handler->getControler()->createContext();
+    }
+
+    $this->setFile($file);
+
+    $this->setContexts($contexts);
+    $this->setHandler($handler);
+
+    $this->setDirectory($dir);
+    $this->setNamespace(action\handler::NS);
+
+    $this->loadDefaultArguments();
+    $this->setActionArguments($aArguments);
+  }
+
+  protected function getHandler() {
+
+    return $this->handler;
+  }
+
+  protected function setHandler(action\handler $handler) {
+
+    $this->handler = $handler;
+  }
+
+  protected function setActionArguments(array $aArguments) {
+
+    $this->aActionArguments = $aArguments;
   }
 
   protected function getActionArgument($sName, $bRequired = true) {
@@ -71,7 +61,7 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
 
     if (!array_key_exists($sName, $this->aActionArguments)) {
 
-      if ($bRequired) $this->throwException(txt('Unknow argument : %s', $sName));
+      if ($bRequired) $this->throwException(sprintf('Missing argument : %s', $sName));
     }
     else {
 
@@ -81,113 +71,105 @@ abstract class Basic extends core\module\Domed implements parser\action\cached, 
     return $mResult;
   }
 
-  protected function validateArgument($sName, $mVar, $mVal, $bRequired = true, $bReturn = false, $bDefault = false) {
+  /**
+   *
+   * @return array|mixed
+   */
+  protected function runAction(fs\file $file) {
 
-    $mResult = null;
+    $aArguments = array();
+    $handler = $this->getHandler();
 
-    if ($bRequired && (is_null($mVal) || $mVal === false)) {
+    include($file->getRealPath());
 
-      if ($bDefault) $mResult = null;
-      else $this->throwException(txt('Validation failed for argument %s', $sName));
-    }
-
-    if (!$bDefault) {
-
-      if ($bReturn) $mResult = $mVal;
-      else $mResult = $mVar;
-    }
-
-    return $mResult;
+    return $aArguments;
   }
 
-  protected function validateNumeric($iVal) {
+  /**
+   * Allow management of multiple calls on same action
+   * @return array|mixed
+   */
+  public function loadAction() {
 
-    if (!is_numeric($iVal)) {
+    if (!$this->bRunned) {
 
-      $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : numeric expected, %s given', $formater->asToken($iVal)));
+        $mResult = $this->runAction($this->getFile());
+        $this->aResults[self::CONTEXT_DEFAULT]->set('', $mResult);
+      $this->bRunned = true;
+
+      //echo $this->show($this->aResults['default']->getArguments());
+      //echo $this->show($this->runAction());
     }
 
-    return $iVal + 0;
+    //return $this->aResults;
   }
 
-  protected function validateArray($aVal) {
+  protected function getContexts() {
 
-    if (!is_array($aVal)) {
-
-      $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : array expected, %s given', $formater->asToken($aVal)));
-    }
-
-    return $aVal;
+    return $this->contexts;
   }
 
-  protected function validateObject($val, $sInterface) {
+  public function getParentParser($bRoot = false) {
 
-    if (!$val instanceof $sInterface) {
-
-      $formater = \Sylma::getControler('formater');
-      $this->throwException(txt('Invalid argument type : object %s expected, %s given', $sInterface, $formater->asToken($val)));
-    }
-
-    return $val;
+    return $this->getHandler()->getParentParser($bRoot);
   }
 
-  protected function getActionFile($sPath, array $aArguments) {
+  public function setContexts(core\argument $contexts) {
 
-    return $this->create('action', array($this->getFile($sPath), $aArguments));
+    $this->contexts = $contexts;
+    $this->aResults = $contexts;
+  }
+
+  /**
+   *
+   * @param type $sContext
+   * @return parser\context
+   */
+  public function getContext($sContext = self::CONTEXT_DEFAULT, $bDebug = true) {
+
+    return $this->aResults->get($sContext, $bDebug);
+  }
+
+  protected function getActionFile($sPath, array $aArguments = array()) {
+
+    $action = $this->create('action', array($this->getFile($sPath), $aArguments));
+    $action->setContexts($this->getContexts());
+    $action->setParentParser($this->getHandler());
+
+    return $action;
+  }
+
+  protected function includeScript($sPath, array $aArguments = array()) {
+
+    $arg = $this->createArgument($aArguments);
+    $arg->merge($this->aActionArguments);
+
+
+    return $this->getScriptFile($this->getFile($sPath), array(
+      'arguments' => $arg,
+      'contexts' => $this->getContexts(),
+      'post' => $this->getContext('post', false) ? $this->getContext('post') : null,
+    ));
   }
 
   public function asObject() {
 
-    $aResult = $this->parseAction();
-
-    if (!$aResult) {
-
-      $this->throwException(txt('No valid object result'));
-    }
-
-    return array_pop($aResult);
+    return $this->getContext()->asObject();
   }
 
   public function asArray() {
 
-    $aAction = array_values($this->parseAction());
-
-    if (count($aAction) == 1 && is_array(current($aAction))) $aResult = current($aAction);
-    else $aResult = $aAction;
-
-    return $aResult;
+    return current($this->getContext()->loadArray());
   }
 
   public function asString($iMode = 0) {
 
-    $mResult = $this->parseAction();
-
-    /*
-    if (is_object($mVal)) {
-
-      $sResult = (string) $mVal;
-    }
-    else if (is_string($mVal)) {
-
-      $sResult = $mVal;
-    }
-    else if (is_array($mVal)) {
-
-      $this->throwException(t('Cannot stringed array result'));
-    }
-
-    return $sResult;*/
-
-    return (string) implode('', $mResult);
+    return $this->getContext()->asString();
   }
 
   protected function throwException($sMessage, $mSender = array(), $iOffset = 2) {
 
-    $file = $this->getControler()->getFile();
-
-    $mSender[] = $file->asToken();
+    $mSender[] = $this->getFile()->asToken();
 
     return parent::throwException($sMessage, $mSender, $iOffset);
   }

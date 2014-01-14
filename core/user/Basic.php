@@ -1,14 +1,12 @@
 <?php
 
 namespace sylma\core\user;
-use \sylma\core, sylma\storage\fs;
-
-require_once('core/module/Argumented.php');
-require_once(dirname(__dir__) . '/user.php');
+use \sylma\core, sylma\storage\fs, sylma\core\functions;
 
 class Basic extends core\module\Argumented implements core\user {
 
   const NS = 'http://www.sylma.org/core/user';
+  const PUBLIC_ALIAS = 'anonymouse';
 
   private $sUser = '';
   private $bValid = false;
@@ -18,6 +16,7 @@ class Basic extends core\module\Argumented implements core\user {
    * Used by @method needProfile()
    */
   private $bProfil = false;
+  private $bPrivate = false;
 
   private $aGroups = array();
   private $cookie;
@@ -26,7 +25,7 @@ class Basic extends core\module\Argumented implements core\user {
 
   // controler :: create, getDocument, createArgument
 
-  public function __construct(Controler $controler, $sName = '', array $aGroups = array(), array $aOptions = array()) {
+  public function __construct(Controler $controler, $sName = '', array $aGroups = array(), $bPrivate = false) {
 
     $this->setName($sName);
     $this->setNamespace(self::NS);
@@ -41,11 +40,12 @@ class Basic extends core\module\Argumented implements core\user {
     }*/
 
     $this->setGroups($aGroups);
+    $this->setPrivate($bPrivate);
   }
 
-  public function getArgument($sPath, $mDefault = null, $bDebug = false) {
+  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
 
-    return parent::getArgument($sPath, $mDefault, $bDebug);
+    return parent::getArgument($sPath, $bDebug, $mDefault);
   }
 
   protected function setName($sName) {
@@ -58,38 +58,12 @@ class Basic extends core\module\Argumented implements core\user {
     return $this->sName;
   }
 
-  public function authenticate($sUser, $sPassword) {
+  public function authenticate($sUser) {
 
-    $sResult = null;
-
-    //$file = $this->getFile();
-    //$this->setOptions(new XML_Document(Controler::getSettings()->get("module[@name='users']")));
-
-    if (!$sUser || !$sPassword) {
-
-      $this->throwException(t('Cannot authenticate, bad datas !'));
-    }
-
-    $dUsers = $this->getControler()->getDocument($this->readArgument('users/path'), \Sylma::MODE_EXECUTE);
-
-    if (!$dUsers || $dUsers->isEmpty()) {
-
-      $this->throwException(t('No active user'));
-    }
-
-    list($spUser, $spPassword) = \addQuote(array($sUser, sha1($sPassword)));
-
-    if (!$eUser = $dUsers->getx("//user[@name = $spUser and @password = $spPassword]")) {
-
-      $this->throwException(t('Bad authentication'));
-    }
-
-    // Authentification successed !
+    // Authentication successed !
 
     $sResult = $this->setName($sUser);
     $this->isValid(true);
-
-    dspm(xt('Authentification %s réussie !', $sUser), 'success');
 
     return $sResult;
   }
@@ -100,6 +74,9 @@ class Basic extends core\module\Argumented implements core\user {
     return $this->bValid;
   }
 
+  /**
+   * @return bool
+   */
   public function logout() {
 
     if ($this->getCookie()) $this->getCookie()->kill();
@@ -107,7 +84,7 @@ class Basic extends core\module\Argumented implements core\user {
     $_SESSION = array();
     // setcookie(session_name(), '', time()-42000, '/');
 
-    return $this->getControler()->create('redirect', array('/'));
+    return $this->create('redirect', array('/'));
   }
 
   /**
@@ -122,6 +99,7 @@ class Basic extends core\module\Argumented implements core\user {
       // just authenticated via @method authenticate()
 
       //$this->loadProfile();
+      $this->setPrivate();
       if ($this->getCookie()) $this->getCookie()->save($this->getName(), $bRemember);
     }
     else if (!$this->loadSession()) {
@@ -133,24 +111,42 @@ class Basic extends core\module\Argumented implements core\user {
         // has cookie
 
         $this->setName($sUser);
+        $this->setPrivate();
+
         $this->bProfil = true;
       }
       else {
 
-        $controler = $this->getControler();
+        $manager = $this->getManager();
 
         // no cookie, select the default user
 
-        $server = $controler->getArgument('server');
+        $server = $manager->getArgument('server');
 
-        if ($_SERVER['REMOTE_ADDR'] == $server->read('ip')) $options = $server;
-        else $options = $controler->getArgument('anonymouse');
+        if ($_SERVER['REMOTE_ADDR'] == $server->read('ip')) {
 
-        $this->setName($options->read('name'));
-        $this->aGroups = $options->query('groups');
-        $this->setArguments($options->get('arguments'));
+          $options = $server;
+        }
+        else {
+
+          $options = $manager->getArgument(self::PUBLIC_ALIAS);
+        }
+
+        $this->loadSettings($options);
       }
     }
+  }
+
+  public function loadPublic() {
+
+    $this->loadSettings($this->getManager()->getArgument(self::PUBLIC_ALIAS));
+  }
+
+  protected function loadSettings(core\argument $args) {
+
+    $this->setName($args->read('name'));
+    $this->aGroups = $args->query('groups');
+    $this->setArguments($args->get('arguments'));
   }
 
   protected function setDirectory(fs\directory $dir) {
@@ -201,7 +197,7 @@ class Basic extends core\module\Argumented implements core\user {
     if (!$dProfil || $dProfil->isEmpty()) {
 
       $this->log($this->readArgument('path') . '/' . $this->getName());
-      $this->log(txt('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
+      $this->log(sprintf('Cannot load profile in @file %s', $this->getDirectory().'/'.$sProfil));
     }
     else {
 
@@ -244,7 +240,10 @@ class Basic extends core\module\Argumented implements core\user {
 
   protected function loadSession() {
 
-    if ($sSession = array_val($this->readArgument('session/name'), $_SESSION)) {
+    $sKey = $this->readArgument('session/name');
+    $sSession = array_key_exists($sKey, $_SESSION) ? $_SESSION[$sKey] : '';
+
+    if ($sSession) {
 
       $aSession = unserialize($sSession);
 
@@ -293,23 +292,25 @@ class Basic extends core\module\Argumented implements core\user {
 
   public function getMode($sOwner, $sGroup, $sMode, $sSource = '[undefined]') {
 
+    if (\Sylma::read('debug/rights')) return 7;
+
     $sMode = (string) $sMode;
 
     // Validity control of the arguments
 
     if (!$sOwner) {
 
-      $this->throwException(txt('Owner not defined in %s', $sSource));
+      $this->throwException(sprintf('Owner not defined in %s', $sSource));
     }
 
     if (strlen($sMode) < 3 || !is_numeric($sMode)) {
 
-      $this->throwException(txt('Invalid mode in %s', $sSource));
+      $this->throwException(sprintf('Invalid mode in %s', $sSource));
     }
 
     if (!strlen($sGroup)) {
 
-      $this->throwException(txt('Group not defined in %s', $sSource));
+      $this->throwException(sprintf('Group not defined in %s', $sSource));
     }
 
     $iOwner = intval($sMode{0});
@@ -318,7 +319,7 @@ class Basic extends core\module\Argumented implements core\user {
 
     if ($iOwner > 7 || $iGroup > 7 || $iPublic > 7) {
 
-      $this->throwException(txt('Invalid mode in %s', $sSource));
+      $this->throwException(sprintf('Invalid mode in %s', $sSource));
     }
 
     // everything is ok
@@ -328,6 +329,23 @@ class Basic extends core\module\Argumented implements core\user {
     if ($this->isMember($sGroup)) $iMode |= $iGroup;
 
     return $iMode;
+  }
+
+  protected function setPrivate($bValue = true) {
+
+    $this->bPrivate = $bValue;
+  }
+
+  public function isPublic() {
+
+    return !$this->isPrivate();
+  }
+
+  public function isPrivate() {
+
+    if (\Sylma::read('debug/rights')) return true;
+
+    return $this->bPrivate;
   }
 
   public function asArgument() {

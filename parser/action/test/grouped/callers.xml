@@ -9,12 +9,25 @@
       <lm:file path="samples/simple.txt"/>
     </le:action>
     <tst:node>
-      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+      <file xmlns="http://www.sylma.org/storage/fs">
+        <path>/sylma/parser/action/test/grouped/samples/simple.txt</path>
+        <action-path>/sylma/parser/action/test/grouped/samples/simple</action-path>
+        <name>simple.txt</name>
+        <simple-name>simple</simple-name>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <size>1</size>
+        <extension>txt</extension>
+      </file>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
       $node = $controler->getArgument('node');
-
+//echo $result->asString();
       return
         $controler->compareNodes($result, $node);
     </tst:expected>
@@ -40,10 +53,23 @@
       <le:settings>
         <le:return format="dom"/>
       </le:settings>
-      <le:call name="get-file">samples/simple.txt</le:call>
+      <le:call-self name="get-file">samples/simple.txt</le:call-self>
     </le:action>
     <tst:node>
-      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+      <file xmlns="http://www.sylma.org/storage/fs">
+        <path>/sylma/parser/action/test/grouped/samples/simple.txt</path>
+        <action-path>/sylma/parser/action/test/grouped/samples/simple</action-path>
+        <name>simple.txt</name>
+        <simple-name>simple</simple-name>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <size>1</size>
+        <extension>txt</extension>
+      </file>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -58,12 +84,25 @@
       <le:settings>
         <le:return format="dom"/>
       </le:settings>
-      <le:call name="get-file">
-        <li:argument>samples/simple.txt</li:argument>
-      </le:call>
+      <le:call-self name="get-file">
+        <le:string>samples/simple.txt</le:string>
+      </le:call-self>
     </le:action>
     <tst:node>
-      <file xmlns="http://www.sylma.org/storage/fs/basic/file"><full-path>/sylma/parser/action/test/grouped/samples/simple.txt</full-path><name>simple.txt</name><simple-name>simple</simple-name><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><size>1</size><extension>txt</extension></file>
+      <file xmlns="http://www.sylma.org/storage/fs">
+        <path>/sylma/parser/action/test/grouped/samples/simple.txt</path>
+        <action-path>/sylma/parser/action/test/grouped/samples/simple</action-path>
+        <name>simple.txt</name>
+        <simple-name>simple</simple-name>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <size>1</size>
+        <extension>txt</extension>
+      </file>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -76,10 +115,10 @@
   <tst:test name="Load file with self-call and multiple arguments">
     <le:action>
       <div>
-        <le:call name="get-file">
-          <li:argument>samples/nofile.txt</li:argument>
+        <le:call-self name="get-file">
+          <le:string>samples/nofile.txt</le:string>
           <le:bool value="false"/>
-        </le:call>
+        </le:call-self>
       </div>
     </le:action>
     <tst:node>
@@ -97,12 +136,33 @@
     <le:action>
       <div>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </div>
     </le:action>
     <tst:node>
       <div xmlns="http://www.sylma.org">123</div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Short call with defined return">
+    <le:action>
+      <div>
+        <lm:manager name="action" return="\sylma\parser\action\Manager">
+          <le:call name="validateNumeric">
+            <le:numeric>3</le:numeric>
+          </le:call>
+        </lm:manager>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">3</div>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -118,13 +178,22 @@
         <le:return format="dom"/>
       </le:settings>
       <lm:directory>
-        <li:call name="get-directory">
-          <li:argument>samples</li:argument>
-        </li:call>
+        <le:call name="get-directory">
+          <le:string>samples</le:string>
+        </le:call>
       </lm:directory>
     </le:action>
     <tst:node>
-      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory"><full-path>/sylma/parser/action/test/grouped/samples</full-path><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><name>samples</name></directory>
+      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory">
+        <path>/sylma/parser/action/test/grouped/samples</path>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <name>samples</name>
+      </directory>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -134,23 +203,51 @@
         $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Read a file with ext-call encapsed">
+    <le:action>
+      <le:settings>
+        <le:return format="txt"/>
+      </le:settings>
+      <lm:directory>
+        <le:call name="get-directory">
+          <le:string>samples</le:string>
+          <le:call name="get-file">
+            <le:string>path.txt</le:string>
+          </le:call>
+        </le:call>
+      </lm:directory>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === $controler->getDirectory() . '/samples/path.txt';
+    </tst:expected>
+  </tst:test>
   <tst:test name="Load a directory with a two level depth obj/element-call">
     <le:action>
       <le:settings>
         <le:return format="dom"/>
       </le:settings>
       <lm:directory>
-        <li:call name="get-directory">
-          <li:argument>
-            <lm:file path="samples/path.txt">
-              <li:call name="read"/>
-            </lm:file>
-          </li:argument>
-        </li:call>
+        <le:call name="get-directory">
+          <lm:file path="samples/path.txt">
+            <le:call name="read"/>
+          </lm:file>
+        </le:call>
       </lm:directory>
     </le:action>
     <tst:node>
-      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory"><full-path>/sylma/parser/action/test/grouped/samples/sub</full-path><owner>root</owner><group>0</group><mode>700</mode><read>true</read><write>true</write><execution>true</execution><name>samples/sub</name></directory>
+      <directory xmlns="http://www.sylma.org/storage/fs/basic/directory">
+        <path>/sylma/parser/action/test/grouped/samples/sub</path>
+        <owner>root</owner>
+        <group>0</group>
+        <mode>700</mode>
+        <read>true</read>
+        <write>true</write>
+        <execution>true</execution>
+        <name>samples/sub</name>
+      </directory>
     </tst:node>
     <tst:expected>
       $result = $controler->getResult('dom');
@@ -164,8 +261,8 @@
     <le:action>
       <le:text>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
-          <li:call name="read"/>
+          <le:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </le:text>
     </le:action>
@@ -180,8 +277,8 @@
     <le:action>
       <div>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
-          <li:call name="read"/>
+          <le:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </div>
     </le:action>
@@ -194,6 +291,48 @@
 
       return
         $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Absolute object construction">
+    <le:action>
+      <le:settings>
+        <le:return format="object"/>
+      </le:settings>
+      <le:object class="\sylma\parser\action\test\grouped\samples\Sample1"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\parser\action\test\grouped\samples\Sample1;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Relative object construction">
+    <le:action>
+      <le:settings>
+        <le:return format="object"/>
+      </le:settings>
+      <le:object class="samples\Sample1"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\parser\action\test\grouped\samples\Sample1;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Parent object construction">
+    <le:action>
+      <le:settings>
+        <le:return format="object"/>
+      </le:settings>
+      <le:action path="samples/sub/parent-object"/>
+    </le:action>
+    <tst:expected>
+      $result = $controler->getResult('object');
+
+      return
+        $result instanceof \sylma\parser\action\test\grouped\samples\Sample1;
     </tst:expected>
   </tst:test>
 </tst:tests>

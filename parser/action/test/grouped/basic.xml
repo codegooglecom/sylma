@@ -30,7 +30,7 @@
       </le:settings>
       <le:text>directory :</le:text>
       <lm:file path="samples/simple.txt">
-        <li:call name="read"/>
+        <le:call name="read"/>
       </lm:file>
     </le:action>
     <tst:expected>
@@ -45,7 +45,7 @@
       <le:string>
         <le:text>directory :</le:text>
         <lm:file path="samples/simple.txt">
-          <li:call name="read"/>
+          <le:call name="read"/>
         </lm:file>
       </le:string>
     </le:action>
@@ -54,6 +54,20 @@
 
       return
         $sResult === 'directory :123';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Return string from object">
+    <le:action>
+      <le:settings>
+        <le:return format="txt"/>
+      </le:settings>
+      <lm:file path="samples/simple.txt"/>
+    </le:action>
+    <tst:expected>
+      $sResult = $controler->getResult('txt');
+
+      return
+        $sResult === $controler->getDirectory() . '/samples/simple.txt';
     </tst:expected>
   </tst:test>
   <tst:test name="Embedded strings">
@@ -92,7 +106,7 @@
         $sResult === 'directory :123';
     </tst:expected>
   </tst:test>
-  <tst:test name="Null">
+  <tst:test name="Null" disabled="true">
     <le:action>
       <le:null/>
     </le:action>
@@ -103,7 +117,7 @@
         $result === null;
     </tst:expected>
   </tst:test>
-  <tst:test name="Boolean">
+  <tst:test name="Boolean" disabled="true">
     <le:action>
       <le:bool value="true"/>
       <le:boolean value="false"/>

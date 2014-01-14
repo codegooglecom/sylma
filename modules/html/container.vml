@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  builder:return="result"
+>
+
+  <xl:resource/>
+
+  <le:argument name="content" format="\sylma\core\stringable"/>
+
+  <tpl:template>
+
+    <div id="container">
+      <div id="containerWrapper">
+        <tpl:apply mode="intro"/>
+        <div id="content">
+          <div id="main"/>
+          <le:get-argument name="content"/>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebar">
+      <tpl:apply mode="sidebar/content"/>
+    </div>
+
+  </tpl:template>
+
+  <tpl:template mode="intro">
+    <div id="intro">
+      <h3>Welcome,</h3>
+      <p>
+        This is your dashboard to manage all datas related to your website.<br/>
+        Choose a category for more options.
+      </p>
+    </div>
+  </tpl:template>
+
+</view:view>

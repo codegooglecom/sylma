@@ -1,14 +1,12 @@
 <?php
 
 namespace sylma\core\argument;
-use \sylma\core, \sylma\dom;
+use sylma\core, sylma\dom;
 
-require_once('Iterator.php');
-require_once('dom2/domable.php');
-
-class Domed extends Iterator implements dom\domable {
+abstract class Domed extends Iterator implements dom\domable {
 
   protected static $aPrefixes = array();
+
   /**
    * Build an @class Options's object with this argument's array
    *
@@ -20,7 +18,7 @@ class Domed extends Iterator implements dom\domable {
    */
   public function getOptions(dom\document $schema = null, $sPath = '') {
 
-    require_once('dom2\Argument.php');
+    require_once('dom\Argument.php');
 
     $doc = $this->getDocument();
     self::getElement($doc, $sPath);
@@ -28,39 +26,24 @@ class Domed extends Iterator implements dom\domable {
     return new dom\Argument($doc, $schema);
   }
 
-  public function asDOM($sNamespace = '') {
+  public function buildDocument(array $aArray, $sNamespace, &$bChildren = false) {
 
-    if (!$sNamespace) $sNamespace = $this->getNamespace();
-
-    if (!$sNamespace) {
-
-      $this->throwException(t('No namespace defined for export as dom document'));
-    }
-
-    if (count($this->aArray) > 1) {
-
-      $this->throwException(txt('Cannot build document with more than one root value with @namespace %s', $sNamespace));
-    }
-
-    $this->normalize();
-
-    $result = self::buildDocument($this->aArray, $sNamespace);
-
-    if (!$result || $result->isEmpty()) {
-
-      $formater = \Sylma::getControler('formater');
-      $this->throwException (txt('No result or invalid result when exporting @namespace %s', $sNamespace));
-    }
-
-    return $result;
-  }
-
-  public static function buildDocument(array $aArray, $sNamespace) {
-
-    $dom = \Sylma::getControler('dom');
+    $dom = \Sylma::getManager('dom');
     $doc = $dom->create('handler');
+    $fragment = $doc->createFragment();
+    $root = $fragment->add($doc->createElement('root', null, array(), $sNamespace));
 
-    self::buildNode($doc, $aArray, $sNamespace);
+    $this->buildNode($root, $aArray, $sNamespace);
+
+    if ($root->countChildren() > 1) {
+
+      $doc->set($root);
+      $bChildren = true;
+    }
+    else {
+
+      $doc->set($root->getFirst());
+    }
 
     return $doc;
   }
@@ -73,18 +56,7 @@ class Domed extends Iterator implements dom\domable {
     return self::buildNode($parent, $aArray);
   }
 
-  protected static function buildPrefix($sNamespace) {
-
-    if (!array_key_exists($sNamespace, self::$aPrefixes)) {
-
-      $sPrefix = 'ns' . count(self::$aPrefixes);
-      self::$aPrefixes[$sNamespace] = $sPrefix;
-    }
-
-    return self::$aPrefixes[$sNamespace] . ':';
-  }
-
-  private static function buildNode(dom\complex $parent, array $aArray, $sNamespace) {
+  private function buildNode(dom\complex $parent, array $aArray, $sNamespace) {
 
     foreach ($aArray as $sKey => $mValue) {
 
@@ -100,24 +72,23 @@ class Domed extends Iterator implements dom\domable {
 
           if ($sKey[0] == '@') {
 
-            $parent->setAttribute(substr($sKey, 1), $mValue);
+            if ($mValue !== '' && !is_null($mValue) && $mValue !== false) $parent->setAttribute(substr($sKey, 1), $mValue);
             continue;
           }
           else if ($sKey[0] == '#') {
 
-            foreach ($mValue as $mSubValue) {
-
-              $node = $parent->addElement(self::buildPrefix($sNamespace) . substr($sKey, 1), null, array(), $sNamespace);
-
-              if (is_array($mSubValue)) self::buildNode($node, $mSubValue, $sNamespace);
-              else $node->add($mSubValue);
-            }
+            $this->buildChild($parent, substr($sKey, 1), $mValue, $sNamespace);
 
             continue;
           }
           else {
 
-            $node = $parent->addElement(self::buildPrefix($sNamespace) . $sKey, null, array(), $sNamespace);
+            if (!$sNamespace) {
+
+              $this->throwException('No namespace defined for export as dom document');
+            }
+
+            $node = $parent->addElement($sKey, null, array(), $sNamespace);
           }
         }
 
@@ -127,23 +98,116 @@ class Domed extends Iterator implements dom\domable {
         }
         else {
 
-          $node->add($mValue);
+          if ($mValue instanceof core\argument) {
+
+            if (0 && $mValue instanceof dom\domable) {
+
+              $node->add($mValue->asDOM());
+            }
+            else {
+
+              self::buildNode($node, $mValue->asDOMArray(), $mValue->getNamespace());
+            }
+          }
+          else {
+
+            $node->add($mValue); // TODO sometime value not added (encoding?)
+          }
         }
       }
     }
   }
 
-  protected static function normalizeObject($val) {
+  protected function buildChild(dom\element $parent, $sName, $mValue, $sNamespace) {
 
-    if ($val instanceof dom\node) {
+    if ($mValue instanceof core\argument) {
+
+      self::buildChild($parent, $sName, $mValue->asArray(), $sNamespace);
+    }
+    else {
+
+      foreach ($mValue as $mSubValue) {
+
+        $el = $parent->addElement($sName, null, array(), $sNamespace);
+
+        if ($mSubValue instanceof core\argument) {
+
+          self::buildNode($el, $mSubValue->asArray(), $sNamespace);
+        }
+        else if (is_array($mSubValue)) {
+
+          self::buildNode($el, $mSubValue, $sNamespace);
+        }
+        else {
+
+          $el->add($mSubValue);
+        }
+      }
+    }
+  }
+
+  protected function normalizeObject($val, $iMode = self::NORMALIZE_DEFAULT) {
+
+    if ($val instanceof dom\node ||
+        $val instanceof dom\collection) {
 
       $mResult = $val;
     }
     else {
 
-      $mResult = parent::normalizeObject($val);
+      $mResult = parent::normalizeObject($val, $iMode);
     }
 
     return $mResult;
+  }
+
+  protected function normalizeArgument(core\argument $arg, $bEmpty = false) {
+
+    if ($bEmpty) $result = $arg->asArray($bEmpty);
+    else $result = $arg->asDOM();
+
+    return $result;
+  }
+
+  public function asDOMArray() {
+
+    $this->normalize(self::NORMALIZE_EMPTY_ARRAY & self::NORMALIZE_ARGUMENT);
+
+    return $this->aArray;
+  }
+
+  public function asDOM($sParentNamespace = '') {
+
+    if (!$sNamespace = $this->getNamespace()) {
+
+      $sNamespace = $sParentNamespace;
+    }
+
+    $bChildren = false;
+
+    $aChildren = $this->asDOMArray();
+
+    if (count($aChildren) > 1) {
+
+      $bChildren = true;
+      $aValues = array('root' => $aChildren);
+    }
+    else {
+
+      $aValues = $aChildren;
+    }
+
+    $result = $this->buildDocument($aValues, $sNamespace);
+
+/*
+    if ($result->isEmpty()) {
+
+      $this->throwException (sprintf('No result or invalid result when exporting @namespace %s', $sNamespace));
+    }
+*/
+    if ($result->isEmpty()) $result = null;
+    else if ($bChildren) $result = $result->getChildren();
+
+    return $result;
   }
 }

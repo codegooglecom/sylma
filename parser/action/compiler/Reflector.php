@@ -1,18 +1,66 @@
 <?php
 
 namespace sylma\parser\action\compiler;
-use \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action, \sylma\parser\action\php;
+use sylma\core, sylma\dom, sylma\parser\action, sylma\parser\languages\common, sylma\parser\languages\php, sylma\parser\reflector as reflector_ns;
 
-require_once('Argumented.php');
+class Reflector extends Argumented implements reflector_ns\elemented {
 
-class Reflector extends Argumented {
+  // Following function are here only for elemented interface compatibility
+  // Used when setting action as new parser's parent
+  // TODO : remove when refactoring actions
+
+  // STARTBLOCK
+
+  public function parseRoot(dom\element $el) {
+
+    return parent::parseRoot($el);
+  }
+
+  public function parseComponent(dom\element $el) {
+
+    return parent::parseComponent($el);
+  }
+
+  public function loadComponent($sName, dom\element $el, $manager = null) {
+
+    return parent::loadComponent($sName, $el, $manager);
+  }
+
+  public function loadSimpleComponent($sName, $manager = null) {
+
+    return parent::loadSimpleComponent($sName, $manager);
+  }
+
+  public function createParser($sNamespace) {
+
+    return parent::createParser($sNamespace);
+  }
+
+  public function getNamespace($sPrefix = null) {
+
+    return parent::getNamespace($sPrefix);
+  }
+
+  public function getRoot() {
+
+    $this->throwException('Not implemented');
+  }
+
+  public function parseFromParent(dom\element $el) {
+
+    $this->throwException('Not implemented');
+  }
+
+  public function onFinish() {}
+
+  // ENDBLOCK
 
   /**
    *
    * @param dom\element $el
    * @return core\argumentable|array|null
    */
-  protected function parseElementAction(dom\element $el) {
+  protected function parseElementSelf(dom\element $el) {
 
     $mResult = null;
 
@@ -20,7 +68,7 @@ class Reflector extends Argumented {
 
       case 'action' : $mResult = $this->reflectAction($el); break;
 
-      case 'call' : $mResult = $this->reflectCall($el); break;
+
 
       // primitives
 
@@ -32,22 +80,23 @@ class Reflector extends Argumented {
       case 'array' : $mResult = $this->reflectArray($el); break;
       case 'numeric' : $mResult = $this->reflectNumeric($el); break;
 
-      case 'get-variable' : $mResult = $this->reflectVariable($el); break;
+
       case 'ns' : $mResult = $this->reflectNS($el); break;
       //case 'argument' :
-      case 'test-argument' :
-      case 'get-all-arguments' :
-      case 'get-argument' :
-
-        $mResult = $this->reflectGetArgument($el);
 
       break;
+
+      case 'document' : $mResult = $this->reflectDocument($el); break;
+      //case 'template' : $mResult = $this->reflectTemplate($el); break;
 
       // case 'get-settings' :
+
+      case 'context' : $mResult = $this->reflectContext($el); break;
+      case 'escape' : $mResult = $this->reflectEscape($el); break;
+      case 'function' : $mResult = $this->reflectFunction($el); break;
+      case 'script' : $mResult = $this->reflectScript($el); break;
+
       case 'switch' :
-      case 'function' :
-      case 'interface' :
-      break;
       case 'xquery' :
       //case 'recall' :
       case 'namespace' :
@@ -55,16 +104,16 @@ class Reflector extends Argumented {
       //case 'special' :
       //case 'controler' :
 
-        $sName = $el->getAttribute('name');
-        $mResult = $window->setControler($sName);
+        //$sName = $el->getAttribute('name');
+        //$mResult = $window->setControler($sName);
 
-      break;
+      //break;
 
-      case 'redirect' :
+      //case 'redirect' :
 
-        $mResult = $window->createCall($window->getSelf(), 'getRedirect', 'core\redirect');
+        //$mResult = $window->createCall($window->getSelf(), 'getRedirect', 'core\redirect');
 
-      break;
+      //break;
 
   // <object name="window" call="Controler::getWindow()"/>
   // <object name="redirect" call="$oRedirect"/>
@@ -77,19 +126,10 @@ class Reflector extends Argumented {
   // <object name="parent-directory" call="$oAction-&gt;getPath()-&gt;getDirectory()-&gt;getParent()" return="true"/>
   // <object name="parent" call="$oAction-&gt;getParent()"/>
   // <object name="database" call="Controler::getDatabase()"/>
-      case 'document' :
-
-        //if ($el->hasChildren())
-
-        $mResult = $this->reflectDocument($el);
-
-      break;
-
-      case 'template' :
 
       default :
 
-        $this->throwException(txt('Unknown action element : %s', $el->asToken()));
+        $mResult = parent::parseElementSelf($el);
     }
 
     return $mResult;
@@ -101,65 +141,45 @@ class Reflector extends Argumented {
 
     foreach ($settings->getChildren() as $el) {
 
-      if ($el->getType() === $el::TEXT) {
+      if ($el->getType() == $el::COMMENT) continue;
 
-        $this->throwException((txt('Invalid %s, element expected', $el->asToken())));
-      }
-
-      if ($el->getNamespace() == $this->getNamespace()) {
-
-        switch ($el->getName()) {
-
-          case 'argument' :
-
-            $aResult[] = $this->reflectArgument($el);
-
-          break;
-          case 'name' : $this->setName($el->read()); break;
-
-          case 'return' : $this->setReturn($el); break;
-
-          default :
-
-            $aResult[] = $this->parseElement($el);
-        }
-      }
-      else {
-
-        $aResult[] = $this->parseElement($el);
-      }
+      $aResult[] = $this->reflectSettingsElement($el);
     }
 
     return $aResult;
   }
 
-  protected function reflectSelfCall(dom\element $el) {
+  protected function reflectSettingsElement(dom\element $el) {
 
-    $window = $this->getWindow();
-    $method = $this->getInterface()->loadMethod($el->getName(), 'element');
+    $result = null;
 
-    $aArguments = array();
+    if ($el->getNamespace() == $this->getNamespace()) {
 
-    foreach ($el->getAttributes() as $attr) {
+      switch ($el->getName()) {
 
-      if ($attr->getNamespace()) continue; // skip @le:*
-      $aArguments[$attr->getName()] = $this->parseString($attr->getValue());
+        case 'argument' :
+
+          $result = $this->reflectArgument($el);
+
+        break;
+        case 'name' :
+
+          //$this->setName($el->read());
+        break;
+
+        case 'return' : $this->setReturn($el); break;
+
+        default :
+
+          $result = $this->parseElement($el);
+      }
+    }
+    else {
+
+      $result = $this->parseElement($el);
     }
 
-    $call = $method->reflectCall($window, $window->getSelf(), $aArguments);
-    $var = $call->getVar(false);
-
-    $children = $el->getChildren();
-    $aResult = array();
-
-    $this->setVariable($el, $var);
-
-    $aResult = array_merge($aResult, $this->runConditions($var, $children));
-    $aResult = array_merge($aResult, $this->runVar($var, $children));
-
-    if (!$aResult) $aResult[] = $call;
-
-    return count($aResult) == 1 ? reset($aResult) : $aResult;
+    return $result;
   }
 
   protected function reflectBoolean(dom\element $el) {
@@ -172,7 +192,7 @@ class Reflector extends Argumented {
 
         if ($sUse != 'or') {
 
-          $this->throwException(txt('Unknown boolean use defined, "and" or "or" expected in %s', $el->asToken()));
+          $this->throwException(sprintf('Unknown boolean use defined, "and" or "or" expected in %s', $el->asToken()));
         }
 
         $bAnd = false;
@@ -180,7 +200,7 @@ class Reflector extends Argumented {
 
       if ($el->countChildren() != 1) {
 
-        $this->throwException(txt('One children or attribute value expected in %s', $el->asToken()));
+        $this->throwException(sprintf('One children or attribute value expected in %s', $el->asToken()));
       }
 
       $mValue = $this->parse($el->getFirst());
@@ -198,7 +218,7 @@ class Reflector extends Argumented {
 
       if ($child->getType() != dom\node::ELEMENT) {
 
-        $this->throwException(txt('Invalid node type in array : %s', $el->asToken()));
+        $this->throwException(sprintf('Invalid node type in array : %s', $el->asToken()));
       }
 
       if (!$mKey = $child->readAttribute('key', $this->getNamespace(), false)) {
@@ -234,33 +254,18 @@ class Reflector extends Argumented {
       $aResult[] = $this->parse($child);
     }
 
-    return $this->getWindow()->createString($aResult);
+    $result = $this->getWindow()->createString($aResult);
+
+    $var = $this->getWindow()->createVar($result);
+
+    if ($this->setVariable($el, $var)) $result = $var;
+
+    return $result;
   }
 
-  protected function parseString($sValue) {
-
-    $window = $this->getWindow();
-
-    preg_match_all('/\[\$([\w-]+)\]/', $sValue, $aResults, PREG_OFFSET_CAPTURE);
-
-    if ($aResults && $aResults[0]) {
-
-      $iSeek = 0;
-
-      foreach ($aResults[1] as $aResult) {
-
-        $iVarLength = strlen($aResult[0]) + 3;
-        $sVarValue = (string) $window->getVariable($aResult[0]);
-
-        $sValue = substr($sValue, 0, $aResult[1] + $iSeek - 2) . $sVarValue . substr($sValue, $aResult[1] + $iSeek - 2 + $iVarLength);
-
-        $iSeek += strlen($sVarValue) - $iVarLength;
-      }
-    }
-
-    return $window->createString($sValue);
-  }
-
+  /**
+   * @return common\_var
+   */
   protected function reflectAction(dom\element $el) {
 
     $result = null;
@@ -269,9 +274,8 @@ class Reflector extends Argumented {
 
     $sPath = $el->readAttribute('path');
 
-    require_once('core/functions/Path.php');
     $sPath = core\functions\path\toAbsolute($sPath, $this->getDirectory());
-    $path = $this->getControler()->create('path', array($sPath));
+    $path = $this->getControler()->create('path', array($sPath, $this->getDirectory()));
 
     // create call
 
@@ -290,18 +294,21 @@ class Reflector extends Argumented {
       $sReturn = $return->readAttribute('format', null, false);
     }
 
+    $window = $this->getWindow();
+
     $result = $this->reflectActionReturn($callAction, $sReturn, $sFormat);
+    //$window->add($window->createCall($window->getSelf(), 'loadActionContexts', 'php-boolean', array($callAction->getVar())));
 
     return $result;
   }
 
-  protected function createActionCall(action\path $path, dom\collection $children) {
+  protected function createActionCall(core\request $path, dom\collection $children) {
 
     $window = $this->getWindow();
 
     $aArguments = array(
       'file' => (string) $path->getFile(),
-      'arguments' => $path->getArgumentsArray(),
+      'arguments' => $path->asArray(),
     );
 
     $iKey = 0;
@@ -311,7 +318,7 @@ class Reflector extends Argumented {
 
       if ($child->getType() != dom\node::ELEMENT) {
 
-        $this->throwException(txt('Invalid %s, element expected', $child->asToken()));
+        $this->throwException(sprintf('Invalid %s, element expected', $child->asToken()));
       }
 
       $sKey = $child->readAttribute('name', $this->getNamespace(), false);
@@ -333,42 +340,37 @@ class Reflector extends Argumented {
       case 'txt' :
 
         $var = $call->getVar();
-        $result = $this->getWindow()->createCall($var, 'asString', 'php-string');
+        $return = $this->getWindow()->createCall($var, 'asString', 'php-string');
+
+        $result = $return->getVar();
 
       break;
 
       case 'dom' :
 
         $var = $call->getVar();
-        $result = $this->getWindow()->createCall($var, 'asDOM', 'php-string');
+        $return = $this->getWindow()->createCall($var, 'asDOM', 'php-string');
+
+        $result = $return->getVar();
 
       break;
 
       case 'object' :
 
-        //$this->throwException('todo, format return');
+        //if (!$sClass = $el->readAttribute('interface', null, false)) $sClass = 'php-string'; // todo, default class ?
+        $sClass = 'php-string';
 
-        $result = $call;
+        $var = $call->getVar();
+        $return = $this->getWindow()->createCall($var, 'asObject', $sClass);
+
+        $result = $return->getVar();
 
       break;
 
       default :
 
-        $this->throwException(txt('Unknown return type for external action : %s', $sReturn));
+        $this->throwException(sprintf('Unknown return type for external action : %s', $sReturn));
     }
-
-    return $result;
-  }
-
-  protected function reflectCall(dom\element $el) {
-
-    $window = $this->getWindow();
-    $sMethod = $el->readAttribute('name');
-
-    $method = $this->getInterface()->loadMethod($sMethod);
-
-    $result = $this->runObject($el, $window->getSelf(), $method);
-    //$result = $this->getInterface()->loadCall($window->getSelf(), $method, $el->getChildren());
 
     return $result;
   }
@@ -380,36 +382,17 @@ class Reflector extends Argumented {
 
     if (!$first || $first->getType() === dom\node::TEXT) {
 
-      $this->throwException(txt('Invalid children for document, one child element expected in %s, ', $el->asToken()));
+      $this->throwException(sprintf('Invalid children for document, one child element expected in %s, ', $el->asToken()));
     }
 
     $content = $this->parseElement($first->remove());
 
-    $interface = $window->loadInstance('\sylma\dom\handler', '/sylma/dom2/handler.php');
+    $interface = $window->loadInstance('\sylma\dom\handler');
     $call = $window->createCall($window->getSelf(), 'createDocument', $interface, array($content));
 
     $mResult = $this->runObject($el, $call->getVar(false));
 
     return $mResult;
-  }
-
-  protected function reflectVariable(dom\element $el) {
-
-    $sName = $el->readAttribute('name');
-
-    if (!array_key_exists($sName, $this->aVariables)) {
-
-      $this->throwException(txt('Unknown variable : %s', $sName));
-    }
-
-    $var = $this->aVariables[$sName];
-
-    if ($var instanceof php\basic\Called) $var = $var->getVar(false);
-    $aResult = $this->runConditions($var, $el->getChildren());
-
-    if (!$aResult) $aResult[] = $var;
-
-    return count($aResult) == 1 ? reset($aResult) : $aResult;
   }
 
   protected function reflectNS(dom\element $el) {
@@ -419,7 +402,7 @@ class Reflector extends Argumented {
 
     if (!$sPrefixes = $el->read()) {
 
-      $this->throwException(txt('You must specify comma separated prefixes in content of %s', $el->asToken()));
+      $this->throwException(sprintf('You must specify comma separated prefixes in content of %s', $el->asToken()));
     }
 
     foreach (explode(',', $sPrefixes) as $sPrefix) {
@@ -430,7 +413,7 @@ class Reflector extends Argumented {
 
         if (!$sNamespace = $el->lookupNamespace(null)) {
 
-          $this->throwException(txt('No default namespace found in @element %s', $el->asToken()));
+          $this->throwException(sprintf('No default namespace found in @element %s', $el->asToken()));
         }
 
         $aResult[substr($sPrefix, 1)] = $window->createString($sNamespace);
@@ -439,7 +422,7 @@ class Reflector extends Argumented {
 
         if (!$sNamespace = $el->lookupNamespace($sPrefix)) {
 
-          $this->throwException(txt('No namespace found with %s in @element %s', $sPrefix, $el->asToken()));
+          $this->throwException(sprintf('No namespace found with %s in @element %s', $sPrefix, $el->asToken()));
         }
 
         $aResult[$sPrefix] = $window->createString($sNamespace);
@@ -453,11 +436,86 @@ class Reflector extends Argumented {
 
     if ($el->countChildren() != 1) {
 
-      $this->throwException(txt('Too much children, one child expected in %s', $el->asToken()));
+      $this->throwException(sprintf('Too much children, one child expected in %s', $el->asToken()));
     }
 
     $content = $this->parseNode($el->getFirst());
 
     return $this->getWindow()->create('numeric', array($this->getWindow(), $content));
+  }
+
+  protected function reflectContext(dom\element $el) {
+
+    $sFormat = $this->getFormat();
+    $this->setFormat('object');
+
+    $window = $this->getWindow();
+
+    $window->startContext($el->readAttribute('name'));
+    $window->add($this->parseChildren($el->getChildren(), true, true));
+    $window->stopContext();
+
+    $this->setFormat($sFormat);
+  }
+
+  protected function reflectEscape(dom\element $el) {
+
+    if ($el->countChildren() != 1) {
+
+      $this->throwException('Need one and only one argument');
+    }
+
+    $window = $this->getWindow();
+    $result = $window->createCall($window->addControler(self::ACTION_ALIAS), 'escape', 'php-string', array($this->parse($el->getFirst())));
+
+    return $result;
+  }
+
+  protected function reflectFunction(dom\element $el) {
+
+    $sName = $el->readAttribute('name');
+
+    if (!function_exists($sName)) {
+
+      $this->throwException(sprintf('Unknown function : %s', $sName));
+    }
+
+    $window = $this->getWindow();
+    $aArguments = array();
+
+    foreach ($el->getChildren() as $child) {
+
+      if ($child->getType() != dom\node::ELEMENT) {
+
+        $this->throwException(sprintf('Invalid %s, element expected', $child->asToken()));
+      }
+
+      $aArguments[] = $this->parse($child);
+    }
+
+
+    $call = $window->callFunction($sName, $window->argToInstance('php-string'), $aArguments);
+
+    $var = $call->getVar(false);
+
+    if ($this->setVariable($el, $var)) $result = $var;
+    else $result = $call;
+
+    return $result;
+  }
+
+  protected function reflectScript(dom\element $el) {
+
+    $window = $this->getWindow();
+    $path = $this->getControler()->create('request', array($el->readx('@path'), $this->getDirectory()));
+    $path->parse();
+    
+    $file = $path->asFile();
+
+    //$this->getManager(self::PARSER_MANAGER)->load($file, array(), true, true);
+
+    //$cache = $this->getManager('fs/cache')->getFile((string) $file . '.php');
+
+    return $window->getSelf()->call('includeScript', array((string) $file, $path->getArguments()->asArray()));
   }
 }

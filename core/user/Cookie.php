@@ -41,11 +41,11 @@ class Cookie extends core\module\Argumented {
 
     if (!setcookie($this->readArgument('name'), $sCookie, $iExpiration, '/') ) {
 
-      dspm(t('Impossible de créer le cookie, les paramètres de votre navigateur ne l\'autorise peut-être pas.'), 'error');
+      //dspm(t('Impossible de créer le cookie, les paramètres de votre navigateur ne l\'autorise peut-être pas.'), 'error');
     }
     else {
 
-      dspm(t('Cookie enregistré.'), 'success');
+      //dspm(t('Cookie enregistré.'), 'success');
     }
   }
 
@@ -71,7 +71,10 @@ class Cookie extends core\module\Argumented {
 
   public function validate() {
 
-    if ($sCookie = array_val($this->readArgument('name'), $_COOKIE)) {
+    $sKey = $this->readArgument('name');
+    $sCookie = array_key_exists($sKey, $_COOKIE) ? $_COOKIE[$sKey] : '';
+
+    if ($sCookie) {
 
       list($sID, $iExpiration, $sHmac) = explode('|', $sCookie);
 

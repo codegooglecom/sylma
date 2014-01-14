@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests xmlns:tst="http://www.sylma.org/parser/action/test/grouped" xmlns="http://www.sylma.org" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:le="http://www.sylma.org/parser/action" xmlns:li="http://www.sylma.org/parser/caller" xmlns:lm="http://www.sylma.org/parser/action/basic">
   <tst:description>DOM</tst:description>
+  <tst:test name="Simple HTML">
+    <le:action>
+      <div>Hello world</div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org">Hello world</div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
   <tst:test name="Build a document">
     <le:action>
       <div>
@@ -81,10 +96,10 @@
           <h2>
             <span>hello</span>
           </h2>
-          <li:call name="getx">
-            <li:argument>/self:h2/self:span</li:argument>
+          <le:call name="getx">
+            <le:string>/self:h2/self:span</le:string>
             <le:ns>*self</le:ns>
-          </li:call>
+          </le:call>
         </le:document>
       </div>
     </le:action>
@@ -133,6 +148,25 @@
           'le' => 'http://www.sylma.org/parser/action',
           'tst' => 'http://www.sylma.org/parser/action/test/grouped',
         );
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Mupltiple namespaces">
+    <le:action>
+      <div>
+        <p>hello</p>
+        <html:span>world</html:span>
+        <p>hello</p>
+      </div>
+    </le:action>
+    <tst:node>
+      <div xmlns="http://www.sylma.org"><p>hello</p><span xmlns="http://www.w3.org/1999/xhtml">world</span><p>hello</p></div>
+    </tst:node>
+    <tst:expected>
+      $result = $controler->getResult('dom');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
 </tst:tests>

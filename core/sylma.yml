@@ -1,23 +1,169 @@
-classes :
-  sylma :
-    name : Sylma
-  initializer :
-    name : Initializer
-  exception :
-    name : SylmaException
-  controler :
-    name : Controler
+debug :
+  enable : false
+  rights: false
+  show : false
+  parser : false
+  email :
+    enable : false
+    default : example@example.org
+  backtrace :
+    show : true
+    html : true
+  html :
+    foreign : false
+    show : true
+  xml :
+    import : false
+namespaces :
+  html : http://www.w3.org/1999/xhtml
+render :
+  gzip : true
+exception :
+  show : false
+  send : false
+  mail :
+    enable : false
+    to : none
+  file : error.log
+initializer :
+  debug :
+    update : null
+    run : true
+    profile : false
+    fatal : false
+  output :
+    indent : true
+  mime :
+    txt : text/plain
+    jpg : image/jpeg
+    jpeg : image/jpeg
+    png : image/png
+    gif : image/gif
+    js : application/javascript
+    webm : video/webm
+    css : text/css
+    less : text/css
+    xml : text/xml
+    xsl : text/xml
+    htm : text/html
+    html : text/html
+    xhtml : application/xhtml+xml
+    json : application/json
+    ttf : application/octet-stream
+    eot : application/octet-stream
+    woff : application/x-font-woff
+    vcf : text/x-vcard
+  executables : [json, png, txt, xml]
+  images :
+    extensions : [jpg, jpeg, png, gif]
+    rebuild : false
+    size :
+      small :
+        width : 200
+        height : 150
+      medium :
+        width : 400
+        height : 300
+      large :
+        width : 800
+        height : 600
+    classes :
+      builder :
+        name : \sylma\core\window\classes\ImageBuilder
+  window :
+    fusion :
+      enable : true
+      update : false
+    error :
+      window : /#sylma/modules/html/window.vml
+      action : /#sylma/modules/html/error.vml
+    debug :
+      update : null
+      run : true
+    html :
+      default :
+        action : /#sylma/modules/html/window.vml
+        sub :
+          default :
+            action : /#sylma/modules/html/container.vml
+    classes :
+      action :
+        name : \sylma\parser\action\handler\Basic
   redirect :
-    name : Redirect
-  messages :
-    name : Messages
-  message :
-    name : Message
-  user :
-    name : User
-  cookie :
-    name : Cookie
-  logger :
-    name : Logger
-  xsl :
-    name : XSL_Document
+    extension : redirect
+  classes :
+    images :
+      name : \sylma\core\window\classes\Image
+    html :
+      name : \sylma\modules\html\Document
+    redirect :
+      name : \sylma\core\Redirect
+    path :
+      name : \sylma\core\request\Basic
+    action :
+      name : \sylma\parser\action\handler\Basic
+    window :
+      name : \sylma\core\window\classes\File
+    json :
+      name : \sylma\template\binder\context\JSON
+  session :
+    lifetime : 403200
+  maintenance :
+    enable : false
+    file : maintenance.html
+users:
+  root:
+    # E_ALL | E_STRICT | E_NOTICE = 32767
+    error-level: 32767
+    arguments: [ ]
+    groups: ['0']
+  # server user for cron jobs
+  server:
+    name: server
+    ip:
+    groups:
+      - famous
+      - server
+    arguments: [ ]
+  anonymouse:
+    name: anonymouse
+    groups: [famous]
+    arguments:
+      full-name: Anonymous
+  authenticated:
+    arguments: [ ]
+    groups: [users]
+
+dom:
+  debug:
+    # display all xpath queries in a formatted table containing paths grouped by count
+    show-queries: false
+    token : true
+  encoding:
+    check: false
+schema :
+  token :
+    duration : 7200
+modules :
+  captcha :
+    fonts : fonts/truetype/ttf-dejavu
+    background : false
+    session : sylma-captcha
+  rebuild :
+    exclude :
+      run :
+        - /sylma/modules/users/logout.eml
+path :
+  extensions :
+    executable : [eml, vml]
+    readable : [css, js, webm, jpg, jpeg, gif, png, pdf, eot, ttf, woff, vcf, less]
+
+directory :
+  tmp : tmp
+
+database :
+  test :
+    host : localhost
+    user : tester
+    password : 1234
+    database : test

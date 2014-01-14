@@ -1,54 +1,44 @@
 <?php
 
 namespace sylma\core\factory\test;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser;
+use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-require_once('modules/tester/Basic.php');
+class Basic extends tester\Basic implements core\argumentable {
 
-class Basic extends tester\Basic {
-  
   const NS = 'http://www.sylma.org/core/factory/test';
-  
-  protected $sTitle = 'Factory';
-  
-  /**
-   * @var core\factory
-   */
-  protected $factory;
-  
-  public function __construct(core\factory $factory = null) {
-    
-    \Sylma::getControler('dom');
-    
+
+  protected $sTitle = 'Cached';
+
+  public function __construct() {
+
+    $this->getManager('dom');
+
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-    
-    if (!$factory) $factory = $this->getControler('factory');
-    $this->factory = $factory;
-    
-    $this->setControler($factory);
+
+    $this->setControler($this->getFactory());
   }
-  
+
   public function createArgument($mArguments, $sNamespace = '') {
-    
+
     return parent::createArgument($mArguments, $sNamespace);
   }
-  
+
   public function getDirectory($sPath = '', $bDebug = true) {
-    
+
     return parent::getDirectory($sPath, $bDebug);
   }
-  
-  public function getFactory() {
-    
-    return $this->factory;
+
+  public function createFactory(core\argument $arg = null) {
+
+    return parent::createFactory($arg);
   }
-  
-  protected function test(dom\element $test, $controler, dom\document $doc, fs\file $file) {
-    
+
+  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
+
     $controler = $this;
-    
-    return parent::test($test, $controler, $doc, $file);
+
+    return parent::test($test, $sContent, $controler, $doc, $file);
   }
 }
 

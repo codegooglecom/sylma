@@ -1,0 +1,71 @@
+debug :
+  run : true
+  update : false # TODO : if TRUE recursion and other proc killers
+namespaces :
+  reflector :
+    'http://2013.sylma.org/parser/security' : security
+    'http://www.sylma.org/parser/js/binder' : js/binder/compiler
+    'http://2013.sylma.org/template/binder' : template/binder
+    'http://2013.sylma.org/core/factory' : factory
+    'http://2013.sylma.org/template' : template/elemented
+    'http://2013.sylma.org/schema/ssd' : schema/ssd
+    'http://2013.sylma.org/schema/xsd' : schema/xsd/elemented
+    #'http://2013.sylma.org/schema/template' : schema/template
+    #'http://2013.sylma.org/view' : view/elemented
+    'http://2013.sylma.org/storage/sql' : sql/view
+    'http://2013.sylma.org/storage/xml' : xml/view
+    'http://2013.sylma.org/action' : action
+  manager :
+    'http://2013.sylma.org/template' : template
+    'http://www.sylma.org/parser/action' : action
+    'http://2013.sylma.org/core/argument' : argument
+    'http://2013.sylma.org/view' : view
+    'http://2013.sylma.org/view/crud' : view/crud
+    'http://www.w3.org/2001/XMLSchema' : schema/xsd
+    'http://2013.sylma.org/storage/sql' : sql/schema
+  cached :
+    'http://www.sylma.org/parser/js/binder/cached' : js/binder/cached
+classes :
+  action :
+    name : \sylma\parser\reflector\handler\Elemented
+    arguments : /#sylma/action/reflector.xml
+  argument :
+    name : \sylma\core\argument\parser\compiler\Documented
+  view :
+    name : \sylma\view\parser\builder\View
+    arguments : /#sylma/view/parser/view.xml
+    classes :
+      crud :
+        name : \sylma\view\parser\builder\Router
+        arguments : /#sylma/view/parser/view.xml
+  schema :
+    classes :
+      ssd :
+        name : schema\ssd\Elemented
+      xsd :
+        name : \sylma\schema\Builder
+        arguments : /#sylma/schema/xsd/builder.xml
+  sql :
+    classes :
+      view :
+        name : \sylma\storage\sql\view\Resource
+        arguments : /#sylma/storage/sql/view/manager.xml
+      schema :
+        name : \sylma\schema\Builder
+        arguments : /#sylma/storage/sql/schema/builder.xml
+  xml :
+    classes :
+      view :
+        name : \sylma\storage\xml\Resource
+        arguments : /#sylma/storage/xml/resource.xml
+  security :
+    name : \sylma\parser\security\Domed
+  factory :
+    name : \sylma\core\factory\parser\Main
+  template :
+    classes :
+      binder :
+        name : \sylma\template\binder\Handler
+        arguments : /#sylma/template/binder/reflector.xml
+      elemented :
+        name : \sylma\template\parser\Elemented

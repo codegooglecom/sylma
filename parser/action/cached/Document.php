@@ -1,29 +1,16 @@
 <?php
 
 namespace sylma\parser\action\cached;
-use \sylma\core, \sylma\dom, \sylma\parser, \sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\parser, sylma\storage\fs;
 
-require_once('Basic.php');
-require_once('dom2/domable.php');
-
-abstract class Document extends Basic implements dom\domable {
+class Document extends Basic implements core\stringable, dom\domable {
 
   protected $sTemplate = '';
+  protected $aParsers = array();
 
-  protected function loadTemplate($iKey, array $aArguments) {
+  protected function runAction(fs\file $file) {
 
-    $sResult = $this->includeTemplate($this->sTemplate, $iKey, $aArguments);
-
-    $doc = $this->create('document');
-    $doc->setContent($sResult);
-
-    return $doc;
-  }
-
-  protected function parseAction() {
-
-    $mResult = null;
-    $aArguments = parent::parseAction();
+    $aArguments = parent::runAction($file);
 
     if ($this->useTemplate()) {
 /*
@@ -32,7 +19,9 @@ abstract class Document extends Basic implements dom\domable {
 
       $sTemplate = $file->getParent()->getDirectory(parser\action::EXPORT_DIRECTORY)->getRealPath() . '/' . $file->getName() . '.tpl.php';
 */
-      $mResult = $this->loadTemplate(0, $aArguments);
+
+      $doc = $this->getHandler()->getControler()->loadTemplate($this->sTemplate, 0, $aArguments);
+      $mResult = $this->loadParsers($doc);
     }
     else {
 
@@ -42,16 +31,48 @@ abstract class Document extends Basic implements dom\domable {
     return $mResult;
   }
 
-  protected function includeTemplate($sTemplate, $iTemplate, array $aArguments) {
+  protected function getParser($sNamespace) {
 
-    ob_start();
+    return array_key_exists($sNamespace, $this->aParsers) ? $this->aParsers[$sNamespace] : null;
+  }
 
-    include($sTemplate);
-    $sResult = ob_get_contents();
+  public function loadParser($sNamespace) {
 
-    ob_end_clean();
+    if (!$result = $this->getParser($sNamespace)) {
 
-    return $sResult;
+      $manager = $this->getControler('parser');
+
+      $result = $manager->getCachedParser($sNamespace, $this);
+
+      $this->addParser($sNamespace, $result);
+    }
+
+    return $result;
+  }
+
+  protected function addParser($sNamespace, parser\cached\documented $parser) {
+
+    $this->aParsers[$sNamespace] = $parser;
+  }
+
+  protected function getParsers() {
+
+    return $this->aParsers;
+  }
+
+  protected function loadParsers(dom\document $result) {
+
+    foreach ($this->getParsers() as $parser) {
+
+      $result = $parser->parseDocument($result);
+    }
+
+    return $result;
+  }
+
+  protected function setTemplate($sTemplate) {
+
+    $this->sTemplate = $sTemplate;
   }
 
   protected function useTemplate() {
@@ -59,41 +80,8 @@ abstract class Document extends Basic implements dom\domable {
     return (bool) $this->sTemplate;
   }
 
-  protected function loadDomable(dom\domable $val) {
-
-    $dom = $val->asDOM();
-
-    return $dom;
-  }
-
   public function asDOM() {
 
-    $mAction = $this->parseAction();
-
-    if ($this->useTemplate()) {
-
-      $mResult = $mAction;
-    }
-    else {
-
-      $iAction = count($mAction);
-
-      if ($iAction == 1) {
-
-        $mAction = array_pop($mAction);
-      }
-
-      if ($iAction > 1 || !($mAction instanceof dom\handler)) {
-
-        $mResult = $this->getControler()->create('document');
-        $mResult->add($mAction);
-      }
-      else {
-
-        $mResult = $mAction;
-      }
-    }
-
-    return $mResult;
+    return $this->getContext()->asDOM();
   }
 }

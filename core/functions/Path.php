@@ -12,9 +12,9 @@ function extractDirectory($sFile, $bObject = true) {
   if ($bObject) {
 
     // object
-    if (!$fs = \Sylma::getControler('fs')) {
+    if (!$fs = \Sylma::getManager('fs')) {
 
-      Sylma::throwException(txt('File controler not yet loaded. Cannot extract path %s', $sFile));
+      Sylma::throwException(sprintf('File controler not yet loaded. Cannot extract path %s', $sFile));
     }
 
     //echo $fs->getDirectory($sResult);

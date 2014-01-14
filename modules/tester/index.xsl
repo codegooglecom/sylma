@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:test="http://www.sylma.org/modules/tester" version="1.0">
+<xsl:stylesheet
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:test="http://www.sylma.org/modules/tester"
+
+  version="1.0"
+>
 
   <xsl:variable name="class-failed">sylma-test-failed</xsl:variable>
   <xsl:variable name="class-title">sylma-test-title</xsl:variable>
@@ -41,7 +48,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
-      <xsl:element name="{$title}">
+      <xsl:element name="{$title}" namespace="http://www.w3.org/1999/xhtml">
         <xsl:attribute name="class">
           <xsl:value-of select="$class-title"/>
         </xsl:attribute>

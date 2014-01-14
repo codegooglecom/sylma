@@ -3,9 +3,7 @@
 namespace sylma\core\argument;
 use \sylma\core;
 
-require_once('Basic.php');
-
-class Iterator extends Basic {
+abstract class Iterator extends Normalizer implements \ArrayAccess {
 
   public function rewind() {
 
@@ -25,8 +23,6 @@ class Iterator extends Basic {
       if (!$result) {
 
         $result = $this->read($sKey);
-        //$this->next();
-        //if ($this->valid()) $result = $this->current();
       }
     }
 
@@ -49,4 +45,32 @@ class Iterator extends Basic {
 
     return $sKey !== NULL && $sKey !== FALSE;
   }
+
+  public function offsetSet($offset, $value) {
+
+    if (is_null($offset)) {
+
+      $this->aArray[] = $value;
+
+    } else {
+
+      $this->aArray[$offset] = $value;
+    }
+  }
+
+  public function offsetExists($offset) {
+
+    return isset($this->aArray[$offset]);
+  }
+
+  public function offsetUnset($offset) {
+
+    unset($this->aArray[$offset]);
+  }
+
+  public function offsetGet($offset) {
+
+    return isset($this->aArray[$offset]) ? $this->aArray[$offset] : null;
+  }
+
 }

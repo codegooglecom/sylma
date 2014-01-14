@@ -3,9 +3,7 @@
 namespace sylma\core\user;
 use sylma\core;
 
-require_once('core/module/Domed.php');
-
-class Controler extends core\module\Domed {
+class Controler extends core\module\Filed {
 
   protected $user;
 
@@ -13,22 +11,32 @@ class Controler extends core\module\Domed {
 
     $this->setDirectory(__FILE__);
 
-    $this->setArguments(\Sylma::get('modules/users'));
+    $this->setArguments(include('settings.xml.php'));
     $this->getArguments()->merge(\Sylma::get('users'));
 
-    $user = $this->create('user', array($this));
+    $user = $this->createUser();
     $user->load();
 
-    $this->user = $user;
+    $this->setUser($user);
+  }
+
+  public function createUser() {
+
+    return $this->create('user', array($this));
   }
 
   public function getUser() {
 
     return $this->user;
   }
-  
-  public function getDocument($sPath, $iMode = \Sylma::MODE_READ) {
 
-    return parent::getDocument($sPath, $iMode);
+  protected function setUser(core\user $user) {
+
+    $this->user = $user;
+  }
+
+  public function getDocument($sPath = '', $bDebug = true) {
+
+    return parent::getDocument($sPath, $bDebug);
   }
 }
