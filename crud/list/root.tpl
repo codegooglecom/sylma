@@ -40,7 +40,7 @@
         </a>
         <tpl:apply mode="actions"/>
       </div>
-      <table js:class="sylma.crud.Table" js:name="table" class="sylma-list sql-{static()/name()}">
+      <table js:class="sylma.crud.list.Table" js:name="table" class="sylma-list sql-{static()/name()}">
         <tpl:apply select="static()" mode="head/row"/>
         <crud:include path="list"/>
       </table>
@@ -61,7 +61,7 @@
 
   <tpl:template match="*" mode="head/cell">
     <th>
-      <a href="#" js:class="sylma.crud.Head">
+      <a href="#" js:class="sylma.crud.list.Head">
         <js:option name="name"><tpl:apply select="alias()"/></js:option>
         <js:event name="click">
           return %object%.update();
@@ -77,7 +77,7 @@
 
     <tpl:apply mode="init"/>
 
-    <tbody js:name="container" js:class="sylma.crud.List">
+    <tbody js:name="container" js:class="sylma.crud.list.Container">
 
       <tpl:apply mode="init-container"/>
 
@@ -134,7 +134,7 @@
   </tpl:template>
 
   <tpl:template match="*" mode="row">
-    <tr js:class="sylma.crud.Row">
+    <tr js:class="sylma.crud.list.Row">
       <tpl:apply mode="row/init"/>
       <js:event name="click">
         %object%.onClick(e);
