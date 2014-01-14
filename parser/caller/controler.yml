@@ -1,6 +1,0 @@
-classes :
-  @sylma-classbase : \sylma\parser\caller
-  method :
-    name : Method
-  interface :
-    name : Domed
