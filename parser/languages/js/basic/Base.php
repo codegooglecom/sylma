@@ -47,6 +47,11 @@ abstract class Base extends common\basic\Controled {
 
   public function setProperty($sName, $value) {
 
+    if (!$sName) {
+
+      $this->getWindow()->throwException('Cannot set empty name for property');
+    }
+
     $this->aProperties[$sName] = $value;
     return $value;
   }

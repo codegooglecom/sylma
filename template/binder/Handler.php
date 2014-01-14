@@ -187,10 +187,6 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     //$el = $this->setNode($el);
 
-    if (is_null($this->rootElement)) {
-
-      $this->rootElement = $el;
-    }
 
     $el->getHandler()->registerNamespaces($this->getNS());
 
@@ -212,9 +208,9 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   public function onClose(dom\element $el, $newElement) {
 
-    if ($newElement instanceof Basic && $this->rootElement === $el) {
+    if ($newElement === $this->rootElement) {
 
-      $this->buildClasses();
+      //$this->buildClasses();
       $this->getPHPWindow()->add($this->getContainer());
     }
   }
@@ -256,6 +252,11 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   public function startObject(Basic $object) {
 
+    if (is_null($this->rootElement) && $object instanceof _class) {
+
+      $this->rootElement = $object;
+    }
+
     $this->aObjects[] = $object;
   }
 
@@ -278,6 +279,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
       $this->onFinish();
     }
 */
+
     return $result;
   }
 

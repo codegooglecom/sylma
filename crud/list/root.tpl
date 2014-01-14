@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<crud:crud
-  xmlns:crud="http://2013.sylma.org/view/crud"
+<tpl:collection
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
@@ -9,9 +8,17 @@
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:crud="http://2013.sylma.org/view/crud"
 >
 
-  <view:template>
+  <tpl:template mode="js">
+    <js:include>Container.js</js:include>
+    <js:include>Table.js</js:include>
+    <js:include>Head.js</js:include>
+    <js:include>Row.js</js:include>
+  </tpl:template>
+
+  <tpl:template>
 
     <tpl:apply mode="title">
       <tpl:read tpl:name="title" select="static()/title()"/>
@@ -39,9 +46,9 @@
       </table>
     </div>
 
-  </view:template>
+  </tpl:template>
 
-  <view:template match="*" mode="head/row">
+  <tpl:template match="*" mode="head/row">
     <thead js:class="sylma.ui.Base" js:name="head">
       <tr>
         <th>
@@ -50,9 +57,9 @@
         <tpl:apply use="list-cols" mode="head/cell"/>
       </tr>
     </thead>
-  </view:template>
+  </tpl:template>
 
-  <view:template match="*" mode="head/cell">
+  <tpl:template match="*" mode="head/cell">
     <th>
       <a href="#" js:class="sylma.crud.Head">
         <js:option name="name"><tpl:apply select="alias()"/></js:option>
@@ -62,11 +69,11 @@
         <tpl:apply select="title()"/>
       </a>
     </th>
-  </view:template>
+  </tpl:template>
 
   <!-- Internal list -->
 
-  <view:template mode="internal">
+  <tpl:template mode="internal">
 
     <tpl:apply mode="init"/>
 
@@ -102,9 +109,9 @@
 
     </tbody>
 
-  </view:template>
+  </tpl:template>
 
-  <view:template mode="init">
+  <tpl:template mode="init">
 
     <tpl:apply mode="init-pager"/>
 
@@ -118,7 +125,7 @@
       <le:get-argument name="order"/>
     </sql:order>
 
-  </view:template>
+  </tpl:template>
 
   <tpl:template match="*" mode="row/init">
     <js:option name="url" cast="x">
@@ -126,7 +133,7 @@
     </js:option>
   </tpl:template>
 
-  <view:template match="*" mode="row">
+  <tpl:template match="*" mode="row">
     <tr js:class="sylma.crud.Row">
       <tpl:apply mode="row/init"/>
       <js:event name="click">
@@ -138,29 +145,21 @@
       </td>
       <tpl:apply use="list-cols" mode="cell"/>
     </tr>
-  </view:template>
+  </tpl:template>
 
-  <view:template match="*" mode="row/action">
+  <tpl:template match="*" mode="row/action">
     <a title="Editer" class="button">
       <tpl:token name="href">
         <le:path/>/update?id=<tpl:read select="id"/>
       </tpl:token>
       E
     </a>
-  </view:template>
+  </tpl:template>
 
-  <view:template match="*" mode="cell">
+  <tpl:template match="*" mode="cell">
     <td>
       <tpl:apply/>
     </td>
-  </view:template>
+  </tpl:template>
 
-  <view:template match="sql:foreign">
-    <tpl:apply select="ref()"/>
-  </view:template>
-
-  <view:template match="sql:datetime">
-    <tpl:read select="format()"/>
-  </view:template>
-
-</crud:crud>
+</tpl:collection>

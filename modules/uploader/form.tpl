@@ -18,7 +18,9 @@
       <le:file>Form.js</le:file>
       <le:file>Dropper.js</le:file>
       <le:file>File.js</le:file>
+      <le:file>Scroller.js</le:file>
     </le:context>
+
 
     <div js:name="template" js:class="sylma.uploader.Dropper" class="clearfix sylma-uploader">
       <tpl:apply reflector="Tree"/>
@@ -32,6 +34,30 @@
     <tpl:apply select="ref()" mode="file/update">
       <tpl:read select="alias('form')" tpl:name="alias"/>
     </tpl:apply>
+
+    <tpl:apply mode="scroller"/>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="scroller">
+
+    <div js:class="sylma.uploader.Scroller" js:name="scroller" class="scroller sylma-hidder">
+
+      <js:event name="mouseout">
+        %object%.stopScroll();
+      </js:event>
+      <div js:node="top" class="top">
+        <js:event name="mouseenter">
+          %object%.scroll(-1,e);
+        </js:event>
+      </div>
+      <div js:node="bottom" class="bottom">
+        <js:event name="mouseenter">
+          %object%.scroll(1,e);
+        </js:event>
+      </div>
+    </div>
+
   </tpl:template>
 
   <tpl:template match="*" mode="file/form">
@@ -100,7 +126,7 @@
         </button>
         <button type="button" js:node="move">
           <js:event name="mousedown">
-            %object%.move(e);
+            %object%.drag(e);
           </js:event>
           <tpl:text>↕</tpl:text>
         </button>

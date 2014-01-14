@@ -315,6 +315,30 @@
       return test.getNode('hello').get('text') === 'Hello';
     </tst:expected>
   </tst:test>
+  <tst:test name="Node in different template">
+    <tst:document>
+      <view:view debug="x">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <tpl:template>
+          <div js:node="hello">Hello</div>
+        </tpl:template>
+        <tpl:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <tpl:apply/>
+            <div>World</div>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+
+      return test.getNode('hello').get('text') === 'Hello';
+    </tst:expected>
+  </tst:test>
   <tst:test name="Multiple sub nodes">
     <tst:document>
       <view:view>

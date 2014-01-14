@@ -71,7 +71,7 @@ class Rooted extends sql\schema\component\Table {
     $this->setHandler($val);
   }
 
-  protected function setHandler(sql\template\handler\Basic $val) {
+  protected function setHandler(sql\schema\Handler $val) {
 
     $this->handler = $val;
   }

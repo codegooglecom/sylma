@@ -6,8 +6,10 @@ use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common
 class Node extends reflector\component\Foreigner implements common\arrayable {
 
   protected $sName;
+  protected $sClass;
   protected $value;
   protected $element;
+  protected $bBuilded = false;
 
   public function parseRoot(dom\element $el) {
 
@@ -27,29 +29,78 @@ class Node extends reflector\component\Foreigner implements common\arrayable {
     $this->element = $element;
   }
 
-  public function build(template\element $newElement) {
+  public function build(template\element $newElement = null) {
 
-    $this->setElement($newElement);
+    if ($newElement) {
 
-    $sName = $this->readx('@js:node');
-    $sClass = uniqid('sylma-');
+      $this->setElement($newElement);
 
-    $this->getObject()->setProperty("nodes.$sName", $sClass);
+      $sClass = uniqid('sylma-');
+      $this->setClass($sClass);
 
-    $el = $this->getNode();
+      $sName = $this->readx('@js:node');
+      $this->setName($sName);
 
-    //$el->addToken('class', $sClass);
-    //$el->setAttribute('class', $sClass);
-    $newElement->parseRoot($this->cleanAttributes($el));
-    $newElement->addToken('class', $sClass);
+      $el = $this->getNode();
+
+      $newElement->parseRoot($this->cleanAttributes($el));
+      $newElement->addToken('class', $sClass);
+    }
+
+    if ($obj = $this->getObject(false)) {
+
+      $this->bBuilded = true;
+      $this->addProperty($this->getObject());
+
+      //$el->addToken('class', $sClass);
+      //$el->setAttribute('class', $sClass);
+    }
   }
 
-  protected function getObject() {
+  protected function addProperty(template\binder\_class $class) {
 
-    return $this->getParser()->getObject();
+    $sClass = $this->getClass();
+    $sName = $this->getName();
+
+    $class->setProperty("nodes.$sName", $sClass);
+  }
+
+  protected function setName($sName) {
+
+    $this->sName = $sName;
+  }
+
+  protected function getName() {
+
+    if (!$this->sName) {
+
+      $this->launchException('No name defined');
+    }
+
+    return $this->sName;
+  }
+
+  protected function setClass($sName) {
+
+    $this->sClass = $sName;
+  }
+
+  protected function getClass() {
+
+    return $this->sClass;
+  }
+
+  protected function getObject($bDebug = true) {
+
+    return $this->getParser()->getObject($bDebug);
   }
 
   public function asArray() {
+
+    if (!$this->bBuilded) {
+
+      $this->addProperty($this->getObject()->getClass());
+    }
 
     return $this->getElement()->asArray();
   }

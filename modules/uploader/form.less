@@ -21,6 +21,37 @@ div.sylma-uploader > span
   text-decoration: blink;
 }
 
+.scroller {
+
+  position: absolute;
+  z-index: 10;
+
+  div
+  {
+    left: 0;
+    background-color: #1C94C4;
+    border: 1px solid #005568;
+    position: fixed;
+    height: 7%;
+    width: 100%;
+  }
+
+  .top
+  {
+    top: 0;
+  }
+
+  .bottom
+  {
+    bottom: 0;
+  }
+}
+
+.scroller.sylma-visible
+{
+  opacity: 0.25;
+}
+
 .field-file
 {
   position: relative;
@@ -57,13 +88,21 @@ div.sylma-uploader > span
       height: 1.8em;
 
     }
+/*
+    button.active
+    {
+      pointer-events:none;
+    }
+*/
   }
+
 }
 
 .field-file.moved
 {
   position: absolute;
   transition: none;
+  z-index: 5;
 }
 
 .field-file-extension-rar,
