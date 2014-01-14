@@ -1,0 +1,190 @@
+
+
+#sylma-system {
+  position: fixed;
+  left: 10px;
+  bottom: 15px;
+  min-width : 5px;
+  max-width: 5px;
+  min-height: 5px;
+  max-height: 5px;
+  padding: 8px;
+  border: 1px solid gray;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  background-color: #eee;
+  z-index: 10;
+  font-size: 10px;
+  margin-bottom: 2px;
+  transition: max-width 0.5s, max-height 0.5s;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#sylma-system ul {
+  margin: 0;
+  padding: 0 3px;
+}
+
+#sylma-system:hover {
+  width: auto;
+  height: auto;
+  max-width: 500px;
+  max-height: 800px;
+  _overflow: auto;
+}
+
+#sylma-system > * {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+#sylma-system:hover > * {
+  opacity: 1;
+}
+
+#sylma-system li {
+  list-style-type: none;
+}
+
+.sylma-error {
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  margin: 0.5em;
+  outline: 0 none;
+  transition: background 0.5s ease, border 0.5s ease;
+}
+
+.sylma-error:focus {
+  background-color: #eee;
+  border-color: #ccc;
+}
+
+.sylma-backtrace {
+  background-color: #ddd;
+  font-size: 10px;
+  padding: 10px;
+  max-height: 0;
+  transition: max-height 0.5s ease;
+  white-space: nowrap;
+  min-width: 700px;
+  overflow: hidden;
+}
+
+.sylma-backtrace > li {
+  list-style-type: none;
+  opacity: 0;
+  transition: opacity 0.5s ease 0s, margin 0.5s;
+}
+
+.sylma-backtrace > li:nth-child(even) {
+
+}
+
+.sylma-backtrace > li:focus,
+.sylma-backtrace > li:hover {
+  background-color: #eee;
+}
+
+.sylma-backtrace > li:focus {
+  margin: 0.5em 0;
+  border: 1px solid #ccc;
+  outline: 0 none;
+}
+
+.sylma-backtrace > li:hover span {
+  color: #444;
+}
+
+.sylma-error:hover .sylma-backtrace,
+.sylma-error:focus .sylma-backtrace
+{
+  max-height: 3500px;
+}
+
+.sylma-error:hover .sylma-backtrace > li,
+.sylma-error:focus .sylma-backtrace > li
+{
+  opacity: 1;
+}
+
+.sylma-function {
+  color: #777;
+}
+
+.sylma-backtrace a {
+  float: left;
+  width: 50%;
+  padding-right: 1em;
+}
+
+.sylma-backtrace ul {
+  max-height: 0;
+  transition: max-height 0.5s ease, padding 0.5s;
+  overflow: hidden;
+  margin-left: 0.5em;
+  padding: 0;
+}
+
+.sylma-backtrace li li {
+  margin-left: 1em;
+  transition: opacity 0.5s ease 0s;
+  opacity: 0;
+}
+
+.sylma-backtrace li li:hover {
+  background-color: #ddd;
+}
+
+.sylma-backtrace li:focus ul {
+  max-height: 3500px;
+  transition: max-height 0s;
+  padding: 0.5em;
+}
+
+.sylma-backtrace li:focus li {
+  opacity: 1;
+}
+
+.sylma-backtrace pre {
+  white-space: pre-wrap;
+}
+
+.sylma-variables {
+  padding-left: 2em;
+  max-height: 1.5em;
+  transition: max-height 0.5s;
+  border: 1px solid #ccc;
+  background-color: #ddd;
+  overflow: hidden;
+  outline: none;
+}
+
+.sylma-variables:focus {
+  max-height: 2500px;
+}
+
+.sylma-variables h3 {
+  padding: 0;
+  margin: 0 0.5em 0.5em;
+  transition: margin 0.5s;
+}
+
+.sylma-variables:focus h3 {
+  margin: 0.5em;
+}
+
+.sylma-debug-mask {
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: max-height 0.5s ease, opacity 0.5s;
+}
+
+.sylma-debug-focused:focus .sylma-debug-mask,
+.sylma-debug-hovered:hover .sylma-debug-mask
+{
+  visibility: visible;
+  max-height: 1850px;
+  opacity: 1;
+}

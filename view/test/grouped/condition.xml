@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:le="http://2013.sylma.org/action"
+>
+  <tst:description>Condition</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="Simple condition">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <h3>is-admin</h3>
+            </tpl:if>
+            <tpl:if test="name = 'root'">
+              <h3>is-root</h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>is-admin</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Condition with token">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <tpl:token name="class">is-admin</tpl:token>
+            </tpl:if>
+            <tpl:if test="name != 'admin'">
+              <tpl:token name="class">is-not-admin</tpl:token>
+            </tpl:if>
+            <tpl:if test="name = 'root'">
+              <h3>is-root</h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="is-admin"/>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Condition with token and content" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <tpl:token name="class">is-admin</tpl:token>
+              <h3>hello world</h3>
+            </tpl:if>
+            <tpl:if test="name = 'root'">
+              <h3>is-root</h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="is-admin">
+        <h3>hello world</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Condition on field">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name">
+              <h3>is-admin</h3>
+            </tpl:if>
+            <tpl:if test="!name">
+              <h3>is-root</h3>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>is-admin</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Condition on static">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="name,email"/>
+          </div>
+        </view:template>
+        <view:template match="user:*">
+          <li>
+            <tpl:if test="alias() = 'name'">is-name</tpl:if>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>is-name</li>
+        <li/>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Condition with else on static">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="name,email"/>
+          </div>
+        </view:template>
+        <view:template match="user:*">
+          <li>
+            <tpl:if test="alias() = 'name'">
+              <tpl:text>is-name</tpl:text>
+              <tpl:else>
+                <tpl:text>is-other</tpl:text>
+              </tpl:else>
+            </tpl:if>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>is-name</li>
+        <li>is-other</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple else">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <tpl:text>is-admin</tpl:text>
+              <tpl:else>is-root</tpl:else>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>is-root</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Token in else">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:if test="name = 'admin'">
+              <tpl:token name="class">is-admin</tpl:token>
+              <tpl:else>
+                <tpl:token name="class">is-root</tpl:token>
+              </tpl:else>
+            </tpl:if>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="is-root"/>
+    </tst:node>
+  </tst:test>
+</tst:tests>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+
+  xmlns:le="http://2013.sylma.org/action"
+>
+  <sql:resource>
+    <sql:id>1</sql:id>
+  </sql:resource>
+  <view:schema>user2.xql</view:schema>
+
+  <le:argument name="hello" format="string"/>
+  <le:argument name="email" format="string"/>
+
+  <view:template>
+    <div>
+      <h3><tpl:apply select="name"/></h3>
+      <le:get-argument name="hello"/>
+      <a href="mailto:email">
+        <le:get-argument name="email"/>
+      </a>
+    </div>
+  </view:template>
+
+</view:view>

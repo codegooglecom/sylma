@@ -1,0 +1,156 @@
+
+form {
+  margin: auto;
+}
+
+.sylma-form
+{
+  width: 600px;
+}
+
+input[disabled],
+textarea[disabled]
+{
+  background-color: #fcfcfc;
+  border-color: #ddd;
+  border-width: 1px;
+}
+
+.form-reference.sylma-hidder
+{
+  max-height: 0;
+  transition: all 0.5s;
+}
+
+.form-reference
+{
+  border-bottom: 2px dotted #ddd;
+  padding: 1em 0;
+  overflow: hidden;
+}
+
+.form-reference.sylma-visible
+{
+  max-height: 300em;
+}
+
+.foreign
+{
+  width: auto;
+}
+
+.foreign-value
+{
+  float: left;
+  white-space: nowrap;
+  margin-right: 1em;
+}
+
+.foreign-value input
+{
+  float: left;
+}
+
+fieldset
+{
+  border: 0;
+  background-color: #E5EEF0;
+  margin: 2px 0 0;
+  padding: 10px;
+}
+
+fieldset h3:first-letter
+{
+  text-transform: uppercase;
+}
+
+.form-reference:last-child
+{
+  border-bottom: 0;
+}
+
+legend
+{
+  font-size: 1.4em;
+  text-transform: capitalize;
+}
+
+div.field {
+  margin-bottom: 0.5em;
+}
+
+.field label {
+  display: block;
+  float: left;
+  vertical-align: top;
+  width: 30%;
+  white-space: nowrap;
+  transition: color 0.2s;
+  -webkit-transition: color 0.2s;
+}
+
+.field label:first-letter
+{
+  text-transform: uppercase;
+}
+
+.field-uneditable,
+.field-text .field-input-element {
+  float: left;
+  padding: 2px;
+}
+
+.field-text .field-input-element
+{
+  border-radius: 3px;
+  border: 1px solid #a6c4ca;
+  transition: border 0.5s,color 0.5s;
+}
+
+.field-text .field-input-element:focus {
+  border-color: #00AFAD;
+}
+
+.field-text .field-input-element {
+  width: 50%;
+}
+
+textarea.field-input-element {
+  height: 100px;
+}
+
+.field-statut-invalid > h3,
+.field-statut-invalid > label
+{
+  color: #EC008C;
+  font-weight: bold;
+}
+
+.field-statut-invalid input.field-input-element,
+.field-statut-invalid textarea.field-input-element
+{
+  border: 1px solid #EC008C;
+}
+
+.field-statut-template {
+  display: none;
+}
+
+.field-message {
+  position: absolute;
+  float:left;
+  margin-left:49%;
+  padding:2px 10px;
+  font-size:0.9em;
+  border:1px solid #CCCCCC;
+  border-radius:0 10px 0 10px;
+  -webkit-border-radius:0 10px 0 10px;
+  background-color:#EEEEEE;
+}
+
+.form-actions {
+  border-top: 1px solid #ddd;
+  margin-top: 1em;
+  padding-top: 1em;
+  text-align: right;
+}

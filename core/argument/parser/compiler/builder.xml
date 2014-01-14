@@ -1,0 +1,35 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/core/argument/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:target="[current()]"
+>
+  <debug>
+    <show>0</show>
+  </debug>
+  <cache>
+    <class>\sylma\core\argument\parser\Cached</class>
+  </cache>
+  <template>/#sylma/core/argument/parser/compiler/basic.xsl</template>
+  <cls:classes>
+    <cls:base>\sylma\core\argument\parser\compiler</cls:base>
+    <cls:class alias="logger" name="\sylma\parser\reflector\logger\Logger"/>
+    <cls:class alias="elemented" name="Elemented">
+      <importer>\sylma\core\argument\Importer</importer>
+      <cls:classes>
+        <component>
+          <cls:classes>
+            <cls:class alias="import" name="component\Import"/>
+          </cls:classes>
+        </component>
+      </cls:classes>
+    </cls:class>
+    <cls:class alias="window" name="\sylma\parser\languages\php\basic\Window"/>
+  </cls:classes>
+  <php>
+    <arg:import static="static">/#sylma/parser/languages/php/window.xml</arg:import>
+  </php>
+</arg:argument>
+

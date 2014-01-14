@@ -1,0 +1,34 @@
+debug :
+  # must be set to FALSE in production
+  enable : true
+  # must be set to FALSE in production, must be set to TRUE for first run
+  rights : true
+exception :
+  # must be set to FALSE in production
+  show : true
+initializer :
+  debug :
+    update : null
+  window :
+    debug :
+      update : null
+    fusion :
+      enable : true
+      update : true
+
+database :
+  default :
+    host : localhost
+    user : user
+    password : password
+    database : database
+  common :
+    host : localhost
+    user : user
+    password : password
+    database : common
+  test :
+    host : localhost
+    user : user
+    password : password
+    database : test

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+
+  extends="route3.vml"
+>
+  <crud:route>
+    <view:view/>
+  </crud:route>
+  <crud:global>
+    <sql:resource>
+      <sql:id>2</sql:id>
+    </sql:resource>
+    <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+  </crud:global>
+</crud:crud>

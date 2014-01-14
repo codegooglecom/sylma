@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/view/parser/test/grouped/samples/tree2"
+>
+
+  <sample1>
+    <arg:element name="tab" key="@name" extend="name()"/>
+    <abc>123</abc>
+    <def>
+      <ghi>hello</ghi>
+      <lmn>world</lmn>
+    </def>
+    <tab name="test1">
+      <value1>456</value1>
+      <value2>smith</value2>
+    </tab>
+    <tab name="test2">john</tab>
+  </sample1>
+</arg:argument>

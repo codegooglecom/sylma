@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/dom"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:target="[current()]"
+>
+  <stats>
+    <enable>0</enable>
+  </stats>
+  <namespaces>
+    <html>http://www.w3.org/1999/xhtml</html>
+    <dom>http://www.sylma.org/dom</dom>
+  </namespaces>
+  <import-depth>5</import-depth>
+  <cls:classes>
+    <cls:base>\sylma\dom</cls:base>
+    <cls:class alias="handler" name="basic\handler\Rooted"/>
+    <cls:class alias="document" name="basic\Document"/>
+    <cls:class alias="element" name="basic\Element"/>
+    <cls:class alias="attribute" name="basic\Attribute"/>
+    <cls:class alias="collection" name="basic\Collection"/>
+    <cls:class alias="fragment" name="basic\Fragment"/>
+    <cls:class alias="text" name="basic\Text"/>
+    <cls:class alias="comment" name="basic\Comment"/>
+    <cls:class alias="cdata" name="basic\CData"/>
+    <cls:class alias="instruction" name="basic\Instruction"/>
+    <cls:class alias="argument" name="argument\Tokened">
+      <cls:classes>
+        <cls:class alias="filed" name="argument\Filed"/>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>

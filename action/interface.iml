@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/interface" xmlns:ls="http://www.sylma.org/security">
-  <file>Interface.php</file>
-  <name>ActionInterface</name>
-  <extends>ModuleBase</extends>
-  <method path="test" name="test"/>
-</class>

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0"
+  targetNamespace="http://2013.sylma.org/schema/ssd"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+>
+
+  <xs:simpleType name="file" ssd:class="type\File">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="view">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="import" type="ssd:file"/>
+      </xs:sequence>
+      <xs:attribute name="output">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="dom">
+              <xs:annotation>
+                <xs:documentation>
+                  output result concatened into a string
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:pattern value=".*">
+              <xs:annotation>
+                <xs:documentation>
+                  output result as array
+                </xs:documentation>
+              </xs:annotation>
+            </xs:pattern>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="return">
+
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

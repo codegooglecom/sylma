@@ -1,0 +1,25 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/schema/xsd"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>/#sylma/parser/reflector/builder.xml</arg:import>
+  <cls:classes>
+    <cls:base>\sylma\schema\xsd</cls:base>
+    <cls:class alias="elemented" name="Elemented">
+      <cls:classes>
+        <component>
+          <cls:classes>
+            <cls:class alias="element" name="component\Element"/>
+            <cls:class alias="complexType" name="component\ComplexType"/>
+            <cls:class alias="simpleType" name="component\SimpleType"/>
+            <cls:class alias="sequence" name="component\Sequence"/>
+            <cls:class alias="baseType" name="\sylma\schema\parser\component\Simple"/>
+            <cls:class alias="restriction" name="component\Restriction"/>
+            <cls:class alias="import" name="\sylma\schema\xsd\component\Import"/>
+          </cls:classes>
+        </component>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>

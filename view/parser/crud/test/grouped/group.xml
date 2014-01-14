@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:le="http://2013.sylma.org/action"
+>
+  <tst:description>Group</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="Group on view">
+    <tst:document>
+      <crud:crud>
+        <crud:route>
+          <view:view mode="view">
+            <view:template match="user:*">
+              <span><tpl:apply/></span>
+            </view:template>
+          </view:view>
+          <view:view name="sub" mode="view" groups="form"/>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource>
+            <sql:id>2</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+        </crud:global>
+        <crud:group name="form">
+          <view:template match="user:*">
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:group>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="main">
+      <form>
+        <span>admin</span>
+        <span>admin@sylma.org</span>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <input type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript();
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view1, $node->get('main')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('sub'))
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Group on route">
+    <tst:document>
+      <crud:crud>
+        <crud:route groups="form">
+          <view:view mode="view">
+            <view:template match="user:*">
+              <span><tpl:apply select="value()"/></span>
+            </view:template>
+          </view:view>
+          <view:view name="sub" mode="view"/>
+        </crud:route>
+        <view:view name="second">
+          <view:template match="user:*">
+            <button><tpl:apply/></button>
+          </view:template>
+        </view:view>
+        <crud:global user:ns="ns">
+          <sql:resource>
+            <sql:id>2</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+        </crud:global>
+        <crud:group name="form">
+          <view:template match="user:*">
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:group>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="main">
+      <form>
+        <span>admin</span>
+        <span>admin@sylma.org</span>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <input type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="second">
+      <form>
+        <button>admin</button>
+        <button>admin@sylma.org</button>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript();
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      $view3 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'second'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view1, $node->get('main')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('sub')) &amp;&amp;
+        $manager->compareNodes($view3, $node->get('second'))
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Priority local on group">
+    <tst:document>
+      <crud:crud>
+        <crud:route groups="form">
+          <crud:local>
+            <view:template match="user:*">
+              <span><tpl:read/></span>
+            </view:template>
+          </crud:local>
+          <view:view mode="view">
+            <view:template match="user:*">
+              <button><tpl:read/></button>
+            </view:template>
+          </view:view>
+          <view:view name="sub" mode="view"/>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource>
+            <sql:id>2</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <form>
+              <stp:apply select="name, email"/>
+            </form>
+          </view:template>
+        </crud:global>
+        <crud:group name="form">
+          <view:template match="user:*">
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:group>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="main">
+      <form>
+        <button>admin</button>
+        <button>admin@sylma.org</button>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <span>admin</span>
+        <span>admin@sylma.org</span>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript();
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view1, $node->get('main')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('sub'))
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple groups">
+    <tst:document>
+      <crud:crud>
+        <crud:route>
+          <view:view mode="view">
+            <view:template match="user:*">
+              <span><tpl:apply/></span>
+            </view:template>
+          </view:view>
+          <view:view name="sub" mode="view" groups="form, test"/>
+        </crud:route>
+        <crud:global user:ns="ns">
+          <sql:resource>
+            <sql:id>2</sql:id>
+          </sql:resource>
+          <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+          <view:template>
+            <div>
+              <stp:apply select="email"/>
+            </div>
+          </view:template>
+        </crud:global>
+        <crud:group name="form">
+          <view:template match="user:*">
+            <input type="text" name="{alias()}" value="{apply()}"/>
+          </view:template>
+        </crud:group>
+        <crud:group name="test">
+          <view:template>
+            <form>
+              <tpl:apply select="name, email"/>
+            </form>
+          </view:template>
+        </crud:group>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="main">
+      <div>
+        <span>admin@sylma.org</span>
+      </div>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <input type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript();
+
+      $view2 = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view1, $node->get('main')) &amp;&amp;
+        $manager->compareNodes($view2, $node->get('sub'))
+    </tst:expected>
+  </tst:test>
+</tst:tests>

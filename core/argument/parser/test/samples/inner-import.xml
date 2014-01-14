@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<arg:argument
+  xmlns="http://www.sylma.org/core/argument/parser/test/sample1"
+  xmlns:arg="http://2013.sylma.org/core/argument"
+>
+  <abc>123</abc>
+  <def>
+    <arg:import>simple2.xml</arg:import>
+  </def>
+</arg:argument>
+

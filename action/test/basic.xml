@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  _xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/action/test/sample1"
+  xmlns:group="http://2013.sylma.org/action/test/sample2"
+>
+  <tst:description>Basic</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="Context with one file">
+    <tst:node>
+      <html:link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
+    </tst:node>
+    <tst:expected>
+
+      $context = new \sylma\modules\html\context\CSS;
+      $manager->set('context', $context);
+
+      $manager->getScript('samples/context1.vml', array(), array(
+        'css' => $context,
+      ));
+      $manager->compareNodes($context->asDOM(), $manager->get('node'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Context with two files">
+    <tst:node>
+      <html:link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>
+      <html:link href="/sylma/action/test/samples/style2.css" rel="stylesheet" type="text/css" media="all"/>
+    </tst:node>
+    <tst:expected>
+
+      $context = new \sylma\modules\html\context\CSS;
+      $manager->set('context', $context);
+
+      $manager->getScript('samples/context2.vml', array(), array(
+        'css' => $context,
+      ));
+
+      $manager->compareNodes($context->asDOM(), $manager->get('node'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple array">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <le:context name="messages">
+            <le:array>
+              <le:string>hello</le:string>
+              <le:string>world</le:string>
+            </le:array>
+          </le:context>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $context = $manager->createArgument(array());
+      $manager->set('context', $context);
+
+      $manager->loadScript(array(), array(), array(
+        'messages' => $context,
+      ));
+
+      $manager->assertEqual($context->asArray(), array(array('hello', 'world')));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Call action">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <le:action path="samples/action1"/>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>hello<a href="mailto:email">test</a></div>
+    </tst:node>
+    <tst:expected>
+
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      return $manager->compareNodes($result, $node);
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Call action with arguments">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <le:action path="samples/action2">
+              <le:string le:name="hello">world</le:string>
+              <tpl:read le:name="email" select="email"/>
+            </le:action>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>helloworldadmin@sylma.org<a href="mailto:email">test</a></div>
+    </tst:node>
+    <tst:expected>
+
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      return $manager->compareNodes($result, $node);
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Call script">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <le:script path="samples/view1"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3><a href="mailto:email">test</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Call script with arguments">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <le:script path="samples/view2">
+              <le:string le:name="hello">world</le:string>
+              <tpl:read le:name="email" select="email"/>
+            </le:script>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <div>
+          <h3>root</h3>world<a href="mailto:email">admin@sylma.org</a>
+        </div>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Get array arguments">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource multiple="x"/>
+        <sql:filter name="id" optional="x" op="in">
+          <le:get-argument name="ids" format="array" source="post"/>
+        </sql:filter>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <h3>
+            <tpl:apply select="name"/>
+          </h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array(
+        'post' => $manager->createArgument(array(
+          'ids' => array(1,2)
+        )),
+      );
+    </tst:load>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <h3>admin</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Create object">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span>
+              <le:object class="samples\Sample1">
+                <tpl:text>hello</tpl:text>
+                <tpl:text>world</tpl:text>
+              </le:object>
+            </span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>hello-world</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Path">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <span>
+            <le:path>samples/view1</le:path>
+          </span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>/sylma/action/test/samples/view1</span>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Path with arguments">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <span>
+            <le:path>samples/view1/myarg</le:path>
+          </span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>/sylma/action/test/samples/view1/myarg</span>
+    </tst:node>
+  </tst:test>
+</tst:tests>

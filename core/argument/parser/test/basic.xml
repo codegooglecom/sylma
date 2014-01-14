@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester"
+  xmlns="http://www.sylma.org"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:arg="http://2013.sylma.org/core/argument"
+>
+  <tst:description>Basic</tst:description>
+  <tst:test name="Construction with an array">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>123</abc>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc') === '123'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Get string as object" catch="\sylma\core\exception">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>123</abc>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+      $arg->get('abc') === '123';
+
+      return false;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Tokened">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc arg:type="token">123,456</abc>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->query('abc') === array('123', '456')
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Attribute key">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>
+        <arg:element name="def" key="@key"/>
+        <def key="ghi">123</def>
+        <def key="jkl">456</def>
+      </abc>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc/ghi') === '123' &amp;&amp;
+        $arg->read('abc/jkl') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Attribute key extends array">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>
+        <arg:element name="def" key="@key" extend="name()"/>
+        <def key="ghi">123</def>
+        <def key="jkl">456</def>
+      </abc>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc/def/ghi') === '123' &amp;&amp;
+        $arg->read('abc/def/jkl') === '456'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple attribute keys and cast">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>
+        <arg:element name="def" key="@key"/>
+        <def key="ghi">123</def>
+        <def key="jkl">456</def>
+        <arg:element name="hello" arg:type="int"/>
+        <hello>123</hello>
+        <world>456</world>
+      </abc>
+      <arg:element name="ghi" key="@test" arg:type="boolean"/>
+      <ghi test="jkl">1</ghi>
+      <ghi test="mno">0</ghi>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc/ghi') === '123' &amp;&amp;
+        $arg->read('abc/jkl') === '456' &amp;&amp;
+        $arg->read('abc/hello') === 123 &amp;&amp;
+        $arg->read('abc/world') === '456' &amp;&amp;
+        $arg->read('jkl') === true &amp;&amp;
+        $arg->read('mno') === false
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Cast types">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <abc>
+        <arg:element name="def" key="@key" arg:type="int"/>
+        <def key="ghi">123</def>
+        <def key="jkl">456</def>
+      </abc>
+      <mybooltrue arg:type="boolean">world</mybooltrue>
+      <myboolfalse arg:type="boolean">0</myboolfalse>
+      <myboolfalse1 arg:type="boolean">false</myboolfalse1>
+      <myint arg:type="integer">123</myint>
+      <myfloat arg:type="float">123.456</myfloat>
+      <mynumint arg:type="numeric">987</mynumint>
+      <mynumfloat arg:type="numeric">456.789</mynumfloat>
+    </arg:argument>
+    <tst:expected>
+      $arg = $controler->getArgument('arg');
+
+      return
+        $arg->read('abc/ghi') === 123 &amp;&amp;
+        $arg->read('abc/jkl') === 456 &amp;&amp;
+        $arg->read('mybooltrue') === true &amp;&amp;
+        $arg->read('myboolfalse') === false &amp;&amp;
+        $arg->read('myboolfalse1') === false &amp;&amp;
+        $arg->read('myint') === 123 &amp;&amp;
+        $arg->read('myfloat') === 123.456 &amp;&amp;
+        $arg->read('mynumint') === 987 &amp;&amp;
+        $arg->read('mynumfloat') === 456.789
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

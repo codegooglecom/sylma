@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+>
+  <tst:description>Basic</tst:description>
+  <tst:test name="Multiple nodes" disabled="true">
+    <tst:datas name="mysql://user">
+      id;name
+      1;abc
+      2;def
+    </tst:datas>
+    <tst:prepare>
+      $manager->setArgument('action', $controler->getAction('samples/row_user'));
+    </tst:prepare>
+    <tst:node>
+      <div><h3>def</h3><a href="mailto:{$email}">test</a></div>
+    </tst:node>
+    <tst:expected>
+      $action = $controler->getArgument('action');
+      $node = $controler->getArgument('node');
+
+      return
+        $controler->compareNodes($action->asDOM(), $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple argument" disabled="true">
+    <tst:prepare>
+      $view = $manager->getView('samples/filter.vml', array('id' => 2));
+      $manager->setArgument('result', $view);
+    </tst:prepare>
+    <tst:node>
+      <div>admin</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Post argument" disabled="true">
+    <tst:prepare>
+      $view = $manager->getView('samples/filter_post.vml', array('id' => 2));
+      $manager->setArgument('result', $view);
+    </tst:prepare>
+    <tst:node>
+      <div>admin</div>
+    </tst:node>
+  </tst:test>
+</tst:tests>

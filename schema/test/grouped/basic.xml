@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://www.sylma.org/schema/test/sample1"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+>
+  <tst:description>Basic</tst:description>
+  <tst:datas name="mysql://user">
+  </tst:datas>
+  <tst:test name="Simple string">
+    <tst:document>
+      <xs:schema
+        targetNamespace="http://www.sylma.org/schema/test/sample1"
+        xmlns="http://www.sylma.org/core/sylma"
+      >
+        <xs:element name="abc" type="xs:string"/>
+      </xs:schema>
+    </tst:document>
+    <tst:expected>
+      $schema = $manager->get('result');
+      $result = $schema->getElement();
+
+      return
+        $result->getName() === 'abc' &amp;&amp;
+        $result->getType()->isSimple() &amp;&amp;
+        $result->getType()->getName() === 'string'
+    </tst:expected>
+  </tst:test>
+</tst:tests>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+
+  build:class="\sylma\modules\captcha\Generator"
+  build:output="array"
+>
+  <tpl:settings>
+    <cls:classes>
+      <cls:class alias="tree" name="\sylma\modules\captcha\Reflector"/>
+    </cls:classes>
+  </tpl:settings>
+  <xl:resource/>
+
+  <tpl:template/>
+
+</view:view>

@@ -1,0 +1,1070 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+>
+  <tst:description>Basic</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="XSD Schema" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user.xsd</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>def</h3><a href="mailto:email">test</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="XQL Schema">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <a href="mailto:email">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3><a href="mailto:email">test</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="special chars in content">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3>&lt;<tpl:apply select="name"/>&gt;</h3>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>&lt;admin&gt;</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="multiple resources">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <sql:resource>
+          <sql:id>3</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <h3>
+            <tpl:read select="name"/>
+          </h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <h3>webmaster</h3>
+    </tst:node>
+  </tst:test>
+  <tst:test name="cdata">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:cdata>hello <tpl:read select="name"/></tpl:cdata>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><![CDATA[hello admin]]></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="html chars in db">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1b.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:read select="source"/></h3>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>
+          <span>root bloc</span>
+        </h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="html chars not converted">
+    <tst:document>
+      <view:view sql:ns="ns" build:return="result">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1b.xql</view:schema>
+        <view:template>
+          <tpl:read select="source/text()"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $result = $manager->read('result');
+
+      $manager->assertEqual($result, '&lt;span>root bloc&lt;/span>');
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Apply value">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name/value()"/></h3>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="No result">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource optional="x">
+          <sql:id>999</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name/value()"/></h3>
+          </div>
+        </view:template>
+        <view:template mode="sylma:empty">
+          <div>
+            <strong>No "<tpl:read select="name()"/>" result</strong>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><strong>No "user" result</strong></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Template precedence">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="id,name"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="*">
+          <first>
+            <tpl:read/>
+          </first>
+        </tpl:template>
+        <tpl:template match="*">
+          <second>
+            <tpl:read/>
+          </second>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <second>2</second>
+        <second>admin</second>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Template once">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="id,name"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="*">
+          <first>
+            <tpl:read/>
+          </first>
+        </tpl:template>
+        <tpl:template match="*" once="x">
+          <second>
+            <tpl:read/>
+          </second>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <second>2</second>
+        <first>admin</first>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Value in string">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:read select="'id={id};name={name}'"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>id=2;name=admin</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Slash in string">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1b.xql</view:schema>
+        <view:template>
+          <div><tpl:read select="'test/{name}'"/></div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>test/root</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Expression in read">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:read select="(id = 2)"/></h3>
+            <h4><tpl:read select="(id != 2)"/></h4>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>1</h3>
+        <h4/>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Return argument">
+    <tst:document>
+      <view:view sql:ns="ns" build:class="\sylma\core\argument\Readable" build:output="array">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <le:array>
+            <tpl:read le:name="name" select="name"/>
+            <tpl:read le:name="email" select="email"/>
+          </le:array>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $manager->assertEqual($manager->get('result')->query(), array(
+        'name' => 'admin',
+        'email' => 'admin@sylma.org',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Return result">
+    <tst:document>
+      <view:view sql:ns="ns" build:return="result">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <tpl:read select="email"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $manager->assertEqual($manager->read('result'), 'admin@sylma.org');
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Array with dom content" catch="\sylma\core\exception" disabled="true">
+    <!-- exception on compile -->
+    <tst:document>
+      <view:view sql:ns="ns" build:output="array">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <abc/>
+        </view:template>
+      </view:view>
+    </tst:document>
+  </tst:test>
+  <tst:test name="Multiple attribute values">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3 class="{name/value()}" test="{name/alias()}"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3 class="admin" test="name"/></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Two templates">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="email"/>
+          </div>
+        </view:template>
+        <view:template match="user:email">
+          <a href="mailto:email"><tpl:apply/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><a href="mailto:email">admin@sylma.org</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Apply all">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:name">
+          <h3><tpl:apply/></h3>
+        </view:template>
+        <view:template match="user:email">
+          <a href="mailto:email"><tpl:apply/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>2<h3>admin</h3><a href="mailto:email">admin@sylma.org</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Apply all with exclusion">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="* ^ id,name"/>
+          </div>
+        </view:template>
+        <view:template match="user:name">
+          <h3><tpl:apply/></h3>
+        </view:template>
+        <view:template match="user:email">
+          <a href="mailto:email"><tpl:apply/></a>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><a href="mailto:email">admin@sylma.org</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Apply all excluding type">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="* ^ sql:foreign"/>
+          </div>
+        </view:template>
+        <view:template match="*">
+          <input name="{alias()}"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <input name="id"/>
+        <input name="name"/>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple apply">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="user:name"/></h3>
+            <span><tpl:apply select="user:name"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3><span>admin</span></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Match all namespace">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="name"/>
+            <tpl:apply select="group_id/ref()"/>
+          </div>
+        </view:template>
+        <view:template match="user:*">
+          <span><tpl:apply/></span>
+        </view:template>
+        <view:template match="group:*">
+          <strong><tpl:read select="name"/></strong>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><span>admin</span><strong>group01</strong></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Using mode">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="user:name" mode="hello"/>
+          </div>
+        </view:template>
+        <view:template match="user:name">
+          <h4><tpl:apply/></h4>
+        </view:template>
+        <view:template match="user:name" mode="hello">
+          <h3><tpl:apply select="value()"/></h3>
+        </view:template>
+        <view:template match="user:name" mode="world">
+          <h5><tpl:apply/></h5>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Using mode on root">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply mode="hello"/>
+          </div>
+        </view:template>
+        <view:template mode="hello">
+          <h3>root</h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>root</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple root template">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <h3>root</h3>
+        </view:template>
+        <view:template>
+          <div>
+            <tpl:apply select="name"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>admin</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple root template with mode">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template mode="hello">
+          <h3>root</h3>
+        </view:template>
+        <view:template>
+          <div>
+            <tpl:apply mode="hello"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>root</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple import">
+    <tst:prepare>
+      $manager->setArgument('result', $manager->getScript('samples/import1.vml'));
+    </tst:prepare>
+    <tst:node>
+      <div><h4>world</h4></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple extends">
+    <tst:prepare>
+      $manager->setArgument('result', $manager->getScript('samples/extends1.vml'));
+    </tst:prepare>
+    <tst:node>
+      <div>world</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="External parser">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <a href="mailto:email" ls:owner="root" ls:group="root" ls:mode="750">test</a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>admin</h3><a href="mailto:email">test</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Variable" disabled="true">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user.xsd</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <tpl:variable name="email"><tpl:apply select="email"/></tpl:variable>
+            <a href="mailto:{$email}"><tpl:apply select="$email"/></a>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>def</h3><a href="mailto:world@world">world@world</a></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple variable">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:variable name="test">abc</tpl:variable>
+            <h3><tpl:apply select="name"/></h3>
+            <span><tpl:apply select="$test"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>abc</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple path argument" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <tpl:apply>
+              <tpl:read tpl:name="test2" select="email"/>
+            </tpl:apply>
+          </div>
+        </view:template>
+        <view:template>
+          <tpl:argument name="test2"/>
+          <span><tpl:read select="$test2"/></span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple content argument">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span>
+              <tpl:apply select="email">
+                <tpl:text tpl:name="test2">world</tpl:text>
+              </tpl:apply>
+            </span>
+          </div>
+        </view:template>
+        <view:template match="user:email">
+          <tpl:argument name="test2"/>
+          <tpl:read/><br/><tpl:read select="$test2"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org<br/>world</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Content argument with default value">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span>
+              <tpl:apply select="email"/>
+            </span>
+          </div>
+        </view:template>
+        <view:template match="user:email">
+          <tpl:argument name="test2" default="alias()"/>
+          <tpl:read/><br/><tpl:read select="$test2"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org<br/>email</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Argument with default content">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span>
+              <tpl:apply select="email"/>
+            </span>
+          </div>
+        </view:template>
+        <view:template match="user:email">
+          <tpl:argument name="test2">
+            <tpl:read select="alias()"/>
+          </tpl:argument>
+          <tpl:read/><br/><tpl:read select="$test2"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org<br/>email</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Constant">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <tpl:constant name="path">email</tpl:constant>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span><tpl:apply use="path"/></span>
+            <h4><tpl:apply select="$$path"/></h4>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sylma.org</span>
+        <h4>email</h4>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Argument variable">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:variable name="test">
+              <le:get-argument name="hello"/>
+            </tpl:variable>
+            <h3><tpl:apply select="name"/></h3>
+            <span><tpl:apply select="$test"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array('arguments' => $manager->createArgument(array('hello' => 'world')));
+    </tst:load>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>world</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Simple format">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <span><tpl:apply select="email/format(length=8)"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sy ...</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Import document tree">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:tree1="http://2013.sylma.org/view/parser/test/grouped/samples/tree1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><tpl:apply select="name"/></h3>
+            <span><tpl:apply import="samples/tree1.xml"/></span>
+          </form>
+        </view:template>
+        <view:template match="tree1:sample1">
+          <div>
+            <span><tpl:read select="abc"/></span>
+            <tpl:apply select="def"/>
+            <!--<tpl:apply select="def/lmn"/>-->
+          </div>
+        </view:template>
+        <view:template match="tree1:def">
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </view:template>
+        <view:template match="tree1:*">
+          <li href="{name()}"><tpl:read/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <h3>admin</h3>
+        <span>
+          <div>
+            <span>123</span>
+            <ul>
+              <li href="ghi">hello</li>
+              <li href="lmn">world</li>
+            </ul>
+          </div>
+        </span>
+      </form>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Import reflector">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:rfl="http://2013.sylma.org/view/parser/test/grouped/samples/reflector1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><tpl:apply select="name"/></h3>
+            <fieldset><tpl:apply reflector="samples\Reflector1"/></fieldset>
+          </form>
+        </view:template>
+        <view:template match="rfl:sample1">
+          <div>
+            <span><tpl:read select="test()"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <h3>admin</h3>
+        <fieldset>
+          <div>
+            <span>Hello world !</span>
+          </div>
+        </fieldset>
+      </form>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Token in insert view" disabled="true">
+    <!-- TODO -->
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:rfl="http://2013.sylma.org/view/parser/test/grouped/samples/reflector1" mode="insert">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><tpl:apply select="name"/></h3>
+            <tpl:apply select="name"/>
+          </form>
+        </view:template>
+        <view:template match="*">
+          <tpl:register/>
+          <div>
+            <h4>
+              <tpl:token name="src">test</tpl:token>
+            </h4>
+            <span><tpl:read select="alias()"/></span>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+  </tst:test>
+  <tst:test name="Read path on apply" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:tree1="http://2013.sylma.org/view/parser/test/grouped/samples/tree1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form>
+            <h3><tpl:apply select="name"/></h3>
+            <span><tpl:apply import="samples/tree2.xml"/></span>
+          </form>
+        </view:template>
+        <view:template match="tree1:sample1">
+          <div>
+            <span><tpl:read select="abc"/></span>
+            <tpl:apply read="def/lmn"/>
+          </div>
+        </view:template>
+        <view:template match="tree1:*">
+          <li><tpl:read/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <h3>admin</h3>
+        <span>
+          <div>
+            <span>123</span>
+            <li>smith</li>
+          </div>
+        </span>
+      </form>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Import argument options" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns" xmlns:tree1="http://2013.sylma.org/view/parser/test/grouped/samples/tree1">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <form><tpl:apply import="samples/tree3.xml"/></form>
+        </view:template>
+        <view:template match="tree1:sample1">
+          <div>
+            <span><tpl:read select="abc"/></span>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="tree1:test1">
+          <li href="{name()}"><tpl:apply select="*"/></li>
+        </view:template>
+        <view:template match="tree1:*">
+          <span><tpl:read/></span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <form>
+        <div>
+          <span>123</span>
+          <li href="test1">
+            <span>456</span>
+            <span>smith</span>
+          </li>
+          <span>john</span>
+        </div>
+      </form>
+    </tst:node>
+  </tst:test>
+</tst:tests>

@@ -1,0 +1,12 @@
+<menus
+  xmlns="http://2013.sylma.org/modules/menus"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  builder:reflector="\sylma\modules\menus\Main"
+  id="lemonav"
+>
+  <menu href="/"/>
+  <menu href="/admin/contenu" title="gestion du contenu"/>
+  <menu href="/admin/general" title="administration"/>
+  <menu href="/sylma/modules/users/crud" title="profil"/>
+</menus>

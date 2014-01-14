@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+>
+  <tst:description>Foreign</tst:description>
+  <tst:datas name="mysql://user2">
+    id;name;email;group_id
+    1;root;root@sylma.org;2
+    2;admin;admin@sylma.org;1
+    3;webmaster;webmaster@sylma.org;0
+    4;user1;user1@sylma.org;1
+  </tst:datas>
+  <tst:datas name="mysql://group">
+    id;name
+    1;group01
+    2;group02
+  </tst:datas>
+  <tst:datas name="mysql://user_group">
+    user;group
+    1;1
+    1;2
+    2;1
+  </tst:datas>
+  <tst:test name="Foreign single key" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <tpl:apply select="group/name"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>root</h3>group01</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign single key with template">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="group_id"/>
+          </div>
+        </view:template>
+        <view:template match="user:group_id">
+          <li><tpl:apply select="ref()/name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign single key matching type">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="group_id"/>
+          </div>
+        </view:template>
+        <view:template match="sql:foreign">
+          <strong><tpl:apply select="ref()"/></strong>
+        </view:template>
+        <view:template match="group:group">
+          <span><tpl:apply select="name"/></span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><strong><span>group02</span></strong></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign single key apply ref">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="group_id/ref()"/>
+          </div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Get ref values">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div><stp:apply select="group_id"/></div>
+        </view:template>
+        <view:template match="user:group_id">
+          <ul><tpl:apply select="all()"/></ul>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="group:name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <ul>
+          <li>group01</li>
+          <li>group02</li>
+          <li>group03</li>
+        </ul>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Get ref values with path">
+    <tst:document>
+      <view:view group:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div><stp:apply select="group_id/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="group:name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>group01</li>
+        <li>group02</li>
+        <li>group03</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Apply template on ref values">
+    <tst:document>
+      <view:view group:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div><stp:apply select="group_id/all()" mode="select"/></div>
+        </view:template>
+        <view:template match="*" mode="select">
+          <li><tpl:apply select="group:name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>group01</li>
+        <li>group02</li>
+        <li>group03</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Read all ref parent value">
+    <tst:document>
+      <view:view group:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div><stp:apply select="group_id/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:read select="parent()"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>1</li>
+        <li>1</li>
+        <li>1</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Apply all ref parent value">
+    <tst:document>
+      <view:view group:ns="ns" user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div><stp:apply select="group_id/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="parent()/value()"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>1</li>
+        <li>1</li>
+        <li>1</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple key">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <tpl:apply select="group/ref()"/>
+          </div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <li>group01</li>
+        <li>group02</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple apply collection">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <tpl:apply select="group/collection()"/>
+          </div>
+        </view:template>
+        <view:template match="sql:collection">
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <ul>
+          <li>group01</li>
+          <li>group02</li>
+        </ul>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Join">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x">
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <view:template match="user:user">
+          <h3><tpl:apply select="name"/></h3>
+          <tpl:apply select="group/join()"/>
+        </view:template>
+        <view:template match="group:group"/>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <h3>root</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Join with select">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x">
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <view:template match="user:user">
+          <h3><tpl:apply select="name"/></h3>
+          <tpl:apply select="group/join()"/>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:read select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <li>group01</li>
+        <h3>root</h3>
+        <li>group02</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Join with distinct">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x">
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <view:template match="user:user">
+          <sql:distinct name="id"/>
+          <h3><tpl:apply select="name"/></h3>
+          <tpl:apply select="group/join()"/>
+        </view:template>
+        <view:template match="group:group"/>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign multiple values">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div><tpl:apply select="group/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li><tpl:apply select="name"/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>group01</li>
+        <li>group02</li>
+        <li>group03</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign multiple compare values">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div><tpl:apply select="group/all()"/></div>
+        </view:template>
+        <view:template match="group:group">
+          <li>
+            <tpl:if test="id in parent()/values()">
+              <tpl:token name="selected">x</tpl:token>
+            </tpl:if>
+            <tpl:apply select="name"/>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li selected="x">group01</li>
+        <li selected="x">group02</li>
+        <li>group03</li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign key path access" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="group/name"/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>root</h3><li>group01</li><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Foreign key with abstract group" disabled="true">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user3.xql</view:schema>
+        <view:template>
+          <div>
+            <h3><stp:apply select="name"/></h3>
+            <tpl:apply select="groups/group"/>
+          </div>
+        </view:template>
+        <view:template match="group">
+          <li><tpl:apply/></li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div><h3>def</h3><a href="mailto:{$email}">test</a></div>
+    </tst:node>
+  </tst:test>
+</tst:tests>

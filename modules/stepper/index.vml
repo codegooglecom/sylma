@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:test="http://2013.sylma.org/modules/stepper"
+
+  build:class="\sylma\core\argument\Readable"
+  build:output="array"
+>
+
+  <crud:global>
+
+    <xl:resource file="schema.xml"/>
+
+    <tpl:settings>
+      <cls:classes>
+        <cls:class alias="tree">
+          <cls:classes>
+            <cls:class alias="cached" name="\sylma\modules\stepper\Browser"/>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </tpl:settings>
+
+  </crud:global>
+
+  <view:view>
+
+    <le:context name="css">
+      <le:file>medias/main.less</le:file>
+    </le:context>
+
+    <le:context name="title">Stepper</le:context>
+
+    <le:context name="js">
+      <le:file>/#sylma/ui/Extras.js</le:file>
+      <le:file>/#sylma/ui/Locale.js</le:file>
+      <le:file>/#sylma/ui/Date.js</le:file>
+      <le:file>medias/Listed.js</le:file>
+      <le:file>medias/Main.js</le:file>
+      <le:file>medias/Framed.js</le:file>
+      <le:file>medias/Test.js</le:file>
+      <le:file>medias/Page.js</le:file>
+      <le:file>medias/Variable.js</le:file>
+      <le:file>medias/Step.js</le:file>
+      <le:file>medias/Call.js</le:file>
+      <le:file>medias/Snapshot.js</le:file>
+      <le:file>medias/Event.js</le:file>
+      <le:file>medias/Input.js</le:file>
+      <le:file>medias/Watcher.js</le:file>
+      <le:file>medias/Property.js</le:file>
+      <le:file>medias/Element.js</le:file>
+      <le:file>medias/Selector.js</le:file>
+      <le:file>medias/Query.js</le:file>
+    </le:context>
+
+    <tpl:import>index.tpl</tpl:import>
+
+  </view:view>
+
+  <view:view name="load"
+    build:class="\sylma\core\argument\Readable"
+    build:output="array"
+  >
+
+    <tpl:template>
+      <tpl:apply select="load()"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="save"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="saveTest()"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="captcha"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="getCaptcha()"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="query"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="runQuery()"/>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

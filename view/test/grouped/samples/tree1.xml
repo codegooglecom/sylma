@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sample1
+  xmlns="http://2013.sylma.org/view/parser/test/grouped/samples/tree1"
+>
+  <abc>123</abc>
+  <def>
+    <ghi>hello</ghi>
+    <lmn>world</lmn>
+  </def>
+</sample1>

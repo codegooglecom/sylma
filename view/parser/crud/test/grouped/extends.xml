@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:le="http://2013.sylma.org/action"
+>
+  <tst:description>Extends</tst:description>
+  <tst:datas name="mysql://user">
+    id;name;email
+    1;root;root@sylma.org
+    2;admin;admin@sylma.org
+    3;webmaster;webmaster@sylma.org
+  </tst:datas>
+  <tst:test name="Simple extends">
+    <tst:prepare>
+      $manager->set('result', $manager->load('samples/extends1.vml'));
+    </tst:prepare>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <span>root@sylma.org</span>
+      </div>
+    </tst:node>
+    <tst:expected>
+      $result = $manager->get('result');
+      $node = $manager->getArgument('node');
+
+      return
+        $manager->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="View extends">
+    <tst:prepare>
+      $manager->set('result', $manager->load('samples/extends2.vml'));
+    </tst:prepare>
+    <tst:node>
+      <form>
+        <button>root</button>
+      </form>
+    </tst:node>
+    <tst:expected>
+      $result = $manager->get('result');
+      $node = $manager->getArgument('node');
+
+      return
+        $manager->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Route extends">
+    <tst:node name="main">
+      <form>
+        <button type="text" name="name" value="admin"/>
+        <button type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <textarea type="text" name="name" value="admin"/>
+        <textarea type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->get('node');
+
+      $view1 = $manager->load('samples/extends3.vml');
+      $view2 = $manager->load('samples/extends3.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub',
+        )),
+      ));
+
+      $node1 = $node->get('main');
+      $node2 = $node->get('sub');
+
+      return
+        $manager->compareNodes($view1, $node1) &amp;&amp;
+        $manager->compareNodes($view2, $node2)
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Global and local extends">
+    <tst:node name="main">
+      <form>
+        <button type="text" name="name" value="admin"/>
+        <button type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <textarea type="text" name="name" value="admin"/>
+        <textarea type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->get('node');
+
+      $view1 = $manager->load('samples/extends4.vml');
+      $view2 = $manager->load('samples/extends4.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub',
+        )),
+      ));
+
+      $node1 = $node->get('main');
+      $node2 = $node->get('sub');
+
+      return
+        $manager->compareNodes($view1, $node1) &amp;&amp;
+        $manager->compareNodes($view2, $node2)
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Double route with global and local overrides">
+    <tst:node name="main">
+      <div>
+        <button type="text" name="name" value="admin"/>
+        <button type="text" name="email" value="admin@sylma.org"/>
+      </div>
+    </tst:node>
+    <tst:node name="sub">
+      <div>
+        <span type="text" name="name" value="admin"/>
+        <span type="text" name="email" value="admin@sylma.org"/>
+      </div>
+    </tst:node>
+    <tst:node name="route2">
+      <form>
+        <h4 type="text" name="name" value="admin"/>
+        <h4 type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub2">
+      <div>hello world</div>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->get('node');
+
+      $view1 = $manager->load('samples/extends5.vml');
+      $view2 = $manager->load('samples/extends5.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub',
+        )),
+      ));
+
+      $view3 = $manager->load('samples/extends5.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'route2',
+        )),
+      ));
+      $view4 = $manager->load('samples/extends5.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'route2', 'sub2',
+        )),
+      ));
+
+      $node1 = $node->get('main');
+      $node2 = $node->get('sub');
+      $node3 = $node->get('route2');
+      $node4 = $node->get('sub2');
+
+      return
+        $manager->compareNodes($view1, $node1) &amp;&amp;
+        $manager->compareNodes($view2, $node2) &amp;&amp;
+        $manager->compareNodes($view3, $node3) &amp;&amp;
+        $manager->compareNodes($view4, $node4)
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Double route with group overrides">
+    <tst:node name="main">
+      <h1>
+        <textarea type="text" name="name" value="admin"/>
+        <span type="text" name="email" value="admin@sylma.org"/>
+      </h1>
+    </tst:node>
+    <tst:node name="sub">
+      <h1>
+        <textarea type="text" name="name" value="admin"/>
+        <span type="text" name="email" value="admin@sylma.org"/>
+      </h1>
+    </tst:node>
+    <tst:node name="route2">
+      <form>
+        <h4 type="text" name="name" value="admin"/>
+        <h4 type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub2">
+      <div>hello world</div>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->get('node');
+
+      $view1 = $manager->load('samples/extends6.vml');
+      $view2 = $manager->load('samples/extends6.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub',
+        )),
+      ));
+
+      $view3 = $manager->load('samples/extends6.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'route2',
+        )),
+      ));
+      $view4 = $manager->load('samples/extends6.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'route2', 'sub2',
+        )),
+      ));
+
+      $node1 = $node->get('main');
+      $node2 = $node->get('sub');
+      $node3 = $node->get('route2');
+      $node4 = $node->get('sub2');
+
+      return
+        $manager->compareNodes($view1, $node1) &amp;&amp;
+        $manager->compareNodes($view2, $node2) &amp;&amp;
+        $manager->compareNodes($view3, $node3) &amp;&amp;
+        $manager->compareNodes($view4, $node4)
+    </tst:expected>
+  </tst:test>
+  <tst:test name="View group override" disabled="true">
+    <tst:node name="main">
+      <form>
+        <span type="text" name="name" value="admin"/>
+        <span type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:node name="sub">
+      <form>
+        <input type="text" name="name" value="admin"/>
+        <button type="text" name="email" value="admin@sylma.org"/>
+      </form>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->get('node');
+
+      $view1 = $manager->load('samples/extends7.vml');
+      $view2 = $manager->load('samples/extends7.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub',
+        )),
+      ));
+
+      $node1 = $node->get('main');
+      $node2 = $node->get('sub');
+
+      return
+        $manager->compareNodes($view1, $node1) &amp;&amp;
+        $manager->compareNodes($view2, $node2)
+    </tst:expected>
+  </tst:test>
+</tst:tests>

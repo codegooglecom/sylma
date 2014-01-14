@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:class="\sylma\core\argument\Readable"
+  build:output="array"
+>
+
+  <sql:resource multiple="x"/>
+  <view:schema>schema.xql</view:schema>
+
+  <view:template>
+    <le:array>
+      <tpl:read select="title" le:name="title"/>
+      <tpl:read select="command" le:name="command"/>
+      <tpl:read select="minute" le:name="minute"/>
+      <tpl:read select="hour" le:name="hour"/>
+      <tpl:read select="day" le:name="day"/>
+      <tpl:read select="weekday" le:name="weekday"/>
+      <tpl:read select="month" le:name="month"/>
+    </le:array>
+  </view:template>
+
+</view:view>

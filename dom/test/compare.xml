@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/dom/test"
+  xmlns="http://www.sylma.org"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+>
+  <tst:description>Filed</tst:description>
+  <tst:test name="Simple">
+    <tst:node name="node1">
+      <root xmlns="http://www.sylma.org/dom/test/samples">
+        <div>hello</div>
+        <ul>
+          <li>world</li>
+        </ul>
+      </root>
+    </tst:node>
+    <tst:node name="node2">
+      <root xmlns="http://www.sylma.org/dom/test/samples">
+        <div>hello</div>
+        <ul>
+          <li>world</li>
+        </ul>
+      </root>
+    </tst:node>
+    <tst:expected>
+
+      $node1 = $manager->get('node/node1');
+      $node2 = $manager->get('node/node2');
+
+      $iResult = $node1->compare($node2);
+
+      $manager->assertEqual($iResult, 0);
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple difference">
+    <tst:node name="node1">
+      <root xmlns="http://www.sylma.org/dom/test/samples">
+        <div>hello</div>
+        <ul>
+          <li>world</li>
+        </ul>
+      </root>
+    </tst:node>
+    <tst:node name="node2">
+      <root xmlns="http://www.sylma.org/dom/test/samples">
+        <div>hello</div>
+        <ul>
+          <li>world2</li>
+        </ul>
+      </root>
+    </tst:node>
+    <tst:expected>
+
+      $node1 = $manager->get('node/node1');
+      $node2 = $manager->get('node/node2');
+
+      $iResult = $node1->compare($node2);
+
+      $manager->assertEqual($iResult, 3);
+      $manager->assertEqual($node1->compareBadNode->asString(), $node2->getx('//ns:li', array('ns' => 'http://www.sylma.org/dom/test/samples'))->asString());
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Ignored difference" xmlns:cmp="http://2013.sylma.org/dom/compare">
+    <tst:node name="node1">
+      <root xmlns="http://www.sylma.org/dom/test/samples">
+        <div>hello</div>
+        <ul cmp:ignore="x">
+          <li>world</li>
+        </ul>
+      </root>
+    </tst:node>
+    <tst:node name="node2">
+      <root xmlns="http://www.sylma.org/dom/test/samples">
+        <div>hello</div>
+        <ul>
+          <li>world2</li>
+        </ul>
+      </root>
+    </tst:node>
+    <tst:expected>
+
+      $node1 = $manager->get('node/node1');
+      $node2 = $manager->get('node/node2');
+
+      $iResult = $node1->compare($node2);
+
+      $manager->assertEqual($iResult, 0);
+      return true;
+
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

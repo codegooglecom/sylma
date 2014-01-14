@@ -1,0 +1,52 @@
+
+.sylma-tab-container
+{
+  transition: margin 0.5s;
+  -webkit-transition: margin 0.5s;
+}
+
+.sylma-tabs {
+
+  width: 100%;
+}
+
+.sylma-tab {
+  float:left;
+  padding-top: 1px;
+}
+
+.sylma-tab-head {
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  color: gray;
+  overflow: hidden;
+  margin-bottom: 1em;
+}
+
+.sylma-tab-head .sylma-highlight a {
+  color: #EC008C;
+}
+
+.sylma-tab-head .sylma-highlight {
+  border-bottom: 3px solid gray;
+}
+
+.sylma-tab-head li {
+  display: block;
+  float: left;
+  border-right: 1px solid #eee;
+}
+
+.sylma-tab-head li:last-child {
+  border-right: 0;
+}
+
+.sylma-tab-head a {
+  display: block;
+  padding: 1em;
+}
+
+.sylma-close {
+  float: right;
+}

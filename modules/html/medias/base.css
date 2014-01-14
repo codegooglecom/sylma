@@ -1,0 +1,122 @@
+/* Document CSS */
+
+body, ul, li, dl, dt, dd, h1 { margin: 0; padding: 0; }
+
+a img { border: 0; }
+p { margin: 1em 0; }
+
+.sylma-hidder {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+
+.sylma-hidder.sylma-visible {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+  -webkit-transition-delay: 0s;
+}
+
+.destroy
+{
+  height: 0;
+  opacity : 0;
+}
+
+.spacer
+{
+  display: none;
+}
+
+#sylma-messages {
+  position: fixed;
+  padding-top: 1em;
+  overflow: hidden;
+  width: 100%;
+  z-index: 100;
+  pointer-events:none;
+  color: #444;
+}
+
+.sylma-message.sylma-visible {
+  margin-top: 1em;
+  /*
+  max-height: 100px;
+  padding: 0.5em;
+  */
+}
+
+.sylma-message {
+  transition: opacity 0.7s, margin 0.7s, padding 0.7s, visibility 0s 0.7s;
+  -webkit-transition: opacity 0.7s, margin 0.7s, padding 0.7s, visibility 0s 0.7s;
+  padding: 0.5em;
+  font-size: 14px;
+  border: 2px solid #ddd;
+  margin: 0 auto;
+  width: 50%;
+  text-align: center;
+  background: white;
+}
+
+.center { text-align: center; margin: auto; }
+.left { float: left !important; }
+.right { float: right !important; }
+
+/**
+ * Markup free clearing.
+ *
+ * @see http://perishablepress.com/press/2009/12/06/new-clearfix-hack
+ */
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+/* IE6 */
+* html .clearfix {
+  height: 1%;
+}
+/* IE7 */
+*:first-child + html .clearfix {
+  min-height: 1%;
+}
+
+/*** Form ***/
+
+.pager .button
+{
+  float: left;
+  margin: 0 0 0 5px;
+}
+
+.pager-separator
+{
+  padding: 0 3px;
+}
+
+.mask
+{
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: opacity ease 0.25s;
+  -moz-transition: opacity ease 0.25s;
+  -webkit-transition: opacity ease 0.25s;
+  -o-transition: opacity ease 0.25s;
+}
+
+a:hover .mask-default
+{
+  opacity: 0;
+}
+
+a:active .mask-default,
+a:active .mask-hover
+{
+  opacity: 0;
+  transition: none;
+}

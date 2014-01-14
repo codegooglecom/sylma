@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+  
+  mode="update"
+>
+  <sql:resource>
+    <sql:id>2</sql:id>
+  </sql:resource>
+  <view:schema>user1.xql</view:schema>
+
+  <view:template>
+    <div>
+      <h3><tpl:apply select="email"/></h3>
+    </div>
+  </view:template>
+
+  <view:template match="user:*">
+    <tpl:register>trigger1@sylma.org</tpl:register>
+  </view:template>
+
+</view:view>

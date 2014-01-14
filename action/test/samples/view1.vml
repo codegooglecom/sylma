@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+
+>
+  <sql:resource>
+    <sql:id>2</sql:id>
+  </sql:resource>
+  <view:schema>user2.xql</view:schema>
+
+  <view:template>
+    <a href="mailto:email">test</a>
+  </view:template>
+
+</view:view>

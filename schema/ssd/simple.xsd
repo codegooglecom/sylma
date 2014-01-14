@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0"
+  targetNamespace="http://2013.sylma.org/schema/ssd"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+>
+
+  <xs:simpleType name="file" ssd:class="type\File">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="email">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b"/>
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="password">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="phone">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="65"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="boolean">
+    <xs:restriction base="xs:string">
+      <xs:enumeration>0</xs:enumeration>
+      <xs:enumeration>1</xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="word">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="/\w+/"/>
+      <xs:maxLength value="15"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="url">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i"/>
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="html">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+</xs:schema>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<class xmlns="http://www.sylma.org/interface">
-  <file>Validator.php</file>
-  <name>XSD_Parser</name>
-  <method-construct>
-    <argument name="schema" format="XML_Document"/>
-    <argument format="XML_Document" name="document"/>
-  </method-construct>
-</class>

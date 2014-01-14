@@ -1,0 +1,10 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/modules/cron/arguments"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <cls:classes>
+    <cls:base>\sylma\modules\cron</cls:base>
+    <cls:class alias="task" name="Task"/>
+  </cls:classes>
+</arg:argument>
