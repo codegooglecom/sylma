@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  _xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:cls="http://2013.sylma.org/core/factory"
+
+  xmlns:user="http://2013.sylma.org/action/test/sample1"
+  xmlns:group="http://2013.sylma.org/action/test/sample2"
+>
+  <tst:description>Basic</tst:description>
+  <tst:test name="Simple collection">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:read select="@name"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>root</li>
+        <li>admin</li>
+        <li>webmaster</li>
+      </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Filtered collection">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <li>
+            <tpl:apply select="user[@name='root']"/>
+          </li>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <tpl:read select="email"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <li>root@sylma.org</li>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Cascading apply">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <tpl:apply mode="test"/>
+        </tpl:template>
+        <tpl:template mode="test">
+          <li>hello</li>
+        </tpl:template>
+        <tpl:template mode="test">
+          <ul>
+            <tpl:apply mode="test"/>
+          </ul>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>hello</li>
+      </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Override class">
+    <tst:document>
+      <view:view user:ns="ns">
+        <tpl:settings>
+          <cls:classes>
+            <cls:class alias="tree" name="\sylma\storage\xml\test\samples\Tree1"/>
+          </cls:classes>
+        </tpl:settings>
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <ul>
+            <span>
+              <tpl:read select="test()"/>
+            </span>
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:read select="@name"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <span>abc</span>
+        <li>root</li>
+        <li>admin</li>
+        <li>webmaster</li>
+      </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Read content">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <div>
+            <tpl:apply select="user[@name='admin']"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:apply select="email"/>
+          </li>
+        </tpl:template>
+        <tpl:template match="user:email">
+          <input type="text" value="{read()}"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>
+          <input type="text" value="admin@sylma.org"/>
+        </li>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Call">
+    <tst:document>
+      <view:view user:ns="ns">
+        <tpl:settings>
+          <cls:classes>
+            <cls:class alias="tree">
+              <cls:classes>
+                <cls:class alias="cached" name="\sylma\storage\xml\test\samples\Cached01"/>
+              </cls:classes>
+            </cls:class>
+          </cls:classes>
+        </tpl:settings>
+        <xl:resource/>
+        <tpl:template>
+          <span><tpl:apply select="getPaths()"/></span>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>/abc,/def</span>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Parse result">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource/>
+        <tpl:settings>
+          <cls:classes>
+            <cls:class alias="tree">
+              <cls:classes>
+                <cls:class alias="cached" name="\sylma\storage\xml\test\samples\Cached02"/>
+              </cls:classes>
+            </cls:class>
+          </cls:classes>
+        </tpl:settings>
+        <tpl:template>
+          <span>hello world</span>
+          <tpl:apply select="return('parse')"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div class="result">
+        <span>hello world</span>
+      </div>
+    </tst:node>
+  </tst:test>
+</tst:tests>

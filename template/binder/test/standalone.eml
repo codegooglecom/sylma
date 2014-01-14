@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action xmlns:le="http://www.sylma.org/parser/action" xmlns="http://www.w3.org/1999/xhtml" xmlns:lm="http://www.sylma.org/parser/action/basic">
+  <le:settings>
+    <le:argument format="php-string" name="file">
+      <le:validate return="true">
+        <le:call-self name="get-file">
+          <le:get-argument name="file"/>
+        </le:call-self>
+      </le:validate>
+    </le:argument>
+    <le:argument format="php-integer" name="key"/>
+  </le:settings>
+  <le:context name="title">Test Binder</le:context>
+  <le:object class="Standalone">
+    <le:get-argument name="file"/>
+    <le:get-argument name="key"/>
+  </le:object>
+  <le:context name="js">
+    <lm:file path="standalone.js"/>
+  </le:context>
+</le:action>
+

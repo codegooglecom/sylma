@@ -1,0 +1,133 @@
+
+form.sylma-uploader
+{
+  display: none;
+}
+
+div.sylma-uploader ul
+{
+  margin-left: 2em;
+}
+
+.sylma-uploader-dropper
+{
+  margin: 2em auto 1em;
+  text-align: center;
+}
+
+div.sylma-uploader > span
+{
+  padding-left: 1em;
+  text-decoration: blink;
+}
+
+.scroller {
+
+  position: absolute;
+  z-index: 10;
+
+  div
+  {
+    left: 0;
+    background-color: #1C94C4;
+    border: 1px solid #005568;
+    position: fixed;
+    height: 7%;
+    width: 100%;
+  }
+
+  .top
+  {
+    top: 0;
+  }
+
+  .bottom
+  {
+    bottom: 0;
+  }
+}
+
+.scroller.sylma-visible
+{
+  opacity: 0.25;
+}
+
+.field-file
+{
+  position: relative;
+  padding: 1.5em 0 1em 5em;
+  background: url(icones/file.png) no-repeat 0 50%;
+
+  img
+  {
+    float: left;
+    margin-right: 1em;
+  }
+
+  .infos
+  {
+    float: left;
+    padding-left: 1em;
+    border-left: 1px solid #ccc;
+  }
+
+  h4
+  {
+    margin: 0;
+  }
+
+  .actions
+  {
+    position: absolute;
+    right : 0;
+    bottom : 1em;
+
+    button
+    {
+      width: 1.8em;
+      height: 1.8em;
+
+    }
+/*
+    button.active
+    {
+      pointer-events:none;
+    }
+*/
+  }
+
+}
+
+.field-file.moved
+{
+  position: absolute;
+  transition: none;
+  z-index: 5;
+}
+
+.field-file-extension-rar,
+.field-file-extension-gzip,
+.field-file-extension-zip
+{
+  background-image: url(icones/zip.png);
+}
+
+.field-file-extension-jpg,
+.field-file-extension-jpeg,
+.field-file-extension-png
+{
+  background-image: url(icones/image.png);
+  /*padding-left: 0.5em;*/
+}
+
+.field-file-extension-pdf
+{
+  background-image: url(icones/pdf.png);
+}
+
+.field-file-extension-docx,
+.field-file-extension-doc
+{
+  background-image: url(icones/word.gif);
+}
+

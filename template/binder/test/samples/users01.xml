@@ -1,0 +1,13 @@
+<users
+  xmlns="http://2013.sylma.org/view/test/sample1"
+>
+  <user name="root">
+    <email>root@sylma.org</email>
+  </user>
+  <user name="admin">
+    <email>admin@sylma.org</email>
+  </user>
+  <user name="webmaster">
+    <email>webmaster@sylma.org</email>
+  </user>
+</users>

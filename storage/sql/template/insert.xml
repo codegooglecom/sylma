@@ -1,0 +1,8 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/sql/template"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>form.xml</arg:import>
+</arg:argument>
+

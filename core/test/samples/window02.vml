@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+
+  <xl:resource/>
+  <tpl:template/>
+
+</view:view>

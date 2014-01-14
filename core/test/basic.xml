@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:cmp="http://2013.sylma.org/dom/compare"
+>
+  <tst:description>Basic</tst:description>
+  <tst:test name="HTML window">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/modules/html/window.vml');
+      $manager->buildScript('/sylma/modules/html/container.vml');
+      $manager->buildScript('/sylma/modules/html/menus/index.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config01.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'));
+
+      $manager->setArgument('result', $manager->createDocument($sResult, 103));
+    </tst:prepare>
+    <tst:node>
+      <html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+        <head>
+          <title>Sylma</title>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+          <meta name="robots" content="noindex,nofollow"/>
+          <link rel="icon" type="image/png" href="/images/favicon.png"/>
+          <link href="/tmp/3565291498.css" type="text/css" media="all" rel="stylesheet"/>
+          <script type="text/javascript"> </script>
+        </head>
+        <body>
+          <div id="sylma-messages"/>
+          <div id="body" class="clearfix">
+            <div id="messages"/>
+            <div id="container">
+              <div id="containerWrapper">
+                <div id="intro">
+                  <h3>Welcome,</h3>
+                  <p cmp:ignore="x">
+ This is your dashboard to manage all datas related to your website.<br/>
+ Choose a category for more options.
+ </p>
+                </div>
+                <div id="content">
+                  <div id="main"/>
+                  <hello/>
+                </div>
+              </div>
+            </div>
+            <div id="sidebar"/>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Override window">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript"> </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Window unauthorized access">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/window02.vml');
+      $manager->buildScript('/sylma/modules/html/error.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config03.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript" cmp:ignore="x"/>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Import multiple resources">
+    <tst:prepare>
+
+      /* Admin build */
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->buildScript('/sylma/core/test/samples/resources01.vml');
+
+      /* Test start */
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config-nofusion.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/resources01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <link href="/sylma/core/test/samples/style01.css" type="text/css" media="all" rel="stylesheet"/>
+          <link href="/sylma/core/test/samples/style02.less" type="text/css" media="all" rel="stylesheet/less"/>
+          <script src="/sylma/core/test/samples/script01.js" type="text/javascript"> </script>
+          <script src="/sylma/modules/html/medias/less.js" type="text/javascript"> </script>
+          <script type="text/javascript"> </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+        </body>
+      </html>
+    </tst:node>
+    <tst:expected>
+
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      $manager->compareNodes($result, $node);
+
+      $css = $manager->getFile('samples/result01.css');
+
+      $fs = $manager->getManager('fs/tmp');
+      $tmp = $fs->getFile('1538782558.css');
+
+      $manager->assertEqual($tmp->read(), $css->read());
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+  <tst:test name="Import multiple resources with fusion" depends="@previous">
+    <tst:prepare>
+
+      /* Admin build */
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->buildScript('/sylma/core/test/samples/resources01.vml');
+
+      $css = new \sylma\modules\html\context\Less(array(
+        $manager->getFile('samples/style01.css'),
+        $manager->getFile('samples/style02.less'),
+      ), $manager->createArgument(array(
+        'enable' => true,
+        'update' => true,
+      )));
+
+      $css->asDOM();
+
+      /* Test start */
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/resources01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <link href="/tmp/1538782558.css" type="text/css" media="all" rel="stylesheet"/>
+          <script src="/tmp/4216214821.js" type="text/javascript"> </script>
+          <script type="text/javascript"> </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+        </body>
+      </html>
+    </tst:node>
+    <tst:expected>
+
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      $manager->compareNodes($result, $node);
+
+      $css = $manager->getFile('samples/result01.css');
+
+      $fs = $manager->getManager('fs/tmp');
+      $tmp = $fs->getFile('1538782558.css');
+
+      $manager->assertEqual($tmp->read(), $css->read());
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+  <tst:test name="JSON call">
+    <tst:prepare>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01.json');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $sResult = $manager->readArgument('result');
+
+      $manager->assertEqual(json_decode($sResult, true), array(
+        'content' => '&lt;hello/>',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+  <tst:test name="JSON PHP error">
+    <tst:prepare>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample02.json');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $sResult = $manager->readArgument('result');
+
+      $manager->assertEqual(json_decode($sResult, true), array(
+        'content' => '',
+        'messages' =>
+          array(
+            0 => 'An error happened, the adminstrator has been informed.',
+          ),
+        ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+  <tst:test name="Call action">
+    <tst:prepare>
+
+      $action = $manager->createAction('/sylma/core/test/samples/action01.eml');
+      $action->getContext('default');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/action01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript" cmp:ignore="x"/>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello>world</hello>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="PHP error">
+    <tst:prepare>
+
+      //$manager->buildScript('/sylma/core/test/samples/sample02.vml');
+      $manager->buildScript('/sylma/modules/html/error.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample02');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript" cmp:ignore="x"/>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Restricted access">
+    <tst:prepare>
+
+      //$manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester02');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript" cmp:ignore="x"/>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Directory without index">
+    <tst:prepare>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester02');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sub');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript" cmp:ignore="x"/>
+        </head>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Image">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $sPath = '/sylma/core/test/samples/image01.jpg';
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET($sPath);
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+      $manager->setArgument('path', $sPath);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $manager->assertEqual($manager->read('result'), $manager->getFile($manager->read('path'))->read());
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Image resized">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $sPath = '/sylma/core/test/samples';
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET($sPath . '/image01.jpg', array('size' => 'small'));
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+      $manager->setArgument('path', $sPath);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $manager->assertEqual($manager->read('result'), $manager->getFile($manager->read('path') . '/image01_small.jpg')->read());
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Window container not patterned">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config04.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head>
+          <script type="text/javascript"> </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+</tst:tests>

@@ -1,0 +1,33 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/storage/sql/view"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <argument>
+    <view>/#sylma/storage/sql/template/view.xml</view>
+    <update>/#sylma/storage/sql/template/update.xml</update>
+    <insert>/#sylma/storage/sql/template/insert.xml</insert>
+    <hollow>/#sylma/storage/sql/template/hollow.xml</hollow>
+  </argument>
+  <cls:classes>
+    <cls:base>\sylma\storage\sql</cls:base>
+    <cls:class alias="collection" name="template\component\Collection"/>
+    <component>
+      <cls:classes>
+        <cls:class alias="filter" name="view\component\Filter"/>
+        <cls:class alias="pager" name="template\Pager">
+          <cls:classes>
+            <cls:class alias="cached" name="cached\Pager"/>
+          </cls:classes>
+        </cls:class>
+        <cls:class alias="order" name="view\component\Order"/>
+        <cls:class alias="limit" name="view\component\Limit"/>
+        <cls:class alias="trigger" name="view\component\Trigger"/>
+        <cls:class alias="result" name="view\component\Result"/>
+        <cls:class alias="token" name="view\component\Token"/>
+        <cls:class alias="connection" name="view\component\Connection"/>
+        <cls:class alias="distinct" name="view\component\Distinct"/>
+      </cls:classes>
+    </component>
+  </cls:classes>
+</arg:argument>

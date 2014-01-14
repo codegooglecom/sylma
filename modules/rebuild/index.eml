@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<le:action
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:le="http://www.sylma.org/parser/action"
+  xmlns:lm="http://www.sylma.org/parser/action/basic"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+>
+  <le:context name="title">Rebuild</le:context>
+  <le:context name="js">
+    <lm:file path="/#sylma/ui/mootools.js"/>
+    <lm:file path="/#sylma/ui/Main.js"/>
+    <lm:file path="medias/main.js"/>
+  </le:context>
+  <le:context name="css">
+    <lm:file path="medias/main.css"/>
+  </le:context>
+  <le:object class="Main"/>
+ </le:action>

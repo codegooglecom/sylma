@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:stp="http://2013.sylma.org/schema/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:js="http://2013.sylma.org/template/binder"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+>
+  <tst:description>Objects</tst:description>
+
+  <tst:test name="Sub object">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <div>Hello world</div>
+            <div js:class="sylma.ui.Base" js:name="sub">yup</div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var node = test.getObject('sub').getNode();
+
+      return node.get('text') === 'yup';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Replace sub object" disabled="true">
+    <tst:prepare>
+      $manager->set('result', $manager->getScript('samples/crud1.vml'));
+    </tst:prepare>
+    <tst:callback>
+
+      var test = example.test.tmp[0];
+      test.update();
+
+    </tst:callback>
+  </tst:test>
+  <tst:test name="Sub object without name">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <div>Hello world</div>
+            <div js:class="sylma.ui.Base">
+              <js:event name="mouseover">return %object%.getNode();</js:event>
+              <span>bonsoir</span>
+            </div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var tmp = example.test.tmp;
+      
+      var node = tmp[0].node.fireEvent('mouseover');
+
+      return node.getChildren()[0].get('text') === 'bonsoir';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Parent named">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test" js:parent-name="hello">
+            <div>Hello world</div>
+            <div js:class="sylma.ui.Base" js:name="sub1">
+              <div js:class="sylma.ui.Base" js:name="sub2">
+                <h2>abc</h2>
+              </div>
+            </div>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var sub1 = test.getObject('sub1');
+
+      sylma.tester.assertEquals(test, sub1.getParent('hello'));
+      sylma.tester.assertEquals(test, sub1.getObject('sub2').getParent('hello'));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple parent named">
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <block js:class="sylma.ui.Base" js:name="test" js:parent="example">
+            <div js:class="sylma.ui.Base" js:name="test1" js:parent-name="hello">
+              <span js:class="sylma.ui.Base" js:name="sub">abc</span>
+            </div>
+            <div js:class="sylma.ui.Base" js:name="test2" js:parent-name="hello">
+              <span js:class="sylma.ui.Base" js:name="sub">def</span>
+            </div>
+          </block>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      var test1 = example.test.getObject('test1');
+      var sub = test1.getObject('sub');
+      sylma.tester.assertEquals(test1, sub.getParent('hello'));
+
+      var test2 = example.test.getObject('test2');
+      var sub = test2.getObject('sub');
+      sylma.tester.assertEquals(test2, sub.getParent('hello'));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Sub object with dynamic name">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <div>Hello world</div>
+            <tpl:apply select="name,email" mode="field"/>
+          </div>
+        </view:template>
+        <view:template match="user:*" mode="field">
+          <div js:class="sylma.ui.Base">
+            <js:name>
+              <tpl:read select="alias()"/>
+            </js:name>
+            <tpl:read/>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var node = test.getObject('email').getNode();
+
+      return node.get('text') === 'admin@sylma.org';
+    </tst:expected>
+  </tst:test>
+</tst:tests>

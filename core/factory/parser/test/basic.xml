@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester"
+  xmlns="http://www.sylma.org"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <tst:description>Basic</tst:description>
+  <tst:test name="Single class">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1"/>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj = $controler->create('test');
+
+      return
+        $obj instanceof \sylma\core\factory\parser\test\samples\Sample1
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Base path">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:base>\sylma\core\factory\parser\test\samples</cls:base>
+        <cls:class alias="test" name="Sample1"/>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj = $controler->create('test');
+
+      return
+        $obj instanceof \sylma\core\factory\parser\test\samples\Sample1
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple base paths">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:base>\sylma\core\factory\parser\test\samples</cls:base>
+        <cls:class alias="test1" name="Sample1">
+          <cls:classes>
+            <cls:base>\sylma\core\factory\parser\test\samples\sub</cls:base>
+            <cls:class alias="sub" name="Sub1"/>
+          </cls:classes>
+        </cls:class>
+        <cls:class alias="test2" name="Sample2"/>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('test1');
+      $obj2 = $controler->create('test1/sub');
+      $obj3 = $controler->create('test2');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\sub\Sub1 &amp;&amp;
+        $obj3 instanceof \sylma\core\factory\parser\test\samples\Sample2
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Encapsed key">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <hello>
+          <cls:classes>
+            <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1"/>
+          </cls:classes>
+        </hello>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj = $controler->create('hello/test');
+
+      return
+        $obj instanceof \sylma\core\factory\parser\test\samples\Sample1
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Simple mixed">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <debug>
+        <show>0</show>
+      </debug>
+      <cls:classes>
+        <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1"/>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj = $controler->create('test');
+      $arg = $controler->getArgument('arg');
+
+      return
+        $obj instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $arg->read('debug/show') === '0';
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Encapsed classes">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1">
+          <cls:classes>
+            <cls:class alias="world" name="\sylma\core\factory\parser\test\samples\Sample2"/>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('test');
+      $obj2 = $controler->create('test/world');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\Sample2
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Encapsed classes with base paths">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:base>\sylma\core\factory\parser\test</cls:base>
+        <cls:class alias="test" name="samples\Sample1">
+          <cls:classes>
+            <cls:base>\sylma\core\factory\parser\test\samples</cls:base>
+            <cls:class alias="world" name="Sample2"/>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('test');
+      $obj2 = $controler->create('test/world');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\Sample2
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Encapsed classes 2" catch="\sylma\core\exception">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1">
+          <cls:class alias="world" name="\sylma\core\factory\parser\test\samples\Sample2"/>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+  </tst:test>
+  <tst:test name="Encapsed key in class">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1">
+          <cls:classes>
+            <hello>
+              <cls:classes>
+                <cls:class alias="world" name="\sylma\core\factory\parser\test\samples\Sample2"/>
+              </cls:classes>
+            </hello>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('test');
+      $obj2 = $controler->create('test/hello/world');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\Sample2
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Argument into class">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="test" name="\sylma\core\factory\parser\test\samples\Sample1">
+          <hello>world</hello>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj = $controler->create('test');
+      $args = $controler->findClass('test');
+
+      return
+        $obj instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $args->read('hello') === 'world'
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Import into argument" disabled="true">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="hello" name="\sylma\core\factory\parser\test\samples\Sample1">
+          <cls:classes>
+            <abc>
+              <arg:import>samples/simple1.xml</arg:import>
+            </abc>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('hello');
+      $obj2 = $controler->create('hello/abc/world');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\Sample2
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Import into class" disabled="true">
+    <arg:argument xmlns="http://www.sylma.org/core/argument/parser/test/sample1">
+      <cls:classes>
+        <cls:class alias="hello" name="\sylma\core\factory\parser\test\samples\Sample1">
+          <arg:import>samples/simple1.xml</arg:import>
+        </cls:class>
+      </cls:classes>
+    </arg:argument>
+    <tst:expected>
+      $obj1 = $controler->create('hello');
+      $obj2 = $controler->create('hello/abc/world');
+
+      return
+        $obj1 instanceof \sylma\core\factory\parser\test\samples\Sample1 &amp;&amp;
+        $obj2 instanceof \sylma\core\factory\parser\test\samples\Sample2
+    </tst:expected>
+  </tst:test>
+</tst:tests>
+

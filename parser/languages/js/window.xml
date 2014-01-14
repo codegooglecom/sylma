@@ -1,0 +1,29 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/languages/php/window"
+  xmlns:cls="http://2013.sylma.org/core/factory">
+  <cls:classes>
+    <cls:base>\sylma\parser\languages</cls:base>
+    <cls:class alias="window" name="js\basic\Window">
+      <cls:classes>
+        <cls:class alias="property" name="common\basic\Property"/>
+        <cls:class alias="call" name="common\basic\_Call"/>
+        <cls:class alias="variable" name="common\basic\Variable"/>
+        <cls:class alias="instanciate" name="common\basic\Instanciate"/>
+        <cls:class alias="assign" name="common\basic\Assign"/>
+        <cls:class alias="instruction" name="common\basic\Instruction"/>
+        <cls:class alias="concat" name="common\basic\Concat"/>
+        <cls:class alias="ghost" name="js\basic\Ghost"/>
+        <cls:class alias="object" name="js\basic\instance\_Object"/>
+        <cls:class alias="function" name="js\basic\instance\_Function"/>
+        <cls:class alias="string" name="js\basic\instance\_String"/>
+        <cls:class alias="concat" name="common\basic\Concat"/>
+        <cls:class alias="array" name="js\basic\instance\_Array"/>
+        <cls:class alias="numeric" name="js\basic\instance\_Numeric"/>
+        <cls:class alias="null" name="js\basic\instance\_Null"/>
+        <cls:class alias="boolean" name="js\basic\instance\_Boolean"/>
+        <cls:class alias="return" name="common\basic\_Return"/>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>

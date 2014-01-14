@@ -1,0 +1,51 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/sql/template"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <arg:import>../schema/builder.xml</arg:import>
+  <cls:classes>
+    <cls:base>\sylma\storage\sql</cls:base>
+    <cls:class alias="elemented" name="xxx">
+      <cls:classes>
+        <cls:class alias="counter" name="template\Counter"/>
+        <component>
+          <cls:classes>
+            <cls:base>\sylma\storage\sql\template\component</cls:base>
+            <cls:class alias="collection" name="Collection">
+              <cls:classes>
+                <cls:class alias="token" name="\sylma\schema\cached\form\Token"/>
+              </cls:classes>
+            </cls:class>
+            <cls:class alias="table" name="Table">
+              <cls:classes>
+                <cls:class alias="token" name="\sylma\schema\cached\form\Token"/>
+              </cls:classes>
+            </cls:class>
+            <cls:class alias="field" name="Field"/>
+            <cls:class alias="foreign" name="Foreign"/>
+            <cls:class alias="reference" name="Reference"/>
+            <cls:class alias="complexType" name="Complex"/>
+            <cls:class alias="simpleType" name="Simple"/>
+            <cls:class alias="baseType" name="Simple"/>
+          </cls:classes>
+        </component>
+        <template>
+          <cls:classes>
+            <cls:base>\sylma\storage\sql</cls:base>
+            <cls:class alias="select" name="query\parser\Select">
+              <cls:classes>
+                <cls:class alias="where" name="cached\Where"/>
+                <cls:class alias="order" name="cached\Order"/>
+              </cls:classes>
+            </cls:class>
+            <cls:class alias="update" name="query\parser\Update"/>
+            <cls:class alias="insert" name="query\parser\Insert"/>
+            <cls:class alias="delete" name="query\parser\Delete"/>
+          </cls:classes>
+        </template>
+      </cls:classes>
+    </cls:class>
+  </cls:classes>
+</arg:argument>
+

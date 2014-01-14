@@ -1,0 +1,23 @@
+@import url('http://2013.sylma.org/myfont');
+
+/** @file /sylma/core/test/samples/style01.css **/
+
+.style01
+{
+  background: url('/rootdir/bgnd.jpg');
+  height: 20px;
+}
+
+.test {
+  font-size: 1.5em;
+}
+.style02 {
+  background: url('/sylma/core/test/samples/sub/image02b.png');
+  height: 20px;
+  font-size: 1.5em;
+}
+.style02b {
+  background: url('/sylma/core/test/samples/image02.png');
+  width: 50px;
+  color: #444;
+}

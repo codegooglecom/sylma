@@ -1,0 +1,13 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/storage/sql/view"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <cls:classes>
+    <cls:base>\sylma\storage\xml</cls:base>
+    <cls:class alias="tree" name="tree\Templated"/>
+    <component>
+      <cls:classes/>
+    </component>
+  </cls:classes>
+</arg:argument>
