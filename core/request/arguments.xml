@@ -1,0 +1,15 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/core/request"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  build:target="[current()]"
+>
+  <!-- TODO : file temporary unusefull, until args are stored in sylma.yml/path -->
+  <<<
+  <extensions>
+    <executable arg:type="token">eml,vml</executable>
+    <readable arg:type="token">css,js,webm,jpg,jpeg,gif,png,pdf,eot,ttf,woff,vcf</readable>
+  </extensions>
+</arg:argument>
