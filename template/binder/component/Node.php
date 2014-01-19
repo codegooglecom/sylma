@@ -1,15 +1,14 @@
 <?php
 
 namespace sylma\template\binder\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template;
 
-class Node extends reflector\component\Foreigner implements common\arrayable {
+class Node extends Basic implements common\arrayable {
 
   protected $sName;
   protected $sClass;
   protected $value;
   protected $element;
-  protected $bBuilded = false;
 
   public function parseRoot(dom\element $el) {
 
@@ -29,31 +28,25 @@ class Node extends reflector\component\Foreigner implements common\arrayable {
     $this->element = $element;
   }
 
-  public function build(template\element $newElement = null) {
+  public function build(template\element $newElement) {
 
-    if ($newElement) {
+    $this->setElement($newElement);
 
-      $this->setElement($newElement);
+    $sClass = uniqid('sylma-');
+    $this->setClass($sClass);
 
-      $sClass = uniqid('sylma-');
-      $this->setClass($sClass);
+    $sName = $this->readx('@js:node');
+    $this->setName($sName);
 
-      $sName = $this->readx('@js:node');
-      $this->setName($sName);
+    $el = $this->getNode();
 
-      $el = $this->getNode();
-
-      $newElement->parseRoot($this->cleanAttributes($el));
-      $newElement->addToken('class', $sClass);
-    }
+    $newElement->parseRoot($this->cleanAttributes($el));
+    $newElement->addToken('class', $sClass);
 
     if ($obj = $this->getObject(false)) {
 
-      $this->bBuilded = true;
+      $this->isBuilt(true);
       $this->addProperty($this->getObject());
-
-      //$el->addToken('class', $sClass);
-      //$el->setAttribute('class', $sClass);
     }
   }
 
@@ -90,16 +83,11 @@ class Node extends reflector\component\Foreigner implements common\arrayable {
     return $this->sClass;
   }
 
-  protected function getObject($bDebug = true) {
-
-    return $this->getParser()->getObject($bDebug);
-  }
-
   public function asArray() {
 
-    if (!$this->bBuilded) {
+    if (!$this->isBuilt()) {
 
-      $this->addProperty($this->getObject()->getClass());
+      $this->addProperty($this->extractClass($this->getObject()));
     }
 
     return $this->getElement()->asArray();

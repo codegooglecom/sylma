@@ -623,6 +623,34 @@
       <div><h3>root</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Template match multiple names">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:name | user:email">
+          <input name="{name()}" value="{value()}"/>
+        </view:template>
+        <view:template match="user:*">
+          <span><tpl:read/></span>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <span>2</span>
+        <input name="name" value="admin"/>
+        <input name="email" value="admin@sylma.org"/>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Simple import">
     <tst:prepare>
       $manager->setArgument('result', $manager->getScript('samples/import1.vml'));

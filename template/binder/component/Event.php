@@ -11,15 +11,24 @@ class Event extends Method {
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
-    $this->addToObject($this->getParser()->getObject());
+    $this->loadID();
+    $this->build($this->getObject(false));
   }
 
-  protected function addToObject(binder\_class $target) {
+  protected function build(binder\Basic $class = null) {
+
+    if ($class) {
+
+      $this->addToObject($class);
+      $this->isBuilt(true);
+    }
+  }
+
+  protected function addToObject(binder\_class $target, $bOptional = false) {
 
     $window = $this->getWindow();
 
     $this->loadValue($this->getNode());
-    $this->loadID();
 
     $function = $window->createFunction(array('e'), $this->getValue());
     $this->loadName();
@@ -29,15 +38,11 @@ class Event extends Method {
     $obj->setProperty('name', $this->getName());
     $obj->setProperty('callback', $function);
 
-/*
-    if (!$this->elementIsObject($el->getParent())) {
+    if ($bOptional) {
 
-      $sClass = uniqid('sylma');
-
-      $this->getParent()->getLastElement()->addToken('class', $sClass);
-      $event->setProperty('target', $sClass);
+      $obj->setProperty('optional', true);
     }
-*/
+
     $target->setEvent($this->getID(), $obj, $this->getRoot()->getCurrentElement());
   }
 
@@ -50,6 +55,19 @@ class Event extends Method {
   public function getID() {
 
     return $this->sID;
+  }
+
+  public function asArray() {
+
+    if (!$this->isBuilt()) {
+
+      $obj = $this->getObject();
+      $this->addToObject($this->extractClass($obj), true);
+
+      $obj->setEvent($this->getID());
+    }
+
+    return array();
   }
 }
 

@@ -9,6 +9,7 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
   const WEIGHT_ELEMENT = 25;
   const WEIGHT_ELEMENT_ALL = 15;
+  const WEIGHT_ELEMENT_NS = 20;
   const WEIGHT_ELEMENT_ROOT = 25;
 
   const MATCH_DEFAULT = '[root]';
@@ -57,11 +58,14 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
     $this->sMatch = $sMatch;
   }
 
-  public function getMatch($sKey = '') {
+  public function getMatch() {
 
-    if ($sKey) return $this->aMatch[$sKey];
-    else return $this->sMatch;
-    return ;
+    return $this->aMatch;
+  }
+
+  protected function getMatchString() {
+
+    return $this->sMatch;
   }
 
   public function setTree(template_ns\parser\tree $tree) {
@@ -133,20 +137,49 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
     return $iResult;
   }
 
+  public function getWeightSingleName(array $aMatch, $sNamespace, $sName, $iWeight = self::WEIGHT_ELEMENT, $iWeightNS = self::WEIGHT_ELEMENT_NS, $iWeightAll = self::WEIGHT_ELEMENT_ALL) {
+
+    $iResult = 0;
+    $bAll = $aMatch['name'] === self::NAME_DEFAULT;
+
+    if ($aMatch['namespace']) {
+
+      if ($sNamespace === $aMatch['namespace']) {
+
+        if ($bAll) {
+
+          $iResult = $iWeightNS;
+        }
+        else {
+
+          if ($sName === $aMatch['name']) {
+
+            $iResult = $iWeight;
+          }
+        }
+      }
+    }
+    else {
+      
+      if ($bAll) {
+
+        $iResult = $iWeightAll;
+      }
+    }
+    return $iResult;
+  }
+
   public function getWeightName($sNamespace, $sName) {
 
     $iResult = 0;
 
-    if ($this->getMatch() && (($sNamespace === $this->getNamespace()) || !$this->getNamespace())) {
+    $aNames = $this->getMatch();
 
-      if ($sName === $this->getMatch('name')) {
+    foreach ($aNames as $aName) {
 
-        $iResult = self::WEIGHT_ELEMENT;
-      }
-      else if ($this->getMatch('name') === self::NAME_DEFAULT) {
+      $iMatch = $this->getWeightSingleName($aName, $sNamespace, $sName);
 
-        $iResult = self::WEIGHT_ELEMENT_ALL;
-      }
+      if ($iMatch > $iResult) $iResult = $iMatch;
     }
 
     return $iResult;
@@ -169,7 +202,7 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
   public function asToken() {
 
-    return 'Template ' . ($this->getMatch() ? "({$this->getMatch()})" : 'root') . ($this->getMode() ? " [mode={$this->getMode()}]" : "");
+    return 'Template ' . ($this->getMatch() ? "({$this->getMatchString()})" : 'root') . ($this->getMode() ? " [mode={$this->getMode()}]" : "");
   }
 
   protected function initRender() {

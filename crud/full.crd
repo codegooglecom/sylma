@@ -95,7 +95,7 @@
   <crud:group name="form">
 
     <sql:resource/>
-    <crud:import>form.tpl</crud:import>
+    <crud:import>all.tpl</crud:import>
 
   </crud:group>
 

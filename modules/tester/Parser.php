@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\modules\tester;
-use sylma\core, sylma\dom, sylma\modules\tester, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs;
 
-class Parser extends tester\Prepare {
+class Parser extends Prepare {
 
   const NS = 'http://www.sylma.org/modules/tester/parser';
   const TRASH_MANAGER = 'fs/trash';
@@ -28,6 +28,7 @@ class Parser extends tester\Prepare {
     //$this->setArguments(array());
     //$this->setSettings($this->getArguments());
     $this->setSettings(array());
+
     //$this->setFiles(array($this->getFile('basic.xml')));
   }
 

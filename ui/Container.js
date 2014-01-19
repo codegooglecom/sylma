@@ -216,13 +216,16 @@ sylma.ui.Container = new Class({
     el.addClass('sylma-visible');
   },
 
+  /**
+   * @uses Element.browserSupportVendorStyle()
+   */
   hide : function(el, callback) {
 
     el = el || this.getNode();
 
     if (callback) {
 
-      var name = 'MozTransition' ? 'transitionend' : el.browserSupportVendorStyle('transition') + 'End';
+      var name = MozTransition ? 'transitionend' : el.browserSupportVendorStyle('transition') + 'End';
 
       var event = el.addEventListener(name, function() {
 
@@ -273,4 +276,20 @@ sylma.ui.Container = new Class({
     }
 
   }
+});
+
+Element.implement ({
+    browserSupportStyle: function(style){
+        var value = this.style[style];
+        return !!(value || value == '');
+
+    },
+    browserSupportVendorStyle: function(style) {
+        var prefixedStyle = null,
+            capitalized = style.capitalize();
+        return this.browserSupportStyle(style) ? style : ['webkit', 'Moz', 'O'].some(function(prefix) {
+            prefixedStyle = prefix + capitalized;
+            return this.browserSupportStyle(prefixedStyle)
+        }, this) ? prefixedStyle : null;
+    }
 });

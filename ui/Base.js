@@ -1,4 +1,4 @@
-sylma.ui.Base = new Class({
+sylma.ui.BaseProps = {
 
   Implements : Options,
 
@@ -77,7 +77,7 @@ sylma.ui.Base = new Class({
 
     this.prepareNodes(this.node);
 
-    this.initEvents(this.sylma.events);
+    this.initEvents(this.sylma.events, props.events);
     this.initNodes(this.nodes);
   },
 
@@ -225,11 +225,16 @@ sylma.ui.Base = new Class({
     this[name] = method.bind(this);
   },
 
-  initEvents : function(events) {
+  initEvents : function(events, enabled) {
+
+    enabled = enabled || {};
 
     for (var name in events) {
 
-      this.initEvent(events[name]);
+      if (!events[name].optional || name in enabled) {
+
+        this.initEvent(events[name]);
+      }
     }
   },
 
@@ -464,4 +469,6 @@ sylma.ui.Base = new Class({
       delete this.objects[key];
     }
   }
-});
+};
+
+sylma.ui.Base = new Class(sylma.ui.BaseProps);

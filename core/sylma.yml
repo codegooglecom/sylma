@@ -106,6 +106,8 @@ initializer :
       name : \sylma\core\window\classes\File
     json :
       name : \sylma\template\binder\context\JSON
+    profiler :
+      name : \sylma\modules\profiler\Manager
   session :
     lifetime : 403200
   maintenance :

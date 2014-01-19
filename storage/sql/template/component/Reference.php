@@ -22,7 +22,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
 
     return $result;
   }
-  
+
   protected function useID() {
 
     return $this->readx('@use-id');
@@ -33,6 +33,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     switch ($sName) {
 
       case 'alias' : $result = $this->getAlias(); break;
+      case 'parent' : $result = $this->getHandler()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments); break;
       //case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
       case 'title' : $result = $this->getTitle(); break;

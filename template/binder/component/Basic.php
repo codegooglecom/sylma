@@ -1,13 +1,28 @@
 <?php
 
 namespace sylma\template\binder\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\template;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template\binder;
 
-class Basic extends reflector\component\Foreigner {
+class Basic extends binder\Basic {
 
-  public function getPHPWindow() {
+  protected $bBuilded = false;
 
-    return $this->getParser()->getPHPWindow();
+  protected function getObject($bDebug = true) {
+
+    return $this->getParser()->getObject($bDebug);
+  }
+
+  protected function extractClass(binder\_Object $obj) {
+
+    return $obj->getClass();
+  }
+
+
+  protected function isBuilt($bValue = null) {
+
+    if (is_bool($bValue)) $this->bBuilded = $bValue;
+
+    return $this->bBuilded;
   }
 }
 

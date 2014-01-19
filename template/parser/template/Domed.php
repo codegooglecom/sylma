@@ -18,7 +18,6 @@ class Domed extends Basic {
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, true, false);
-    $this->parseMatchNamespace($el);
 
     $this->loadMode();
 
@@ -29,31 +28,6 @@ class Domed extends Basic {
 
     $this->setID(uniqid());
     $this->build();
-  }
-
-  protected function parseMatchNamespace(dom\element $el) {
-
-    if ($sMatch = $el->readx('@match', array(), false)) {
-
-      preg_match_all('/(\w+):(\w+|\*)/', $sMatch, $aMatches, PREG_SET_ORDER);
-
-      foreach ($aMatches as $aMatch) {
-
-        list(,$sPrefix, $sName) = $aMatch;
-
-        if (!$sNamespace = $el->lookupNamespace($sPrefix)) {
-
-          $this->launchException('Cannot match value, no namespace defined', get_defined_vars());
-        }
-
-        if (!$sName) {
-
-          $this->launchException('Cannot match value, no name defined', get_defined_vars());
-        }
-
-        $this->setNamespace($sNamespace);
-      }
-    }
   }
 
   public function parseComponent(dom\element $el) {

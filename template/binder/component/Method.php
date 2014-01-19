@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\binder\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
-class Method extends reflector\component\Foreigner implements common\arrayable {
+class Method extends Basic implements common\arrayable {
 
   protected $sName;
   protected $sValue;
@@ -21,7 +21,7 @@ class Method extends reflector\component\Foreigner implements common\arrayable {
       $aArguments = explode(',', $sArguments);
     }
     else {
-    
+
       $aArguments = array();
     }
 

@@ -250,7 +250,12 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return $this->container;
   }
 
-  public function startObject(Basic $object) {
+  public function startObject($object) {
+
+    if (!$object instanceof _class && !$object instanceof _Object) {
+
+      $this->launchException('Bad object', get_defined_vars());
+    }
 
     if (is_null($this->rootElement) && $object instanceof _class) {
 
@@ -267,7 +272,9 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
       $this->launchException('No object in stack');
     }
 
-    return end($this->aObjects);
+    $result = end($this->aObjects);
+
+    return $result === false ? null : $result;
   }
 
   public function stopObject($bBuild = true) {

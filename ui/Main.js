@@ -314,7 +314,7 @@ sylma.classes = {
       return prefix + this.uID++;
     }
   })
-}
+};
 
 sylma.ui = new sylma.classes.ui;
 sylma.log = function(msg) {

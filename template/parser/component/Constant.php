@@ -27,6 +27,8 @@ class Constant extends Child implements common\arrayable, parser\component {
 
   protected function build() {
 
+    $this->log("Constant '{$this->getName()}'", array('content' => $this->readx()));
+
     $this->getParser()->setConstant($this->getName(), $this->readx());
   }
 

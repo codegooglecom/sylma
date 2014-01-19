@@ -188,10 +188,10 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
   public function __clone() {
 
     $this->default = null;
-    //$this->global = null;
+    $this->global = null;
     $this->aPaths = array();
     $this->aGroups = array();
-    
+
     $this->sourceFile = null;
   }
 }

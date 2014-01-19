@@ -13,7 +13,7 @@
 
     <tpl:apply mode="css"/>
 
-    <form js:class="sylma.crud.Form" class="sylma-form">
+    <form js:class="sylma.crud.Form" class="sylma-form" js:parent-name="form">
       <tpl:apply mode="init"/>
       <tpl:apply mode="form"/>
       <div class="form-actions">

@@ -101,6 +101,41 @@
 
     </tst:callback>
   </tst:test>
+  <tst:test name="Event in different template">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <tpl:template>
+          <ul js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="user:*">
+          <input js:class="sylma.ui.Base" value="{value()}">
+            <js:name>
+              <tpl:read select="title()"/>
+            </js:name>
+            <tpl:apply mode="events"/>
+          </input>
+        </tpl:template>
+        <tpl:template match="user:name" mode="events">
+          <js:event name="click">%parent%.getObject('email').getNode().fireEvent('click');</js:event>
+        </tpl:template>
+        <tpl:template match="user:email" mode="events">
+          <js:event name="click">sylma.tester.test(true);</js:event>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:callback>
+
+      var test = example.test;
+      test.getObject('name').getNode().fireEvent('click');
+
+    </tst:callback>
+  </tst:test>
   <tst:test name="Event on node">
     <tst:document>
       <view:view>

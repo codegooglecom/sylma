@@ -5,78 +5,69 @@ use sylma\core, sylma\dom, sylma\schema as schema_ns, sylma\template as template
 
 class Container extends template_ns\parser\template\Argumented {
 
-  const CONTEXT_ELEMENT = 'element';
-  const CONTEXT_TYPE = 'type';
-
-  const CONTEXT_DEFAULT = self::CONTEXT_ELEMENT;
-
-  const WEIGHT_TYPE = 20;
-  const WEIGHT_TYPE_ALL = 10;
-
-  protected $context;
+  const WEIGHT_TYPE = 22;
+  const WEIGHT_TYPE_NS = 17;
+  const WEIGHT_TYPE_ALL = 12;
 
   public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
 
     $this->parseMatch($el);
-
-    if ($sApply = $el->readx('@apply', array(), false)) {
-
-      $this->setContext($sApply);
-    }
-    else if ($this->getMatch()) {
-
-      $this->setContext($this->getMatch('context'));
-    }
-    else {
-
-      $this->setContext(self::CONTEXT_DEFAULT);
-    }
   }
 
   public function parseMatch(dom\element $el) {
 
     $this->setMatch($el->readx('@match', array(), false));
 
-    if ($this->getMatch()) {
+    if ($this->getMatchString()) {
 
-      $this->parseMatchValue($this->getMatch());
+      $this->parseMatchValue($this->getMatchString(), $el);
     }
   }
 
-  public function parseMatchValue($sMatch) {
+  /**
+   * @used by self::parseMatchValue() anonymouse closure
+   */
+  public function buildMatchValue(dom\element $el, $sPrefix, $sName) {
+
+    $sNamespace = '';
+
+    if ($sPrefix and !$sNamespace = $el->lookupNamespace($sPrefix)) {
+
+      $this->launchException('Cannot match value, namespace not found', get_defined_vars());
+    }
+
+    if (!$sName) {
+
+      $this->launchException('Cannot match value, no name defined', get_defined_vars());
+    }
+
+    return array(
+      'name' => $sName,
+      'namespace' => $sNamespace,
+    );
+  }
+
+  public function parseMatchValue($sMatch, dom\element $el) {
 
     if (!$sMatch) {
 
       $this->throwException('No match defined');
     }
 
-    preg_match('`(?:#(\w+)/)?(?:([\w\-_]+):)?([\*\w\-_]+)`', $sMatch, $aMatches);
+    preg_match_all('`(?:(?<prefix>[\w\-_]+):)?(?<name>[\*\w\-_]+)[|\s]*`', $sMatch, $aMatches, PREG_SET_ORDER);
 
-    $sContext = $aMatches[1];
-    $sPrefix = $aMatches[2];
-    $sName = $aMatches[3];
+    $tpl = $this;
+    $aNames = array_map(function($item) use ($el, $tpl) {
 
-    if (!$sContext) $sContext = self::CONTEXT_DEFAULT;
-    //if (!$sMode) $sMode = self::MODE_DEFAULT;
+      $aResult = $tpl->buildMatchValue($el, $item['prefix'], $item['name']);
 
-    $this->aMatch = array(
-      'context' => $sContext,
-      //'mode' => $sMode,
-      //'namespace' => $this->getNamespace(),
-      'name' => $sName,
-    );
-  }
+      return $aResult;
 
-  protected function getContext() {
+    }, $aMatches);
 
-    return $this->context;
-  }
-
-  protected function setContext($context) {
-
-    $this->context = $context;
+    $this->aMatch = $aNames;
   }
 
   public function getWeightSchema(schema_ns\parser\element $element, $sContext, $sMode, $bRoot = false) {
@@ -85,32 +76,25 @@ class Container extends template_ns\parser\template\Argumented {
 
     if ($this->getMatch() || $bRoot) {
 
-      if (!$sContext) $sContext = self::CONTEXT_DEFAULT;
+      if (!$this->getMatch()) {
 
-      if ($sContext === $this->getContext()) {
+        if ($bRoot && $sMode === $this->getMode()) {
 
-        //if (!$sMode) $sMode = self::MODE_DEFAULT;
-
-        if (!$this->getMatch()) {
-
-          if ($bRoot && $sMode === $this->getMode()) {
-
-            $iResult = self::WEIGHT_ELEMENT_ROOT;
-          }
+          $iResult = self::WEIGHT_ELEMENT_ROOT;
         }
-        else if ($sMode === $this->getMode()) {
+      }
+      else if ($sMode === $this->getMode()) {
 
-          $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
+        $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
 
-          if ($type = $element->getType()) {
+        if ($type = $element->getType()) {
 
-            $iType = $this->getWeightType($type);
-            $iResult = $iType > $iElement ? $iType : $iElement;
-          }
-          else {
+          $iType = $this->getWeightType($type);
+          $iResult = $iType > $iElement ? $iType : $iElement;
+        }
+        else {
 
-            $iResult = $iElement;
-          }
+          $iResult = $iElement;
         }
       }
     }
@@ -129,15 +113,15 @@ class Container extends template_ns\parser\template\Argumented {
 
     $iResult = 0;
 
-    if ($type->getNamespace() === $this->getNamespace()) {
+    if ($this->getMatch()) {
 
-      if ($type->getName() === $this->getMatch('name')) {
+      $aNames = $this->getMatch();
 
-        $iResult = self::WEIGHT_TYPE;
-      }
-      else if ($this->getMatch('name') === self::NAME_DEFAULT) {
+      foreach ($aNames as $aName) {
 
-        $iResult = self::WEIGHT_TYPE_ALL;
+        $iMatch = $this->getWeightSingleName($aName, $type->getNamespace(), $type->getName(), self::WEIGHT_TYPE, self::WEIGHT_TYPE_NS, self::WEIGHT_TYPE_ALL);
+
+        if ($iMatch > $iResult) $iResult = $iMatch;
       }
     }
 

@@ -3,7 +3,7 @@
 namespace sylma\modules\tester;
 use sylma\core;
 
-class Formed extends Parser {
+class Formed extends Profiler {
 
   protected function createToken() {
 

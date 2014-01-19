@@ -21,6 +21,25 @@
       <le:file>Scroller.js</le:file>
     </le:context>
 
+    <tpl:apply mode="file/content"/>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="file/content">
+
+    <tpl:apply mode="file/dropper"/>
+    <tpl:apply mode="file/ref"/>
+    <tpl:apply mode="file/scroller"/>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="file/ref">
+    <tpl:apply select="ref()" mode="file/update">
+      <tpl:read select="alias('form')" tpl:name="alias"/>
+    </tpl:apply>
+  </tpl:template>
+
+  <tpl:template match="*" mode="file/dropper">
 
     <div js:name="template" js:class="sylma.uploader.Dropper" class="clearfix sylma-uploader">
       <tpl:apply reflector="Tree"/>
@@ -31,15 +50,10 @@
         <span class="sylma-hidder" js:node="loading">Loading ...</span>
       </div>
     </div>
-    <tpl:apply select="ref()" mode="file/update">
-      <tpl:read select="alias('form')" tpl:name="alias"/>
-    </tpl:apply>
-
-    <tpl:apply mode="scroller"/>
 
   </tpl:template>
 
-  <tpl:template match="*" mode="scroller">
+  <tpl:template match="*" mode="file/scroller">
 
     <div js:class="sylma.uploader.Scroller" js:name="scroller" class="scroller sylma-hidder">
 

@@ -59,7 +59,9 @@
     <tpl:argument name="value" default="value()"/>
     <tpl:argument name="type" default="'text'"/>
 
-    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}"/>
+    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}">
+      <tpl:apply mode="input/events"/>
+    </input>
 
   </tpl:template>
 
