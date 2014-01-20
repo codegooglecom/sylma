@@ -30,7 +30,7 @@ sylma.crud.fieldset.Template = new Class({
     parent = parent || this;
 
     //props.parentObject = parent;
-    //props.sylma.parents = Object.append({}, this.getParents()),
+    //props.sylma.parents = Object.append({}, this.getParents());
 
     props.objects = {};
     props.sylma.key = null;

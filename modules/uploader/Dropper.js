@@ -46,7 +46,11 @@ sylma.uploader.Dropper = new Class({
 
       sylma.ui.importNode(response.content).inject(this.getNode().getParent());
 
-      var obj = sylma.ui.createObject(this.importResponse(response, this));
+      var props = this.importResponse(response, this);
+      props.sylma = props.sylma || {};
+      props.sylma.parents = Object.append({}, this.getParents());
+
+      var obj = sylma.ui.createObject(props);
       this.tmp.push(obj);
 
       this.position++;

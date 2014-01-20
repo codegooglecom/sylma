@@ -147,19 +147,22 @@ sylma.crud.fieldset.RowMovable = new Class({
 
     var old = this.mask;
     dir = dir || 'before';
-//console.log(height - old.getSize().y);
-    var mask = this.buildMask();
-    mask.inject(target, dir);
 
-    old.set('tween', {
-      onComplete : function() {
+    if (target) {
 
-        old.destroy();
-      }
-    });
+      var mask = this.buildMask();
+      mask.inject(target, dir);
 
-    mask.tween('height', height);
-    old.tween('height', 0);
+      old.set('tween', {
+        onComplete : function() {
+
+          old.destroy();
+        }
+      });
+
+      mask.tween('height', height);
+      old.tween('height', 0);
+    }
   },
 
   updatePosition: function(val) {

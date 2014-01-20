@@ -29,6 +29,7 @@
 
   <tpl:template match="sql:foreign" mode="container/multiple/empty">
     <fieldset class="field form-foreign" js:class="sylma.crud.Field">
+      <tpl:apply mode="reference/js"/>
       <js:event name="change">
         %object%.downlight();
       </js:event>
