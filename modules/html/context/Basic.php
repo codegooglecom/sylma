@@ -83,7 +83,7 @@ class Basic extends core\argument\Readable implements window\context {
 
   protected function readFile(fs\file $file) {
 
-    return $file->execute();
+    return $file->checkRights(\Sylma::MODE_EXECUTE) ? $file->execute() : $file->read();
   }
 
   /**
