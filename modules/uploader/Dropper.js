@@ -7,7 +7,11 @@ sylma.uploader.Dropper = new Class({
   initialize : function(props) {
 
     this.parent(props);
-    this.position = this.getNode().getAllNext().length + 1;
+  },
+
+  onLoad : function() {
+
+    this.position = this.getParent('fieldset').getCount() + 1;
   },
 
   sendFile : function() {
@@ -44,14 +48,13 @@ sylma.uploader.Dropper = new Class({
 
     if (response.content) {
 
-      sylma.ui.importNode(response.content).inject(this.getNode().getParent());
+      var content = this.getParent('fieldset').getObject('content');
+
+      sylma.ui.importNode(response.content).inject(content.getNode());
 
       var props = this.importResponse(response, this);
-      props.sylma = props.sylma || {};
-      props.sylma.parents = Object.append({}, this.getParents());
 
-      var obj = sylma.ui.createObject(props);
-      this.tmp.push(obj);
+      content.initObject(props);
 
       this.position++;
     }

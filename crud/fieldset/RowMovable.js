@@ -170,6 +170,11 @@ sylma.crud.fieldset.RowMovable = new Class({
     this.getNode().setStyle('top', val - this.offset);
   },
 
+  updatePositionInput : function(val) {
+
+    this.getNode('position').set('value', val);
+  },
+
   release: function() {
 
     this.moved = false;
@@ -191,7 +196,13 @@ sylma.crud.fieldset.RowMovable = new Class({
     });
 
     this.mask.destroy();
-    window.removeEvents(this.events);
 
+    node.getParent().getChildren().each(function(el, key) {
+
+      var obj = el.retrieve('sylma-object');
+      obj.updatePositionInput(key + 1);
+    });
+
+    window.removeEvents(this.events);
   }
 });

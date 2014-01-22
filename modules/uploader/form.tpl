@@ -34,9 +34,11 @@
   </tpl:template>
 
   <tpl:template match="*" mode="file/ref">
-    <tpl:apply select="ref()" mode="file/update">
-      <tpl:read select="alias('form')" tpl:name="alias"/>
-    </tpl:apply>
+    <div js:class="sylma.crud.Group" js:name="content">
+      <tpl:apply select="ref()" mode="file/update">
+        <tpl:read select="alias('form')" tpl:name="alias"/>
+      </tpl:apply>
+    </div>
   </tpl:template>
 
   <tpl:template match="*" mode="file/dropper">

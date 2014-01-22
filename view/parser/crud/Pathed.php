@@ -8,6 +8,7 @@ abstract class Pathed extends reflector\component\Foreigner implements reflector
   const DEFAULT_FILE = 'default';
 
   protected $sAlias = '';
+  protected $sName = '';
 
   public function setParser(reflector\domed $parent) {
 

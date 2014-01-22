@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\view\parser\crud;
-use sylma\core, sylma\dom, sylma\parser\reflector;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\view\parser;
 
 class Route extends Pathed implements dom\domable, core\tokenable {
 
@@ -11,6 +11,7 @@ class Route extends Pathed implements dom\domable, core\tokenable {
 
   public function parseRoot(dom\element $el) {
 
+    $this->setNamespace(parser\Elemented::NS, 'view', false);
     $this->setNode($el, true);
 
     $this->main = $this->parseView($this->getx('view:view[not(@name)]'));

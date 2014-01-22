@@ -83,7 +83,7 @@ class Basic extends core\argument\Readable implements window\context {
 
   protected function readFile(fs\file $file) {
 
-    return $file->read();
+    return $file->execute();
   }
 
   /**
