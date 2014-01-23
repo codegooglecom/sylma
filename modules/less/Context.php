@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\modules\html\context;
-use sylma\core, sylma\parser\context, sylma\dom, sylma\storage\fs;
+namespace sylma\modules\less;
+use sylma\core, sylma\storage\fs, sylma\modules\html;
 
-class Less extends CSS {
+class Context extends html\context\CSS {
 
   public function __construct(array $aArray = array(), core\argument $fusion = null, core\window\context $js = null) {
 
@@ -17,7 +17,8 @@ class Less extends CSS {
 
     if ($file->getExtension() === 'less') {
 
-      $this->js->add(\Sylma::getManager('fs')->getFile('/#sylma/modules/html/medias/less.js'));
+      $fs = \Sylma::getManager('fs');
+      $this->js->add($fs->getFile('less.js', $fs->extractDirectory(__FILE__)));
       $aResult['link']['@rel'] = 'stylesheet/less';
     }
 

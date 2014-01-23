@@ -4,11 +4,12 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
-  xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
   <tst:description>Filter</tst:description>
   <tst:datas name="mysql://user">
@@ -189,6 +190,92 @@
       $result1 = $manager->loadScript();
       $result2 = $manager->loadScript(array(
         'id' => '2',
+      ));
+
+      $manager->compareNodes($result1, $nodes->get('node1'));
+      $manager->compareNodes($result2, $nodes->get('node2'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Filter on multiple foreign">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <sql:distinct name="id"/>
+          <h2>
+            <tpl:apply select="name"/>
+            <tpl:apply select="group/join()"/>
+          </h2>
+        </tpl:template>
+        <tpl:template match="group:group">
+          <sql:filter name="id" op="in">
+            <le:array>
+              <tpl:text>1</tpl:text>
+              <tpl:text>2</tpl:text>
+            </le:array>
+          </sql:filter>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h2>root</h2>
+        <h2>admin</h2>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Dynamic filter on multiple foreign">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <sql:distinct name="id"/>
+          <h2>
+            <tpl:apply select="name"/>
+            <tpl:apply select="group/join()"/>
+          </h2>
+        </tpl:template>
+        <tpl:template match="group:group">
+          <sql:filter name="id" op="in" optional="x">
+            <le:get-argument name="id" optional="x" format="array"/>
+          </sql:filter>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node name="node1">
+      <div>
+        <h2>root</h2>
+        <h2>admin</h2>
+        <h2>webmaster</h2>
+      </div>
+    </tst:node>
+    <tst:node name="node2">
+      <div>
+        <h2>root</h2>
+        <h2>admin</h2>
+      </div>
+    </tst:node>
+    <tst:expected>
+
+      $nodes = $manager->getArgument('node');
+
+      $result1 = $manager->loadScript();
+      $result2 = $manager->loadScript(array(
+        'id' => array(1, 2),
       ));
 
       $manager->compareNodes($result1, $nodes->get('node1'));

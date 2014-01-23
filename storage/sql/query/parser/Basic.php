@@ -110,9 +110,16 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     $this->aWheres = array();
   }
 
-  public function setColumn($val) {
+  public function setColumn($val, $bShift = false) {
 
-    $this->aColumns[] = $val;
+    if ($bShift) {
+
+      array_unshift($this->aColumns, $val);
+    }
+    else {
+
+      $this->aColumns[] = $val;
+    }
   }
 
   protected function getColumns() {

@@ -45,10 +45,16 @@ class Select extends Wherer implements common\argumentable {
 
       $sName = $el->asAlias();
 
-      if ($bDistinct) $mContent = array('DISTINCT ', $sName);
-      else $mContent = $sName;
+      if ($bDistinct) {
 
-      $this->setColumn($mContent);
+        $mContent = array('DISTINCT ', $sName);
+        $this->setColumn($mContent, true);
+      }
+      else {
+
+        $mContent = $sName;
+        $this->setColumn($mContent);
+      }
     }
 
     $this->aElements[] = $el;

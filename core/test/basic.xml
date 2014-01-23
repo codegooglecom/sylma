@@ -161,7 +161,7 @@
           <link href="/sylma/core/test/samples/style01.css" type="text/css" media="all" rel="stylesheet"/>
           <link href="/sylma/core/test/samples/style02.less" type="text/css" media="all" rel="stylesheet/less"/>
           <script src="/sylma/core/test/samples/script01.js" type="text/javascript"> </script>
-          <script src="/sylma/modules/html/medias/less.js" type="text/javascript"> </script>
+          <script src="/sylma/modules/less/less.js" type="text/javascript"> </script>
           <script type="text/javascript"> </script>
         </head>
         <body>
@@ -198,7 +198,7 @@
       $manager->buildScript('/sylma/core/test/samples/container01.vml');
       $manager->buildScript('/sylma/core/test/samples/resources01.vml');
 
-      $css = new \sylma\modules\html\context\Less(array(
+      $css = new \sylma\modules\less\Context(array(
         $manager->getFile('samples/style01.css'),
         $manager->getFile('samples/style02.less'),
       ), $manager->createArgument(array(

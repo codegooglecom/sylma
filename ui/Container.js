@@ -225,13 +225,7 @@ sylma.ui.Container = new Class({
 
     if (callback) {
 
-      var name = MozTransition ? 'transitionend' : el.browserSupportVendorStyle('transition') + 'End';
-
-      var event = el.addEventListener(name, function() {
-
-        this.removeEvent(name, event);
-        callback();
-      });
+      sylma.ui.addEventTransition(el, callback);
     }
 
     el.removeClass('sylma-visible');

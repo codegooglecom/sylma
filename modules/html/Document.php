@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\template\binder, sylma\dom;
+use sylma\core, sylma\template\binder, sylma\dom, sylma\modules\less;
 
 class Document extends core\window\classes\Container {
 
@@ -14,7 +14,7 @@ class Document extends core\window\classes\Container {
 
     $this->setArguments($args);
     $this->setPost($post);
-    
+
     $this->setSettings($this->getManager('init')->getArgument('window'));
 
     if (!$messages = $this->getManager('parser')->getContext('errors', false)) {
@@ -31,10 +31,8 @@ class Document extends core\window\classes\Container {
 
     $contexts = $this->createArgument(array(
       'title' => array(),
-      'css' => new context\Less(array(), $fusion, $js),
+      'css' => new less\Context(array(), $fusion, $js),
       'js' => $js,
-      //'js-classes' => new binder\context\Classes,
-      //'js/load' => new js\context\Load,
       'errors' =>  $messages,
       //'title' =>  new parser\context\Basic,
     ));

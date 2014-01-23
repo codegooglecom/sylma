@@ -211,7 +211,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       default :
 
-        $this->launchException("Function '$sName' unknown", get_defined_vars());
+        $result = $this->getHandler()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
     }
 
     return $result;

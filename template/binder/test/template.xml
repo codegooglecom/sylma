@@ -358,7 +358,7 @@
           </div>
         </tpl:template>
         <tpl:template match="user:user">
-          <div js:class="sylma.ui.Template" js:alias="user">
+          <div js:class="sylma.ui.Template" js:alias="user" class="sylma-hidder sylma-visible">
             <js:method name="destroy">
 
               this.getParent().test(this, this.parent.bind(this));
@@ -400,7 +400,7 @@
                       /* @todo dom compare */
                       sylma.tester.assertEquals(test.getNode().get('text').replace(/\s*/g, ''), 'webmaster@sylma.orgroot@sylma.orgadmin@sylma.org..');
 
-                      user1.remove();
+                      user1.remove.delay(100, user1);
                     }
                   }
                 });

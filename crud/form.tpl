@@ -58,12 +58,16 @@
       <tpl:apply mode="label/value">
         <tpl:read select="$title" tpl:name="title"/>
       </tpl:apply>
-      <tpl:if test="!is-optional()">
-        <tpl:text>*</tpl:text>
-      </tpl:if>
+      <tpl:apply mode="label/optional"/>
       <tpl:text> :</tpl:text>
     </label>
 
+  </tpl:template>
+
+  <tpl:template mode="label/optional">
+    <tpl:if test="!is-optional()">
+      <tpl:text>*</tpl:text>
+    </tpl:if>
   </tpl:template>
 
   <tpl:template match="*" mode="label/value">

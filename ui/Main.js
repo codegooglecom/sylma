@@ -152,7 +152,7 @@ sylma.classes = {
       }
     },
 
-    importNode : function(val, name) {
+    importNode : function(val, name, root) {
 
       name = name || 'div';
 
@@ -160,7 +160,7 @@ sylma.classes = {
         html : val
       });
 
-      return el.getChildren();
+      return root ? el : el.getChildren();
     },
 
     objectToString : function(val) {
@@ -312,6 +312,20 @@ sylma.classes = {
     generateID : function(prefix) {
 
       return prefix + this.uID++;
+    },
+
+    addEventTransition : function(el, callback) {
+
+      var name = Browser.firefox ? 'transitionend' : el.browserSupportVendorStyle('transition') + 'End';
+
+      var event = el.addEventListener(name, function(e) {
+
+        if (e.propertyName === 'opacity') {
+
+          this.removeEvent(name, event);
+          callback && callback(e);
+        }
+      });
     }
   })
 };

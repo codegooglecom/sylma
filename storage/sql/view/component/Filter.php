@@ -47,11 +47,15 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
 
       $content = $bEscape ? "'{$this->readx()}'" : $this->readx();
     }
+    else {
+
+      $content = $this->readx();
+    }
 
     if ($bIN && !$bOptional) {
 
       $window = $this->getWindow();
-      $escape = $window->addControler(self::DB_MANAGER)->call('escape', array($content));
+      $escape = $window->addControler(self::DB_MANAGER)->call('getConnection')->call('escape', array($content));
       $content = array('(', $window->callFunction('implode', 'php-string', array(',', $escape)), ')');
     }
 

@@ -12,6 +12,14 @@
   font-size: 12px;
 }
 
+@media screen and (max-width: 460px)
+{
+  #sylma-todo-widget
+  {
+    position: absolute;
+  }
+}
+
 #sylma-todo-widget:hover,
 #sylma-todo-widget.sylma-highlight
 {

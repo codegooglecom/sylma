@@ -396,27 +396,31 @@ sylma.ui.BaseProps = {
     this.getNode().removeClass('sylma-highlight');
   },
 
-  remove : function() {
+  remove : function(destroy) {
 
     var node = this.getNode();
+    destroy = destroy === undefined ? true : destroy;
 
-    new Fx.Morph(node, {
-      //duration : 'long',
-      onComplete : function() {
+    sylma.ui.addEventTransition(node, function(e) {
 
-        // TODO : node.destroy() send "too much recursion" error, maybe too much events
-        node.dispose();
+      node.dispose();
+
+      if (destroy) {
+
         this.destroy();
+      }
 
-      }.bind(this)
-    }).start('.destroy');
+    }.bind(this));
+
+    node.addClass('destroy');
+    node.removeClass('sylma-visible');
   },
 
   importResponse : function(response, parent, target) {
 
     if (response.classes) {
 
-      eval(response.classes);
+      eval(response.classes); // var classes = ..
       Object.merge(sylma.binder.classes, classes);
     }
 

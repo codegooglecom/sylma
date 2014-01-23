@@ -229,7 +229,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
       default :
 
-        $result = $this->getParser()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
+        $result = $this->getHandler()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
     }
 
     return $result;
