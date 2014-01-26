@@ -314,18 +314,37 @@ sylma.classes = {
       return prefix + this.uID++;
     },
 
-    addEventTransition : function(el, callback) {
+    getVendorPrefix : function(style) {
 
-      var name = Browser.firefox ? 'transitionend' : el.browserSupportVendorStyle('transition') + 'End';
+      var result;
 
-      var event = el.addEventListener(name, function(e) {
+      switch (Browser.name) {
 
-        if (e.propertyName === 'opacity') {
+        case 'firefox' : result = 'Moz'; break;
+        case 'safari' :
+        case 'chrome' : result = 'webkit'; break;
+        case 'opera' : result = 'O'; break;
+        default : result = style; break;
+      }
 
-          this.removeEvent(name, event);
+      return result + style.capitalize();
+    },
+
+    addEventTransition : function(el, callback, property) {
+
+      property = property || 'opacity';
+      var name = Browser.firefox ? 'transitionend' : this.getVendorPrefix('transition') + 'End';
+
+      var handler = function(e) {
+        
+        if (e.propertyName === property) {
+
+          this.removeEventListener(name, handler);
           callback && callback(e);
         }
-      });
+      };
+
+      el.addEventListener(name, handler);
     }
   })
 };
