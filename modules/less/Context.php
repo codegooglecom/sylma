@@ -44,9 +44,8 @@ class Context extends html\context\CSS {
   protected function parseLess(fs\file $file) {
 
     $sResult = '';
-    require_once('lessc.php');
 
-    $less = new \lessc;
+    $less = new Prefixer;
     //$less->setImportDir($file->getParent()->getRealPath());
 //echo (string) $file->getControler()->getDirectory()->getRealPath();
     $less->setImportDir($file->getControler()->getDirectory()->getRealPath());

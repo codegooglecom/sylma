@@ -76,7 +76,7 @@
 
     <tpl:apply mode="body/top"/>
 
-    <div id="body" class="clearfix">
+    <div id="body">
       <div id="messages"/>
       <tpl:apply mode="body/action"/>
     </div>

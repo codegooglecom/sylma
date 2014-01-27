@@ -330,16 +330,20 @@ sylma.classes = {
       return result + style.capitalize();
     },
 
-    addEventTransition : function(el, callback, property) {
+    addEventTransition : function(el, callback, property, remove) {
 
       property = property || 'opacity';
       var name = Browser.firefox ? 'transitionend' : this.getVendorPrefix('transition') + 'End';
 
       var handler = function(e) {
-        
+
         if (e.propertyName === property) {
 
-          this.removeEventListener(name, handler);
+          if (remove) {
+
+            this.removeEventListener(name, handler);
+          }
+
           callback && callback(e);
         }
       };
