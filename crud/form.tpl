@@ -64,7 +64,7 @@
 
   </tpl:template>
 
-  <tpl:template mode="label/optional">
+  <tpl:template match="*" mode="label/optional">
     <tpl:if test="!is-optional()">
       <tpl:text>*</tpl:text>
     </tpl:if>

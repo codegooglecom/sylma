@@ -300,7 +300,7 @@ sylma.classes = {
 
     isTouched : function() {
 
-      return 'ontouchstart' in document.documentElement;
+      return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
     },
 
     getHash : function() {
@@ -334,6 +334,17 @@ sylma.classes = {
 
       property = property || 'opacity';
       var name = Browser.firefox ? 'transitionend' : this.getVendorPrefix('transition') + 'End';
+
+      switch (property) {
+
+        case 'margin-top' :
+        case 'margin-right' :
+        case 'margin-bottom' :
+        case 'margin-left' :
+
+          property = Browser.firefox ? property : 'margin';
+          break;
+      }
 
       var handler = function(e) {
 
