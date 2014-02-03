@@ -75,7 +75,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
       $this->bInit = true;
 
       $this->initWindow();
-      $aResult[] = $this->prepareParent();
+      $this->getPHPWindow()->add($this->prepareParent());
 
       $this->getContainer()->setPHPWindow($this->getPHPWindow());
       $this->getContainer()->setContext($this->getClasses());
