@@ -15,13 +15,16 @@ abstract class Domed extends template\parser\component\Unknowned implements temp
   protected $aDefaultAttributes = array();
   protected $aAttributes = array();
 
+  protected $aAllowedNamespaces = array();
+
   public function parseRoot(dom\element $el) {
 
     $this->allowUnknown(true);
     $this->allowText(true);
 
-    $this->build($el);
-    //$this->setNamespace(\Sylma::read('namespaces/html'));
+    $this->aAllowedNamespaces[] = \Sylma::read('namespaces/html');
+
+    $this->build($el);;
   }
 
   public function build(dom\element $el = null) {

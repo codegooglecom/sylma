@@ -2,7 +2,7 @@
  *
  */
 
-var sylma = {};
+var sylma = sylma || {};
 
 sylma.debug = {
   log : false

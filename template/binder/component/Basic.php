@@ -9,14 +9,13 @@ class Basic extends binder\Basic {
 
   protected function getObject($bDebug = true) {
 
-    return $this->getParser()->getObject($bDebug);
+    return $this->getHandler()->getObject($bDebug);
   }
 
-  protected function extractClass(binder\_Object $obj) {
+  protected function extractClass(binder\Basic $obj) {
 
-    return $obj->getClass();
+    return $obj instanceof binder\_class ? $obj : $obj->getClass();
   }
-
 
   protected function isBuilt($bValue = null) {
 

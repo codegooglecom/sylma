@@ -46,7 +46,7 @@ class Node extends Basic implements common\arrayable {
     if ($obj = $this->getObject(false)) {
 
       $this->isBuilt(true);
-      $this->addProperty($this->getObject());
+      $this->addProperty($this->extractClass($this->getObject()));
     }
   }
 

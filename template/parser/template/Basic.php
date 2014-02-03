@@ -17,7 +17,9 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
   const CHECK_RECURSION = false; // if TRUE, disable concat optimization
 
-  protected $aContent;
+  private $aContent;
+  protected $aHeaders = array();
+
   protected $bBuilded = false;
 
   protected $sMatch;
@@ -40,6 +42,8 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
     if (!$this->bBuilded) {
 
+      $this->bBuilded = true;
+
       $this->start();
 
       $mContent = $this->getNode()->countChildren() ? $this->parseComponentRoot($this->getNode()) : null;
@@ -47,7 +51,6 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
       $this->stop();
 
       $this->aContent = is_array($mContent) ? $mContent : array($mContent);
-      $this->bBuilded = true;
     }
 
     return $this->aContent;
@@ -160,7 +163,7 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
       }
     }
     else {
-      
+
       if ($bAll) {
 
         $iResult = $iWeightAll;
@@ -246,6 +249,8 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
   }
 
   public function __clone() {
+
+    $this->build();
 
     $this->bCloned = true;
   }

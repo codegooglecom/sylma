@@ -76,8 +76,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
 
       case 'template' :
 
-        $this->loadTemplate($el);
-        $result = null;
+        $result = $this->loadTemplate($el);
         break;
 
       default :

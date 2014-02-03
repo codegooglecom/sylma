@@ -11,6 +11,7 @@ class Container extends core\module\Domed {
   const CONTENT_SUB = 'content';
 
   protected $aPaths = array();
+  protected $content;
 
   public function __construct(core\argument $args, core\argument $post, core\argument &$contexts) {
 
@@ -19,6 +20,8 @@ class Container extends core\module\Domed {
 
     $this->setPaths($this->getArgument(self::CONTENT_ARGUMENT)->query());
     $this->setArgument(self::CONTENT_ARGUMENT, null);
+
+    $this->content = $this->buildWindowScript($this->getPaths());
   }
 
   protected function setPaths(array $aPaths) {

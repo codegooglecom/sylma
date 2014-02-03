@@ -99,9 +99,11 @@ abstract class Templated extends reflector\handler\Elemented {
   protected function loadTemplate(dom\element $el) {
 
     $template = $this->createComponent('component/template', $this);
-    $template->parseRoot($el);
+    $aResult = $template->parseRoot($el);
 
     $this->addTemplate($template);
+
+    //return $aResult;
   }
 /*
   protected function resetTemplates() {

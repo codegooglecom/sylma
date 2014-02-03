@@ -70,7 +70,7 @@
     </tst:document>
     <tst:expected>
       var tmp = example.test.tmp;
-      
+
       var node = tmp[0].node.fireEvent('mouseover');
 
       return node.getChildren()[0].get('text') === 'bonsoir';

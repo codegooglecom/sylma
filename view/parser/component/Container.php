@@ -11,9 +11,11 @@ class Container extends template_ns\parser\template\Argumented {
 
   public function parseRoot(dom\element $el) {
 
-    parent::parseRoot($el);
+    $aResult = parent::parseRoot($el);
 
     $this->parseMatch($el);
+
+    return $aResult;
   }
 
   public function parseMatch(dom\element $el) {

@@ -4,6 +4,7 @@ namespace sylma\template\parser\component\element;
 use sylma\core;
 
 abstract class Attributed extends Domed {
+
 /*
   public function parseAttributeKey($sName) {
 
@@ -26,7 +27,7 @@ abstract class Attributed extends Domed {
 
     foreach ($el->getAttributes() as $attr) {
 
-      if ($attr->getNamespace() !== self::BUILDER_NS) {
+      if (!$attr->getNamespace() || in_array($attr->getNamespace(), $this->aAllowedNamespaces)) {
 
         $this->setDefaultAttribute($attr->getName(), $attr->getValue());
       }

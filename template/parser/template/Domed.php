@@ -9,8 +9,6 @@ class Domed extends Basic {
 
   protected static $aCall = array();
 
-  protected $aHeaders = array();
-
   protected $sID = '';
   protected $sMode = self::MODE_DEFAULT;
   protected $aSendParameters = array(); // arguments are stored until template is ready
@@ -27,7 +25,8 @@ class Domed extends Basic {
     $this->allowText(true);
 
     $this->setID(uniqid());
-    $this->build();
+
+    //return $this->build();
   }
 
   public function parseComponent(dom\element $el) {
@@ -64,33 +63,28 @@ class Domed extends Basic {
     $element->setTemplate($this);
     $this->addComponent($element);
 
-    $result = $this->loadAttributes($el, $element);
-    $element->parseRoot($el);
+    $aResult[] = $this->loadAttributes($el, $element);
+    $aResult[] = $element->parseRoot($el);
 
     //$element->build();
 
-    return $result;
+    return $aResult;
   }
 
+  /**
+   * @uses \sylma\template\binder\Handler::onClose()
+   */
   protected function loadAttributes(dom\element $el, template_ns\element $component) {
 
     if ($this->useForeignAttributes($el)) {
 
       $aForeigns = $this->getForeignAttributes($el, null);
       $mResult = $this->parseAttributesForeign($el, $component, $aForeigns);
-      $this->getForeignAttributes($el, null, true);
+      //$this->getForeignAttributes($el, null, true);
     }
     else {
 
       $mResult = $component;
-    }
-
-    $aParsers = $this->getAttributeParsers();
-    $this->setAttributeParsers();
-
-    foreach ($aParsers as $parser) {
-
-      $parser->onClose($el, $mResult);
     }
 
     return $mResult;

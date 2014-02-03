@@ -212,6 +212,7 @@ abstract class Foreigner extends Domed {
   protected function parseAttributesForeign(dom\element $el, $content, array $aForeigns) {
 
     $aParsers = array();
+    $aResult = array();
 
     foreach ($aForeigns as $sNamespace => $bVal) {
 
@@ -220,9 +221,10 @@ abstract class Foreigner extends Domed {
       if ($parser) {
 
         $aParsers[] = $parser;
-        $parser->init();
         //$parser->setParent($this);
-        $content = $parser->parseAttributes($el, $content, $content);
+
+        //$aResult[] = $parser->init();
+        $aResult[] = $parser->parseAttributes($el, $content, $content);
       }
       else {
 
@@ -232,7 +234,7 @@ abstract class Foreigner extends Domed {
 
     $this->setAttributeParsers($aParsers);
 
-    return $content;
+    return array_filter($aResult);
   }
 
   protected function getAttributeParsers() {

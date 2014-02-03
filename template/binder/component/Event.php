@@ -19,7 +19,7 @@ class Event extends Method {
 
     if ($class) {
 
-      $this->addToObject($class);
+      $this->addToObject($this->extractClass($class));
       $this->isBuilt(true);
     }
   }

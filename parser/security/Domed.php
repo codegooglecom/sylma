@@ -9,11 +9,6 @@ class Domed extends Main implements reflector\attributed {
 
   protected $element;
 
-  public function init() {
-
-
-  }
-
   public function parseAttributes(dom\element $el, $resultElement, $result) {
 
     if (!is_object($result)) {
@@ -37,11 +32,6 @@ class Domed extends Main implements reflector\attributed {
     }
 
     return $result;
-  }
-
-  public function onClose(dom\element $el, $newElement) {
-
-
   }
 
   protected function parseElement(dom\element $el) {

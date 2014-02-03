@@ -87,6 +87,7 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $aResult = array(
       'extend' => $window->createCaller(function() use ($self, $window) {
+        
         return $window->argToInstance($self->getClass()->getExtend());
       }),
       'events' => $this->getEvents(),

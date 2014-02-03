@@ -170,6 +170,11 @@ abstract class Domed extends Main {
     return $this->getWindow()->createString(trim($node));
   }
 
+  protected function parseAttributesForeign(dom\element $el, $content, array $aForeigns) {
+
+    return current(parent::parseAttributesForeign($el, $content, $aForeigns));
+  }
+
   protected function parseString($sValue) {
 
     $window = $this->getWindow();

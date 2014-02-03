@@ -45,7 +45,17 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
    */
   protected $aSources = array();
 
+  /**
+   * JS context
+   * common\_var
+   */
   protected $context;
+
+  /**
+   * Classes context
+   * common\_var
+   */
+  protected $classes;
 
   /**
    * root object for rendering
@@ -54,20 +64,24 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
   protected $objects;
   protected $bInit = false;
   protected $bTemplate = false;
-  protected $rootElement;
+  protected $bRoot;
 
-  public function init() {
+  protected function init() {
+
+    $aResult = array();
 
     if (!$this->bInit) {
 
+      $this->bInit = true;
+
       $this->initWindow();
-      $this->prepareParent();
+      $aResult[] = $this->prepareParent();
 
       $this->getContainer()->setPHPWindow($this->getPHPWindow());
-      $this->getContainer()->setContext($this->getContext());
-
-      $this->bInit = true;
+      $this->getContainer()->setContext($this->getClasses());
     }
+
+    return $aResult;
   }
 
   protected function initWindow() {
@@ -96,47 +110,62 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   protected function prepareParent() {
 
+    $aResult = array();
+
     $window = $this->getPHPWindow();
     $contexts = $window->getVariable('contexts');
 
     $isset = $window->callFunction('isset', $window->tokenToInstance('php-boolean'), array($contexts));
     $content = $window->createCall($window->getSylma(), 'throwException', 'php-boolean', array('No context sent'));
-    $window->add($window->createCondition($window->createNot($isset), $content));
+    $aResult[] = $window->createCondition($window->createNot($isset), $content);
 
     $this->setDirectory(__FILE__);
 
+    $context = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\core\window\context')->getVar(false);
+    $this->setContext($context);
+
+    $aResult[] = $context->getInsert();
+
     foreach ($this->aFiles as $sFile) {
 
-      $this->addScript($sFile);
+      $aResult[] = $this->addScript($context, $sFile);
     }
 
-    $this->setContext($this->checkContext($contexts, self::CLASSES_PATH, self::CLASSES_CONTEXT, $window));
-    $this->setObjects($this->checkContext($contexts, self::OBJECTS_PATH, self::OBJECTS_CONTEXT, $window));
+    list($content, $classes) = $this->checkContext($contexts, self::CLASSES_PATH, self::CLASSES_CONTEXT, $window);
+    $this->setClasses($classes);
+    $aResult[] = $content;
+
+    list($content, $objects) = $this->checkContext($contexts, self::OBJECTS_PATH, self::OBJECTS_CONTEXT, $window);
+    $this->setObjects($objects);
+    $aResult[] = $content;
+
+    return $aResult;
   }
 
-  public function addScript($sPath) {
+  public function addScript(common\_var $js, $sPath) {
 
     $window = $this->getPHPWindow();
-    $contexts = $window->getVariable('contexts');
-
     $fs = $window->addControler('fs');
-    $js = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\core\window\context', true);
 
-    $window->add($js->call('add', array($fs->call('getFile', array($sPath)))));
+    return $js->call('add', array($fs->call('getFile', array($sPath))))->getInsert();
   }
 
   protected function checkContext(common\_var $contexts, $sPath, $sAlias, $window) {
 
-    $result = $contexts->call('get', array($sPath, false), '\sylma\core\window\context')->getVar();
-    $if = $window->createCondition($window->createNot($result));
+    $aResult = array();
+
+    $context = $contexts->call('get', array($sPath, false), '\sylma\core\window\context')->getVar(false);
+    $aResult[] = $context->getInsert();
+
+    $if = $window->createCondition($window->createNot($context));
 
     $new = $this->createObject($sAlias, array(), $window, false);
     $call = $contexts->call('set', array($sPath, $new, true));
-    $if->addContent($window->createAssign($result, $call));
+    $if->addContent($context->getInsert($call));
 
-    $window->add($if);
+    $aResult[] = $if;
 
-    return $result;
+    return array($aResult, $context);
   }
 
   protected function setObjects(common\_var $arg) {
@@ -153,6 +182,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     return parent::getParent($bDebug);
   }
+
   /**
    * @return common\_var
    */
@@ -164,6 +194,19 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
   protected function setContext(common\_var $context) {
 
     $this->context = $context;
+  }
+
+  /**
+   * @return common\_var
+   */
+  protected function getClasses() {
+
+    return $this->classes;
+  }
+
+  protected function setClasses(common\_var $val) {
+
+    $this->classes = $val;
   }
 
   protected function elementIsObject(dom\element $el) {
@@ -181,38 +224,36 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return $el->readx('@js:alias', $this->getNS(), false);
   }
 
-  public function parseAttributes(dom\element $el, $resultElement, $result) {
+  public function parseAttributes(dom\element $el, $resultElement, $current) {
 
-    $result = null;
+    $aResult = null;
+    $bRoot = false;
 
     //$el = $this->setNode($el);
-
+    $aResult[] = $this->init();
 
     $el->getHandler()->registerNamespaces($this->getNS());
 
     if ($this->elementIsTemplate($el)) {
 
-      $result = $this->reflectTemplate($el, $resultElement);
+      $aResult[] = $this->reflectTemplate($el, $resultElement);
     }
     else if ($this->elementIsObject($el)) {
 
-      $result = $this->reflectObject($el, $resultElement);
+      if (!$this->bRoot) {
+
+        $this->bRoot = true;
+        $aResult[] = $this->getPHPWindow()->createInstruction($this->getContainer());
+      }
+      $aResult[] = $this->reflectObject($el, $resultElement);
+
     }
     else if ($this->elementIsNode($el)) {
 
-      $result = $this->reflectNode($el, $resultElement);
+      $aResult[] = $this->reflectNode($el, $resultElement);
     }
 
-    return $result;
-  }
-
-  public function onClose(dom\element $el, $newElement) {
-
-    if ($newElement === $this->rootElement) {
-
-      //$this->buildClasses();
-      $this->getPHPWindow()->add($this->getContainer());
-    }
+    return $aResult;
   }
 
   protected function addClass(_Class $class) {
@@ -237,6 +278,14 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return !$this->aObjects;
   }
 
+  public function parseFromChild(dom\element $el) {
+
+    return array(
+      $this->init(),
+      parent::parseFromChild($el),
+    );
+  }
+
   protected function setContainer(common\_object $container) {
 
     $this->container = $container;
@@ -255,11 +304,6 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     if (!$object instanceof _class && !$object instanceof _Object) {
 
       $this->launchException('Bad object', get_defined_vars());
-    }
-
-    if (is_null($this->rootElement) && $object instanceof _class) {
-
-      $this->rootElement = $object;
     }
 
     $this->aObjects[] = $object;
@@ -321,16 +365,20 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
   protected function reflectTemplate(dom\element $el, template\element $resultElement) {
 
+    $aResult = array();
+
     if (!$this->bInitTemplate) {
 
-      $this->addScript(self::TEMPLATE_FILE);
+      $aResult[] = $this->addScript($this->getContext(), self::TEMPLATE_FILE);
       $this->bInitTemplate = true;
     }
 
-    $result = $this->reflectObject($el, $resultElement);
-    $result->useTemplate(true);
+    $obj = $this->reflectObject($el, $resultElement);
+    $obj->useTemplate(true);
 
-    return $result;
+    $aResult[] = $obj;
+
+    return $aResult;
   }
 
   /**
