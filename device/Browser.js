@@ -87,43 +87,50 @@ sylma.device.Browser = new Class({
       ipad : ipad,
       ios : iphone || ipad,
       android : ~ua.indexOf('Android'),
-      fullscreen : window.navigator.standalone,
+      fullscreen : window.navigator.standalone
     };
 
-    if (ua.android) {
+    if (this.useScroll()) {
 
-      window.onscroll = function() {
+      if (ua.android) {
 
-        ua.page.style.height = window.innerHeight + 'px'
-      };
+        window.onscroll = function() {
+
+          ua.page.style.height = window.innerHeight + 'px'
+        };
+      }
+
+      this.scrollTop();
     }
+  },
 
-    this.scrollTop();
+  useScroll : function() {
+
+    var ua = this.ua;
+
+    return !!(ua && ua.android || (ua.ios && !navigator.userAgent.match(/CPU.*OS 7_\d/i)));
   },
 
   scrollTop : function() {
 
     var ua = this.ua;
-    // Start out by adding the height of the location bar to the width, so that
-    // we can scroll past it
-    if (ua.ios) {
-      // iOS reliably returns the innerWindow size for documentElement.clientHeight
-      // but window.innerHeight is sometimes the wrong value after rotating
-      // the orientation
-      var height = document.documentElement.clientHeight;
-      // Only add extra padding to the height on iphone / ipod, since the ipad
-      // browser doesn't scroll off the location bar.
-      if (ua.iphone && !ua.fullscreen) height += 60;
-      ua.page.style.height = height + 'px';
 
-    } else if (ua.android) {
-      // The stock Android browser has a location bar height of 56 pixels, but
-      // this very likely could be broken in other Android browsers.
-      page.style.height = (window.innerHeight + 56) + 'px'
+    if (this.useScroll()) {
+
+      if (ua.ios) {
+
+        var height = document.documentElement.clientHeight;
+
+        if (ua.iphone && !ua.fullscreen) height += 60;
+        ua.page.style.height = height + 'px';
+
+      } else if (ua.android) {
+
+        page.style.height = (window.innerHeight + 56) + 'px'
+      }
+
+      setTimeout(scrollTo, 0, 0, 1);
     }
-    // Scroll after a timeout, since iOS will scroll to the top of the page
-    // after it fires the onload event
-    setTimeout(scrollTo, 0, 0, 1);
   },
 
   /**
