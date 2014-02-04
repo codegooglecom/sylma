@@ -3,22 +3,30 @@ var sylma = sylma || {};
 sylma.device = {};
 
 sylma.device.Browser = new Class({
-/*
-  getStyle : function(name) {
+
+  getProperty : function(name) {
+
+    var result;
 
     switch (Browser.name) {
 
+      case 'chrome' :
+      case 'safari' :
+
+        result = '-webkit-' + name;
+        break;
+
       case 'ie' :
       case 'firefox' :
+      default :
 
         result = name;
         break;
-
-      case '' :
-
     }
+
+    return result;
   },
-*/
+
   isTouched : function() {
 
     return sylma.ui.isTouched();
@@ -126,10 +134,11 @@ sylma.device.Browser = new Class({
 
       } else if (ua.android) {
 
-        page.style.height = (window.innerHeight + 56) + 'px'
+        ua.page.style.height = (window.innerHeight + 56) + 'px';
       }
 
-      setTimeout(scrollTo, 0, 0, 1);
+      setTimeout(scrollTo, 0, 0, 100);
+
     }
   },
 

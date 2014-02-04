@@ -20,7 +20,6 @@ class Prefixer extends \lessc {
     'box-sizing' => array(),
 
     'transform' => array(
-      'moz' => self::MODE_PREFIX,
       'o' => self::MODE_PREFIX,
     ),
 
@@ -53,6 +52,10 @@ class Prefixer extends \lessc {
     ),
   );
 
+  protected $aContainers = array(
+    'transition',
+  );
+
   public function __construct($fname = null) {
 
     parent::__construct($fname);
@@ -74,7 +77,7 @@ class Prefixer extends \lessc {
 
         if ($sPrefixed = $vendor->prefixProperty($sName, $this->getProperty($sName))) {
 
-          $out->lines[] = $this->formatter->property($sPrefixed, $this->compileValue($this->reduce($aValue)));
+          $out->lines[] = $this->formatter->property($sPrefixed, $this->compileValue($this->reduce($aValue), $vendor));
         }
       }
     }
@@ -82,12 +85,43 @@ class Prefixer extends \lessc {
     parent::compileProp($prop, $block, $out);
   }
 
+  public function compileValue($value, Browser $vendor = null) {
+
+    if ($value[0] === 'list') {
+
+      $handler = $this;
+
+      $result = implode($value[1], array_map(function($item) use ($handler, $vendor) {
+
+        return $handler->compileValue($item, $vendor);
+
+      }, $value[2]));
+    }
+    else if ($value[0] === 'keyword' && $vendor) {
+
+      $sName = $value[1];
+
+      if (in_array($sName, array_keys($this->aProperties))) {
+
+        $value[1] = $vendor->prefixProperty($sName, $this->getProperty($sName));
+      }
+
+      $result = parent::compileValue($value);
+    }
+    else {
+
+      $result = parent::compileValue($value);
+    }
+
+    return $result;
+  }
+
   protected function getProperties() {
 
     return $this->aProperties;
   }
 
-  protected function getProperty($sName) {
+  public function getProperty($sName) {
 
     return $this->aProperties[$sName];
   }
