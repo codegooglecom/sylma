@@ -122,8 +122,9 @@ sylma.device.Browser = new Class({
   scrollTop : function() {
 
     var ua = this.ua;
+    var result = this.useScroll();
 
-    if (this.useScroll()) {
+    if (result) {
 
       if (ua.ios) {
 
@@ -138,8 +139,9 @@ sylma.device.Browser = new Class({
       }
 
       setTimeout(scrollTo, 0, 0, 100);
-
     }
+
+    return result;
   },
 
   /**
