@@ -17,7 +17,9 @@ class Prefixer extends \lessc {
     'background-size' => array(),
 
     'border-radius' => array(),
-    'box-sizing' => array(),
+    'box-sizing' => array(
+      'moz' => self::MODE_PREFIX,
+    ),
 
     'transform' => array(
       'o' => self::MODE_PREFIX,

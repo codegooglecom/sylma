@@ -100,14 +100,6 @@ sylma.device.Browser = new Class({
 
     if (this.useScroll()) {
 
-      if (ua.android) {
-
-        window.onscroll = function() {
-
-          ua.page.style.height = window.innerHeight + 'px'
-        };
-      }
-
       this.scrollTop();
     }
   },
@@ -116,7 +108,7 @@ sylma.device.Browser = new Class({
 
     var ua = this.ua;
 
-    return !!(ua && ua.android || (ua.ios && !navigator.userAgent.match(/CPU.*OS 7_\d/i)));
+    return !!(ua && ua.ios && !navigator.userAgent.match(/CPU.*OS 7_\d/i));
   },
 
   scrollTop : function() {
@@ -132,10 +124,6 @@ sylma.device.Browser = new Class({
 
         if (ua.iphone && !ua.fullscreen) height += 60;
         ua.page.style.height = height + 'px';
-
-      } else if (ua.android) {
-
-        ua.page.style.height = (window.innerHeight + 56) + 'px';
       }
 
       setTimeout(scrollTo, 0, 0, 100);
