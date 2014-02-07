@@ -6,8 +6,7 @@ sylma.crud.Form = new Class({
   mask : null,
 
   options : {
-    mask : true,
-    method : 'post'
+    mask : true
   },
 
   initialize : function(options) {
@@ -72,8 +71,20 @@ sylma.crud.Form = new Class({
         }
       });
 
-      if (this.get('method') === 'get') req.get(datas);
-      else req.post(datas);
+      // @todo remove
+      if (this.get('method') !== undefined) {
+
+        console.log('method option do not work anymore, use method attribute instead')
+      }
+
+      if (this.getNode().getAttribute('method').toLowerCase() === 'post') {
+
+        req.post(datas);
+      }
+      else {
+
+        req.get(datas);
+      }
     }
     catch (error) {
 

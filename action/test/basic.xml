@@ -227,6 +227,46 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Replace argument" disabled="true">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <sql:resource multiple="x"/>
+        <le:argument name="ids" source="post">
+          <le:replace>
+            <le:array>
+              <le:get-argument name="ids"/>
+            </le:array>
+          </le:replace>
+        </le:argument>
+        <sql:filter name="id" optional="x" op="in">
+          <le:get-argument name="ids" format="array" source="post"/>
+        </sql:filter>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <h3>
+            <tpl:apply select="name"/>
+          </h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array(
+        'post' => $manager->createArgument(array(
+          'ids' => '1',
+        )),
+      );
+    </tst:load>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Create object">
     <tst:document>
       <view:view sql:ns="ns">
