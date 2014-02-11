@@ -154,7 +154,8 @@ class Initializer extends module\Domed {
     if ($path->getExtension() == $this->readArgument('redirect/extension')) {
 
       // Redirect
-      $action = $this->loadAction($path);
+      $builder = $this->createWindowBuilder();
+      $action = $builder->loadAction($path);
       $redirect = $action->asObject();
 
       if (!$redirect instanceof core\redirect) {

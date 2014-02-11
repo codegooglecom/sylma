@@ -198,7 +198,7 @@ class Builder extends core\module\Domed {
     return $window->asString();
   }
 
-  protected function loadAction(core\request $path) {
+  public function loadAction(core\request $path) {
 
     $path->parse();
 
