@@ -23,6 +23,7 @@
         <le:object class="\sylma\dom\test\Basic"/>
         <le:object class="\sylma\dom\argument\test\Basic"/>
         <le:object class="\sylma\core\test\Handler"/>
+        <le:object class="\sylma\device\test\Handler"/>
       </test:tests>
     </le:document>
   </le:settings>

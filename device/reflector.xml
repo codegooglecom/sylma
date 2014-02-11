@@ -1,0 +1,16 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/view"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+  <cls:classes>
+    <cls:base>\sylma\device</cls:base>
+    <cls:class alias="dummy" name="Dummy"/>
+    <component>
+      <cls:classes>
+        <cls:base>\sylma\device\component</cls:base>
+        <cls:class alias="assert" name="Assert"/>
+      </cls:classes>
+    </component>
+  </cls:classes>
+</arg:argument>

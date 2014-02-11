@@ -299,6 +299,7 @@
 
       $manager->assertEqual(json_decode($sResult, true), array(
         'content' => '',
+        'error' => true,
         'messages' =>
           array(
             0 => 'An error happened, the adminstrator has been informed.',
@@ -526,4 +527,29 @@
       </html>
     </tst:node>
   </tst:test>
+
+  <tst:test name="Window with pattern">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window03.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config05.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <app xmlns="">
+        <hello/>
+      </app>
+    </tst:node>
+  </tst:test>
+
 </tst:tests>

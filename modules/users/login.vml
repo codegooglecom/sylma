@@ -22,11 +22,11 @@
 
       <view:template>
 
-        <form js:class="sylma.crud.Form">
+        <form js:class="sylma.crud.Form" method="post">
 
           <tpl:apply mode="js"/>
           <tpl:apply mode="css"/>
-          
+
           <tpl:token name="action"><le:path>login-do</le:path>.json</tpl:token>
           <tpl:apply mode="init"/>
           <tpl:apply use="form-cols" mode="container"/>

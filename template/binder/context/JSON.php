@@ -15,6 +15,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
   public function setScript(core\request $path, core\argument $post, $sContext = '') {
 
     //$path->parse();
+    $bError = null;
     $parser = \Sylma::getManager('parser');
     $messages = new html\context\Messages;
 
@@ -38,6 +39,9 @@ class JSON extends window\classes\Container implements window\scripted, window\a
 
       $result = '';
       $e->save(false);
+      $bError = true;
+
+      $messages->add('An error happened, the adminstrator has been informed.');
     }
 
     if (\Sylma::isAdmin()) {
@@ -47,11 +51,6 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     else {
 
       $errors = null;
-
-      if (!$contexts->get('errors')->isEmpty()) {
-
-        $messages->add('An error happened, the adminstrator has been informed.');
-      }
     }
 
     $classes = $contexts->get('js/classes', false);
@@ -60,6 +59,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
       'content' => $result instanceof dom\document ? (string) $result : $result,
       'objects' => $contexts->get('js/load/objects', false),
       'classes' => $classes ? $classes->asStringVar() : null,
+      'error' => $bError,
       'errors' => $errors,
       'messages' => $contexts->get('messages'),
     ));

@@ -77,7 +77,9 @@ sylma.crud.Form = new Class({
         console.log('method option do not work anymore, use method attribute instead')
       }
 
-      if (this.getNode().getAttribute('method').toLowerCase() === 'post') {
+      var method = this.getNode().getAttribute('method');
+
+      if (method && method.toLowerCase() === 'post') {
 
         req.post(datas);
       }

@@ -58,7 +58,7 @@ class Window extends common\basic\Window implements php\window {
     return $mResult;
   }
 
-  public function addControler($sName, $from = null) {
+  public function addManager($sName, $from = null) {
 
     if (!$from) $from = $this->getSylma();
 
@@ -80,6 +80,14 @@ class Window extends common\basic\Window implements php\window {
     }
 
     return $this->aManagers[$sName];
+  }
+
+  /**
+   * @deprecated Use self::addManager() instead
+   */
+  public function addControler($sName, $from = null) {
+
+    return $this->addManager($sName, $from);
   }
 
   public function getSylma() {

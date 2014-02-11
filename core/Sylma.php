@@ -123,7 +123,7 @@ class Sylma {
 
     if (!$controler && $bLoad && $bDebug) {
 
-      self::throwException(sprintf('Controler %s is not defined', $sName));
+      self::throwException(sprintf('Manager "%s" is not defined', $sName));
     }
 
     return $controler;

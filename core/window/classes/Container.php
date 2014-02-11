@@ -11,17 +11,19 @@ class Container extends core\module\Domed {
   const CONTENT_SUB = 'content';
 
   protected $aPaths = array();
+  protected $contexts;
   protected $content;
 
   public function __construct(core\argument $args, core\argument $post, core\argument &$contexts) {
 
+    $this->setSettings($this->getManager('init')->getArgument('window'));
     $this->setArguments($args);
     $this->setPost($post);
 
     $this->setPaths($this->getArgument(self::CONTENT_ARGUMENT)->query());
     $this->setArgument(self::CONTENT_ARGUMENT, null);
 
-    $this->content = $this->buildWindowScript($this->getPaths());
+    //$this->content = $this->buildWindowScript($this->getPaths());
   }
 
   protected function setPaths(array $aPaths) {
@@ -139,6 +141,8 @@ class Container extends core\module\Domed {
 
   protected function buildWindowScript(array $aPaths) {
 
+    $this->setDirectory(__FILE__);
+
     $args = $this->getArguments();
     $post = $this->getPost();
 
@@ -215,7 +219,7 @@ class Container extends core\module\Domed {
       'arguments' => $args,
       'post' => $post,
       'contexts' => $this->getContexts(),
-    ), $debug->read('debug/update', false), $debug->read('debug/run'), true);
+    ), $debug->read('debug/update', false), $debug->read('debug/run', false), true);
 
     return $result;
   }

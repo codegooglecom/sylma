@@ -92,27 +92,34 @@ initializer :
   redirect :
     extension : redirect
   classes :
-    images :
-      name : \sylma\core\window\classes\Image
     html :
       name : \sylma\modules\html\Document
     redirect :
       name : \sylma\core\Redirect
     path :
       name : \sylma\core\request\Basic
-    action :
-      name : \sylma\parser\action\handler\Basic
-    window :
-      name : \sylma\core\window\classes\File
     json :
       name : \sylma\template\binder\context\JSON
     profiler :
       name : \sylma\modules\profiler\Manager
+    builder :
+      name : \sylma\device\Windower
+      classes :
+        images :
+          name : \sylma\core\window\classes\Image
+        window :
+          name : \sylma\core\window\classes\File
+        action :
+          name : \sylma\parser\action\handler\Basic
+        device :
+          name : \sylma\device\Dummy
+
   session :
     lifetime : 403200
   maintenance :
     enable : false
     file : maintenance.html
+
 users:
   root:
     # E_ALL | E_STRICT | E_NOTICE = 32767
@@ -169,3 +176,6 @@ database :
     user : tester
     password : 1234
     database : test
+
+device :
+  enable : false

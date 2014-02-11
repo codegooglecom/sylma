@@ -7,6 +7,14 @@ class Init01 extends core\Initializer {
 
   protected $aGET = array();
 
+  public function loadSettings($sServer, $sSylma) {
+
+    $result = parent::loadSettings($sServer, $sSylma);
+
+    \Sylma::setSettings($result);
+    return $result;
+  }
+
   protected function startSession() {
 
 

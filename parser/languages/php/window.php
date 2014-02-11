@@ -9,7 +9,7 @@ interface window extends common\_window {
 
   function __construct($controler, core\argument $args, $sClass);
 
-  function addControler($sName);
+  function addManager($sName);
 
   /**
    * @return common\_var

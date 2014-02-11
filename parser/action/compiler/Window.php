@@ -80,7 +80,7 @@ class Window extends php\basic\Window {
     return $this->add($this->createInsert($this->toInstance($mValue)));
   }
 
-  public function addControler($sName) {
+  public function addControler($sName, $from = null) {
 
     return parent::addControler($sName, $this->getSelf());
   }

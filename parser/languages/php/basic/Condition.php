@@ -94,7 +94,7 @@ class Condition extends common\basic\Structured implements common\argumentable, 
 
     $sArgument = null;
     $window = $this->getControler();
-
+/*
     if ($this->useTemplate()) {
 
       $insert = $window->createInsert($window->argToInstance(true), '', null, false);
@@ -102,7 +102,7 @@ class Condition extends common\basic\Structured implements common\argumentable, 
       $this->addContent($insert);
       $window->add($window->createInsert($window->argToInstance(false), '', $insert->getKey(), false));
     }
-
+*/
     list($aBefore, $test) = $this->parseTest();
 
     return  $this->getWindow()->createArgument(array(

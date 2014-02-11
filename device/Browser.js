@@ -4,6 +4,8 @@ sylma.device = {};
 
 sylma.device.Browser = new Class({
 
+  //refreshDuration : 150,
+
   getProperty : function(name) {
 
     var result;

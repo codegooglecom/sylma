@@ -15,6 +15,7 @@ namespaces :
     'http://2013.sylma.org/storage/sql' : sql/view
     'http://2013.sylma.org/storage/xml' : xml/view
     'http://2013.sylma.org/action' : action
+    'http://2014.sylma.org/device' : device
   manager :
     'http://2013.sylma.org/template' : template
     'http://www.sylma.org/parser/action' : action
@@ -69,3 +70,6 @@ classes :
         arguments : /#sylma/template/binder/reflector.xml
       elemented :
         name : \sylma\template\parser\Elemented
+  device :
+    name : \sylma\device\Elemented
+    arguments : /#sylma/device/reflector.xml

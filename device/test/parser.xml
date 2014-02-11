@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:dvc="http://2014.sylma.org/device"
+
+  xmlns:cmp="http://2013.sylma.org/dom/compare"
+>
+  <tst:description>Parser</tst:description>
+
+  <tst:test name="Assert mobile">
+    <tst:prepare>
+
+      $manager->setDevice('mobile');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <dvc:assert test="mobile">
+              <h1>is-mobile</h1>
+            </dvc:assert>
+            <dvc:assert test="desktop">
+              <h2>is-desktop</h2>
+            </dvc:assert>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h1>is-mobile</h1>
+      </div>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Assert desktop">
+    <tst:prepare>
+
+      $manager->setDevice('desktop');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <dvc:assert test="mobile">
+              <h1>is-mobile</h1>
+            </dvc:assert>
+            <dvc:assert test="desktop">
+              <h2>is-desktop</h2>
+            </dvc:assert>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h2>is-desktop</h2>
+      </div>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Add foreign">
+    <tst:prepare>
+
+      $manager->setDevice('desktop');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <dvc:assert test="desktop">
+              <le:path/>
+            </dvc:assert>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>/sylma/device/test/parserxml-add-foreign</div>
+    </tst:node>
+  </tst:test>
+
+</tst:tests>

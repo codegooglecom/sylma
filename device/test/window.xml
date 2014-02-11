@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:dvc="http://2014.sylma.org/device"
+
+  xmlns:cmp="http://2013.sylma.org/dom/compare"
+>
+  <tst:description>Window</tst:description>
+  <tst:test name="Window mobile">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/device/test/samples/window01.vml');
+      $manager->buildScript('/sylma/device/test/samples/window02.vml');
+
+      $manager->buildScript('/sylma/device/test/samples/sample01.vml');
+
+
+    </tst:prepare>
+    <tst:node name="mobile">
+      <app>
+        <hello/>
+      </app>
+    </tst:node>
+    <tst:node name="desktop">
+      <document>
+        <hello/>
+      </document>
+    </tst:node>
+    <tst:expected>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/device/test/samples/config01.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $settings->set('initializer/classes/builder/header', 'mobile');
+
+      $init->setGET('/sylma/device/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->compareNodes($manager->createDocument($sResult), $manager->get('node/mobile'));
+
+      $init = $manager->create('init');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/device/test/samples/config01.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+
+      $init->setGET('/sylma/device/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->compareNodes($manager->createDocument($sResult), $manager->get('node/desktop'));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+</tst:tests>
