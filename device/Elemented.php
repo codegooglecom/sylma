@@ -10,7 +10,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     $parser = $this->getParent();
 
-    $content = $parser->getTemplate()->parseChildren($children);
+    $content = $parser->getCurrentTemplate()->parseChildren($children);
     $result = $parser->addToResult($content, false);
 
     return $result;

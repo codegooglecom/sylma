@@ -27,12 +27,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user.xsd</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email">test</a>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -46,12 +46,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email">test</a>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -65,11 +65,11 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3>&lt;<tpl:apply select="name"/>&gt;</h3>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -86,11 +86,11 @@
           <sql:id>3</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <h3>
             <tpl:read select="name"/>
           </h3>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -104,11 +104,11 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:cdata>hello <tpl:read select="name"/></tpl:cdata>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -122,11 +122,11 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user1b.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:read select="source"/></h3>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -144,9 +144,9 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user1b.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <tpl:read select="source/text()"/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -166,16 +166,52 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name/value()"/></h3>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
       <div><h3>admin</h3></div>
     </tst:node>
+  </tst:test>
+  <tst:test name="Required apply on simple">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <h3><tpl:apply select="name" required="x"/></h3>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Required apply on complex" catch="\sylma\core\exception" disabled="true">
+    <!-- Exception on build -->
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <h3><tpl:apply mode="anymode" required="x"/></h3>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
   </tst:test>
   <tst:test name="No result">
     <tst:document>
@@ -184,16 +220,16 @@
           <sql:id>999</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name/value()"/></h3>
           </div>
-        </view:template>
-        <view:template mode="sylma:empty">
+        </tpl:template>
+        <tpl:template mode="sylma:empty">
           <div>
             <strong>No "<tpl:read select="name()"/>" result</strong>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -269,11 +305,11 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:read select="'id={id};name={name}'"/>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -287,9 +323,9 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user1b.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div><tpl:read select="'test/{name}'"/></div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -303,12 +339,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:read select="(id = 2)"/></h3>
             <h4><tpl:read select="(id != 2)"/></h4>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -325,12 +361,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <le:array>
             <tpl:read le:name="name" select="name"/>
             <tpl:read le:name="email" select="email"/>
           </le:array>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -351,9 +387,9 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <tpl:read select="email"/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -372,9 +408,9 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <abc/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
   </tst:test>
@@ -385,11 +421,11 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3 class="{name/value()}" test="{name/alias()}"/>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -403,14 +439,14 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="email"/>
           </div>
-        </view:template>
-        <view:template match="user:email">
+        </tpl:template>
+        <tpl:template match="user:email">
           <a href="mailto:email"><tpl:apply/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -424,17 +460,17 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="*"/>
           </div>
-        </view:template>
-        <view:template match="user:name">
+        </tpl:template>
+        <tpl:template match="user:name">
           <h3><tpl:apply/></h3>
-        </view:template>
-        <view:template match="user:email">
+        </tpl:template>
+        <tpl:template match="user:email">
           <a href="mailto:email"><tpl:apply/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -448,17 +484,17 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="* ^ id,name"/>
           </div>
-        </view:template>
-        <view:template match="user:name">
+        </tpl:template>
+        <tpl:template match="user:name">
           <h3><tpl:apply/></h3>
-        </view:template>
-        <view:template match="user:email">
+        </tpl:template>
+        <tpl:template match="user:email">
           <a href="mailto:email"><tpl:apply/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -472,14 +508,14 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="* ^ sql:foreign"/>
           </div>
-        </view:template>
-        <view:template match="*">
+        </tpl:template>
+        <tpl:template match="*">
           <input name="{alias()}"/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -496,12 +532,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="user:name"/></h3>
             <span><tpl:apply select="user:name"/></span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -515,18 +551,18 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name"/>
             <tpl:apply select="group_id/ref()"/>
           </div>
-        </view:template>
-        <view:template match="user:*">
+        </tpl:template>
+        <tpl:template match="user:*">
           <span><tpl:apply/></span>
-        </view:template>
-        <view:template match="group:*">
+        </tpl:template>
+        <tpl:template match="group:*">
           <strong><tpl:read select="name"/></strong>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -540,20 +576,20 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="user:name" mode="hello"/>
           </div>
-        </view:template>
-        <view:template match="user:name">
+        </tpl:template>
+        <tpl:template match="user:name">
           <h4><tpl:apply/></h4>
-        </view:template>
-        <view:template match="user:name" mode="hello">
+        </tpl:template>
+        <tpl:template match="user:name" mode="hello">
           <h3><tpl:apply select="value()"/></h3>
-        </view:template>
-        <view:template match="user:name" mode="world">
+        </tpl:template>
+        <tpl:template match="user:name" mode="world">
           <h5><tpl:apply/></h5>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -567,14 +603,14 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply mode="hello"/>
           </div>
-        </view:template>
-        <view:template mode="hello">
+        </tpl:template>
+        <tpl:template mode="hello">
           <h3>root</h3>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -588,14 +624,14 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <h3>root</h3>
-        </view:template>
-        <view:template>
+        </tpl:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name"/>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -609,14 +645,14 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template mode="hello">
+        <tpl:template mode="hello">
           <h3>root</h3>
-        </view:template>
-        <view:template>
+        </tpl:template>
+        <tpl:template>
           <div>
             <tpl:apply mode="hello"/>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -630,17 +666,17 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="*"/>
           </div>
-        </view:template>
-        <view:template match="user:name | user:email">
+        </tpl:template>
+        <tpl:template match="user:name | user:email">
           <input name="{name()}" value="{value()}"/>
-        </view:template>
-        <view:template match="user:*">
+        </tpl:template>
+        <tpl:template match="user:*">
           <span><tpl:read/></span>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -674,12 +710,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email" ls:owner="root" ls:group="root" ls:mode="750">test</a>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -693,13 +729,13 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user.xsd</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <tpl:variable name="email"><tpl:apply select="email"/></tpl:variable>
             <a href="mailto:{$email}"><tpl:apply select="$email"/></a>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -713,13 +749,13 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:variable name="test">abc</tpl:variable>
             <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply select="$test"/></span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -736,18 +772,18 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <tpl:apply>
               <tpl:read tpl:name="test2" select="email"/>
             </tpl:apply>
           </div>
-        </view:template>
-        <view:template>
+        </tpl:template>
+        <tpl:template>
           <tpl:argument name="test2"/>
           <span><tpl:read select="$test2"/></span>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -764,7 +800,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <span>
@@ -773,11 +809,11 @@
               </tpl:apply>
             </span>
           </div>
-        </view:template>
-        <view:template match="user:email">
+        </tpl:template>
+        <tpl:template match="user:email">
           <tpl:argument name="test2"/>
           <tpl:read/><br/><tpl:read select="$test2"/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -794,18 +830,18 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <span>
               <tpl:apply select="email"/>
             </span>
           </div>
-        </view:template>
-        <view:template match="user:email">
+        </tpl:template>
+        <tpl:template match="user:email">
           <tpl:argument name="test2" default="alias()"/>
           <tpl:read/><br/><tpl:read select="$test2"/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -822,20 +858,20 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <span>
               <tpl:apply select="email"/>
             </span>
           </div>
-        </view:template>
-        <view:template match="user:email">
+        </tpl:template>
+        <tpl:template match="user:email">
           <tpl:argument name="test2">
             <tpl:read select="alias()"/>
           </tpl:argument>
           <tpl:read/><br/><tpl:read select="$test2"/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -853,13 +889,13 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply use="path"/></span>
             <h4><tpl:apply select="$$path"/></h4>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -877,7 +913,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:variable name="test">
               <le:get-argument name="hello"/>
@@ -885,7 +921,7 @@
             <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply select="$test"/></span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:load>
@@ -905,12 +941,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply select="email/format(length=8)"/></span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -927,27 +963,27 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <form>
             <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply import="samples/tree1.xml"/></span>
           </form>
-        </view:template>
-        <view:template match="tree1:sample1">
+        </tpl:template>
+        <tpl:template match="tree1:sample1">
           <div>
             <span><tpl:read select="abc"/></span>
             <tpl:apply select="def"/>
             <!--<tpl:apply select="def/lmn"/>-->
           </div>
-        </view:template>
-        <view:template match="tree1:def">
+        </tpl:template>
+        <tpl:template match="tree1:def">
           <ul>
             <tpl:apply select="*"/>
           </ul>
-        </view:template>
-        <view:template match="tree1:*">
+        </tpl:template>
+        <tpl:template match="tree1:*">
           <li href="{name()}"><tpl:read/></li>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -972,17 +1008,17 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <form>
             <h3><tpl:apply select="name"/></h3>
             <fieldset><tpl:apply reflector="samples\Reflector1"/></fieldset>
           </form>
-        </view:template>
-        <view:template match="rfl:sample1">
+        </tpl:template>
+        <tpl:template match="rfl:sample1">
           <div>
             <span><tpl:read select="test()"/></span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -1004,13 +1040,13 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <form>
             <h3><tpl:apply select="name"/></h3>
             <tpl:apply select="name"/>
           </form>
-        </view:template>
-        <view:template match="*">
+        </tpl:template>
+        <tpl:template match="*">
           <tpl:register/>
           <div>
             <h4>
@@ -1018,7 +1054,7 @@
             </h4>
             <span><tpl:read select="alias()"/></span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
   </tst:test>
@@ -1029,21 +1065,21 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <form>
             <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply import="samples/tree2.xml"/></span>
           </form>
-        </view:template>
-        <view:template match="tree1:sample1">
+        </tpl:template>
+        <tpl:template match="tree1:sample1">
           <div>
             <span><tpl:read select="abc"/></span>
             <tpl:apply read="def/lmn"/>
           </div>
-        </view:template>
-        <view:template match="tree1:*">
+        </tpl:template>
+        <tpl:template match="tree1:*">
           <li><tpl:read/></li>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -1065,21 +1101,21 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user4.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <form><tpl:apply import="samples/tree3.xml"/></form>
-        </view:template>
-        <view:template match="tree1:sample1">
+        </tpl:template>
+        <tpl:template match="tree1:sample1">
           <div>
             <span><tpl:read select="abc"/></span>
             <tpl:apply select="*"/>
           </div>
-        </view:template>
-        <view:template match="tree1:test1">
+        </tpl:template>
+        <tpl:template match="tree1:test1">
           <li href="{name()}"><tpl:apply select="*"/></li>
-        </view:template>
-        <view:template match="tree1:*">
+        </tpl:template>
+        <tpl:template match="tree1:*">
           <span><tpl:read/></span>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>

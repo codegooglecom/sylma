@@ -4,12 +4,14 @@
   xmlns:cls="http://2013.sylma.org/core/factory"
 >
   <cls:classes>
-    <cls:base>\sylma\device</cls:base>
-    <cls:class alias="dummy" name="Dummy"/>
     <component>
       <cls:classes>
         <cls:base>\sylma\device\component</cls:base>
-        <cls:class alias="assert" name="Assert"/>
+        <cls:class alias="assert" name="Assert">
+          <cls:classes>
+            <cls:class alias="dummy" name="\sylma\device\Dummy"/>
+          </cls:classes>
+        </cls:class>
       </cls:classes>
     </component>
   </cls:classes>

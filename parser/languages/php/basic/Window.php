@@ -58,14 +58,17 @@ class Window extends common\basic\Window implements php\window {
     return $mResult;
   }
 
-  public function addManager($sName, $from = null) {
+  public function addManager($sName, $from = null, $return = null) {
 
     if (!$from) $from = $this->getSylma();
 
     if (!array_key_exists($sName, $this->aManagers)) {
 
-      $controler = $this->getControler($sName);
-      $return = $this->tokenToInstance(get_class($controler));
+      if (!$return) {
+
+        $controler = $this->getControler($sName);
+        $return = $this->tokenToInstance(get_class($controler));
+      }
 
       $call = $this->createCall($from, 'getManager', $return, array($sName));
 

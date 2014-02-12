@@ -50,7 +50,7 @@ $this->launchException("Not ready");
 
     $aResult = $this->getWindow()->parseArrayables(array($result));
 
-    if (!$result && $this->readx('@required')) {
+    if (!$aResult && $this->readx('@required')) {
 
       $this->launchException('Apply require a template');
     }

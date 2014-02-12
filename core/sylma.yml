@@ -179,3 +179,4 @@ database :
 
 device :
   enable : false
+  force : null

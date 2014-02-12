@@ -129,25 +129,26 @@ class Argument extends _Callable {
 
     if ($bRead) {
 
-      $result = $args->read($sPath);
+      $result = $args->read($sPath, false);
     }
     else {
 
       $el = $args->get($sPath, false, false);
+      $result = null;
 
-      if (!$el) {
+      if ($el) {
 
-        $this->launchException("Unknown value : '$sPath'");
-      }
+        //$this->launchException("Unknown value : '$sPath'");
 
-      if ($el->getType() == $el::ELEMENT) { // && $el->isComplex()
+        if ($el->getType() == $el::ELEMENT) { // && $el->isComplex()
 
-        $tree = $this->loadChild($args->get($sPath));
-        $result = $this->getParser()->applyArrayTo($tree, $aPath, $sMode);
-      }
-      else {
+          $tree = $this->loadChild($args->get($sPath));
+          $result = $this->getParser()->applyArrayTo($tree, $aPath, $sMode);
+        }
+        else {
 
-        $result = $this->reflectApplyDefault($sPath, $aPath, $sMode, true);
+          $result = $this->reflectApplyDefault($sPath, $aPath, $sMode, true);
+        }
       }
     }
 

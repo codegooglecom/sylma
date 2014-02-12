@@ -11,13 +11,27 @@ use sylma\core;
 class Dummy extends \Mobile_Detect
 {
 
+  protected $settings;
+
+  public function setSettings(core\argument $settings) {
+
+    $this->settings = $settings;
+  }
+
+  protected function getSettings() {
+
+    return $this->settings;
+  }
+
   public function isDevice($sName) {
+
+    $sForce = $this->getSettings()->read('force', false);
 
     switch ($sName) {
 
-      case 'mobile' : $bResult = $this->isMobile(); break;
-      case 'tablet' : $bResult = $this->isTablet(); break;
-      case 'desktop' : $bResult = !$this->isMobile() && !$this->isTablet(); break;
+      case 'mobile' : $bResult = $sForce === 'mobile' || (!$sForce && $this->isMobile()); break;
+      case 'tablet' : $bResult = $sForce === 'tablet' || (!$sForce && $this->isTablet()); break;
+      case 'desktop' : $bResult = $sForce === 'desktop' || (!$sForce && !$this->isMobile() && !$this->isTablet()); break;
 
       default :
 

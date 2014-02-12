@@ -17,7 +17,8 @@ class Assert extends reflector\component\Foreigner implements common\arrayable {
   public function asArray() {
 
     $window = $this->getWindow();
-    $manager = $window->addManager('device');
+    $return = $this->createDummy('dummy', array(), null, false);
+    $manager = $window->addManager('device', null, $return);
 
     $test = $manager->call('isDevice', array($this->readx('@test', true)));
     $result = $window->createCondition($test, $this->parseContent());

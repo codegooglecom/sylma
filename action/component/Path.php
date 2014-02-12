@@ -23,7 +23,18 @@ class Path extends reflector\component\Foreigner implements common\arrayable {
       $request->setFile($this->getRoot()->getFile());
     }
 
-    return array($request->asString());
+    $sResult = '';
+
+    try {
+
+      $sResult = $request->asString();
+
+    } catch (core\exception $e) {
+
+      $this->launchException($e->getMessage());
+    }
+    
+    return array($sResult);
   }
 }
 

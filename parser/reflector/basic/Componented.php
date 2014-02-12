@@ -31,7 +31,7 @@ abstract class Componented extends Namespaced {
     return $sResult;
   }
 
-  protected function createObject($sAlias = 'cached', array $aArguments = array(), $window = null, $bVar = true) {
+  protected function createDummy($sAlias = 'dummy', array $aArguments = array(), $window = null, $bVar = false) {
 
     $sClass = $this->lookupClassName($sAlias);
     if (!$window) $window = $this->getWindow();
@@ -39,6 +39,14 @@ abstract class Componented extends Namespaced {
     $result = $window->createInstanciate($window->tokenToInstance($sClass), $aArguments);
 
     return $bVar ? $window->createVar($result) : $result;
+  }
+
+  /**
+   * @deprecated use self::createDummy() instead
+   */
+  protected function createObject($sAlias = 'cached', array $aArguments = array(), $window = null, $bVar = true) {
+
+    return $this->createDummy($sAlias, $aArguments, $window, $bVar);
   }
 
   protected function allowComponent($mValue = null) {
