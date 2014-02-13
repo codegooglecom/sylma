@@ -92,4 +92,32 @@
     </tst:node>
   </tst:test>
 
+  <tst:test name="Assert not">
+    <tst:prepare>
+
+      $manager->setDevice('desktop');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <dvc:assert test="!desktop">
+              <h1>is-mobile</h1>
+            </dvc:assert>
+            <dvc:assert test="!mobile">
+              <h2>is-desktop</h2>
+            </dvc:assert>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h2>is-desktop</h2>
+      </div>
+    </tst:node>
+  </tst:test>
+
 </tst:tests>

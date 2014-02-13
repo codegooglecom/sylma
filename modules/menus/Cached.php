@@ -6,6 +6,7 @@ use sylma\core;
 class Cached extends core\module\Managed {
 
   protected $path;
+  const CLASS_ACTIVE = 'sylma-highlight active'; // @todo remove sylma-highlight
 
   public function __construct() {
 
@@ -32,8 +33,8 @@ class Cached extends core\module\Managed {
 
       $bResult = preg_match("`^$sPath`", $this->getPath());
     }
-    
-    return  $bResult ? 'sylma-highlight' : '';
+
+    return  $bResult ? self::CLASS_ACTIVE : '';
   }
 }
 
