@@ -236,6 +236,8 @@ class Template extends Builder {
 
       if (!$this->bAdded) {
 
+        $this->bAdded = true;
+
         if (!$bTemplateChild) {
 
           $root = $this->getRoot();
@@ -250,8 +252,6 @@ class Template extends Builder {
 
           $root->setMode($sMode);
         }
-
-        $this->bAdded = true;
       }
     }
     else {

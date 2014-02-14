@@ -26,9 +26,16 @@ class Order extends reflector\component\Foreigner implements reflector\component
     }
     else {
 
-      $sElement = $this->readx();
+      $sValue = $this->readx();
 
-      $query->setOrderPath($sElement);
+      if ($this->readx('@function')) {
+
+        $query->setOrderFunction($sValue);
+      }
+      else {
+
+        $query->setOrderPath($sValue);
+      }
     }
 
     $this->log('SQL : order');

@@ -12,19 +12,33 @@ class Event extends Method {
 
     $this->setNode($el);
     $this->loadID();
-    $this->build($this->getObject(false));
+
+    $this->build();
   }
 
-  protected function build(binder\Basic $class = null) {
+  protected function build() {
 
-    if ($class) {
+    if ($class = $this->getObject(false)) {
 
-      $this->addToObject($this->extractClass($class));
+      $this->addToObject($class);
       $this->isBuilt(true);
     }
   }
 
-  protected function addToObject(binder\_class $target, $bOptional = false) {
+  protected function addToObject(binder\Basic $target) {
+
+    if ($target instanceof binder\_class) {
+
+      $this->addToClass($target);
+    }
+    else {
+
+      $target->setEvent($this->getID());
+      $this->addToClass($target->getClass(), true);
+    }
+  }
+
+  protected function addToClass(binder\_class $target, $bOptional = false) {
 
     $window = $this->getWindow();
 
@@ -61,10 +75,7 @@ class Event extends Method {
 
     if (!$this->isBuilt()) {
 
-      $obj = $this->getObject();
-      $this->addToObject($this->extractClass($obj), true);
-
-      $obj->setEvent($this->getID());
+      $this->addToObject($this->getObject());
     }
 
     return array();

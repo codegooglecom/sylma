@@ -78,7 +78,7 @@ sylma.ui.BaseProps = {
     this.prepareNodes(this.node);
 
     this.initEvents(this.sylma.events, props.events);
-    this.initNodes(this.nodes);
+    this.initNodes(Object.append(this.nodes, props.nodes));
   },
 
   initSylma : function(props) {

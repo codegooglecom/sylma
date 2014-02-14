@@ -245,6 +245,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
         $this->bRoot = true;
         $aResult[] = $this->getPHPWindow()->createInstruction($this->getContainer());
       }
+
       $aResult[] = $this->reflectObject($el, $resultElement);
 
     }

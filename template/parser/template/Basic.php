@@ -250,7 +250,7 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
   public function __clone() {
 
-    $this->build();
+    //$this->build();
 
     $this->bCloned = true;
   }

@@ -132,6 +132,30 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Order function">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="x"/>
+        <sql:order function="x">AVG(id)</sql:order>
+        <view:schema>samples/user1.xql</view:schema>
+        <view:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </view:template>
+        <view:template match="user:user">
+          <li>
+            <tpl:apply select="name"/>
+          </li>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>root</li>
+      </ul>
+    </tst:node>
+  </tst:test>
   <tst:test name="Dynamic order">
     <tst:document>
       <view:view user:ns="ns">

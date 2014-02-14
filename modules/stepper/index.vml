@@ -40,29 +40,36 @@
 
     <le:context name="title">Stepper</le:context>
 
-    <le:context name="js">
-      <le:file>/#sylma/ui/Extras.js</le:file>
-      <le:file>/#sylma/ui/Locale.js</le:file>
-      <le:file>/#sylma/ui/Date.js</le:file>
-      <le:file>medias/Listed.js</le:file>
-      <le:file>medias/Main.js</le:file>
-      <le:file>medias/Framed.js</le:file>
-      <le:file>medias/Test.js</le:file>
-      <le:file>medias/Page.js</le:file>
-      <le:file>medias/Variable.js</le:file>
-      <le:file>medias/Step.js</le:file>
-      <le:file>medias/Call.js</le:file>
-      <le:file>medias/Snapshot.js</le:file>
-      <le:file>medias/Event.js</le:file>
-      <le:file>medias/Input.js</le:file>
-      <le:file>medias/Watcher.js</le:file>
-      <le:file>medias/Property.js</le:file>
-      <le:file>medias/Element.js</le:file>
-      <le:file>medias/Selector.js</le:file>
-      <le:file>medias/Query.js</le:file>
-    </le:context>
-
     <tpl:import>index.tpl</tpl:import>
+
+    <tpl:template>
+
+      <le:context name="js">
+        <le:file>/#sylma/ui/Template.js</le:file>
+        <le:file>/#sylma/ui/Extras.js</le:file>
+        <le:file>/#sylma/ui/Locale.js</le:file>
+        <le:file>/#sylma/ui/Date.js</le:file>
+        <le:file>medias/Listed.js</le:file>
+        <le:file>medias/Main.js</le:file>
+        <le:file>medias/Framed.js</le:file>
+        <le:file>medias/Test.js</le:file>
+        <le:file>medias/Page.js</le:file>
+        <le:file>medias/Variable.js</le:file>
+        <le:file>medias/Step.js</le:file>
+        <le:file>medias/Call.js</le:file>
+        <le:file>medias/Snapshot.js</le:file>
+        <le:file>medias/Event.js</le:file>
+        <le:file>medias/Input.js</le:file>
+        <le:file>medias/Watcher.js</le:file>
+        <le:file>medias/Property.js</le:file>
+        <le:file>medias/Element.js</le:file>
+        <le:file>medias/Selector.js</le:file>
+        <le:file>medias/Query.js</le:file>
+      </le:context>
+
+      <tpl:apply/>
+
+    </tpl:template>
 
   </view:view>
 

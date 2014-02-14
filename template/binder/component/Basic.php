@@ -11,12 +11,12 @@ class Basic extends binder\Basic {
 
     return $this->getHandler()->getObject($bDebug);
   }
-
+/*
   protected function extractClass(binder\Basic $obj) {
 
     return $obj instanceof binder\_class ? $obj : $obj->getClass();
   }
-
+*/
   protected function isBuilt($bValue = null) {
 
     if (is_bool($bValue)) $this->bBuilded = $bValue;

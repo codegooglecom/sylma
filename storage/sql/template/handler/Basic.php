@@ -67,6 +67,7 @@ class Basic extends sql\schema\Handler {
       unset($this->aTemplates[$iKey]);
     }
 
+    $tpl->build();
     $result = clone $tpl;
 
     return $result;

@@ -46,16 +46,26 @@ class Node extends Basic implements common\arrayable {
     if ($obj = $this->getObject(false)) {
 
       $this->isBuilt(true);
-      $this->addProperty($this->extractClass($this->getObject()));
+      $this->addProperty($this->getObject());
     }
   }
 
-  protected function addProperty(template\binder\_class $class) {
+  /**
+   * @uses template\binder\_Object::setNodeElement()
+   */
+  protected function addProperty(template\binder\Basic $class) {
 
     $sClass = $this->getClass();
     $sName = $this->getName();
 
-    $class->setProperty("nodes.$sName", $sClass);
+    if ($class instanceof template\binder\_class) {
+
+      $class->setProperty("nodes.$sName", $sClass);
+    }
+    else {
+
+      $this->getObject()->setNodeElement($this->getName(), $this->getClass());
+    }
   }
 
   protected function setName($sName) {
@@ -87,7 +97,7 @@ class Node extends Basic implements common\arrayable {
 
     if (!$this->isBuilt()) {
 
-      $this->addProperty($this->extractClass($this->getObject()));
+      $this->addProperty($this->getObject());
     }
 
     return $this->getElement()->asArray();

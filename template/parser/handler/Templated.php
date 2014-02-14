@@ -30,6 +30,7 @@ abstract class Templated extends reflector\handler\Elemented {
 
     if ($result) {
 
+      $result->build();
       $result = clone $result;
     }
 

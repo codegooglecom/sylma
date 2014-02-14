@@ -3,19 +3,14 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\languages\common, sylma\schema, sylma\storage\sql;
 
-class Select extends Wherer implements common\argumentable {
+class Select extends Ordered implements common\argumentable {
 
   protected $sMethod = '';
-  protected $aJoins = array();
   protected $aElements = array();
   protected $aKeyElements = array();
-  protected $aJoinsElements = array();
 
   protected $offset = '0';
   protected $count;
-  protected $order;
-  protected $orderPath;
-  protected $orderDynamic;
 
   protected $aClones = array();
   protected $main;
@@ -142,47 +137,6 @@ class Select extends Wherer implements common\argumentable {
     return $result;
   }
 
-  public function addJoin(sql\schema\table $table, sql\schema\element $field, $val) {
-
-    $bAdd = true;
-
-    foreach ($this->aJoinsElements as $el) {
-
-      if ($el === $field) {
-
-        $bAdd = false;
-      }
-    }
-
-    if ($bAdd) {
-
-      foreach($this->getClones() as $clone) {
-
-        $clone->addJoin($table, $field, $val);
-      }
-
-      $this->aJoins[] = array($table, $field, $val);
-      $this->aJoinsElements[] = $field;
-    }
-  }
-
-  protected function getJoins() {
-
-    $aResult = array();
-
-    foreach ($this->aJoins as $iCurrent => $aJoin) {
-
-      $aResult[] = array(' LEFT JOIN ', $aJoin[0], ' ON ', $aJoin[1], ' = ', $aJoin[2], ' ');
-    }
-
-    return $aResult;
-  }
-
-  public function clearJoins() {
-
-    $this->aJoins = array();
-  }
-
   public function setMethod($sMethod) {
 
     $this->sMethod = $sMethod;
@@ -227,116 +181,11 @@ class Select extends Wherer implements common\argumentable {
     $this->offset = $this->count = null;
   }
 
-  public function setOrderPath($sValue) {
-
-    $this->orderPath = $sValue;
-  }
-
-  protected function getOrderPath() {
-
-    return $this->orderPath;
-  }
-
-  public function setOrderDynamic($content) {
-
-    $this->orderDynamic = $content;
-  }
-
-  protected function getOrderDynamic() {
-
-    return $this->orderDynamic;
-  }
-
-  protected function getOrder() {
-
-    return $this->order;
-  }
-
-  protected function prepareOrder() {
-
-    $aResult = array();
-    $obj = null;
-
-    $string = $this->getParser()->getType('string', $this->getParser()->getNamespace('sql'));
-
-    if ($sPath = $this->getOrderPath()) {
-
-      $obj = $this->createObject('order', array($sPath));
-      $order = $this->create('order', array($sPath));
-      $table = $this->aTables[0];
-
-      $aElements = array();
-
-      foreach ($order->extractPath() as $aElement) {
-
-        $field = $table->getElement($aElement['name']);
-
-        $aElements[$field->getName()] = array(
-          'alias' => $field,
-          'string' => $field->getType()->doExtends($string),
-        );
-      }
-
-      $aResult[] = $obj->getInsert();
-      $aResult[] = $obj->call('setElements', array($aElements));
-    }
-    else if ($content = $this->getOrderDynamic()) {
-
-      foreach ($this->getElements() as $field) {
-
-        $aElements[$field->getName()] = array(
-          'alias' => $field,
-          'string' => $field->getType()->doExtends($string),
-        );
-      }
-
-      $obj = $this->createObject('order', array($content));
-
-      // On join, only first element is used as order, maybe todo
-
-      foreach ($this->aJoins as $aJoin) {
-
-        $foreign = $aJoin[2];
-        $ref = $aJoin[1];
-
-        if (!$ref instanceof sql\schema\element) {
-
-          $this->launchException('Cannot prepare unknown for order', get_defined_vars());
-        }
-
-        foreach ($this->getElements() as $el) {
-
-          if ($el->getParent() === $ref->getParent()) {
-
-            $aElements[$foreign->getName()] = array(
-              'alias' => $el,
-              'string' => $el->getType()->doExtends($string),
-            );
-
-            break;
-          }
-        }
-      }
-
-      $aResult[] = $obj->getInsert();
-      $aResult[] = $obj->call('setElements', array($aElements));
-    }
-
-    $this->order = $obj;
-
-    return $aResult;
-  }
-
   public function getCall($bDebug = false) {
 
     $bDebug = $this->isMultiple() || $this->isOptional() ? false: true;
 
     return parent::getCall($bDebug);
-  }
-
-  public function clearOrder() {
-
-    $this->order = null;
   }
 
   protected function build() {

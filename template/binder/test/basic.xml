@@ -352,26 +352,36 @@
   </tst:test>
   <tst:test name="Node in different template">
     <tst:document>
-      <view:view debug="x">
+      <view:view user:ns="ns">
         <sql:resource>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <tpl:template>
+        <tpl:template match="user:name" mode="node">
           <div js:node="hello">Hello</div>
         </tpl:template>
-        <tpl:template>
-          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
-            <tpl:apply/>
+        <tpl:template match="*" mode="container">
+          <div js:class="sylma.ui.Base">
+            <tpl:apply mode="node"/>
             <div>World</div>
           </div>
+        </tpl:template>
+        <tpl:template>
+          <content js:class="sylma.ui.Container" js:name="test" js:parent="example">
+            <tpl:apply select="*" mode="container"/>
+          </content>
         </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
       var test = example.test;
 
-      return test.getNode('hello').get('text') === 'Hello';
+      sylma.tester.assertEquals(test.tmp[0].getNode('hello'), undefined);
+      sylma.tester.assertEquals(test.tmp[1].getNode('hello').get('text'), 'Hello');
+      sylma.tester.assertEquals(test.tmp[2].getNode('hello'), undefined);
+
+      return true;
+      
     </tst:expected>
   </tst:test>
   <tst:test name="Multiple sub nodes">

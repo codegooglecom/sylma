@@ -16,7 +16,9 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
   protected $class;
   protected $var;
   protected $sJSClass;
+
   protected $aEvents = array();
+  protected $aNodes = array();
 
   public function parseRoot(dom\element $el) {
 
@@ -45,11 +47,6 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
   public function getClass() {
 
     return $this->class;
-  }
-
-  protected function getEvents() {
-
-    return $this->aEvents;
   }
 
   protected function isRoot($mValue = null) {
@@ -87,13 +84,21 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
     $aResult = array(
       'extend' => $window->createCaller(function() use ($self, $window) {
-        
+
         return $window->argToInstance($self->getClass()->getExtend());
       }),
-      'events' => $this->getEvents(),
-      //'binder' => $this->getClass()->getID(),
       'id' => $this->getID(),
     );
+
+    if ($aEvents = $this->getEvents()) {
+
+      $aResult['events'] = $aEvents;
+    }
+
+    if ($aNodes = $this->getNodes()) {
+
+      $aResult['nodes'] = $aNodes;
+    }
 
     if (!$this->getName()) {
 
@@ -141,6 +146,21 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
   public function setEvent($sID) {
 
     $this->aEvents[$sID] = true;
+  }
+
+  protected function getEvents() {
+
+    return $this->aEvents;
+  }
+
+  public function setNodeElement($sID, $sClass) {
+
+    $this->aNodes[$sID] = $sClass;
+  }
+
+  protected function getNodes() {
+
+    return $this->aNodes;
   }
 
   public function asArray() {
