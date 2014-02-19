@@ -97,6 +97,34 @@
   {
     margin: 2px;
     padding-top: 0.5em;
+
+    .delay.zoom,
+    .name.zoom
+    {
+      &.sylma-visible
+      {
+        max-height: 5em;
+      }
+
+      input
+      {
+        width: 97%;
+      }
+    }
+
+    .page
+    {
+      li
+      {
+        form
+        {
+          & > button
+          {
+            line-height: 1.2em;
+          }
+        }
+      }
+    }
   }
 
   .test:nth-child(2)
@@ -169,7 +197,7 @@
     transition: all ease-in 0.2s;
   }
 
-  .ready > .refresh
+  li.ready .refresh
   {
     .visible;
   }

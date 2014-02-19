@@ -7,9 +7,9 @@ sylma.stepper.Framed = new Class({
     return this.getParent('main').getFrame();
   },
 
-  getWindow : function() {
+  getWindow : function(frame) {
 
-    return this.getParent('main').getWindow();
+    return this.getParent('main').getWindow(frame);
   },
 
   getSelector : function(debug) {

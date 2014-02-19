@@ -165,7 +165,7 @@
 
   <tpl:template match="test:*" mode="delete">
     <button type="button" js:class="sylma.ui.Template" js:alias="delete" js:autoload="x" class="delete">
-      <js:event name="click">%parent%.remove();</js:event>
+      <js:event name="click">%parent%.remove(true);</js:event>
       <tpl:text>✕</tpl:text>
     </button>
   </tpl:template>
@@ -177,11 +177,27 @@
     </button>
   </tpl:template>
 
-  <tpl:template match="test:*" mode="rename">
-    <button js:class="sylma.ui.Template" js:alias="rename" js:autoload="x" class="edit">
-      <js:event name="click">%parent%.editName();</js:event>
-      <tpl:text>...</tpl:text>
+  <tpl:template match="test:*" mode="refresh">
+    <button type="button" js:class="sylma.ui.Template" js:alias="refresh" js:autoload="x" class="sylma-hidder edit refresh">
+      <js:event name="click">%parent%.refresh();</js:event>
+      <span>↻</span>
     </button>
+  </tpl:template>
+
+  <tpl:template match="test:*" mode="rename">
+    <div js:class="sylma.ui.Template" js:alias="rename">
+      <div class="sylma-hidder zoom name" js:node="input">
+        <input type="text" value="{@file}">
+          <js:event name="input">
+            %parent%.setFile(this.get('value'));
+          </js:event>
+        </input>
+      </div>
+      <button class="edit">
+        <js:event name="click">%object%.getNode('input').toggleClass('sylma-visible');</js:event>
+        <tpl:text>...</tpl:text>
+      </button>
+    </div>
   </tpl:template>
 
   <tpl:template match="test:event">
@@ -210,6 +226,17 @@
           <js:event name="click">%object%.addVariable();</js:event>
           <tpl:text>$</tpl:text>
         </button>
+        <button type="button">
+          <js:event name="click">%object%.getNode('delay').toggleClass('sylma-visible');</js:event>
+          <tpl:text>⌚</tpl:text>
+        </button>
+        <div js:node="delay" class="delay zoom sylma-hidder">
+          <input type="text" value="{@delay}">
+            <js:event name="input">
+              %object%.setDelay(this.get('value'));
+            </js:event>
+          </input>
+        </div>
         <tpl:apply select="property"/>
         <tpl:apply select="variable"/>
       </form>
@@ -226,6 +253,8 @@
         <option>opacity</option>
         <option>height</option>
         <option>width</option>
+        <option>iframe</option>
+        <option>z-index</option>
         <option>margin-top</option>
         <option>margin-right</option>
         <option>margin-bottom</option>
@@ -240,16 +269,14 @@
         <tpl:read/>
       </span>
       <tpl:apply mode="delete"/>
+      <tpl:apply mode="refresh"/>
     </div>
   </tpl:template>
 
   <tpl:template match="test:snapshot">
     <li js:class="sylma.stepper.Snapshot" js:alias="snapshot">
       <tpl:apply mode="actions"/>
-      <button class="edit refresh sylma-hidder">
-        <js:event name="click">%object%.refresh();</js:event>
-        <span>↻</span>
-      </button>
+      <tpl:apply mode="refresh"/>
       <tpl:apply mode="title"/>
       <tpl:apply mode="selector"/>
     </li>

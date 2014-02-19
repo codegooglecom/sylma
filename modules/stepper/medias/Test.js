@@ -4,37 +4,43 @@ sylma.stepper.Test = new Class({
   Extends : sylma.stepper.Framed,
   Implements : sylma.stepper.Listed,
 
-  onReady : function() {
+  loaded : false,
+  loading: false,
+
+  onLoad : function() {
+
+    this.add('rename', {file : this.options.file});
 
     if (!this.options.file) {
 
-      this.editName(false);
+      this.getObject('rename')[0].toggleShow();
     }
   },
 
-  editName : function(update) {
+  setFile: function(val, update) {
 
-    update = update === undefined ? true : false;
+    this.options.file = val;
 
-    var result = window.prompt('Please choose a file name', this.options.file || '');
+    if (update === undefined || update) {
 
-    if (result) {
-
-      this.options.file = result;
-
-      if (update) {
-
-        this.getNode('name').set('html', result);
-      }
+      this.getNode('name').set('html', val);
     }
   },
 
   initPages : function(callback) {
 
-    if (!this.loaded) {
+    if (!this.loaded && !this.loading) {
 
-      this.loaded = true;
+      this.loading = true;
+
       this.getParent('main').loadTest(this.get('file'), function(response) {
+
+        if (!response.error) {
+
+          this.loaded = true;
+        }
+
+        this.loading = false;
 
         Object.each(response.content.page, function(item) {
 
@@ -98,12 +104,22 @@ sylma.stepper.Test = new Class({
   addPage : function() {
 
     var result = this.add('page', {
-      url : this.getWindow().location.pathname
+      url : this.getLocation()
     }, this.getCurrent() + 1);
 
-    result.go();
+    result.go(function() {
+
+      result.addSnapshot();
+    });
 
     return result;
+  },
+
+  getLocation : function() {
+
+    var location = this.getWindow().location;
+
+    return location.pathname + location.search;
   },
 
   goPage : function(page) {
@@ -157,14 +173,14 @@ sylma.stepper.Test = new Class({
     if (!this.getPage()) {
 
       var page = this.addPage();
-      page.addSnapshot();
+      //page.addSnapshot();
     }
     else {
 
       this.getPage().go(callback);
     }
 
-    this.getPage().record();
+    //this.getPage().record();
   },
 
   test : function(callback) {
@@ -175,7 +191,13 @@ sylma.stepper.Test = new Class({
 
     this.toggleSelect(true, function() {
 
-      this.testItems(this.getPages(), 0, callback);
+      var pages = this.getPages();
+
+      pages[0].test(function() {
+
+        this.testNextItem(pages, 1, callback);
+
+      }.bind(this), undefined, undefined, true);
 
     }.bind(this));
   },

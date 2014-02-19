@@ -96,6 +96,8 @@ class Browser extends core\module\Domed {
           case 'watcher' :
 
             $aStep['element'] = $step->read('@element');
+            $aStep['delay'] = $step->read('@delay', false);
+
 
             foreach ($step->query('property', false) as $property) {
 

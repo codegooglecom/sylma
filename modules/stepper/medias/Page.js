@@ -13,8 +13,11 @@ sylma.stepper.Page = new Class({
 
   onLoad : function() {
 
+    this.add('rename', {file : this.options.url});
+
     if (!this.options.url) {
 
+      this.getObject('rename')[0].toggleShow();
       this.updateName();
     }
   },
@@ -52,34 +55,50 @@ sylma.stepper.Page = new Class({
     });
   },
 
-  addEvent : function(e) {
+  addEvent : function(e, frames) {
 
     return this.addStep(function(key, callback) {
 
-      var result = this.getSteps().add('event', {event : e}, key);
+      var result = this.getSteps().add('event', {
+        event : e,
+        frames : frames
+      }, key);
+
       callback && callback();
 
       return result;
     });
   },
 
-  addInput: function(e) {
+  addInput: function(e, frames) {
 
     return this.addStep(function(key, callback) {
 
-      var result = this.getSteps().add('input', {event : e}, key);
+      var result = this.getSteps().add('input', {
+        event : e,
+        frames : frames
+      }, key);
+
       callback && callback();
 
       return result;
     });
   },
 
-  addWatcher : function() {
+  addWatcher : function(options) {
 
     return this.addStep(function(key, callback) {
 
-      var result = this.getSteps().add('watcher', {}, key);
-      result.activate(callback);
+      var result = this.getSteps().add('watcher', options, key);
+
+      if (!options) {
+
+        result.activate(callback);
+      }
+      else {
+
+        callback && callback();
+      }
 
       return result;
     });
@@ -94,6 +113,11 @@ sylma.stepper.Page = new Class({
 
       return result;
     });
+  },
+
+  updateDelay : function(val) {
+
+    this.options.delay = val;
   },
 
   addQuery : function() {
@@ -117,7 +141,7 @@ sylma.stepper.Page = new Class({
     //this.goLast(callback);
   },
 
-  test : function(callback, to, record) {
+  test : function(callback, to, record, reload) {
 
     var current = this.getCurrent();
 
@@ -165,7 +189,7 @@ sylma.stepper.Page = new Class({
         this.testNextItem(all, 0, callback);
       }
 
-    }.bind(this), to <= current);
+    }.bind(this), to <= current || reload);
   },
 
   selectStep : function(step) {
@@ -194,14 +218,16 @@ sylma.stepper.Page = new Class({
 
     var current = location.pathname + location.search;
     var url = this.getUrl();
-//console.log('mypath', current, this.getWindow().location);
+
     var diff = current !== url;
 
     if ((url || reload) && !this.hasError() && (reload || diff)) {
 
+      this.getFrame().store('ready', false);
+
       this.resetSteps(this.mode.all);
       this.setCurrent(-1);
-//console.log(url, this.hasError(), reload, diff);
+
       location.href = url || location.href;
       this.getParent('main').pauseRecord();
 
@@ -271,23 +297,6 @@ sylma.stepper.Page = new Class({
     }.bind(this));
   },
 
-  editName : function(update) {
-
-    update = update === undefined ? true : false;
-
-    var result = window.prompt('Please choose a page path', this.options.url || '');
-
-    if (result !== null) {
-
-      this.options.url = result;
-
-      if (update) {
-
-        this.updateName();
-      }
-    }
-  },
-
   updateName: function() {
 
     var result = this.options.url;
@@ -296,6 +305,16 @@ sylma.stepper.Page = new Class({
       html : result ? result : '[any]',
       href : result ? result : '#'
     });
+  },
+
+  setFile : function(val, update) {
+
+    this.options.url = val;
+
+    if (update === undefined || update) {
+
+      this.updateName();
+    }
   },
 
   select : function(callback, reset) {

@@ -34,6 +34,12 @@ sylma.stepper.Property = new Class({
 
         break;
 
+      case 'iframe' :
+
+        result = 1;
+
+        break;
+
       default :
 
         result = el.getStyle(key).toInt();
@@ -43,6 +49,12 @@ sylma.stepper.Property = new Class({
     this.options.value = result;
 
     this.updateValue();
+  },
+
+  refresh : function() {
+
+    this.onChange();
+    this.getParent().hasError(false);
   },
 
   test : function(el) {
@@ -55,6 +67,11 @@ sylma.stepper.Property = new Class({
       case 'children' :
 
         result = el.getChildren().length === value;
+        break;
+
+      case 'iframe' :
+
+        result = el.retrieve('ready');
         break;
 
       default :

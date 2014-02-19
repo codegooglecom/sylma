@@ -2,6 +2,12 @@ sylma.stepper.Watcher = new Class({
 
   Extends : sylma.stepper.Step,
 
+  options : {
+    delay : '',
+    defaultDelay : 1000
+  },
+
+
   onLoad : function() {
 
     var element = this.options.element;
@@ -93,7 +99,17 @@ sylma.stepper.Watcher = new Class({
 
       callback();
 
-    }.bind(this), 1000);
+    }.bind(this), this.getDelay());
+  },
+
+  setDelay : function(val) {
+
+    this.options.delay = val;
+  },
+
+  getDelay : function() {
+
+    return this.options.delay || this.options.defaultDelay;
   },
 
   badElement : function(callback, loop) {
@@ -133,7 +149,7 @@ sylma.stepper.Watcher = new Class({
             window.clearInterval(interval2);
             this.loadVariable();
 
-            callback();
+            callback.delay(30);
           }
 
         }.bind(this), 10);
@@ -178,11 +194,20 @@ sylma.stepper.Watcher = new Class({
 
   toJSON : function() {
 
-    return {watcher : {
+    var result = {
       '@element' : this.getSelector(),
       '#property' : this.getProperties(),
       0 : this.getVariable()
-    }};
+    };
+
+    var delay = this.options.delay;
+
+    if (delay) {
+
+      result['@delay'] = delay;
+    }
+
+    return {watcher : result};
   }
 
 });

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <test
   xmlns="http://2013.sylma.org/modules/stepper"
+
+  file=""
 >
   <page url="/sylma/modules/stepper/test/samples/content01">
     <element>#body</element>
@@ -20,7 +22,7 @@
       <call path="">
         <variable name=""/>
       </call>
-      <watcher element="">
+      <watcher element="" delay="">
         <property name=""/>
         <variable name=""/>
       </watcher>

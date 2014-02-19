@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:test="http://2013.sylma.org/modules/stepper"
+
+  extends="/#sylma/modules/stepper/index.vml"
+>
+
+  <crud:global>
+
+    <tpl:settings>
+      <cls:classes>
+        <cls:class alias="tree">
+          <cls:classes>
+            <cls:class alias="cached" name="\sylma\modules\stepper\test\samples\Stepper01"/>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </tpl:settings>
+
+  </crud:global>
+
+  <view:view name="clear"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="clearDirectory()"/>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

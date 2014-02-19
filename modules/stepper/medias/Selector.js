@@ -5,9 +5,11 @@ sylma.stepper.Selector = new Class({
   mask : null,
   activated : false,
   masked : false,
+
   options : {
     target : null, // dom node
-    element : null // string
+    element : null, // string
+    frames : [] // stack of parent frames
   },
 
   onReady : function() {
@@ -35,7 +37,7 @@ sylma.stepper.Selector = new Class({
     var mask = this.getMask();
     //this.show(mask);
     var overlay = this.overlay = new Element('div', {
-      id : 'overlay',
+      id : 'overlay'
     });
 
     this.getFrame().setStyle('z-index', 70);
@@ -65,8 +67,12 @@ sylma.stepper.Selector = new Class({
   startCapture : function() {
 
     this.getParent('main').pauseRecord();
+    this.startCaptureFrame(this.getFrame());
+  },
 
-    this.events = {
+  startCaptureFrame : function(frame) {
+
+    var events = {
       click : function(e) {
 
         this.selectElement(e.target);
@@ -82,13 +88,36 @@ sylma.stepper.Selector = new Class({
       }.bind(this)
     };
 
-    this.getWindow().addEvents(this.events);
+    this.getWindow(frame).addEvents(events);
+/*
+    this.getParent('main').getFrames(frame).each(function(item) {
+
+      this.startCaptureFrame(item);
+    }.bind(this));
+*/
+    frame.store('selector', events);
   },
 
   stopCapture: function() {
 
     this.getParent('main').resumeRecord();
-    if (this.events) this.getWindow().removeEvents(this.events);
+    this.stopCaptureFrame(this.getFrame());
+  },
+
+  stopCaptureFrame : function(frame) {
+
+    var events = frame.retrieve('selector');
+
+    if (events) {
+
+      this.getWindow(frame).removeEvents(events);
+/*
+      this.getParent('main').getFrames(frame).each(function(item) {
+
+        this.stopCaptureFrame(item);
+      }.bind(this));
+*/
+    }
   },
 
   windowMove : function(e) {
@@ -187,7 +216,7 @@ sylma.stepper.Selector = new Class({
 
     var parent = this.getElement().getParent();
 
-    if (parent.get('tag') !== 'body') {
+    if (parent.get('tag') !== 'html') {
 
       this.changeElement(parent);
     }
@@ -215,7 +244,19 @@ sylma.stepper.Selector = new Class({
   getElement : function() {
 
     var path = this.options.element;
-    var result = this.getWindow().document.body.getElement(path);
+
+    var win = this.getWindow();
+    var result;
+
+    if (path) {
+
+      path.split(';').each(function(path) {
+
+        win = this.getWindow(result);
+        result = win.document.body.getElement(path);
+
+      }.bind(this));
+    }
 
     return result;
   },
@@ -228,6 +269,28 @@ sylma.stepper.Selector = new Class({
   },
 
   buildPath : function(target) {
+
+    var result = '';
+
+    this.options.frames.slice(1).each(function(frame) {
+
+      result += this.buildElementPath(frame) + ';';
+
+    }.bind(this));
+
+    if (target.getParents().length > 1) {
+
+      result += this.buildElementPath(target);
+    }
+    else {
+
+      result += target.get('tag');
+    }
+
+    return result;
+  },
+
+  buildElementPath : function(target) {
 
     var useID = false;
 
@@ -264,8 +327,6 @@ sylma.stepper.Selector = new Class({
       return result;
 
     }).clean().reverse().join(' > ');
-
-    //console.log(result);
 
     return result;
   },

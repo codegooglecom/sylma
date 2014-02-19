@@ -33,7 +33,7 @@ sylma.stepper.Main = new Class({
     }
 
     this.setCurrent(-1);
-    this.buildFrame(this.path);
+    this.prepareActionFrame();
   },
 
   getFrame : function() {
@@ -41,54 +41,72 @@ sylma.stepper.Main = new Class({
     return this.getNode('frame');
   },
 
-  getWindow : function() {
+  getWindow : function(frame) {
 
-    return this.getFrame().contentWindow;
+    frame = frame || this.getFrame();
+
+    return frame.contentWindow;
   },
 
-  buildFrame : function(url) {
+  prepareActionFrame : function() {
 
     var frame = this.getFrame();
+    this.prepareFrame(frame);
 
     frame.set({
-      src       : this.path,
+      src : this.path,
       styles : {
         width : this.screen.x,
         height : this.screen.y
-      },
-      events : {
-        load : function() {
-
-          var win = frame.contentWindow;
-
-          if (!win.addEvents) {
-
-            console.log('Add mootools to iframe');
-
-            var script = document.createElement("script");
-            script.type = 'text/javascript';
-            script.src = '/sylma/ui/mootools.js';
-
-            script.addEventListener('load', function() {
-
-              this.callTest();
-
-            }.bind(this));
-
-            win.document.body.appendChild(script);
-          }
-          else {
-
-            this.callTest();
-          }
-
-          //frame.setStyle('height', $(win.document.body).scrollHeight);
-
-        }.bind(this)
       }
     });
 
     frame.addClass('sylma-visible');
+  },
+
+  prepareFrame : function(frame) {
+
+    frame.addEvents({
+      load : function() {
+
+        var win = this.getWindow(frame);
+
+        if (!win.addEvents) {
+
+          console.log('Add mootools to iframe');
+
+          var script = document.createElement("script");
+          script.type = 'text/javascript';
+          script.src = '/sylma/ui/mootools.js';
+
+          script.addEventListener('load', function() {
+
+            this.getFrames(frame).each(function(frame) {
+
+              this.prepareFrame(frame);
+
+            }.bind(this));
+
+            frame.store('ready', 1);
+            this.callTest();
+
+          }.bind(this));
+
+          win.document.body.appendChild(script);
+        }
+        else {
+
+          frame.store('ready', 1);
+          this.callTest();
+        }
+
+      }.bind(this)
+    });
+  },
+
+  getFrames : function(frame) {
+
+    return this.getWindow(frame).document.body.getElements('iframe');
   },
 
   callTest : function() {
@@ -155,13 +173,13 @@ sylma.stepper.Main = new Class({
     this.events.callback = callback;
   },
 
-  addInput : function(e) {
+  addInput : function(e, frames) {
 
     var target = e.target;
 
     if (!this.input || this.input.getElement() != target) {
 
-      this.input = this.getTest().getPage().addInput(e);
+      this.input = this.getTest().getPage().addInput(e, frames);
     }
 
     this.input.updateValue();
@@ -233,9 +251,15 @@ sylma.stepper.Main = new Class({
 
     this.stopCapture();
 
-    var test = this.getTest();
+    this.startCaptureFrame(this.getFrame(), this.getTest())
+  },
 
-    Object.append(this.events, {
+  startCaptureFrame : function(frame, test, token, frames) {
+
+    token = token || 'main';
+    frames = frames || [];
+
+    var events = {
 
       window : {
         click : function(e) {
@@ -248,11 +272,11 @@ sylma.stepper.Main = new Class({
           }
           else if (tag === 'option') {
 
-            this.addInput(e);
+            this.addInput(e, frames);
           }
           else if (!this.isInput(e.target)) {
 
-            this.getTest().getPage().addEvent(e);
+            this.getTest().getPage().addEvent(e, frames);
             this.input = null;
           }
 
@@ -263,7 +287,7 @@ sylma.stepper.Main = new Class({
 
           if (this.isInput(target) && target.get('value')) {
 
-            this.addInput(e);
+            this.addInput(e, frames);
           }
 
         }.bind(this)
@@ -272,25 +296,68 @@ sylma.stepper.Main = new Class({
 
         load : function() {
 
-          this.addPage();
-          this.getPage().addSnapshot();
+          if (frames.length) {
 
-        }.bind(test)
+            test.getPage().addWatcher({
+              selector : [{
+                target : frame
+              }],
+              property : [{
+                name : 'iframe',
+                value : 1
+              }]
+            });
+          }
+          else {
+
+            test.addPage();
+            test.getPage().addSnapshot();
+          }
+        }.bind(this)
       }
-    });
+    };
 
-    var events = this.events;
+    frames.push(frame);
+    var subtoken = 'sub' + frames.length;
 
-    this.getFrame().addEvents(events.frame);
-    this.getWindow().addEvents(events.window);
+    this.getFrames(frame).each(function(item) {
+
+      this.startCaptureFrame(item, test, subtoken, frames.slice(0));
+
+    }.bind(this));
+
+    frame.store(token, events);
+    frame.addEvents(events.frame);
+
+    var win = this.getWindow(frame);
+    win.addEvents(events.window);
   },
 
   stopCapture: function() {
 
-    var events = this.events;
+    this.stopCaptureFrame(this.getFrame());
+  },
 
-    if (events.frame) this.getFrame().removeEvents(events.frame);
-    if (events.window) this.getWindow().removeEvents(events.window);
+  stopCaptureFrame : function(frame, token, frames) {
+
+    token = token  || 'main';
+    var events = frame.retrieve(token);
+
+    if (events) {
+
+      frames = frames || [frame];
+
+      frame.removeEvents(events.frame);
+      this.getWindow(frame).removeEvents(events.window);
+
+      var subtoken = 'sub' + frames.length;
+
+      this.getFrames(frame).each(function(item) {
+
+        this.stopCaptureFrame(item, subtoken, frames);
+
+      }.bind(this));
+    }
   },
 
   loadTest : function(file, callback) {

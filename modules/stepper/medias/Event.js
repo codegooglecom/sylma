@@ -2,7 +2,7 @@ sylma.stepper.Event = new Class({
 
   Extends : sylma.stepper.Step,
 
-  isgo : false,
+  //isgo : false,
 
   onReady : function() {
 
@@ -14,7 +14,8 @@ sylma.stepper.Event = new Class({
         event : e,
         name : e.type,
         selector : [{
-          target : e.target
+          target : e.target,
+          frames : this.options.frames
         }]
       };
     }
@@ -35,12 +36,12 @@ sylma.stepper.Event = new Class({
     var page = this.getParent('page'),
         steps = page.getSteps().tmp,
         length = steps.length;
-
+/*
     if (this.getKey() === length - 1) {
 
       this.isgo = true;
     }
-
+*/
     this.parent();
   },
 
@@ -50,18 +51,19 @@ sylma.stepper.Event = new Class({
 
     if (el) {
 
-      if (!this.isgo) {
+      //if (!this.isgo) {
 
         this.log('Run');
         el.focus();
         el.click();
-      }
+      //}
 
-      this.isgo = false;
+      //this.isgo = false;
     }
     else {
 
       this.hasError(true);
+      console.log('cannot find ' + this.options.element);
     }
 
     callback();
