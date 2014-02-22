@@ -31,7 +31,7 @@ sylma.stepper.Event = new Class({
     }
   },
 
-  go: function() {
+  go: function(callback) {
 
     var page = this.getParent('page'),
         steps = page.getSteps().tmp,
@@ -42,7 +42,7 @@ sylma.stepper.Event = new Class({
       this.isgo = true;
     }
 */
-    this.parent();
+    this.parent(callback);
   },
 
   test : function(callback) {
@@ -66,7 +66,7 @@ sylma.stepper.Event = new Class({
       console.log('cannot find ' + this.options.element);
     }
 
-    callback();
+    callback && callback();
   },
 
   toJSON : function() {

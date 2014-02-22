@@ -41,6 +41,11 @@ sylma.stepper.Watcher = new Class({
 
     var properties = (this.getProperties() || []).slice();
 
+    properties.each(function(item) {
+
+      item.reset();
+    });
+
     var reloads = properties && properties.filter(function(item) {
 
       return item.getName() === 'reload';
@@ -97,7 +102,7 @@ sylma.stepper.Watcher = new Class({
       this.addDifference(text);
       window.clearInterval(loop);
 
-      callback();
+      callback && callback();
 
     }.bind(this), this.getDelay());
   },
@@ -149,7 +154,7 @@ sylma.stepper.Watcher = new Class({
             window.clearInterval(interval2);
             this.loadVariable();
 
-            callback.delay(30);
+            callback && callback.delay(50);
           }
 
         }.bind(this), 10);

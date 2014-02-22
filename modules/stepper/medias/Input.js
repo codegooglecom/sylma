@@ -60,7 +60,7 @@ sylma.stepper.Input = new Class({
 
     this.updateElement();
 
-    callback();
+    callback && callback();
   },
 
   toJSON : function() {

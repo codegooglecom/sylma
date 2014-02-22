@@ -2,11 +2,12 @@ sylma.stepper.Step = new Class({
 
   Extends : sylma.stepper.Framed,
 
-  go: function() {
+  go: function(callback) {
 
     this.getParent('page').goStep(this, function() {
 
       this.isReady(true);
+      callback && callback();
 
     }.bind(this));
   },
@@ -52,6 +53,14 @@ sylma.stepper.Step = new Class({
   isVariable : function(val) {
 
     return val[0] === '$' ? val.slice(1) : undefined;
+  },
+
+  goNext : function() {
+
+    this.isPlayed(true);
+    this.test();
+
+    return false;
   },
 
   addVariable : function() {

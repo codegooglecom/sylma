@@ -14,6 +14,64 @@ sylma.stepper.Listed = new Class({
     return this.currentKey;
   },
 
+  getItems : function() {
+
+    throw new Error('Must be overrided');
+  },
+
+  goNext : function() {
+
+    var result = false;
+    var items = this.getItems();
+    var current = this.getCurrent();
+
+    if (current < 0) {
+
+      var item = items.pick();
+
+      if (item) {
+
+        this.setCurrent();
+        this.showItem(item);
+
+        result = true;
+      }
+    }
+    else {
+
+      result = this.checkItem(items[current]);
+
+      if (!result) {
+
+        current++;
+
+        if (current !== items.length) {
+
+          this.setCurrent(current);
+          this.showItem(items[current]);
+
+          result = true;
+        }
+      }
+    }
+
+    return result;
+  },
+
+  showItem : function(item) {
+
+    item.go(function() {
+
+      item.goNext();
+      
+    }, true);
+  },
+
+  checkItem : function(item) {
+
+    return item.goNext();
+  },
+
   testLast : function(items, key, callback) {
 
     this.testItem(items, key, callback);

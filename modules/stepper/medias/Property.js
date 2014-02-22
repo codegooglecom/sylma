@@ -31,13 +31,16 @@ sylma.stepper.Property = new Class({
       case 'children' :
 
         result = el.getChildren().length;
+        break;
 
+      case 'class' :
+
+        result = el.get('class');
         break;
 
       case 'iframe' :
 
         result = 1;
-
         break;
 
       default :
@@ -57,34 +60,58 @@ sylma.stepper.Property = new Class({
     this.getParent().hasError(false);
   },
 
+  reset : function() {
+
+    this.ready = false;
+    this.binded = false;
+  },
+
+  onFrameLoad : function(el) {
+
+    el.removeEvent('load', this.onFrameLoad);
+    this.ready = true;
+  },
+
   test : function(el) {
 
-    var value = this.options.value.toInt();
+    var value = this.options.value;
     var result;
 
     switch (this.options.name) {
 
       case 'children' :
 
-        result = el.getChildren().length === value;
+        result = el.getChildren().length === value.toInt();
+        break;
+
+      case 'class' :
+
+        result = el.hasClass(value);
         break;
 
       case 'iframe' :
 
-        result = el.retrieve('ready');
+        if (!this.binded) {
+
+          this.binded = true;
+          el.addEvent('load', this.onFrameLoad.bind(this, el));
+        }
+
+        result = this.ready;
         break;
 
       default :
 
-        result = el.getComputedStyle(this.options.name).toInt() === value;
+        result = el.getComputedStyle(this.options.name).toInt() === value.toInt();
     }
 
     return result;
   },
 
-  updateValue : function() {
+  updateValue : function(val) {
 
-    this.getNode('value').set('html', this.options.value);
+    if (val !== undefined) this.options.value = val;
+    this.getNode('value').set('value', this.options.value);
   },
 
   toJSON : function() {

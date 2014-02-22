@@ -42,7 +42,7 @@ sylma.stepper.Snapshot = new Class({
 
       var test = new sylma.stepper.Element(el, tree);
       var result = test.compare();
-      
+
       this.hasError(!result);
     }
     else {
@@ -50,7 +50,7 @@ sylma.stepper.Snapshot = new Class({
       this.hasError(true);
     }
 
-    callback();
+    callback && callback();
   },
 
   shot : function(el) {

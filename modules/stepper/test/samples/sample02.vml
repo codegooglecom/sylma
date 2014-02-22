@@ -12,11 +12,11 @@
   <tpl:template>
 
     <div>
-      <h4>Hello world</h4>
+      <h5>Hello universe</h5>
       <tpl:variable name="path">
-        <le:path>sample02</le:path>
+        <le:path>sample01</le:path>
       </tpl:variable>
-      <a href="{$path}">sample02</a>
+      <a href="{$path}">sample01</a>
     </div>
 
   </tpl:template>

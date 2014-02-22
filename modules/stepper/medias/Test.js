@@ -91,6 +91,11 @@ sylma.stepper.Test = new Class({
     return this.getObject('page', false) || [];
   },
 
+  getItems : function() {
+
+    return this.getPages();
+  },
+
   getPage : function() {
 
     var pages = this.getPages();
@@ -149,21 +154,29 @@ sylma.stepper.Test = new Class({
 
         this.initPages(callback);
       }
+      else {
 
-      this.go();
+        callback && callback();
+      }
+
+      this.getParent('main').goTest(this);
     }
     else {
+
+      this.setCurrent(-1);
 
       this.getPages().each(function(item) {
 
         item.unselect();
       });
+
+      //this.getParent('main').goTest();
     }
   },
 
-  go : function() {
+  go : function(callback) {
 
-    this.getParent('main').goTest(this);
+    this.toggleSelect(true, callback);
   },
 
   record : function(callback) {
@@ -193,11 +206,15 @@ sylma.stepper.Test = new Class({
 
       var pages = this.getPages();
 
-      pages[0].test(function() {
+      pages[0].go(function() {
 
-        this.testNextItem(pages, 1, callback);
+        pages[0].test(function() {
 
-      }.bind(this), undefined, undefined, true);
+          this.testNextItem(pages, 1, callback);
+
+        }.bind(this));
+
+      }.bind(this), true);
 
     }.bind(this));
   },
@@ -223,6 +240,11 @@ sylma.stepper.Test = new Class({
     return {test : {
       '#page' : this.getPages()
     }};
+  },
+
+  asToken : function() {
+
+    return 'test(' + this.getKey() + ') : ' + this.options.file;
   }
 
 });

@@ -26,7 +26,7 @@ sylma.stepper.Framed = new Class({
 
   log: function(msg) {
 
-    console.log(msg + ' ' + this.asToken(), this.options);
+    console.log(msg + ' ' + this.asToken());
   },
 
   toggleActivation : function(val) {

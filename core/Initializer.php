@@ -147,6 +147,8 @@ class Initializer extends module\Domed {
 
       $profiler = $this->create('profiler');
       $profiler->start();
+
+      //xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
     }
 
     $sExtension = $path->parseExtension(true);
@@ -183,6 +185,12 @@ class Initializer extends module\Domed {
 
       $profiler->stop();
       $profiler->save();
+/*
+      $data = xdebug_get_code_coverage();
+      xdebug_stop_code_coverage();
+
+      //print_r($data);
+ */
     }
 
     return $sResult;

@@ -41,8 +41,12 @@
             <tpl:text>▶</tpl:text>
           </button>
           <button>
-            <js:event name="click">%object%.test();</js:event>
+            <js:event name="click">%object%.test(%object%.getCurrent());</js:event>
             <span>▹</span>
+          </button>
+          <button js:node="next">
+            <js:event name="click">%object%.goNext();</js:event>
+            <span>↴</span>
           </button>
           <button>
             <js:event name="click">%object%.getFrame().toggleClass('sylma-visible');</js:event>
@@ -56,6 +60,10 @@
           <button>
             <js:event name="click">%object%.createTest();</js:event>
             <tpl:text>✚</tpl:text>
+          </button>
+          <button>
+            <js:event name="click">%object%.getTest().addPage();</js:event>
+            <tpl:text>⚐</tpl:text>
           </button>
           <button>
             <js:event name="click">%object%.getTest().getPage().addWatcher();</js:event>
@@ -85,7 +93,7 @@
     <div js:class="sylma.stepper.Test" js:alias="test" class="test" js:parent-name="test">
       <tpl:apply mode="rename"/>
       <button class="edit">
-        <js:event name="click">%object%.testFrom();</js:event>
+        <js:event name="click">%object%.test();</js:event>
         <span>▷</span>
       </button>
       <button class="edit">
@@ -213,7 +221,7 @@
   </tpl:template>
 
   <tpl:template match="test:watcher">
-    <li js:class="sylma.stepper.Watcher" js:alias="watcher">
+    <li js:class="sylma.stepper.Watcher" js:alias="watcher" class="watcher">
       <tpl:apply mode="actions"/>
       <tpl:apply mode="title"/>
       <tpl:apply mode="selector"/>
@@ -253,6 +261,7 @@
         <option>opacity</option>
         <option>height</option>
         <option>width</option>
+        <option>class</option>
         <option>iframe</option>
         <option>z-index</option>
         <option>margin-top</option>
@@ -265,9 +274,11 @@
         <option>left</option>
         <option>scroll</option>
       </select>
-      <span js:node="value">
-        <tpl:read/>
-      </span>
+      <input type="text" js:node="value" value="{read()}">
+        <js:event name="input">
+          %object%.updateValue(this.get('value'));
+        </js:event>
+      </input>
       <tpl:apply mode="delete"/>
       <tpl:apply mode="refresh"/>
     </div>

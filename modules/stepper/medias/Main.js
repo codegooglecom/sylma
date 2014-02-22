@@ -87,7 +87,6 @@ sylma.stepper.Main = new Class({
 
             }.bind(this));
 
-            frame.store('ready', 1);
             this.callTest();
 
           }.bind(this));
@@ -96,7 +95,6 @@ sylma.stepper.Main = new Class({
         }
         else {
 
-          frame.store('ready', 1);
           this.callTest();
         }
 
@@ -141,6 +139,11 @@ sylma.stepper.Main = new Class({
   getTests : function(debug) {
 
     return this.getObject('test', debug);
+  },
+
+  getItems : function() {
+
+    return this.getTests();
   },
 
   getTest : function(debug) {
@@ -225,6 +228,8 @@ sylma.stepper.Main = new Class({
 //console.log('pause', this.pauses);
     if (this.recording && !this.pauses) {
 
+      this.toggleRecord(false);
+      //this.toggleNext(false);
       this.stopCapture();
     }
 
@@ -237,14 +242,21 @@ sylma.stepper.Main = new Class({
 
     if (this.recording && !this.pauses) {
 
-      this.stopCapture();
+      //this.stopCapture();
       this.startCapture();
+      this.toggleRecord(true);
+      //this.toggleNext(true);
     }
   },
 
   toggleRecord: function(val) {
 
     this.getNode().toggleClass('record', val);
+  },
+
+  toggleNext : function(val) {
+
+    this.getNode('next').set('disabled', val ? 'disabled' : false);
   },
 
   startCapture: function() {
@@ -296,12 +308,13 @@ sylma.stepper.Main = new Class({
 
         load : function() {
 
-          if (frames.length) {
+          if (frames.length > 1) {
 
             test.getPage().addWatcher({
               selector : [{
                 target : frame
               }],
+              delay : 3000,
               property : [{
                 name : 'iframe',
                 value : 1
@@ -311,7 +324,7 @@ sylma.stepper.Main = new Class({
           else {
 
             test.addPage();
-            test.getPage().addSnapshot();
+            //test.getPage().addSnapshot();
           }
         }.bind(this)
       }
@@ -386,7 +399,8 @@ sylma.stepper.Main = new Class({
     this.testItems(tests, 0, function() {
 
       sylma.ui.showMessage('All tests passed');
-    });
+      this.resumeRecord();
+    }.bind(this));
   },
 
   save : function() {
