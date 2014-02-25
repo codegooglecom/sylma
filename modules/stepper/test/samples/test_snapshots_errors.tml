@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page url="/sylma/modules/stepper/test/samples/sample01b">
+    <ns0:steps>
+      <ns0:snapshot element="#content">
+        <ns0:content>{"name":"div","children":[{"name":"div","content":"","position":{"x":218,"y":188},"size":{"x":1044,"y":0}},{"name":"div","children":[{"name":"h4","content":"Hello world","position":{"x":218,"y":203},"size":{"x":1044,"y":17}},{"name":"a","content":"sample02","position":{"x":218,"y":236},"size":{"x":54,"y":17}}],"position":{"x":218,"y":203},"size":{"x":1044,"y":50}}],"position":{"x":200,"y":165},"size":{"x":1080,"y":646}}</ns0:content>
+      </ns0:snapshot>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/modules/stepper/test/samples/sample01c">
+    <ns0:steps>
+      <ns0:snapshot element="#content &gt; div:nth-child(2)">
+        <ns0:content>{"name":"div","children":[{"name":"div","content":"","position":{"x":218,"y":188},"size":{"x":1044,"y":0}},{"name":"div","children":[{"name":"h4","content":"Hello world","position":{"x":218,"y":203},"size":{"x":1044,"y":17}},{"name":"a","content":"sample02","position":{"x":218,"y":236},"size":{"x":54,"y":17}}],"position":{"x":218,"y":203},"size":{"x":1044,"y":50}}],"position":{"x":200,"y":165},"size":{"x":1080,"y":646}}</ns0:content>
+      </ns0:snapshot>
+    </ns0:steps>
+  </ns0:page>
+</ns0:test>
