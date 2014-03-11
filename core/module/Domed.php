@@ -222,9 +222,12 @@ abstract class Domed extends Filed {
 
     if (is_string($mContent)) {
 
-      $aNS = $this->getNamespace() ? array($this->getNamespace()) : array();
+      //$aNS = $this->getNamespace() ? array($this->getNamespace()) : array();
+      //$result = $this->create('options', array($this->createDocument($mContent), $aNS));
 
-      $result = $this->create('options', array($this->createDocument($mContent), $aNS));
+      $result = $this->create('options', array(
+        $this->getFile($mContent)->asDocument(array(), \Sylma::MODE_EXECUTE)
+      ));
     }
     else {
 

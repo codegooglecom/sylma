@@ -33,7 +33,7 @@ sylma.stepper.Test = new Class({
 
       this.loading = true;
 
-      this.getParent('main').loadTest(this.get('file'), function(response) {
+      this.getParent('directory').loadTest(this.get('file'), function(response) {
 
         if (!response.error) {
 
@@ -159,7 +159,7 @@ sylma.stepper.Test = new Class({
         callback && callback();
       }
 
-      this.getParent('main').goTest(this);
+      this.getParent('directory').goTest(this);
     }
     else {
 
@@ -172,11 +172,6 @@ sylma.stepper.Test = new Class({
 
       //this.getParent('main').goTest();
     }
-  },
-
-  go : function(callback) {
-
-    this.toggleSelect(true, callback);
   },
 
   record : function(callback) {
@@ -206,22 +201,18 @@ sylma.stepper.Test = new Class({
 
       var pages = this.getPages();
 
-      pages[0].go(function() {
+      pages[0].goTest(function() {
 
-        pages[0].test(function() {
+        this.testNextItem(pages, 1, callback);
 
-          this.testNextItem(pages, 1, callback);
-
-        }.bind(this));
-
-      }.bind(this), true);
+      }.bind(this));
 
     }.bind(this));
   },
 
   testFrom: function() {
 
-    this.getParent('main').test(this.getKey());
+    this.getParent('directory').test(this.getKey());
   },
 
   save : function() {
@@ -229,7 +220,7 @@ sylma.stepper.Test = new Class({
     var content = JSON.stringify(this);
 //console.log(test); return;
     this.send(this.getParent('main').get('save'), {
-      dir : this.getParent('main').get('directory'),
+      dir : this.getParent('directory').getPath(),
       file : this.get('file'),
       test : content
     });

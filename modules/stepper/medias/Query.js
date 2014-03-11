@@ -29,7 +29,7 @@ sylma.stepper.Query = new Class({
 
     this.send(this.getParent('main').get('query'), {
       file : this.getValue(),
-      dir : this.getParent('main').get('directory'),
+      dir : this.getParent('directory').getPath(),
       creation : this.getCreation()
       //timeshift : this.getTimeshift(),
     }, function(response) {

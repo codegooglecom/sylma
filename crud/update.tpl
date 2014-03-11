@@ -16,6 +16,9 @@
     <tpl:argument name="value" default="value()"/>
 
     <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
+
+      <js:include>/#sylma/crud/Field.js</js:include>
+      
       <js:event name="change">
         %object%.downlight();
       </js:event>

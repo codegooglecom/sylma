@@ -32,7 +32,7 @@ class Initializer extends Parser implements core\argumentable {
 
     if (!$sAlias) {
 
-      $result = $this->create('user', array($manager));
+      $result = $manager->create('user', array($manager));
       $result->loadPublic();
     }
     else {
@@ -44,7 +44,7 @@ class Initializer extends Parser implements core\argumentable {
 
       $aGroups = $this->aUsers[$sAlias];
 
-      $result = $this->create('user', array($manager, $sAlias, $aGroups));
+      $result = $manager->create('user', array($manager, $sAlias, $aGroups));
     }
 
     return $result;

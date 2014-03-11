@@ -11,6 +11,8 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
+  <tpl:import>/#sylma/crud/list/root.tpl</tpl:import>
+
   <tpl:template match="sql:foreign">
     <tpl:apply select="ref()"/>
   </tpl:template>

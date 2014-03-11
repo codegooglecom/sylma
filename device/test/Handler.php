@@ -5,6 +5,8 @@ use sylma\core, sylma\modules\tester;
 
 class Handler extends tester\Initializer implements core\argumentable {
 
+  const DEVICE_SETTINGS = 'device';
+
   public static $aUbuntu = array(
     'HTTP_HOST' => 'sylma',
     'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:27.0) Gecko/20100101 Firefox/27.0',
@@ -55,6 +57,11 @@ class Handler extends tester\Initializer implements core\argumentable {
 
     $this->setDirectory(__file__);
     $this->setSettings('settings.xml');
+
+    $device = $this->create('device');
+    $device->setSettings(\Sylma::get(self::DEVICE_SETTINGS));
+
+    \Sylma::setManager('device', $device);
 
     parent::__construct();
   }

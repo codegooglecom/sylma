@@ -48,7 +48,9 @@
   </tpl:template>
 
   <tpl:template match="sql:reference" mode="container" sql:ns="ns">
+
     <tpl:apply mode="reference/js"/>
+    
     <fieldset js:class="sylma.crud.fieldset.Container" js:parent-name="fieldset">
       <js:name>
         <tpl:read select="alias()"/>

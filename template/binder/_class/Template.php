@@ -279,7 +279,9 @@ class Template extends Builder {
     $this->getParser()->startSource($source);
     $this->getParser()->startObject($this);
 
-    $content = $window->toString($this->getElement());
+    // @TODO instructions are lost !
+    $content = $window->toString($this->getElement(), null, false);
+    //$content = $this->getHandler()->getView()->addToResult($this->getElement(), false);
 
     $this->getParser()->stopSource();
     $this->getParser()->stopObject();

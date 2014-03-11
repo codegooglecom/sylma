@@ -74,6 +74,7 @@ initializer :
     fusion :
       enable : true
       update : false
+      debug : false
     error :
       window : /#sylma/modules/html/window.vml
       action : /#sylma/modules/html/error.vml
@@ -86,6 +87,9 @@ initializer :
         sub :
           default :
             action : /#sylma/modules/html/container.vml
+      test :
+        action : /sylma/modules/stepper/test/window.vml
+        pattern : `^/(sylma/modules/stepper/test)`
     classes :
       action :
         name : \sylma\parser\action\handler\Basic

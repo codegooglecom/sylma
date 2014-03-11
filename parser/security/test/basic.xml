@@ -1,93 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests
-  xmlns:tst="http://2013.sylma.org/parser/security/test"
-  xmlns="http://www.sylma.org"
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
   xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://www.sylma.org/parser/action"
   xmlns:lm="http://www.sylma.org/parser/action/basic"
 >
   <tst:description>Basic</tst:description>
   <tst:test name="Read tester01">
     <tst:prepare>
-      $controler->setUser('tester01');
-      $controler->setArgument('action', $controler->getAction('samples/read'));
+      $manager->readScript('samples/read.vml', 'tester01');
     </tst:prepare>
     <tst:node>
-      <div xmlns="http://www.sylma.org"><h1>hello</h1><h2 id="test">hello</h2><h3>hello</h3><h6>hello</h6><span>world</span></div>
+      <div>
+        <h1>hello</h1>
+        <h2 id="test">hello</h2>
+        <h3>hello</h3>
+        <h6>hello</h6>
+        <span>world</span>
+      </div>
     </tst:node>
-    <tst:expected>
-      $action = $controler->getArgument('action');
-      $node = $controler->getArgument('node');
-
-      return
-        $controler->compareNodes($action->asDOM(), $node);
-    </tst:expected>
   </tst:test>
   <tst:test name="Read tester02">
     <tst:prepare>
-      $controler->setUser('tester02');
-      $controler->setArgument('action', $controler->getAction('samples/read'));
+      $manager->readScript('samples/read.vml', 'tester02');
     </tst:prepare>
     <tst:node>
-      <div xmlns="http://www.sylma.org"><h1>hello</h1><h3>hello</h3><h6>hello</h6><span>world</span></div>
+      <div>
+        <h1>hello</h1>
+        <h3>hello</h3>
+        <h6>hello</h6>
+        <span>world</span>
+      </div>
     </tst:node>
-    <tst:expected>
-      $action = $controler->getArgument('action');
-      $node = $controler->getArgument('node');
-
-      return
-        $controler->compareNodes($action->asDOM(), $node);
-    </tst:expected>
   </tst:test>
   <tst:test name="Read tester03">
     <tst:prepare>
-      $controler->setUser('tester03');
-      $controler->setArgument('action', $controler->getAction('samples/read'));
+      $manager->readScript('samples/read.vml', 'tester03');
     </tst:prepare>
     <tst:node>
-      <div xmlns="http://www.sylma.org"><h1>hello</h1><h5>hello</h5><h6>hello</h6><span>world</span></div>
+      <div>
+        <h1>hello</h1>
+        <h5>hello</h5>
+        <h6>hello</h6>
+        <span>world</span>
+      </div>
     </tst:node>
-    <tst:expected>
-      $action = $controler->getArgument('action');
-      $node = $controler->getArgument('node');
-
-      return
-        $controler->compareNodes($action->asDOM(), $node);
-    </tst:expected>
-
   </tst:test>
   <tst:test name="Embed tester01">
     <tst:prepare>
-      $controler->setUser('tester01');
-      $controler->setArgument('action', $controler->getAction('samples/embed'));
+      $manager->readScript('samples/embed.vml', 'tester01');
     </tst:prepare>
     <tst:node>
-      <div xmlns="http://www.sylma.org"><h1><span>Hello <strong>world</strong></span></h1></div>
+      <div>
+        <h1>
+          <span>Hello <strong>world</strong></span>
+        </h1>
+      </div>
     </tst:node>
-    <tst:expected>
-      $action = $controler->getArgument('action');
-      $node = $controler->getArgument('node');
-
-      return
-        $controler->compareNodes($action->asDOM(), $node);
-    </tst:expected>
-
   </tst:test>
   <tst:test name="Embed tester02">
     <tst:prepare>
-      $controler->setUser('tester02');
-      $controler->setArgument('action', $controler->getAction('samples/embed'));
+      $manager->readScript('samples/embed.vml', 'tester02');
     </tst:prepare>
     <tst:node>
-      <div xmlns="http://www.sylma.org"></div>
+      <div/>
     </tst:node>
-    <tst:expected>
-      $action = $controler->getArgument('action');
-      $node = $controler->getArgument('node');
-
-      return
-        $controler->compareNodes($action->asDOM(), $node);
-    </tst:expected>
-
   </tst:test>
 </tst:tests>

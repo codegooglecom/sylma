@@ -29,6 +29,8 @@ abstract class Window extends core\module\Domed {
    */
   protected $bRender = false;
 
+  protected $aInstructions = array();
+
   protected $iMode = 1;
 
   public function getSelf() {
@@ -374,12 +376,12 @@ return; // todo, decide to use or not
 
         if ($bDebug || !$target) {
 
-          $this->launchException('Instruction not allowed here', get_defined_vars());
-        }
+            $this->launchException('Instruction not allowed here', get_defined_vars());
+          }
 
-        $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);
-        $aResult[] = $mVal;
-      }
+          $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);
+          $aResult[] = $mVal;
+        }
       else {
 
         //$val = $this->createString($this->prepareToString($mVal));

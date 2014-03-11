@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+>
+
+  <xl:resource/>
+
+  <tpl:settings>
+    <cls:classes>
+      <cls:class alias="tree">
+        <cls:classes>
+          <cls:class alias="cached" name="\sylma\modules\html\Document"/>
+        </cls:classes>
+      </cls:class>
+    </cls:classes>
+  </tpl:settings>
+
+  <tpl:template>
+
+    <le:context name="css">
+      <le:file>/#sylma/modules/html/medias/base.css</le:file>
+      <le:file>/#sylma/modules/html/medias/infos.css</le:file>
+    </le:context>
+
+    <tpl:apply select="return('prepare')"/>
+    <html anyclass="x">
+      <head>
+        <title>Sylma - Stepper</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      </head>
+      <body>
+        <style type="text/css">
+          body
+          {
+            font-size: 12px;
+            font-family: Arial;
+            background-color: white;
+          }
+
+          #top
+          {
+            height: 50px;
+          }
+
+          h1,
+          #menu
+          {
+            float: left;
+            margin: 1em;
+          }
+
+          #menu li
+          {
+            display: inline-block;
+            list-style-type: none;
+          }
+
+          #content
+          {
+            border: 1px dotted gray;
+            height: 400px;
+            margin: 1em;
+          }
+        </style>
+        <div id="messages"/>
+        <div id="top">
+          <h1>Stepper test window</h1>
+          <ul id="menu">
+            <li>
+              <a href="/">Home</a>
+            </li>
+          </ul>
+        </div>
+        <div id="content">
+          <tpl:read select="getContent()"/>
+        </div>
+      </body>
+    </html>
+  </tpl:template>
+
+</view:view>

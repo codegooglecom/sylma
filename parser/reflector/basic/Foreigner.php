@@ -146,11 +146,6 @@ abstract class Foreigner extends Domed {
       $newElement->add($aChildren);
     }
 
-    foreach ($aParsers as $parser) {
-
-      $parser->onClose($el, $newElement);
-    }
-
     //$this->stopElement();
 
     return $mResult;

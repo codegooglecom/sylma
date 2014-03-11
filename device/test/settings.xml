@@ -8,5 +8,6 @@
     <cls:base>\sylma</cls:base>
     <cls:class alias="init" name="core\test\samples\Init01"/>
     <cls:class alias="user" name="core\user\Basic"/>
+    <cls:class alias="device" name="device\Dummy"/>
   </cls:classes>
 </arg:argument>

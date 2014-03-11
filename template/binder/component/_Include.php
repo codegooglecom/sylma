@@ -9,6 +9,8 @@ class _Include extends Basic implements common\arrayable {
 
     $this->setNode($el);
     $this->setFile($this->getSourceFile($this->readx()));
+
+    return $this->build();
   }
 
   protected function getContext() {
@@ -17,7 +19,7 @@ class _Include extends Basic implements common\arrayable {
     return $parser::CONTEXT_JS;
   }
 
-  public function asArray() {
+  protected function build() {
 
     $window = $this->getPHPWindow();
     $contexts = $window->getVariable('contexts');
@@ -25,6 +27,19 @@ class _Include extends Basic implements common\arrayable {
     $callFile = $window->addControler(self::FILE_MANAGER)->call('getFile', array((string) $this->getFile()));
 
     return array($contexts->call('get', array($this->getContext()))->call('add', array($callFile))->getInsert());
+  }
+
+  public function asArray() {
+
+    $aResult = array();
+
+    if (!$this->bBuilded) {
+
+      $this->bBuilded = true;
+      $aResult = $this->build();
+    }
+
+    return $aResult;
   }
 }
 

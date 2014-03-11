@@ -18,17 +18,26 @@
       <js:option name="directory" cast="x">
         <tpl:apply select="getDirectory()"/>
       </js:option>
+      <js:option name="collection">
+        <tpl:apply select="getCollection()"/>
+      </js:option>
+      <js:option name="path" cast="x">
+        <tpl:apply mode="path"/>
+      </js:option>
       <js:option name="query">
         <le:path>query</le:path>
       </js:option>
       <js:option name="save">
         <le:path>save</le:path>
       </js:option>
-      <js:option name="load">
-        <le:path>load</le:path>
+      <js:option name="loadTest">
+        <le:path>loadTest</le:path>
       </js:option>
-      <js:option name="tests">
-        <tpl:apply select="getTests()"/>
+      <js:option name="loadDirectory">
+        <le:path>loadDirectory</le:path>
+      </js:option>
+      <js:option name="items">
+        <tpl:apply select="getItems()"/>
       </js:option>
       <div js:node="board" class="board">
         <div class="actions">
@@ -37,15 +46,15 @@
             <span>●</span>
           </button>
           <button>
-            <js:event name="click">%object%.test(0);</js:event>
+            <js:event name="click">%object%.getRoot().test();</js:event>
             <tpl:text>▶</tpl:text>
           </button>
           <button>
-            <js:event name="click">%object%.test(%object%.getCurrent());</js:event>
+            <js:event name="click">%object%.getRoot().test(null, %object%.getRoot().getCurrent());</js:event>
             <span>▹</span>
           </button>
           <button js:node="next">
-            <js:event name="click">%object%.goNext();</js:event>
+            <js:event name="click">%object%.getRoot().goNext();</js:event>
             <span>↴</span>
           </button>
           <button>
@@ -58,7 +67,7 @@
           </button>
           <br/>
           <button>
-            <js:event name="click">%object%.createTest();</js:event>
+            <js:event name="click">%object%.getRoot().createTest();</js:event>
             <tpl:text>✚</tpl:text>
           </button>
           <button>
@@ -82,14 +91,48 @@
             <tpl:text>♦</tpl:text>
           </button>
         </div>
-        <tpl:apply mode="test"/>
+        <tpl:apply select="*" mode="hollow"/>
+        <tpl:apply mode="content"/>
       </div>
       <iframe js:node="frame" class="sylma-hidder"/>
     </div>
 
   </tpl:template>
 
-  <tpl:template mode="test">
+  <tpl:template mode="path">
+    <le:path>/</le:path>
+  </tpl:template>
+
+  <tpl:template match="test:directory" mode="hollow">
+    <tpl:apply select="*"/>
+  </tpl:template>
+
+  <tpl:template match="test:collection" mode="content">
+    <div js:class="sylma.stepper.Collection" js:alias="collection" class="collection" js:parent-name="collection">
+      <tpl:apply select="*"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="test:directory">
+    <div js:class="sylma.stepper.Directory" js:alias="directory" class="directory" js:parent-name="directory">
+      <button class="edit">
+        <js:event name="click">%object%.test();</js:event>
+        <span>▷</span>
+      </button>
+      <button class="edit">
+        <js:event name="click">%object%.toggleSelect();</js:event>
+        <span>▶</span>
+      </button>
+      <h4>
+        <tpl:read select="path"/>
+      </h4>
+      <div js:node="items" class="sylma-hidder zoom items">
+        <tpl:apply select="*"/>
+      </div>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="test:test">
     <div js:class="sylma.stepper.Test" js:alias="test" class="test" js:parent-name="test">
       <tpl:apply mode="rename"/>
       <button class="edit">
@@ -103,7 +146,7 @@
       <h4 js:node="name">
         <tpl:read select="file"/>
       </h4>
-      <div js:node="pages" class="sylma-hidder zoom pages">
+      <div js:node="pages" class="sylma-hidder zoom items pages">
         <tpl:apply select="*"/>
       </div>
     </div>

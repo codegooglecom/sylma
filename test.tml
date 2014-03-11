@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<collection
+  xmlns="http://2013.sylma.org/modules/stepper/collection"
+>
+  <directory path="modules/stepper/test/all"/>
+  <!--
+  <directory path="storage/sql/crud/test/all"/>
+  -->
+</collection>

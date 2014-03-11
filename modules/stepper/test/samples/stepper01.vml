@@ -29,12 +29,30 @@
 
   </crud:global>
 
+  <view:view>
+
+    <tpl:template mode="path">
+      <le:path>../empty</le:path>
+    </tpl:template>
+
+  </view:view>
+
   <view:view name="clear"
     build:return="result"
   >
 
     <tpl:template>
       <tpl:apply select="clearDirectory()"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="collection"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="prepareCollection()"/>
     </tpl:template>
 
   </view:view>

@@ -5,9 +5,6 @@ sylma.debug.log = true;
 sylma.stepper.Main = new Class({
 
   Extends : sylma.ui.Container,
-  Implements : sylma.stepper.Listed,
-
-  path : '/',
 
   screen : {
     x : 1280,
@@ -19,21 +16,45 @@ sylma.stepper.Main = new Class({
   events : {},
   variables : {},
 
+  /**
+   * Collection or Directory
+   */
+  root : null,
+
   onReady : function() {
 
-    var tests = this.get('tests');
+    if (this.options.collection) {
 
-    if (tests) {
+      this.root = this.add('collection', {
+        items : this.get('items')
+      });
+    }
+    else if (this.options.directory) {
 
-      Object.each(tests.test, function(item) {
+      this.sylma.template.classes.directory = {
+        name : 'sylma.stepper.DirectoryStandalone'
+      };
 
-        this.addTest(item);
+      this.root = this.buildObject('directory', {
+        path : this.options.directory,
+        tests : this.get('items')
+      });
 
-      }.bind(this));
+      this.root.setupTemplate(this.sylma.template.classes.test, this.getNode());
+      this.root.loadTests();
     }
 
-    this.setCurrent(-1);
     this.prepareActionFrame();
+  },
+
+  getRoot : function() {
+
+    if (!this.root) {
+
+      throw new Error('No root defined');
+    }
+
+    return this.root;
   },
 
   getFrame : function() {
@@ -54,7 +75,7 @@ sylma.stepper.Main = new Class({
     this.prepareFrame(frame);
 
     frame.set({
-      src : this.path,
+      src : this.options.path,
       styles : {
         width : this.screen.x,
         height : this.screen.y
@@ -118,50 +139,9 @@ sylma.stepper.Main = new Class({
     }
   },
 
-  createTest : function() {
-
-    var result = this.addTest({}, true);
-
-    result.toggleSelect(true);
-    this.record(true);
-  },
-
   addTest : function(props, nofile) {
 
-    props.nofile = nofile;
-
-    var result = this.add('test', props);
-    this.setCurrent(result.getKey());
-
-    return result;
-  },
-
-  getTests : function(debug) {
-
-    return this.getObject('test', debug);
-  },
-
-  getItems : function() {
-
-    return this.getTests();
-  },
-
-  getTest : function(debug) {
-
-    var tests = this.getTests(debug);
-
-    return tests && tests[this.getCurrent()];
-  },
-
-  goTest : function(test) {
-
-    var key = test.getKey();
-    this.setCurrent(key);
-
-    this.getTests().each(function(item, sub) {
-
-      if (sub !== key) item.toggleSelect(false);
-    });
+    return this.getRoot().addTest(props, nofile);;
   },
 
   isInput : function(el) {
@@ -207,13 +187,18 @@ sylma.stepper.Main = new Class({
 
     if (force || !this.recording) {
 
-      this.recording = true;
-      this.getTest().record(function() {
+      var test = this.getTest();
 
-        this.stopCapture();
-        this.startCapture();
+      if (test) {
 
-      }.bind(this));
+        this.recording = true;
+        test.record(function() {
+
+          this.stopCapture();
+          this.startCapture();
+
+        }.bind(this));
+      }
     }
     else {
 
@@ -263,7 +248,17 @@ sylma.stepper.Main = new Class({
 
     this.stopCapture();
 
-    this.startCaptureFrame(this.getFrame(), this.getTest())
+    var test = this.getTest();
+
+    if (test) {
+
+      this.startCaptureFrame(this.getFrame(), test);
+    }
+  },
+
+  getTest: function() {
+
+    return this.getRoot().getTest();
   },
 
   startCaptureFrame : function(frame, test, token, frames) {
@@ -288,7 +283,7 @@ sylma.stepper.Main = new Class({
           }
           else if (!this.isInput(e.target)) {
 
-            this.getTest().getPage().addEvent(e, frames);
+            test.getPage().addEvent(e, frames);
             this.input = null;
           }
 
@@ -371,36 +366,6 @@ sylma.stepper.Main = new Class({
 
       }.bind(this));
     }
-  },
-
-  loadTest : function(file, callback) {
-
-    this.send(this.get('load'), {
-      file : file,
-      dir : this.get('directory')
-    }, callback);
-  },
-
-  test : function(key) {
-
-    var tests;
-    this.pauseRecord();
-
-    if (key === undefined) {
-      // only one
-      var current = this.getCurrent();
-      tests = this.getTests().slice(current < 0 ? 0 : current, current + 1);
-    }
-    else {
-      // all
-      tests = this.getTests().slice(key);
-    }
-
-    this.testItems(tests, 0, function() {
-
-      sylma.ui.showMessage('All tests passed');
-      this.resumeRecord();
-    }.bind(this));
   },
 
   save : function() {

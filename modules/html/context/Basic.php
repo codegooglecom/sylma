@@ -22,7 +22,7 @@ class Basic extends core\argument\Readable implements window\context {
     $this->fusion = $args;
   }
 
-  protected function getFusion($bDebug = true) {
+  protected function getFusion() {
 
     return $this->fusion;
   }

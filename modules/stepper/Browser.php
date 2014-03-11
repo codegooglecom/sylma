@@ -25,9 +25,28 @@ class Browser extends core\module\Domed {
     }
   }
 
-  public function getDirectory($sPath = '', $bDebug = true) {
+  public function getDirectory($sPath = '', $bDebug = false) {
 
     return parent::getDirectory($sPath, $bDebug);
+  }
+
+  public function getCollection($bDebug = false) {
+
+    return $this->read('file', $bDebug);
+  }
+
+  public function getItems() {
+
+    if ($this->getCollection(false)) {
+
+      $aResult = $this->getDirectories();
+    }
+    else {
+
+      $aResult = $this->getTests();
+    }
+
+    return $aResult;
   }
 
   public function getTests() {
@@ -40,7 +59,7 @@ class Browser extends core\module\Domed {
 
     $iBase = strlen((string) $this->getDirectory()) + 1;
 
-    foreach ($this->getDirectory()->browse($args, false) as $file) {
+    foreach ($this->getDirectory('', true)->browse($args, false) as $file) {
 
       $aResult['test'][] = array(
         'file' => substr($file, $iBase),
@@ -50,14 +69,34 @@ class Browser extends core\module\Domed {
     return $aResult;
   }
 
-  public function load() {
+  public function getDirectories() {
 
-    $file = $this->getDirectory()->getFile($this->read('file'));
+    $aResult = array();
+    $file = $this->getManager(self::FILE_MANAGER)->getFile($this->getCollection());
+    $collection = $this->createOptions($file->asDocument());
 
-    $test = $this->createOptions($file->asDocument(array(), \Sylma::MODE_EXECUTE), false);
-    $aResult = $this->buildTest($test);
+    $this->setDirectory($file->getParent());
+
+    foreach ($collection as $dir) {
+
+      $aResult['directory'][] = array(
+        'path' => (string) $this->getDirectory($dir->read('@path')),
+      );
+    }
 
     return $aResult;
+  }
+
+  public function loadTest() {
+
+    $aResult = $this->buildTest($this->createOptions($this->read('path')));
+
+    return $aResult;
+  }
+
+  public function loadDirectory() {
+
+    return $this->getTests();
   }
 
   protected function buildTest(core\argument $test) {

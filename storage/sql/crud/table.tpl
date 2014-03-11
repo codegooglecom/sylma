@@ -14,6 +14,9 @@
     <tpl:apply mode="css"/>
 
     <form js:class="sylma.crud.Form" class="sylma-form" js:parent-name="form" method="post">
+
+      <js:include>/#sylma/crud/Form.js</js:include>
+
       <tpl:apply mode="init"/>
       <tpl:apply mode="form"/>
       <div class="form-actions">

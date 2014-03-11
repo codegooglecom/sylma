@@ -15,7 +15,7 @@
   <sql:resource/>
   <view:schema>schema.xql</view:schema>
 
-  <tpl:import>/#sylma/storage/sql/form.tpl</tpl:import>
+  <tpl:import>/#sylma/storage/sql/crud/all.tpl</tpl:import>
 
   <tpl:constant name="form-cols">* ^ id,archive,insert</tpl:constant>
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  xmlns:ls="http://2013.sylma.org/parser/security"
+>
+
+  <xl:resource/>
+
+  <tpl:template>
+    <div>
+      <h1 ls:owner="tester01" ls:group="groupe01" ls:mode="100">
+        <span>Hello <strong ls:owner="tester02" ls:group="groupe01" ls:mode="110">world</strong></span>
+      </h1>
+    </div>
+  </tpl:template>
+
+</view:view>
+

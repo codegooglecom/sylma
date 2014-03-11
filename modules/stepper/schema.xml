@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<test
+<collection
   xmlns="http://2013.sylma.org/modules/stepper"
-
-  file=""
 >
-  <page url="/sylma/modules/stepper/test/samples/content01">
-    <element>#body</element>
-    <exclude>
-      <path></path>
-    </exclude>
-    <steps>
-      <query creation="" timeshift="">
+  <directory path="">
+    <test file="">
+      <page url="/sylma/modules/stepper/test/samples/content01">
+        <element>#body</element>
+        <exclude>
+          <path></path>
+        </exclude>
+        <steps>
+          <query creation="" timeshift="">
 
-      </query>
-      <event name="click" element="">
+          </query>
+          <event name="click" element="">
 
-      </event>
-      <input element="">
+          </event>
+          <input element="">
 
-      </input>
-      <call path="">
-        <variable name=""/>
-      </call>
-      <watcher element="" delay="">
-        <property name=""/>
-        <variable name=""/>
-      </watcher>
-      <snapshot element="">
+          </input>
+          <call path="">
+            <variable name=""/>
+          </call>
+          <watcher element="" delay="">
+            <property name=""/>
+            <variable name=""/>
+          </watcher>
+          <snapshot element="">
 
-      </snapshot>
-    </steps>
-  </page>
-</test>
+          </snapshot>
+        </steps>
+      </page>
+    </test>
+  </directory>
+</collection>

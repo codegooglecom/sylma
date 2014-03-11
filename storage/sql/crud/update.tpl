@@ -11,6 +11,8 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
+  <tpl:import>/#sylma/crud/update.tpl</tpl:import>
+
   <view:template match="sql:string-long" mode="input" sql:ns="ns">
     <tpl:apply mode="input/update"/>
   </view:template>
@@ -30,6 +32,9 @@
 
   <tpl:template match="sql:foreign" mode="container/multiple/update">
     <fieldset class="form-foreign" js:class="sylma.crud.Field">
+
+      <js:include>/#sylma/crud/Field.js</js:include>
+      
       <tpl:apply mode="reference/js"/>
       <js:event name="change">
         %object%.downlight();

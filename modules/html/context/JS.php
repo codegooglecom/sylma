@@ -36,6 +36,14 @@ class JS extends Basic implements dom\domable {
     ));
   }
 
+  protected function readFile(fs\file $file) {
+
+    $bDebug = $this->getFusion() ? $this->getFusion()->read('debug') : false;
+
+    return "// {$file->asToken()}\n\n" .
+    ($bDebug ? "console.log('load : $file');" . parent::readFile($file) : parent::readFile($file));
+  }
+
   public function asDOM() {
 
     $aStrings = $this->loadContent();

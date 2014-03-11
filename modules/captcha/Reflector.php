@@ -24,11 +24,18 @@ class Reflector extends xml\tree\Argument {
   protected function loadElement() {
 
     $tree = $this->getParser()->getCurrentTemplate()->getTree();
-    $file = $this->getFile('schema.xql');
-    $sName = $tree->getParser()->addSchema($file->getDocument(), $file);
+    $schema = $tree->getParser();
 
-    $element = $tree->getParser()->getElement($sName, $this->getNamespace());
+    $file = $this->getFile('schema.xql');
+
+    $doc = $this->getRoot()->importDocument($file->getDocument(), $file);
+
+    $element = $schema->parseComponent($doc->getRoot()->getFirst());
+    $element->loadNamespace($tree->getNamespace());
     $element->setParent($tree);
+
+    $particle = current($tree->getType()->getParticles());
+    $particle->addElement($element);
 
     $this->setElement($element);
   }

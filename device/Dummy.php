@@ -20,6 +20,11 @@ class Dummy extends \Mobile_Detect
 
   protected function getSettings() {
 
+    if (!$this->settings) {
+
+      \Sylma::throwException('No settings defined for device');
+    }
+
     return $this->settings;
   }
 

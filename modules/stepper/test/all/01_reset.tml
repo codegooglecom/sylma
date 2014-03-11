@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
-  <ns0:page url="/admin">
+  <ns0:page>
     <ns0:steps>
       <ns0:call path="/sylma/modules/stepper/test/samples/stepper01/clear?dir=/test/tmp"/>
     </ns0:steps>

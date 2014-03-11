@@ -3,9 +3,9 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/sample01">
     <ns0:steps>
       <ns0:snapshot element="#content">
-        <ns0:content>{"name":"div","children":[{"name":"div","content":"","position":{"x":218,"y":188},"size":{"x":1044,"y":0}},{"name":"div","children":[{"name":"h4","content":"Hello world","position":{"x":218,"y":203},"size":{"x":1044,"y":17}},{"name":"a","content":"sample02","position":{"x":218,"y":236},"size":{"x":54,"y":17}}],"position":{"x":218,"y":203},"size":{"x":1044,"y":50}}],"position":{"x":200,"y":165},"size":{"x":1080,"y":646}}</ns0:content>
+        <ns0:content>{"name":"div","children":[{"name":"div","children":[{"name":"h4","content":"Hello world","position":{"x":13,"y":78},"size":{"x":1254,"y":14}},{"name":"a","content":"sample02","position":{"x":13,"y":108},"size":{"x":54,"y":14}}],"position":{"x":13,"y":78},"size":{"x":1254,"y":44}}],"position":{"x":12,"y":62},"size":{"x":1256,"y":402}}</ns0:content>
       </ns0:snapshot>
-      <ns0:event name="click" element="#content &gt; div:nth-child(2) &gt; a"/>
+      <ns0:event name="click" element="#content &gt; div &gt; a"/>
     </ns0:steps>
   </ns0:page>
   <ns0:page url="/sylma/modules/stepper/test/samples/sample03">

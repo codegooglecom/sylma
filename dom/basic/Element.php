@@ -291,8 +291,15 @@ class Element extends \DOMElement implements dom\element {
 
   public function createAttribute($sName, $sValue, $sNamespace = null) {
 
-    if ($sNamespace) $this->setAttributeNS($sNamespace, $sName, $sValue);
-    else $this->setAttribute($sName, $sValue);
+    try {
+
+      if ($sNamespace) $this->setAttributeNS($sNamespace, $sName, $sValue);
+      else $this->setAttribute($sName, $sValue);
+    }
+    catch (\DOMException $e) {
+
+      $this->getHandler()->throwException('Bad attribute');
+    }
   }
 
   public function addToken($sAttribute, $sValue, $sNamespace = null, $sSeparator = ' ') {

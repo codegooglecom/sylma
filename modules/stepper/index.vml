@@ -52,6 +52,9 @@
         <le:file>medias/Listed.js</le:file>
         <le:file>medias/Main.js</le:file>
         <le:file>medias/Framed.js</le:file>
+        <le:file>medias/Collection.js</le:file>
+        <le:file>medias/Directory.js</le:file>
+        <le:file>medias/DirectoryStandalone.js</le:file>
         <le:file>medias/Test.js</le:file>
         <le:file>medias/Page.js</le:file>
         <le:file>medias/Variable.js</le:file>
@@ -73,17 +76,38 @@
 
   </view:view>
 
-  <view:view name="load"
+  <view:view name="loadTest"
     build:class="\sylma\core\argument\Readable"
     build:output="array"
   >
 
     <tpl:template>
-      <tpl:apply select="load()"/>
+      <tpl:apply select="loadTest()"/>
     </tpl:template>
 
   </view:view>
 
+  <view:view name="loadDirectory"
+    build:class="\sylma\core\argument\Readable"
+    build:output="array"
+  >
+
+    <tpl:template>
+      <tpl:apply select="loadDirectory()"/>
+    </tpl:template>
+
+  </view:view>
+<!--
+  <view:view name="directory"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:read select="getDirectory()"/>
+    </tpl:template>
+
+  </view:view>
+-->
   <view:view name="save"
     build:return="result"
   >

@@ -1,4 +1,4 @@
-sylma.crud = {};
+sylma.crud = sylma.crud || {};
 sylma.crud.list = {};
 
 sylma.crud.list.Container = new Class({

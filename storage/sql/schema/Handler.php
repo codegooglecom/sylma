@@ -121,8 +121,10 @@ class Handler extends xsd\Elemented {
 
     if (!$el->readAttribute('ns', $sNamespace, false)) {
 
-      $sPrefix = $context->lookupPrefix($sNamespace);
-      $el->createAttribute("$sPrefix:ns", 'ns', $sNamespace);
+      if ($sPrefix = $context->lookupPrefix($sNamespace)) {
+
+        $el->createAttribute("$sPrefix:ns", 'ns', $sNamespace);
+      }
     }
   }
 }

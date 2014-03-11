@@ -404,6 +404,11 @@ class Directory extends Resource implements fs\directory {
     return $result;
   }
 
+  public function getDirectories() {
+
+    return $this->aDirectories;
+  }
+
   /**
    *
    * @param type $sName

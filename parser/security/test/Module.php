@@ -1,11 +1,9 @@
 <?php
 
 namespace sylma\parser\security\test;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
+use sylma\modules\tester, sylma\core;
 
-class Module extends tester\Prepare implements core\argumentable {
-
-  const NS = 'http://2013.sylma.org/parser/security/test';
+class Module extends tester\Initializer {
 
   protected $sTitle = 'Security';
   protected $user;
@@ -25,69 +23,25 @@ class Module extends tester\Prepare implements core\argumentable {
     ),
   );
 
-  public function __construct(parser\action\Manager $controler = null) {
-
-    $this->getManager('dom');
+  public function __construct() {
 
     $this->setDirectory(__file__);
-    $this->setNamespace(self::NS, 'self');
-    $this->setNamespace(action\handler::NS, 'le', false);
 
-    if (!$controler) $controler = $this;
-    //if (!$controler) $controler = \Sylma::getControler('action');
-
-    $this->setControler($controler);
+    parent::__construct();
   }
 
-  public function getArgument($sPath, $bDebug = true, $mDefault = null) {
+  public function readScript($sPath, $sUser) {
 
-    return parent::getArgument($sPath, $bDebug, $mDefault);
-  }
+    $this->buildScript($sPath);
 
-  public function setArgument($sPath, $mValue) {
+    $current = \Sylma::getManager('user');
+    \Sylma::setManager('user', $this->createUser($sUser));
 
-    return parent::setArgument($sPath, $mValue);
-  }
+    $result = $this->getScript($sPath);
 
-  protected function test(dom\element $test, $sContent, $controler, dom\document $doc, fs\file $file) {
+    \Sylma::setManager('user', $current);
 
-    if ($node = $test->getx('self:node', array(), false)) {
-
-      $this->setArgument('node', $node->getFirst());
-    }
-
-    return parent::test($test, $sContent, $controler, $doc, $file);
-  }
-
-  public function onPrepared() {
-
-    if ($action = $this->getArgument('action')) {
-
-      $action->setControler($this->getUser(), 'user');
-    }
-  }
-
-  public function getUser() {
-
-    return $this->user;
-  }
-
-  public function setUser($sName) {
-
-    if (!array_key_exists($sName, $this->aUsers)) {
-
-      $this->throwException(sprintf('Unknown test user : %s', $sName));
-    }
-
-    $user = $this->getControler('user')->getControler();
-
-    $aGroups = $this->aUsers[$sName];
-    $this->user = $user->create('user', array($user, $sName, $aGroups, true));
-  }
-
-  public function getAction($sPath, array $aArguments = array()) {
-
-    return parent::readAction($sPath, $aArguments);
+    $this->set('result', $result);
   }
 }
 
