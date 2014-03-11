@@ -78,7 +78,7 @@ class Browser extends core\module\Domed {
     $this->setDirectory($file->getParent());
 
     foreach ($collection as $dir) {
-
+      
       $aResult['directory'][] = array(
         'path' => (string) $this->getDirectory($dir->read('@path')),
       );

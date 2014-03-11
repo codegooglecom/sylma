@@ -376,12 +376,17 @@ return; // todo, decide to use or not
 
         if ($bDebug || !$target) {
 
+          if ($bDebug) {
+
             $this->launchException('Instruction not allowed here', get_defined_vars());
           }
+        }
+        else {
 
           $aResult[] = $this->assignArrayResult($aTexts, $target, $bFirst);
           $aResult[] = $mVal;
         }
+      }
       else {
 
         //$val = $this->createString($this->prepareToString($mVal));
