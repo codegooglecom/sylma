@@ -47,6 +47,7 @@
           #top
           {
             height: 50px;
+            overflow: hidden;
           }
 
           h1,

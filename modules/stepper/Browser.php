@@ -78,9 +78,9 @@ class Browser extends core\module\Domed {
     $this->setDirectory($file->getParent());
 
     foreach ($collection as $dir) {
-      
+
       $aResult['directory'][] = array(
-        'path' => (string) $this->getDirectory($dir->read('@path')),
+        'path' => (string) $this->getDirectory($dir->read('@path'), true),
       );
     }
 
@@ -154,11 +154,20 @@ class Browser extends core\module\Domed {
 
             $aStep['element'] = $step->read('@element');
             $aStep['content'] = $step->read('content', false);
+
+            foreach ($step->query('exclude', false) as $exclude) {
+
+              $aStep['excludes'][] = array(
+                'element' => $exclude->read('@element'),
+              );
+            }
             break;
 
           case 'call' :
 
             $aStep['path'] = $step->read('@path');
+            $aStep['get'] = $step->read('@method', false) === 'get';
+
             $this->loadVariable($step, $aStep);
             break;
 

@@ -1,6 +1,7 @@
 sylma.stepper.Framed = new Class({
 
   Extends : sylma.ui.Template,
+  Implements : sylma.stepper.ErrorHandler,
 
   getFrame : function() {
 
@@ -34,21 +35,8 @@ sylma.stepper.Framed = new Class({
     this.getNode().toggleClass('activated', val);
   },
 
-  hasError : function(value) {
-
-    var node = this.getNode();
-
-    if (value !== undefined) {
-
-      node.toggleClass('error', value);
-    }
-
-    return node.hasClass('error');
-  },
-
   parseVariables : function(result, callback) {
 
-    this.hasError(false);
     var exists = false;
 
     if (result.indexOf('$') !== -1) {

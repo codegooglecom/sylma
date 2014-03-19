@@ -136,16 +136,23 @@ class Builder extends core\module\Domed {
   protected function lookupRoute(core\argument $args, $sCurrent) {
 
     $result = null;
+    $iLast = 0;
+    $iKey = 0;
 
-    foreach ($args as $alt) {
+    foreach ($args as $test=>$alt) {
 
       if (is_object($alt)) {
 
-        if ($this->testRoute($alt, $sCurrent)) {
+        $iWeight = $this->testRoute($alt, $sCurrent, $iKey + 1);
+
+        if ($iWeight > $iLast) {
 
           $result = $alt;
+          $iLast = $iWeight;
         }
       }
+
+      $iKey++;
     }
 /*
     if (!$result) {
@@ -157,11 +164,19 @@ class Builder extends core\module\Domed {
     return $result;
   }
 
-  protected function testRoute(core\argument $alt, $sCurrent) {
+  protected function testRoute(core\argument $alt, $sCurrent, $iKey) {
 
     $sPattern = $alt->read('pattern', false);
 
-    return !$sPattern || preg_match($sPattern, $sCurrent);
+    $iResult = 0;
+
+    if (!$sPattern || preg_match($sPattern, $sCurrent)) {
+
+      $iWeight = $alt->read('weight', false);
+      $iResult = $iWeight ? $iWeight : $iKey;
+    }
+
+    return $iResult;
   }
 
   public function loadObject(core\request $path, $window) {

@@ -552,4 +552,52 @@
     </tst:node>
   </tst:test>
 
+  <tst:test name="Weight biggest">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window03.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config06.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <app xmlns="">
+        <hello/>
+      </app>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Position biggest than weight">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window03.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample03.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config06.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample03');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <app xmlns="">
+        <hello/>
+      </app>
+    </tst:node>
+  </tst:test>
+
 </tst:tests>

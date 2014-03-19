@@ -1,0 +1,1 @@
+TRUNCATE TABLE `sylma_stepper_sample01`

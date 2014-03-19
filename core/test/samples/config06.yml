@@ -10,9 +10,16 @@ initializer :
       default :
         action : /#sylma/core/test/samples/window02.vml
         pattern : `^/other`
-      bad :
-        action : /#sylma/core/test/samples/unexisting
-        pattern : `^/sylma`
       admin :
         action : /#sylma/core/test/samples/window03.vml
         pattern : `^/sylma`
+        weight : 5
+      bad :
+        action : /#sylma/core/test/samples/unexisting
+        pattern : `^/sylma`
+      admin2 :
+        action : /#sylma/core/test/samples/window03.vml
+        pattern : `sample02`
+        sub :
+          default :
+            action : /#sylma/core/test/samples/container01.vml

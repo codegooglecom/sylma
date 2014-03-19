@@ -2,6 +2,11 @@ sylma.stepper.Step = new Class({
 
   Extends : sylma.stepper.Framed,
 
+  getList : function() {
+
+    return this.getParent('page');
+  },
+
   go: function(callback) {
 
     this.getParent('page').goStep(this, function() {

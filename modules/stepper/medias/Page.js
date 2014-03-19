@@ -158,7 +158,7 @@ sylma.stepper.Page = new Class({
 
     if (url && url !== location) {
 
-      this.hasError(true);
+      this.addError({type : 'page', message : 'bad path'});
       this.log('Bad path : "' + location + '"');
     }
     else {
@@ -241,7 +241,7 @@ sylma.stepper.Page = new Class({
 
     var diff = current !== url;
 
-    if (!this.hasError() && (reload || diff)) {
+    if (!this.errors.length && (reload || diff)) {
 
       this.resetSteps(this.mode.all);
       this.setCurrent(-1);
@@ -386,10 +386,14 @@ sylma.stepper.Page = new Class({
     var item = items[key];
 
     item.hasError(false);
-    item.isPlayed(true);
     item.isReady(false);
 
-    this.testItems(items, key, callback, record);
+    this.testItems(items, key, function() {
+
+      item.isPlayed(true);
+      callback && callback();
+
+    }, record);
   },
 
   testLast : function(items, key, callback, record) {

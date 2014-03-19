@@ -11,6 +11,14 @@ sylma.stepper.Snapshot = new Class({
 
       this.add('selector', {element : element});
     }
+
+    var excludes = this.options.excludes;
+
+    Object.each(excludes, function(item) {
+
+      this.addExclude(item);
+
+    }.bind(this));
   },
 
   activate: function(callback) {
@@ -40,10 +48,21 @@ sylma.stepper.Snapshot = new Class({
 
     if (el) {
 
-      var test = new sylma.stepper.Element(el, tree);
+      var test = new sylma.stepper.Element(el, tree, this.loadExcludes());
       var result = test.compare();
 
-      this.hasError(!result);
+      if (!result) {
+
+        test.differences.each(function(item) {
+
+          var el = item.element;
+
+          this.addError('snapshot', item.type + ' : ' + (el ? el.get('tag') : '[undefined]') + ' < ' + item.expected);
+
+        }.bind(this));
+
+        this.hasError(true);
+      }
     }
     else {
 
@@ -53,22 +72,56 @@ sylma.stepper.Snapshot = new Class({
     callback && callback();
   },
 
+  loadExcludes : function() {
+
+    return this.getExcludes().map(function(item) {
+
+      return item.getElement();
+    });
+  },
+
   shot : function(el) {
 
     var element = new sylma.stepper.Element(el);
     this.options.content = element.toString();
   },
 
-  addDifference : function(type, el, expected) {
+  addExclude : function(options) {
 
-    console.log(this.asToken(), type, el, expected);
+    var selector = this.getObject('excluder').pick().add('selector', options);
+
+    if (!options) {
+
+      selector.activate();
+    }
+  },
+
+  getExcludes : function() {
+
+    return this.getObject('excluder').pick().getObject('selector') || [];
   },
 
   toJSON : function() {
 
-    return {snapshot : {
+    var snapshot = {
       '@element' : this.getSelector(),
-      content : this.options.content
-    }};
+      content : this.options.content,
+    };
+
+    var excludes = this.getExcludes();
+
+    if (excludes.length) {
+
+      snapshot.exclude = [];
+
+      this.getExcludes().each(function(exclude) {
+
+        snapshot.exclude.push({
+          '@element' : exclude
+        });
+      });
+    }
+
+    return {snapshot : snapshot};
   }
 });

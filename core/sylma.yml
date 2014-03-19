@@ -87,9 +87,15 @@ initializer :
         sub :
           default :
             action : /#sylma/modules/html/container.vml
-      test :
+      stepper :
         action : /sylma/modules/stepper/test/window.vml
         pattern : `^/(sylma/modules/stepper/test)`
+      crud :
+        action : /sylma/modules/html/window.vml
+        pattern : `^/(sylma/storage/sql/crud/test)`
+        sub :
+          default :
+            action : /#sylma/modules/html/container.vml
     classes :
       action :
         name : \sylma\parser\action\handler\Basic

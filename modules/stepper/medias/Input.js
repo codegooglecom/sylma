@@ -41,6 +41,7 @@ sylma.stepper.Input = new Class({
 
       el.set('value', val);
       el.fireEvent('input');
+      el.fireEvent('change');
     }
   },
 

@@ -5,6 +5,7 @@ sylma.debug.log = true;
 sylma.stepper.Main = new Class({
 
   Extends : sylma.ui.Container,
+  Implements : sylma.stepper.ErrorHandler,
 
   screen : {
     x : 1280,
@@ -181,6 +182,14 @@ sylma.stepper.Main = new Class({
     }
 
     return this.variables[name];
+  },
+
+  addParentError : function(error) {
+
+  },
+
+  clearParentError : function() {
+
   },
 
   record : function(force) {

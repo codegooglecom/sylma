@@ -98,6 +98,25 @@
     </div>
 
   </tpl:template>
+<!--
+  <tpl:template mode="error">
+    <div class="error" js:class="sylma.ui.Template" js:alias="error">
+      <strong>
+        <tpl:read select="type"/>
+      </strong> :
+      <tpl:read select="message"/>
+      <ul>
+        <tpl:apply mode="error/path"/>
+      </ul>
+    </div>
+  </tpl:template>
+
+  <tpl:template mode="error/path" js:class="sylma.ui.Template" js:alias="path">
+    <li>
+      <tpl:read select="value"/>
+    </li>
+  </tpl:template>
+-->
 
   <tpl:template mode="path">
     <le:path>/</le:path>
@@ -187,19 +206,19 @@
         <js:event name="click">%object%.activate(function(target) { this.changeElement(target); }.bind(%object%));</js:event>
         <tpl:text>◌</tpl:text>
       </button>
-      <button class="sylma-hidder edit">
+      <button type="button" class="sylma-hidder edit">
         <js:event name="click">%object%.selectNext();</js:event>
         <tpl:text>▹</tpl:text>
       </button>
-      <button class="sylma-hidder edit">
+      <button type="button" class="sylma-hidder edit">
         <js:event name="click">%object%.selectPrevious();</js:event>
         <tpl:text>◃</tpl:text>
       </button>
-      <button class="sylma-hidder edit">
+      <button type="button" class="sylma-hidder edit">
         <js:event name="click">%object%.selectChild();</js:event>
         <tpl:text>▿</tpl:text>
       </button>
-      <button class="sylma-hidder edit">
+      <button type="button" class="sylma-hidder edit">
         <js:event name="click">%object%.selectParent();</js:event>
         <tpl:text>▵</tpl:text>
       </button>
@@ -295,7 +314,7 @@
   </tpl:template>
 
   <tpl:template match="test:property">
-    <div js:class="sylma.stepper.Property" js:alias="property">
+    <div js:class="sylma.stepper.Property" js:alias="property" class="property">
       <select js:node="name">
         <js:event name="change">%object%.onChange()</js:event>
         <option>&lt;choose&gt;</option>
@@ -333,7 +352,20 @@
       <tpl:apply mode="refresh"/>
       <tpl:apply mode="title"/>
       <tpl:apply mode="selector"/>
+      <form js:node="form" class="sylma-hidder zoom options">
+        <button type="button">
+          <js:event name="click">%object%.addExclude();</js:event>
+          <tpl:text>^</tpl:text>
+        </button>
+        <div js:class="sylma.ui.Template" js:alias="excluder" js:autoload="x">
+          <tpl:apply select="exclude"/>
+        </div>
+      </form>
     </li>
+  </tpl:template>
+
+  <tpl:template match="test:exclude">
+    <tpl:apply mode="selector"/>
   </tpl:template>
 
   <tpl:template match="test:call">
@@ -346,6 +378,8 @@
           <js:event name="click">%object%.addVariable();</js:event>
           <tpl:text>$</tpl:text>
         </button>
+        <input type="checkbox" js:node="method"/>
+        <label> GET</label>
         <tpl:apply select="variable"/>
       </form>
     </li>

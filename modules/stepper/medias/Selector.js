@@ -40,6 +40,7 @@ sylma.stepper.Selector = new Class({
       id : 'overlay'
     });
 
+    this.getFrame().toggleClass('sylma-visible', true);
     this.getFrame().setStyle('z-index', 70);
 
     document.body.adopt(overlay);

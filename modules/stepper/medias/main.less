@@ -104,6 +104,11 @@
   {
     padding-top: 0.5em;
 
+    &.error > h4
+    {
+      color: red;
+    }
+
     .items
     {
       overflow: hidden;
@@ -157,12 +162,33 @@
         padding-bottom: 4px;
       }
 
+      &.error > a
+      {
+        color: red;
+      }
+
       li
       {
+
+        &.error > h4
+        {
+          color: red;
+        }
+
+        &.ready .selector button
+        {
+          .visible;
+        }
+
         & > strong
         {
           font-size: 1.1em;
           line-height: 1.4em;
+        }
+
+        &.error > strong
+        {
+          color: red;
         }
 
         form
@@ -177,9 +203,12 @@
         {
           form
           {
-            input[type=text]
+            .property
             {
-              width: 15%;
+              input[type=text]
+              {
+                width: 15%;
+              }
             }
           }
         }
@@ -275,11 +304,6 @@
     position: relative;
   }
 
-  .ready > .selector button
-  {
-    .visible;
-  }
-
   .page.activated > a,
   li.played
   {
@@ -296,11 +320,6 @@
   {
     margin-left: 0.4em;
     transform: rotate(90deg);
-  }
-
-  .error
-  {
-    color: red;
   }
 
   .zoom.sylma-hidder

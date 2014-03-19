@@ -117,7 +117,7 @@ sylma.stepper.Property = new Class({
   toJSON : function() {
 
     return {
-      '@name' : this.options.name,
+      '@name' : this.options.name || 'default',
       0 : this.options.value
     };
   }

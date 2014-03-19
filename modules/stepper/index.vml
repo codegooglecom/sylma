@@ -50,6 +50,7 @@
         <le:file>/#sylma/ui/Locale.js</le:file>
         <le:file>/#sylma/ui/Date.js</le:file>
         <le:file>medias/Listed.js</le:file>
+        <le:file>medias/ErrorHandler.js</le:file>
         <le:file>medias/Main.js</le:file>
         <le:file>medias/Framed.js</le:file>
         <le:file>medias/Collection.js</le:file>

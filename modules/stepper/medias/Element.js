@@ -4,11 +4,15 @@ sylma.stepper.Element = new Class({
   content : undefined,
   ignore : undefined,
   ignoreMatch : /\d{2}\.\d{2}\.\d{4}/,
+  excludes : [],
 
-  initialize : function(el, options) {
+  differences : [],
+
+  initialize : function(el, options, excludes) {
 
     this.element = el;
     this.options = options;
+    this.excludes = excludes;
 
     if (options) {
 
@@ -98,19 +102,36 @@ sylma.stepper.Element = new Class({
 
   createElement : function(node, options) {
 
-    return new sylma.stepper.Element(node, options);
+    return new sylma.stepper.Element(node, options, this.excludes);
   },
 
   compare : function() {
 
     var result = true;
+
     var el = this.element;
     var opt = this.options;
 
     if (!opt)
     {
       this.addDifference('No options');
-      return false;
+      result = false;
+    }
+    else {
+
+      var excluded = this.excludes.some(function(item) {
+
+        return el === item;
+      });
+
+      if (!excluded) {
+
+        result = this.compareElement(el, opt);
+      }
+      else {
+
+        result = true;
+      }
     }
 /*
     if (el.namespaceURI !== opt.namespace) {
@@ -119,6 +140,13 @@ sylma.stepper.Element = new Class({
       result = false;
     };
 */
+
+    return result;
+  },
+
+  compareElement : function(el, opt) {
+
+    var result = true;
     var size = el.getSize();
 
     var diff = {
@@ -127,13 +155,14 @@ sylma.stepper.Element = new Class({
     };
 
     if (diff.x || diff.y) {
+
       this.addDifference('size', el, diff);
       result = false;
     }
 
     var position = el.getPosition();
 
-    var diff = {
+    diff = {
       x : position.x - opt.position.x,
       y : position.y - opt.position.y
     };
@@ -144,6 +173,14 @@ sylma.stepper.Element = new Class({
       result = false;
     }
 
+    result = this.compareContent(el, opt) && result;
+
+    return result;
+  },
+
+  compareContent: function(el, opt) {
+
+    var result = true;
     var content = this.content;
 
     if (content) {
@@ -170,7 +207,9 @@ sylma.stepper.Element = new Class({
       this.getChildren().each(function(item) {
 
         result = item.compare() && result;
-      });
+        this.differences.push.apply(this.differences, item.differences);
+
+      }.bind(this));
     }
 
     return result;
@@ -179,6 +218,11 @@ sylma.stepper.Element = new Class({
   addDifference : function(type, el, expected) {
 
     console.log('Difference : ', type, el, expected);
+    this.differences.push({
+      type : type,
+      element : el,
+      expected : expected
+    });
   },
 
   getAttributes : function() {

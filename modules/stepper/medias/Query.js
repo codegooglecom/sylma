@@ -36,7 +36,7 @@ sylma.stepper.Query = new Class({
 
       if (!response.content) {
 
-        this.hasError(true);
+        this.addError('query', 'No response');
       }
 
       callback && callback();

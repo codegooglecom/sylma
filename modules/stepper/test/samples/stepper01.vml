@@ -47,6 +47,36 @@
 
   </view:view>
 
+  <view:view name="sample"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="prepareSample()"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="getTimeshift"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="getTimeshift()"/>
+    </tpl:template>
+
+  </view:view>
+  
+  <view:view name="testTimeshift"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="testTimeshift()"/>
+    </tpl:template>
+
+  </view:view>
+
   <view:view name="collection"
     build:return="result"
   >

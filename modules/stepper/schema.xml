@@ -19,7 +19,7 @@
           <input element="">
 
           </input>
-          <call path="">
+          <call path="" method="">
             <variable name=""/>
           </call>
           <watcher element="" delay="">
@@ -27,7 +27,7 @@
             <variable name=""/>
           </watcher>
           <snapshot element="">
-
+            <exclude element=""/>
           </snapshot>
         </steps>
       </page>

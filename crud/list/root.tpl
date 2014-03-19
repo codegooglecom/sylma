@@ -20,6 +20,8 @@
 
   <tpl:template>
 
+    <tpl:apply mode="js"/>
+
     <tpl:apply mode="title">
       <tpl:read tpl:name="title" select="static()/title()"/>
     </tpl:apply>

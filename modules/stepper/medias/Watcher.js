@@ -192,9 +192,7 @@ sylma.stepper.Watcher = new Class({
 
   addDifference : function(msg) {
 
-    this.hasError(true);
-
-    console.log(this.asToken(), msg);
+    this.addError('watcher', msg);
   },
 
   toJSON : function() {

@@ -31,20 +31,6 @@ sylma.stepper.Event = new Class({
     }
   },
 
-  go: function(callback) {
-
-    var page = this.getParent('page'),
-        steps = page.getSteps().tmp,
-        length = steps.length;
-/*
-    if (this.getKey() === length - 1) {
-
-      this.isgo = true;
-    }
-*/
-    this.parent(callback);
-  },
-
   test : function(callback) {
 
     var el = this.getSelector().getElement();
@@ -62,8 +48,7 @@ sylma.stepper.Event = new Class({
     }
     else {
 
-      this.hasError(true);
-      console.log('cannot find ' + this.options.element);
+      this.addError('event', 'cannot find ' + this.options.element);
     }
 
     callback && callback();

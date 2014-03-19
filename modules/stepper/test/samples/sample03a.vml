@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:js="http://2013.sylma.org/template/binder"
+>
+
+  <xl:resource/>
+
+  <tpl:template>
+
+    <div js:class="sylma.ui.Container">
+      <button type="button">
+        <tpl:text>Click me</tpl:text>
+        <js:event name="click">
+          %object%.getNode('title').tween('height', 80);
+        </js:event>
+      </button>
+      <div style="height: 50px; border: 1px solid red" js:node="title">Title</div>
+    </div>
+
+  </tpl:template>
+
+</view:view>

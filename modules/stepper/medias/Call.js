@@ -4,12 +4,14 @@ sylma.stepper.Call = new Class({
 
   loaded : false,
 
-  onReady : function() {
+  onLoad : function() {
 
     if (!this.options.path) {
 
       this.options.path = '';
     }
+
+    this.useGET(this.options.get);
   },
 
   submit : function(callback) {
@@ -32,17 +34,28 @@ sylma.stepper.Call = new Class({
 
         callback && callback();
 
-      }.bind(this));
+      }.bind(this), this.useGET());
     }
     else {
 
-      this.hasError(true);
-      this.log('Cannot call without path');
+      this.addError('call', 'Cannot call without path');
 
       callback && callback();
     }
 
     return result;
+  },
+
+  useGET : function(val) {
+
+    var node = this.getNode('method');
+
+    if (val !== undefined) {
+
+      node.set('checked', val ? 'checked' : '');
+    }
+
+    return node.get('checked');
   },
 
   getPath: function() {
@@ -78,6 +91,7 @@ sylma.stepper.Call = new Class({
 
     return {call : {
       '@path' : this.getValue(),
+      '@method' : this.useGET() ? 'get' : 'post',
       0 : this.getVariable()
     }};
   },

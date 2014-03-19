@@ -22,17 +22,26 @@ class Windower extends window\Builder {
 
       $device = $this->create('device');
       \Sylma::setManager('device', $device);
-      
+
       $device->setSettings($args);
     }
   }
 
-  protected function testRoute(core\argument $alt, $sCurrent) {
+  protected function testRoute(core\argument $alt, $sCurrent, $iKey) {
 
-    $bParent = parent::testRoute($alt, $sCurrent);
-    $sDevice = $alt->read('device', false);
+    $iWeight = parent::testRoute($alt, $sCurrent, $iKey);
 
-    return $bParent && (!$sDevice || $this->isDevice($sDevice));
+    if ($iWeight) {
+
+      $sDevice = $alt->read('device', false);
+
+      if ($sDevice && !$this->isDevice($sDevice)) {
+
+        $iWeight = 0;
+      }
+    }
+
+    return $iWeight;
   }
 
   protected function isDevice($sName) {
