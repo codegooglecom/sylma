@@ -35,20 +35,32 @@ sylma.stepper.Framed = new Class({
     this.getNode().toggleClass('activated', val);
   },
 
-  parseVariables : function(result, callback) {
+  isActive : function() {
+
+    return this.getNode().hasClass('activated');
+  },
+
+  parseVariables : function(result) {
 
     var exists = false;
 
-    if (result.indexOf('$') !== -1) {
+    if (result && result.indexOf && result.indexOf('$') !== -1) {
 
-      result = result.replace(/\$(\w+)/g, function(match, name) {
+      result = result.replace(/\\?\$(\w+)/g, function(match, name) {
 
-        exists = true;
-        var content = this.getParent('main').getVariable(name);
+        if (match[0] === '\\') {
 
-        if (content === undefined) {
+          content = match.substr(1);
+        }
+        else {
 
-          this.hasError(true);
+          exists = true;
+          var content = this.getParent('main').getVariable(name);
+
+          if (content === undefined) {
+
+            this.hasError(true);
+          }
         }
 
         return content;
@@ -56,9 +68,10 @@ sylma.stepper.Framed = new Class({
       }.bind(this));
     }
 
-    callback && callback(result, exists);
-
-    return result;
+    return {
+      content : result,
+      variables : exists
+    };
   },
 
   parseArguments : function(path) {

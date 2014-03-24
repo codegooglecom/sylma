@@ -319,22 +319,25 @@
         <js:event name="change">%object%.onChange()</js:event>
         <option>&lt;choose&gt;</option>
         <option>reload</option>
+        <option>content</option>
         <option>children</option>
-        <option>opacity</option>
-        <option>height</option>
-        <option>width</option>
         <option>class</option>
         <option>iframe</option>
-        <option>z-index</option>
-        <option>margin-top</option>
-        <option>margin-right</option>
-        <option>margin-bottom</option>
-        <option>margin-left</option>
-        <option>top</option>
-        <option>right</option>
-        <option>bottom</option>
-        <option>left</option>
-        <option>scroll</option>
+        <optgroup label="style">
+          <option>height</option>
+          <option>width</option>
+          <option>opacity</option>
+          <option>z-index</option>
+          <option>margin-top</option>
+          <option>margin-right</option>
+          <option>margin-bottom</option>
+          <option>margin-left</option>
+          <option>top</option>
+          <option>right</option>
+          <option>bottom</option>
+          <option>left</option>
+          <option>scroll</option>
+        </optgroup>
       </select>
       <input type="text" js:node="value" value="{read()}">
         <js:event name="input">
@@ -416,6 +419,7 @@
       <form js:node="form" class="sylma-hidder zoom options">
         <input js:node="value" type="text" value="{read()}"/>
         <input js:node="creation" type="text" value="{@creation}"/>
+        <input js:node="connection" type="text" value="{@connection}"/>
       </form>
     </li>
   </tpl:template>

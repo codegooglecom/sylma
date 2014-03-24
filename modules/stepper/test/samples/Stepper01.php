@@ -69,7 +69,19 @@ class Stepper01 extends stepper\Browser {
     $result = new \DateTime;
     $result->sub(new \DateInterval('P4D'));
 
-    return $result->format('Y-m-d H:m:s');
+    return $this->formatDateObject($result);
+  }
+
+  public function formatDate($sValue) {
+
+    $date = new \DateTime($sValue);
+
+    return $this->formatDateObject($date);
+  }
+
+  public function formatDateObject(\DateTime $date) {
+
+    return $date->format('Y-m-d H:i');
   }
 
   public function testTimeshift() {

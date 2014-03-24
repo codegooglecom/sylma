@@ -23,13 +23,7 @@ sylma.stepper.Input = new Class({
 
   updateElement: function() {
 
-    var val = this.getValue();
-    var name = this.isVariable(val);
-
-    if (name) {
-
-      val = this.getParent('main').getVariable(name);
-    }
+    var val = this.parseVariables(this.getValue()).content;
 
     var el = this.getElement();
 

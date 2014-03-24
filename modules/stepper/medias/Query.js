@@ -9,6 +9,7 @@ sylma.stepper.Query = new Class({
     if (!creation) {
 
       this.options.value = '';
+      this.options.connection = '';
       this.options.creation = new Date().format('%Y-%m-%d %H:%M:%S');
     }
   },
@@ -16,6 +17,11 @@ sylma.stepper.Query = new Class({
   getCreation : function() {
 
     return this.getNode('creation').get('value');
+  },
+
+  getConnection : function() {
+
+    return this.getNode('connection').get('value') || '';
   },
 
   getValue : function() {
@@ -30,8 +36,8 @@ sylma.stepper.Query = new Class({
     this.send(this.getParent('main').get('query'), {
       file : this.getValue(),
       dir : this.getParent('directory').getPath(),
-      creation : this.getCreation()
-      //timeshift : this.getTimeshift(),
+      creation : this.getCreation(),
+      connection : this.getConnection()
     }, function(response) {
 
       if (!response.content) {
@@ -49,6 +55,7 @@ sylma.stepper.Query = new Class({
 
     return {query : {
       '@creation' : this.getCreation(),
+      '@connection' : this.getConnection(),
       0 : this.getValue()
     }};
   },

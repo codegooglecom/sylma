@@ -10,7 +10,7 @@
           <path></path>
         </exclude>
         <steps>
-          <query creation="" timeshift="">
+          <query creation="" timeshift="" connection="">
 
           </query>
           <event name="click" element="">

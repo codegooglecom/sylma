@@ -13,7 +13,7 @@
 >
 
   <sql:resource multiple="x"/>
-  <view:schema>schema01.xql</view:schema>
+  <view:schema>schema01b.xql</view:schema>
 
   <tpl:template>
     <div>
@@ -28,9 +28,6 @@
     <a href="mailto:{email}">
       <tpl:read select="email"/>
     </a>
-    <span>
-      <tpl:read select="update/format(pattern='%Y-%m-%d %H:%M')"/>
-    </span>
   </tpl:template>
 
 </view:view>

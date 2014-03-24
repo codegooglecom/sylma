@@ -66,7 +66,8 @@
       <a href="#" js:class="sylma.crud.list.Head">
         <js:option name="name"><tpl:apply select="alias()"/></js:option>
         <js:event name="click">
-          return %object%.update();
+          %object%.update();
+          e.preventDefault();
         </js:event>
         <tpl:apply select="title()"/>
       </a>

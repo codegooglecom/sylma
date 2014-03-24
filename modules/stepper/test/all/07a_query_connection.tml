@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page>
+    <ns0:steps>
+      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/modules/stepper/test/samples/schema01b.xql" method="get"/>
+      <ns0:query creation="2014-03-12 17:24:01" connection="test">../empty01.sql</ns0:query>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/modules/stepper/test/samples/view01c">
+    <ns0:steps>
+      <ns0:snapshot element="#content">
+        <ns0:content>{"name":"div","children":[{"name":"div","content":"","position":{"x":13,"y":63},"size":{"x":1254,"y":0}}],"position":{"x":12,"y":62},"size":{"x":1256,"y":402}}</ns0:content>
+      </ns0:snapshot>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
+    <ns0:steps>
+      <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; button:nth-child(4)"/>
+      <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li"/>
+      <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li &gt; button:nth-child(3)"/>
+      <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li">
+        <ns0:property name="height">93</ns0:property>
+      </ns0:watcher>
+      <ns0:input element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li &gt; form &gt; input:nth-child(3)">test</ns0:input>
+      <ns0:input element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li &gt; form &gt; input:nth-child(1)">/sylma/modules/stepper/test/samples/query01b.sql</ns0:input>
+      <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(6)"/>
+      <ns0:watcher element=" &gt; div:nth-child(1) &gt; div">
+        <ns0:property name="height">16</ns0:property>
+      </ns0:watcher>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page>
+    <ns0:steps>
+      <ns0:query creation="2014-03-20 23:35:05" connection="test">../empty01.sql</ns0:query>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
+    <ns0:steps>
+      <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(2)"/>
+      <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/modules/stepper/test/samples/view01c">
+    <ns0:steps>
+      <ns0:snapshot element="#content">
+        <ns0:content>{"name":"div","children":[{"name":"div","children":[{"name":"h4","content":"Faith Mills","position":{"x":13,"y":78},"size":{"x":1254,"y":14}},{"name":"a","content":"faith.mills@example.com","position":{"x":13,"y":108},"size":{"x":136,"y":14}},{"name":"span","content":"2013-12-10 09:47","position":{"x":152,"y":108},"size":{"x":98,"y":14}}],"position":{"x":13,"y":78},"size":{"x":1254,"y":44}}],"position":{"x":12,"y":62},"size":{"x":1256,"y":402}}</ns0:content>
+      </ns0:snapshot>
+    </ns0:steps>
+  </ns0:page>
+</ns0:test>

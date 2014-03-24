@@ -6,11 +6,6 @@ sylma.stepper.Call = new Class({
 
   onLoad : function() {
 
-    if (!this.options.path) {
-
-      this.options.path = '';
-    }
-
     this.useGET(this.options.get);
   },
 
@@ -28,6 +23,11 @@ sylma.stepper.Call = new Class({
       var route = this.parseArguments(this.getPath());
 
       this.send(route.path, route.arguments, function(response) {
+
+        if (response.error) {
+
+          this.addError('call', 'An error occured on server');
+        }
 
         this.options.value = response.content;
         this.loadVariable(this.options.value);
@@ -62,12 +62,12 @@ sylma.stepper.Call = new Class({
 
     var result = this.getValue();
 
-    return this.parseVariables(result);
+    return this.parseVariables(result).content;
   },
 
   getValue: function() {
 
-    return this.getNode('path').get('value');
+    return this.getNode('path').get('value') || '';
   },
 
   loadVariable: function(val) {

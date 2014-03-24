@@ -28,6 +28,11 @@ sylma.stepper.Property = new Class({
 
     switch (key) {
 
+      case 'content' :
+
+        result = el.get('text');
+        break;
+
       case 'children' :
 
         result = el.getChildren().length;
@@ -49,7 +54,7 @@ sylma.stepper.Property = new Class({
     }
 
     this.options.name = key;
-    this.options.value = result;
+    this.options.value = result === undefined ? '' : result;
 
     this.updateValue();
   },
@@ -74,10 +79,15 @@ sylma.stepper.Property = new Class({
 
   test : function(el) {
 
-    var value = this.options.value;
+    var value = this.parseVariables(this.options.value).content;
     var result;
 
     switch (this.options.name) {
+
+      case 'content' :
+
+        result = el.get('text') === value;
+        break;
 
       case 'children' :
 

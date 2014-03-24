@@ -176,6 +176,7 @@ class Browser extends core\module\Domed {
             $aStep['value'] = $step->read();
             $aStep['creation'] = $step->read('@creation');
             $aStep['timeshift'] = $step->read('@timeshift', false);
+            $aStep['connection'] = $step->read('@connection', false);
             break;
         }
 
@@ -223,19 +224,20 @@ class Browser extends core\module\Domed {
 
     $file = $this->getFile($this->read('file'));
     $creation = new \DateTime($this->read('creation'));
+    $sConnection = $this->read('connection');
+
     $diff = $creation->diff(new \DateTime());
 
     $sContent = preg_replace_callback('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', function($aMatch) use($diff) {
 
-      //dsp($sMatch);
       $date = new \DateTime($aMatch[0]);
       $new = $date->add($diff);
 
       return $new->format('Y-m-d H:i:s');
 
     }, $file->execute());
-//$this->getDirectory()->createFile('temp')->saveText($sContent);
-    $this->getManager(self::DB_MANAGER)->getConnection()->execute($sContent);
+
+    $this->getManager(self::DB_MANAGER)->getConnection($sConnection)->execute($sContent);
 
     return true;
   }

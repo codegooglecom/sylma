@@ -21,10 +21,14 @@
       <sql:current>
         <le:get-argument name="page"/>
       </sql:current>
-      <sql:count>10</sql:count>
+      <sql:count>
+        <tpl:apply mode="pager/count"/>
+      </sql:count>
     </sql:pager>
 
   </view:template>
+
+  <tpl:template mode="pager/count">10</tpl:template>
 
   <view:template match="sql:pager">
 

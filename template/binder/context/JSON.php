@@ -96,6 +96,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
 
     $action->setContexts($contexts);
     $context = new window\classes\Context(\Sylma::getManager('init'));
+    $bError = false;
 
     try {
 
@@ -106,11 +107,13 @@ class JSON extends window\classes\Container implements window\scripted, window\a
 
       $e->save(false);
       $sResult = '';
+      $bError = true;
     }
 
     $this->setSettings(array(
       'content' => $sResult,
       'errors' => $contexts->get('errors'),
+      'error' => $bError,
       'messages' => $contexts->get('messages'),
     ));
   }

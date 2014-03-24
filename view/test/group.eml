@@ -9,7 +9,6 @@
   <tst:group>
     <tst:description>View</tst:description>
     <le:object class="grouped\Grouped"/>
-    <le:object class="standalone\Standalone"/>
   </tst:group>
 </le:action>
 
