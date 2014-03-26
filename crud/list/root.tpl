@@ -161,8 +161,12 @@
 
   <tpl:template match="*" mode="cell">
     <td>
-      <tpl:apply/>
+      <tpl:apply mode="cell/content"/>
     </td>
+  </tpl:template>
+
+  <tpl:template match="*" mode="cell/content">
+    <tpl:apply/>
   </tpl:template>
 
 </tpl:collection>

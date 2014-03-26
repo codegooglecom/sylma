@@ -17,7 +17,7 @@
 
     <view:schema>project.xql</view:schema>
     <tpl:constant name="list-cols">*</tpl:constant>
-    <tpl:constant name="form-cols">*</tpl:constant>
+    <tpl:constant name="form-cols">* ^ id</tpl:constant>
 
     <tpl:template match="stat:todo_statut" mode="select-option-value">
       <tpl:read select="value"/>

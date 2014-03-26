@@ -14,6 +14,8 @@
 
   <tpl:template match="*" mode="file">
 
+    <tpl:apply mode="reference/js"/>
+
     <le:context name="js">
       <le:file>Form.js</le:file>
       <le:file>Dropper.js</le:file>

@@ -14,7 +14,7 @@
   <tpl:import>/#sylma/crud/list/root.tpl</tpl:import>
 
   <tpl:template match="sql:foreign">
-    <tpl:apply select="ref()"/>
+    <tpl:apply select="ref()" mode="cell/content"/>
   </tpl:template>
 
   <tpl:template match="sql:datetime">
