@@ -32,7 +32,12 @@ class Argument extends _Callable {
     $this->options = $arg;
   }
 
-  protected function getOptions() {
+  protected function getOptions($bDebug = true) {
+
+    if ($bDebug && !$this->options) {
+
+      $this->launchException('No options defined');
+    }
 
     return $this->options;
   }

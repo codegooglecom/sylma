@@ -68,7 +68,7 @@ abstract class Prepare extends Basic {
 
   protected function testNode() {
 
-    $result = $this->getArgument('result');
+    $result = $this->getArgument('result', false);
 
     if ($node = $this->getArgument('node', false)) {
 

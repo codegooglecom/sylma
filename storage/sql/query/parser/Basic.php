@@ -15,6 +15,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
 
   protected $connection;
   protected $aMethods = array('get', 'query', 'insert', 'extract');
+  protected $sCharset = '';
 
   protected $handler;
   protected $var;
@@ -39,6 +40,16 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     }
 
     return $this->connection;
+  }
+
+  public function setCharset($sValue) {
+
+    $this->sCharset = $sValue;
+  }
+
+  protected function getCharset() {
+
+    return $this->sCharset;
   }
 
   public function setHandler(common\_var $handler) {

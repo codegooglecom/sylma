@@ -11,7 +11,7 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
-  <tpl:template match="*" mode="date/prepare">
+  <tpl:template match="*" mode="date/prepare" once="x">
     <le:context name="js">
       <le:file>/#sylma/ui/Extras.js</le:file>
       <le:file>/#sylma/ui/Locale.js</le:file>

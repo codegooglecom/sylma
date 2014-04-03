@@ -17,11 +17,13 @@
     <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="type" default="'text'"/>
+    <tpl:argument name="class" default="'text'"/>
 
     <tpl:apply mode="input/empty/build">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="id" select="$id"/>
       <tpl:read tpl:name="type" select="$type"/>
+      <tpl:read tpl:name="class" select="$class"/>
     </tpl:apply>
 
   </tpl:template>
@@ -31,8 +33,11 @@
     <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="type" default="'text'"/>
+    <tpl:argument name="class" default="'text'"/>
 
-    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" name="{$alias}"/>
+    <input class="field field-{$class}" type="{$type}" id="form-{$id}" name="{$alias}">
+      <tpl:apply mode="input/events"/>
+    </input>
 
   </tpl:template>
 
@@ -58,8 +63,9 @@
     <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="value" default="value()"/>
     <tpl:argument name="type" default="'text'"/>
+    <tpl:argument name="class" default="'text'"/>
 
-    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}">
+    <input class="field field-{$class}" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}">
       <tpl:apply mode="input/events"/>
     </input>
 

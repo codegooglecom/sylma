@@ -7,6 +7,8 @@
   xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
 >
@@ -465,5 +467,128 @@
     <tst:node>
       <div><h3>def</h3><a href="mailto:{$email}">test</a></div>
     </tst:node>
+  </tst:test>
+  <tst:test name="List with simple foreign">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <a href="email"><tpl:apply select="name"/>,<tpl:apply select="group_id/ref()"/></a>
+        </view:template>
+        <view:template match="group:group">
+          <tpl:read select="id"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <a href="email">root,2</a>
+        <a href="email">admin,1</a>
+        <a href="email">webmaster,</a>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="List with simple foreign name's collision" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </view:template>
+        <view:template match="user:user">
+          <div>
+            <a href="email"><tpl:apply select="name"/>,<tpl:apply select="group_id/ref()"/></a>
+          </div>
+        </view:template>
+        <view:template match="group:group">
+          <tpl:read select="name"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <a href="email">root,2</a>
+        <a href="email">admin,1</a>
+        <a href="email">webmaster,0</a>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Insert multiple">
+    <tst:document>
+      <view:view user:ns="ns" mode="insert">
+        <sql:resource/>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <tpl:apply select="name,group"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      $manager->setToken('/sylma/storage/sql/test/foreignxml-insert-multiple');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'name' => 'foreign01',
+          'group' => array(2,3),
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->readArgument('result');
+      $manager->setArgument('id', $sID);
+
+      $user = $manager->runQuery("SELECT id_group FROM user_group WHERE id_user = $sID", 4);
+      $manager->runQuery("DELETE FROM user WHERE id = $sID", 2);
+
+      $manager->assertEqual($user->asArray(), array('2', '3'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Update multiple">
+    <tst:document>
+      <view:view user:ns="ns" mode="update">
+        <sql:resource>
+          <sql:id><le:get-argument name="id" source="post"/></sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <view:template>
+          <tpl:apply select="group"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $manager->setToken('/sylma/storage/sql/test/foreignxml-update-multiple');
+      $sID = $manager->readArgument('id');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'id' => $sID,
+          'group' => array(1),
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->readArgument('id');
+      $user = $manager->runQuery("SELECT id_group FROM user_group WHERE id_user = $sID", 4);
+
+      $manager->assertEqual($user->asArray(), array('1'));
+
+      return true;
+    </tst:expected>
   </tst:test>
 </tst:tests>

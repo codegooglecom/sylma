@@ -12,7 +12,7 @@
 
     <view:view name="list">
 
-      <crud:import>pager.tpl</crud:import>
+      <crud:import>pager/pager.tpl</crud:import>
 
     </view:view>
 

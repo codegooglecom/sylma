@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+>
+
+  <crud:global>
+
+    <sql:resource multiple="multiple"/>
+
+    <tpl:import>../../list.tpl</tpl:import>
+
+    <tpl:constant name="list-cols">*</tpl:constant>
+    <tpl:constant name="list-order">name</tpl:constant>
+
+  </crud:global>
+
+  <crud:route>
+
+    <view:view mode="view" _debug="x">
+
+      <le:context name="css">
+        <le:file>/#sylma/modules/html/medias/form.css</le:file>
+      </le:context>
+
+    </view:view>
+
+    <view:view name="list">
+
+      <tpl:template>
+        <tpl:apply mode="internal"/>
+      </tpl:template>
+
+      <crud:import>../../../pager/pager.tpl</crud:import>
+
+      <tpl:template mode="pager/count">5</tpl:template>
+
+    </view:view>
+
+  </crud:route>
+
+</crud:crud>

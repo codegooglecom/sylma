@@ -73,10 +73,10 @@ class Event extends Method {
 
   public function asArray() {
 
-    if (!$this->isBuilt()) {
+    //if (!$this->isBuilt()) {
 
       $this->addToObject($this->getObject());
-    }
+    //}
 
     return array();
   }

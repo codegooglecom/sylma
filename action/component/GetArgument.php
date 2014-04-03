@@ -1,16 +1,17 @@
 <?php
 
 namespace sylma\action\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
-class GetArgument extends reflector\component\Foreigner implements common\arrayable {
+class GetArgument extends Named implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
+    $this->allowForeign(true);
   }
 
-  public function asArray() {
+  protected function build() {
 
     $window = $this->getWindow();
 
@@ -21,12 +22,31 @@ class GetArgument extends reflector\component\Foreigner implements common\arraya
 
     $arguments = $window->getVariable($sSource);
 
-    $aArguments = array($this->readx('@name'));
-    if ($this->readx('@optional')) $aArguments[] = false;
-    $sNamed = $this->readx('@format') == 'array' ? 'query' : 'read';
-    $argument = $this->readx('@name') ? $arguments->call($sNamed, $aArguments) : $arguments->call('shift');
+    $name = $this->loadName();
+
+    if ($name) {
+
+      $aArguments = array($name);
+
+      if ($this->readx('@optional')) {
+
+        $aArguments[] = false;
+      }
+
+      $sFunction = $this->readx('@format') == 'array' ? 'query' : 'read';
+      $argument = $arguments->call($sFunction, $aArguments);
+    }
+    else {
+
+      $argument = $arguments->call('shift');
+    }
 
     return $this->readx('@escape') ? $this->reflectEscape($argument) : array($argument);
+  }
+
+  public function asArray() {
+
+    return $this->build();
   }
 }
 

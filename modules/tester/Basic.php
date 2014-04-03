@@ -185,11 +185,14 @@ abstract class Basic extends Asserter {
 
   protected function catchException(dom\element $test, core\exception $e, fs\file $file) {
 
+    return $this->catchExceptionCheck($test->readAttribute('catch', null, false), $test, $e, $file);
+  }
+
+  protected function catchExceptionCheck($sException, dom\element $test, core\exception $e, fs\file $file) {
+
     $bResult = false;
 
-    $sCatch = $test->readAttribute('catch', null, false);
-
-    if ($sCatch && $e instanceof $sCatch) {
+    if ($sException && $e instanceof $sException) {
 
       $bResult = true;
     }
@@ -198,7 +201,10 @@ abstract class Basic extends Asserter {
       $e->addPath($file->asToken());
       $e->addPath('Test ID : ' . $test->readAttribute('name'));
 
-      if ($sCatch) $e->addPath(sprintf('Exception of type %s expected', $sCatch));
+      if ($sException) {
+
+        $e->addPath(sprintf('Exception of type %s expected', $sException));
+      }
       //$e->addPath($test->asString());
 
       $e->save(false);

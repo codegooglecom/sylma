@@ -11,13 +11,16 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
 
     $this->setNode($el);
     $this->allowForeign(true);
-
   }
 
   protected function build() {
 
     $tree = $this->getParser()->getCurrentTree();
-    $query = $tree->getQuery();
+
+    if (!$query = $tree->getQuery(false)) {
+
+      $query = $tree->getParent()->getQuery();
+    }
 
     $bEscape = !$this->readx('@function');
     $bOptional = $this->readx('@optional');
@@ -28,10 +31,20 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
     }
 
     $bIN = strtolower(trim($sOP)) == 'in';
+    $container = $this->getNode();
 
-    if ($this->getNode()->isComplex()) {
+    if ($sName = $this->readx('@name')) {
 
-      $content = $this->parseComponentRoot($this->getNode());
+      $field = $tree->getElement($sName, $tree->getNamespace());
+    }
+    else {
+
+      $field = $tree;
+    }
+
+    if ($container->isComplex()) {
+
+      $content = $this->parseComponentRoot($container);
 
       if ($bEscape && !$bOptional && !$bIN) {
 
@@ -45,11 +58,11 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
         $this->launchException('Optional filter must be complex');
       }
 
-      $content = $bEscape ? "'{$this->readx()}'" : $this->readx();
+      $content = $bEscape ? "'{$container->readx()}'" : $container->readx();
     }
     else {
 
-      $content = $this->readx();
+      $content = $container->readx();
     }
 
     if ($bIN && !$bOptional) {
@@ -59,18 +72,17 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
       $content = array('(', $window->callFunction('implode', 'php-string', array(',', $escape)), ')');
     }
 
-    $sName = $this->readx('@name', true);
 
-    $this->log("SQL : filter [$sName]");
+    $this->log("SQL : filter");
 
     if ($bOptional) {
 
       $sDefault = $this->readx('@default');
-      $query->setOptionalWhere($tree->getElement($sName, $tree->getNamespace()), $sOP, $this->getWindow()->toString(array($content)), $sDefault);
+      $query->setOptionalWhere($field, $sOP, $this->getWindow()->toString(array($content)), $sDefault);
     }
     else {
 
-      $query->setWhere($tree->getElement($sName, $tree->getNamespace()), $sOP, $content);
+      $query->setWhere($field, $sOP, $content);
     }
   }
 
@@ -79,7 +91,7 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
     if (!$this->bBuilded) {
 
       $aResult = array($this->build());
-      $this->bBuilded = true;
+      //$this->bBuilded = true;
     }
     else {
 

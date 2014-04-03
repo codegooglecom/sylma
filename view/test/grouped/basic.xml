@@ -177,6 +177,28 @@
       <div><h3>admin</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="Apply element">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <h4><tpl:apply select="email" mode="unexisting"/></h4>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <h4/>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Required apply on simple">
     <tst:document>
       <view:view sql:ns="ns">

@@ -1,11 +1,9 @@
 <?php
 
 namespace sylma\action\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
 class Action extends Caller implements common\arrayable {
-
-  const PREFIX = 'action';
 
   public function parseRoot(dom\element $el) {
 

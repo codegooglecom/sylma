@@ -11,48 +11,103 @@
   xmlns:crud="http://2013.sylma.org/view/crud"
 >
 
-  <tpl:template mode="js">
-    <js:include>Container.js</js:include>
+  <tpl:import>filters.tpl</tpl:import>
+  <tpl:import>../form.tpl</tpl:import>
+  <tpl:import>../input.tpl</tpl:import>
+  <tpl:import>../type/numeric.tpl</tpl:import>
+  <tpl:import>../type/date.tpl</tpl:import>
+
+  <tpl:template mode="list/js">
+    <js:include>../Form.js</js:include>
     <js:include>Table.js</js:include>
     <js:include>Head.js</js:include>
     <js:include>Row.js</js:include>
   </tpl:template>
 
+  <tpl:template mode="list/css">
+    <le:context name="css">
+      <le:file>list.less</le:file>
+    </le:context>
+  </tpl:template>
+
   <tpl:template>
 
-    <tpl:apply mode="js"/>
+    <tpl:apply mode="list/js"/>
+    <tpl:apply mode="list/css"/>
 
     <tpl:apply mode="title">
       <tpl:read tpl:name="title" select="static()/title()"/>
     </tpl:apply>
 
     <div>
-      <div style="margin-bottom: 1em" class="clearfix">
-        <a class="button">
-          <tpl:token name="href">
-            <le:path/>/insert
-          </tpl:token>
-          Insert
-        </a>
-        <a class="button" ls:owner="root" ls:group="admin" ls:mode="700">
-          <tpl:token name="href">
-            <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
-          </tpl:token>
-          Structure
-        </a>
+      <form class="list" js:class="sylma.crud.list.Table" action="" method="post" js:parent-name="table">
+
+        <tpl:token name="action">
+          <crud:path/>/default/list.json
+        </tpl:token>
+
         <tpl:apply mode="actions"/>
-      </div>
-      <table js:class="sylma.crud.list.Table" js:name="table" class="sylma-list sql-{static()/name()}">
-        <tpl:apply select="static()" mode="head/row"/>
-        <crud:include path="list"/>
-      </table>
+        <tpl:apply mode="order"/>
+
+        <table js:node="table" class="sql-{static()/name()}">
+          <tpl:apply select="static()" mode="head/row"/>
+          <crud:include path="list"/>
+        </table>
+      </form>
+    </div>
+
+  </tpl:template>
+
+  <tpl:template mode="order/prepare">
+
+    <le:argument name="sylma-order" format="string" source="post">
+      <le:default>
+        <tpl:apply select="$$list-order"/>
+      </le:default>
+    </le:argument>
+
+  </tpl:template>
+
+  <tpl:template mode="order">
+
+    <tpl:apply mode="order/prepare"/>
+
+    <tpl:variable name="order">
+      <le:get-argument name="sylma-order" source="post"/>
+    </tpl:variable>
+    <input type="hidden" name="sylma-order" value="{$order}" js:node="order"/>
+
+  </tpl:template>
+
+  <tpl:template mode="actions">
+
+    <div class="actions" js:class="sylma.ui.Base">
+      <a class="button">
+        <tpl:token name="href">
+          <le:path/>/insert
+        </tpl:token>
+        Insert
+      </a>
+      <a class="button" href="javascript:void(0)">
+        <js:event name="click">
+          %parent%.toggleShow(%parent%.getNode('filters'));
+        </js:event>
+        <tpl:text>Filters</tpl:text>
+      </a>
+      <a class="button" ls:owner="root" ls:group="admin" ls:mode="700">
+        <tpl:token name="href">
+          <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
+        </tpl:token>
+        Structure
+      </a>
     </div>
 
   </tpl:template>
 
   <tpl:template match="*" mode="head/row">
-    <thead js:class="sylma.ui.Base" js:name="head">
-      <tr>
+    <thead>
+      <tpl:apply mode="filters"/>
+      <tr js:class="sylma.ui.Base" js:name="head">
         <th>
           <a>action</a>
         </th>
@@ -80,16 +135,9 @@
 
     <tpl:apply mode="init"/>
 
-    <tbody js:name="container" js:class="sylma.crud.list.Container">
+    <tbody js:name="container" js:class="sylma.ui.Container">
 
       <tpl:apply mode="init-container"/>
-
-      <js:option name="path">
-        <crud:path/>
-      </js:option>
-      <js:option name="send.order">
-        <le:get-argument name="order"/>
-      </js:option>
 
       <tpl:if test="has-children()">
 
@@ -116,16 +164,12 @@
 
   <tpl:template mode="init">
 
+    <tpl:apply select="static()" mode="filters/prepare"/>
     <tpl:apply mode="init-pager"/>
-
-    <le:argument name="order" format="string">
-      <le:default>
-        <tpl:apply select="$$list-order"/>
-      </le:default>
-    </le:argument>
+    <tpl:apply mode="order/prepare"/>
 
     <sql:order>
-      <le:get-argument name="order"/>
+      <le:get-argument name="sylma-order" source="post"/>
     </sql:order>
 
   </tpl:template>
@@ -137,6 +181,7 @@
   </tpl:template>
 
   <tpl:template match="*" mode="row">
+
     <tr js:class="sylma.crud.list.Row">
       <tpl:apply mode="row/init"/>
       <js:event name="click">

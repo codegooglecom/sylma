@@ -4,7 +4,6 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
@@ -21,15 +20,14 @@
     <tst:document>
       <view:view xs:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
-          <div><stp:apply select="name/#type"/></div>
+          <div><tpl:apply select="name/#type"/></div>
         </view:template>
         <view:template match="#type/xs:string">
-          <span><stp:apply select="name()"/></span>
+          <span><tpl:apply select="name()"/></span>
         </view:template>
       </view:view>
     </tst:document>
@@ -41,15 +39,14 @@
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
-          <div><stp:apply select="name/#type"/></div>
+          <div><tpl:apply select="name/#type"/></div>
         </view:template>
         <view:template match="user:name" apply="type">
-          <span><stp:apply select="name()"/></span>
+          <span><tpl:apply select="name()"/></span>
         </view:template>
       </view:view>
     </tst:document>
@@ -61,13 +58,12 @@
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource>
-          <sql:source>test</sql:source>
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user3.xql</view:schema>
         <view:template>
           <div>
-            <stp:apply select="name"/>
+            <tpl:apply select="name"/>
           </div>
         </view:template>
         <view:template match="#type/user:name" apply="element">
@@ -77,6 +73,66 @@
     </tst:document>
     <tst:node>
       <div><h3>admin</h3></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Match type priority">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="id"/>
+          </div>
+        </view:template>
+        <view:template match="sql:id">
+          <h4>
+            <tpl:read/>
+          </h4>
+        </view:template>
+        <view:template match="*">
+          <h3>
+            <tpl:read/>
+          </h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h4>2</h4>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Match extended type priority">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="name"/>
+          </div>
+        </view:template>
+        <view:template match="sql:string">
+          <h4>
+            <tpl:read/>
+          </h4>
+        </view:template>
+        <view:template match="*">
+          <h3>
+            <tpl:read/>
+          </h3>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h4>admin</h4>
+      </div>
     </tst:node>
   </tst:test>
 </tst:tests>

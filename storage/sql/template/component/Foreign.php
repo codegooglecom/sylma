@@ -14,7 +14,12 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
    *
    * @return sql\query\parser\Select
    */
-  public function getQuery() {
+  public function getQuery($bDebug = true) {
+
+    if ($bDebug && !$this->query) {
+
+      $this->launchException('No query defined');
+    }
 
     return $this->query;
   }
@@ -53,7 +58,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
         $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
         break;
-      
+
       default :
 
         $this->launchException("Invalid function name : '{$sName}'");

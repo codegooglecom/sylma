@@ -104,7 +104,7 @@ abstract class Ordered extends Joined {
 
     foreach ($this->getElements() as $field) {
 
-      $aElements[$field->getName()] = array(
+      $aElements[$field->getAlias()] = array(
         'alias' => $field,
         'string' => $field->getType()->doExtends($string),
       );
@@ -128,11 +128,18 @@ abstract class Ordered extends Joined {
 
         if ($el->getParent() === $ref->getParent()) {
 
-          $aElements[$foreign->getName()] = array(
+          $sName = $foreign->getAlias();
+
+          if (isset($aElements[$sName])) {
+
+            $sName = $foreign->getAlias();
+            $foreign->useAlias(true);
+          }
+
+          $aElements[$sName] = array(
             'alias' => $el,
             'string' => $el->getType()->doExtends($string),
           );
-
           break;
         }
       }

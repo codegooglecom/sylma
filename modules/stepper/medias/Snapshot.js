@@ -57,7 +57,9 @@ sylma.stepper.Snapshot = new Class({
 
           var el = item.element;
 
-          this.addError('snapshot', item.type + ' : ' + (el ? el.get('tag') : '[undefined]') + ' < ' + item.expected);
+          var msg = item.type + ' : ' + (el ? el.get('tag') : '[undefined]') + ' < ' + item.expected;
+          this.addError('snapshot', msg);
+          console.log(this.asToken(), item.type, el, item.expected);
 
         }.bind(this));
 

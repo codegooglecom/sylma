@@ -32,7 +32,7 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
       $sQuery = $this->loadUpdate();
 
-      dsp($sQuery);
+      //$this->getHandler()->log($sQuery);
       $this->getConnection()->read($sQuery, false);
     }
   }
@@ -94,12 +94,19 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
       }
     }
 
-    $sQuery = "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ');';
+
+    $sQuery = "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ')';
+
+    if ($sCharset = $this->getCharset()) {
+
+      $sQuery .= " DEFAULT CHARACTER SET '$sCharset';";
+    }
 
     $sql = $this->getManager(self::DB_MANAGER);
 
     $sql->getConnection($this->getConnectionAlias())->execute($sQuery, false);
-    dsp($sQuery);
+
+    //$this->getHandler()->log($sQuery);
 
     foreach ($aReferences as $ref) {
 
@@ -116,7 +123,7 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
     if ($this->useDepth()) {
 
-      $handler = $this->create('handler');
+      $handler = $this->create('handler', array(false));
       $handler->useDepth(true);
       $handler->setFile($file);
 

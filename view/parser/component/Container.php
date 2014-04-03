@@ -117,13 +117,18 @@ class Container extends template_ns\parser\template\Argumented {
 
     if ($this->getMatch()) {
 
+      $aTypes = array_reverse($type->getBases());
+      $aTypes[] = $type;
+
       $aNames = $this->getMatch();
 
       foreach ($aNames as $aName) {
 
-        $iMatch = $this->getWeightSingleName($aName, $type->getNamespace(), $type->getName(), self::WEIGHT_TYPE, self::WEIGHT_TYPE_NS, self::WEIGHT_TYPE_ALL);
+        foreach ($aTypes as $subtype) {
 
-        if ($iMatch > $iResult) $iResult = $iMatch;
+          $iMatch = $this->getWeightSingleName($aName, $subtype->getNamespace(), $subtype->getName(), self::WEIGHT_TYPE, self::WEIGHT_TYPE_NS, self::WEIGHT_TYPE_ALL);
+          if ($iMatch > $iResult) $iResult = $iMatch;
+        }
       }
     }
 

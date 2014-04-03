@@ -122,10 +122,10 @@
           </input>
         </tpl:template>
         <tpl:template match="user:name" mode="events">
-          <js:event name="click">%parent%.getObject('email').getNode().fireEvent('click');</js:event>
+          <js:event name="click">%parent%.getObject('email').getNode().fireEvent('change');</js:event>
         </tpl:template>
         <tpl:template match="user:email" mode="events">
-          <js:event name="click">sylma.tester.test(true);</js:event>
+          <js:event name="change">sylma.tester.test(true);</js:event>
         </tpl:template>
       </view:view>
     </tst:document>
@@ -133,6 +133,46 @@
 
       var test = example.test;
       test.getObject('name').getNode().fireEvent('click');
+
+    </tst:callback>
+  </tst:test>
+  <tst:test name="Event in different template duplicated">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <tpl:template>
+          <ul js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="user:*">
+          <input js:class="sylma.ui.Base" value="{value()}">
+            <js:name>
+              <tpl:read select="title()"/>
+            </js:name>
+            <tpl:apply mode="events"/>
+          </input>
+        </tpl:template>
+        <tpl:template match="user:name" mode="events">
+          <tpl:apply mode="common"/>
+          <js:event name="click">%parent%.getObject('email').getNode().fireEvent('test1');</js:event>
+        </tpl:template>
+        <tpl:template match="user:email" mode="events">
+          <tpl:apply mode="common"/>
+          <js:event name="click">sylma.tester.test(true);</js:event>
+        </tpl:template>
+        <tpl:template match="user:*" mode="common">
+          <js:event name="test1">this.fireEvent('click');</js:event>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:callback>
+
+      var test = example.test;
+      test.getObject('name').getNode().fireEvent('test1');
 
     </tst:callback>
   </tst:test>
@@ -381,7 +421,7 @@
       sylma.tester.assertEquals(test.tmp[2].getNode('hello'), undefined);
 
       return true;
-      
+
     </tst:expected>
   </tst:test>
   <tst:test name="Multiple sub nodes">

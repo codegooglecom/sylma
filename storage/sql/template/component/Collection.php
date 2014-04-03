@@ -172,7 +172,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'static' :
 
-        $result = $aPath ? $this->getHandler()->parsePathToken($this->getTable(), $aPath, $sMode, true, $aArguments) : $this->getTable()->reflectApply($sMode, $aArguments);
+        $result = $aPath ? $this->getHandler()->parsePathToken($this->getTable(), $aPath, $sMode, true, $aArguments) : $this->getTable()->reflectApply($sMode, $aArguments, true);
         break;
 
       case 'count' :

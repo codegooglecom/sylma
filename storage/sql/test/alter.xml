@@ -17,6 +17,8 @@
   <tst:test name="Create table">
     <tst:prepare>
 
+      $manager->runQuery('DROP TABLE IF EXISTS test1', 2);
+
       $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
         'path' => '/#sylma/storage/sql/test/samples/test1.xql',
       ));
@@ -48,12 +50,76 @@
     <tst:expected>
 
       $tests = $manager->runQuery('SELECT * FROM test1', 0);
+
+      $manager->assertEqual($tests->asArray(), array(
+        'id' => '1',
+        'name' => 'test1',
+        'email' => 'test1@sylma.org',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Table in default charset">
+    <tst:expected>
+
+      $tests = $manager->runQuery("SELECT * FROM test1 WHERE name COLLATE UTF8_GENERAL_CI like '%te%'", 0);
       $manager->runQuery('DROP TABLE test1', 2);
 
       $manager->assertEqual($tests->asArray(), array(
         'id' => '1',
         'name' => 'test1',
         'email' => 'test1@sylma.org',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Table in latin-1">
+    <tst:prepare>
+
+      $manager->runQuery('DROP TABLE IF EXISTS latin01', 2);
+
+      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
+        'path' => '/#sylma/storage/sql/test/samples/latin01.xql',
+      ));
+
+    </tst:prepare>
+    <tst:document>
+      <view:view user:ns="ns" mode="insert">
+        <sql:resource/>
+        <view:schema>samples/latin01.xql</view:schema>
+        <view:template>
+          <tpl:apply select="name, email"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $manager->setToken('/sylma/storage/sql/test/alterxml-table-in-latin-1');
+
+      return
+        array('post' => $manager->createArgument(
+        array(
+          'name' => 'Alexandra Glover',
+          'email' => 'none',
+        )));
+
+    </tst:load>
+    <tst:expected>
+
+      $tests = $manager->runQuery("SELECT * FROM latin01 WHERE name COLLATE latin1_general_ci like '%alex%'", 0);
+      $manager->runQuery('DROP TABLE latin01', 2);
+
+      $manager->assertEqual($tests->asArray(), array(
+        'id' => '1',
+        'name' => 'Alexandra Glover',
+        'email' => 'none',
       ));
 
       return true;

@@ -19,7 +19,7 @@ sylma.crud.Date = new Class({
     var el = this.getNode().getElement('input[type=text]');
 
     var showFormat = '%e%o %B %Y';
-    var inputFormat = '%Y-%m-%d';
+    var inputFormat = '%Y-%m-%d'; //%H:%m:%S
 
     var date = el.get('value') ? Date.parse(el.get('value')) : '';
     var input = el.getNext();

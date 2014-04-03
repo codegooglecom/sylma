@@ -114,6 +114,8 @@ class Browser extends core\module\Domed {
 
       foreach ($page->get('steps') as $step) {
 
+        if ($step->isEmpty()) continue;
+
         $aStep = array(
           '_alias' => $step->getName(),
         );
@@ -230,7 +232,15 @@ class Browser extends core\module\Domed {
 
     $sContent = preg_replace_callback('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', function($aMatch) use($diff) {
 
-      $date = new \DateTime($aMatch[0]);
+      try
+      {
+        $date = new \DateTime($aMatch[0]);
+
+      } catch (\Exception $e) {
+
+        \Sylma::throwException($e->getMessage());
+      }
+
       $new = $date->add($diff);
 
       return $new->format('Y-m-d H:i:s');

@@ -13,12 +13,14 @@
     <sql:field name="date-update" type="xs:dateTime"/>
   </sql:group>
 
-  <xs:simpleType name="id" type="xs:integer" reflector="\sylma\schema\cached\form\_Integer"/>
-
   <xs:simpleType name="int" reflector="\sylma\schema\cached\form\_Integer">
     <xs:restriction base="xs:integer">
       <xs:totalDigits value="6"/>
     </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="id" reflector="\sylma\schema\cached\form\_Integer">
+    <xs:restriction base="sql:int"/>
   </xs:simpleType>
 
   <xs:simpleType name="float" reflector="\sylma\schema\cached\form\_Float">

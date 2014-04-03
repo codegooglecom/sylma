@@ -78,17 +78,33 @@ class Parser extends Prepare {
 
   protected function buildResult(dom\element $test, $manager, fs\file $file, array $aArguments) {
 
-    $manager->build($file, $this->getDirectory());
+    $result = null;
 
-    if ($sLoad = $test->readx('self:load', array(), false)) {
+    try
+    {
+      $manager->build($file, $this->getDirectory());
 
-      if (is_null(eval('$closure = function($manager) { ' . $sLoad . '; };'))) {
+      if ($sLoad = $test->readx('self:load', array(), false)) {
 
-        $aArguments = $this->evaluate($closure, $this);
+        if (is_null(eval('$closure = function($manager) { ' . $sLoad . '; };'))) {
+
+          $aArguments = $this->evaluate($closure, $this);
+        }
       }
+
+      $result = $this->loadResult($manager, $file, $aArguments, !$test->getx('self:expected', array(), false));
+
+    } catch (\sylma\core\exception $e) {
+
+      $this->catchParserException($test, $e, $file);
     }
 
-    return $this->loadResult($manager, $file, $aArguments, !$test->getx('self:expected', array(), false));
+    return $result;
+  }
+
+  protected function catchParserException(dom\element $test, core\exception $e, fs\file $file) {
+
+    return $this->catchExceptionCheck($test->readAttribute('exception-parser', null, false), $test, $e, $file);
   }
 
   protected function loadResult($manager, fs\file $file, array $aArguments, $bDelete = true) {

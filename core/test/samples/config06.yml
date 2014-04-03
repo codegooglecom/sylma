@@ -7,13 +7,14 @@ initializer :
     fatal : true
   window :
     html :
+      test : null
       default :
         action : /#sylma/core/test/samples/window02.vml
         pattern : `^/other`
       admin :
         action : /#sylma/core/test/samples/window03.vml
         pattern : `^/sylma`
-        weight : 5
+        weight : 6
       bad :
         action : /#sylma/core/test/samples/unexisting
         pattern : `^/sylma`

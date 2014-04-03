@@ -1,2 +1,8 @@
 debug :
   enable : false
+exception :
+  show : true
+initializer :
+  window :
+    html :
+      test : null

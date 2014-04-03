@@ -27,13 +27,33 @@ class Iterator extends Basic implements core\argument {
     $dom = $this->getControler();
     //return $result = new Iterator($dom->create('handler', array($this->getChildren()->current())), $this->getNS());
 
-    return $this->buildChild($dom->create('handler', array($this->getChildren()->current())));
+    $current = $this->getChildren()->current();
+
+    if ($current) {
+
+      switch ($current->getType()) {
+
+        case $current::ELEMENT :
+
+          $doc = $dom->create('handler', array($current));
+          $result = $this->buildChild($doc);
+          break;
+
+        default :
+
+          $doc = $dom->create('handler', array());
+          $result = $this->buildChild($doc);
+          //$doc->addElement('root', $current);
+      }
+    }
+
+    return $result;
   }
 
   public function key() {
 
     $node = $this->getChildren()->current();
-    return $node->getName();
+    return $node->getType() === $node::ELEMENT ? $node->getName() : $this->getChildren()->current;
   }
 
   public function next() {

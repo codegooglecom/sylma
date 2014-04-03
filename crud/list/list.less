@@ -1,0 +1,159 @@
+
+.list
+{
+
+  .actions
+  {
+    overflow: hidden;
+    margin-bottom: 1em;
+  }
+
+  .filters
+  {
+    td,th
+    {
+      padding: 1em 0.5em;
+      text-align: center;
+
+      border-bottom: 1px solid #ccc;
+      height: 0.2em;
+    }
+
+    th a
+    {
+      display: inline;
+    }
+
+    td
+    {
+      .close
+      {
+        position: absolute;
+        font-weight: bold;
+        line-height: 2.2em;
+        margin-left: -1.3em;
+        opacity: 0.15;
+
+        &:hover
+        {
+          opacity: 0.35;
+          cursor: pointer;
+        }
+      }
+
+      .date-container
+      {
+        display: inline-block;
+      }
+    }
+
+    .field-integer
+    {
+      width: 3em;
+    }
+
+    &.sylma-hidder
+    {
+      display: none;
+    }
+
+    &.sylma-visible
+    {
+      display: table-row;
+    }
+  }
+
+  table
+  {
+    border-collapse: collapse;
+    transition: width 0.2s;
+
+    th a
+    {
+      padding: 1em 1.5em;
+      display: block;
+      text-transform: uppercase;
+      font-weight: normal;
+      color: black;
+
+      &:first-letter {
+        text-transform: uppercase;
+      }
+
+      &.sylma-highlight
+      {
+        color: #ec008c;
+        background: url('arrows.png') no-repeat;
+        background-position: 100% 16px;
+      }
+
+      &.order-desc {
+        background-position: 100% -81px;
+      }
+    }
+    thead
+    {
+      background-color: #f4f4f4;
+    }
+    tbody
+    {
+      td
+      {
+        padding: 0.5em;
+        border-bottom: 1px solid #d6d6d6;
+      }
+      tr
+      {
+        transition: background 0.1s;
+
+        &:hover
+        {
+          background-color: #e4f4f4;
+          cursor: pointer;
+        }
+      }
+    }
+    td
+    {
+      a.button
+      {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .actions a:hover
+      {
+        color: white;
+        background-color: #ec008c;
+      }
+    }
+  }
+}
+
+.pager {
+  text-align: center;
+  margin: 0.5em 0 0.5em;
+  /*font-size: 1.2em;*/
+
+  & > div {
+    width: 150px;
+    margin: auto;
+  }
+
+  .pager-current,
+  .pager-total
+  {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .pager-separator
+  {
+    padding: 0 3px;
+  }
+}
+
+.sylma-noresult
+{
+  text-align: center;
+}

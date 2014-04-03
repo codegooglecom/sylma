@@ -13,13 +13,15 @@
 
   <view:template mode="init-pager">
 
-    <le:argument name="page" format="integer">
+    <js:include>Pager.js</js:include>
+
+    <le:argument name="sylma-page" format="integer" source="post">
       <le:default>1</le:default>
     </le:argument>
 
     <sql:pager>
       <sql:current>
-        <le:get-argument name="page"/>
+        <le:get-argument name="sylma-page" source="post"/>
       </sql:current>
       <sql:count>
         <tpl:apply mode="pager/count"/>
@@ -32,12 +34,12 @@
 
   <view:template match="sql:pager">
 
-    <div class="pager" js:class="sylma.ui.Base">
-
+    <div class="pager" js:class="sylma.crud.Pager" js:name="pager">
+<!--
       <tpl:if test="!is-multiple()">
         <tpl:token name="class">form-disable</tpl:token>
       </tpl:if>
-
+-->
       <div class="clearfix">
 
         <a href="#" title="Page précédente" class="button pager-previous">
@@ -48,8 +50,7 @@
             <tpl:apply select="previous"/>
           </js:option>
           <js:event name="click">
-            %parent%.update({page : %object%.get('prev')});
-            e.preventDefault();
+            %object%.goPage(%object%.get('prev'), e);
           </js:event>
           &lt;&lt;
         </a>
@@ -61,8 +62,7 @@
               <tpl:token name="class">form-disable</tpl:token>
             </tpl:if>
             <js:event name="click">
-              %parent%.update({page : 1});
-              e.preventDefault();
+              %object%.goPage(1, e);
             </js:event>
             <tpl:read select="current"/>
           </a>
@@ -77,8 +77,7 @@
               <tpl:apply select="last"/>
             </js:option>
             <js:event name="click">
-              %parent%.update({page : %object%.get('last')});
-              e.preventDefault();
+              %object%.goPage(%object%.get('last'), e);
             </js:event>
             <tpl:read select="last"/>
           </a>
@@ -93,11 +92,16 @@
             <tpl:apply select="next"/>
           </js:option>
           <js:event name="click">
-            %parent%.update({page : %object%.get('next')});
-            e.preventDefault();
+            %object%.goPage(%object%.get('next'), e);
           </js:event>
           &gt;&gt;
         </a>
+
+        <tpl:variable name="page">
+          <le:get-argument name="sylma-page" source="post"/>
+        </tpl:variable>
+        <input type="hidden" name="sylma-page" value="{$page}" js:node="input"/>
+
       </div>
     </div>
 

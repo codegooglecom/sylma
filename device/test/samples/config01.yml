@@ -2,12 +2,13 @@ debug :
   enable : true
 exception :
   show : false
-  
+
 initializer :
   debug :
     fatal : true
   window :
     html :
+      test : null
       default :
         action : /#sylma/device/test/samples/window02.vml
         sub : null

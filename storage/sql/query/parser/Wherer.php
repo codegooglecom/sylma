@@ -9,6 +9,24 @@ abstract class Wherer extends Basic {
   protected $dynamicWhere;
   protected $aDynamicWhereCalls = array();
 
+  protected function getCollation($sCharset) {
+
+    switch ($sCharset) {
+
+      case 'latin1' :
+
+        $sResult = 'latin1_general_ci';
+        break;
+
+      case 'utf8' :
+      default :
+
+        $sResult = 'utf8_general_ci';
+    }
+
+    return $sResult;
+  }
+
   public function setOptionalWhere($val1, $sOp, $val2, $sDefault = '', $sLog = 'AND') {
 
     $bImport = !$this->getDynamicWhere();
@@ -52,7 +70,7 @@ abstract class Wherer extends Basic {
 
     if (!$this->getDynamicWhere()) {
 
-      $where = $this->createObject('where', array($this->getConnection()));
+      $where = $this->createObject('where', array($this->getConnection(), $this->getCollation($this->getCharset())));
       $this->setDynamicWhere($where);
     }
 

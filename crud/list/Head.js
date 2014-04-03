@@ -22,7 +22,7 @@ sylma.crud.list.Head = new Class({
   extractOrder : function() {
 
     var result = {};
-    var name = this.getContainer().get('send').order;
+    var name = this.getContainer().getNode('order').get('value');
 
     if (name) {
 
@@ -54,7 +54,7 @@ sylma.crud.list.Head = new Class({
 
   getContainer : function() {
 
-    return this.getParent(1).getObject('container');
+    return this.getParent('table');
   },
 
   updateDir : function(dir) {
@@ -73,12 +73,17 @@ sylma.crud.list.Head = new Class({
       head.downlight();
     });
 
-    var container = this.getContainer();
+    //var container = this.getContainer();
 
     if (current) this.updateDir(!this.get('dir'));
     else this.updateDir(false);
 
-    container.update({order : (this.get('dir') ? '!' : '') + this.get('name')});
+    //container.update({order : (this.get('dir') ? '!' : '') + this.get('name')});
+
+    var table = this.getContainer();
+
+    table.getNode('order').set('value', (this.get('dir') ? '!' : '') + this.get('name'));
+    table.update(true);
 
     this.highlight();
 

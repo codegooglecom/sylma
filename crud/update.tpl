@@ -18,7 +18,7 @@
     <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
 
       <js:include>/#sylma/crud/Field.js</js:include>
-      
+
       <js:event name="change">
         %object%.downlight();
       </js:event>
@@ -52,5 +52,19 @@
       <tpl:read select="'hidden'" tpl:name="type"/>
     </tpl:apply>
   </view:template>
+
+  <tpl:template match="*" mode="date/content">
+
+    <tpl:apply mode="input/update">
+      <tpl:read tpl:name="alias" select="''"/>
+      <tpl:read tpl:name="id" select="alias('form')"/>
+      <tpl:read tpl:name="class" select="'date'"/>
+    </tpl:apply>
+    <tpl:apply mode="input/update">
+      <tpl:read tpl:name="type" select="'hidden'"/>
+      <tpl:read tpl:name="id" select="''"/>
+    </tpl:apply>
+
+  </tpl:template>
 
 </tpl:collection>

@@ -1,11 +1,9 @@
 <?php
 
 namespace sylma\action\component;
-use sylma\core, sylma\dom, sylma\parser\reflector;
+use sylma\core, sylma\dom;
 
-class Caller extends reflector\component\Foreigner {
-
-  const PREFIX = 'action';
+class Caller extends Basic {
 
   public function parseRoot(dom\element $el) {
 

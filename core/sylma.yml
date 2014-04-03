@@ -87,6 +87,9 @@ initializer :
         sub :
           default :
             action : /#sylma/modules/html/container.vml
+      test :
+        action : /sylma/modules/html/window.vml
+        pattern : `^/(sylma/.+/test)`
       stepper :
         action : /sylma/modules/stepper/test/window.vml
         pattern : `^/(sylma/modules/stepper/test)`

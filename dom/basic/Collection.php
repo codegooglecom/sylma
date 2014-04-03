@@ -9,7 +9,7 @@ class Collection implements \Iterator, dom\collection {
 
   private $aNodes = array();
   private $aStore = array();
-  private $iIndex = 0;
+  public $current = 0;
 
   public $length = 0;
 
@@ -26,22 +26,22 @@ class Collection implements \Iterator, dom\collection {
 
   public function rewind() {
 
-    $this->iIndex = 0;
+    $this->current = 0;
   }
 
   public function next() {
 
-    $this->iIndex++;
+    $this->current++;
   }
 
   public function key() {
 
-    return $this->iIndex;
+    return $this->current;
   }
 
   public function current() {
 
-    if (array_key_exists($this->iIndex, $this->aNodes)) return $this->aNodes[$this->iIndex];
+    if (array_key_exists($this->current, $this->aNodes)) return $this->aNodes[$this->current];
     else return null;
   }
 
@@ -57,7 +57,7 @@ class Collection implements \Iterator, dom\collection {
 
   public function valid() {
 
-    return ($this->iIndex < count($this->aNodes));
+    return ($this->current < count($this->aNodes));
   }
 
   public function add($content) {
@@ -88,19 +88,19 @@ class Collection implements \Iterator, dom\collection {
     foreach ($list as $node) $this->addNode($node);
   }
 
-  public function setIndex($iIndex) {
+  public function setIndex($current) {
 
-    $this->iIndex = $iIndex;
+    $this->current = $current;
   }
 
   public function store() {
 
-    $this->aStore[] = $this->iIndex;
+    $this->aStore[] = $this->current;
   }
 
   public function restore() {
 
-    $this->iIndex = array_pop($this->aStore);
+    $this->current = array_pop($this->aStore);
   }
 
   public function reverse() {

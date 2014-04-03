@@ -9,12 +9,18 @@ class Handler extends core\module\Domed implements core\stringable {
 
   protected $schema;
   protected $bDepth = false;
+  //protected $bLog = true;
 
   protected static $aFiles = array();
 
-  public function __construct() {
+  public function __construct($bReset = true) {
 
     $this->setDirectory(__FILE__);
+
+    if ($bReset) {
+
+      self::$aFiles = array();
+    }
   }
 
   public function setFile(fs\file $file) {
@@ -28,6 +34,21 @@ class Handler extends core\module\Domed implements core\stringable {
     return parent::setFile($file);
   }
 
+  /**
+   * @param type $bDepth
+   * @return boolean
+   */
+  /*
+  public function useLog($bValue = null) {
+
+    if (is_bool($bValue)) {
+
+      $this->bLog = $bValue;
+    }
+
+    return $this->bLog;
+  }
+*/
   /**
    * @param type $bDepth
    * @return boolean
@@ -59,7 +80,15 @@ class Handler extends core\module\Domed implements core\stringable {
     $result = $builder->getSchema();
     $this->setSchema($result);
   }
+/*
+  public function log($val) {
 
+    if ($this->bLog) {
+
+      dsp($val);
+    }
+  }
+*/
   public function asString() {
 
     $sFile = (string) $this->getFile('', false);
@@ -71,7 +100,7 @@ class Handler extends core\module\Domed implements core\stringable {
       $schema = $this->getSchema();
       $table = $schema->getElement();
 
-      dsp($sFile);
+      //$this->log($sFile);
 
       $table->asCreate($this->useDepth());
       $table->asUpdate();

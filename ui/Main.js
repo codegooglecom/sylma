@@ -125,7 +125,14 @@ sylma.classes = {
 
       var parent = this.loadPath(props.extend);
 
-      return new parent(props);
+      if (sylma.factory.debug) {
+
+        sylma.log('Create object : key=' + (props.sylma ? props.sylma.key : '[unknown]') + ' id=' + props.id);
+      }
+
+      var result = new parent(props);
+
+      return result;
     },
 
     onWindowLoad : function() {

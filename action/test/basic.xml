@@ -5,9 +5,11 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
 
   xmlns:user="http://2013.sylma.org/action/test/sample1"
   xmlns:group="http://2013.sylma.org/action/test/sample2"
@@ -62,7 +64,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <le:context name="messages">
             <le:array>
               <le:string>hello</le:string>
@@ -73,7 +75,7 @@
             <h3><tpl:apply select="name"/></h3>
             <a href="mailto:email">test</a>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -97,12 +99,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <le:action path="samples/action1"/>
             <a href="mailto:email">test</a>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -124,7 +126,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <le:action path="samples/action2">
               <le:string le:name="hello">world</le:string>
@@ -132,7 +134,7 @@
             </le:action>
             <a href="mailto:email">test</a>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -154,12 +156,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <le:script path="samples/view1"/>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -173,7 +175,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <le:script path="samples/view2">
@@ -181,7 +183,7 @@
               <tpl:read le:name="email" select="email"/>
             </le:script>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -193,6 +195,60 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Check dynamic named argument">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <xl:resource/>
+        <tpl:template>
+          <le:argument source="post">
+            <le:name>
+              <tpl:text>arg1</tpl:text>
+            </le:name>
+          </le:argument>
+          <div>
+            <le:get-argument name="arg1" source="post"/>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array(
+        'post' => $manager->createArgument(array(
+          'arg1' => 'myarg1',
+        )),
+      );
+    </tst:load>
+    <tst:node>
+      <div>myarg1</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Get dynamic named argument">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <xl:resource/>
+        <tpl:template>
+          <h3>
+            <le:get-argument source="post">
+              <le:name>
+                <tpl:text>arg2</tpl:text>
+              </le:name>
+            </le:get-argument>
+          </h3>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+      return array(
+        'post' => $manager->createArgument(array(
+          'arg2' => 'myarg2',
+        )),
+      );
+    </tst:load>
+    <tst:node>
+      <h3>myarg2</h3>
+    </tst:node>
+  </tst:test>
+
   <tst:test name="Get array arguments">
     <tst:document>
       <view:view sql:ns="ns" user:ns="ns">
@@ -201,16 +257,16 @@
           <le:get-argument name="ids" format="array" source="post"/>
         </sql:filter>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="*"/>
           </div>
-        </view:template>
-        <view:template match="user:user">
+        </tpl:template>
+        <tpl:template match="user:user">
           <h3>
             <tpl:apply select="name"/>
           </h3>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:load>
@@ -227,43 +283,54 @@
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Replace argument" disabled="true">
+  <tst:test name="Replace argument">
     <tst:document>
       <view:view sql:ns="ns" user:ns="ns">
-        <sql:resource multiple="x"/>
-        <le:argument name="ids" source="post">
+        <xl:resource/>
+        <le:argument name="id" source="post">
           <le:replace>
-            <le:array>
-              <le:get-argument name="ids"/>
-            </le:array>
+            <le:string>(<le:get-argument name="id" source="post"/>)</le:string>
           </le:replace>
         </le:argument>
-        <sql:filter name="id" optional="x" op="in">
-          <le:get-argument name="ids" format="array" source="post"/>
-        </sql:filter>
-        <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
-            <tpl:apply select="*"/>
+            <le:get-argument name="id" source="post"/>
           </div>
-        </view:template>
-        <view:template match="user:user">
-          <h3>
-            <tpl:apply select="name"/>
-          </h3>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:load>
       return array(
         'post' => $manager->createArgument(array(
-          'ids' => '1',
+          'id' => '7',
         )),
       );
     </tst:load>
     <tst:node>
+      <div>(7)</div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Do not replace empty argument">
+    <tst:document>
+      <view:view sql:ns="ns" user:ns="ns">
+        <xl:resource/>
+        <le:argument name="id" optional="x" source="post">
+          <le:replace>
+            <le:string>(<le:get-argument optional="x" name="id" source="post"/>)</le:string>
+          </le:replace>
+        </le:argument>
+        <tpl:template>
+          <div>
+            <span>
+              <le:get-argument name="id" optional="x" source="post"/>
+            </span>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
       <div>
-        <h3>root</h3>
+        <span/>
       </div>
     </tst:node>
   </tst:test>
@@ -274,7 +341,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <h3><tpl:apply select="name"/></h3>
             <span>
@@ -284,7 +351,7 @@
               </le:object>
             </span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -301,11 +368,11 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <span>
             <le:path>samples/view1</le:path>
           </span>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -319,11 +386,11 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <span>
             <le:path>samples/view1/myarg</le:path>
           </span>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>

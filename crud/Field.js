@@ -1,3 +1,4 @@
+
 sylma.crud.Field = new Class({
 
   Extends : sylma.ui.Base,

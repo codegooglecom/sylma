@@ -12,6 +12,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected $bBuilded = false;
   protected $aColumns = array();
   protected $bSub = false;
+  protected $bStatic = false;
 
   protected $loop;
   protected $connection;
@@ -107,7 +108,21 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   public function getSource() {
 
-    return $this->source ? $this->source : $this->getQuery()->getVar();
+    if ($this->isStatic()) {
+
+      $this->launchException('Cannot read value in static mode');
+    }
+
+    if ($this->source) {
+
+      $result = $this->source;
+    }
+    else {
+
+      $result = $this->getQuery()->getVar();
+    }
+
+    return $result;
   }
 
   public function getKey() {
@@ -121,6 +136,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
     $query->setConnection($this->getConnection());
     $query->setTable($this);
+    $query->setCharset($this->getCharset());
 
     return $query;
   }
@@ -146,6 +162,16 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
+  }
+
+  protected function isStatic($bValue = null) {
+
+    if (is_bool($bValue)) {
+
+      $this->bStatic = $bValue;
+    }
+
+    return $this->bStatic;
   }
 
   public function reflectApply($sMode = '', array $aArguments = array(), $bStatic = false) {
@@ -188,7 +214,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       }
       else {
 
-        $aResult[] = $tpl;
+        $this->isStatic($bStatic || $this->isStatic());
+        $aResult[] = $this->getWindow()->parse($tpl, true);
+        $this->isStatic(false);
       }
     }
     else {

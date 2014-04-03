@@ -16,7 +16,7 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
       $this->addToQuery();
     }
-    else {
+    else if (!$sMode) {
 
       $result = $this->reflectRead();
     }

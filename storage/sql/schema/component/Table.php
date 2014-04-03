@@ -30,6 +30,11 @@ class Table extends Element implements schema\table {
     return $this->readx('@connection');
   }
 
+  protected function getCharset() {
+
+    return $this->readx('@charset');
+  }
+
   public function asString() {
 
     return "`" . $this->getName() . "`";

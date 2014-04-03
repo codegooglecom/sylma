@@ -45,11 +45,16 @@ sylma.crud.Form = new Class({
 
       if (val) val = 'disabled';
 
-      this.getNode().getElements('input, select, textarea').each(function(el) {
+      this.getInputs().each(function(el) {
 
         el.set('disabled', val);
       });
     }
+  },
+
+  getInputs : function() {
+
+    return this.getNode().getElements('input, select, textarea');
   },
 
   submit : function(e, args) {

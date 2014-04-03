@@ -1,0 +1,118 @@
+
+#lemonav
+{
+  width: 100%;
+  background: url('background.gif') repeat-x;
+  font-family: Helvetica;
+  font-weight: normal;
+
+  & > ul
+  {
+    & > li
+    {
+
+      font-size: 15px;
+      text-shadow:#333333 -1px -1px;
+      text-transform: uppercase;
+      display: block;
+      float: left;
+      border-width: 0 1px;
+      border-right-color: #4d4d4d;
+      border-left-color: #333333;
+      border-style: solid;
+
+      &.empty
+      {
+        border-right: 0;
+        text-indent: -9999px;
+        height: 42px;
+      }
+
+      a
+      {
+        display: block;
+        height: 30px; /* 42 - p */
+        padding: 12px 20px 0;
+      }
+
+      a, a:hover
+      {
+        color: #CBCBCB;
+      }
+
+      &:not(.sylma-highlight) a:hover
+      {
+        background-color: #4D4D4D
+      }
+
+      &.sylma-highlight
+      {
+        background-color: #f4f4f4;
+        border-color: #f4f4f4;
+
+        a
+        {
+          color: #333333;
+          text-shadow: #FFFFFF 1px 1px;
+        }
+      }
+
+      &:first-child.sylma-highlight {
+        background-color: white;
+      }
+    }
+
+  }
+}
+
+#lemonav-logout
+{
+  background: url(logout.png) no-repeat;
+  width: 44px;
+  height: 42px;
+  display: block;
+  float: right;
+}
+
+#lemonav-logout:hover
+{
+  background-position: 0 -42px;
+}
+
+@media screen and (max-width: 700px)
+{
+  #lemonav
+  {
+    background: none;
+
+    ul li
+    {
+      font-size: 85%;
+
+      a
+      {
+        padding: 0.5em;
+        height: auto;
+      }
+    }
+  }
+
+  #lemonav-logout
+  {
+    height: 2em;
+    width: 2em;
+    -webkit-background-size: cover;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: cover;
+  }
+}
+
+@media screen and (max-width: 460px)
+{
+  #lemonav ul li
+  {
+    font-size: 70%;
+  }
+}

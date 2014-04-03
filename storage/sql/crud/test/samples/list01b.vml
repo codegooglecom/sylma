@@ -7,40 +7,14 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
+
+  extends="base.crd"
 >
 
   <crud:global>
 
-    <sql:resource multiple="multiple"/>
     <view:schema>crud01.xql</view:schema>
 
-    <tpl:import>../../list.tpl</tpl:import>
-
-    <tpl:constant name="list-cols">*</tpl:constant>
-    <tpl:constant name="list-order">name</tpl:constant>
-
   </crud:global>
-
-  <crud:route>
-
-    <view:view mode="view">
-
-      <le:context name="css">
-        <le:file>/#sylma/modules/html/medias/form.css</le:file>
-      </le:context>
-
-    </view:view>
-
-    <view:view name="list">
-
-      <tpl:template>
-        <tpl:apply mode="internal"/>
-      </tpl:template>
-
-      <crud:import>../../../pager.tpl</crud:import>
-
-    </view:view>
-
-  </crud:route>
 
 </crud:crud>

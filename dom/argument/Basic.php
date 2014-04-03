@@ -35,7 +35,7 @@ abstract class Basic extends core\module\Controled {
 
     // first element define default namespace & prefix
 
-    if (!$this->getPrefix()) {
+    if (!$this->getPrefix() && $doc->getRoot(false)) {
 
       if (!$sNamespace = $doc->getRoot()->getNamespace()) {
 
@@ -76,13 +76,18 @@ abstract class Basic extends core\module\Controled {
   }
 
   public function setDocument(dom\handler $document) {
-
+/*
     if ($document->isEmpty()) {
 
-      $this->throwException(t('Cannot use empty doc as option\'s content'));
+      $this->throwException('Cannot use empty doc as option\'s content');
     }
-
+*/
     $this->document = $document;
+  }
+
+  public function isEmpty() {
+
+    return !$this->document || $this->document->isEmpty();
   }
 
   /**

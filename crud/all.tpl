@@ -13,6 +13,7 @@
   <tpl:import>type/boolean.tpl</tpl:import>
   <tpl:import>type/date.tpl</tpl:import>
   <tpl:import>type/password.tpl</tpl:import>
+  <tpl:import>type/numeric.tpl</tpl:import>
 
   <tpl:template>
 

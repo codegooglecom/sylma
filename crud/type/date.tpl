@@ -12,11 +12,15 @@
 
   <tpl:template match="*" mode="date">
 
+    <tpl:argument name="alias" default="alias('form')"/>
+
     <tpl:apply mode="date/prepare"/>
 
-    <div js:class="sylma.crud.Date">
+    <div class="date-container" js:class="sylma.crud.Date">
 
-      <tpl:apply mode="date/content"/>
+      <tpl:apply mode="date/content">
+        <tpl:read select="$alias" tpl:name="alias"/>
+      </tpl:apply>
 
     </div>
 
@@ -24,11 +28,15 @@
 
   <tpl:template match="*" mode="date/content">
 
-    <tpl:apply mode="input/update">
+    <tpl:argument name="alias"/>
+
+    <tpl:apply mode="input/empty">
       <tpl:read tpl:name="alias" select="''"/>
-      <tpl:read tpl:name="id" select="alias('form')"/>
+      <tpl:read tpl:name="id" select="$alias"/>
+      <tpl:read tpl:name="class" select="'date'"/>
     </tpl:apply>
-    <tpl:apply mode="input/update">
+    <tpl:apply mode="input/empty">
+      <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'hidden'"/>
       <tpl:read tpl:name="id" select="''"/>
     </tpl:apply>

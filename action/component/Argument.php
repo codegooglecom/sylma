@@ -3,9 +3,7 @@
 namespace sylma\action\component;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
 
-class Argument extends reflector\component\Foreigner implements common\arrayable {
-
-  const PREFIX = 'action';
+class Argument extends Named implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
@@ -16,6 +14,7 @@ class Argument extends reflector\component\Foreigner implements common\arrayable
 
   public function asArray() {
 
+    $aResult = array();
     $window = $this->getWindow();
 
     if (!$sSource = $this->readx('@source')) {
@@ -25,22 +24,40 @@ class Argument extends reflector\component\Foreigner implements common\arrayable
 
     $default = $this->getx('action:default');
     $arguments = $window->getVariable($sSource);
-    $sName = $this->readx('@name');
+    $name = $this->loadName();
 
     if ($default) {
 
-      $result = $window->createCondition($window->createNot($arguments->call('read', array($this->readx('@name'), false))));
+      $if = $window->createCondition($window->createNot($arguments->call('read', array($name, false))));
+      $content = $window->parse($this->parseComponentRoot($default));
+      $if->addContent($arguments->call('set', array($name, $content)));
 
-      $content = $this->parseComponentRoot($default);
-
-      $result->addContent($arguments->call('set', array($sName, $content)));
+      $aResult[] = $if;
     }
     else {
 
-      $result = $arguments->call('read', array($sName));
+      $aArguments = array($name);
+
+      if ($this->readx('@optional')) {
+
+        $aArguments[] = false;
+      }
+
+      $aResult[] = $window->createInstruction($arguments->call('read', $aArguments));
     }
 
-    return array($result);
+    $replace = $this->getx('action:replace');
+
+    if ($replace && !$default) {
+
+      $if = $window->createCondition($arguments->call('read', array($name, false)));
+      $content = $window->parse($this->parseComponentRoot($replace));
+      $if->addContent($arguments->call('set', array($name, $content)));
+
+      $aResult[] = $if;
+    }
+
+    return $aResult;
   }
 
 }

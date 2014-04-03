@@ -12,7 +12,7 @@
   <tst:test name="Default type and ssd type">
     <tst:expected>
       $sNS = 'http://2013.sylma.org/storage/sql/test/sample1';
-      $schema = $manager->getSchema('samples/user2.xql');
+      $schema = $manager->getSchema('samples/user2b.xql');
 
       $user = $schema->getElement();
       $name = $user->getElement('name', $sNS);
@@ -64,6 +64,23 @@
       $manager->assertEqual($name->getType()->getDefine()->getRule('maxLength'), '64');
       $manager->assertEqual($email->getType()->getDefine()->getRule('maxLength'), '255');
       $manager->assertEqual($content->getType()->getDefine()->getRule('maxLength'), '65535');
+
+      return true;
+    </tst:expected>
+  </tst:test>
+  <tst:test name="ID extended">
+    <tst:expected>
+      $sNS = 'http://2013.sylma.org/storage/sql/test/sample1';
+      $schema = $manager->getSchema('samples/user3.xql');
+
+      $user = $schema->getElement();
+      $id = $user->getElement('id', $sNS);
+
+      $integer = $schema->getType('integer', $schema->getNamespace('xs'));
+      $sqlint = $schema->getType('int', $schema->getNamespace('sql'));
+
+      $manager->assertTrue($id->getType()->doExtends($integer));
+      $manager->assertTrue($id->getType()->doExtends($sqlint));
 
       return true;
     </tst:expected>

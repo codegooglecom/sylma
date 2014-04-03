@@ -207,5 +207,35 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Iterate on comment">
+    <tst:prepare>
+      $controler->set('arg', $controler->createArgument('list02.xml'));
+    </tst:prepare>
+    <tst:expected>
+      $arg = $controler->get('arg');
+      $aResult = array();
+
+      foreach ($arg as $mKey => $val) {
+
+      if ($val instanceof \sylma\dom\basic\Comment) break;
+        if ($val->isEmpty())
+        {
+          $aResult[$mKey] = null;
+        }
+        else
+        {
+          $aResult[$mKey] = $val->read();
+        }
+      }
+
+      $manager->assertEquals($aResult, array(
+        'abc' => '123',
+        'def' => '456',
+        2 => null,
+      ));
+
+      return true;
+    </tst:expected>
+  </tst:test>
 </tst:tests>
 
