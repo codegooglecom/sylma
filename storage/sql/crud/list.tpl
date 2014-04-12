@@ -12,6 +12,17 @@
 >
 
   <tpl:import>/#sylma/crud/list/root.tpl</tpl:import>
+  <tpl:import>foreign.tpl</tpl:import>
+
+  <tpl:template match="sql:foreign" mode="input/foreign/events">
+    <js:event name="change">
+      %object%.update();
+    </js:event>
+  </tpl:template>
+
+  <tpl:template match="sql:foreign" mode="input/default">
+    <tpl:text>&lt; All &gt;</tpl:text>
+  </tpl:template>
 
   <tpl:template match="sql:foreign">
     <tpl:apply select="ref()" mode="cell/content"/>
@@ -19,6 +30,46 @@
 
   <tpl:template match="sql:datetime">
     <tpl:read select="format()"/>
+  </tpl:template>
+
+  <tpl:template match="sql:datetime" mode="filter">
+    <div class="filter-container"  js:class="sylma.crud.list.FilterContainer">
+      <div class="filter" js:class="sylma.crud.list.Filter">
+        <tpl:apply mode="date">
+          <tpl:read select="'{alias('form')}_from'" tpl:name="alias"/>
+        </tpl:apply>
+       <tpl:apply mode="input/clear"/>
+      </div>
+      <div class="filter sylma-hidder" js:class="sylma.crud.list.Filter">
+        <tpl:apply mode="date">
+          <tpl:read select="'{alias('form')}_to'" tpl:name="alias"/>
+        </tpl:apply>
+       <tpl:apply mode="input/clear"/>
+      </div>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="sql:datetime" mode="input/events">
+    <js:event name="change">
+      %parent%.update();
+    </js:event>
+  </tpl:template>
+
+  <tpl:template match="sql:datetime" mode="filter/internal">
+    <sql:filter optional="x" op="&gt;=">
+      <le:get-argument optional="x" source="post">
+        <le:name>
+          <tpl:read select="'{alias()}_from'"/>
+        </le:name>
+      </le:get-argument>
+    </sql:filter>
+    <sql:filter optional="x" op="&lt;=">
+      <le:get-argument optional="x" source="post">
+        <le:name>
+          <tpl:read select="'{alias()}_to'"/>
+        </le:name>
+      </le:get-argument>
+    </sql:filter>
   </tpl:template>
 
 </crud:crud>

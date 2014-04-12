@@ -1,4 +1,3 @@
-
 INSERT INTO `crud01` (`id`, `name`, `email`) VALUES
 (1, 'Alexandra Glover', 'alexandra.glover@example.com'),
 (2, 'Faith Mills', 'faith.mills@example.com'),

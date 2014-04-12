@@ -27,6 +27,11 @@ sylma.stepper.Test = new Class({
     }
   },
 
+  getDirectory : function() {
+
+    return this.get('directory');
+  },
+  
   initPages : function(callback) {
 
     if (!this.loaded && !this.loading) {

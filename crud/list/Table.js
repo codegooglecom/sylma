@@ -11,9 +11,14 @@ sylma.crud.list.Table = new Class({
 
   onLoad : function() {
 
-    this.getObject('head').tmp.each(function(head) {
-      head.updateOrder();
-    });
+    var head = this.getObject('head');
+
+    if (head) {
+
+      head.tmp.each(function(head) {
+        head.updateOrder();
+      });
+    }
   },
 
   update : function(reset, delay) {

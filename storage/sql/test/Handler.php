@@ -10,6 +10,7 @@ class Handler extends tester\Formed implements core\argumentable {
   public function __construct() {
 
     $this->setDirectory(__file__);
+    $this->resetDB();
 
     parent::__construct();
   }

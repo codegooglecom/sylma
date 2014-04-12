@@ -11,28 +11,51 @@
   xmlns:crud="http://2013.sylma.org/view/crud"
 >
 
-  <tpl:template match="*" mode="filters">
+  <tpl:import>../input.tpl</tpl:import>
+  <tpl:import>../type/numeric.tpl</tpl:import>
+  <tpl:import>../type/date.tpl</tpl:import>
 
+  <tpl:template match="*" mode="list/filters/js">
+    <js:include>Filters.js</js:include>
+    <js:include>FilterContainer.js</js:include>
     <js:include>Filter.js</js:include>
-
-    <tr class="filters sylma-hidder" js:node="filters">
-      <th>
-        <a>filters</a>
-      </th>
-      <tpl:apply use="list-cols" mode="filter"/>
-    </tr>
-
   </tpl:template>
 
+  <tpl:template match="*" mode="list/filters/css">
+    <le:context name="css">
+      <le:file>filters.less</le:file>
+    </le:context>
+  </tpl:template>
+
+  <tpl:template match="*" mode="filters">
+
+    <tpl:apply mode="list/filters/js"/>
+    <tpl:apply mode="list/filters/css"/>
+
+    <div class="filters hidder clearfix" js:name="filters" js:parent-name="filters" js:class="sylma.crud.list.Filters">
+      <div class="filter-container title" js:class="sylma.crud.list.FilterContainer">
+        <tpl:apply mode="filters/corner"/>
+      </div>
+      <tpl:apply use="list-cols" mode="filter"/>
+    </div>
+
+  </tpl:template>
+<!--
+  <tpl:template match="*" mode="filters/corner">
+    <a>filters</a>
+  </tpl:template>
+-->
   <tpl:template match="*" mode="filter">
-    <td js:class="sylma.crud.list.Filter">
+    <div class="filter-container" js:class="sylma.crud.list.FilterContainer">
       <tpl:apply mode="filter/content"/>
-    </td>
+    </div>
   </tpl:template>
 
   <tpl:template match="*" mode="filter/content">
-    <tpl:apply mode="input/empty"/>
-    <tpl:apply mode="input/clear"/>
+    <div class="filter" js:class="sylma.crud.list.Filter">
+      <tpl:apply mode="input/empty"/>
+      <tpl:apply mode="input/clear"/>
+    </div>
   </tpl:template>
 
   <tpl:template match="*" mode="input/clear">
@@ -65,58 +88,18 @@
   </tpl:template>
 
   <tpl:template match="sql:string" mode="filter/internal">
+    <tpl:argument name="key" default="alias()"/>
+    <tpl:apply mode="filter/internal/text">
+      <tpl:read select="$key" tpl:name="key"/>
+    </tpl:apply>
+  </tpl:template>
+
+  <tpl:template match="*" mode="filter/internal/text">
+    <tpl:argument name="key"/>
     <sql:filter optional="x" op="search">
       <le:get-argument optional="x" source="post">
         <le:name>
-          <tpl:read select="alias()"/>
-        </le:name>
-      </le:get-argument>
-    </sql:filter>
-  </tpl:template>
-
-  <!-- sql:datetime -->
-
-  <tpl:template match="sql:datetime" mode="filter">
-    <td>
-      <tpl:apply mode="filter/date">
-        <tpl:text tpl:name="alias">from</tpl:text>
-      </tpl:apply>
-      <div class="sylma-hidder" style="height: 0" js:node="to">
-        <tpl:apply mode="filter/date">
-          <tpl:text tpl:name="alias">to</tpl:text>
-        </tpl:apply>
-      </div>
-    </td>
-  </tpl:template>
-
-  <tpl:template match="sql:datetime" mode="filter/date">
-    <tpl:argument name="alias" default="{alias('form')}{$alias}"/>
-    <div js:class="sylma.crud.list.Filter">
-      <tpl:apply mode="date">
-        <tpl:read select="'{alias('form')}_{$alias}'" tpl:name="alias"/>
-      </tpl:apply>
-     <tpl:apply mode="input/clear"/>
-    </div>
-  </tpl:template>
-
-  <tpl:template match="sql:datetime" mode="input/events">
-    <js:event name="change">
-      %parent%.update();
-    </js:event>
-  </tpl:template>
-
-  <tpl:template match="sql:datetime" mode="filter/internal">
-    <sql:filter optional="x" op="&gt;=">
-      <le:get-argument optional="x" source="post">
-        <le:name>
-          <tpl:read select="'{alias()}_from'"/>
-        </le:name>
-      </le:get-argument>
-    </sql:filter>
-    <sql:filter optional="x" op="&lt;=">
-      <le:get-argument optional="x" source="post">
-        <le:name>
-          <tpl:read select="'{alias()}_to'"/>
+          <tpl:read select="$key"/>
         </le:name>
       </le:get-argument>
     </sql:filter>

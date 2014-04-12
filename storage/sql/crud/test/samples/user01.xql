@@ -12,7 +12,7 @@
   <table name="sylma_stepper_user01" connection="test">
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
-    <foreign occurs="0..1" name="group" table="group:sylma_stepper_group01" import="group01.xql"/>
+    <foreign occurs="0..1" name="group" table="group:sylma_stepper_group01" default="null" import="group01.xql"/>
   </table>
 
 </schema>

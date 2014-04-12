@@ -3,6 +3,8 @@ sylma.crud = sylma.crud || {} ;
 sylma.crud.Form = new Class({
 
   Extends : sylma.ui.Container,
+  Implements : Events,
+
   mask : null,
 
   options : {
@@ -137,6 +139,7 @@ sylma.crud.Form = new Class({
 
     this.parseMessages(response);
     this.submitReturn(response, args);
+    this.fireEvent('complete');
   },
 
   parseMessages : function(response) {

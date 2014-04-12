@@ -95,7 +95,7 @@
       <div><strong><span>group02</span></strong></div>
     </tst:node>
   </tst:test>
-  <tst:test name="Foreign single key apply ref">
+  <tst:test name="Single key apply ref">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">
         <sql:resource>
@@ -114,6 +114,27 @@
     </tst:document>
     <tst:node>
       <div><li>group02</li></div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Single key apply ref in static">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x"/>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply select="static()/group_id/ref()"/>
+          </div>
+        </view:template>
+        <view:template match="group:group">
+          <h2><tpl:apply select="title()"/></h2>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h2>group</h2>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Get ref values">

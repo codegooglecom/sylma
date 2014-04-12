@@ -47,12 +47,14 @@
     <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="value" default="value()"/>
     <tpl:argument name="type" default="'text'"/>
+    <tpl:argument name="class" default="'text'"/>
 
     <tpl:apply mode="input/update/build">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="id" select="$id"/>
       <tpl:read tpl:name="value" select="$value"/>
       <tpl:read tpl:name="type" select="$type"/>
+      <tpl:read tpl:name="class" select="$class"/>
     </tpl:apply>
 
   </tpl:template>

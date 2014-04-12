@@ -2,7 +2,7 @@
 <collection
   xmlns="http://2013.sylma.org/modules/stepper/collection"
 >
-  <directory path="core/exception/test/all"/>
+  <directory path="core/exception/test/stepper"/>
   <directory path="modules/stepper/test/all"/>
   <directory path="storage/sql/crud/test/all"/>
 </collection>

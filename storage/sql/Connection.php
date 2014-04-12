@@ -98,6 +98,7 @@ class Connection extends core\module\Argumented {
 
     try {
 
+      $this->logQuery($sQuery);
       // https://bugs.php.net/bug.php?id=61613 : Cannot handle errors with multiple request
       $result = $this->getDatabase()->query($sQuery);
     }

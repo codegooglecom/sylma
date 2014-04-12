@@ -117,7 +117,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       $result->setTree($this);
       $result->sendArguments($aArguments);
     }
-    else {
+    else if (!$sMode) {
 
       $this->launchException('No template found', get_defined_vars());
       //$result = $this->reflectRead();

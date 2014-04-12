@@ -13,9 +13,6 @@
 
   <tpl:import>filters.tpl</tpl:import>
   <tpl:import>../form.tpl</tpl:import>
-  <tpl:import>../input.tpl</tpl:import>
-  <tpl:import>../type/numeric.tpl</tpl:import>
-  <tpl:import>../type/date.tpl</tpl:import>
 
   <tpl:template mode="list/js">
     <js:include>../Form.js</js:include>
@@ -48,6 +45,8 @@
 
         <tpl:apply mode="actions"/>
         <tpl:apply mode="order"/>
+
+        <tpl:apply select="static()" mode="filters"/>
 
         <table js:node="table" class="sql-{static()/name()}">
           <tpl:apply select="static()" mode="head/row"/>
@@ -88,12 +87,14 @@
         </tpl:token>
         Insert
       </a>
+      <!--
       <a class="button" href="javascript:void(0)">
         <js:event name="click">
-          %parent%.toggleShow(%parent%.getNode('filters'));
+          %parent%.getObject('filters').toggleShow();
         </js:event>
         <tpl:text>Filters</tpl:text>
       </a>
+      -->
       <a class="button" ls:owner="root" ls:group="admin" ls:mode="700">
         <tpl:token name="href">
           <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
@@ -106,19 +107,27 @@
 
   <tpl:template match="*" mode="head/row">
     <thead>
-      <tpl:apply mode="filters"/>
       <tr js:class="sylma.ui.Base" js:name="head">
         <th>
-          <a>action</a>
+          <tpl:apply mode="head/corner"/>
         </th>
         <tpl:apply use="list-cols" mode="head/cell"/>
       </tr>
     </thead>
   </tpl:template>
 
+  <tpl:template match="*" mode="head/corner">
+    <a href="javascript:void(0)" class="button">
+      <tpl:text>F</tpl:text>
+      <js:event name="click">
+        %object%.getParent('table').getObject('filters').toggleShow();
+      </js:event>
+    </a>
+  </tpl:template>
+
   <tpl:template match="*" mode="head/cell">
     <th>
-      <a href="#" js:class="sylma.crud.list.Head">
+      <a href="#" class="order" js:class="sylma.crud.list.Head">
         <js:option name="name"><tpl:apply select="alias()"/></js:option>
         <js:event name="click">
           %object%.update();
@@ -164,7 +173,10 @@
 
   <tpl:template mode="init">
 
+
+<!--
     <tpl:apply select="static()" mode="filters/prepare"/>
+-->
     <tpl:apply mode="init-pager"/>
     <tpl:apply mode="order/prepare"/>
 
@@ -205,6 +217,7 @@
   </tpl:template>
 
   <tpl:template match="*" mode="cell">
+    <tpl:apply mode="filter/internal"/>
     <td>
       <tpl:apply mode="cell/content"/>
     </td>

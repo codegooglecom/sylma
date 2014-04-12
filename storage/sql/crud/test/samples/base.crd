@@ -30,7 +30,7 @@
 
     </view:view>
 
-    <view:view name="list">
+    <view:view name="list" _debug="x">
 
       <tpl:template>
         <tpl:apply mode="internal"/>

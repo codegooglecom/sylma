@@ -164,7 +164,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
   }
 
-  protected function isStatic($bValue = null) {
+  public function isStatic($bValue = null) {
 
     if (is_bool($bValue)) {
 

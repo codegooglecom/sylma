@@ -35,7 +35,7 @@ sylma.stepper.Query = new Class({
 
     this.send(this.getParent('main').get('query'), {
       file : this.getValue(),
-      dir : this.getParent('directory').getPath(),
+      dir : this.getDirectory(),
       creation : this.getCreation(),
       connection : this.getConnection()
     }, function(response) {

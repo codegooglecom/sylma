@@ -61,6 +61,27 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Create related tables" disabled="true">
+    <tst:prepare>
+
+      $manager->runQuery('DROP TABLE IF EXISTS user', 2);
+      $manager->runQuery('DROP TABLE IF EXISTS `group`', 2);
+
+      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
+        'path' => '/#sylma/storage/sql/test/samples/user2.xql',
+        'depth' => 1,
+      ));
+
+    </tst:prepare>
+    <tst:expected>
+
+      // no error
+      $manager->resetDB();
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
   <tst:test name="Table in default charset">
     <tst:expected>
 

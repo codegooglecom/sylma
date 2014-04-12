@@ -60,6 +60,7 @@ class Initializer extends module\Domed {
 
     //set_exception_handler("self::sendException");
     ini_set('session.gc_maxlifetime', $this->readArgument('session/lifetime'));
+    session_cache_expire(240);
 
     $this->startSession();
 

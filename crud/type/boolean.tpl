@@ -17,7 +17,7 @@
     <tpl:argument name="alias" default="alias()"/>
     <tpl:argument name="id" default="$alias"/>
 
-    <input class="field-input field-input-element" type="{$type}" id="form-{$id}" value="{$content}" name="{$alias}">
+    <input class="field field-boolean" type="{$type}" id="form-{$id}" value="{$content}" name="{$alias}">
       <tpl:apply mode="input/boolean/value">
         <tpl:read select="$value" tpl:name="value"/>
       </tpl:apply>
@@ -40,6 +40,7 @@
     <tpl:apply mode="input/update">
       <tpl:read tpl:name="type" select="'checkbox'"/>
       <tpl:read tpl:name="value" select="'1'"/>
+      <tpl:read tpl:name="class" select="'boolean'"/>
     </tpl:apply>
     <!--<input class="field-input field-input-element" type="checkbox" id="form-{$alias}" value="1" name="{$alias}"/>-->
   </tpl:template>
@@ -50,6 +51,7 @@
       <tpl:read tpl:name="type" select="'checkbox'"/>
       <tpl:read tpl:name="value" select="value()"/>
       <tpl:read tpl:name="content" select="'1'"/>
+      <tpl:read tpl:name="class" select="'boolean'"/>
     </tpl:apply>
 
   </tpl:template>

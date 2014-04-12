@@ -31,6 +31,10 @@ class Simple extends schema\component\SimpleType {
         $sValue = "VARCHAR({$iSize})";
       }
     }
+    else if ($this->doExtends ($this->getParser ()->getType('id', $this->getNamespace ('sql')))) {
+
+      $sValue = 'BIGINT UNSIGNED';
+    }
     else if ($this->doExtends($this->getParser()->getType('integer', $this->getNamespace('xs')))) {
 
       $iSize = $this->getDefine()->getRule('totalDigits');
@@ -49,10 +53,6 @@ class Simple extends schema\component\SimpleType {
     else if ($this->doExtends($this->getParser()->getType('float', $this->getNamespace('xs')))) {
 
       $sValue = "FLOAT";
-    }
-    else if ($this->doExtends ($this->getParser ()->getType('id', $this->getNamespace ('sql')))) {
-
-      $sValue = 'BIGINT UNSIGNED';
     }
     else {
 

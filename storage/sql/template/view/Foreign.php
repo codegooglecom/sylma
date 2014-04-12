@@ -59,7 +59,21 @@ class Foreign extends sql\template\component\Foreign {
 
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
-    $result = $this->applyElement($aPath, $sMode, $aArguments);
+    if ($this->getParent()->isStatic()) {
+
+      if ($aPath) {
+
+        $this->launchException('Cannot send paths to table');
+      }
+
+      $table = $this->getElementRef();
+      $table->setQuery($this->getParent()->getQuery());
+      $result = $table->reflectApply($sMode, $aArguments, true);
+    }
+    else {
+
+      $result = $this->applyElement($aPath, $sMode, $aArguments);
+    }
 
     return $result;
   }
@@ -157,7 +171,7 @@ class Foreign extends sql\template\component\Foreign {
 
       if ($aPath) {
 
-        $result = $this->getParser()->parsePathToken($element, $aPath, $sMode);
+        $result = $this->getParser()->parsePathToken($element, $aPath, $sMode, false, $aArguments);
       }
       else {
 

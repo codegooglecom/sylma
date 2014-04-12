@@ -84,6 +84,7 @@
         <tpl:read tpl:name="id" select="$id"/>
         <tpl:read tpl:name="type" select="'radio'"/>
         <tpl:read tpl:name="value" select="id"/>
+        <tpl:read tpl:name="class" select="'boolean'"/>
       </tpl:apply>
 
       <tpl:apply mode="foreign/label">
@@ -104,6 +105,7 @@
         <tpl:read tpl:name="alias" select="'{$alias}[{id}]'"/>
         <tpl:read tpl:name="type" select="'checkbox'"/>
         <tpl:read tpl:name="value" select="id"/>
+        <tpl:read tpl:name="class" select="'boolean'"/>
       </tpl:apply>
 
       <tpl:apply mode="foreign/label">
@@ -117,15 +119,24 @@
   <tpl:template match="sql:foreign" mode="select-notest">
     <tpl:argument name="alias" default="alias('form')"/>
     <select id="form-{$alias}" name="{$alias}" class="field-input-element">
-      <option value="0">&lt; Choisissez &gt;</option>
+      <tpl:apply mode="input/foreign/events"/>
+      <option value="0">
+        <tpl:apply mode="input/foreign/default"/>
+      </option>
       <tpl:apply select="all()" mode="select-option"/>
     </select>
+  </tpl:template>
+
+  <tpl:template match="*" mode="input/foreign/default">
+    <tpl:text>&lt; Choose &gt;</tpl:text>
   </tpl:template>
 
   <tpl:template match="sql:foreign" mode="select-test">
     <tpl:argument name="alias" default="alias('form')"/>
     <select id="form-{$alias}" name="{$alias}" class="field-input-element">
-      <option value="0">&lt; Choisissez &gt;</option>
+      <option value="0">
+        <tpl:apply mode="input/foreign/default"/>
+      </option>
       <tpl:apply select="all()" mode="select-option-test"/>
     </select>
   </tpl:template>
@@ -142,7 +153,9 @@
   <tpl:template match="sql:foreign" mode="select-multiple-notest">
     <tpl:argument name="alias" default="alias('form')"/>
     <select id="form-{$alias}" name="{$alias}" multiple="multiple">
-      <option value="0">&lt; Choisissez &gt;</option>
+      <option value="0">
+        <tpl:apply mode="input/foreign/default"/>
+      </option>
       <tpl:apply select="all()" mode="select-option"/>
     </select>
   </tpl:template>
@@ -153,7 +166,9 @@
       <tpl:read select="values()"/>
     </tpl:variable>
     <select id="form-{$alias}" name="{$alias}" multiple="multiple">
-      <option value="0">&lt; Choisissez &gt;</option>
+      <option value="0">
+        <tpl:apply mode="input/foreign/default"/>
+      </option>
       <tpl:apply select="all()" mode="select-multiple-option-test">
         <tpl:read select="$values" tpl:name="values"/>
       </tpl:apply>
@@ -254,16 +269,31 @@
 
   <tpl:template match="*" mode="select-option">
     <option value="{id}">
-      <tpl:apply mode="select-option-value"/>
+      <tpl:apply mode="select-option-value" required="x"/>
     </option>
   </tpl:template>
 
   <tpl:template match="*" mode="select-test">
     <tpl:argument name="alias" default="alias('form')"/>
     <select id="form-{$alias}" name="{$alias}">
-      <option value="0">&lt; Choisissez &gt;</option>
+      <option value="0">
+        <tpl:apply mode="input/foreign/default"/>
+      </option>
       <tpl:apply select="all()" mode="select-option-test"/>
     </select>
+  </tpl:template>
+
+  <tpl:template match="sql:foreign" mode="filter/content">
+    <div class="filter" js:class="sylma.crud.list.Filter">
+      <tpl:apply mode="input/empty"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="sql:foreign" mode="filter/text">
+    <div class="filter" js:class="sylma.crud.list.Filter">
+      <tpl:apply mode="input/empty/build"/>
+      <tpl:apply mode="input/clear"/>
+    </div>
   </tpl:template>
 
 </tpl:collection>

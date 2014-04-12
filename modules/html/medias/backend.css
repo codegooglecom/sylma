@@ -141,7 +141,7 @@ h3
 /*** CRUD ***/
 
 .button {
-  display: block;
+  display: inline-block;
   padding: 5px;
   margin: 0 0 5px 5px;
   text-decoration: none !important;
@@ -149,7 +149,7 @@ h3
   -webkit-border-radius: 7px;
   color: white;
   background-color: #a6c6cb;
-  float: left;
+  float: none;
   box-shadow: 2px 2px #ddd;
 }
 

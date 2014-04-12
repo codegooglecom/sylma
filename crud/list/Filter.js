@@ -8,6 +8,11 @@ sylma.crud.list.Filter = new Class({
     this.getParent('table').update(true, true);
   },
 
+  updateSize : function(width) {
+
+    this.getNode().getElements('input, select').setStyle('width', width - 6);
+  },
+
   clear : function() {
 
     var nodes = this.getNode().getElements('input, select');

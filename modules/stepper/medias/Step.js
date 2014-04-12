@@ -80,6 +80,11 @@ sylma.stepper.Step = new Class({
     return vars && vars.pick();
   },
 
+  getDirectory : function() {
+
+    return this.getParent('directory').getPath() + this.getParent('test').getDirectory();
+  },
+
   asToken: function() {
 
     return this.getAlias() + '(' + this.getKey() + ') : ' + this.getSelector().getPath();

@@ -73,6 +73,8 @@ sylma.ui.Container = new Class({
       var props = this.importResponse(result, this.getParent(), true);
       if (props.objects) this.initObjects(props.objects);
     }
+
+    this.onWindowLoad.delay(10, this);
   },
 
   useTemplate : function() {
@@ -213,7 +215,8 @@ sylma.ui.Container = new Class({
 
     el = el || this.getNode();
 
-    el.addClass('sylma-visible');
+    el.addClass('visible');
+    el.addClass('sylma-visible'); // @deprecated
   },
 
   /**
@@ -228,7 +231,8 @@ sylma.ui.Container = new Class({
       sylma.ui.addEventTransition(el, callback);
     }
 
-    el.removeClass('sylma-visible');
+    el.removeClass('visible');
+    el.removeClass('sylma-visible'); // @deprecated
   },
 
   toggleShow : function(el, val) {
@@ -236,7 +240,7 @@ sylma.ui.Container = new Class({
     var result;
     el = el || this.getNode();
 
-    if (val === false || (val === undefined && el.hasClass('sylma-visible'))) {
+    if (val === false || (val === undefined && (el.hasClass('sylma-visible') || el.hasClass('visible')))) {
 
       result = false;
       this.hide(el);

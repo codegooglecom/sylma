@@ -57,12 +57,22 @@ class Browser extends core\module\Domed {
       'extensions' => array('tml'),
     ));
 
-    $iBase = strlen((string) $this->getDirectory()) + 1;
+    $sCurrentDirectory = (string) $this->getDirectory();
+    $iBase = strlen($sCurrentDirectory);
 
     foreach ($this->getDirectory('', true)->browse($args, false) as $file) {
 
+      $sDirectory = '';
+      $sSubDirectory = (string) $file->getParent();
+
+      if ($sCurrentDirectory !== $sSubDirectory) {
+
+        $sDirectory = substr($sSubDirectory, $iBase);
+      }
+
       $aResult['test'][] = array(
-        'file' => substr($file, $iBase),
+        'file' => substr($file, $iBase + 1),
+        'directory' => $sDirectory,
       );
     }
 
