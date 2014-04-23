@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\storage\sql\template;
+namespace sylma\storage\sql\pager;
 use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\parser\languages\common, sylma\storage\sql;
 
-class Pager extends reflector\component\Foreigner implements reflector\component, template\parser\tree, common\arrayable {
+class Tree extends reflector\component\Foreigner implements reflector\component, template\parser\tree, common\arrayable {
 
   CONST PREFIX = 'sql';
 
@@ -23,8 +23,6 @@ class Pager extends reflector\component\Foreigner implements reflector\component
     $collection = $this->getParser()->getTree();
     $collection->setPager($this);
     $this->setCollection($collection);
-
-    $this->build();
   }
 
   public function setCollection(sql\template\component\Collection $collection) {
@@ -80,8 +78,9 @@ class Pager extends reflector\component\Foreigner implements reflector\component
     //$var->insert();
     $this->setVar($var);
 
-    $this->setOffset($this->parseComponentRoot($this->getx('sql:current', true)));
-    $this->setCount($this->parseComponentRoot($this->getx('sql:count', true)));
+    $window = $this->getWindow();
+    $this->setOffset($window->parse($this->parseComponentRoot($this->getx('sql:current', true))));
+    $this->setCount($window->parse($this->parseComponentRoot($this->getx('sql:count', true))));
 
     $collection->setLimit($var->call('getOffset'), $this->getCount());
   }
@@ -105,6 +104,7 @@ class Pager extends reflector\component\Foreigner implements reflector\component
 
     switch ($sName) {
 
+      case 'init' : $aResult = $this->initCounter(); break;
       case 'is-multiple' : $aResult[] = $var->call('isMultiple'); break;
       case 'is-first' : $aResult[] = $var->call('isFirst');; break;
       case 'is-last' : $aResult[] = $var->call('isLast'); break;
@@ -138,6 +138,11 @@ class Pager extends reflector\component\Foreigner implements reflector\component
     return $aResult;
   }
 
+  protected function initCounter() {
+
+    return $this->getVar()->call('setCount', array($this->getCollection()->getCount()))->getInsert();
+  }
+
   protected function _loadCount() {
 
     if (!$this->bCount) {
@@ -163,10 +168,11 @@ class Pager extends reflector\component\Foreigner implements reflector\component
   public function asArray() {
 
     $this->log('Pager : build');
+    $this->build();
+
     $var = $this->getVar();
 
     $aResult[] = $var->getInsert();
-    $aResult[] = $var->call('setCount', array($this->getCollection()->getCount()))->getInsert();
     $aResult[] = $var->call('setPage', array($this->getOffset()))->getInsert();
     $aResult[] = $var->call('setSize', array($this->getCount()))->getInsert();
 

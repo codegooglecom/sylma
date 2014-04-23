@@ -34,8 +34,4 @@
     </div>
   </tpl:template>
 
-  <tpl:template match="cap:captcha" mode="label/value">
-    <tpl:text>Recopiez le code</tpl:text>
-  </tpl:template>
-
 </view:view>

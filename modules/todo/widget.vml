@@ -24,6 +24,10 @@
   </sql:filter>
 
   <tpl:template>
+
+    <tpl:apply select="init()"/>
+    <tpl:apply select="counter()"/>
+
     <div id="sylma-todo-widget">
       <span class="count">
         <tpl:if test="count()">

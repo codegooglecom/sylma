@@ -176,7 +176,7 @@
 
     </tst:callback>
   </tst:test>
-  <tst:test name="Event on node">
+  <tst:test name="Event on element">
     <tst:document>
       <view:view>
         <sql:resource>
@@ -201,7 +201,35 @@
 
     </tst:callback>
   </tst:test>
-  <tst:test name="Event on node with existing class">
+  <tst:test name="Event on empty link" disabled="true">
+    <!-- @TODO : bad closing when sent in JSON -->
+    <tst:document>
+      <view:view>
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <textarea js:node="strong">
+              <js:event name="click">throw new Error('Must not be called');</js:event>
+            </textarea>
+            <span>
+              <js:event name="click">sylma.tester.test(true);</js:event>
+            </span>
+            <p>hello</p>
+          </div>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:callback>
+
+      var test = example.test;
+      test.node.getElement('span').fireEvent('click');
+
+    </tst:callback>
+  </tst:test>
+  <tst:test name="Event on element with existing class">
     <tst:document>
       <view:view>
         <sql:resource>

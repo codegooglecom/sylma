@@ -15,6 +15,11 @@
             <cls:class alias="collection" name="Collection">
               <cls:classes>
                 <cls:class alias="token" name="\sylma\schema\cached\form\Token"/>
+                <cls:class alias="tree" name="\sylma\crud\_list\Tree">
+                  <cls:classes>
+                    <cls:class alias="dummy" name="\sylma\crud\_list\Dummy"/>
+                  </cls:classes>
+                </cls:class>
               </cls:classes>
             </cls:class>
             <cls:class alias="table" name="Table">

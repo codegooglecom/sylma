@@ -34,6 +34,19 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     $this->var = $var;
   }
 
+  protected function importElementRef() {
+
+    if ($result = parent::importElementRef()) {
+
+      if ($collection = $this->getParent()->getCollection()) {
+
+        $result->setCollection($collection);
+      }
+    }
+
+    return $result;
+  }
+
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);

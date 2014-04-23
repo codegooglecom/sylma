@@ -15,9 +15,9 @@
     <component>
       <cls:classes>
         <cls:class alias="filter" name="view\component\Filter"/>
-        <cls:class alias="pager" name="template\Pager">
+        <cls:class alias="pager" name="pager\Tree">
           <cls:classes>
-            <cls:class alias="cached" name="cached\Pager"/>
+            <cls:class alias="cached" name="pager\Dummy"/>
           </cls:classes>
         </cls:class>
         <cls:class alias="order" name="view\component\Order"/>

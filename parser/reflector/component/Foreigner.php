@@ -112,7 +112,7 @@ class Foreigner extends reflector\basic\Reflector implements reflector\component
     return $this->getParser()->getRoot();
   }
 
-  protected function parseComponentRoot(dom\element $el, $bDebug = true) {
+  protected function parseComponentRoot(dom\element $el, $bParse = false, $bDebug = true) {
 
     $children = $el->getChildren();
 
@@ -133,7 +133,7 @@ class Foreigner extends reflector\basic\Reflector implements reflector\component
       }
     }
 
-    return $mResult;
+    return $bParse ? $this->getWindow()->parse($mResult) : $mResult;
   }
 
     /**

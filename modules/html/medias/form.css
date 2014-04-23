@@ -75,11 +75,11 @@ legend
   text-transform: capitalize;
 }
 
-div.field {
+.field-container {
   margin-bottom: 0.5em;
 }
 
-.field label {
+.field-container label {
   display: block;
   float: left;
   vertical-align: top;
@@ -89,17 +89,21 @@ div.field {
   -webkit-transition: color 0.2s;
 }
 
-.field label:first-letter
+.field-container label:first-letter
 {
   text-transform: uppercase;
 }
 
 .field-uneditable,
-.field-text .field-input-element {
+.field.field-text,
+.field.field-date
+{
   float: left;
   padding: 2px;
 }
 
+.field.field-text,
+.field.field-date,
 .field-text .field-input-element
 {
   border-radius: 3px;
@@ -111,11 +115,13 @@ div.field {
   border-color: #00AFAD;
 }
 
-.field-text .field-input-element {
+.field-text .field-input-element,
+.field.field-text
+{
   width: 50%;
 }
 
-textarea.field-input-element {
+textarea.field {
   height: 100px;
 }
 

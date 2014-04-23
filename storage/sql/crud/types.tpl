@@ -20,11 +20,11 @@
   </tpl:template>
 
   <tpl:template match="sql:string-long" mode="input/empty" sql:ns="ns">
-    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field-input field-input-element"></textarea>
+    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field field-text field-input-element"></textarea>
   </tpl:template>
 
   <tpl:template match="sql:string-long" mode="input/update" sql:ns="ns">
-    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field-input field-input-element">
+    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field field-text field-input-element">
       <tpl:apply/>
     </textarea>
   </tpl:template>

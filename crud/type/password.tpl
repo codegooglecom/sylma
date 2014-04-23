@@ -16,10 +16,10 @@
 
     <tpl:argument name="alias" default="alias()"/>
 
-    <tpl:apply mode="input/boolean">
+    <tpl:apply mode="input/empty">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'password'"/>
-      <tpl:read tpl:name="content" select="''"/>
+      <tpl:read tpl:name="value" select="''"/>
     </tpl:apply>
 
   </tpl:template>

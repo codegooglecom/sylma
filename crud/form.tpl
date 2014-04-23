@@ -21,7 +21,7 @@
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="value" default="''"/>
 
-    <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
+    <div class="field-container clearfix field-{$type}" js:class="sylma.crud.Field">
 
       <js:include>/#sylma/crud/Field.js</js:include>
 

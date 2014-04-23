@@ -20,7 +20,7 @@ class Apply extends parser\component\Apply implements common\arrayable {
     if ($sReflector = $this->readx('@reflector')) {
 
       $sReflector = $this->getWindow()->getAbsoluteClass($sReflector, (string) $this->getSourceDirectory());
-      $tree = $this->getParser()->createTree($sReflector);
+      $tree = $this->getHandler()->createTree($sReflector);
 
       $result = $this->getParser()->applyPathTo($tree, $sSelect, $sMode, $aArguments);
     }

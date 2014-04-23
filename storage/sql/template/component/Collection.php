@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\storage\sql;
+use sylma\core, sylma\storage\sql, sylma\template;
 
 class Collection extends Rooted implements sql\template\pathable {
 
@@ -11,11 +11,13 @@ class Collection extends Rooted implements sql\template\pathable {
   protected $key;
 
   protected $dummy;
+  protected $tree;
 
   /**
    * Before loop
    */
   protected $aStart = array();
+  protected $bBuilded = false;
 
   public function getElement($sName, $sNamespace = null) {
 
@@ -33,6 +35,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->setQuery($table->getQuery());
 
     $this->table = $table;
+    $table->setCollection($this);
     //$this->loadNamespace($table->getNamespace());
   }
 
@@ -105,7 +108,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
     if (!$sMode) {
 
-      $aResult[] = $this->getCounter();
+      //$aResult[] = $this->getCounter();
     }
 
     $aResult[] = $result;
@@ -120,7 +123,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->getTable()->setSource($this->getSource());
     $this->getTable()->setKey($this->getKey());
     $this->getTable()->setQuery($this->getQuery());
-    $this->getTable()->setCollection($this);
+    //$this->getTable()->setCollection($this);
 
     $content = $this->getTable()->reflectApply($sMode, $aArguments);
 
@@ -129,14 +132,7 @@ class Collection extends Rooted implements sql\template\pathable {
       $aResult[] = $this->getQuery();
     }
 
-    $collection = $this;
-    $window = $this->getWindow();
-
-    $aResult[] = $window->createCaller(function() use ($collection, $window) {
-
-      return $window->createGroup($collection->getStart());
-    });
-
+    $aResult[] = $this->buildStart();
     $aResult[] = $this->postBuild($content);
 
     $this->insertQuery(false);
@@ -151,6 +147,26 @@ class Collection extends Rooted implements sql\template\pathable {
   public function getStart() {
 
     return $this->aStart;
+  }
+
+  protected function buildStart() {
+
+    $aResult = array();
+
+    if (!$this->bBuilded) {
+
+      $collection = $this;
+      $window = $this->getWindow();
+
+      $aResult[] = $window->createCaller(function() use ($collection, $window) {
+
+        return $window->createGroup($collection->getStart());
+      });
+
+      $this->bBuilded = true;
+    }
+
+    return $aResult;
   }
 
   protected function getDummy() {
@@ -170,9 +186,19 @@ class Collection extends Rooted implements sql\template\pathable {
 
     switch ($sName) {
 
+      case 'init' :
+
+        $result = $this->buildStart();
+        break;
+
       case 'static' :
 
         $result = $aPath ? $this->getHandler()->parsePathToken($this->getTable(), $aPath, $sMode, true, $aArguments) : $this->getTable()->reflectApply($sMode, $aArguments, true);
+        break;
+
+      case 'counter' :
+
+        $result = $this->getCounter();
         break;
 
       case 'count' :
@@ -187,7 +213,12 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'dummy' :
 
-        $result = $this->reflectDummy($aPath, $aArguments);
+        $result = $this->reflectDummy($aPath, $aArguments, $sMode);
+        break;
+
+      case 'source' :
+
+        $result = $this->reflectSource($aPath, $aArguments, $sMode);
         break;
 
       case 'distinct' :
@@ -217,21 +248,42 @@ class Collection extends Rooted implements sql\template\pathable {
     return $result;
   }
 
-  protected function reflectDummy(array $aPath, array $aArguments = array()) {
+  protected function reflectDummy(array $aPath, array $aArguments = array(), $sMode = '') {
 
-    $dummy = $this->getDummy();
 
-    if ($aPath) {
+    return $this->getHandler()->parsePathToken($this->getTree(), $aPath, $sMode, false, $aArguments);
+  }
 
-      $sFunction = current($aPath);
-      $result = $dummy->call($sFunction, $aArguments);
-    }
-    else {
+  protected function reflectSource(array $aPath, array $aArguments = array(), $sMode = '') {
 
-      $result = $dummy;
+    $result = null;
+
+    if (!$this->getTree()) {
+
+      $window = $this->getWindow();
+      $tree = $this->create('tree', array($this->getHandler(), $this->getFactory()->findClass('tree')));
+
+      $result = $tree->loadDummy();
+
+      //$this->getTable()->setSource($tree->getDummy());
+      $this->setTree($tree);
     }
 
     return $result;
+  }
+
+  protected function setTree(template\parser\tree $tree) {
+
+    $this->tree = $tree;
+  }
+
+  /**
+   * @usedby sql\template\component\Table::startStatic()
+   * @return xml\tree
+   */
+  public function getTree() {
+
+    return $this->tree;
   }
 
   protected function getDistinct(array $aFunctionArguments, array $aPath, $sMode, array $aArguments = array()) {
@@ -272,7 +324,7 @@ class Collection extends Rooted implements sql\template\pathable {
     return $el->getElementRef();
   }
 
-  public function setPager(sql\template\Pager $pager) {
+  public function setPager(sql\pager\Tree $pager) {
 
     $pager->setCollection($this);
     $pager->setParser($this->getHandler()->getView());

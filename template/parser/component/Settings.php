@@ -6,7 +6,7 @@ use sylma\core, sylma\dom, sylma\template, sylma\parser\languages\common;
 class Settings extends Child implements common\arrayable, template\parser\component {
 
   const ARGUMENT_NS = 'http://2013.sylma.org/core/argument';
-static $test = 1;
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
@@ -22,7 +22,7 @@ static $test = 1;
     $builder = $manager->loadBuilder($this->getSourceFile(), $this->getSourceDirectory(), null, $doc);
     $args = $builder->buildStatic();
 
-    $this->setSettings($args);
+    $this->setSettings($args, false);
   }
 
   protected function build() {
@@ -36,12 +36,7 @@ static $test = 1;
   }
 
   public function asArray() {
-/*if (self::$test == 3) {
-    $this->launchException('test');
-  }
-  self::$test++;
- *
- */
+
     $this->build();
 
     return array();

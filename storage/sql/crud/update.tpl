@@ -31,10 +31,10 @@
   </view:template>
 
   <tpl:template match="sql:foreign" mode="container/multiple/update">
-    <fieldset class="form-foreign" js:class="sylma.crud.Field">
+    <fieldset class="field-container form-foreign" js:class="sylma.crud.Field">
 
       <js:include>/#sylma/crud/Field.js</js:include>
-      
+
       <tpl:apply mode="reference/js"/>
       <js:event name="change">
         %object%.downlight();

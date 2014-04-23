@@ -91,6 +91,10 @@ class Rooted extends sql\schema\component\Table {
     return $aResult;
   }
 
+  /**
+   *
+   * @return template\parser\template
+   */
   protected function lookupTemplate($sMode) {
 
     return $this->getParser()->lookupTemplate($this, 'element', $sMode, $this->isRoot());

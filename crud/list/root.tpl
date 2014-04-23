@@ -9,8 +9,10 @@
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 >
 
+  <tpl:import>dummy.tpl</tpl:import>
   <tpl:import>filters.tpl</tpl:import>
   <tpl:import>../form.tpl</tpl:import>
 
@@ -43,10 +45,14 @@
           <crud:path/>/default/list.json
         </tpl:token>
 
-        <tpl:apply mode="actions"/>
+        <tpl:apply mode="dummy"/>
         <tpl:apply mode="order"/>
 
-        <tpl:apply select="static()" mode="filters"/>
+        <tpl:apply select="init()"/>
+
+        <tpl:apply mode="actions"/>
+
+        <tpl:apply select="static()" mode="init"/>
 
         <table js:node="table" class="sql-{static()/name()}">
           <tpl:apply select="static()" mode="head/row"/>
@@ -57,24 +63,16 @@
 
   </tpl:template>
 
-  <tpl:template mode="order/prepare">
+  <tpl:template match="sql:table" mode="init">
 
-    <le:argument name="sylma-order" format="string" source="post">
-      <le:default>
-        <tpl:apply select="$$list-order"/>
-      </le:default>
-    </le:argument>
+    <tpl:apply mode="filters"/>
 
   </tpl:template>
 
-  <tpl:template mode="order">
+  <tpl:template match="*" mode="order">
 
     <tpl:apply mode="order/prepare"/>
-
-    <tpl:variable name="order">
-      <le:get-argument name="sylma-order" source="post"/>
-    </tpl:variable>
-    <input type="hidden" name="sylma-order" value="{$order}" js:node="order"/>
+    <input type="hidden" name="sylma-order" value="{dummy()/sylma-order}" js:node="order"/>
 
   </tpl:template>
 
@@ -142,11 +140,24 @@
 
   <tpl:template mode="internal">
 
-    <tpl:apply mode="init"/>
+    <tpl:apply mode="dummy"/>
+
+    <tpl:apply mode="pager/dummy"/>
+    <tpl:apply mode="order/prepare"/>
+
+    <tpl:apply select="init()"/>
+    <tpl:apply select="counter()"/>
+
+    <sql:order>
+      <tpl:read select="dummy()/sylma-order"/>
+    </sql:order>
 
     <tbody js:name="container" js:class="sylma.ui.Container">
 
       <tpl:apply mode="init-container"/>
+      <tpl:apply select="static()" mode="init/internal"/>
+
+      <tpl:apply select="dummy()/save()"/>
 
       <tpl:if test="has-children()">
 
@@ -171,18 +182,13 @@
 
   </tpl:template>
 
-  <tpl:template mode="init">
+  <tpl:template  match="*" mode="pager/input/source">
+    <tpl:read select="dummy()/sylma-page"/>
+  </tpl:template>
 
+  <tpl:template match="sql:table" mode="init/internal">
 
-<!--
-    <tpl:apply select="static()" mode="filters/prepare"/>
--->
-    <tpl:apply mode="init-pager"/>
-    <tpl:apply mode="order/prepare"/>
-
-    <sql:order>
-      <le:get-argument name="sylma-order" source="post"/>
-    </sql:order>
+    <tpl:apply use="list-cols" mode="filter/internal"/>
 
   </tpl:template>
 
@@ -217,7 +223,6 @@
   </tpl:template>
 
   <tpl:template match="*" mode="cell">
-    <tpl:apply mode="filter/internal"/>
     <td>
       <tpl:apply mode="cell/content"/>
     </td>

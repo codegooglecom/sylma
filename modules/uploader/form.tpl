@@ -142,15 +142,19 @@
           </js:event>
           <tpl:text>-</tpl:text>
         </button>
-        <button type="button" js:node="move">
-          <js:event name="mousedown">
-            %object%.drag(e);
-          </js:event>
-          <tpl:text>↕</tpl:text>
-        </button>
+        <tpl:apply mode="file/drag"/>
       </div>
     </div>
 
+  </tpl:template>
+
+  <tpl:template match="*" mode="file/drag">
+    <button type="button" js:node="move">
+      <js:event name="mousedown">
+        %object%.drag(e);
+      </js:event>
+      <tpl:text>↕</tpl:text>
+    </button>
   </tpl:template>
 
   <tpl:template match="*" mode="file/inputs">

@@ -39,7 +39,7 @@ class Foreign extends sql\template\component\Foreign {
 
     $this->addToQuery();
 
-    return $this->getParent()->getSource()->call('read', array($this->getAlias()), 'php-string');
+    return $this->getParent()->getSource()->call('read', array($this->getAlias(), false), 'php-string');
   }
 
   protected function reflectValues() {
@@ -61,14 +61,18 @@ class Foreign extends sql\template\component\Foreign {
 
     if ($this->getParent()->isStatic()) {
 
-      if ($aPath) {
-
-        $this->launchException('Cannot send paths to table');
-      }
-
       $table = $this->getElementRef();
       $table->setQuery($this->getParent()->getQuery());
-      $result = $table->reflectApply($sMode, $aArguments, true);
+
+      if ($aPath) {
+
+        // @TODO : only works with default as first path
+        $result = $table->reflectApplyDefault(array_pop($aPath), $aPath, $sMode, false, $aArguments, true);
+      }
+      else {
+
+        $result = $table->reflectApply($sMode, $aArguments, true);
+      }
     }
     else {
 

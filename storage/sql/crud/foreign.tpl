@@ -28,7 +28,7 @@
   </tpl:template>
 
   <tpl:template match="sql:foreign" mode="container/multiple/empty">
-    <fieldset class="field form-foreign" js:class="sylma.crud.Field">
+    <fieldset class="field-container form-foreign" js:class="sylma.crud.Field">
       <tpl:apply mode="reference/js"/>
       <js:event name="change">
         %object%.downlight();
@@ -134,6 +134,7 @@
   <tpl:template match="sql:foreign" mode="select-test">
     <tpl:argument name="alias" default="alias('form')"/>
     <select id="form-{$alias}" name="{$alias}" class="field-input-element">
+      <tpl:apply mode="input/foreign/events"/>
       <option value="0">
         <tpl:apply mode="input/foreign/default"/>
       </option>
@@ -285,13 +286,13 @@
 
   <tpl:template match="sql:foreign" mode="filter/content">
     <div class="filter" js:class="sylma.crud.list.Filter">
-      <tpl:apply mode="input/empty"/>
+      <tpl:apply mode="input/update"/>
     </div>
   </tpl:template>
 
   <tpl:template match="sql:foreign" mode="filter/text">
     <div class="filter" js:class="sylma.crud.list.Filter">
-      <tpl:apply mode="input/empty/build"/>
+      <tpl:apply mode="input/update/build"/>
       <tpl:apply mode="input/clear"/>
     </div>
   </tpl:template>

@@ -1,9 +1,9 @@
 <?php
 
-namespace sylma\storage\sql\cached;
+namespace sylma\storage\sql\pager;
 use sylma\core;
 
-class Pager extends core\module\Exceptionable {
+class Dummy extends core\module\Exceptionable {
 
   protected $iCount;
   protected $iPage;
@@ -21,7 +21,9 @@ class Pager extends core\module\Exceptionable {
 
   public function setPage($iPage) {
 
-    $this->iPage = intval($iPage);
+    $iValue = intval($iPage);
+
+    $this->iPage = $iValue < 1 ? 1 : $iValue;
   }
 
   public function getPage() {
@@ -41,9 +43,9 @@ class Pager extends core\module\Exceptionable {
 
   public function getOffset() {
 
-    $test = ($this->getPage() - 1) * $this->getSize();
+    $iResult = ($this->getPage() - 1) * $this->getSize();
 
-    return $test;
+    return $iResult < 0 ? 0 : $iResult;
   }
 
   public function isMultiple() {

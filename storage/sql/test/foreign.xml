@@ -8,6 +8,7 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
@@ -611,5 +612,34 @@
 
       return true;
     </tst:expected>
+  </tst:test>
+  <tst:test name="Ref call static dummy" exception-parser="\sylma\core\exception">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user2.xql</view:schema>
+
+        <tpl:template>
+
+          <tpl:apply select="source()"/>
+          <tpl:apply select="static()"/>
+
+        </tpl:template>
+
+        <tpl:template match="sql:table">
+          <div>
+            <tpl:apply select="group_id/all()"/>
+          </div>
+        </tpl:template>
+
+        <tpl:template match="group:group">
+          <tpl:filter name="name">
+            <tpl:read select="name"/>
+          </tpl:filter>
+        </tpl:template>
+
+      </view:view>
+    </tst:document>
   </tst:test>
 </tst:tests>

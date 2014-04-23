@@ -9,11 +9,13 @@
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 >
 
   <tpl:import>../input.tpl</tpl:import>
   <tpl:import>../type/numeric.tpl</tpl:import>
   <tpl:import>../type/date.tpl</tpl:import>
+  <tpl:import>../update.tpl</tpl:import>
 
   <tpl:template match="*" mode="list/filters/js">
     <js:include>Filters.js</js:include>
@@ -53,7 +55,7 @@
 
   <tpl:template match="*" mode="filter/content">
     <div class="filter" js:class="sylma.crud.list.Filter">
-      <tpl:apply mode="input/empty"/>
+      <tpl:apply mode="input/update"/>
       <tpl:apply mode="input/clear"/>
     </div>
   </tpl:template>
@@ -73,17 +75,9 @@
     </js:event>
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="filters/prepare">
-    <tpl:apply use="list-cols" mode="filter/internal"/>
-  </tpl:template>
-
   <tpl:template match="*" mode="filter/internal">
     <sql:filter optional="x">
-      <le:get-argument optional="x" source="post">
-        <le:name>
-          <tpl:read select="alias()"/>
-        </le:name>
-      </le:get-argument>
+      <tpl:read/>
     </sql:filter>
   </tpl:template>
 
@@ -97,11 +91,7 @@
   <tpl:template match="*" mode="filter/internal/text">
     <tpl:argument name="key"/>
     <sql:filter optional="x" op="search">
-      <le:get-argument optional="x" source="post">
-        <le:name>
-          <tpl:read select="$key"/>
-        </le:name>
-      </le:get-argument>
+      <tpl:read/>
     </sql:filter>
   </tpl:template>
 

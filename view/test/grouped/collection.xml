@@ -103,6 +103,7 @@
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div>
+            <tpl:apply select="counter()"/>
             <tpl:apply select="*"/>
             <span><tpl:apply select="count()"/></span>
           </div>
@@ -129,6 +130,7 @@
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
+          <tpl:apply select="counter()"/>
           <div>
             <span><tpl:apply select="count()"/></span>
           </div>
@@ -150,6 +152,7 @@
         <sql:filter name="name">admin</sql:filter>
         <view:schema>samples/user1.xql</view:schema>
         <view:template>
+          <tpl:apply select="counter()"/>
           <div>
             <tpl:apply select="*"/>
             <span><tpl:apply select="count()"/></span>
@@ -176,17 +179,22 @@
         <view:template>
           <tpl:settings>
             <cls:classes>
-              <cls:class alias="dummy" name="\sylma\view\test\grouped\samples\Product"/>
+              <cls:class alias="tree">
+                <cls:classes>
+                  <cls:class alias="dummy" name="\sylma\view\test\grouped\samples\Product"/>
+                </cls:classes>
+              </cls:class>
             </cls:classes>
           </tpl:settings>
+          <tpl:apply select="source()"/>
           <div>
             <tpl:apply select="*"/>
-            <span><tpl:apply select="dummy()/sum"/></span>
+            <span><tpl:apply select="dummy()/sum()"/></span>
           </div>
         </view:template>
         <view:template match="user:product">
           <li value="{price}"><tpl:read select="name"/></li>
-          <tpl:apply select="collection()/dummy()/add">
+          <tpl:apply select="collection()/dummy()/add()">
             <tpl:read select="price" tpl:name="val"/>
           </tpl:apply>
         </view:template>

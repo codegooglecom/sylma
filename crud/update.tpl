@@ -15,7 +15,7 @@
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="value" default="value()"/>
 
-    <div class="field clearfix field-{$type}" js:class="sylma.crud.Field">
+    <div class="field-container clearfix field-{$type}" js:class="sylma.crud.Field">
 
       <js:include>/#sylma/crud/Field.js</js:include>
 
@@ -55,12 +55,12 @@
 
   <tpl:template match="*" mode="date/content">
 
-    <tpl:apply mode="input/update">
+    <tpl:apply mode="input/update/build">
       <tpl:read tpl:name="alias" select="''"/>
       <tpl:read tpl:name="id" select="alias('form')"/>
       <tpl:read tpl:name="class" select="'date'"/>
     </tpl:apply>
-    <tpl:apply mode="input/update">
+    <tpl:apply mode="input/update/build">
       <tpl:read tpl:name="type" select="'hidden'"/>
       <tpl:read tpl:name="id" select="''"/>
     </tpl:apply>

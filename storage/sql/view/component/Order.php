@@ -21,7 +21,7 @@ class Order extends reflector\component\Foreigner implements reflector\component
 
     if ($this->getNode()->isComplex()) {
 
-      $content = $this->parseComponentRoot($this->getNode());
+      $content = $this->parseComponentRoot($this->getNode(), true);
       $query->setOrderDynamic($content);
     }
     else {

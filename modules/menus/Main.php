@@ -8,7 +8,7 @@ class Main extends xml\tree\Argument {
   protected function loadChild(core\argument $content) {
 
     $result = parent::loadChild($content);
-    $result->setVar($this->getVar());
+    $result->setDummy($this->getDummy());
 
     return $result;
   }
@@ -19,7 +19,7 @@ class Main extends xml\tree\Argument {
 
       case 'check-active' :
 
-        $result = $this->getVar()->call('checkActive', array($this->reflectApplyDefault('@href', array(), '', true)));
+        $result = $this->getDummy()->call('checkActive', array($this->reflectApplyDefault('@href', array(), '', true)));
 
         break;
 

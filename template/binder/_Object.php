@@ -223,7 +223,9 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
 
   public function asToken() {
 
-    return "Object [{$this->getClass()->getExtend()}]";
+    $sExtend = $this->getClass() ? $this->getClass()->getExtend() : '[not ready]';
+
+    return "Object [{$sExtend}]";
   }
 }
 

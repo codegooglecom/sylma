@@ -11,6 +11,8 @@ sylma.crud.list.Table = new Class({
 
   onLoad : function() {
 
+    this.parent();
+
     var head = this.getObject('head');
 
     if (head) {

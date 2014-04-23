@@ -33,7 +33,7 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
     $contexts = $window->getVariable('contexts');
 
     $var = $this->createObject('cached', array($args, $post, $contexts));
-    $this->setVar($var);
+    $this->setDummy($var);
 
     $var->insert();
   }
@@ -43,25 +43,21 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
     $this->getRoot()->setReturn('result');
 
     $view = $this->getParser();
-    $view->setReturn($this->getVar()->call($sMethod, array($view->getResult())));
+    $view->setReturn($this->getDummy()->call($sMethod, array($view->getResult())));
   }
 
-  protected function setVar(common\_callable $var) {
+  protected function setDummy(common\_var $var) {
 
-    $this->var = $var;
+    $this->dummy = $var;
   }
 
   /**
-   * @return common\_callable
+   * @usedby sql\template\component\Table::startStatic()
+   * @return common\_var
    */
-  protected function getVar($bDebug = true) {
+  public function getDummy() {
 
-    if (!$this->var && $bDebug) {
-
-      $this->launchException('No object associated');
-    }
-
-    return $this->var;
+    return $this->dummy;
   }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
@@ -74,6 +70,7 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
       case 'return' : $result = $this->reflectReturn($aFunctionArguments[0]); break;
       default :
 
+        if ($aFunctionArguments) $aArguments = array($aFunctionArguments);
         $result = $this->reflectCall($sName, $aArguments);
     }
 
@@ -82,12 +79,12 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
 
   protected function reflectCall($sName, array $aArguments) {
 
-    if (!$this->getVar(false)) {
+    if (!$this->getDummy(false)) {
 
       $this->launchException("Function '$sName()' unknown or object undefined");
     }
 
-    return $this->getVar()->call($sName, $aArguments);
+    return $this->getDummy()->call($sName, $aArguments);
   }
 
   public function reflectApply($sMode) {
@@ -95,8 +92,13 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
     $this->launchException('Cannot apply, no tree defined');
   }
 
+  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false) {
+
+    $this->launchException('Cannot apply, no tree defined');
+  }
+
   public function asToken() {
 
-    return $this->show($this->getVar());
+    return get_class($this);
   }
 }

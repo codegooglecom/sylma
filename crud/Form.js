@@ -11,11 +11,10 @@ sylma.crud.Form = new Class({
     mask : true
   },
 
-  initialize : function(options) {
-
-    this.parent(options);
+  onLoad : function() {
 
     this.getNode().addEvent('submit', this.submit.bind(this));
+    this.updateMask(false);
   },
 
   prepareMask : function() {
@@ -46,6 +45,7 @@ sylma.crud.Form = new Class({
     if (this.get('mask') === true) {
 
       if (val) val = 'disabled';
+      else val = undefined;
 
       this.getInputs().each(function(el) {
 

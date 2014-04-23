@@ -32,7 +32,7 @@
   <tpl:template match="menus:menus">
     <tpl:apply mode="init"/>
     <div id="{@id}" ls:mode="710" ls:owner="root" ls:group="users">
-      <ul class="clearfix">
+      <ul class="clearfix menu">
         <tpl:apply select="*"/>
         <li class="empty">.</li>
         <a id="lemonav-logout" title="Logout" href="/sylma/modules/users/logout.redirect"/>

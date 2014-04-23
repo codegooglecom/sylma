@@ -30,12 +30,12 @@
 
     <tpl:argument name="alias"/>
 
-    <tpl:apply mode="input/empty">
+    <tpl:apply mode="input/empty/build">
       <tpl:read tpl:name="alias" select="''"/>
       <tpl:read tpl:name="id" select="$alias"/>
       <tpl:read tpl:name="class" select="'date'"/>
     </tpl:apply>
-    <tpl:apply mode="input/empty">
+    <tpl:apply mode="input/empty/build">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'hidden'"/>
       <tpl:read tpl:name="id" select="''"/>

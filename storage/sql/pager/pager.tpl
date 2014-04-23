@@ -11,9 +11,15 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
-  <view:template mode="init-pager">
+  <view:template mode="pager/init">
 
     <js:include>Pager.js</js:include>
+
+  </view:template>
+
+  <view:template mode="pager/argument">
+
+    <tpl:apply mode="pager/init"/>
 
     <le:argument name="sylma-page" format="integer" source="post">
       <le:default>1</le:default>
@@ -30,9 +36,26 @@
 
   </view:template>
 
+  <view:template match="*" mode="pager/dummy">
+
+    <tpl:apply mode="pager/init"/>
+
+    <sql:pager>
+      <sql:current>
+        <tpl:read select="dummy()/sylma-page"/>
+      </sql:current>
+      <sql:count>
+        <tpl:apply mode="pager/count"/>
+      </sql:count>
+    </sql:pager>
+
+  </view:template>
+
   <tpl:template mode="pager/count">10</tpl:template>
 
   <view:template match="sql:pager">
+
+    <tpl:apply select="init()"/>
 
     <div class="pager" js:class="sylma.crud.Pager" js:name="pager">
 <!--
@@ -97,10 +120,7 @@
           &gt;&gt;
         </a>
 
-        <tpl:variable name="page">
-          <le:get-argument name="sylma-page" source="post"/>
-        </tpl:variable>
-        <input type="hidden" name="sylma-page" value="{$page}" js:node="input"/>
+        <input type="hidden" name="sylma-page" value="{current}" js:node="input"/>
 
       </div>
     </div>

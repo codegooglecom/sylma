@@ -19,18 +19,17 @@
     <view:schema>user01.xql</view:schema>
 
     <tpl:template match="user:group" mode="filter/content">
-      <tpl:apply mode="filter/text"/>
+      <tpl:apply select="ref()/name" mode="filter/content"/>
     </tpl:template>
-
-    <tpl:template match="user:group" mode="filter/internal"/>
 
     <tpl:template match="group:sylma_stepper_group01">
-      <tpl:apply select="name" mode="filter/internal">
-        <tpl:read select="'group'" tpl:name="key"/>
-      </tpl:apply>
       <tpl:read select="name"/>
     </tpl:template>
- 
+
+    <tpl:template match="user:group" mode="filter/internal">
+      <tpl:apply select="ref()/name" mode="filter/internal"/>
+    </tpl:template>
+
   </crud:global>
 
 </crud:crud>

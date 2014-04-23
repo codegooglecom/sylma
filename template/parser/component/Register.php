@@ -20,7 +20,7 @@ class Register extends Child implements common\arrayable, parser\component {
 
   protected function loadContent() {
 
-    return $this->parseComponentRoot($this->getNode(), false);
+    return $this->parseComponentRoot($this->getNode(), false, false);
   }
 
   public function asArray() {

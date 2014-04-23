@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template;
 
 class Table extends Rooted implements sql\template\pathable, schema\parser\element {
 
@@ -19,7 +19,6 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected $collection;
 
   public function init() {
-
     //$this->loadConnection();
   }
 
@@ -72,7 +71,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     $this->collection = $val;
   }
 
-  protected function getCollection() {
+  /**
+   * @usedby sql\template\component\Foreign::importElementRef()
+   * @return sql\template\component\Collection
+   */
+  public function getCollection() {
 
     return $this->collection;
   }
@@ -106,18 +109,18 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $result;
   }
 
-  public function getSource() {
+  public function getSource($bDebug = true) {
 
-    if ($this->isStatic()) {
-
-      $this->launchException('Cannot read value in static mode');
-    }
-
-    if ($this->source) {
+    if (!$bDebug || $this->source) {
 
       $result = $this->source;
     }
     else {
+
+      if ($this->isStatic()) {
+
+        $this->launchException('Cannot load query in static mode');
+      }
 
       $result = $this->getQuery()->getVar();
     }
@@ -159,9 +162,22 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     $query->setElement($el);
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array(), $bStatic = false) {
 
-    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
+    if ($bStatic) {
+
+      $aStat = $this->startStatic();
+    }
+
+    $content = $this->getHandler()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
+    $result = $this->getWindow()->parse($content, true);
+
+    if ($bStatic) {
+
+      $this->stopStatic($aStat);
+    }
+
+    return $result;
   }
 
   public function isStatic($bValue = null) {
@@ -214,9 +230,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       }
       else {
 
-        $this->isStatic($bStatic || $this->isStatic());
-        $aResult[] = $this->getWindow()->parse($tpl, true);
-        $this->isStatic(false);
+        $aResult[] = $this->reflectApplyStatic($bStatic, $tpl);
       }
     }
     else {
@@ -230,6 +244,47 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     }
 
     return $aResult;
+  }
+
+  protected function reflectApplyStatic($bStatic, template\parser\template $tpl = null) {
+
+    if ($bStatic) {
+
+      $aStat = $this->startStatic();
+    }
+
+    $aResult = $this->getWindow()->parse($tpl, true);
+
+    if ($bStatic) {
+
+      $this->stopStatic($aStat);
+    }
+
+    return $aResult;
+  }
+
+  protected function startStatic() {
+
+    $current = $this->getSource(false);
+
+    if ($collection = $this->getCollection() and $tree = $collection->getTree()) {
+
+      $this->setSource($tree->getDummy());
+    }
+
+    $bCurrent = $this->isStatic();
+    $this->isStatic(true);
+
+    return array(
+      'source' => $current,
+      'static' => $bCurrent,
+    );
+  }
+
+  protected function stopStatic(array $aStat) {
+
+    $this->setSource($aStat['source']);
+    $this->isStatic($aStat['static']);
   }
 
   public function reflectRead() {
@@ -247,12 +302,12 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       case 'position' :$result = $this->getPosition();  break;
       case 'collection' :
 
-        $result = $this->getParser()->parsePathToken($this->getCollection(), $aPath, $sMode, $bRead, $aArguments);
+        $result = $this->getHandler()->parsePathToken($this->getCollection(), $aPath, $sMode, $bRead, $aArguments);
         break;
 
       case 'parent' :
 
-        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
+        $result = $this->getHandler()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
         break;
 
       default :
