@@ -13,7 +13,7 @@ class Form extends core\module\Domed {
 
   public function __construct(core\argument $arguments, core\argument $post, core\argument $contexts, $sMode, Token $token = null) {
 
-    $this->validateToken($token);
+    //$this->validateToken($token);
 
     $this->setMode($sMode);
 
