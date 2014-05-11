@@ -15,6 +15,11 @@ class Apply extends parser\component\Apply implements common\arrayable {
     $sSelect = $this->readx('@select');
     $sMode = $this->readx('@mode');
 
+    if ($sXMode = $this->readx('@xmode')) {
+
+      $this->getHandler()->startXMode($sXMode);
+    }
+
     $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
 
     if ($sReflector = $this->readx('@reflector')) {
@@ -53,6 +58,11 @@ $this->launchException("Not ready");
     if (!$result && !$aResult && $this->readx('@required')) {
 
       $this->launchException('Apply require a template');
+    }
+
+    if ($sXMode) {
+
+      $this->getHandler()->stopXMode();
     }
 
     $this->stopLog();

@@ -10,6 +10,7 @@
 
   <tpl:template mode="js">
     <js:include>Form.js</js:include>
+    <js:include>/#sylma/ui/Clonable.js</js:include>
     <js:include>Field.js</js:include>
     <js:include>type/Text.js</js:include>
   </tpl:template>

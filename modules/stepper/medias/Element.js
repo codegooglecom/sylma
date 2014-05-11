@@ -88,7 +88,7 @@ sylma.stepper.Element = new Class({
 
       if (!subopt || tag !== subopt.name) {
 
-        this.addDifference('bad element', node, 'expecting ' + subopt.name);
+        this.addDifference('bad element', node, 'expecting ' + (subopt ? subopt.name : '[undefined]'));
 
         i--;
         length--;

@@ -13,6 +13,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected $aColumns = array();
   protected $bSub = false;
   protected $bStatic = false;
+  protected $bMultiple = true;
 
   protected $loop;
   protected $connection;
@@ -83,6 +84,13 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected function getMode() {
 
     return $this->sMode;
+  }
+
+  public function isMultiple($bValue = null) {
+
+    if (is_bool($bValue)) $this->bMultiple = $bValue;
+
+    return $this->bMultiple;
   }
 
   public function isSub($bVal = null) {

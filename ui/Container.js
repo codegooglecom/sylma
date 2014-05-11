@@ -1,8 +1,4 @@
-/**
- *
- */
-
-sylma.ui.Container = new Class({
+sylma.ui.ContainerProps = {
 
   Extends : sylma.ui.Base,
   /*
@@ -274,4 +270,6 @@ sylma.ui.Container = new Class({
     }
 
   }
-});
+};
+
+sylma.ui.Container = new Class(sylma.ui.ContainerProps);

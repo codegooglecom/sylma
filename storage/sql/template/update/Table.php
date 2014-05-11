@@ -9,7 +9,7 @@ class Table extends sql\template\insert\Table {
 
   /**
    * @uses sql\query\parser\Basic::setHandler()
-   * @uses Reference::secureQuery()
+   * @uses sql\schema\component\Foreign::filterQuery()
    * @return array|common\argumentable
    */
   protected function loadQuery() {
@@ -27,15 +27,15 @@ class Table extends sql\template\insert\Table {
 
         $update = $this->getQuery();
         $update->setWhere($id, '=', $source);
-        $this->getParent()->secureQuery($update);
+        $this->getParent()->filterQuery($update);
 
         $insert = $this->createQuery('insert');
-        $insert->setHandler($this->getDummy());
+        $insert->setDummy($this->getDummy());
 
         $delete = $this->createQuery('delete');
-        $delete->setHandler($this->getDummy());
+        $delete->setDummy($this->getDummy());
         $delete->setWhere($id, '=', $source);
-        $this->getParent()->secureQuery($delete);
+        $this->getParent()->filterQuery($delete);
 
         $result = $window->createSwitch($this->getDummy()->call('getMode'));
 
@@ -50,6 +50,37 @@ class Table extends sql\template\insert\Table {
     }
 
     return $result;
+  }
+
+  public function loadSingleReference($sName, self $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
+
+    $window = $this->getWindow();
+
+    //$table->isSub(true);
+
+    //$arg = $window->tokenToInstance(self::$sArgumentClass);
+    //$from = $window->callFunction('current', '\sylma\core\argument', array($this->getElementArgument($sName, 'get')));
+    //$source = $window->createVar($window->createInstanciate($arg, array($from)));
+    $source = $window->createVar($this->getElementArgument($sName, 'get'));
+    //$source = $window->createVar($this->getElementArgument($sName, 'get'));
+
+    $aContent[] = $source->getInsert();
+
+    $table->setSource($source);
+    $key = $window->addVar($window->argToInstance(0));
+    $table->init($key, $this->getDummy());
+
+    $aContent[] = $window->toString($this->getParser()->parsePathToken($table, $aPath, $sMode, false, $aArguments));
+    $aContent[] = $table->getValidation();
+
+    if ($foreign) {
+
+      $this->addElement($foreign, $val);
+    }
+
+    $this->addContent($aContent);
+    $this->addValidate($table->callValidate());
+    $this->addTrigger(array($table->getExecution()));
   }
 
   protected function loadTriggers() {

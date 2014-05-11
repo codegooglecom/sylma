@@ -56,7 +56,42 @@ sylma.crud.Form = new Class({
 
   getInputs : function() {
 
-    return this.getNode().getElements('input, select, textarea');
+    return this.getNode().getElements('input[type=^button], select, textarea');
+  },
+
+  clearInputs : function(inputs) {
+
+    inputs = inputs || this.getInputs();
+
+    inputs.each(function(item) {
+
+      switch(item.get('tag')) {
+
+        case 'input' :
+
+          switch(item.getAttribute('type')) {
+
+            case 'checkbox' :
+            case 'radio' : item.set('checked'); break;
+
+            default :
+
+              item.set('value');
+          }
+
+          break;
+
+      case 'textarea' :
+
+        item.set('value');
+        break;
+
+      case 'select' :
+
+        item.getChildren().set('selected');
+        break;
+      }
+    });
   },
 
   submit : function(e, args) {
@@ -204,18 +239,15 @@ sylma.crud.Form = new Class({
   submitReturn : function(response, args) {
 
     var redirect = response.content;
-
     var result = sylma.ui.parseMessages(response, null, redirect);
 
     if (!result.errors && redirect) {
 
       window.location.href = document.referrer;
-      //this.hideMask();
     }
     else {
 
       this.hideMask();
     }
   }
-
 });

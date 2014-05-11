@@ -26,7 +26,7 @@ class Update extends Insert {
       $this->launchException('Cannot build update query without registered fields');
     }
 */
-    $aQuery = array('UPDATE ', $sTable, ' SET ', $this->getHandler()->call('asString'), $aWheres);
+    $aQuery = array('UPDATE ', $sTable, ' SET ', $this->getDummy()->call('asString'), $aWheres);
 
     return $this->getWindow()->createString($this->getWindow()->flattenArray($aQuery));
   }

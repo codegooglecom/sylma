@@ -195,7 +195,8 @@ class _Object extends Basic implements common\arrayable, core\tokenable {
     $this->getHandler()->startObject($this);
     $this->startLog($this->asToken());
 
-    $element = $this->getClass()->getElement();
+    $element = clone $this->getClass()->getElement();
+
     $element->setAttribute('id', $this->getID());
 
     $var = $this->getHandler()->getObjects();

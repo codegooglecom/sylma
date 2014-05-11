@@ -5,6 +5,9 @@ use sylma\core;
 
 abstract class Attributed extends Domed {
 
+  protected $aDefaultAttributes = array();
+  protected $aAttributes = array();
+
 /*
   public function parseAttributeKey($sName) {
 
@@ -94,9 +97,9 @@ abstract class Attributed extends Domed {
     $this->aDefaultAttributes[$sName] = $mVal;
   }
 
-  protected function resetAttributes() {
+  protected function resetAttributes($aAttributes = array()) {
 
-    $this->aAttributes = $this->aDefaultAttributes;
+    $this->aAttributes = $aAttributes ? $aAttributes : $this->aDefaultAttributes;
   }
 
   public function setAttribute($sName, $mVal) {

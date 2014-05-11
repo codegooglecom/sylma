@@ -9,7 +9,7 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
   protected $bAlias = false;
   protected $bRoot = false;
-  
+
   public function isRoot($bValue = null) {
 
     if (is_bool($bValue)) $this->bRoot = $bValue;
@@ -36,15 +36,7 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
       case 'form' :
 
-        if ($this->isSub()) {
-
-          $mResult = $this->getWindow()->toString(array($this->getParent()->getParent()->getName(), '[', $this->getParentKey(), "][{$this->getName()}]"));
-        }
-        else {
-
-          $mResult = $this->getAlias();
-        }
-
+        $mResult = $this->getAliasForm();
         break;
 
       case 'key' :
@@ -73,9 +65,41 @@ class Element extends schema\xsd\component\Element implements common\stringable 
     return $mResult;
   }
 
+  protected function getAliasForm() {
+
+    if ($this->isSub()) {
+
+      $table = $this->getParent();
+      $foreign = $this->getParent()->getParent();
+
+      if ($table->isMultiple()) {
+
+        if (!$iKey = $this->getParentKey()) {
+
+          $iKey = '0';
+        }
+
+        $aResult = array($foreign->getName(), '[', $iKey, ']', );
+      }
+      else {
+
+        $aResult = array($foreign->getName());
+      }
+
+      $aResult[] = "[{$this->getName()}]";
+      $mResult = $this->getWindow()->toString($aResult);
+    }
+    else {
+
+      $mResult = $this->getAlias();
+    }
+
+    return $mResult;
+  }
+
   protected function isSub() {
 
-    return $this->getParent()->isSub();
+    return $this->getParent(false) && $this->getParent()->isSub();
   }
 
   public function useAlias($bVal = null) {
@@ -129,7 +153,15 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
   public function getDefault() {
 
-    return $this->readx('@default');
+    if (!$sResult = $this->readx('@default')) {
+
+      if ($this->getParent(false)) {
+
+        $sResult = $this->getParent()->getDefault();
+      }
+    }
+
+    return $sResult;
   }
 }
 

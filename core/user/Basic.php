@@ -10,6 +10,7 @@ class Basic extends core\module\Argumented implements core\user {
 
   private $sUser = '';
   private $bValid = false;
+  protected $sID = '0';
   private $sSID = ''; // session ID
 
   /**
@@ -58,14 +59,15 @@ class Basic extends core\module\Argumented implements core\user {
     return $this->sName;
   }
 
-  public function authenticate($sUser) {
+  public function authenticate($sUser, $sID) {
 
     // Authentication successed !
 
-    $sResult = $this->setName($sUser);
+    $this->sID = $sID;
+    $this->setName($sUser);
     $this->isValid(true);
 
-    return $sResult;
+    return $sUser;
   }
 
   protected function isValid($bValid = null) {
@@ -94,23 +96,45 @@ class Basic extends core\module\Argumented implements core\user {
 
     $this->loadCookie();
 
-    if ($this->isValid() && $this->getName()) {
+    if ($this->isValid() && $this->getName() && $this->getID()) {
 
       // just authenticated via @method authenticate()
 
       //$this->loadProfile();
       $this->setPrivate();
-      if ($this->getCookie()) $this->getCookie()->save($this->getName(), $bRemember);
+
+      if ($this->getCookie()) {
+
+        $this->getCookie()->save(array(
+          'id' => $this->getID(),
+          'name' => $this->getName()
+        ), $bRemember);
+      }
     }
     else if (!$this->loadSession()) {
 
       // no session
 
-      if ($this->getCookie() && ($sUser = $this->getCookie()->getUser())) {
+      $sID = $sName = '';
+
+      if ($this->getCookie()) {
+
+        $aContent = $this->getCookie()->getContent();
+
+        if (is_array($aContent)) {
+
+          if (isset($aContent['id'])) $sID = $aContent['id'];
+          if (isset($aContent['name'])) $sName = $aContent['name'];
+        }
+      }
+
+      if ($sID && $sName) {
 
         // has cookie
 
-        $this->setName($sUser);
+        $this->sID = $sID;
+        $this->setName($sName);
+
         $this->setPrivate();
 
         $this->bProfil = true;
@@ -247,8 +271,9 @@ class Basic extends core\module\Argumented implements core\user {
 
       $aSession = unserialize($sSession);
 
-      $this->setName($aSession[0]);
-      $this->setGroups($aSession[1]);
+      $this->sID = $aSession[0];
+      $this->setName($aSession[1]);
+      $this->setGroups($aSession[2]);
       //if ($aSession[2]) $this->setOptions($aSession[2]);
     }
 
@@ -260,7 +285,11 @@ class Basic extends core\module\Argumented implements core\user {
     $options = null;
     //if ($this->getOptions()) $options = $this->getOptions()->getDocument();
 
-    $_SESSION[$this->readArgument('session/name')] = serialize(array($this->getName(), $this->getGroups(), $options));
+    $_SESSION[$this->readArgument('session/name')] = serialize(array(
+      $this->getID(),
+      $this->getName(),
+      $this->getGroups(),
+      $options));
   }
 
   /*** Groups ***/
@@ -331,6 +360,11 @@ class Basic extends core\module\Argumented implements core\user {
     return $iMode;
   }
 
+  protected function getID() {
+
+    return $this->sID;
+  }
+
   protected function setPrivate($bValue = true) {
 
     $this->bPrivate = $bValue;
@@ -362,6 +396,6 @@ class Basic extends core\module\Argumented implements core\user {
 
   public function __toString() {
 
-    return $this->getName();
+    return $this->getID();
   }
 }

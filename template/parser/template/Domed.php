@@ -17,7 +17,7 @@ class Domed extends Basic {
 
     $this->setNode($el, true, false);
 
-    $this->loadMode();
+    $this->loadModes();
 
     $this->allowUnknown(true);
     $this->allowForeign(true);
@@ -61,6 +61,7 @@ class Domed extends Basic {
 
     $element = $this->loadSimpleComponent('element');
     $element->setTemplate($this);
+
     $this->addComponent($element);
 
     $aResult[] = $this->loadAttributes($el, $element);

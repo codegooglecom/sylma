@@ -166,6 +166,8 @@ class Foreign extends Element implements sql\schema\foreign {
     $sElement = $this->getParser()->addSchema($doc);
 
     $table = $this->getParser()->getElement($sElement, $this->getNamespace());
+
+    $table->setParent($this);
     $table->isSub(true);
 
     $current = $table->getElement($sCurrent);
@@ -176,5 +178,9 @@ class Foreign extends Element implements sql\schema\foreign {
     return array($table, $current, $target);
   }
 
+  public function filterQuery(sql\query\parser\Basic $query) {
+
+    //$query->setWhere($this, '=', $this->getParent()->getElementArgument('id'));
+  }
 }
 

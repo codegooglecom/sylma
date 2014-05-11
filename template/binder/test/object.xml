@@ -23,7 +23,7 @@
         <sql:resource>
           <sql:id>2</sql:id>
         </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <div>Hello world</div>
@@ -56,7 +56,7 @@
         <sql:resource>
           <sql:id>2</sql:id>
         </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <div>Hello world</div>
@@ -82,7 +82,7 @@
         <sql:resource>
           <sql:id>2</sql:id>
         </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test" js:parent-name="hello">
             <div>Hello world</div>
@@ -112,7 +112,7 @@
         <sql:resource>
           <sql:id>2</sql:id>
         </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <block js:class="sylma.ui.Base" js:name="test" js:parent="example">
             <div js:class="sylma.ui.Base" js:name="test1" js:parent-name="hello">
@@ -145,7 +145,7 @@
         <sql:resource>
           <sql:id>2</sql:id>
         </sql:resource>
-        <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
+        <view:schema>samples/user1.xql</view:schema>
         <view:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <div>Hello world</div>
@@ -164,9 +164,52 @@
     </tst:document>
     <tst:expected>
       var test = example.test;
-      var node = test.getObject('email').getNode();
+      var name = test.getObject('name').getNode();
+      var email = test.getObject('email').getNode();
 
-      return node.get('text') === 'admin@sylma.org';
+      sylma.tester.assertEquals(name.get('text'), 'admin');
+      sylma.tester.assertEquals(email.get('text'), 'admin@sylma.org');
+
+      return true
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Template call self">
+    <!-- @TODO : move to template tests, require a component that update statically attribute -->
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
+            <tpl:apply/>
+          </div>
+        </tpl:template>
+        <tpl:template match="*">
+          <div js:class="sylma.ui.Base">
+            <tpl:apply mode="content"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user" mode="content">
+          <tpl:apply select="*"/>
+        </tpl:template>
+        <tpl:template match="user:*" mode="content">
+          <tpl:read/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+      var test = example.test;
+      var table = test.tmp[0];
+      var id = test.tmp[0].tmp[0];
+      var name = test.tmp[0].tmp[1];
+
+      sylma.tester.assertEquals(table.getNode().getFirst(), id.getNode());
+      sylma.tester.assertEquals(id.getNode().get('text'), '2');
+      sylma.tester.assertEquals(name.getNode().get('text'), 'admin');
+
+      return true;
     </tst:expected>
   </tst:test>
 </tst:tests>

@@ -8,12 +8,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
   protected $parent;
   protected $query;
   protected $var;
-
-  protected function getParentKey() {
-
-    return '';
-  }
-
+  
   protected function isSub() {
 
     return $this->getParent()->isSub();

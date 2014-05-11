@@ -20,5 +20,10 @@ class Reference extends Foreign implements sql\schema\reference {
 
     $this->setType($this->getParser()->getType('reference', $this->getParser()->getNamespace(self::PREFIX)));
   }
+
+  public function filterQuery(sql\query\parser\Basic $query) {
+
+    $query->setWhere($this->getForeign(), '=', $this->getParent()->getElementArgument('id'));
+  }
 }
 

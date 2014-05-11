@@ -33,6 +33,11 @@ class Script extends Caller implements common\arrayable {
       'contexts' => $this->getWindow()->getVariable('contexts'),
     )));
 
+    if ($this->readx('@hollow')) {
+
+      $result = $this->getWindow()->createInstruction($result);
+    }
+
     return array($result);
   }
 }

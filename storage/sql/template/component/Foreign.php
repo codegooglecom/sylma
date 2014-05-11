@@ -63,7 +63,8 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
       //case 'this' : $result = $aPath ? $this->getParser()->parsePathToken($this, $aPath, $sMode, $aArguments) : $this->reflectApply($sMode, $aArguments); break;
       case 'value' : $result = $this->reflectRead(); break;
       case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
-      case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
+      case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments, $bRead); break;
+      case 'subref' : $result = $this->reflectFunctionSubRef($aPath, $sMode, $aArguments, $bRead); break;
       case 'collection' : $result = $this->reflectFunctionCollection($aPath, $sMode, $aArguments); break;
       case 'title' : $result = $this->getTitle(); break;
 
@@ -81,7 +82,17 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
     return $result;
   }
 
-  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
+  protected function reflectFunctionSubRef(array $aPath, $sMode, array $aArguments = array(), $bRead = false) {
+
+    $table = $this->getElementRef();
+    $table->isSub(true);
+
+    $table->isMultiple((bool) $this->getMaxOccurs(true));
+
+    return $this->reflectFunctionRef($aPath, $sMode, $aArguments, $bRead);
+  }
+
+  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array(), $bRead = false) {
 
     $this->launchException('Should not be called');
   }

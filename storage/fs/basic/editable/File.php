@@ -134,6 +134,8 @@ class File extends fs\basic\File implements fs\editable\file {
     if (!$bResult) $this->throwException ('Cannot save text content for unknown reason');
     $this->bExist = true;
 
+    //$this->iChanged = null;
+
     //$this->update();
 
     return $bResult;

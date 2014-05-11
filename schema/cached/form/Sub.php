@@ -25,7 +25,9 @@ class Sub extends Form {
 
   public function getID() {
 
-    return $this->getElement('id')->getValue();
+    $el = $this->getElement('id', false);
+
+    return $el ? $el->getValue() : null;
   }
 
   protected function setKey($iKey) {

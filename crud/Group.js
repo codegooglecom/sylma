@@ -1,7 +1,7 @@
 
 sylma.crud.Group = new Class({
 
-  Extends : sylma.ui.Container,
+  Extends : sylma.ui.Clonable,
   elements : [],
   highlighted : 0,
 
@@ -48,5 +48,4 @@ sylma.crud.Group = new Class({
       }
     }
   }
-
 });

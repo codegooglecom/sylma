@@ -1,9 +1,9 @@
 
-sylma.crud.fieldset = {};
+sylma.crud.fieldset = sylma.crud.fieldset || {};
 
 sylma.crud.fieldset.Container = new Class({
 
-  Extends : sylma.ui.Container,
+  Extends : sylma.ui.Clonable,
   count : 0,
 
   initialize : function(props) {
@@ -16,9 +16,33 @@ sylma.crud.fieldset.Container = new Class({
     }
   },
 
+  prepare : function() {
+  },
+
+  clonePrepare : function() {
+
+    this.parent();
+
+    this.objects.add.clonePrepare();
+    this.objects.content.clonePrepare();
+  },
+
   getContent : function() {
 
     return this.getObject('content');
+  },
+
+  cloneContent : function(objects, tmp) {
+
+    this.getNode().setStyle('display', 'block');
+
+    var result = {};
+
+    result.template = objects.template;
+    result.add = objects.add.clone(this, this.getNode());
+    result.content = objects.content.clone(this, this.getNode());
+
+    this.objects = result;
   },
 
   getCount : function() {

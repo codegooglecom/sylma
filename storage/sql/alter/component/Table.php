@@ -155,5 +155,21 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
 
     return $sResult;
   }
+
+  /**
+   * @usedby Field::typeAsString()
+   */
+  public function getDefault() {
+
+    $sResult = '';
+
+    if ($this->readx('@allow-empty')) {
+
+      $sResult = 'NULL';
+    }
+
+    return $sResult;
+  }
+
 }
 

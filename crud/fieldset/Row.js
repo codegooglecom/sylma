@@ -1,4 +1,6 @@
 
+sylma.crud.fieldset = sylma.crud.fieldset || {};
+
 sylma.crud.fieldset.Row = new Class({
 
     Extends : sylma.crud.Group,
@@ -7,29 +9,6 @@ sylma.crud.fieldset.Row = new Class({
     setPosition : function(pos) {
 
       this.position = pos;
-    },
-
-    cloneContent : function(objects, tmp) {
-
-      this.getNode().setStyle('display', 'block');
-
-      var result = {
-        objects : {},
-        tmp : []
-      }
-
-      for (var i in objects) {
-
-        result.objects[i] = this.cloneSub(objects[i]);
-      }
-
-      for (i = 0; i < tmp.length; i++) {
-
-        result.tmp[i] = this.cloneSub(tmp[i]);
-      }
-
-      this.objects = result.objects;
-      this.tmp = result.tmp;
     },
 
     cloneSub : function(obj) {
@@ -46,13 +25,13 @@ sylma.crud.fieldset.Row = new Class({
 
     remove : function() {
 
-      for (var i in this.objects) {
+      Object.each(this.objects, function(item) {
 
-        if (this.objects[i].isHighlighted()) {
+        if (item && item.isHighlighted && item.isHighlighted()) {
 
           this.downlight();
         }
-      }
+      }, this);
 
       var fieldset = this.getParent('fieldset');
 
@@ -72,6 +51,5 @@ sylma.crud.fieldset.Row = new Class({
 
         this.parent();
       }
-    },
-
+    }
   });

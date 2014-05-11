@@ -56,11 +56,15 @@
 
         <table js:node="table" class="sql-{static()/name()}">
           <tpl:apply select="static()" mode="head/row"/>
-          <crud:include path="list"/>
+          <tpl:apply mode="list/content"/>
         </table>
       </form>
     </div>
 
+  </tpl:template>
+
+  <tpl:template mode="list/content">
+    <crud:include path="list"/>
   </tpl:template>
 
   <tpl:template match="sql:table" mode="init">
@@ -79,12 +83,7 @@
   <tpl:template mode="actions">
 
     <div class="actions" js:class="sylma.ui.Base">
-      <a class="button">
-        <tpl:token name="href">
-          <le:path/>/insert
-        </tpl:token>
-        Insert
-      </a>
+      <tpl:apply mode="actions/insert"/>
       <!--
       <a class="button" href="javascript:void(0)">
         <js:event name="click">
@@ -92,15 +91,28 @@
         </js:event>
         <tpl:text>Filters</tpl:text>
       </a>
-      -->
       <a class="button" ls:owner="root" ls:group="admin" ls:mode="700">
         <tpl:token name="href">
           <le:path>/sylma/storage/sql/alter</le:path>?path=<view:get-schema/>
         </tpl:token>
         Structure
       </a>
+      -->
     </div>
 
+  </tpl:template>
+
+  <tpl:template mode="actions/insert">
+    <a class="button">
+      <tpl:token name="href">
+        <tpl:apply mode="actions/insert/href"/>
+      </tpl:token>
+      Insert
+    </a>
+  </tpl:template>
+
+  <tpl:template mode="actions/insert/href">
+    <le:path/>/insert
   </tpl:template>
 
   <tpl:template match="*" mode="head/row">
@@ -194,7 +206,7 @@
 
   <tpl:template match="*" mode="row/init">
     <js:option name="url" cast="x">
-      <le:path/>/update?id=<tpl:read select="id"/>
+      <tpl:apply mode="row/action/href"/>
     </js:option>
   </tpl:template>
 
@@ -216,10 +228,14 @@
   <tpl:template match="*" mode="row/action">
     <a title="Editer" class="button">
       <tpl:token name="href">
-        <le:path/>/update?id=<tpl:read select="id"/>
+        <tpl:apply mode="row/action/href"/>
       </tpl:token>
       E
     </a>
+  </tpl:template>
+
+  <tpl:template match="*" mode="row/action/href">
+    <le:path/>/update?id=<tpl:read select="id"/>
   </tpl:template>
 
   <tpl:template match="*" mode="cell">

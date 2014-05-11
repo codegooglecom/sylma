@@ -16,7 +16,7 @@ class Rooted extends sql\schema\component\Table {
 
   protected $aTriggers = array();
 
-  public function setSource($source) {
+  public function setSource(common\_callable $source = null) {
 
     $this->source = $source;
   }

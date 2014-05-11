@@ -13,9 +13,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
 
   protected function importElementRef() {
 
-    $result = parent::importElementRef();
-
-    if ($result) {
+    if ($result = parent::importElementRef()) {
 
       $result->isSub(true);
     }

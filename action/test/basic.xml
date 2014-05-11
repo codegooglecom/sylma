@@ -195,6 +195,27 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Call script hollow">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <tpl:template>
+          <div>
+            <h3><tpl:apply select="name"/></h3>
+            <le:script path="samples/view1" hollow="x"/>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Check dynamic named argument">
     <tst:document>
       <view:view sql:ns="ns" user:ns="ns">

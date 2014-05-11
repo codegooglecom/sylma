@@ -25,14 +25,9 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->loadDummy($key, $parent);
   }
 
-  public function getAlias($sMode = '') {
-
-    return $this->getName();
-  }
-
   public function addElement(sql\schema\element $el, $content = null, array $aArguments = array()) {
 
-    if ($this->getDummy()) {
+    if ($this->getDummy(false)) {
 
       $this->addElementToDummy($el, $content, $aArguments);
     }
@@ -75,16 +70,27 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function getElementArgument($sName, $sMethod = 'read') {
 
-    return $this->getSource()->call($sMethod, array($sName, false), 'php-string');
+    switch ($sMethod) {
+
+      case 'read' : $sFormat = 'php-string'; break;
+      case 'query' : $sFormat = 'php-array'; break;
+      case 'get' : $sFormat = '\sylma\core\argument'; break;
+
+      default :
+
+        $this->launchException('Unknown format');
+    }
+
+    return $this->getSource()->call($sMethod, array($sName, false), $sFormat);
   }
 
   protected function buildQuery() {
 
     $result = parent::buildQuery();
 
-    if ($this->getDummy()) {
+    if ($this->getDummy(false)) {
 
-      $result->setHandler($this->getDummy());
+      $result->setDummy($this->getDummy());
     }
 
     return $result;
@@ -137,6 +143,88 @@ class Table extends sql\template\component\Table implements common\argumentable 
       $id = $this->getElement('id', null, false);
       $this->addContent($var->call('setSub', array($this->getParent()->getAlias(), $key, $parent, $id ? $id->getName() : null)));
     }
+  }
+
+  public function loadMultipleReference($sName, self $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
+
+    $window = $this->getWindow();
+
+    $item = $window->createVariable('', '\sylma\core\argument');
+    $key = $window->createVariable('', 'php-integer');
+    $loop1 = $window->createLoop($this->getElementArgument($sName, 'get'), $item, $key);
+
+    $table->setSource($item);
+    $table->init($key, $this->getDummy());
+
+    $valid = $window->addVar($window->argToInstance(true));
+
+    $aContent[] = $window->toString($this->getParser()->parsePathToken($table, $aPath, $sMode, false, $aArguments));
+    $aContent[] = $table->getValidation();
+
+    $test = $window->createNot($table->callValidate());
+    $aContent[] = $window->createCondition($test, $window->createAssign($valid, $window->argToInstance(false)));
+
+    $forms = $window->addVar($window->argToInstance(array()));
+
+    $aContent[] = $window->callFunction('array_push', 'php-boolean', array($forms, $table->getDummy()));
+
+    $loop1->setContent($aContent);
+    $this->addContent($loop1);
+
+    $item = $window->createVariable('', '\sylma\core\argument');
+    $loop2 = $window->createLoop($forms, $item);
+
+    $table->setDummy($item);
+
+    if ($foreign) {
+
+      $table->addElement($foreign, $val);
+    }
+
+    $loop2->setContent(array($table->getExecution()));
+
+    $this->addValidate($valid);
+    $this->addTrigger(array($loop2));
+  }
+
+  public function loadSingleReference($sName, self $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
+
+    $this->launchException('Single foreign insert as reference not implemented');
+  }
+
+  /**
+   * @todo (wip) single reference insert, need main and sub form invert
+   */
+  public function _loadSingleReference($sName, self $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
+
+    $window = $this->getWindow();
+
+    $arg = $window->tokenToInstance(self::$sArgumentClass);
+    $from = $window->callFunction('current', 'php-boolean', array($table->getElementArgument($sName, 'query')));
+    $source = $window->createVar($window->createInstanciate($arg, array($from)));
+
+    $table->setSource($source);
+    $key = $window->addVar($window->argToInstance(0));
+    $this->init();
+
+    $table->init($key, $source);
+
+    $aContent[] = $window->toString($this->getParser()->parsePathToken($table, $aPath, $sMode, false, $aArguments));
+    $aContent[] = $this->getValidation();
+
+    if ($foreign) {
+
+      $table->addElement($foreign, $val);
+    }
+
+    $table->addContent($source->getInsert());
+    $table->addContent($aContent);
+    $table->addValidate($this->callValidate());
+    $table->addTrigger(array($this->getExecution()));
+
+    $this->addContent($table);
+
+    //return $table;
   }
 
   protected function getPosition() {
@@ -208,12 +296,12 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $aContent;
   }
 
-  public function addContent($mVal) {
+  protected function addContent($mVal) {
 
     $this->aContent[] = $mVal;
   }
 
-  public function addValidate($mVal) {
+  protected function addValidate($mVal) {
 
     if ($this->aValidates) {
 
@@ -223,14 +311,14 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->aValidates[] = $mVal;
   }
 
-  public function callValidate() {
+  protected function callValidate() {
 
     $this->addValidate($this->getDummy()->call('validate'));
 
     return array_reverse($this->aValidates);
   }
 
-  public function getValidation() {
+  protected function getValidation() {
 
     $result = $this->getWindow()->createGroup($this->getContent());
     $this->aContent = array();
@@ -238,7 +326,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $result;
   }
 
-  public function getExecution() {
+  protected function getExecution() {
 
     $aResult = $this->aContent;
     $aResult[] = $this->loadTriggers();

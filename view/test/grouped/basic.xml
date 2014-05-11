@@ -681,6 +681,33 @@
       <div><h3>root</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="XMode">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <tpl:apply select="name" xmode="mymode"/>
+        </tpl:template>
+        <tpl:template match="user:name">
+          <tpl:apply/>
+        </tpl:template>
+        <tpl:template match="*" xmode="badmode">
+          <h3/>
+        </tpl:template>
+        <tpl:template match="*" xmode="mymode">
+          <h4>
+            <tpl:read/>
+          </h4>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <h4>admin</h4>
+    </tst:node>
+  </tst:test>
   <tst:test name="Template match multiple names">
     <tst:document>
       <view:view user:ns="ns">

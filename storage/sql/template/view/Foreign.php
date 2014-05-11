@@ -57,7 +57,7 @@ class Foreign extends sql\template\component\Foreign {
     return $query->getCall()->call('asArray');
   }
 
-  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
+  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array(), $bRead = false) {
 
     if ($this->getParent()->isStatic()) {
 
@@ -67,7 +67,7 @@ class Foreign extends sql\template\component\Foreign {
       if ($aPath) {
 
         // @TODO : only works with default as first path
-        $result = $table->reflectApplyDefault(array_pop($aPath), $aPath, $sMode, false, $aArguments, true);
+        $result = $table->reflectApplyDefault(array_pop($aPath), $aPath, $sMode, $bRead, $aArguments, true);
       }
       else {
 
@@ -76,7 +76,7 @@ class Foreign extends sql\template\component\Foreign {
     }
     else {
 
-      $result = $this->applyElement($aPath, $sMode, $aArguments);
+      $result = $this->applyElement($aPath, $sMode, $aArguments, $bRead);
     }
 
     return $result;
@@ -151,7 +151,7 @@ class Foreign extends sql\template\component\Foreign {
     return $result;
   }
 
-  protected function applyElement(array $aPath, $sMode, array $aArguments = array()) {
+  protected function applyElement(array $aPath, $sMode, array $aArguments = array(), $bRead = false) {
 
     //$sName = $element->getName();
 
@@ -175,7 +175,7 @@ class Foreign extends sql\template\component\Foreign {
 
       if ($aPath) {
 
-        $result = $this->getParser()->parsePathToken($element, $aPath, $sMode, false, $aArguments);
+        $result = $this->getParser()->parsePathToken($element, $aPath, $sMode, $bRead, $aArguments);
       }
       else {
 

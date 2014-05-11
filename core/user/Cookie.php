@@ -7,7 +7,7 @@ require_once('core/module/Argumented.php');
 
 class Cookie extends core\module\Argumented {
 
-  protected $sUser = '';
+  protected $sContent = '';
 
   /**
    * Expiration time
@@ -24,12 +24,14 @@ class Cookie extends core\module\Argumented {
     $this->validate();
   }
 
-  public function getUser() {
+  public function getContent() {
 
-    return $this->sUser;
+    return json_decode($this->sContent, true);
   }
 
-  public function save($sUser, $bRemember = false) {
+  public function save($mContent, $bRemember = false) {
+
+    $sContent = json_encode($mContent);
 
     if ($bRemember) $iExpiration = time() + $this->readArgument('lifetime/normal'); // 14 days
     else $iExpiration = time() + $this->readArgument('lifetime/short'); // 8 hours
@@ -37,7 +39,7 @@ class Cookie extends core\module\Argumented {
     if ($bRemember) setcookie($this->readArgument('remember/name'), 'true', time() + $this->readArgument('remember/lifetime'), '/');
     else setcookie($this->readArgument('remember/name'), '', 0, '/');
 
-    $sCookie = $this->generate($sUser, $iExpiration);
+    $sCookie = $this->generate($sContent, $iExpiration);
 
     if (!setcookie($this->readArgument('name'), $sCookie, $iExpiration, '/') ) {
 
@@ -49,12 +51,12 @@ class Cookie extends core\module\Argumented {
     }
   }
 
-  private function generate($sID, $iExpiration) {
+  private function generate($sContent, $iExpiration) {
 
-    $sKey = hash_hmac( 'md5', $sID . $iExpiration, $this->readArgument('secret-key') );
-    $sHash = hash_hmac( 'md5', $sID . $iExpiration, $sKey );
+    $sKey = hash_hmac( 'md5', $sContent . $iExpiration, $this->readArgument('secret-key') );
+    $sHash = hash_hmac( 'md5', $sContent . $iExpiration, $sKey );
 
-    $sCookie = $sID . '|' . $iExpiration . '|' . $sHash;
+    $sCookie = $sContent . '|' . $iExpiration . '|' . $sHash;
 
     return $sCookie;
   }
@@ -85,7 +87,7 @@ class Cookie extends core\module\Argumented {
 
         if ($sHmac == $sHash) {
 
-          $this->sUser = $sID;
+          $this->sContent = $sID;
           $this->iExpiration = $iExpiration;
         }
       }

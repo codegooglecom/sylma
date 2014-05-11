@@ -129,7 +129,7 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
 
   public function setEvent($sName, js\basic\instance\_Object  $val, template\element $el) {
 
-    if ($el !== $this->getElement()) {
+    if ($el->getID() !== $this->getElement()->getID()) {
 
       $el->addToken('class', $sName);
       $val->setProperty('node', $sName);

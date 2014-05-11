@@ -72,7 +72,7 @@ class Container extends template_ns\parser\template\Argumented {
     $this->aMatch = $aNames;
   }
 
-  public function getWeightSchema(schema_ns\parser\element $element, $sContext, $sMode, $bRoot = false) {
+  public function getWeightSchema(schema_ns\parser\element $element, $sMode, $sXMode, $bRoot = false) {
 
     $iResult = 0;
 
@@ -85,7 +85,7 @@ class Container extends template_ns\parser\template\Argumented {
           $iResult = self::WEIGHT_ELEMENT_ROOT;
         }
       }
-      else if ($sMode === $this->getMode()) {
+      else if ((!$this->getXMode() || $this->getXMode() === $sXMode) && $sMode === $this->getMode()) {
 
         $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
 

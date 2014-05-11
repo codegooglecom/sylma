@@ -642,4 +642,141 @@
       </view:view>
     </tst:document>
   </tst:test>
+  <tst:test name="Insert as reference" disabled="true">
+    <tst:document>
+      <view:view user:ns="ns" mode="insert">
+        <sql:resource/>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template match="sql:table">
+          <tpl:apply select="* ^ id"/>
+        </view:template>
+        <view:template match="*">
+          <tpl:register/>
+        </view:template>
+        <view:template match="user:group_id">
+          <tpl:apply select="ref()"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $manager->setToken('/sylma/storage/sql/test/alterxml-table-in-latin-1');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'name' => 'Faith Mills',
+          'group_id' => array(
+            array(
+              'name' => 'group01',
+            ),
+          ),
+        )));
+
+    </tst:load>
+    <tst:expected>
+
+      $sID = $manager->read('id');
+      $manager->setArgument('id', $sID);
+
+      $user = $manager->runQuery("SELECT user.name AS user, `group`.id, `group`.name AS `group` FROM user LEFT JOIN `group` ON `group`.id = user.group_id WHERE user.id = $sID", 1);
+
+      $manager->assertEqual($user->asArray(), array(
+        'name' => 'Faith Mills',
+        'id' => 1,
+        'group' => 'group01',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Update as reference">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO `group` (name) VALUES ('group01')", 8);
+      $manager->set('group', $sID);
+      $manager->set('user', $manager->runQuery("INSERT INTO user (name, group_id) VALUES ('Faith Mills', $sID)", 8));
+
+    </tst:prepare>
+    <tst:document>
+      <view:view user:ns="ns" mode="update">
+        <sql:resource>
+          <sql:id>
+            <le:get-argument name="id" source="post"/>
+          </sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template match="sql:table">
+          <tpl:apply select="*"/>
+        </view:template>
+        <view:template match="*">
+          <tpl:register/>
+        </view:template>
+        <view:template match="user:group_id">
+          <tpl:apply select="subref()"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $manager->setToken('/sylma/storage/sql/test/update-as-reference');
+      $iUser = $manager->read('user');
+      $iGroup = $manager->read('group');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'id' => $iUser,
+          'name' => 'Faith Mills 2',
+          'group_id' => array(
+            'id' => $iGroup,
+            'name' => 'group01b',
+          ),
+        )));
+
+    </tst:load>
+    <tst:expected>
+
+      $sID = $manager->read('user');
+
+      $user = $manager->runQuery("SELECT user.name, `group`.name AS `group` FROM user LEFT JOIN `group` ON `group`.id = user.group_id WHERE user.id = $sID", 0);
+
+      $manager->assertEqual($user->asArray(), array(
+        'name' => 'Faith Mills 2',
+        'group' => 'group01b',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Alias as reference">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource/>
+        <view:schema>samples/user2.xql</view:schema>
+        <view:template>
+          <div>
+            <tpl:apply/>
+          </div>
+        </view:template>
+        <view:template match="sql:table">
+          <tpl:apply select="*"/>
+        </view:template>
+        <view:template match="*">
+          <input type="text" name="{alias('form')}" id="{alias()}"/>
+        </view:template>
+        <view:template match="user:group_id">
+          <tpl:apply select="subref()"/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+     <div>
+      <input type="text" name="id" id="id"/>
+      <input type="text" name="name" id="name"/>
+      <input type="text" name="group_id[id]" id="group_id"/>
+      <input type="text" name="group_id[name]" id="group_name"/>
+    </div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

@@ -404,6 +404,9 @@ class Documented extends Logger implements reflector\documented {
     $window->setReturn($sReturn);
   }
 
+  /**
+   * @usedby sylma\template\binder\component\Event::addToClass()
+   */
   public function getCurrentElement() {
 
     if (!$this->aElements) {
@@ -414,6 +417,9 @@ class Documented extends Logger implements reflector\documented {
     return end($this->aElements);
   }
 
+  /**
+   * @usedby \sylma\template\parser\component\element\Domed::start()
+   */
   public function startElement(template\element $el) {
 
     //$this->startComponentLog($el, $el->asToken());

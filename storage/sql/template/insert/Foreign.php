@@ -12,9 +12,18 @@ class Foreign extends sql\template\component\Foreign {
     return null;
   }
 
-  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
+  /**
+   * @uses Table::getDummy()
+   * @uses Table::setDummy()
+   */
+  protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array(), $bRead = false) {
 
-    return null;
+    $table = $this->getElementRef();
+    //$val = $table->getElementArgument($table->getElement('id')->getName());
+
+    $result = $this->getParent()->loadSingleReference($this->getName(), $table, $aPath, $sMode, $aArguments);
+
+    return $result;
   }
 
   protected function buildSingle($sMode, $content = null) {
@@ -27,9 +36,9 @@ class Foreign extends sql\template\component\Foreign {
     ));
   }
 
-  protected function loadID() {
+  protected function reflectID() {
 
-    return $this->getParser()->getView()->getResult();
+    return $this->getParent()->getResult();
   }
 
   /**
@@ -44,7 +53,7 @@ class Foreign extends sql\template\component\Foreign {
     $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $val, $key);
 
     $junction->init($key, $this->getParent()->getDummy());
-    $junction->addElement($source, $this->loadID());
+    $junction->addElement($source, $this->reflectID());
     $junction->addElement($target, $val);
 
     $loop->addContent($junction);

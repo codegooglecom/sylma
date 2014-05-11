@@ -101,12 +101,18 @@ class Form extends core\module\Domed {
 
   public function getElement($sName, $bDebug = true) {
 
+    $mResult = null;
+
     if (!isset($this->aElements[$sName])) {
 
       if ($bDebug) $this->launchException("Element $sName does not exists");
     }
+    else {
 
-    return $this->aElements[$sName];
+      $mResult = $this->aElements[$sName];
+    }
+
+    return $mResult;
   }
 
   protected function getElements() {

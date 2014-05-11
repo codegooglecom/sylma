@@ -9,16 +9,21 @@ class Insert extends Basic implements common\argumentable {
   protected $aSets = array();
   protected $aValues = array();
 
-  protected $handler;
+  protected $dummy;
 
-  public function setHandler(common\_var $handler) {
+  public function setDummy(common\_var $handler) {
 
-    $this->handler = $handler;
+    $this->dummy = $handler;
   }
 
-  protected function getHandler() {
+  protected function getDummy($bDebug = true) {
 
-    return $this->handler;
+    if ($bDebug && !$this->dummy) {
+
+      $this->launchException('No dummy defined');
+    }
+
+    return $this->dummy;
   }
 
   public function addSet($field, $val) {
@@ -46,9 +51,9 @@ class Insert extends Basic implements common\argumentable {
 
     $sTable = current($this->getTables());
 
-    if ($this->getHandler()) {
+    if ($this->getDummy(false)) {
 
-      $aQuery = array('INSERT INTO ', $sTable, $this->getHandler()->call('asString'));
+      $aQuery = array('INSERT INTO ', $sTable, $this->getDummy()->call('asString'));
     }
     else {
 

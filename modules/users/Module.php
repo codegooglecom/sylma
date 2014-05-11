@@ -64,6 +64,7 @@ class Module extends core\module\Domed {
     if (!$doc->isEmpty()) {
 
       list($sID, $sPassword) = explode(' ', $doc->readx());
+      
       if ($sPassword == crypt($post->read('password'), $sPassword)) {
 
         $sResult = $sID;
@@ -80,7 +81,7 @@ class Module extends core\module\Domed {
 
       $bRemember = true; //(bool) $post->get('remember', false);
       $user = $this->getManager('user');
-      $user->authenticate($post->read('name'));
+      $user->authenticate($post->read('name'), $sResult);
 
       \Sylma::setManager('user', $user);
       $user->load($bRemember);

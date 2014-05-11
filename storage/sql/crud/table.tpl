@@ -11,19 +11,31 @@
 
   <tpl:template match="sql:table" mode="form/build">
 
+    <tpl:variable name="action">
+      <tpl:apply mode="init/action"/>
+    </tpl:variable>
+
+    <form js:class="sylma.crud.Form" class="sylma-form" action="{$action}" js:parent-name="form" method="post">
+
+      <tpl:apply mode="form/content"/>
+
+    </form>
+
+  </tpl:template>
+
+  <tpl:template match="sql:table" mode="form/content">
+
     <tpl:apply mode="css"/>
 
-    <form js:class="sylma.crud.Form" class="sylma-form" js:parent-name="form" method="post">
+    <js:include>/#sylma/crud/Form.js</js:include>
 
-      <js:include>/#sylma/crud/Form.js</js:include>
+    <tpl:apply mode="form/init"/>
+    <tpl:apply mode="form"/>
 
-      <tpl:apply mode="init"/>
-      <tpl:apply mode="form"/>
-      <div class="form-actions">
-        <tpl:apply mode="form/action"/>
-      </div>
-      <tpl:apply mode="form/token"/>
-    </form>
+    <div class="form-actions">
+      <tpl:apply mode="form/action"/>
+    </div>
+    <tpl:apply mode="form/token"/>
 
   </tpl:template>
 

@@ -5,7 +5,7 @@ use sylma\core, sylma\storage\sql;
 
 class Foreign extends sql\template\insert\Foreign {
 
-  protected function loadID() {
+  protected function reflectID() {
 
     return $this->getParent()->getElementArgument('id');
   }
@@ -15,7 +15,7 @@ class Foreign extends sql\template\insert\Foreign {
     $del = $this->loadSimpleComponent('template/delete');
 
     $del->setTable($junction);
-    $del->setWhere($source, '=', $this->loadID());
+    $del->setWhere($source, '=', $this->reflectID());
 
     $aContent[] = $del;
     $aContent[] = parent::buildMultiple($junction, $source, $target);

@@ -1,13 +1,12 @@
 
 sylma.crud.Field = new Class({
 
-  Extends : sylma.ui.Base,
+  Extends : sylma.ui.Clonable,
   highlightClass : 'field-statut-invalid',
 
   initialize : function(props) {
 
     this.parent(props);
-    this.props = props;
 
     var inputs = this.getInputs();
 
@@ -80,36 +79,38 @@ sylma.crud.Field = new Class({
 
   clonePrepare : function() {
 
-    var id = 'sylma' + Math.floor(Math.random(new Date().getSeconds()) * 999);
-    this.getNode().addClass(id);
+    //if (!this.props.sylma.isclone) {
 
-    var input = this.getInput();
-    input.set('data-name', input.get('name'));
-    input.set('name');
+      this.parent();
 
-    this.cloneID = id;
+      var input = this.getInput();
+
+      input.set('data-name', input.get('name'));
+      input.set('name');
+    //}
   },
 
   clone : function(parent, node, position) {
 
-    var props = this.props;
-
-    props.node = node.getElements('.' + this.cloneID).pick();
-    props.id = null;
-    props.parentObject = parent;
-
-    var result = sylma.ui.createObject(props);
-    result.updateID(position);
+    var result = this.parent(parent, node);
+    result.cloneInput(position);
 
     return result;
   },
 
-  updateID : function(id) {
+  cloneContent : function(objects, tmp) {
+
+  },
+
+  cloneInput : function(position) {
 
     var input = this.getInput();
-    var name = input.get('data-name').replace(/\[\]/, '[' + id + ']');
+
+    var name = input.get('data-name').replace(/\[0\]/, '[' + position + ']');
+
     input.set('name', name);
     input.set('id', name);
+
     var label = this.getNode().getElement('label', false);
     if (label) label.set('for', name);
   },

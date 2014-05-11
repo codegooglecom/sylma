@@ -9,6 +9,7 @@ abstract class Templated extends reflector\handler\Elemented {
   protected $aCheckTemplates = array();
 
   protected $aTemplates = array();
+  protected $aXModes = array();
 
   public function lookupTemplate($sName, $sNamespace, $sMode, $bRoot = false) {
 
@@ -20,7 +21,7 @@ abstract class Templated extends reflector\handler\Elemented {
       $sToken = $sNamespace . ':' . $sName;
       if ($this->checkTemplate($template, $sToken, false)) continue;
 
-      $iWeight = $template->getWeight($sNamespace, $sName, $sMode, $bRoot);
+      $iWeight = $template->getWeight($sNamespace, $sName, $sMode, $this->getXMode(), $bRoot);
       if ($iWeight && $iWeight >= $iLast) {
 
         $result = $template;
@@ -85,6 +86,9 @@ abstract class Templated extends reflector\handler\Elemented {
     return $tpl->getID() . $sToken;
   }
 
+  /**
+   * @usedby \sylma\storage\sql\template\handler\Basic::lookupTemplate()
+   */
   public function checkTemplate(parser\template $tpl, $sToken, $bDebug = true) {
 
     $bResult = isset($this->aCheckTemplates[$this->getTreeID($tpl, $sToken)]);
@@ -112,6 +116,31 @@ abstract class Templated extends reflector\handler\Elemented {
     $this->aTemplates = array();
   }
 */
+
+  /**
+   * @usedby \sylma\view\parser\component\Apply::build()
+   */
+  public function startXMode($sMode) {
+
+    $this->aXModes[] = $sMode;
+  }
+
+  /**
+   * @usedby \sylma\view\parser\component\Apply::build()
+   */
+  public function stopXMode() {
+
+    array_pop($this->aXModes);
+  }
+
+  /**
+   * @usedby \sylma\storage\sql\template\handler\Basic::lookupTemplate()
+   */
+  public function getXMode() {
+
+    return end($this->aXModes);
+  }
+
   protected function getTemplates() {
 
     return $this->aTemplates;

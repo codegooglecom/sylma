@@ -606,33 +606,4 @@
       return true;
     </tst:expected>
   </tst:test>
-  <tst:test name="Insert foreign multiple" catch="\sylma\core\exception" disabled="true">
-    <tst:document>
-      <view:view user:ns="ns" mode="update">
-        <sql:resource>
-          <sql:id><le:get-argument name="id" source="post"/></sql:id>
-        </sql:resource>
-        <view:schema>samples/user4.xql</view:schema>
-        <view:template>
-          <tpl:apply select="group"/>
-        </view:template>
-        <view:template match="user:*">
-          <tpl:register/>
-        </view:template>
-      </view:view>
-    </tst:document>
-    <tst:load>
-// Cannot insert foreign without other elements
-// Exception occurs on compile, tester should catch it
-
-      $manager->setToken('/sylma/view/test/grouped/formxml-insert-foreign-multiple');
-      $sID = $manager->readArgument('id');
-
-      return
-        array('post' => $manager->createArgument(array(
-          'id' => $sID,
-          'group' => array(2,3),
-        )))
-    </tst:load>
-  </tst:test>
 </tst:tests>

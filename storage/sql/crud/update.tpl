@@ -13,6 +13,14 @@
 
   <tpl:import>/#sylma/crud/update.tpl</tpl:import>
 
+  <tpl:template mode="form/init">
+    <sql:filter name="id">
+      <le:get-argument name="id"/>
+    </sql:filter>
+    <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
+    <tpl:apply mode="title"/>
+  </tpl:template>
+
   <view:template match="sql:string-long" mode="input" sql:ns="ns">
     <tpl:apply mode="input/update"/>
   </view:template>

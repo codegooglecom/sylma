@@ -30,16 +30,12 @@
   <tpl:template match="sql:table" sql:ns="ns" mode="update">
     <div js:class="sylma.crud.fieldset.Row" class="form-reference clearfix sylma-hidder sylma-visible">
       <tpl:apply/>
-      <button type="button" class="right">
-        <js:event name="click">
-          %object%.remove();
-        </js:event>
-        <tpl:text>-</tpl:text>
-      </button>
+      <tpl:apply mode="reference/remove"/>
     </div>
   </tpl:template>
 
   <tpl:template match="*" mode="reference/js">
+    <js:include>/#sylma/ui/Clonable.js</js:include>
     <js:include>/#sylma/crud/Group.js</js:include>
     <js:include>/#sylma/crud/fieldset/Container.js</js:include>
     <js:include>/#sylma/crud/fieldset/Row.js</js:include>
@@ -47,10 +43,28 @@
     <js:include>/#sylma/crud/fieldset/Template.js</js:include>
   </tpl:template>
 
-  <tpl:template match="sql:reference" mode="container" sql:ns="ns">
+  <tpl:template match="sql:reference" mode="container/empty">
 
     <tpl:apply mode="reference/js"/>
-    
+
+    <fieldset js:class="sylma.crud.fieldset.Container" js:parent-name="fieldset">
+      <js:name>
+        <tpl:read select="alias()"/>
+      </js:name>
+      <js:option name="useID">
+        <tpl:read select="use-id()"/>
+      </js:option>
+      <tpl:apply mode="legend"/>
+      <tpl:apply mode="template/add"/>
+      <tpl:apply mode="template"/>
+      <div js:class="sylma.crud.Group" js:name="content"/>
+    </fieldset>
+  </tpl:template>
+
+  <tpl:template match="sql:reference" mode="container">
+
+    <tpl:apply mode="reference/js"/>
+
     <fieldset js:class="sylma.crud.fieldset.Container" js:parent-name="fieldset">
       <js:name>
         <tpl:read select="alias()"/>
@@ -68,7 +82,7 @@
   </tpl:template>
 
   <tpl:template match="sql:reference" mode="template/add">
-    <button type="button" js:class="sylma.ui.Base">
+    <button type="button" js:name="add" js:class="sylma.ui.Clonable">
       <js:event name="click">
         %parent%.addTemplate();
       </js:event>
@@ -79,13 +93,17 @@
   <tpl:template match="sql:reference" mode="template">
     <div js:name="template" js:class="sylma.crud.fieldset.Template" class="form-reference clearfix sylma-hidder" style="display: none">
       <tpl:apply select="static()" mode="empty"/>
-      <button type="button" class="right">
-        <js:event name="click">
-          %object%.remove();
-        </js:event>
-        <tpl:text>-</tpl:text>
-      </button>
+      <tpl:apply mode="reference/remove"/>
     </div>
+  </tpl:template>
+
+  <tpl:template match="*" mode="reference/remove">
+    <button type="button" class="right">
+      <js:event name="click">
+        %object%.remove();
+      </js:event>
+      <tpl:text>-</tpl:text>
+    </button>
   </tpl:template>
 
 

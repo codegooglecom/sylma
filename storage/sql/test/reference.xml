@@ -3,6 +3,7 @@
   xmlns:tst="http://www.sylma.org/modules/tester/parser"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
+  xmlns:crud="http://2013.sylma.org/view/crud"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
@@ -139,7 +140,7 @@
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Form insert">
+  <tst:test name="Form alias">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource>
@@ -169,9 +170,234 @@
       <div>
         <input name="name"/>
         <fieldset>
-          <input name="users[][name]"/>
+          <input name="users[0][name]"/>
         </fieldset>
       </div>
     </tst:node>
+  </tst:test>
+  <tst:test name="Form insert">
+    <tst:document>
+
+      <view:view mode="insert">
+
+        <sql:resource/>
+        <view:schema>samples/group1.xql</view:schema>
+
+        <tpl:template>
+          <form>
+            <tpl:apply select="name,users"/>
+          </form>
+        </tpl:template>
+
+        <tpl:template match="sql:reference" sql:ns="ns">
+          <fieldset>
+            <tpl:apply select="ref()" mode="ref"/>
+          </fieldset>
+        </tpl:template>
+
+        <tpl:template match="*">
+          <input name="{alias('form')}"/>
+          <tpl:register/>
+        </tpl:template>
+
+        <tpl:template match="sql:table" mode="ref">
+          <tpl:apply select="name,email"/>
+        </tpl:template>
+
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $aUsers = array(
+        array(
+          'name' => 'test_ref1',
+          'email' => 'test_ref1@sylma.org',
+        ),
+        array(
+          'name' => 'test_ref2',
+          'email' => 'test_ref2@sylma.org',
+        ),
+      );
+
+      $manager->set('users', $aUsers);
+
+      return array(
+        'post' => $manager->createArgument(array(
+          'name' => 'group_crud',
+          'users' => $aUsers,
+        )),
+      );
+    </tst:load>
+    <tst:expected>
+
+      $sID = $manager->read('result');
+      $aUsers = $manager->get('users')->asArray();
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $group = $manager->runQuery("SELECT name FROM `group` WHERE id = $sID", false);
+      $users = $manager->runQuery("SELECT name,email FROM user2 WHERE `group_id` = $sID", true);
+      $manager->set('idref', $sID);
+
+      $manager->assertEquals($group->read('name'), 'group_crud');
+      $manager->assertEquals($users->query(), $aUsers);
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Form update">
+    <tst:dependancy>Form insert (prev)</tst:dependancy>
+    <tst:document>
+
+      <view:view mode="update">
+
+        <sql:resource/>
+        <view:schema>samples/group1.xql</view:schema>
+
+        <tpl:template>
+          <form>
+            <tpl:apply select="name,users"/>
+          </form>
+        </tpl:template>
+        <tpl:template match="sql:reference" sql:ns="ns">
+          <fieldset>
+            <div>
+              <tpl:apply select="ref()" mode="ref"/>
+            </div>
+          </fieldset>
+        </tpl:template>
+        <tpl:template match="*">
+          <input name="{alias('form')}" value="{value()}"/>
+          <tpl:register/>
+        </tpl:template>
+
+        <tpl:template match="sql:table" mode="ref">
+          <tpl:apply select="name,email"/>
+        </tpl:template>
+
+        <sql:filter name="id"><le:get-argument name="id" source="post"/></sql:filter>
+
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $sID = $manager->read('idref');
+
+      $aUsers = array(
+        array(
+          'name' => 'test_ref1b',
+          'email' => 'test_ref1b@sylma.org',
+        ),
+        array(
+          'name' => 'test_ref2b',
+          'email' => 'test_ref2b@sylma.org',
+        ),
+      );
+
+      $manager->set('users', $aUsers);
+
+      return array(
+        'post' => $manager->createArgument(array(
+          'id' => $sID,
+          'name' => 'group_crud_new',
+          'users' => $aUsers,
+        )),
+      );
+    </tst:load>
+    <tst:expected>
+
+      $sID = $manager->read('idref');
+      $aUsers = $manager->get('users')->asArray();
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $group = $manager->runQuery("SELECT name FROM `group` WHERE id = $sID", false);
+      $users = $manager->runQuery("SELECT name,email FROM user2 WHERE `group_id` = $sID", true);
+
+      $manager->assertEquals($group->read('name'), 'group_crud_new');
+      $manager->assertEquals($users->query(), $aUsers);
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Form update with ids">
+    <tst:dependancy>Form update (prev)</tst:dependancy>
+    <tst:document>
+
+      <view:view mode="update">
+
+        <sql:resource/>
+        <view:schema>samples/group2b.xql</view:schema>
+
+        <tpl:template>
+          <form>
+            <tpl:apply select="name,users"/>
+          </form>
+        </tpl:template>
+        <tpl:template match="sql:reference" sql:ns="ns">
+          <fieldset>
+            <div>
+              <tpl:apply select="ref()" mode="ref"/>
+            </div>
+          </fieldset>
+        </tpl:template>
+        <tpl:template match="*">
+          <input name="{alias('form')}" value="{value()}"/>
+          <tpl:register/>
+        </tpl:template>
+
+        <tpl:template match="sql:table" mode="ref">
+          <tpl:apply select="id,name,email"/>
+        </tpl:template>
+
+        <sql:filter name="id"><le:get-argument name="id" source="post"/></sql:filter>
+
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $sID = $manager->read('idref');
+
+      $aUsers = array(
+        array(
+          'id' => -7,
+        ),
+        array(
+          'id' => '8',
+          'name' => 'test_ref2c',
+          'email' => 'test_ref2c@sylma.org',
+        ),
+      );
+
+      $manager->set('users', $aUsers);
+
+      return array(
+        'post' => $manager->createArgument(array(
+          'id' => $sID,
+          'name' => 'group_crud_new',
+          'users' => $aUsers,
+        )),
+      );
+    </tst:load>
+    <tst:expected>
+
+      $sID = $manager->read('idref');
+      $aUsers = $manager->get('users')->asArray();
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $group = $manager->runQuery("SELECT name FROM `group` WHERE id = $sID", false);
+      $users = $manager->runQuery("SELECT id,name,email FROM user2 WHERE `group_id` = $sID", true);
+
+      array_shift($aUsers);
+
+      $manager->assertEquals($group->read('name'), 'group_crud_new');
+      $manager->assertEquals($users->query(), $aUsers);
+
+      return true;
+
+    </tst:expected>
   </tst:test>
 </tst:tests>

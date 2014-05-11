@@ -39,11 +39,14 @@ class Basic extends sql\schema\Handler {
       'key' => 0,
     );
 
+    $view = $this->getView();
+    $sXMode = $view->getXMode();
+
     foreach ($this->getTemplates() as $iKey => $template) {
 
-      if ($this->getView()->checkTemplate($template, $element->asToken(), false)) continue;
+      if ($view->checkTemplate($template, $element->asToken(), false)) continue;
 
-      $iWeight = $template->getWeightSchema($element, $sContext, $sMode, $bRoot);
+      $iWeight = $template->getWeightSchema($element, $sMode, $sXMode, $bRoot);
       if ($iWeight && $iWeight >= $current->weight) {
 
         $current->template = $template;

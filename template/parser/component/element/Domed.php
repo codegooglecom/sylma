@@ -7,15 +7,12 @@ abstract class Domed extends template\parser\component\Unknowned implements temp
 
   const TARGET_PREFIX = 'target';
 
-  //protected $aAttributes = array();
   protected $aContent = array();
   protected $bBuilded = false;
   protected $aBefore = array();
 
-  protected $aDefaultAttributes = array();
-  protected $aAttributes = array();
-
   protected $aAllowedNamespaces = array();
+  protected $sID = '';
 
   public function parseRoot(dom\element $el) {
 
@@ -24,7 +21,16 @@ abstract class Domed extends template\parser\component\Unknowned implements temp
 
     $this->aAllowedNamespaces[] = \Sylma::read('namespaces/html');
 
-    $this->build($el);;
+    $this->sID = uniqid();
+    $this->build($el);
+  }
+
+  /**
+   * @usedby \sylma\template\binder\_class\Builder::setEvent()
+   */
+  public function getID() {
+
+    return $this->sID;
   }
 
   public function build(dom\element $el = null) {

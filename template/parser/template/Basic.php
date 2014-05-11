@@ -24,6 +24,8 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
   protected $sMatch;
   protected $aMatch = array();
+  protected $sMode = '';
+  protected $sXMode = '';
 
   protected $tree;
   protected $bCloned = false;
@@ -98,11 +100,16 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
     return $this->tree;
   }
 
-  protected function loadMode() {
+  protected function loadModes() {
 
     if ($sMode = $this->readx('@mode')) {
 
       $this->sMode = $sMode;
+    }
+
+    if ($sXMode = $this->readx('@xmode')) {
+
+      $this->sXMode = $sXMode;
     }
   }
 
@@ -121,11 +128,16 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
     return $this->sMode;
   }
 
-  public function getWeight($sNamespace, $sName, $sMode = self::MODE_DEFAULT, $bRoot = false) {
+  protected function getXMode() {
+
+    return $this->sXMode;
+  }
+
+  public function getWeight($sNamespace, $sName, $sMode = self::MODE_DEFAULT, $sXMode, $bRoot = false) {
 
     $iResult = 0;
 
-    if ($sMode === $this->getMode()) {
+    if ((!$this->getXMode() || $this->getXMode() === $sXMode) && $sMode === $this->getMode()) {
 
       if ($bRoot && !$this->getMatch()) {
 
@@ -253,6 +265,19 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
     //$this->build();
 
     $this->bCloned = true;
+/*
+    $aContent = array();
+
+    foreach ($this->aContent as $item) {
+
+      if ($item instanceof template\parser\clonable) {
+
+        $aContent[] = clone $item;
+      }
+    }
+
+    $this->aContent = $aContent;
+*/
   }
 
 }

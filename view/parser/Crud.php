@@ -111,8 +111,13 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
   protected function parsePath(dom\element $el) {
 
-    $result = $this->parseComponent($el);
-    $this->addPath($result);
+    $result = null;
+
+    if (!$el->readx('@disabled', array(), false)) {
+
+      $result = $this->parseComponent($el);
+      $this->addPath($result);
+    }
 
     return $result;
   }
