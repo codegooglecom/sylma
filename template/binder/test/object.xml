@@ -174,7 +174,8 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Template call self">
-    <!-- @TODO : move to template tests, require a component that update statically attribute -->
+    <!-- @TODO : clone element -->
+    <!-- @TODO : move to template tests, require a component (like template/binder) that update statically attribute -->
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource>

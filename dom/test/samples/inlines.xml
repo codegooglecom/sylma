@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="http://www.sylma.org/dom/test/samples">
+  <div>
+    <span>abc</span>
+    <span>def</span>ghi<h2>jkl</h2>
+    <a>mno</a>
+  </div>
+</root>

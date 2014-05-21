@@ -219,7 +219,7 @@ class Pather extends component\Child {
     else {
 
       $el = $this->getSource();
-      $result = $bRead ? $el->reflectRead($sMode) : $el->reflectApply($sMode);
+      $result = $bRead ? $el->reflectRead($sMode) : $el->reflectApply($sMode, $aArguments);
     }
 
     return $result;

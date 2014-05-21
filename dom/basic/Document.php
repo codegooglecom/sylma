@@ -14,7 +14,7 @@ class Document extends \DOMDocument implements dom\document {
 
     parent::__construct($sVersion, $sEncoding);
 
-    $this->preserveWhiteSpace = false;
+    //$this->preserveWhiteSpace = $bWhitespace;
   }
 
   public function __call($sMethod, $aArgs) {

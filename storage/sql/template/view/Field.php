@@ -36,7 +36,7 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
     return $this->reflectSelf();
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead, $sArguments = '') {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
@@ -59,7 +59,7 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
       default :
 
-        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments);
+        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $result;

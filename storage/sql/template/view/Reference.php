@@ -51,9 +51,9 @@ class Reference extends sql\template\component\Reference {
     return $this->getParser()->parsePathToken($targetTable, $aPath, $sMode, false, $aArguments);
   }
 
-  protected function getCollection() {
+  protected function getCollection($bReset = false) {
 
-    if (!$this->collection) {
+    if ($bReset || !$this->collection) {
 
       $this->collection = $this->loadCollection();
     }
@@ -67,7 +67,7 @@ class Reference extends sql\template\component\Reference {
     $element = $this->getForeign();
 
     $result = $this->loadSimpleComponent('component/collection');
-    $result->setTable($table);
+    $result->setTable($table, true);
 
     if ($element->getMaxOccurs(true)) {
 
@@ -83,11 +83,11 @@ class Reference extends sql\template\component\Reference {
 
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
-    $collection = $this->getCollection();
+    $collection = $this->getCollection(true);
 
     if ($aPath) {
 
-      $result = $this->getParser()->parsePathToken($collection, $aPath, $sMode, false, $aArguments);
+      $result = $this->getHandler()->parsePathToken($collection, $aPath, $sMode, false, $aArguments);
     }
     else {
 

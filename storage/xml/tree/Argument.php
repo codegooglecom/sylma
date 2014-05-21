@@ -123,7 +123,7 @@ class Argument extends _Callable {
     return $result;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     $args = $this->getOptions();
 

@@ -67,7 +67,7 @@ class Foreign extends sql\template\component\Foreign {
       if ($aPath) {
 
         // @TODO : only works with default as first path
-        $result = $table->reflectApplyDefault(array_pop($aPath), $aPath, $sMode, $bRead, $aArguments, true);
+        $result = $table->reflectApplyDefault(array_shift($aPath), $aPath, $sMode, $bRead, $aArguments, true);
       }
       else {
 
@@ -86,7 +86,7 @@ class Foreign extends sql\template\component\Foreign {
 
     $collection = $this->buildMultiple();
 
-    return $collection->reflectApply($sMode, $aArguments);
+    return $this->getHandler()->parsePathToken($collection, $aPath, $sMode, $aArguments);
   }
 
   protected function reflectFunctionJoin(array $aPath, $sMode, array $aArguments = array()) {
@@ -110,7 +110,7 @@ class Foreign extends sql\template\component\Foreign {
 
   protected function buildSingle() {
 
-    if (!$this->bBuilded) {
+    //if (!$this->bBuilded) {
 
       $element = $this->getElementRef();
 
@@ -124,8 +124,8 @@ class Foreign extends sql\template\component\Foreign {
       $id = $element->getElement('id', $element->getNamespace());
 
       $query->addJoin($element, $id, $this);
-      $this->bBuilded = true;
-    }
+      //$this->bBuilded = true;
+    //}
   }
 
   protected function buildMultiple() {
@@ -137,7 +137,7 @@ class Foreign extends sql\template\component\Foreign {
 
     list($table, $field, $target) = $this->loadJunction();
 
-    $query = $table->getQuery();
+    $query = $table->getQuery(true);
     $result = $this->getParser()->createCollection();
 
     $result->setTable($element);

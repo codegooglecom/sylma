@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tpl:collection
+  xmlns:crud="http://2013.sylma.org/view/crud"
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
-  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
-  xmlns:crud="http://2013.sylma.org/view/crud"
   xmlns:cls="http://2013.sylma.org/core/factory"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+
 >
 
   <tpl:import>../input.tpl</tpl:import>
@@ -81,7 +85,7 @@
     </sql:filter>
   </tpl:template>
 
-  <tpl:template match="sql:string" mode="filter/internal">
+  <tpl:template match="xs:string" mode="filter/internal">
     <tpl:argument name="key" default="alias()"/>
     <tpl:apply mode="filter/internal/text">
       <tpl:read select="$key" tpl:name="key"/>

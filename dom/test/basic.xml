@@ -56,5 +56,19 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Inlines elements" disabled="true">
+    <!-- Need DOM whitespaces update -->
+    <tst:expected>
+      $doc = $controler->createDocument((string) $controler->getFile('samples/inlines.xml'));
+
+      $sDoc = '&lt;root xmlns="http://www.sylma.org/dom/test/samples"&gt;
+  &lt;div&gt;&lt;span&gt;abc&lt;/span&gt;&lt;span&gt;def&lt;/span&gt;ghi&lt;h2&gt;jkl&lt;/h2&gt;&lt;a&gt;mno&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/root&gt;';
+
+      $manager->assertEqual($doc->asString($doc::STRING_INDENT), $sDoc);
+      return true;
+    </tst:expected>
+  </tst:test>
 </tst:tests>
 

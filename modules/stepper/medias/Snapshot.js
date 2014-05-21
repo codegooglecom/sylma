@@ -53,17 +53,25 @@ sylma.stepper.Snapshot = new Class({
 
       if (!result) {
 
-        test.differences.each(function(item) {
+        if (this.getParent('main').updating) {
 
-          var el = item.element;
+          this.refresh();
+          this.getParent('test').addUpdate();
+        }
+        else {
 
-          var msg = item.type + ' : ' + (el ? el.get('tag') : '[undefined]') + ' < ' + item.expected;
-          this.addError('snapshot', msg);
-          console.log(this.asToken(), item.type, el, item.expected);
+          test.differences.each(function(item) {
 
-        }.bind(this));
+            var el = item.element;
 
-        this.hasError(true);
+            var msg = item.type + ' : ' + (el ? el.get('tag') : '[undefined]') + ' < ' + item.expected;
+            this.addError('snapshot', msg);
+            console.log(this.asToken(), item.type, el, item.expected);
+
+          }.bind(this));
+
+          this.hasError(true);
+        }
       }
     }
     else {

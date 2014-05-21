@@ -87,9 +87,14 @@ abstract class Prepare extends Basic {
 
   }
 
-  public function resetDB() {
+  public function resetDB($sAlias = '') {
 
-    $arg = $this->createArgument(static::DB_ARGUMENTS);
+    if (!$sAlias) {
+
+      $sAlias = static::DB_ARGUMENTS;
+    }
+    
+    $arg = $this->createArgument($sAlias);
     $db = $this->getManager(static::DB_MANAGER)->getConnection(static::DB_CONNECTION);
 
     try {

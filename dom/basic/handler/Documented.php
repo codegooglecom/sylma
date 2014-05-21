@@ -33,7 +33,9 @@ abstract class Documented extends Container {
       }
       else if (is_string($mValue)) {
 
-        if (trim($mValue)) {
+        $mValue = trim($mValue);
+
+        if ($mValue) {
 
           $mResult = $this->startString($mValue);
         }

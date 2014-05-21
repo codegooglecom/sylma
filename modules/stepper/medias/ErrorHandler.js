@@ -53,7 +53,7 @@ sylma.stepper.ErrorHandler = new Class({
   clearChildError : function(errors) {
 
     this.childErrors -= errors.length;
-    this.hasError(this.childErrors);
+    this.hasError(this.childErrors > 0);
 
     this.clearParentError(errors);
   },

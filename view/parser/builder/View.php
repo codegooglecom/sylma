@@ -131,14 +131,21 @@ class View extends Variabled {
       $this->setMode(self::MODE_DEFAULT);
     }
 
-    if ($sPath = $doc->readx('@extends', array(), false)) {
-
-      $file = $this->getSourceFile($sPath);
-      $new = $this->importDocument($file->getDocument(), $file);
-      $doc->shift($new->getRoot()->getChildren());
-    }
+    $this->importView($doc, $doc);
 
     return $this->getMode();
+  }
+
+  protected function importView(dom\handler $source, dom\handler $target) {
+
+    if ($sPath = $source->readx('@extends', array(), false)) {
+
+      $file = $this->getSourceFile($sPath);
+      $new = $this->importDocument($file->asDocument(array(), \Sylma::MODE_EXECUTE, false), $file);
+      $target->shift($new->getRoot()->getChildren());
+
+      $this->importView($new, $target);
+    }
   }
 
   protected function loadMode(dom\handler $doc) {

@@ -43,7 +43,7 @@ class Simple extends xsd\component\SimpleType implements sql\template\pathable {
     return $result;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array(), $bStatic = false) {
 
     $this->launchException('Not ready');
   }
@@ -53,7 +53,7 @@ class Simple extends xsd\component\SimpleType implements sql\template\pathable {
     return $this->reflectRead();;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 

@@ -23,19 +23,22 @@ abstract class Basic extends core\module\Managed {
    */
   private $iMode = null;
 
-  public function __construct($mContent = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array()) {
+  public function __construct($mContent = '', $iMode = \Sylma::MODE_READ, array $aNamespaces = array(), $bWhitespaces = false) {
 
     $manager = \Sylma::getManager('dom');
 
     $this->setManager($manager);
     $this->setMode($iMode);
 
-    $this->setDocument($manager->create('document'));
+    $doc = $manager->create('document');
+    $this->setDocument($doc);
+
+    $doc->preserveWhiteSpace = $bWhitespaces;
 
     $this->registerClasses();
     $this->registerNamespaces($aNamespaces);
 
-    $this->setFragment($this->getDocument()->createDocumentFragment());
+    $this->setFragment($doc->createDocumentFragment());
     $this->set($mContent);
   }
 

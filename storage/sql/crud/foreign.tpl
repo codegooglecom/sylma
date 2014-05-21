@@ -29,7 +29,9 @@
 
   <tpl:template match="sql:foreign" mode="container/multiple/empty">
     <fieldset class="field-container form-foreign" js:class="sylma.crud.Field">
-      <tpl:apply mode="reference/js"/>
+
+      <js:include>/#sylma/crud/Field.js</js:include>
+
       <js:event name="change">
         %object%.downlight();
       </js:event>
@@ -196,9 +198,7 @@
 
   <tpl:template match="sql:foreign" mode="input/multiple/boolean/update">
 
-    <tpl:variable name="values">
-      <tpl:read select="values()"/>
-    </tpl:variable>
+    <tpl:argument name="values" default="values()"/>
 
     <tpl:apply select="all()" mode="foreign/multiple/boolean/update">
       <tpl:read tpl:name="values" select="$values"/>

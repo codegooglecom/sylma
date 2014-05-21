@@ -13,12 +13,7 @@ interface file extends fs\resource {
    * @return dom\document|null An XML document loaded with the content of this file
    *
    */
-  function asDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ);
-
-  /**
-   * @deprecated use asDocument() instead
-   */
-  function getDocument();
+  function asDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ, $bWhitespaces = false);
 
   /**
    * @return string The content of the text file

@@ -28,7 +28,7 @@ sylma.stepper.Step = new Class({
       node.toggleClass(name, val);
 
       var form = this.getNode('form', false);
-
+//console.log('isready', val);
       if (form) {
 
         this.toggleShow(form, val);

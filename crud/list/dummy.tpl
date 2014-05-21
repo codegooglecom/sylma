@@ -26,10 +26,10 @@
 
   <tpl:template match="*" mode="order/prepare">
 
-    <tpl:apply select="dummy()/setDefault()">
+    <tpl:read select="dummy()/setDefault()">
       <tpl:read select="'sylma-order'"/>
       <tpl:read select="$$list-order"/>
-    </tpl:apply>
+    </tpl:read>
 
   </tpl:template>
 

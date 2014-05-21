@@ -15,5 +15,7 @@ interface template {
   function parseValue($sValue);
   //function loadElement(dom\element $el);
   function useOnce();
+
+  //function reflectApplyFunction($sName, $sArguments = '');
 }
 

@@ -2,7 +2,7 @@
 sylma.crud.list.Filters = new Class({
 
   Extends : sylma.ui.Container,
-  
+
   onLoad : function() {
 
     this.updateSize();
@@ -18,7 +18,7 @@ sylma.crud.list.Filters = new Class({
 
     table.getElements('thead tr > *').each(function(item, key) {
 
-      filters[key].updateSize(item.getStyle('width').toInt() + 2);
+      filters[key].updateSize(item.getStyle('width').toInt() + item.getStyle('padding-left').toInt() + item.getStyle('padding-right').toInt());
     });
   }
 });

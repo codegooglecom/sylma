@@ -43,7 +43,6 @@
 
       <js:include>/#sylma/crud/Field.js</js:include>
 
-      <tpl:apply mode="reference/js"/>
       <js:event name="change">
         %object%.downlight();
       </js:event>

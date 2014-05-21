@@ -27,11 +27,18 @@ class Where extends core\module\Managed {
 
   public function add($val1, $sOp, $val2, $sDefault = null) {
 
+    $bArray = is_array($val2);
+
+    if ($bArray) {
+
+      $val2 = array_filter($val2);
+    }
+
     if ($val2) {
 
       $sql = $this->db;
 
-      if (is_array($val2)) {
+      if ($bArray) {
 
         $aNew = array();
 

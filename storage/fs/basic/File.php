@@ -114,7 +114,7 @@ class File extends Resource implements fs\file {
    * Get a copy of the corresponding document
    * @param integer $iMode : The mode used to load the document
    */
-  public function getFreeDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ, $bSecured = false) {
+  public function getFreeDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ, $bSecured = false, $bWhitespaces = false) {
 
     $result = null;
 
@@ -125,7 +125,7 @@ class File extends Resource implements fs\file {
 
     $this->getControler('dom');
 
-    $result = $this->getControler()->create('file/document', array(null, $iMode));
+    $result = $this->getControler()->create('file/document', array(null, $iMode, array(), $bWhitespaces));
 
     $result->setFile($this);
     $result->registerNamespaces($aNS);
@@ -135,11 +135,14 @@ class File extends Resource implements fs\file {
     return $result;
   }
 
-  public function asDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
+  public function asDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ, $bWhitespaces = false) {
 
-    return $this->getFreeDocument($aNS, $iMode, true);
+    return $this->getFreeDocument($aNS, $iMode, true, $bWhitespaces);
   }
 
+  /**
+   * @deprecated, use self::asDocument() instead
+   */
   public function getDocument(array $aNS = array(), $iMode = \Sylma::MODE_READ) {
 
     return $this->asDocument($aNS, $iMode);

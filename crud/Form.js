@@ -94,10 +94,15 @@ sylma.crud.Form = new Class({
     });
   },
 
-  submit : function(e, args) {
+  submit : function(e, args, callback) {
 
     var node = this.getNode();
-    var self = this;
+
+    callback = callback || function(response) {
+
+      this.submitParse(response, args);
+
+    }.bind(this);
 
     try {
 
@@ -107,10 +112,7 @@ sylma.crud.Form = new Class({
       var req = new Request.JSON({
 
         url : node.action,
-        onSuccess: function(response) {
-
-          self.submitParse(response, args);
-        }
+        onSuccess: callback
       });
 
       // @todo remove
@@ -140,6 +142,29 @@ sylma.crud.Form = new Class({
 
     if (e) e.preventDefault();
     return false;
+  },
+
+  submitDelay : function(e, args) {
+
+    this.updateDelay(function() {
+
+      this.submit(e, args, function(response, args) {
+
+        this.updater.running = false;
+
+        if (this.updater.obsolete) {
+
+          this.updater.obsolete = false;
+          this.submitDelay(e, args);
+        }
+        else {
+
+          this.submitParse(response, args);
+        }
+        
+      }.bind(this));
+
+    }.bind(this), 200);
   },
 
   loadDatas : function (args) {

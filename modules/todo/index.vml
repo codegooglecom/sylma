@@ -8,9 +8,9 @@
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
 
-  xmlns:todo="http://2013.sylma,org/modules/todo"
-  xmlns:stat="http://2013.sylma,org/modules/todo/statut"
-  xmlns:proj="http://2013.sylma,org/modules/todo/project"
+  xmlns:todo="http://2013.sylma.org/modules/todo"
+  xmlns:stat="http://2013.sylma.org/modules/todo/statut"
+  xmlns:proj="http://2013.sylma.org/modules/todo/project"
 
   extends="/#sylma/storage/sql/crud.tpl"
 >

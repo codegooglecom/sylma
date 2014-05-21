@@ -38,6 +38,9 @@ abstract class Templated extends reflector\handler\Elemented {
     return $result;
   }
 
+  /**
+   * @return parser\template
+   */
   public function getCurrentTemplate($bDebug = true) {
 
     if (!$this->aCurrentTemplates) {

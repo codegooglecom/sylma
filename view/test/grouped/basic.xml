@@ -76,6 +76,27 @@
       <div><h3>&lt;admin&gt;</h3></div>
     </tst:node>
   </tst:test>
+  <tst:test name="White spaces">
+    <!-- @todo : Need DOM whitespaces update -->
+    <tst:expected>
+
+      $doc = $manager->getScript('samples/whitespaces.vml');
+
+      $sValue = &lt;&lt;&lt;EOT
+&lt;div&gt;
+  &lt;span&gt;abc&lt;/span&gt;
+  &lt;span&gt;def&lt;/span&gt;
+  &lt;span&gt;ghi&lt;/span&gt;
+  &lt;h4&gt;title1&lt;/h4&gt;
+  &lt;em&gt;emphase&lt;/em&gt;
+  &lt;span&gt;jkl&lt;/span&gt;
+&lt;/div&gt;
+EOT;
+      $manager->assertEquals($sValue, $doc->asString($doc::STRING_INDENT));
+      return true;
+      
+    </tst:expected>
+  </tst:test>
   <tst:test name="multiple resources">
     <tst:document>
       <view:view sql:ns="ns">
@@ -689,23 +710,34 @@
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
         <tpl:template>
-          <tpl:apply select="name" xmode="mymode"/>
+          <div>
+            <tpl:apply select="name" xmode="mymode"/>
+            <tpl:apply select="email"/>
+          </div>
         </tpl:template>
         <tpl:template match="user:name">
           <tpl:apply/>
-        </tpl:template>
-        <tpl:template match="*" xmode="badmode">
-          <h3/>
         </tpl:template>
         <tpl:template match="*" xmode="mymode">
           <h4>
             <tpl:read/>
           </h4>
         </tpl:template>
+        <tpl:template match="*">
+          <h2>
+            <tpl:read/>
+          </h2>
+        </tpl:template>
+        <tpl:template match="*" xmode="badmode">
+          <h3/>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <h4>admin</h4>
+      <div>
+        <h4>admin</h4>
+        <h2>admin@sylma.org</h2>
+      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Template match multiple names">

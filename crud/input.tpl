@@ -73,13 +73,13 @@
 
   </tpl:template>
 
-  <tpl:template match="*" mode="input/hidden">
-    <tpl:apply mode="input/hidden/empty"/>
-  </tpl:template>
-
   <tpl:template match="*" mode="input/hidden/empty">
+
+    <tpl:argument name="alias" default="alias('form')"/>
+
     <tpl:apply mode="input/empty/build">
       <tpl:read select="'hidden'" tpl:name="type"/>
+      <tpl:read select="$alias" tpl:name="alias"/>
     </tpl:apply>
   </tpl:template>
 

@@ -8,7 +8,7 @@
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
 
-  xmlns:user="http://2013.sylma,org/core/user"
+  xmlns:user="http://2013.sylma.org/core/user"
 
   extends="/#sylma/storage/sql/crud.tpl"
 >

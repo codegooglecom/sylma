@@ -48,11 +48,20 @@
     <tpl:apply mode="input/update"/>
   </view:template>
 
-  <view:template match="*" mode="input/hidden">
+  <tpl:template match="*" mode="input/hidden">
+
+    <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="id" default="$alias"/>
+    <tpl:argument name="value" default="value()"/>
+
     <tpl:apply mode="input/update/build">
+      <tpl:read select="$id" tpl:name="id"/>
       <tpl:read select="'hidden'" tpl:name="type"/>
+      <tpl:read select="$alias" tpl:name="alias"/>
+      <tpl:read select="$value" tpl:name="value"/>
     </tpl:apply>
-  </view:template>
+
+  </tpl:template>
 
   <tpl:template match="*" mode="date/content">
 

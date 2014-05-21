@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/modules/stepper/test/user01"
+  xmlns:group="http://2013.sylma.org/modules/stepper/test/group01"
+
+  extends="base.crd"
+>
+
+  <crud:global group:ns="ns" user:ns="ns">
+
+    <view:schema>user01.xql</view:schema>
+
+    <tpl:constant name="list-cols">*,group/ref()/id, group/ref()/nom ^ group</tpl:constant>
+    <tpl:constant name="list-cols">name,group/ref()/id, group/ref()/name</tpl:constant>
+
+  </crud:global>
+
+</crud:crud>

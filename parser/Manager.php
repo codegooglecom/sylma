@@ -50,7 +50,7 @@ class Manager extends compiler\Manager {
   public function loadBuilder(fs\file $file, fs\directory $dir = null, core\argument $args = null, dom\document $doc = null) {
 
     if (!$dir) $dir = $file->getParent();
-    if (!$doc) $doc = $file->getDocument();
+    if (!$doc) $doc = $file->asDocument();
 
     $result = $this->loadBuilderFromNS($doc->getRoot()->getNamespace(), $file, $dir, $args, $doc);
 

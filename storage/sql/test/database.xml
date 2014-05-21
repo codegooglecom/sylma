@@ -1,0 +1,48 @@
+<arg:argument
+  xmlns:arg="http://2013.sylma.org/core/argument"
+  xmlns="http://2013.sylma.org/view/test"
+>
+  <script>
+
+    DROP TABLE IF EXISTS `user6b`;
+    DROP TABLE IF EXISTS `city01`;
+    DROP TABLE IF EXISTS `country01`;
+
+    CREATE TABLE IF NOT EXISTS `country01` (
+      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `name` varchar(64) COLLATE utf8_bin NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
+
+    INSERT INTO `country01` (`id`, `name`) VALUES
+    (1, 'Turkey'),
+    (2, 'India'),
+    (3, 'Russia');
+
+    CREATE TABLE IF NOT EXISTS `city01` (
+      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `name` varchar(64) COLLATE utf8_bin NOT NULL,
+      `country` bigint(20) unsigned NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=5 ;
+
+    INSERT INTO `city01` (`id`, `name`, `country`) VALUES
+    (1, 'Delhi', 2),
+    (2, 'Istanbul', 1),
+    (3, 'Moscow', 3);
+
+    CREATE TABLE IF NOT EXISTS `user6b` (
+      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `name` varchar(64) COLLATE utf8_bin NOT NULL,
+      `city` bigint(20) unsigned NOT NULL,
+      PRIMARY KEY (`id`),
+      KEY `city` (`city`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
+
+    INSERT INTO `user6b` (`id`, `name`, `city`) VALUES
+    (1, 'Alexandra Glover', 1),
+    (2, 'Faith Mills', 1),
+    (3, 'Isaac Nash', 3);
+
+  </script>
+</arg:argument>

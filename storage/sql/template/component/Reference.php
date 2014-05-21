@@ -117,7 +117,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
     $this->launchException('Should not be called');
   }
 
-  public function reflectApplyDefault() {
+  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false, array $aArguments = array()) {
 
     $this->launchException('Should not be called');
   }

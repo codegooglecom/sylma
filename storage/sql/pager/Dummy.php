@@ -70,7 +70,7 @@ class Dummy extends core\module\Exceptionable {
 
   public function getLast() {
 
-    return ceil($this->getCount() / $this->getSize());
+    return $this->getSize() ? ceil($this->getCount() / $this->getSize()) : 0;
   }
 
   public function getPrevious() {

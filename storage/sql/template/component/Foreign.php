@@ -38,7 +38,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
     if ($result = parent::importElementRef()) {
 
-      if ($collection = $this->getParent()->getCollection()) {
+      if ($collection = $this->getParent()->getCollection(false)) {
 
         $result->setCollection($collection);
       }
@@ -49,7 +49,9 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
-    return $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
+    array_unshift($aPath, $sPath);
+
+    return $this->reflectFunctionRef($aPath, $sMode, $aArguments, $bRead);
   }
 
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
@@ -113,7 +115,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
     $collection = $this->loadSimpleComponent('component/collection');
 
-    $collection->setQuery($element->getQuery());
+    $collection->setQuery($element->getQuery(true));
     $collection->setTable($element);
 
     return $collection->reflectApplyAll($sMode, $aArguments);

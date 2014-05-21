@@ -36,7 +36,7 @@
           <title>Sylma</title>
           <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
           <meta name="robots" content="noindex,nofollow"/>
-          <link href="/tmp/2162252628.css" type="text/css" media="all" rel="stylesheet"/>
+          <link href="/tmp/1000489276.css" type="text/css" media="all" rel="stylesheet"/>
           <script type="text/javascript"> </script>
         </head>
         <body>
@@ -244,6 +244,70 @@
 
       $fs = $manager->getManager('fs/tmp');
       $tmp = $fs->getFile('1538782558.css');
+
+      $manager->assertEqual($tmp->read(), $css->read());
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+  <tst:test name="Import multiple avoid duplicate" disabled="true">
+    <!-- @todo decide whether to avoid it or not -->
+    <tst:prepare>
+
+      /* Admin build */
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->buildScript('/sylma/core/test/samples/resources02.vml');
+
+      $css = new \sylma\modules\less\Context(array(
+        $manager->getFile('samples/style03.less'),
+        $manager->getFile('samples/style03b.less'),
+      ), $manager->createArgument(array(
+        'enable' => true,
+        'update' => true,
+      )));
+
+      $css->asDOM();
+
+      /* Test start */
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/resources02');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html xmlns="http://www.w3.org/1999/xhtml" anyclass="x">
+        <head>
+          <link href="/tmp/1692228251.css" type="text/css" media="all" rel="stylesheet"/>
+          <script type="text/javascript"> </script>
+        </head>
+        <body>
+          <div id="messages"/>
+          <hello/>
+        </body>
+      </html>
+    </tst:node>
+    <tst:expected>
+
+      $result = $manager->get('result');
+      $node = $manager->get('node');
+
+      $manager->compareNodes($result, $node);
+
+      $css = $manager->getFile('samples/result_duplicate.css');
+
+      $fs = $manager->getManager('fs/tmp');
+      $tmp = $fs->getFile('1692228251.css');
 
       $manager->assertEqual($tmp->read(), $css->read());
 

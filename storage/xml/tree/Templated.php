@@ -32,7 +32,7 @@ class Templated extends Argument {
     return $result;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false) {
+  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false, array $aArguments = array()) {
 
     if ($bRead && $this->useScript()) {
 

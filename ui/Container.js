@@ -11,6 +11,12 @@ sylma.ui.ContainerProps = {
   },
   */
 
+ updater : {
+   running : false,
+   obsolete : false,
+   callback : null
+ },
+
   initSylma : function(props) {
 
     var template = this.sylma.template;
@@ -19,23 +25,28 @@ sylma.ui.ContainerProps = {
     Object.append(this.sylma.template, template);
   },
 
-  update : function(args, path, inside) {
+  update : function(args, path, inside, callback, get) {
 
     if (inside !== undefined) this.set('sylma-inside', inside);
+    get = get || get === undefined;
 
-    var self = this;
-    var path = path || this.get('path');
+    path = path || this.get('path');
 
     var req = new Request.JSON({
-
+      data : args,
+      method : get ? 'get' : 'post',
       url : path + '.json',
-      onSuccess : self.updateSuccess.bind(self)
+      onSuccess : function(response) {
+
+        this.updateSuccess(response, callback);
+
+      }.bind(this)
     });
 
-    req.get(args);
+    req.send();
   },
 
-  updateSuccess : function(response) {
+  updateSuccess : function(response, callback) {
 
     var result = sylma.ui.parseMessages(response);
     var name = this.getNode().getParent().tagName || 'div';
@@ -52,6 +63,8 @@ sylma.ui.ContainerProps = {
 
     var node = sylma.ui.importNode(result.content, name);
     this.updateContent(result, node, target);
+
+    callback && callback();
   },
 
   updateContent : function(result, node, target) {
@@ -71,6 +84,25 @@ sylma.ui.ContainerProps = {
     }
 
     this.onWindowLoad.delay(10, this);
+  },
+
+  updateDelay: function(callback, delay) {
+
+    if (this.updater.running) {
+
+      this.updater.obsolete = true;
+    }
+    else {
+
+      window.clearTimeout(this.updater.callback);
+
+      this.updater.callback = function() {
+
+        this.updater.running = true;
+        callback();
+
+      }.delay(delay, this);
+    }
   },
 
   useTemplate : function() {
@@ -211,8 +243,12 @@ sylma.ui.ContainerProps = {
 
     el = el || this.getNode();
 
-    el.addClass('visible');
-    el.addClass('sylma-visible'); // @deprecated
+    (function() {
+
+      el.addClass('visible');
+      el.addClass('sylma-visible'); // @deprecated
+
+    }.delay(10));
   },
 
   /**
@@ -227,8 +263,12 @@ sylma.ui.ContainerProps = {
       sylma.ui.addEventTransition(el, callback);
     }
 
-    el.removeClass('visible');
-    el.removeClass('sylma-visible'); // @deprecated
+    (function() {
+
+      el.removeClass('visible');
+      el.removeClass('sylma-visible'); // @deprecated
+
+    }.delay(10));
   },
 
   toggleShow : function(el, val) {

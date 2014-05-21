@@ -6,6 +6,7 @@ use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template as tpl,
 class _Callable extends reflector\component\Foreigner implements tpl\parser\tree {
 
   protected $var;
+  protected $dummy;
 
   public function parseRoot(dom\element $el) {
 
@@ -92,9 +93,14 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
     $this->launchException('Cannot apply, no tree defined');
   }
 
-  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false) {
+  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false, array $aArguments = array()) {
 
     $this->launchException('Cannot apply, no tree defined');
+  }
+
+  public function reflectRead() {
+
+    $this->launchException('Not implemented');
   }
 
   public function asToken() {

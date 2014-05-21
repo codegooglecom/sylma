@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schema
-  targetNamespace="http://2013.sylma,org/modules/todo"
+  targetNamespace="http://2013.sylma.org/modules/todo"
   xmlns="http://2013.sylma.org/storage/sql"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
-  xmlns:stat="http://2013.sylma,org/modules/todo/statut"
-  xmlns:proj="http://2013.sylma,org/modules/todo/project"
+  xmlns:stat="http://2013.sylma.org/modules/todo/statut"
+  xmlns:proj="http://2013.sylma.org/modules/todo/project"
 >
 
   <table name="todo" connection="common">

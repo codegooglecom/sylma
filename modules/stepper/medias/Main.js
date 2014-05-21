@@ -16,6 +16,7 @@ sylma.stepper.Main = new Class({
   pauses : 0,
   events : {},
   variables : {},
+  updating : false,
 
   /**
    * Collection or Directory
@@ -43,6 +44,11 @@ sylma.stepper.Main = new Class({
 
       this.root.setupTemplate(this.sylma.template.classes.test, this.getNode());
       this.root.loadTests();
+    }
+
+    if (this.updating) {
+
+      console.log('!!!!!!!!! WARNING : update mode enabled. DO NOT RUN TESTS if you don\'t want update files !!!!!!!!!!!');
     }
 
     this.prepareActionFrame();

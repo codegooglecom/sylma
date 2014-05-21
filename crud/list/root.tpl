@@ -39,28 +39,45 @@
     </tpl:apply>
 
     <div>
-      <form class="list" js:class="sylma.crud.list.Table" action="" method="post" js:parent-name="table">
 
-        <tpl:token name="action">
-          <crud:path/>/default/list.json
-        </tpl:token>
+      <tpl:apply mode="list/form"/>
 
-        <tpl:apply mode="dummy"/>
-        <tpl:apply mode="order"/>
-
-        <tpl:apply select="init()"/>
-
-        <tpl:apply mode="actions"/>
-
-        <tpl:apply select="static()" mode="init"/>
-
-        <table js:node="table" class="sql-{static()/name()}">
-          <tpl:apply select="static()" mode="head/row"/>
-          <tpl:apply mode="list/content"/>
-        </table>
-      </form>
     </div>
 
+  </tpl:template>
+
+  <tpl:template mode="list/form">
+
+    <form class="list" js:class="sylma.crud.list.Table" action="" method="post" js:parent-name="table">
+      <tpl:apply mode="list/container"/>
+    </form>
+
+  </tpl:template>
+
+  <tpl:template mode="list/container">
+
+    <tpl:token name="action">
+      <tpl:apply mode="list/path"/>
+    </tpl:token>
+
+    <tpl:apply mode="dummy"/>
+    <tpl:apply mode="order"/>
+
+    <tpl:apply select="init()"/>
+
+    <tpl:apply mode="actions"/>
+
+    <tpl:apply select="static()" mode="init"/>
+
+    <table js:node="table" class="sql-{static()/name()}">
+      <tpl:apply select="static()" mode="head/row"/>
+      <tpl:apply mode="list/content"/>
+    </table>
+
+  </tpl:template>
+
+  <tpl:template mode="list/path">
+    <crud:path/>/default/list.json
   </tpl:template>
 
   <tpl:template mode="list/content">
@@ -76,7 +93,11 @@
   <tpl:template match="*" mode="order">
 
     <tpl:apply mode="order/prepare"/>
-    <input type="hidden" name="sylma-order" value="{dummy()/sylma-order}" js:node="order"/>
+
+    <tpl:variable name="value">
+      <tpl:read select="dummy()/sylma-order"/>
+    </tpl:variable>
+    <input type="hidden" name="sylma-order" value="{$value}" js:node="order"/>
 
   </tpl:template>
 
@@ -143,9 +164,13 @@
           %object%.update();
           e.preventDefault();
         </js:event>
-        <tpl:apply select="title()"/>
+        <tpl:apply mode="head/cell/content"/>
       </a>
     </th>
+  </tpl:template>
+
+  <tpl:template match="*" mode="head/cell/content">
+    <tpl:apply select="title()"/>
   </tpl:template>
 
   <!-- Internal list -->

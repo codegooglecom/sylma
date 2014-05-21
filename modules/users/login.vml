@@ -9,7 +9,7 @@
   xmlns:le="http://2013.sylma.org/action"
   xmlns:build="http://2013.sylma.org/parser/reflector/builder"
 
-  xmlns:user="http://2013.sylma,org/core/user"
+  xmlns:user="http://2013.sylma.org/core/user"
 >
 
   <crud:route>

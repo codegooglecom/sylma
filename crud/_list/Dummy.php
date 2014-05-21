@@ -54,8 +54,13 @@ class Dummy extends core\module\Domed {
   }
 
   public function read($sPath, $bDebug = true) {
-//dsp($sPath, parent::read($sPath, $bDebug), $bDebug);
+
     return parent::read($sPath, $bDebug);
+  }
+
+  public function query($sPath, $bDebug = true) {
+
+    return parent::query($sPath, $bDebug);
   }
 
   protected function reset() {

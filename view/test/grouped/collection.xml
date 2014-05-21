@@ -30,14 +30,14 @@
       <view:view user:ns="ns">
         <sql:resource multiple="multiple"/>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="*"/>
           </div>
-        </view:template>
-        <view:template match="user:user">
+        </tpl:template>
+        <tpl:template match="user:user">
           <a href="{email}"><tpl:apply select="name"/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -53,14 +53,14 @@
       <view:view user:ns="ns">
         <sql:resource multiple="multiple"/>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template match="*">
+        <tpl:template match="*">
           <div>
             <tpl:apply select="*"/>
           </div>
-        </view:template>
-        <view:template match="user:user">
+        </tpl:template>
+        <tpl:template match="user:user">
           <a href="{email/value()}"><tpl:read select="name"/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -77,17 +77,17 @@
         <sql:resource multiple="multiple"/>
         <sql:filter name="name">xorblutl</sql:filter>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template match="*">
+        <tpl:template match="*">
           <tpl:if test="has-children()">
             <tpl:apply select="*"/>
             <tpl:else>
               <div>no result</div>
             </tpl:else>
           </tpl:if>
-        </view:template>
-        <view:template match="user:user">
+        </tpl:template>
+        <tpl:template match="user:user">
           <a href="{email/value()}"><tpl:read select="name"/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -101,16 +101,16 @@
           <sql:table>user</sql:table>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="counter()"/>
             <tpl:apply select="*"/>
             <span><tpl:apply select="count()"/></span>
           </div>
-        </view:template>
-        <view:template match="user:user">
+        </tpl:template>
+        <tpl:template match="user:user">
           <a href="{email}"><tpl:apply select="name"/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -129,12 +129,12 @@
           <sql:table>user_multi</sql:table>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <tpl:apply select="counter()"/>
           <div>
             <span><tpl:apply select="count()"/></span>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -151,16 +151,16 @@
         </sql:resource>
         <sql:filter name="name">admin</sql:filter>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <tpl:apply select="counter()"/>
           <div>
             <tpl:apply select="*"/>
             <span><tpl:apply select="count()"/></span>
           </div>
-        </view:template>
-        <view:template match="user:user_multi">
+        </tpl:template>
+        <tpl:template match="user:user_multi">
           <a href="{email}"><tpl:apply select="name"/></a>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -171,12 +171,12 @@
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Collection reflector">
+  <tst:test name="Dummy calls">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource multiple="multiple"/>
         <view:schema>samples/product.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <tpl:settings>
             <cls:classes>
               <cls:class alias="tree">
@@ -191,13 +191,13 @@
             <tpl:apply select="*"/>
             <span><tpl:apply select="dummy()/sum()"/></span>
           </div>
-        </view:template>
-        <view:template match="user:product">
+        </tpl:template>
+        <tpl:template match="user:product">
           <li value="{price}"><tpl:read select="name"/></li>
           <tpl:apply select="collection()/dummy()/add()">
             <tpl:read select="price" tpl:name="val"/>
           </tpl:apply>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -206,6 +206,34 @@
         <li value="5">card</li>
         <span>17.5</span>
       </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Dummy dynamic default">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/product.xql</view:schema>
+        <tpl:template>
+          <tpl:settings>
+            <cls:classes>
+              <cls:class alias="tree">
+                <cls:classes>
+                  <cls:class alias="dummy" name="\sylma\view\test\grouped\samples\Dummy02"/>
+                </cls:classes>
+              </cls:class>
+            </cls:classes>
+          </tpl:settings>
+          <tpl:apply select="source()"/>
+          <span>
+            <tpl:read select="dummy()/default()">
+              <tpl:read select="'abc'"/>
+            </tpl:read>
+          </span>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>def</span>
     </tst:node>
   </tst:test>
 </tst:tests>

@@ -21,6 +21,7 @@
     <tpl:argument name="title" default="title()"/>
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="value" default="''"/>
+    <tpl:argument name="object" default="alias('key')"/>
 
     <div class="field-container clearfix field-{$type}" js:class="sylma.crud.Field">
 
@@ -30,7 +31,7 @@
         %object%.downlight();
       </js:event>
       <js:name>
-        <tpl:read select="alias('key')"/>
+        <tpl:read select="$object"/>
       </js:name>
       <tpl:apply mode="register"/>
       <tpl:apply mode="label">

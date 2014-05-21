@@ -35,7 +35,7 @@ class Documented extends Logger implements reflector\documented {
     }
     else if ($file) {
 
-      $this->setDocument($file->getDocument(array(), \Sylma::MODE_EXECUTE));
+      $this->setDocument($file->asDocument(array(), \Sylma::MODE_EXECUTE));
     }
 
     $this->loadDefaultArguments();

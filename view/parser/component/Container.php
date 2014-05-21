@@ -85,18 +85,25 @@ class Container extends template_ns\parser\template\Argumented {
           $iResult = self::WEIGHT_ELEMENT_ROOT;
         }
       }
-      else if ((!$this->getXMode() || $this->getXMode() === $sXMode) && $sMode === $this->getMode()) {
+      else if ($sMode === $this->getMode()) {
 
-        $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
+        $bXMode = $this->getXMode() === $sXMode;
 
-        if ($type = $element->getType()) {
+        if (!$this->getXMode() || $bXMode) {
 
-          $iType = $this->getWeightType($type);
-          $iResult = $iType > $iElement ? $iType : $iElement;
-        }
-        else {
+          $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
 
-          $iResult = $iElement;
+          if ($type = $element->getType()) {
+
+            $iType = $this->getWeightType($type);
+            $iResult = $iType > $iElement ? $iType : $iElement;
+            
+            if ($this->getXMode() && $bXMode) $iResult += 1;
+          }
+          else {
+
+            $iResult = $iElement;
+          }
         }
       }
     }

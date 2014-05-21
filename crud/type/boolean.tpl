@@ -21,6 +21,7 @@
       <tpl:apply mode="input/boolean/value">
         <tpl:read select="$value" tpl:name="value"/>
       </tpl:apply>
+      <tpl:apply mode="input/events"/>
     </input>
 
   </tpl:template>

@@ -8,7 +8,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
   protected $parent;
   protected $query;
   protected $var;
-  
+
   protected function isSub() {
 
     return $this->getParent()->isSub();
@@ -51,7 +51,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $result;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead, $sArguments = '') {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
@@ -64,7 +64,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
       case 'title' : $result = $this->getTitle(); break;
       case 'parent' :
 
-        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead);
+        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
 
         break;
 
@@ -98,7 +98,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
     return $this->getWindow()->createCall($this->getSource(), 'read', 'php-string', $aArguments);
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     $result = $this->getParser()->reflectApplyDefault($this, $sPath, $aPath, $sMode, $bRead, $aArguments);
 

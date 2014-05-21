@@ -25,7 +25,7 @@
   <tpl:template>
 
     <le:context name="css">
-      <le:file>/#sylma/modules/html/medias/base.css</le:file>
+      <le:file>/#sylma/modules/html/medias/base.less</le:file>
       <le:file>/#sylma/modules/html/medias/infos.css</le:file>
     </le:context>
 

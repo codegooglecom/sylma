@@ -62,7 +62,7 @@ class Tree extends xml\tree\Argument {
 
         $aFunctionArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
         $result = $this->getReflector()->call('validate', $aFunctionArguments);
-        
+
         break;
       case 'max-size' : $result = ini_get('upload_max_filesize'); break;
       case 'extensions' : $result = implode(', ', $this->getExtensions()); break;
@@ -82,7 +82,7 @@ class Tree extends xml\tree\Argument {
     return $this->getReflector()->call('setDirectory', array($aArguments['directory']))->getInsert();
   }
 
-  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false) {
+  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false, array $aArguments = array()) {
 
     return $this->getReflector()->call('read', array($sPath));
   }

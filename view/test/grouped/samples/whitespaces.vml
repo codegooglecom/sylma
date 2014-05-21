@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+  <xl:resource/>
+
+  <tpl:template>
+    <div>
+      <tpl:apply mode="inline"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template mode="inline">
+    <span>abc</span><span>def</span>
+    <span>ghi</span><h4>title1</h4>
+    <em>emphase</em>
+
+    <span>jkl</span>
+  </tpl:template>
+
+</view:view>

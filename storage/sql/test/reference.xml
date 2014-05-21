@@ -5,7 +5,6 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns:crud="http://2013.sylma.org/view/crud"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
@@ -21,17 +20,17 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/group2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <ul>
               <tpl:apply select="users/ref()"/>
             </ul>
           </div>
-        </view:template>
-        <view:template match="user:user2">
+        </tpl:template>
+        <tpl:template match="user:user2">
           <li><tpl:read select="name"/></li>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -40,6 +39,40 @@
         <ul>
           <li>admin</li>
           <li>user1</li>
+        </ul>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Reference with subpath">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/country01.xql</view:schema>
+        <tpl:template>
+          <div>
+            <h3>
+              <tpl:apply select="name"/>
+            </h3>
+            <ul>
+              <tpl:apply select="cities/join()/users/ref()"/>
+            </ul>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user6b">
+          <li>
+            <tpl:read select="name"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>India</h3>
+        <ul>
+          <li>Alexandra Glover</li>
+          <li>Faith Mills</li>
         </ul>
       </div>
     </tst:node>
@@ -56,13 +89,13 @@
             <tpl:apply select="*"/>
           </div>
         </tpl:template>
-        <view:template match="group:group">
+        <tpl:template match="group:group">
           <h2><tpl:read select="name"/></h2>
           <tpl:apply select="users/join()"/>
-        </view:template>
-        <view:template match="user:user2">
+        </tpl:template>
+        <tpl:template match="user:user2">
           <li><tpl:read select="name"/></li>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -81,18 +114,18 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/group2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
-            <h3><stp:apply select="name"/></h3>
+            <h3><tpl:apply select="name"/></h3>
             <ul>
               <tpl:apply select="users/ref()"/>
             </ul>
           </div>
-        </view:template>
-        <view:template match="user:user2">
+        </tpl:template>
+        <tpl:template match="user:user2">
           <sql:filter name="name">admin</sql:filter>
           <li><tpl:read select="name"/></li>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -111,23 +144,23 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/group2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name,users"/>
           </div>
-        </view:template>
-        <view:template match="user:user2">
+        </tpl:template>
+        <tpl:template match="user:user2">
           <tpl:apply select="name"/>
-        </view:template>
-        <view:template match="sql:reference" sql:ns="ns">
+        </tpl:template>
+        <tpl:template match="sql:reference" sql:ns="ns">
           <fieldset>
             <tpl:apply select="ref()"/>
           </fieldset>
-        </view:template>
-        <view:template match="*">
+        </tpl:template>
+        <tpl:template match="*">
           <input name="{alias('form')}" value="{value()}"/>
           <tpl:register/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -147,23 +180,23 @@
           <sql:id>3</sql:id>
         </sql:resource>
         <view:schema>samples/group2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name,users"/>
           </div>
-        </view:template>
-        <view:template match="user:user2">
+        </tpl:template>
+        <tpl:template match="user:user2">
           <tpl:apply select="name"/>
-        </view:template>
-        <view:template match="sql:reference" sql:ns="ns">
+        </tpl:template>
+        <tpl:template match="sql:reference" sql:ns="ns">
           <fieldset>
             <tpl:apply select="static()"/>
           </fieldset>
-        </view:template>
-        <view:template match="*">
+        </tpl:template>
+        <tpl:template match="*">
           <input name="{alias('form')}"/>
           <tpl:register/>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>

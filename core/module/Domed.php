@@ -191,7 +191,7 @@ abstract class Domed extends Filed {
 
       if ($file = $this->getFile($sPath, $bDebug)) {
 
-        $doc = $file->getDocument($this->getNS());
+        $doc = $file->asDocument($this->getNS(), \Sylma::MODE_EXECUTE);
       }
     }
     else {

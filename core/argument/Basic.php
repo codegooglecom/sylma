@@ -81,11 +81,16 @@ abstract class Basic extends core\module\Namespaced implements core\argument {
     }
   }
 
+  public function getLength() {
+
+    return count($this->aArray);
+  }
+
   private function mergeArrays(array $aFrom, array $aTo, array $aPath = array()) {
 
     foreach($aTo as $sKey => $mVal) {
 
-      if (is_integer($sKey)) {
+      if (0 && is_integer($sKey)) {
 
         $aFrom[] = $mVal;
       }

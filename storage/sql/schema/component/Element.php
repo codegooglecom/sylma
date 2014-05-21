@@ -118,7 +118,7 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
     if (!$this->getNode(false) or !$sResult = $this->readx('@title')) {
 
-      $sResult = $this->getAlias();
+      $sResult = $this->getName();
     }
 
     return $sResult;

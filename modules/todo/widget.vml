@@ -7,8 +7,8 @@
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
 
-  xmlns:todo="http://2013.sylma,org/modules/todo"
-  xmlns:stat="http://2013.sylma,org/modules/todo/statut"
+  xmlns:todo="http://2013.sylma.org/modules/todo"
+  xmlns:stat="http://2013.sylma.org/modules/todo/statut"
 >
 
   <le:context name="css">

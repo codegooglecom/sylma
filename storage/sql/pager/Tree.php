@@ -97,7 +97,7 @@ class Tree extends reflector\component\Foreigner implements reflector\component,
     return $result;
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     $var = $this->getVar();
     //$aResult[] = $this->loadCount();
@@ -117,7 +117,7 @@ class Tree extends reflector\component\Foreigner implements reflector\component,
     return $aResult;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     $var = $this->getVar();
     //$aResult[] = $this->loadCount();
@@ -136,6 +136,11 @@ class Tree extends reflector\component\Foreigner implements reflector\component,
     }
 
     return $aResult;
+  }
+
+  public function reflectRead() {
+
+    $this->launchException('Not implemented');
   }
 
   protected function initCounter() {

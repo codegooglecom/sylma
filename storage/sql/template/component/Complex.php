@@ -46,7 +46,7 @@ class Complex extends sql\schema\component\ComplexType implements template\parse
     return $this->reflectRead();
   }
 
-  public function reflectApplyFunction($sName, array $aPath, $sMode) {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
@@ -58,6 +58,11 @@ class Complex extends sql\schema\component\ComplexType implements template\parse
     }
 
     return $result;
+  }
+
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
+
+    $this->launchException('Not implemented');
   }
 
   protected function parsePathToken($aPath, $sMode) {

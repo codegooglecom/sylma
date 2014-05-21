@@ -76,7 +76,12 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
    * @usedby sql\template\component\Foreign::importElementRef()
    * @return sql\template\component\Collection
    */
-  public function getCollection() {
+  public function getCollection($bDebug = true) {
+
+    if ($bDebug && !$this->collection) {
+
+      $this->launchException('No collection defined');
+    }
 
     return $this->collection;
   }
@@ -100,9 +105,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->bSub;
   }
 
-  public function getQuery() {
+  public function getQuery($bReset = false) {
 
-    if (!$this->query) {
+    if (!$this->query || $bReset) {
 
       $this->setQuery($this->buildQuery());
     }
@@ -275,7 +280,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
     $current = $this->getSource(false);
 
-    if ($collection = $this->getCollection() and $tree = $collection->getTree()) {
+    if ($collection = $this->getCollection(false) and $tree = $collection->getTree()) {
 
       $this->setSource($tree->getDummy());
     }
@@ -316,6 +321,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       case 'parent' :
 
         $result = $this->getHandler()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
+        break;
+
+      case 'dummy' :
+
+        $result = $this->getCollection()->reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
         break;
 
       default :

@@ -6,6 +6,7 @@ sylma.stepper.Test = new Class({
 
   loaded : false,
   loading: false,
+  needUpdate : false,
 
   onLoad : function() {
 
@@ -31,7 +32,7 @@ sylma.stepper.Test = new Class({
 
     return this.get('directory');
   },
-  
+
   initPages : function(callback) {
 
     if (!this.loaded && !this.loading) {
@@ -218,6 +219,26 @@ sylma.stepper.Test = new Class({
   testFrom: function() {
 
     this.getParent('directory').test(this.getKey());
+  },
+
+  testLast : function(items, key, callback) {
+
+    this.testItem(items, key, function() {
+
+      if (this.getParent('main').updating && this.needUpdate) {
+
+        //this.save();
+        sylma.ui.showMessage('save');
+      }
+
+      callback && callback();
+
+    }.bind(this));
+  },
+
+  addUpdate : function() {
+
+    this.needUpdate = true;
   },
 
   save : function() {

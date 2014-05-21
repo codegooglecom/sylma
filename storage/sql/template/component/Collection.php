@@ -24,7 +24,10 @@ class Collection extends Rooted implements sql\template\pathable {
     return $this->getTable()->getElement($sName, $sNamespace);
   }
 
-  public function setTable(Table $table) {
+  /**
+   * @usedby sql\template\component\Reference::loadCollection()
+   */
+  public function setTable(Table $table, $bReset = false) {
 
     $sNamespace = $this->getHandler()->getNamespace('sql');
 
@@ -32,7 +35,7 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->setNamespace($sNamespace);
     //$this->setNamespace($table->getNamespace(), 'element', false);
     $this->setName('[collection]');
-    $this->setQuery($table->getQuery());
+    $this->setQuery($table->getQuery($bReset));
 
     $this->table = $table;
     $table->setCollection($this);
@@ -77,12 +80,16 @@ class Collection extends Rooted implements sql\template\pathable {
       $this->launchException('Cannot read collection');
     }
 
-    return $this->getParse()->parsePathToken($this, $aPath, $aArguments);
+    return $this->getParse()->parsePathToken($this, $aPath, $aArguments, true);
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
-    $this->launchException('Cannot reflect collection default path');
+    $aResult = $this->prepareApply();
+    array_unshift($aPath, $sPath);
+    $aResult[] = $this->getHandler()->parsePathToken($this->getTable(), $aPath, $sMode, $bRead, $aArguments);
+
+    return $aResult;
   }
 
   public function reflectApply($sMode = '', array $aArguments = array()) {
@@ -116,7 +123,7 @@ class Collection extends Rooted implements sql\template\pathable {
     return $aResult;
   }
 
-  public function reflectApplyAll($sMode, array $aArguments = array()) {
+  protected function prepareApply() {
 
     $this->preBuild();
 
@@ -125,17 +132,22 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->getTable()->setQuery($this->getQuery());
     //$this->getTable()->setCollection($this);
 
-    $content = $this->getTable()->reflectApply($sMode, $aArguments);
-
     if ($this->insertQuery()) {
 
       $aResult[] = $this->getQuery();
     }
 
     $aResult[] = $this->buildStart();
-    $aResult[] = $this->postBuild($content);
 
     $this->insertQuery(false);
+
+    return $aResult;
+  }
+
+  public function reflectApplyAll($sMode, array $aArguments = array()) {
+
+    $aResult = $this->prepareApply();
+    $aResult[] = $this->postBuild($this->getTable()->reflectApply($sMode, $aArguments));
 
     return $aResult;
   }
@@ -213,7 +225,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       case 'dummy' :
 
-        $result = $this->reflectDummy($aPath, $aArguments, $sMode);
+        $result = $this->reflectDummy($aPath, $aArguments, $sMode, $bRead);
         break;
 
       case 'source' :
@@ -248,10 +260,9 @@ class Collection extends Rooted implements sql\template\pathable {
     return $result;
   }
 
-  protected function reflectDummy(array $aPath, array $aArguments = array(), $sMode = '') {
+  protected function reflectDummy(array $aPath, array $aArguments = array(), $sMode = '', $bRead) {
 
-
-    return $this->getHandler()->parsePathToken($this->getTree(), $aPath, $sMode, false, $aArguments);
+    return $this->getHandler()->parsePathToken($this->getTree(), $aPath, $sMode, $bRead, $aArguments);
   }
 
   protected function reflectSource(array $aPath, array $aArguments = array(), $sMode = '') {

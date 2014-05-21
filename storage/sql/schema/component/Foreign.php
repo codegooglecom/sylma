@@ -9,6 +9,7 @@ class Foreign extends Element implements sql\schema\foreign {
   const JUNCTION_MODE = 'view';
 
   protected $elementRef;
+  protected $aJunction = array();
 
   public function parseRoot(dom\element $el) {
 
@@ -42,7 +43,16 @@ class Foreign extends Element implements sql\schema\foreign {
 
     if ($sImport = $this->readx('@import')) {
 
-      $result = $this->getSourceFile($sImport);
+      try {
+
+        $result = $this->getSourceFile($sImport);
+
+      } catch (core\exception $e) {
+
+        $e->addPath($this->asToken());
+        throw $e;
+      }
+
     }
     else {
 
@@ -61,13 +71,17 @@ class Foreign extends Element implements sql\schema\foreign {
 
       if (!$result = $this->loadElementRef($file)) {
 
-        $this->launchException('Cannot find foreign table');
+        $this->launchException('Cannot find foreign table', get_defined_vars());
       }
     }
 
     return $result;
   }
 
+  /**
+   *
+   * @return sql\schema\component\Table
+   */
   public function getElementRef() {
 
     if (!$this->elementRef) {
@@ -112,6 +126,16 @@ class Foreign extends Element implements sql\schema\foreign {
    * @return array A an array containing element of the junction table : (table, current foreign, target foreign)
    */
   protected function loadJunction() {
+
+    if (!$this->aJunction) {
+
+      $this->aJunction = $this->buildJunction();
+    }
+
+    return $this->aJunction;
+  }
+
+  protected function buildJunction() {
 
     $sName = $this->readx('@junction', true);
 
