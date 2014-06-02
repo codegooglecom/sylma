@@ -91,6 +91,11 @@ class Foreign extends sql\template\component\Foreign {
 
   protected function reflectFunctionJoin(array $aPath, $sMode, array $aArguments = array()) {
 
+    if (!$this->getMaxOccurs(true)) {
+
+      $this->launchException('Cannot join simple foreign');
+    }
+
     $targetTable = $this->getElementRef();
     $currentTable = $this->getParent();
 

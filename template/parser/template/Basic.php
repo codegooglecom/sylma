@@ -242,8 +242,14 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
     $aResult[] = $this->aHeaders;
 
-    if (self::CHECK_RECURSION) $aResult[] = $this->getWindow()->toString($this->build());
-    else $aResult[] = $this->getWindow()->parseArrayables($this->build());
+    if (self::CHECK_RECURSION) {
+
+      $aResult[] = $this->getWindow()->toString($this->build());
+    }
+    else {
+
+      $aResult[] = $this->getWindow()->parseArrayables($this->build());
+    }
 
     $this->stopLog();
     $this->stop();

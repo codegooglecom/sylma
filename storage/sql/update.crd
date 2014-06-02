@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:le="http://2013.sylma.org/action"
+>
+
+  <crud:global>
+
+    <sql:resource/>
+
+    <crud:import>/#sylma/crud/all.tpl</crud:import>
+    <crud:import>/#sylma/storage/sql/crud/form.tpl</crud:import>
+<!--
+    <view:schema>user01.xql</view:schema>
+-->
+    <tpl:constant name="form-cols">* ^ id</tpl:constant>
+
+    <tpl:template mode="init/action">
+      <crud:path/>/default/do.json
+    </tpl:template>
+
+    <tpl:template match="*" mode="form/token/content">
+      <crud:path/>
+      <tpl:text>/default/do</tpl:text>
+    </tpl:template>
+
+  </crud:global>
+
+  <crud:route>
+
+    <view:view mode="view" _debug="x">
+
+      <tpl:import>/#sylma/storage/sql/crud/update.tpl</tpl:import>
+
+      <tpl:template>
+        <tpl:apply mode="js"/>
+        <tpl:apply/>
+      </tpl:template>
+
+      <tpl:template mode="form/token">
+        <sql:token>
+          <tpl:apply mode="form/token/content"/>
+        </sql:token>
+      </tpl:template>
+
+    </view:view>
+
+    <view:view name="do" mode="update">
+
+      <sql:filter name="id">
+        <le:get-argument name="id" source="post"/>
+      </sql:filter>
+
+    </view:view>
+
+  </crud:route>
+
+</crud:crud>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <arg:argument
   xmlns:arg="http://2013.sylma.org/core/argument"
-  xmlns="http://2013.sylma.org/dom"
+  xmlns="http://2013.sylma.org/core/user"
   xmlns:cls="http://2013.sylma.org/core/factory"
   xmlns:build="http://2013.sylma.org/parser/reflector/builder"
 

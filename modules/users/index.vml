@@ -9,15 +9,16 @@
   xmlns:le="http://2013.sylma.org/action"
 
   xmlns:user="http://2013.sylma.org/core/user"
+  xmlns:group="http://2013.sylma.org/core/user/group"
 
   extends="/#sylma/storage/sql/crud.tpl"
 >
 
-  <crud:global>
+  <crud:global group:ns="ns">
 
     <view:schema>schema.xql</view:schema>
     <tpl:constant name="list-cols">id,name</tpl:constant>
-    <tpl:constant name="form-cols">name,password</tpl:constant>
+    <tpl:constant name="form-cols">name,password,groups</tpl:constant>
 
   </crud:global>
 
@@ -49,6 +50,10 @@
       </tpl:apply>
 
     </view:template>
+
+    <tpl:template match="group:group" mode="select-option-value">
+      <tpl:read select="name"/>
+    </tpl:template>
 
   </crud:group>
 

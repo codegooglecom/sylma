@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:user="http://2013.sylma.org/core/user"
+  xmlns:group="http://2013.sylma.org/core/user/group"
+
+  extends="/#sylma/storage/sql/update.crd"
+>
+
+  <crud:global user:ns="ns" group:ns="ns">
+
+    <view:schema>schema.xql</view:schema>
+    <tpl:constant name="form-cols">password</tpl:constant>
+
+    <le:context name="title">Edit my profil</le:context>
+
+    <sql:filter name="id">
+      <le:manager name="user"/>
+    </sql:filter>
+
+    <view:template match="user:password" mode="container">
+
+      <tpl:apply mode="container"/>
+
+      <tpl:apply mode="container/empty">
+        <tpl:text tpl:name="alias">password_confirm</tpl:text>
+        <tpl:text tpl:name="title">confirm password</tpl:text>
+      </tpl:apply>
+
+    </view:template>
+
+  </crud:global>
+
+</crud:crud>

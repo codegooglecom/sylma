@@ -97,6 +97,7 @@ class Container extends core\module\Domed {
       'ul' => array(
         '#li' => array(
           'user : ' . $user->getName(),
+          'groups : ' . implode(',', $user->getGroups()),
           'time : ' . functions\numeric\formatFloat($init->getElapsedTime()),
           array(
             'a' => array(

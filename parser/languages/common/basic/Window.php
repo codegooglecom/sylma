@@ -243,6 +243,9 @@ return; // todo, decide to use or not
     return $mResult;
   }
 
+  /**
+   * @deprecated : use parse() instead
+   */
   public function parseArrayables(array $aContent) {
 
     //$aContent =

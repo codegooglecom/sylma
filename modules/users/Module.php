@@ -5,6 +5,7 @@ use sylma\core;
 class Module extends core\module\Domed {
 
   const NS = 'http://www.sylma.org/modules/users';
+  const GROUP_AUTH = 'user';
 
   public function __construct() {
 
@@ -52,6 +53,7 @@ class Module extends core\module\Domed {
   public function login() {
 
     $sResult = '';
+    $aGroups = array();
 
     $contexts = $this->getActionContexts();
 
@@ -63,8 +65,9 @@ class Module extends core\module\Domed {
 
     if (!$doc->isEmpty()) {
 
-      list($sID, $sPassword) = explode(' ', $doc->readx());
-      
+      list($sID, $sPassword, $sGroups) = explode(' ', $doc->readx());
+      $aGroups = array_filter(explode(',', $sGroups));
+
       if ($sPassword == crypt($post->read('password'), $sPassword)) {
 
         $sResult = $sID;
@@ -79,9 +82,11 @@ class Module extends core\module\Domed {
     }
     else {
 
+      $aGroups[] = self::GROUP_AUTH;
+      
       $bRemember = true; //(bool) $post->get('remember', false);
       $user = $this->getManager('user');
-      $user->authenticate($post->read('name'), $sResult);
+      $user->authenticate($post->read('name'), $sResult, $aGroups);
 
       \Sylma::setManager('user', $user);
       $user->load($bRemember);

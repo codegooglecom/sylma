@@ -10,7 +10,7 @@
   <file name="crud.vml">
     <security>
       <owner>root</owner>
-      <group>users</group>
+      <group>webmaster</group>
       <mode>750</mode>
     </security>
   </file>

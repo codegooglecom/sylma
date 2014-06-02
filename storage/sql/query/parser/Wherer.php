@@ -91,7 +91,7 @@ abstract class Wherer extends Basic {
 
     if ($where = $this->getDynamicWhere()) {
 
-      $this->addDynamicWhereCall($where->call('addStatic', array($this->getWindow()->toString(array($val1, $sOp, $val2)))));
+      $this->addDynamicWhereCall($where->call('addStatic', array($this->getWindow()->toString(array($val1, ' ', $sOp, ' ', $val2)))));
     }
     else {
 

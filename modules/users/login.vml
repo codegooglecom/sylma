@@ -10,9 +10,18 @@
   xmlns:build="http://2013.sylma.org/parser/reflector/builder"
 
   xmlns:user="http://2013.sylma.org/core/user"
+  xmlns:group="http://2013.sylma.org/core/user/group"
 >
 
   <crud:route>
+
+    <crud:local>
+
+      <sql:resource/>
+      <view:schema>schema.xql</view:schema>
+      <crud:import>/#sylma/storage/sql/crud/all.tpl</crud:import>
+
+    </crud:local>
 
     <view:view mode="hollow" _debug="x">
 
@@ -20,7 +29,7 @@
 
       <le:context name="title">login</le:context>
 
-      <view:template>
+      <tpl:template>
 
         <form js:class="sylma.crud.Form" method="post">
 
@@ -35,13 +44,13 @@
           </div>
         </form>
 
-      </view:template>
+      </tpl:template>
 
     </view:view>
 
-    <view:view name="check" internal="x">
+    <view:view name="check" internal="x" group:ns="ns">
 
-      <view:template>
+      <tpl:template>
 
         <sql:filter name="name">
           <le:get-argument source="post" name="name"/>
@@ -51,20 +60,19 @@
           <tpl:read select="id"/>
           <tpl:text> </tpl:text>
           <tpl:read select="password"/>
+          <tpl:text> </tpl:text>
+          <tpl:apply select="groups/ref()"/>
         </div>
 
-      </view:template>
+      </tpl:template>
+
+      <tpl:template match="group:group">
+        <tpl:read select="name"/>
+        <tpl:text>,</tpl:text>
+      </tpl:template>
 
     </view:view>
 
   </crud:route>
-
-  <crud:global>
-
-    <sql:resource/>
-    <view:schema>schema.xql</view:schema>
-    <crud:import>/#sylma/storage/sql/crud/all.tpl</crud:import>
-
-  </crud:global>
 
 </crud:crud>

@@ -8,6 +8,7 @@ class Parser extends Prepare {
   const NS = 'http://www.sylma.org/modules/tester/parser';
   const TRASH_MANAGER = 'fs/trash';
   const DEBUG_RUN = true;
+  const PARSER_EXCEPTION = 'exception-parser';
 
   protected static $sArgumentClass = 'sylma\core\argument\Readable';
   protected $exportDirectory;
@@ -104,7 +105,7 @@ class Parser extends Prepare {
 
   protected function catchParserException(dom\element $test, core\exception $e, fs\file $file) {
 
-    return $this->catchExceptionCheck($test->readAttribute('exception-parser', null, false), $test, $e, $file);
+    return $this->catchExceptionCheck($test->readAttribute(self::PARSER_EXCEPTION, null, false), $test, $e, $file);
   }
 
   protected function loadResult($manager, fs\file $file, array $aArguments, $bDelete = true) {

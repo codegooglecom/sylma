@@ -5,13 +5,13 @@ use \sylma\core, sylma\storage\fs, sylma\core\functions;
 
 class Basic extends core\module\Argumented implements core\user {
 
-  const NS = 'http://www.sylma.org/core/user';
+  const NS = 'http://2013.sylma.org/core/user';
   const PUBLIC_ALIAS = 'anonymouse';
 
-  private $sUser = '';
+  //private $sUser = '';
   private $bValid = false;
   protected $sID = '0';
-  private $sSID = ''; // session ID
+  //private $sSID = ''; // session ID
 
   /**
    * Used by @method needProfile()
@@ -59,15 +59,14 @@ class Basic extends core\module\Argumented implements core\user {
     return $this->sName;
   }
 
-  public function authenticate($sUser, $sID) {
+  public function authenticate($sName, $sID, array $aGroups) {
 
     // Authentication successed !
 
-    $this->sID = $sID;
-    $this->setName($sUser);
+    $this->loadSettings($sName, $sID, $aGroups);
     $this->isValid(true);
 
-    return $sUser;
+    return $sName;
   }
 
   protected function isValid($bValid = null) {
@@ -94,71 +93,52 @@ class Basic extends core\module\Argumented implements core\user {
    */
   public function load($bRemember = false) {
 
-    $this->loadCookie();
+    $this->buildCookie();
 
     if ($this->isValid() && $this->getName() && $this->getID()) {
 
-      // just authenticated via @method authenticate()
-
-      //$this->loadProfile();
-      $this->setPrivate();
-
-      if ($this->getCookie()) {
-
-        $this->getCookie()->save(array(
-          'id' => $this->getID(),
-          'name' => $this->getName()
-        ), $bRemember);
-      }
+      $this->save($bRemember);
     }
-    else if (!$this->loadSession()) {
+    else if (!$this->loadSession() && !$this->loadCookie()) {
 
-      // no session
-
-      $sID = $sName = '';
-
-      if ($this->getCookie()) {
-
-        $aContent = $this->getCookie()->getContent();
-
-        if (is_array($aContent)) {
-
-          if (isset($aContent['id'])) $sID = $aContent['id'];
-          if (isset($aContent['name'])) $sName = $aContent['name'];
-        }
-      }
-
-      if ($sID && $sName) {
-
-        // has cookie
-
-        $this->sID = $sID;
-        $this->setName($sName);
-
-        $this->setPrivate();
-
-        $this->bProfil = true;
-      }
-      else {
-
-        $manager = $this->getManager();
-
-        // no cookie, select the default user
-
-        $server = $manager->getArgument('server');
-
-        if ($_SERVER['REMOTE_ADDR'] == $server->read('ip')) {
-
-          $options = $server;
-        }
-        else {
-
-          $options = $manager->getArgument(self::PUBLIC_ALIAS);
-        }
-
-        $this->loadSettings($options);
-      }
+      $this->loadDefault();
     }
+  }
+
+  /**
+   * just authenticated via @method authenticate()
+   */
+  protected function save($bRemember) {
+
+    //$this->loadProfile();
+    $this->setPrivate();
+
+    if ($this->getCookie()) {
+
+      $this->getCookie()->save(array(
+        'id' => $this->getID(),
+        'name' => $this->getName(),
+        'groups' => $this->getGroups(),
+      ), $bRemember);
+    }
+  }
+
+  protected function loadDefault() {
+
+    $manager = $this->getManager();
+
+    $server = $manager->getArgument('server');
+
+    if ($_SERVER['REMOTE_ADDR'] === $server->read('ip')) {
+
+      $options = $server;
+    }
+    else {
+
+      $options = $manager->getArgument(self::PUBLIC_ALIAS);
+    }
+
+    $this->loadSettings($options->read('name'), '0', $options->query('groups'), $options->get('arguments'));
   }
 
   public function loadPublic() {
@@ -166,11 +146,16 @@ class Basic extends core\module\Argumented implements core\user {
     $this->loadSettings($this->getManager()->getArgument(self::PUBLIC_ALIAS));
   }
 
-  protected function loadSettings(core\argument $args) {
+  protected function loadSettings($sName, $sID, array $aGroups, core\argument $args = null) {
 
-    $this->setName($args->read('name'));
-    $this->aGroups = $args->query('groups');
-    $this->setArguments($args->get('arguments'));
+    $this->setName($sName);
+    $this->sID = $sID;
+    $this->setGroups($aGroups);
+
+    if ($args) {
+
+      $this->setArguments($args);
+    }
   }
 
   protected function setDirectory(fs\directory $dir) {
@@ -233,7 +218,7 @@ class Basic extends core\module\Argumented implements core\user {
     $this->saveSession();
   }
   */
-
+/*
   protected function loadGroups() {
 
     $aGroups = $this->getArgument('authenticated/groups')->query();
@@ -251,15 +236,47 @@ class Basic extends core\module\Argumented implements core\user {
 
     $this->setGroups(array_unique($aGroups));
   }
-
+*/
   public function getCookie() {
 
     return $this->cookie;
   }
 
-  protected function loadCookie() {
+  protected function buildCookie() {
 
     $this->cookie = $this->getControler()->create('cookie', array($this->getControler(), $this->getArgument('cookies')));
+  }
+
+  protected function loadCookie() {
+
+    $aGroups = array();
+    $sID = $sName = '';
+
+    if ($this->getCookie()) {
+
+      $aContent = $this->getCookie()->getContent();
+
+      if (is_array($aContent)) {
+
+        if (isset($aContent['id'])) $sID = $aContent['id'];
+        if (isset($aContent['name'])) $sName = $aContent['name'];
+        if (isset($aContent['groups'])) $aGroups = $aContent['groups'];
+      }
+    }
+
+    $bResult = $sID && $sName;
+
+    if ($bResult) {
+
+      // has cookie
+
+      $this->loadSettings($sName, $sID, $aGroups);
+      $this->setPrivate();
+
+      $this->bProfil = true;
+    }
+
+    return $bResult;
   }
 
   protected function loadSession() {
@@ -299,7 +316,7 @@ class Basic extends core\module\Argumented implements core\user {
     $this->aGroups = $aGroups;
   }
 
-  protected function getGroups() {
+  public function getGroups() {
 
     return $this->aGroups;
   }
@@ -383,7 +400,7 @@ class Basic extends core\module\Argumented implements core\user {
   }
 
   public function asArgument() {
-
+/*
     $sName = $this->getName() . ' [' . implode(', ', $this->getGroups()) . ']';
 
     return $controler->createArgument(array(
@@ -392,6 +409,7 @@ class Basic extends core\module\Argumented implements core\user {
         '' => $sName,
       ),
     ), \Sylma::read('namespaces/html'));
+ */
   }
 
   public function __toString() {

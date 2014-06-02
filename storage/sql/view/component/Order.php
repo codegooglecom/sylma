@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\view\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\storage\sql;
 
 class Order extends reflector\component\Foreigner implements reflector\component, common\arrayable {
 
@@ -17,7 +17,7 @@ class Order extends reflector\component\Foreigner implements reflector\component
   public function asArray() {
 
     $tree = $this->getParser()->getCurrentTree();
-    $query = $tree->getQuery();
+    $query = $this->checkQuery($tree->getQuery());
 
     if ($this->getNode()->isComplex()) {
 
@@ -41,6 +41,11 @@ class Order extends reflector\component\Foreigner implements reflector\component
     $this->log('SQL : order');
 
     return array();
+  }
+
+  protected function checkQuery(sql\query\parser\Select $query) {
+
+    return $query;
   }
 }
 

@@ -31,7 +31,7 @@
 
   <tpl:template match="menus:menus">
     <tpl:apply mode="init"/>
-    <div id="{@id}" ls:mode="710" ls:owner="root" ls:group="users">
+    <div id="{@id}" ls:mode="710" ls:owner="root" ls:group="user">
       <ul class="clearfix menu">
         <tpl:apply select="*"/>
         <li class="empty">.</li>
@@ -39,6 +39,23 @@
         <tpl:apply mode="shortcuts"/>
       </ul>
     </div>
+  </tpl:template>
+
+  <tpl:template match="menus:menu" mode="content">
+    <tpl:if test="@href = '/sylma/modules/users/crud'">
+      <tpl:variable name="href">
+        <le:path>/#sylma/modules/users/update</le:path>
+        <tpl:text>?id=</tpl:text>
+        <le:manager name="user"/>
+      </tpl:variable>
+      <a href="{$href}">
+        <tpl:apply mode="title"/>
+      </a>
+      <tpl:else>
+        <tpl:apply mode="content"/>
+      </tpl:else>
+    </tpl:if>
+
   </tpl:template>
 
   <tpl:template match="menus:menus" mode="shortcuts">

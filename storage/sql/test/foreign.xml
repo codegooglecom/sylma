@@ -381,6 +381,26 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Bad join" exception-parser="\sylma\core\exception">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="x">
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user2.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <h3><tpl:apply select="name"/></h3>
+          <tpl:apply select="group_id/join()"/>
+        </tpl:template>
+        <tpl:template match="group:group"/>
+      </view:view>
+    </tst:document>
+  </tst:test>
   <tst:test name="Join with select">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">
