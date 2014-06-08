@@ -84,19 +84,47 @@ abstract class Type extends core\module\Domed {
 
     $bResult = false;
 
-    if ($this->getValue()) {
+    if (!$this->getValue()) {
 
-      if (!$bResult = $this->validateFormat()) {
-
-        $this->addMessage($this->translate("The field '%s' is not valid", $this->read('title')), $this->asAlias());
-      }
+      $bResult = $this->validateFalse();
     }
     else {
 
-      $bResult = $this->validateEmpty();
+      $bResult = $this->validateValue();
     }
 
     return $bResult;
+  }
+
+  protected function validateFalse() {
+
+    $bResult = false;
+
+    if ($this->isNull($this->getValue())) {
+
+      $bResult = $this->validateEmpty();
+    }
+    else {
+
+      $bResult = $this->validateValue();
+    }
+
+    return $bResult;
+  }
+
+  protected function validateValue() {
+
+    if (!$bResult = $this->validateFormat()) {
+
+      $this->addMessage($this->translate("The field '%s' is not valid", $this->read('title')), $this->asAlias());
+    }
+
+    return $bResult;
+  }
+
+  protected function isNull() {
+
+    return $this->getValue() === '' || $this->getValue() === NULL;
   }
 
   protected function validateEmpty() {
@@ -148,16 +176,21 @@ abstract class Type extends core\module\Domed {
 
     $val = $this->getValue();
 
-    if ($val) {
-
-      $sResult = "'".addslashes($val)."'";
-    }
-    else {
+    if ($this->isNull($val)) {
 
       $sResult = $this->escapeEmpty();
     }
+    else {
+
+      $sResult = $this->escapeValue($val);
+    }
 
     return $sResult;
+  }
+
+  protected function escapeValue($val) {
+
+    return "'".addslashes($val)."'";
   }
 
   protected function escapeEmpty() {

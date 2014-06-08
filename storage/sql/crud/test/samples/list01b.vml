@@ -8,7 +8,7 @@
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
 
-  extends="base.crd"
+  extends="list.crd"
 >
 
   <crud:global>

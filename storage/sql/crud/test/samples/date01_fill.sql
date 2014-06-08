@@ -1,5 +1,3 @@
-TRUNCATE TABLE date01;
-
 INSERT INTO `date01` (`id`, `name`, `insert`) VALUES
 (1, 'Alexandra Glover', '2014-03-03 12:00:00'),
 (2, 'Faith Mills', '2014-03-01 12:00:00'),

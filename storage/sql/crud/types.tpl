@@ -9,38 +9,24 @@
 >
 
   <tpl:template match="sql:id" mode="label"/>
-  <tpl:template match="sql:id" mode="input/empty">
-    <tpl:register/>
-    <tpl:apply mode="input/hidden/empty"/>
-  </tpl:template>
 
-  <tpl:template match="sql:id" mode="input">
+  <tpl:template match="sql:id" mode="input" xmode="insert">
     <tpl:register/>
     <tpl:apply mode="input/hidden"/>
   </tpl:template>
 
-  <tpl:template match="sql:string-long" mode="input/empty" sql:ns="ns">
-    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field field-text field-input-element"></textarea>
-  </tpl:template>
-
-  <tpl:template match="sql:string-long" mode="input/update" sql:ns="ns">
+  <tpl:template match="sql:string-long" mode="input">
     <textarea id="form-{alias('form')}" name="{alias('form')}" class="field field-text field-input-element">
-      <tpl:apply/>
+      <tpl:apply mode="input/value"/>
     </textarea>
   </tpl:template>
 
-  <tpl:template match="sql:boolean" mode="input/empty" sql:ns="ns">
+  <tpl:template match="sql:boolean" mode="input" xmode="insert">
     <tpl:apply mode="input/checkbox/empty"/>
   </tpl:template>
 
-  <tpl:template match="sql:boolean" mode="input/update" sql:ns="ns">
+  <tpl:template match="sql:boolean" mode="input" xmode="update">
     <tpl:apply mode="input/checkbox/update"/>
-  </tpl:template>
-
-  <tpl:template match="sql:datetime" mode="input/empty" sql:ns="ns">
-
-    <tpl:apply mode="date"/>
-
   </tpl:template>
 
 </tpl:collection>

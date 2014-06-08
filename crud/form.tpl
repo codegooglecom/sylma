@@ -15,16 +15,16 @@
     <js:include>type/Text.js</js:include>
   </tpl:template>
 
-  <tpl:template match="*" mode="container/empty">
+  <tpl:template match="*" mode="container">
 
     <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="title" default="title()"/>
     <tpl:argument name="type" default="'text'"/>
-    <tpl:argument name="value" default="''"/>
     <tpl:argument name="object" default="alias('key')"/>
 
     <div class="field-container clearfix field-{$type}" js:class="sylma.crud.Field">
 
+      <js:include>/#sylma/ui/Clonable.js</js:include>
       <js:include>/#sylma/crud/Field.js</js:include>
 
       <js:event name="change">
@@ -38,16 +38,12 @@
         <tpl:read tpl:name="alias" select="$alias"/>
         <tpl:read tpl:name="title" select="$title"/>
       </tpl:apply>
-      <tpl:apply mode="input/empty">
+      <tpl:apply mode="input">
         <tpl:read tpl:name="alias" select="$alias"/>
         <tpl:read tpl:name="type" select="$type"/>
       </tpl:apply>
     </div>
 
-  </tpl:template>
-
-  <tpl:template match="*" mode="container">
-    <tpl:apply mode="container/empty"/>
   </tpl:template>
 
   <tpl:template match="*" mode="register">

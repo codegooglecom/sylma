@@ -54,5 +54,17 @@ class Complex extends Type implements parser\type, parser\type\complex {
 
     return $aResult;
   }
+
+  public function __clone() {
+
+    $aParticles = array();
+
+    foreach ($this->getParticles() as $particle) {
+
+      $aParticles[] = clone $particle;
+    }
+
+    $this->aParticles = $aParticles;
+  }
 }
 

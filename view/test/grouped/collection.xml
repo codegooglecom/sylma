@@ -214,6 +214,7 @@
         <sql:resource multiple="multiple"/>
         <view:schema>samples/product.xql</view:schema>
         <tpl:template>
+          <tpl:argument name="var" default="'abc'"/>
           <tpl:settings>
             <cls:classes>
               <cls:class alias="tree">
@@ -226,14 +227,14 @@
           <tpl:apply select="source()"/>
           <span>
             <tpl:read select="dummy()/default()">
-              <tpl:read select="'abc'"/>
+              <tpl:read select="'{$var}def'"/>
             </tpl:read>
           </span>
         </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <span>def</span>
+      <span>hello world</span>
     </tst:node>
   </tst:test>
 </tst:tests>

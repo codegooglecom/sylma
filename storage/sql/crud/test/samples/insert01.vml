@@ -21,12 +21,12 @@
     <tpl:constant name="form-cols">* ^ id</tpl:constant>
 
     <tpl:template mode="init/action">
-      <crud:path/>/do.json
+      <crud:path/>/default/do.json
     </tpl:template>
 
     <tpl:template mode="form/token/content">
       <crud:path/>
-      <tpl:text>/insert/do</tpl:text>
+      <tpl:text>/do</tpl:text>
     </tpl:template>
 
   </crud:global>

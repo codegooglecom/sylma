@@ -12,7 +12,9 @@
   </ns0:page>
   <ns0:page>
     <ns0:steps>
-      <ns0:watcher element=" &gt; div:nth-child(1)"/>
+      <ns0:watcher element=" &gt; div:nth-child(1) &gt; div">
+        <ns0:property name="height">18</ns0:property>
+      </ns0:watcher>
     </ns0:steps>
   </ns0:page>
 </ns0:test>

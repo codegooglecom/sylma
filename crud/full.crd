@@ -47,7 +47,9 @@
 
     <view:view mode="view" groups="view" sql:ns="ns">
 
-      <tpl:import>update.tpl</tpl:import>
+      <tpl:template>
+        <tpl:apply mode="form/build" xmode="update"/>
+      </tpl:template>
 
       <tpl:template mode="init/action">
         <le:path/>/update/do.json

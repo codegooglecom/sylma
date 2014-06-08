@@ -10,9 +10,16 @@
 
   <tpl:import>/#sylma/modules/datepicker/init.tpl</tpl:import>
 
+  <tpl:template match="sql:datetime" mode="input">
+
+    <tpl:apply mode="date"/>
+
+  </tpl:template>
+
   <tpl:template match="*" mode="date">
 
     <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="value" default="''"/>
 
     <tpl:apply mode="date/prepare"/>
 
@@ -20,6 +27,7 @@
 
       <tpl:apply mode="date/content">
         <tpl:read select="$alias" tpl:name="alias"/>
+        <tpl:read select="$value" tpl:name="value"/>
       </tpl:apply>
 
     </div>
@@ -29,19 +37,20 @@
   <tpl:template match="*" mode="date/content">
 
     <tpl:argument name="alias"/>
+    <tpl:argument name="value"/>
 
-    <tpl:apply mode="input/empty/build">
+    <tpl:apply mode="input/build">
       <tpl:read tpl:name="alias" select="''"/>
       <tpl:read tpl:name="id" select="$alias"/>
       <tpl:read tpl:name="class" select="'date'"/>
+      <tpl:read tpl:name="value" select="$value"/>
     </tpl:apply>
-    <tpl:apply mode="input/empty/build">
+    <tpl:apply mode="input/build">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'hidden'"/>
       <tpl:read tpl:name="id" select="''"/>
     </tpl:apply>
 
   </tpl:template>
-
 
 </tpl:collection>

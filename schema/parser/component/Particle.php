@@ -60,5 +60,27 @@ abstract class Particle extends Basic implements parser\particle {
 
     return $result;
   }
+
+  public function __clone() {
+
+    $aElements = array();
+    $aElementsIndexed = array();
+
+    foreach ($this->aElements as $sNamespace => $aNamespace) {
+
+      foreach ($aNamespace as $sName => $element) {
+
+        $clone = clone $element;
+
+        $clone->setParticle($this);
+
+        $aElements[$sNamespace][$sName] = $clone;
+        $aElementsIndexed[$clone->getPosition()] = $clone;
+      }
+    }
+
+    $this->aElements = $aElements;
+    $this->aElementsIndexed = $aElementsIndexed;
+  }
 }
 

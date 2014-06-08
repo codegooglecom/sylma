@@ -18,16 +18,6 @@
 
   </crud:route>
 
-  <crud:route name="update" groups="form,crud">
-
-    <view:view mode="view" groups="view">
-
-      <tpl:import>crud/update.tpl</tpl:import>
-
-    </view:view>
-
-  </crud:route>
-
   <crud:group name="form">
 
     <crud:import>crud/form.tpl</crud:import>

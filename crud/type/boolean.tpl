@@ -38,7 +38,7 @@
 
   <tpl:template match="*" mode="input/checkbox/empty">
 
-    <tpl:apply mode="input/update">
+    <tpl:apply mode="input/build">
       <tpl:read tpl:name="type" select="'checkbox'"/>
       <tpl:read tpl:name="value" select="'1'"/>
       <tpl:read tpl:name="class" select="'boolean'"/>

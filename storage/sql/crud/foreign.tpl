@@ -11,23 +11,23 @@
   <tpl:template match="sql:foreign" mode="container">
 
     <tpl:if test="is-multiple()">
-      <tpl:apply mode="container/multiple/empty"/>
+      <tpl:apply mode="container/multiple"/>
       <tpl:else>
-        <tpl:apply mode="container/empty"/>
+        <tpl:apply mode="container/simple"/>
       </tpl:else>
     </tpl:if>
 
   </tpl:template>
 
-  <tpl:template match="sql:foreign" mode="container/empty">
+  <tpl:template match="sql:foreign" mode="container/simple">
 
-    <tpl:apply mode="container/empty">
+    <tpl:apply mode="container">
       <tpl:text tpl:name="type">foreign</tpl:text>
     </tpl:apply>
 
   </tpl:template>
 
-  <tpl:template match="sql:foreign" mode="container/multiple/empty">
+  <tpl:template match="sql:foreign" mode="container/multiple">
     <fieldset class="field-container form-foreign" js:class="sylma.crud.Field">
 
       <js:include>/#sylma/crud/Field.js</js:include>
@@ -39,7 +39,7 @@
         <tpl:read select="alias('key')"/>
       </js:name>
       <tpl:apply mode="legend"/>
-      <tpl:apply mode="input/boolean/empty"/>
+      <tpl:apply mode="input/boolean"/>
     </fieldset>
   </tpl:template>
 
@@ -49,15 +49,15 @@
     </legend>
   </tpl:template>
 
-  <tpl:template match="sql:foreign" mode="input/empty" sql:ns="ns">
+  <tpl:template match="sql:foreign" mode="input" xmode="insert">
     <tpl:apply mode="select-notest"/>
   </tpl:template>
-<!--
-  <tpl:template match="sql:foreign" mode="input/empty" sql:ns="ns">
-    <tpl:apply mode="input/boolean/empty"/>
-  </tpl:template>
--->
-  <tpl:template match="sql:foreign" mode="input/boolean/empty">
+
+  <view:template match="sql:foreign" mode="input" xmode="update">
+    <tpl:apply mode="select-test"/>
+  </view:template>
+
+  <tpl:template match="sql:foreign" mode="input/boolean" xmode="insert">
 
     <tpl:if test="is-multiple()">
       <tpl:apply select="all()" mode="foreign/multiple/boolean/empty">
@@ -74,6 +74,19 @@
 
   </tpl:template>
 
+  <view:template match="sql:foreign" mode="input/boolean" xmode="update">
+
+    <tpl:if test="is-multiple()">
+      <tpl:apply mode="input/multiple/boolean/update"/>
+      <tpl:else>
+        <tpl:apply mode="input/single/boolean/update"/>
+      </tpl:else>
+    </tpl:if>
+
+    <tpl:apply mode="register"/>
+
+  </view:template>
+
   <tpl:template match="*" mode="foreign/single/boolean/empty">
 
     <tpl:argument name="alias"/>
@@ -81,7 +94,7 @@
 
     <div class="foreign-value">
 
-      <tpl:apply mode="input/update">
+      <tpl:apply mode="input/build">
         <tpl:read tpl:name="alias" select="'{$alias}'"/>
         <tpl:read tpl:name="id" select="$id"/>
         <tpl:read tpl:name="type" select="'radio'"/>
@@ -103,7 +116,7 @@
 
     <div class="foreign-value">
 
-      <tpl:apply mode="input/update">
+      <tpl:apply mode="input/build">
         <tpl:read tpl:name="alias" select="'{$alias}[{id}]'"/>
         <tpl:read tpl:name="type" select="'checkbox'"/>
         <tpl:read tpl:name="value" select="id"/>
@@ -286,13 +299,13 @@
 
   <tpl:template match="sql:foreign" mode="filter/content">
     <div class="filter" js:class="sylma.crud.list.Filter">
-      <tpl:apply mode="input/update"/>
+      <tpl:apply mode="input"/>
     </div>
   </tpl:template>
 
   <tpl:template match="sql:foreign" mode="filter/text">
     <div class="filter" js:class="sylma.crud.list.Filter">
-      <tpl:apply mode="input/update/build"/>
+      <tpl:apply mode="input/build"/>
       <tpl:apply mode="input/clear"/>
     </div>
   </tpl:template>

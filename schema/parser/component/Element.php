@@ -62,7 +62,7 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
     $this->iPosition = $iPosition;
   }
 
-  protected function getPosition() {
+  public function getPosition() {
 
     return $this->iPosition;
   }
@@ -250,5 +250,11 @@ class Element extends Basic implements schema\parser\element, core\tokenable {
 
     return $this->sToken;
   }
+
+  public function __clone() {
+
+    $this->setType(clone $this->getType());
+  }
+
 }
 

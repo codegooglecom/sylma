@@ -8,7 +8,7 @@
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
 
-  extends="base.crd"
+  extends="list.crd"
 >
 
   <crud:global>
@@ -19,5 +19,11 @@
     <tpl:constant name="list-order">name</tpl:constant>
 
   </crud:global>
+
+  <crud:route>
+
+    <view:view _debug="x"/>
+
+  </crud:route>
 
 </crud:crud>

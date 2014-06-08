@@ -19,7 +19,6 @@
           <cls:classes>
             <cls:class alias="template" name="Traverser">
               <cls:classes>
-                <cls:class alias="apply" name="Apply"/>
                 <cls:class alias="register" name="Register"/>
                 <cls:class alias="token" name="Token"/>
               </cls:classes>

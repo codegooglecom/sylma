@@ -602,6 +602,117 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Multiple refs on same table">
+    <tst:prepare>
+
+      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
+        'path' => '/#sylma/storage/sql/test/samples/user7.xql',
+      ));
+
+      $manager->runQueryFile('samples/user7.sql');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user7.xql</view:schema>
+        <tpl:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="*">
+          <li>
+            <h2>
+              <tpl:read select="name"/>
+            </h2>
+            <span>
+              <tpl:read select="group_main/name"/>
+            </span>
+            <em>
+              <tpl:read select="group_sub/name"/>
+            </em>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>
+          <h2>alexandra</h2>
+          <span>group01</span>
+          <em>group02</em>
+        </li>
+        <li>
+          <h2>faith</h2>
+          <span>group02</span>
+          <em>group01</em>
+        </li>
+        <li>
+          <h2>isaac</h2>
+          <span>group03</span>
+          <em>group03</em>
+        </li>
+      </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Multiple refs on same table with templates">
+    <tst:prepare>
+
+      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
+        'path' => '/#sylma/storage/sql/test/samples/user7.xql',
+      ));
+
+      $manager->runQueryFile('samples/user7.sql');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user7.xql</view:schema>
+        <tpl:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="*">
+          <li>
+            <h2>
+              <tpl:read select="name"/>
+            </h2>
+            <tpl:apply select="*" mode="element"/>
+          </li>
+        </tpl:template>
+        <tpl:template match="sql:foreign" mode="element">
+          <tpl:apply select="ref()" mode="table"/>
+        </tpl:template>
+        <tpl:template match="sql:table" mode="table">
+          <span>
+            <tpl:read select="name"/>
+          </span>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>
+          <h2>alexandra</h2>
+          <span>group01</span>
+          <span>group02</span>
+        </li>
+        <li>
+          <h2>faith</h2>
+          <span>group02</span>
+          <span>group01</span>
+        </li>
+        <li>
+          <h2>isaac</h2>
+          <span>group03</span>
+          <span>group03</span>
+        </li>
+      </ul>
+    </tst:node>
+  </tst:test>
   <tst:test name="Insert multiple">
     <tst:document>
       <view:view user:ns="ns" mode="insert">

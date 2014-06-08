@@ -60,7 +60,7 @@ class Reflector extends xml\tree\Argument {
     return $result;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false) {
+  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
     return parent::reflectApplyDefault($sPath, $aPath, $sMode, $bRead);
   }

@@ -48,7 +48,9 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
         if ($this->useAlias()) {
 
-          $mResult = $this->getParent()->getName() . '_' . $this->getName();
+          $parent = $this->getParent();
+          $sParent = $parent->useAlias() ? $parent->getAlias() : $parent->getName();
+          $mResult = $sParent . '_' . $this->getName();
         }
         else {
 
@@ -153,7 +155,9 @@ class Element extends schema\xsd\component\Element implements common\stringable 
 
   public function getDefault() {
 
-    if (!$sResult = $this->readx('@default')) {
+    $sResult = $this->readx('@default');
+
+    if ($sResult === '') {
 
       if ($this->getParent(false)) {
 

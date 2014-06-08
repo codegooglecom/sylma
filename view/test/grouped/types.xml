@@ -23,12 +23,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div><tpl:apply select="name/#type"/></div>
-        </view:template>
-        <view:template match="#type/xs:string">
+        </tpl:template>
+        <tpl:template match="#type/xs:string">
           <span><tpl:apply select="name()"/></span>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -42,12 +42,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div><tpl:apply select="name/#type"/></div>
-        </view:template>
-        <view:template match="user:name" apply="type">
+        </tpl:template>
+        <tpl:template match="user:name" apply="type">
           <span><tpl:apply select="name()"/></span>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -61,14 +61,14 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user3.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name"/>
           </div>
-        </view:template>
-        <view:template match="#type/user:name" apply="element">
+        </tpl:template>
+        <tpl:template match="#type/user:name" apply="element">
           <h3><tpl:apply/></h3>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -82,21 +82,21 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="id"/>
           </div>
-        </view:template>
-        <view:template match="sql:id">
+        </tpl:template>
+        <tpl:template match="sql:id">
           <h4>
             <tpl:read/>
           </h4>
-        </view:template>
-        <view:template match="*">
+        </tpl:template>
+        <tpl:template match="*">
           <h3>
             <tpl:read/>
           </h3>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -112,21 +112,21 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user2.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name"/>
           </div>
-        </view:template>
-        <view:template match="sql:string">
+        </tpl:template>
+        <tpl:template match="sql:string">
           <h4>
             <tpl:read/>
           </h4>
-        </view:template>
-        <view:template match="*">
+        </tpl:template>
+        <tpl:template match="*">
           <h3>
             <tpl:read/>
           </h3>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>

@@ -42,8 +42,8 @@
 
     <view:view>
 
-      <tpl:template match="todo:url" mode="input/empty">
-        <tpl:apply mode="input/update">
+      <tpl:template match="todo:url" mode="input">
+        <tpl:apply mode="input/build">
           <le:get-argument name="url" tpl:name="value" optional="x"/>
         </tpl:apply>
       </tpl:template>

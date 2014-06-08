@@ -19,7 +19,6 @@
   <tpl:import>../input.tpl</tpl:import>
   <tpl:import>../type/numeric.tpl</tpl:import>
   <tpl:import>../type/date.tpl</tpl:import>
-  <tpl:import>../update.tpl</tpl:import>
 
   <tpl:template match="*" mode="list/filters/js">
     <js:include>Filters.js</js:include>
@@ -42,7 +41,7 @@
       <div class="filter-container title" js:class="sylma.crud.list.FilterContainer">
         <tpl:apply mode="filters/corner"/>
       </div>
-      <tpl:apply use="list-cols" mode="filter"/>
+      <tpl:apply use="list-cols" mode="filter" xmode="update"/>
     </div>
 
   </tpl:template>
@@ -59,7 +58,7 @@
 
   <tpl:template match="*" mode="filter/content">
     <div class="filter" js:class="sylma.crud.list.Filter">
-      <tpl:apply mode="input/update"/>
+      <tpl:apply mode="input"/>
       <tpl:apply mode="input/clear"/>
     </div>
   </tpl:template>

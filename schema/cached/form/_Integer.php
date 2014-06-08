@@ -10,20 +10,21 @@ class _Integer extends Type {
     return is_numeric($this->getValue());
   }
 
-  public function escape() {
+  protected function getDefault() {
 
-    $val = $this->getValue();
+    $sResult = parent::getDefault();
 
-    if ($val) {
+    if ($sResult === '') {
 
-      $sResult = $val;
-    }
-    else {
-
-      $sResult = $this->escapeEmpty();
+      $this->launchException('Empty string not allowed as integer');
     }
 
     return $sResult;
+  }
+
+  public function escapeValue($val) {
+
+    return $val;
   }
 }
 

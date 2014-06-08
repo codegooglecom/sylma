@@ -10,9 +10,9 @@ class Foreign extends _Integer {
     return $this->read('multiple', false);
   }
 
-  public function validateNull() {
+  public function isNull() {
 
-    return $this->validateEmpty();
+    return !$this->getValue();
   }
 }
 

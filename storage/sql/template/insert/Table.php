@@ -227,7 +227,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     //return $table;
   }
 
-  protected function getPosition() {
+  public function getPosition() {
 
     return $this->getKey();
   }

@@ -8,15 +8,11 @@
   xmlns:js="http://2013.sylma.org/template/binder"
 >
 
-  <tpl:template match="ssd:password" mode="input" ssd:ns="ns">
-    <tpl:apply mode="input/empty"/>
-  </tpl:template>
-
-  <tpl:template match="ssd:password" mode="input/empty" ssd:ns="ns">
+  <tpl:template match="ssd:password" mode="input">
 
     <tpl:argument name="alias" default="alias()"/>
 
-    <tpl:apply mode="input/empty">
+    <tpl:apply mode="input/build" xmode="insert">
       <tpl:read tpl:name="alias" select="$alias"/>
       <tpl:read tpl:name="type" select="'password'"/>
       <tpl:read tpl:name="value" select="''"/>

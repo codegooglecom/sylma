@@ -80,35 +80,37 @@ class Container extends template_ns\parser\template\Argumented {
 
       if (!$this->getMatch()) {
 
-        if ($bRoot && $sMode === $this->getMode()) {
+        if ($bRoot && $sMode === $this->getMode() && $this->checkXMode($sXMode)) {
 
           $iResult = self::WEIGHT_ELEMENT_ROOT;
+
+          if ($this->getXMode() && $this->getXMode() === $sXMode) $iResult += 1;
         }
       }
-      else if ($sMode === $this->getMode()) {
+      else if ($sMode === $this->getMode() && $this->checkXMode($sXMode)) {
 
-        $bXMode = $this->getXMode() === $sXMode;
+        $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
 
-        if (!$this->getXMode() || $bXMode) {
+        if ($type = $element->getType()) {
 
-          $iElement = $this->getWeightName($element->getNamespace(), $element->getName());
+          $iType = $this->getWeightType($type);
+          $iResult = $iType > $iElement ? $iType : $iElement;
 
-          if ($type = $element->getType()) {
+          if ($this->getXMode() && $this->getXMode() === $sXMode) $iResult += 1;
+        }
+        else {
 
-            $iType = $this->getWeightType($type);
-            $iResult = $iType > $iElement ? $iType : $iElement;
-            
-            if ($this->getXMode() && $bXMode) $iResult += 1;
-          }
-          else {
-
-            $iResult = $iElement;
-          }
+          $iResult = $iElement;
         }
       }
     }
 
     return $iResult;
+  }
+
+  protected function checkXMode($sXMode) {
+
+    return !$this->getXMode() || $this->getXMode() === $sXMode;
   }
 
   protected function startLog($sMessage = 'Template', array $aVars = array()) {

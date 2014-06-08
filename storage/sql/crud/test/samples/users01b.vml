@@ -11,7 +11,7 @@
   xmlns:user="http://2013.sylma.org/modules/stepper/test/user01"
   xmlns:group="http://2013.sylma.org/modules/stepper/test/group01"
 
-  extends="base.crd"
+  extends="list.crd"
 >
 
   <crud:global group:ns="ns" user:ns="ns">

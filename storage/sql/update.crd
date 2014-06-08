@@ -34,11 +34,9 @@
 
     <view:view mode="view" _debug="x">
 
-      <tpl:import>/#sylma/storage/sql/crud/update.tpl</tpl:import>
-
       <tpl:template>
         <tpl:apply mode="js"/>
-        <tpl:apply/>
+        <tpl:apply mode="form/build" xmode="update"/>
       </tpl:template>
 
       <tpl:template mode="form/token">
@@ -49,7 +47,7 @@
 
     </view:view>
 
-    <view:view name="do" mode="update">
+    <view:view name="do" mode="update" _debug="x">
 
       <sql:filter name="id">
         <le:get-argument name="id" source="post"/>

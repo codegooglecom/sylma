@@ -217,7 +217,11 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
 
   public function asToken() {
 
-    return 'Template ' . ($this->getMatch() ? "({$this->getMatchString()})" : 'root') . ($this->getMode() ? " [mode={$this->getMode()}]" : "");
+    $sMatch = $this->getMatch() ? "({$this->getMatchString()})" : 'root';
+    $sMode = $this->getMode() ? " [mode={$this->getMode()}]" : "";
+    $sXMode = $this->getXMode() ? " [xmode={$this->getXMode()}]" : "";
+
+    return 'Template ' . $sMatch . $sMode . $sXMode;
   }
 
   protected function initRender() {

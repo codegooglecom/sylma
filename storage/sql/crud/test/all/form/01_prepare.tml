@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page>
+    <ns0:steps>
+      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/storage/sql/crud/test/samples/crud01.xql" method="get"/>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/insert01.vml" method="get"/>
+    </ns0:steps>
+  </ns0:page>
+</ns0:test>

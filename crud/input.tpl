@@ -9,79 +9,51 @@
 >
 
   <tpl:template match="*" mode="input">
-    <tpl:apply mode="input/empty"/>
-  </tpl:template>
-
-  <tpl:template match="*" mode="input/empty">
 
     <tpl:argument name="alias" default="alias('form')"/>
-    <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="type" default="'text'"/>
-    <tpl:argument name="class" default="'text'"/>
 
-    <tpl:apply mode="input/empty/build">
-      <tpl:read tpl:name="alias" select="$alias"/>
-      <tpl:read tpl:name="id" select="$id"/>
-      <tpl:read tpl:name="type" select="$type"/>
-      <tpl:read tpl:name="class" select="$class"/>
+    <tpl:apply mode="input/build">
+      <tpl:read select="$alias" tpl:name="alias"/>
+      <tpl:read select="$type" tpl:name="type"/>
     </tpl:apply>
 
   </tpl:template>
 
-  <tpl:template match="*" mode="input/empty/build">
+  <tpl:template match="*" mode="input/build">
 
     <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="id" default="$alias"/>
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="class" default="'text'"/>
+    <tpl:argument name="value" default="''"/>
 
-    <input class="field field-{$class}" type="{$type}" id="form-{$id}" name="{$alias}">
+    <tpl:variable name="final-value">
+      <tpl:apply mode="input/value"/>
+      <tpl:read select="$value"/>
+    </tpl:variable>
+
+    <input class="field field-{$class}" type="{$type}" id="form-{$id}" value="{$final-value}" name="{$alias}">
       <tpl:apply mode="input/events"/>
     </input>
 
   </tpl:template>
 
-  <tpl:template match="*" mode="input/update">
+  <tpl:template match="*" mode="input/value" xmode="insert"/>
+
+  <tpl:template match="*" mode="input/value" xmode="update">
+    <tpl:read select="value()"/>
+  </tpl:template>
+
+  <tpl:template match="*" mode="input/hidden">
 
     <tpl:argument name="alias" default="alias('form')"/>
     <tpl:argument name="id" default="$alias"/>
-    <tpl:argument name="value" default="value()"/>
-    <tpl:argument name="type" default="'text'"/>
-    <tpl:argument name="class" default="'text'"/>
 
-    <tpl:apply mode="input/update/build">
-      <tpl:read tpl:name="alias" select="$alias"/>
-      <tpl:read tpl:name="id" select="$id"/>
-      <tpl:read tpl:name="value" select="$value"/>
-      <tpl:read tpl:name="type" select="$type"/>
-      <tpl:read tpl:name="class" select="$class"/>
-    </tpl:apply>
-
-  </tpl:template>
-
-  <tpl:template match="*" mode="input/update/build">
-
-    <tpl:argument name="alias" default="alias('form')"/>
-    <tpl:argument name="id" default="$alias"/>
-    <tpl:argument name="value" default="value()"/>
-    <tpl:argument name="type" default="'text'"/>
-    <tpl:argument name="class" default="'text'"/>
-
-    <input class="field field-{$class}" type="{$type}" id="form-{$id}" value="{$value}" name="{$alias}">
-      <tpl:apply mode="input/events"/>
-    </input>
-
-  </tpl:template>
-
-  <tpl:template match="*" mode="input/hidden/empty">
-
-    <tpl:argument name="alias" default="alias('form')"/>
-
-    <tpl:apply mode="input/empty/build">
+    <tpl:apply mode="input/build">
       <tpl:read select="'hidden'" tpl:name="type"/>
       <tpl:read select="$alias" tpl:name="alias"/>
     </tpl:apply>
   </tpl:template>
-
 
 </tpl:collection>

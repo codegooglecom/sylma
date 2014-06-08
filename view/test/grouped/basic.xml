@@ -94,7 +94,7 @@
 EOT;
       $manager->assertEquals($sValue, $doc->asString($doc::STRING_INDENT));
       return true;
-      
+
     </tst:expected>
   </tst:test>
   <tst:test name="multiple resources">
@@ -712,8 +712,11 @@ EOT;
         <tpl:template>
           <div>
             <tpl:apply select="name" xmode="mymode"/>
-            <tpl:apply select="email"/>
+            <tpl:apply mode="abc" xmode="def"/>
           </div>
+        </tpl:template>
+        <tpl:template mode="abc" xmode="badmode">
+          <h5/>
         </tpl:template>
         <tpl:template match="user:name">
           <tpl:apply/>
@@ -736,7 +739,6 @@ EOT;
     <tst:node>
       <div>
         <h4>admin</h4>
-        <h2>admin@sylma.org</h2>
       </div>
     </tst:node>
   </tst:test>
@@ -801,49 +803,6 @@ EOT;
     </tst:document>
     <tst:node>
       <div><h3>admin</h3><a href="mailto:email">test</a></div>
-    </tst:node>
-  </tst:test>
-  <tst:test name="Variable" disabled="true">
-    <tst:document>
-      <view:view>
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user.xsd</view:schema>
-        <tpl:template>
-          <div>
-            <h3><tpl:apply select="name"/></h3>
-            <tpl:variable name="email"><tpl:apply select="email"/></tpl:variable>
-            <a href="mailto:{$email}"><tpl:apply select="$email"/></a>
-          </div>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div><h3>def</h3><a href="mailto:world@world">world@world</a></div>
-    </tst:node>
-  </tst:test>
-  <tst:test name="Simple variable">
-    <tst:document>
-      <view:view sql:ns="ns">
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user1.xql</view:schema>
-        <tpl:template>
-          <div>
-            <tpl:variable name="test">abc</tpl:variable>
-            <h3><tpl:apply select="name"/></h3>
-            <span><tpl:apply select="$test"/></span>
-          </div>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div>
-        <h3>admin</h3>
-        <span>abc</span>
-      </div>
     </tst:node>
   </tst:test>
   <tst:test name="Simple path argument" disabled="true">
@@ -984,34 +943,6 @@ EOT;
         <h3>admin</h3>
         <span>admin@sylma.org</span>
         <h4>email</h4>
-      </div>
-    </tst:node>
-  </tst:test>
-  <tst:test name="Argument variable">
-    <tst:document>
-      <view:view sql:ns="ns">
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user1.xql</view:schema>
-        <tpl:template>
-          <div>
-            <tpl:variable name="test">
-              <le:get-argument name="hello"/>
-            </tpl:variable>
-            <h3><tpl:apply select="name"/></h3>
-            <span><tpl:apply select="$test"/></span>
-          </div>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:load>
-      return array('arguments' => $manager->createArgument(array('hello' => 'world')));
-    </tst:load>
-    <tst:node>
-      <div>
-        <h3>admin</h3>
-        <span>world</span>
       </div>
     </tst:node>
   </tst:test>

@@ -41,7 +41,7 @@ class Tree extends xml\tree\_Callable {
 
   protected function reflectFunctionDefault(array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
 
-    $sPath = $this->getWindow()->parse(array_shift($aArguments));
+    $sPath = $this->getWindow()->toString(array_shift($aArguments));
 
     return $this->reflectApplyDefault($sPath, $aPath, $sMode, $bRead, $aArguments);
   }

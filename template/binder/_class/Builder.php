@@ -102,8 +102,10 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
 
       $this->loadExtend();
 
-      $class = $this->getWindow()->createObject(array(), 'Class');
-      $new = $this->getWindow()->createInstanciate($class, array($js));
+      $window = $this->getWindow();
+
+      $class = $window->createObject(array(), 'Class');
+      $new = $window->createInstanciate($class, array($js));
 
       $container->setProperty($this->getID(), $new);
     }

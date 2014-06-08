@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page>
+    <ns0:steps>
+      <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/numeric01.sql</ns0:query>
+      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/storage/sql/crud/test/samples/numeric01.xql" method="get"/>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/numeric01.vml" method="get"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/storage/sql/crud/test/samples/numeric01?sylma-reset=1">
+    <ns0:steps>
+      <ns0:snapshot element="#content &gt; div:nth-child(2) &gt; form &gt; table">
+        <ns0:content>{"name":"table","children":[{"name":"thead","children":[{"name":"tr","children":[{"name":"th","children":[{"name":"a","content":"F","position":{"x":223,"y":206},"size":{"x":23,"y":24}}],"position":{"x":218,"y":200},"size":{"x":28,"y":41}},{"name":"th","children":[{"name":"a","content":"id","position":{"x":247,"y":201},"size":{"x":48,"y":38}}],"position":{"x":246,"y":200},"size":{"x":50,"y":41}},{"name":"th","children":[{"name":"a","content":"name","position":{"x":297,"y":201},"size":{"x":71,"y":38}}],"position":{"x":296,"y":200},"size":{"x":73,"y":41}},{"name":"th","children":[{"name":"a","content":"age","position":{"x":370,"y":201},"size":{"x":61,"y":38}}],"position":{"x":369,"y":200},"size":{"x":63,"y":41}},{"name":"th","children":[{"name":"a","content":"size","position":{"x":433,"y":201},"size":{"x":62,"y":38}}],"position":{"x":432,"y":200},"size":{"x":64,"y":41}}],"position":{"x":218,"y":200},"size":{"x":278,"y":41}}],"position":{"x":218,"y":200},"size":{"x":278,"y":41}},{"name":"tbody","children":[{"name":"tr","children":[{"name":"td","children":[{"name":"p","content":"No result","position":{"x":218,"y":259},"size":{"x":278,"y":14}}],"position":{"x":218,"y":241},"size":{"x":278,"y":51}}],"position":{"x":218,"y":241},"size":{"x":278,"y":51}},{"name":"tr","children":[{"name":"td","children":[{"name":"div","children":[{"name":"div","children":[{"name":"a","content":"\n &lt;&lt;\n ","position":{"x":298,"y":304},"size":{"x":30,"y":24}},{"name":"span","children":[{"name":"a","content":"1","position":{"x":341,"y":309},"size":{"x":11,"y":14}},{"name":"span","content":"/","position":{"x":355,"y":309},"size":{"x":9,"y":14}},{"name":"a","content":"0","position":{"x":367,"y":309},"size":{"x":11,"y":14}}],"position":{"x":336,"y":304},"size":{"x":47,"y":24}},{"name":"a","content":"\n &gt;&gt;\n ","position":{"x":391,"y":304},"size":{"x":30,"y":24}},{"name":"input","content":"","position":{"x":0,"y":0},"size":{"x":0,"y":0}}],"position":{"x":282,"y":304},"size":{"x":150,"y":24}}],"position":{"x":218,"y":304},"size":{"x":278,"y":24}}],"position":{"x":218,"y":292},"size":{"x":278,"y":49}}],"position":{"x":218,"y":292},"size":{"x":278,"y":49}}],"position":{"x":218,"y":241},"size":{"x":278,"y":100}}],"position":{"x":218,"y":200},"size":{"x":278,"y":141}}</ns0:content>
+      </ns0:snapshot>
+    </ns0:steps>
+  </ns0:page>
+</ns0:test>

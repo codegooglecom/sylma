@@ -5,6 +5,12 @@ use sylma\core;
 
 class Formed extends Profiler {
 
+  const MODE_GET = 0;
+  const MODE_QUERY = 1;
+  const MODE_READ = 2;
+  const MODE_EXTRACT = 4;
+  const MODE_INSERT = 8;
+
   protected function createToken() {
 
     return new \sylma\schema\cached\form\Token;
@@ -27,7 +33,12 @@ class Formed extends Profiler {
     return parent::createArgument($mArguments, $sNamespace);
   }
 
-  public function runQuery($sValue, $iMode = 1) {
+  public function runQueryFile($sPath) {
+
+    return $this->runQuery($this->getFile($sPath)->read(), self::MODE_INSERT);
+  }
+
+  public function runQuery($sValue, $iMode = self::MODE_QUERY) {
 
     $db = $this->getManager(self::DB_MANAGER)->getConnection(self::DB_CONNECTION);
 

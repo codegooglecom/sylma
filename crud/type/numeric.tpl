@@ -11,12 +11,8 @@
 >
 
   <tpl:template match="xs:integer" mode="input">
-    <tpl:apply mode="input/empty"/>
-  </tpl:template>
 
-  <tpl:template match="xs:integer" mode="input/empty">
-
-    <tpl:apply mode="input/empty">
+    <tpl:apply mode="input/build">
       <tpl:read select="'integer'" tpl:name="class"/>
     </tpl:apply>
 

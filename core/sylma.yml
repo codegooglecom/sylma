@@ -93,9 +93,11 @@ initializer :
       stepper :
         action : /sylma/modules/stepper/test/window.vml
         pattern : `^/(sylma/modules/stepper/test)`
+        weight : 10
       crud :
         action : /sylma/modules/html/window.vml
         pattern : `^/(sylma/storage/sql/crud/test)`
+        weight : 10
         sub :
           default :
             action : /#sylma/modules/html/container.vml

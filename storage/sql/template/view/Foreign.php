@@ -115,22 +115,19 @@ class Foreign extends sql\template\component\Foreign {
 
   protected function buildSingle() {
 
-    //if (!$this->bBuilded) {
+    $element = $this->getElementRef();
 
-      $element = $this->getElementRef();
+    $parent = $this->getParent();
+    $query = $parent->getQuery();
 
-      $parent = $this->getParent();
-      $query = $parent->getQuery();
+    $element->setSource($parent->getSource());
+    $element->setQuery($query);
+    $element->insertQuery(false);
 
-      $element->setSource($parent->getSource());
-      $element->setQuery($query);
-      $element->insertQuery(false);
+    $id = $element->getElement('id', $element->getNamespace());
 
-      $id = $element->getElement('id', $element->getNamespace());
-
-      $query->addJoin($element, $id, $this);
-      //$this->bBuilded = true;
-    //}
+    $table = $query->addJoin($element, $id, $this);
+    $this->setElementRef($table);
   }
 
   protected function buildMultiple() {
@@ -176,15 +173,15 @@ class Foreign extends sql\template\component\Foreign {
     else {
 
       $this->buildSingle();
-      $element = $this->getElementRef();
+      $table = $this->getElementRef();
 
       if ($aPath) {
 
-        $result = $this->getParser()->parsePathToken($element, $aPath, $sMode, $bRead, $aArguments);
+        $result = $this->getParser()->parsePathToken($table, $aPath, $sMode, $bRead, $aArguments);
       }
       else {
 
-        $result = $element->reflectApply($sMode, $aArguments);
+        $result = $table->reflectApply($sMode, $aArguments);
       }
     }
 

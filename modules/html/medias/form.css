@@ -95,6 +95,7 @@ legend
 }
 
 .field-uneditable,
+.field.field-integer,
 .field.field-text,
 .field.field-date
 {
@@ -102,6 +103,7 @@ legend
   padding: 2px;
 }
 
+.field.field-integer,
 .field.field-text,
 .field.field-date,
 .field-text .field-input-element
@@ -116,7 +118,8 @@ legend
 }
 
 .field-text .field-input-element,
-.field.field-text
+.field.field-text,
+.field.field-integer
 {
   width: 50%;
 }

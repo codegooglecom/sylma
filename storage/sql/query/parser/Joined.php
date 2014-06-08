@@ -7,14 +7,21 @@ abstract class Joined extends Wherer {
 
   protected $aJoins = array();
   protected $aJoinsElements = array();
+  protected $aJoinsTables = array();
 
-  public function addJoin(sql\schema\table $table, sql\schema\element $field, $val) {
+  /**
+   * @usedby sql\template\view\Foreign::reflectFunctionJoin()
+   * @usedby sql\template\view\Foreign::buildSingle()
+   * @usedby sql\template\view\Foreign::buildMultiple()
+   * @usedby sql\template\view\Reference::reflectFunctionJoin()
+   */
+  public function addJoin(sql\schema\table $result, sql\schema\element $field, $val, $bClone = false) {
 
     $bAdd = true;
 
-    foreach ($this->aJoinsElements as $el) {
+    foreach ($this->aJoinsElements as $aJoin) {
 
-      if ($el === $field) {
+      if ($aJoin[0] === $val && $aJoin[1] === $result->getName()) {
 
         $bAdd = false;
       }
@@ -22,14 +29,37 @@ abstract class Joined extends Wherer {
 
     if ($bAdd) {
 
-      foreach($this->getClones() as $clone) {
+      if (!$bClone) {
 
-        $clone->addJoin($table, $field, $val);
+        $sName = $result->getName();
+
+        if (isset($this->aJoinsTables[$sName])) {
+
+          $result = clone $result;
+          $field = $result->getElement($field->getName());
+          //$field = clone $field; // @todo : not great, cloned but not referenced in table
+
+          $result->setAlias($sName . $this->aJoinsTables[$sName]);
+          $field->setParent($result);
+
+          $this->aJoinsTables[$sName]++;
+        }
+        else {
+
+          $this->aJoinsTables[$sName] = 1;
+        }
       }
 
-      $this->aJoins[] = array($table, $field, $val);
-      $this->aJoinsElements[] = $field;
+      foreach($this->getClones() as $clone) {
+
+        $clone->addJoin($result, $field, $val, true);
+      }
+
+      $this->aJoins[] = array($result->asAlias(), $field, $val);
+      $this->aJoinsElements[] = array($val, $result->getName());
     }
+
+    return $result;
   }
 
   protected function getJoins() {
@@ -38,10 +68,15 @@ abstract class Joined extends Wherer {
 
     foreach ($this->aJoins as $iCurrent => $aJoin) {
 
-      $aResult[] = array(' LEFT JOIN ', $aJoin[0], ' ON ', $aJoin[1], ' = ', $aJoin[2], ' ');
+      $aResult[] = array(' LEFT JOIN ', $aJoin[0], ' ON ', $this->prepareElement($aJoin[1]), ' = ', $aJoin[2], ' ');
     }
 
     return $aResult;
+  }
+
+  protected function prepareElement(sql\schema\element $element) {
+
+    return $element->asString();
   }
 
   public function clearJoins() {

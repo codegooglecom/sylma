@@ -29,7 +29,7 @@
 
       <tpl:apply mode="container"/>
 
-      <tpl:apply mode="container/empty">
+      <tpl:apply mode="container">
         <tpl:text tpl:name="alias">password_confirm</tpl:text>
         <tpl:text tpl:name="title">confirm password</tpl:text>
       </tpl:apply>

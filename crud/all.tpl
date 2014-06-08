@@ -17,7 +17,7 @@
 
   <tpl:template>
 
-    <tpl:apply mode="form/build"/>
+    <tpl:apply mode="form/build" xmode="insert"/>
 
   </tpl:template>
 

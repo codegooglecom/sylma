@@ -5,20 +5,21 @@
   <script>
     #DELETE IF EXISTS FROM `user`;
     DROP TABLE IF EXISTS `user`;
+    DROP TABLE IF EXISTS `user7`;
 
     #DELETE IF EXISTS FROM `group`;
     DROP TABLE IF EXISTS `group`;
 
     CREATE TABLE IF NOT EXISTS `group` (
-      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(65) COLLATE utf8_bin NOT NULL,
       `url` varchar(255) COLLATE utf8_bin NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
     CREATE TABLE IF NOT EXISTS `user_group` (
-      `id_user` int(10) unsigned NOT NULL,
-      `id_group` int(10) unsigned NOT NULL
+      `id_user` bigint(20)  UNSIGNED NOT NULL,
+      `id_group` bigint(20)  UNSIGNED NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
     TRUNCATE TABLE `group`;
@@ -35,11 +36,11 @@
     (2, 1);
 
     CREATE TABLE IF NOT EXISTS `user` (
-      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(255) COLLATE utf8_bin NOT NULL,
       `email` varchar(65) COLLATE utf8_bin NOT NULL,
       `password` varchar(255) COLLATE utf8_bin NOT NULL,
-      `group_id` int(10) unsigned NULL DEFAULT NULL,
+      `group_id` bigint(20)  UNSIGNED NULL DEFAULT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
@@ -49,7 +50,7 @@
       (3, 'webmaster', 'webmaster@sylma.org', 0);
 
     CREATE TABLE IF NOT EXISTS `user1b` (
-      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(255) COLLATE utf8_bin NOT NULL,
       `source` varchar(255) COLLATE utf8_bin NOT NULL,
       PRIMARY KEY (`id`)
@@ -63,7 +64,7 @@
       (3, 'webmaster', 'b');
 
     CREATE TABLE IF NOT EXISTS `user1c` (
-      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(255) COLLATE utf8_bin NOT NULL,
       `email` varchar(65) COLLATE utf8_bin NOT NULL,
       `age` FLOAT NOT NULL,
@@ -79,7 +80,7 @@
       (3, 'webmaster', 'webmaster@sylma.org', 8, 'b');
 
     CREATE TABLE IF NOT EXISTS `user1e` (
-      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(255) COLLATE utf8_bin NOT NULL,
       `email` varchar(65) COLLATE utf8_bin NOT NULL,
       PRIMARY KEY (`id`)
@@ -97,10 +98,10 @@
       (7, 'charlie', 'charlie@sylma.org');
 
     CREATE TABLE IF NOT EXISTS `user2` (
-      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(85) COLLATE utf8_bin NOT NULL,
       `email` varchar(65) COLLATE utf8_bin NOT NULL,
-      `group_id` int(10) unsigned NOT NULL,
+      `group_id` bigint(20)  UNSIGNED NOT NULL,
       `date-update` TIMESTAMP NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
@@ -114,10 +115,10 @@
       (4, 'user1', 'user1@sylma.org', 1, '2035-01-18 00:00:00');
 
     CREATE TABLE IF NOT EXISTS `user_multi` (
-      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(85) COLLATE utf8_bin NOT NULL,
       `email` varchar(65) COLLATE utf8_bin NOT NULL,
-      `group_id` int(10) unsigned NOT NULL,
+      `group_id` bigint(20)  UNSIGNED NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=0 ;
 
@@ -132,7 +133,7 @@
     TRUNCATE TABLE `product`;
 
     CREATE TABLE IF NOT EXISTS `product` (
-      `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+      `id` bigint(20)  UNSIGNED NOT NULL AUTO_INCREMENT,
       `name` varchar(64) NOT NULL,
       `price` float NOT NULL,
       PRIMARY KEY (`id`)

@@ -2,9 +2,10 @@
 <ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
   <ns0:page>
     <ns0:steps>
+      <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/date01_reset.sql</ns0:query>
       <ns0:call path="/sylma/storage/sql/alter?path=/sylma/storage/sql/crud/test/samples/date01.xql" method="get"/>
       <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/date01.vml" method="get"/>
-      <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/date01.sql</ns0:query>
+      <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/date01_fill.sql</ns0:query>
     </ns0:steps>
   </ns0:page>
   <ns0:page url="/sylma/storage/sql/crud/test/samples/date01?sylma-reset=1">

@@ -7,7 +7,7 @@ class Dummy02 extends core\module\Domed {
 
   public function read($sPath, $bDebug = true) {
 
-    return $sPath === 'abc' ? 'def' : '';
+    return $sPath === 'abcdef' ? 'hello world' : '';
   }
 
   public function sum() {

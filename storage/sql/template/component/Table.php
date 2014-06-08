@@ -336,7 +336,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $result;
   }
 
-  protected function getPosition() {
+  public function getPosition() {
 
     if (!$key = $this->getKey()) {
 

@@ -23,6 +23,14 @@
 
   </tpl:template>
 
+  <tpl:template mode="form/init" xmode="update">
+    <sql:filter name="id">
+      <le:get-argument name="id"/>
+    </sql:filter>
+    <input type="hidden" name="{id/alias()}" value="{id/value()}"/>
+    <tpl:apply mode="title"/>
+  </tpl:template>
+
   <tpl:template match="sql:table" mode="form/content">
 
     <tpl:apply mode="css"/>
@@ -55,10 +63,6 @@
     <input type="submit" value="Envoyer"/>
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="empty">
-    <tpl:apply select="* ^ sql:foreign" mode="container/empty"/>
-  </tpl:template>
-
   <tpl:template match="sql:table">
     <tpl:apply select="* ^ sql:foreign" mode="container"/>
   </tpl:template>
@@ -66,13 +70,17 @@
   <tpl:template match="sql:table" mode="update">
     <div js:class="sylma.crud.fieldset.Row" class="form-reference clearfix sylma-hidder sylma-visible">
       <tpl:apply/>
-      <button type="button" class="right">
-        <js:event name="click">
-          %object%.remove();
-        </js:event>
-        <tpl:text>-</tpl:text>
-      </button>
+      <tpl:apply mode="row/remove"/>
     </div>
+  </tpl:template>
+
+  <tpl:template match="*" mode="row/remove">
+    <button type="button" class="right">
+      <js:event name="click">
+        %object%.remove();
+      </js:event>
+      <tpl:text>-</tpl:text>
+    </button>
   </tpl:template>
 
 </tpl:collection>

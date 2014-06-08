@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  extends="../../../crud.tpl"
+>
+
+  <crud:global>
+
+    <view:schema>numeric01.xql</view:schema>
+
+  </crud:global>
+<!--
+  <crud:route name="insert">
+
+    <view:view _debug="x"/>
+
+  </crud:route>
+
+  <crud:route name="update">
+
+    <view:view _debug="x"/>
+
+  </crud:route>
+-->
+</crud:crud>

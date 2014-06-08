@@ -13,7 +13,6 @@
 
   <tpl:import>/#sylma/crud/list/root.tpl</tpl:import>
   <tpl:import>foreign.tpl</tpl:import>
-  <tpl:import>update.tpl</tpl:import>
 
   <tpl:template match="sql:foreign" mode="input/foreign/events">
     <js:event name="change">
@@ -34,21 +33,32 @@
   </tpl:template>
 
   <tpl:template match="sql:datetime" mode="filter">
+    <tpl:argument name="alias" default="alias('form')"/>
     <div class="filter-container"  js:class="sylma.crud.list.FilterContainer">
       <div class="filter" js:class="sylma.crud.list.Filter">
         <tpl:apply mode="date">
-          <tpl:read select="'{alias('form')}_from'" tpl:name="alias"/>
+          <tpl:read select="'{$alias}_from'" tpl:name="alias"/>
+          <tpl:read select="parent()/collection()/dummy()/default()" tpl:name="value">
+            <tpl:read select="'{$alias}_from'"/>
+          </tpl:read>
         </tpl:apply>
        <tpl:apply mode="input/clear"/>
       </div>
+      <!--
       <div class="filter sylma-hidder" js:class="sylma.crud.list.Filter">
         <tpl:apply mode="date">
-          <tpl:read select="'{alias('form')}_to'" tpl:name="alias"/>
+          <tpl:read select="'{$alias}_to'" tpl:name="alias"/>
+          <tpl:read select="parent()/dummy()/default()" tpl:name="value">
+            <tpl:read select="'{$alias}_to'"/>
+          </tpl:read>
         </tpl:apply>
        <tpl:apply mode="input/clear"/>
       </div>
+      -->
     </div>
   </tpl:template>
+
+  <tpl:template match="sql:datetime" mode="input/value"/>
 
   <tpl:template match="sql:datetime" mode="input/events">
     <js:event name="change">
@@ -58,12 +68,11 @@
 
   <tpl:template match="sql:datetime" mode="filter/internal">
     <sql:filter optional="x" op="&gt;=">
-      <le:get-argument optional="x" source="post">
-        <le:name>
-          <tpl:read select="'{alias()}_from'"/>
-        </le:name>
-      </le:get-argument>
+      <tpl:read select="parent()/dummy()/default()" tpl:name="value">
+        <tpl:read select="'{alias()}_from'"/>
+      </tpl:read>
     </sql:filter>
+    <!--
     <sql:filter optional="x" op="&lt;=">
       <le:get-argument optional="x" source="post">
         <le:name>
@@ -71,6 +80,7 @@
         </le:name>
       </le:get-argument>
     </sql:filter>
+    -->
   </tpl:template>
 
 </crud:crud>

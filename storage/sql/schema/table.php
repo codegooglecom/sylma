@@ -5,5 +5,6 @@ use sylma\core;
 
 interface table {
 
+  function setAlias($sValue);
 }
 
