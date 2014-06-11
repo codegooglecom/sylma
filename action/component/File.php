@@ -15,10 +15,21 @@ class File extends reflector\component\Foreigner implements common\arrayable, co
 
   public function asArray() {
 
-    $fs = $this->getWindow()->addControler('fs');
-    $file = $this->getSourceFile($this->readx(''));
+    $sValue = $this->readx('');
 
-    return array($fs->call('getFile', array((string) $file), '\sylma\storage\fs\file'));
+    if (substr($sValue, 0, 2) === '//') {
+
+      $result = $this->createDummy('distant', array($sValue));
+    }
+    else {
+
+      $fs = $this->getWindow()->addControler('fs');
+      $file = $this->getSourceFile($sValue);
+
+      $result = $fs->call('getFile', array((string) $file), '\sylma\storage\fs\file');
+    }
+
+    return array($result);
   }
 
   public function asArgument() {

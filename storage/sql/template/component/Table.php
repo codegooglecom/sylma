@@ -328,6 +328,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
         $result = $this->getCollection()->reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
         break;
 
+      case 'column' :
+
+        $result = $this->reflectColumn(array_pop($aPath));
+        break;
+
       default :
 
         $result = $this->getHandler()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
@@ -401,6 +406,18 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   public function reflectRegister() {
 
     $this->launchException('Table cannot be registered');
+  }
+
+  protected function reflectColumn($sName) {
+
+    $result = null;
+
+    if ($this->getQuery()->getColumn($sName)) {
+
+      $result = $this->getSource()->call('read', array($sName));
+    }
+
+    return $result;
   }
 }
 

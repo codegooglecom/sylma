@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\html\context;
-use sylma\core, sylma\core\window, sylma\dom, sylma\storage\fs, sylma\modules\html;
+use sylma\core, sylma\core\window, sylma\dom, sylma\storage\fs, sylma\action;
 
 class Basic extends core\argument\Readable implements window\context {
 
@@ -49,7 +49,11 @@ class Basic extends core\argument\Readable implements window\context {
 
     foreach ($this->query() as $mValue) {
 
-      if ($mValue instanceof fs\file) {
+      if ($mValue instanceof action\FileDistant) {
+
+        $aResultTexts[] = $this->addFile($mValue);
+      }
+      else if ($mValue instanceof fs\file) {
 
         $sFile = (string) $mValue;
 

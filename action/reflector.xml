@@ -22,7 +22,11 @@
         <cls:class alias="argument" name="Argument"/>
         <cls:class alias="get-argument" name="GetArgument"/>
         <cls:class alias="context" name="Context"/>
-        <cls:class alias="file" name="File"/>
+        <cls:class alias="file" name="File">
+          <cls:classes>
+            <cls:class alias="distant" name="\sylma\action\FileDistant"/>
+          </cls:classes>
+        </cls:class>
         <cls:class alias="string" name="_String"/>
         <cls:class alias="array" name="_Array"/>
         <cls:class alias="boolean" name="_Boolean"/>

@@ -1,0 +1,75 @@
+@import "/html/vars.less";
+
+.slideshow
+{
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+
+  .container
+  {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+
+    transition: margin 1s, opacity 0.2s;
+  }
+
+  .slide
+  {
+    width: 100%;
+    height: 100%;
+    float: left;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: cover;
+    background-position: 50% 50%;
+    margin-left: 0;
+    opacity: 0;
+
+    transition: opacity 1s;
+
+    &.ready
+    {
+      opacity: 1;
+    }
+  }
+
+  .pager
+  {
+    @hl : 44;
+    bottom: 0;
+    width: 100%;
+    height: @hl * @em;
+    text-align: center;
+
+    .pages
+    {
+      text-align: center;
+      width: 100%;
+      position: absolute;
+      width: 100%;
+      z-index: 1;
+
+      transition: width 0.5s;
+
+      a
+      {
+        @size: 18;
+        @padding: 13;
+
+        display: inline-block;
+        padding: @padding * @em 8 * @em;
+        opacity: 0;
+
+        transition: opacity 0.5s;
+
+        &.visible
+        {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

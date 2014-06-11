@@ -60,6 +60,28 @@ class Select extends Ordered implements common\argumentable {
     return $this->aElements;
   }
 
+  public function setColumn($val, $bShift = false, $sAlias = '') {
+
+    if ($sAlias) {
+
+      $this->aColumns[$sAlias] = $val;
+    }
+    else {
+
+      parent::setColumn($val, $bShift);
+    }
+  }
+
+  public function getColumn($sAlias) {
+
+    if (!isset($this->aColumns[$sAlias])) {
+
+      $this->launchException('No alias defined with this name', get_defined_vars());
+    }
+    
+    return true;
+  }
+
   protected function getColumns() {
 
     $aResult = array();

@@ -38,6 +38,33 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Context with distant file">
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <le:context name="js">
+            <le:file>//www.example.org/_badurl</le:file>
+          </le:context>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <html:script src="//www.example.org/_badurl" type="text/javascript"/>
+    </tst:node>
+    <tst:expected>
+
+      $context = new \sylma\modules\html\context\JS;
+
+      $manager->loadScript(array(), array(), array(
+        'js' => $context,
+      ));
+
+      $manager->compareNodes($context->asDOM(), $manager->get('node'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
   <tst:test name="Context with two files">
     <tst:node>
       <html:link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>

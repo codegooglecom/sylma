@@ -208,6 +208,35 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Function">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/product.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:product">
+          <sql:function name="sum" element="price" alias="prices"/>
+          <sql:function name="count" element="id" alias="count"/>
+          <span>
+            <tpl:read select="column()/prices"/>
+          </span>
+          <em>
+            <tpl:read select="column()/count"/>
+          </em>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <span>17.5</span>
+        <em>2</em>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Dummy dynamic default">
     <tst:document>
       <view:view user:ns="ns">
