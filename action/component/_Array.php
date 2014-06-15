@@ -18,7 +18,19 @@ class _Array extends reflector\component\Foreigner implements common\arrayable {
 
     $window = $this->getWindow();
 
-    return array($window->argToInstance($this->parseChildren($this->getNode()->getChildren())));
+    $sExplode = $this->readx('@explode', false);
+
+    if ($sExplode) {
+
+      $result = explode($sExplode, $this->readx());
+    }
+    else {
+
+      $aContent = $this->parseChildren($this->getNode()->getChildren());
+      $result = array($window->argToInstance($aContent));
+    }
+
+    return $result;
   }
 
   protected function addParsedChild(dom\element $el, array &$aResult, $mContent) {

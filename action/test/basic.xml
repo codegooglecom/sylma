@@ -119,6 +119,31 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Array exploded">
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <le:context name="messages">
+            <le:array explode=",">4,2,abc</le:array>
+          </le:context>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $context = $manager->createArgument(array());
+      $manager->set('context', $context);
+
+      $manager->loadScript(array(), array(), array(
+        'messages' => $context,
+      ));
+
+      $manager->assertEqual($context->asArray(), array('4', '2', 'abc'));
+
+      return true;
+    </tst:expected>
+  </tst:test>
   <tst:test name="Call action">
     <tst:document>
       <view:view>

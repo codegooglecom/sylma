@@ -12,7 +12,7 @@ class Dummy extends core\module\Domed {
 
     $this->setSettings($args);
     $this->setSettings($post);
-
+//dsp($this->getSettings());
     if ($this->read('sylma-reset', false)) {
 
       $this->reset();
@@ -28,16 +28,26 @@ class Dummy extends core\module\Domed {
 
     $this->sToken = $sValue;
     $this->loadDatas();
+
+  }
+
+  protected function loadDefaults() {
+
+
   }
 
   protected function loadDatas() {
 
+    $current = $this->getSettings();
+
     if (!$this->bReset) {
 
-      $current = $this->getSettings();
-      $this->setSettings($this->getSession(), false);
-      $this->setSettings($current);
+      $this->setSettings(array(), false);
+      $this->loadDefaults();
+      $this->setSettings($this->getSession());
     }
+
+    $this->setSettings($current);
   }
 
   protected function getToken() {

@@ -39,13 +39,9 @@
       <tpl:apply mode="template/add"/>
       <tpl:apply mode="template"/>
       <div js:class="sylma.crud.Group" js:name="content">
-        <tpl:apply mode="container/content"/>
+        <tpl:apply select="ref()" mode="update"/>
       </div>
     </fieldset>
-  </tpl:template>
-
-  <tpl:template match="sql:reference" mode="container/content" xmode="update">
-    <tpl:apply select="ref()" mode="update"/>
   </tpl:template>
 
   <tpl:template match="sql:reference" mode="template/add">
@@ -59,7 +55,7 @@
 
   <tpl:template match="sql:reference" mode="template">
     <div js:name="template" js:class="sylma.crud.fieldset.Template" class="form-reference clearfix sylma-hidder" style="display: none">
-      <tpl:apply select="static()" xmode="insert"/>
+      <tpl:apply select="static()" mode="empty"/>
       <tpl:apply mode="row/remove"/>
     </div>
   </tpl:template>

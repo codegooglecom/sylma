@@ -79,4 +79,79 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Containing loop" disabled="true">
+    <!-- @todo : should work -->
+    <tst:document>
+      <view:view group:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:variable name="groups">
+              <tpl:apply select="group/ref()"/>
+            </tpl:variable>
+            <h3>
+              <tpl:read select="name"/>
+            </h3>
+            <ul>
+              <tpl:read select="$groups"/>
+            </ul>
+          </div>
+        </tpl:template>
+        <tpl:template match="group:group">
+          <li>
+            <tpl:read select="name"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>world</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Containing loop with node">
+    <tst:document>
+      <view:view group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:variable name="groups">
+              <tpl:apply mode="ref"/>
+            </tpl:variable>
+            <h3>
+              <tpl:read select="name"/>
+            </h3>
+            <tpl:read select="$groups"/>
+          </div>
+        </tpl:template>
+        <tpl:template mode="ref">
+          <ul>
+            <tpl:apply select="group/ref()"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="group:group">
+          <li>
+            <tpl:read select="name"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <ul>
+          <li>group01</li>
+          <li>group02</li>
+        </ul>
+      </div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

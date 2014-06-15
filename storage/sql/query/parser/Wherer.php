@@ -36,7 +36,7 @@ abstract class Wherer extends Basic {
 
       foreach ($this->aWheres as $aWhere) {
 
-        $aTest = $aWhere[0];
+        $aTest = array($aWhere[0][0], ' ', $aWhere[0][1], ' ', $aWhere[0][2]);
         $sSubLog = $aWhere[1];
 
         $this->addDynamicWhereCall($where->call('addStatic', array($this->getWindow()->toString($aTest), $sSubLog)));

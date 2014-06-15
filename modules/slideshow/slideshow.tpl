@@ -64,7 +64,6 @@
   </tpl:template>
 
   <tpl:template match="*" mode="slideshow/item">
-    <sql:filter name="position">1</sql:filter>
     <div js:class="sylma.slideshow.Slide" class="slide">
       <js:option name="path">
         <tpl:read select="path"/>

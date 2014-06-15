@@ -946,7 +946,8 @@ EOT;
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Simple format">
+  <tst:test name="Format on tree">
+    <!-- should be in sql -->
     <tst:document>
       <view:view sql:ns="ns">
         <sql:resource>
@@ -957,6 +958,34 @@ EOT;
           <div>
             <h3><tpl:apply select="name"/></h3>
             <span><tpl:apply select="email/format(length=8)"/></span>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>admin</h3>
+        <span>admin@sy ...</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Format component">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>2</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+            <h3>
+              <tpl:apply select="name"/>
+            </h3>
+            <span>
+              <tpl:format type="string" arguments="length=8">
+                <tpl:read select="email"/>
+              </tpl:format>
+            </span>
           </div>
         </tpl:template>
       </view:view>

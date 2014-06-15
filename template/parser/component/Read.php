@@ -16,7 +16,7 @@ class Read extends Child implements common\arrayable, parser\component {
     $sMode = $this->readx('@mode');
 
 
-    $sSelectOut = $sSelect ? ',@mode=' . $sSelect : '';
+    $sSelectOut = $sSelect ? ',@select=' . $sSelect : '';
     $sModeOut = $sMode ? ',@mode=' . $sMode : '';
 
     $this->log('Read [' . $sSelectOut . $sModeOut . ']');

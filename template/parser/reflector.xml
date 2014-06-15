@@ -44,6 +44,12 @@
                 <cls:class alias="argument" name="Argument"/>
                 <cls:class alias="cdata" name="CData"/>
                 <cls:class alias="settings" name="Settings"/>
+                <cls:class alias="format" name="Format">
+                  <cls:classes>
+                    <cls:class alias="numeric" name="\sylma\schema\cached\view\Numeric"/>
+                    <cls:class alias="string" name="\sylma\schema\cached\view\_String"/>
+                  </cls:classes>
+                </cls:class>
 
               </cls:classes>
             </cls:class>

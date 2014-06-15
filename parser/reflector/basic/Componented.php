@@ -31,12 +31,20 @@ abstract class Componented extends Namespaced {
     return $sResult;
   }
 
-  protected function createDummy($sAlias = 'dummy', array $aArguments = array(), $window = null, $bVar = false) {
+  protected function createDummy($sAlias = 'dummy', array $aArguments = array(), $window = null, $bVar = false, $bStatic = false) {
 
     $sClass = $this->lookupClassName($sAlias);
     if (!$window) $window = $this->getWindow();
 
-    $result = $window->createInstanciate($window->tokenToInstance($sClass), $aArguments);
+    if ($bStatic) {
+
+      $result = $window->createClass($sClass);
+    }
+    else {
+
+      $result = $window->createInstanciate($window->tokenToInstance($sClass), $aArguments);
+    }
+
 
     return $bVar ? $window->createVar($result) : $result;
   }
