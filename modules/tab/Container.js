@@ -4,9 +4,8 @@ sylma.ui.tab.Container = new Class({
   Extends : sylma.ui.Container,
   width : 0,
 
-  initialize : function(props) {
+  onLoad : function() {
 
-    this.parent(props);
     this.setWidth(this.getNode().getParent().getSize().x);
     this.getNode().getParent().setStyles({
       position: 'relative',

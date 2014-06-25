@@ -64,6 +64,8 @@ sylma.ui.ContainerProps = {
     var node = sylma.ui.importNode(result.content, name);
     this.updateContent(result, node, target);
 
+    if (this.getNode().hasClass('hidder')) this.show();
+
     callback && callback();
   },
 
@@ -243,12 +245,15 @@ sylma.ui.ContainerProps = {
 
     el = el || this.getNode();
 
+    el.style.WebkitBackfaceVisibility = 'hidden';
+
     (function() {
 
       el.addClass('visible');
       el.addClass('sylma-visible'); // @deprecated
 
-    }.delay(10));
+
+    }.delay(50));
   },
 
   /**
@@ -263,12 +268,14 @@ sylma.ui.ContainerProps = {
       sylma.ui.addEventTransition(el, callback);
     }
 
+    //el.style.WebkitBackfaceVisibility = 'hidden';
+
     (function() {
 
       el.removeClass('visible');
       el.removeClass('sylma-visible'); // @deprecated
 
-    }.delay(10));
+    }.delay(50));
   },
 
   toggleShow : function(el, val) {

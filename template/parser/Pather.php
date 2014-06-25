@@ -43,7 +43,7 @@ class Pather extends component\Child {
     $window = $this->getWindow();
 
     $bOp = false; // alternate between op and val
-    $bIN = false; // new custom op !
+    $bIN = false;
 
     foreach ($aTokens as $sToken) {
 
@@ -103,6 +103,8 @@ class Pather extends component\Child {
           $needle = $window->extractValue(array_pop($aResult));
           $haystack = $window->extractValue($result);
           $aResult[] = $window->callFunction('in_array', 'php-boolean', array($needle, $haystack));
+
+          $bIN = false;
         }
         else {
 

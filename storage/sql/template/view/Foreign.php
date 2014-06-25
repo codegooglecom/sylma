@@ -20,7 +20,8 @@ class Foreign extends sql\template\component\Foreign {
     switch ($sName) {
 
       case 'values' : $result = $this->reflectValues(); break;
-      case 'join' : $result = $this->reflectFunctionJoin($aPath, $sMode, $aArguments); break;
+      case 'extract' : $result = $this->reflectFunctionExtract($aPath, $sMode, $aArguments, $bRead); break;
+      case 'join' : $result = $this->reflectFunctionJoin($aPath, $sMode, $aArguments, $bRead); break;
 
       default :
 
@@ -82,7 +83,22 @@ class Foreign extends sql\template\component\Foreign {
     return $result;
   }
 
+  protected function reflectFunctionExtract(array $aPath, $sMode, array $aArguments = array(), $bRead = false) {
+
+    $collection = $this->buildMultiple();
+    $collection->getQuery()->setMethod('extract');
+
+    $this->getWindow()->parse($this->getHandler()->parsePathToken($collection->getTable(), $aPath, $sMode, $bRead, $aArguments));
+
+    return $collection->getQuery()->getCall()->call('asArray');
+  }
+
   protected function reflectFunctionCollection(array $aPath, $sMode, array $aArguments = array()) {
+
+    if (!$this->getMaxOccurs(true)) {
+
+      $this->launchException('No collection defined in simple foreign');
+    }
 
     $collection = $this->buildMultiple();
 
@@ -110,7 +126,7 @@ class Foreign extends sql\template\component\Foreign {
     $query->addJoin($junctionTable, $junctionCurrent, $currentTable->getElement('id'));
     $query->addJoin($targetTable, $junctionTarget, $targetTable->getElement('id'));
 
-    return $this->getParser()->parsePathToken($targetTable, $aPath, $sMode, false, $aArguments);
+    return $this->getHandler()->parsePathToken($targetTable, $aPath, $sMode, false, $aArguments);
   }
 
   protected function buildSingle() {

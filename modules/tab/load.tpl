@@ -10,8 +10,9 @@
 >
 
   <tpl:template match="*" mode="tab/js">
-    
+
     <js:include>/#sylma/crud/Form.js</js:include>
+    <js:include>/#sylma/ui/Clonable.js</js:include>
     <js:include>/#sylma/crud/Group.js</js:include>
 
     <js:include>Main.js</js:include>

@@ -77,7 +77,14 @@
   <view:template match="sql:foreign" mode="input/boolean" xmode="update">
 
     <tpl:if test="is-multiple()">
-      <tpl:apply mode="input/multiple/boolean/update"/>
+
+      <tpl:variable name="values">
+        <tpl:read select="values()"/>
+      </tpl:variable>
+
+      <tpl:apply mode="input/multiple/boolean/update">
+        <tpl:read select="$values" tpl:name="values"/>
+      </tpl:apply>
       <tpl:else>
         <tpl:apply mode="input/single/boolean/update"/>
       </tpl:else>
@@ -179,7 +186,7 @@
   <tpl:template match="sql:foreign" mode="select-multiple-test">
     <tpl:argument name="alias" default="alias('form')"/>
     <tpl:variable name="values">
-      <tpl:read select="values()"/>
+      <tpl:apply select="values()"/>
     </tpl:variable>
     <select id="form-{$alias}" name="{$alias}" multiple="multiple">
       <option value="0">
@@ -211,7 +218,7 @@
 
   <tpl:template match="sql:foreign" mode="input/multiple/boolean/update">
 
-    <tpl:argument name="values" default="values()"/>
+    <tpl:argument name="values"/>
 
     <tpl:apply select="all()" mode="foreign/multiple/boolean/update">
       <tpl:read tpl:name="values" select="$values"/>

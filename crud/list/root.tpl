@@ -15,19 +15,7 @@
   <tpl:import>dummy.tpl</tpl:import>
   <tpl:import>filters.tpl</tpl:import>
   <tpl:import>../form.tpl</tpl:import>
-
-  <tpl:template mode="list/js">
-    <js:include>../Form.js</js:include>
-    <js:include>Table.js</js:include>
-    <js:include>Head.js</js:include>
-    <js:include>Row.js</js:include>
-  </tpl:template>
-
-  <tpl:template mode="list/css">
-    <le:context name="css">
-      <le:file>list.less</le:file>
-    </le:context>
-  </tpl:template>
+  <tpl:import>resources.tpl</tpl:import>
 
   <tpl:template>
 
@@ -132,7 +120,7 @@
     </a>
   </tpl:template>
 
-  <tpl:template mode="actions/insert/href">
+  <tpl:template match="*" mode="actions/insert/href">
     <le:path/>/insert
   </tpl:template>
 
@@ -242,7 +230,6 @@
       <js:event name="click">
         %object%.onClick(e);
       </js:event>
-      <tpl:apply mode="init-row"/>
       <td>
         <tpl:apply mode="row/action"/>
       </td>

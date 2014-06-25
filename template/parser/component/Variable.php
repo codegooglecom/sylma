@@ -59,8 +59,21 @@ class Variable extends Child implements common\arrayable, parser\component {
         $mContent = '';
       }
 
-      self::setContent($this->getWindow()->createVar($this->getWindow()->argToInstance('')));
-      $aResult[] = $this->getWindow()->toString($mContent, $this->getContent(), false, true);
+      $window = $this->getWindow();
+
+      switch ($this->readx('@format', false)) {
+
+        case 'array' :
+
+          self::setContent($window->createVar($this->getWindow()->argToInstance($mContent)));
+          $aResult[] = $this->getContent()->getInsert();
+          break;
+
+        default :
+
+          self::setContent($this->getWindow()->createVar($this->getWindow()->argToInstance('')));
+          $aResult[] = $this->getWindow()->toString($mContent, $this->getContent(), false, true);
+      }
     }
 
     return $aResult;

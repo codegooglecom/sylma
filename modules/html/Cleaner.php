@@ -1,13 +1,22 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\dom;
+use sylma\core, sylma\dom, sylma\storage\fs;
 
 class Cleaner extends core\module\Domed {
 
-  public function __construct() {
+  const TEMPLATE_PATH = 'cleaner.xsl';
+
+  public function __construct(fs\file $file = null) {
 
     $this->setDirectory(__FILE__);
+
+    if (!$file) {
+
+      $file = $this->getFile(self::TEMPLATE_PATH);
+    }
+
+    $this->setFile($file);
     $this->loadDefaultArguments();
   }
 
@@ -15,7 +24,7 @@ class Cleaner extends core\module\Domed {
 
     require_once('dom/handler.php');
 
-    $cleaner = $this->getTemplate('cleaner.xsl');
+    $cleaner = $this->getTemplate((string) $this->getFile());
 
     $cleaned = $cleaner->parseDocument($doc);
 

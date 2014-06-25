@@ -12,7 +12,7 @@ class _Include extends template\parser\component\Child implements template\parse
 
   protected function build(parser\builder\Router $root) {
 
-    $path = $root->getPath($this->readx('@path', true));
+    $path = $root->getPath($this->readx('@path', false));
 /*
     if ($path == $this->getRoot()->getView()) {
 

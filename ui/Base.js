@@ -1,6 +1,6 @@
 sylma.ui.BaseProps = {
 
-  Implements : Options,
+  Implements : [Options, Events],
 
   /**
    * List of unnamed sub-objects

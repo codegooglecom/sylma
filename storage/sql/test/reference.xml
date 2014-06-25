@@ -43,6 +43,46 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Extract query">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/group2.xql</view:schema>
+        <tpl:template>
+          <div>
+
+            <tpl:variable name="users">
+              <tpl:apply select="users/extract()"/>
+            </tpl:variable>
+
+            <h3>
+              <tpl:read select="name"/>
+            </h3>
+
+            <tpl:if test="'user1' in $users">
+              <span>use user1</span>
+            </tpl:if>
+
+            <tpl:if test="'user2' in $users">
+              <em>use user2</em>
+            </tpl:if>
+
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user2">
+          <tpl:read select="name"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>group01</h3>
+        <span>use user1</span>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Reference with subpath">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">

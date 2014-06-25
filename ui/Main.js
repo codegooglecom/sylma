@@ -155,6 +155,8 @@ sylma.classes = {
 
           if (obj.onWindowLoad) obj.onWindowLoad();
           if (obj.onLoad) obj.onLoad();
+          
+          obj.fireEvent('load');
         }
       }
     },

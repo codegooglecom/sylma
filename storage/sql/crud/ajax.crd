@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  extends="../crud.tpl"
+>
+
+  <crud:global>
+
+    <tpl:template match="*" mode="ajax">
+
+      <div class="form hidder" js:class="sylma.ui.Container" js:name="form" js:parent-name="container">
+
+        <tpl:apply mode="ajax/form" required="x"/>
+
+      </div>
+
+    </tpl:template>
+
+  </crud:global>
+
+  <crud:group name="view">
+
+    <tpl:template match="sql:table" mode="form/build">
+
+      <tpl:apply mode="ajax"/>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="ajax/form">
+
+      <tpl:variable name="action">
+        <tpl:apply mode="init/action"/>
+      </tpl:variable>
+
+      <form class="sylma-form" action="{$action}" js:parent-name="form" method="post" js:class="sylma.crud.Form">
+        <js:option name="ajax">1</js:option>
+        <js:method name="submitSuccess">
+
+          this.getParent('container').hide();
+          this.getParent('tab').getObject('list').update();
+
+        </js:method>
+        <tpl:apply mode="form/content"/>
+
+      </form>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="form/actions/hidden">
+      <input type="submit" style="display:none"/>
+    </tpl:template>
+
+  </crud:group>
+
+  <crud:route>
+
+    <view:view>
+
+      <tpl:template mode="actions"/>
+
+      <tpl:template mode="list/form">
+
+        <form class="list" js:name="list" js:class="sylma.crud.list.Table" action="" method="post" js:parent-name="table">
+          <tpl:apply mode="list/container"/>
+        </form>
+
+      </tpl:template>
+
+    </view:view>
+
+    <view:view name="list">
+
+      <tpl:template match="*" mode="row/action"/>
+
+      <tpl:template match="*" mode="row/action/href">
+        <le:string>
+          <le:path/>
+          <tpl:text>/update</tpl:text>
+        </le:string>
+      </tpl:template>
+
+      <tpl:template match="*" mode="row">
+
+        <tr js:class="sylma.crud.list.Row">
+          <js:option name="id">
+            <tpl:read select="id"/>
+          </js:option>
+          <js:option name="url">
+            <tpl:apply mode="row/action/href"/>
+          </js:option>
+          <js:method name="show">
+            this.getParent('tab').getObject('form').update({id : this.get('id')}, this.get('url'));
+          </js:method>
+          <js:event name="click">
+            %object%.onClick(e);
+          </js:event>
+          <td>
+            <tpl:apply mode="row/action"/>
+          </td>
+          <tpl:apply use="list-cols" mode="cell"/>
+        </tr>
+      </tpl:template>
+
+    </view:view>
+
+  </crud:route>
+
+  <view:view name="view">
+
+    <xl:resource/>
+
+    <tpl:template>
+
+      <div class="references">
+
+        <tpl:apply mode="content"/>
+
+      </div>
+
+    </tpl:template>
+
+    <tpl:template mode="content">
+
+      <tpl:apply mode="ajax"/>
+      <crud:include/>
+
+    </tpl:template>
+
+    <tpl:template mode="ajax/form"/>
+
+  </view:view>
+
+</crud:crud>
+

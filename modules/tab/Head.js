@@ -3,9 +3,22 @@ sylma.ui.tab.Head = new Class({
 
   Extends : sylma.ui.Base,
 
-  initialize : function(props) {
+  options : {
+    mode : 'inside'
+  },
 
-    this.parent(props);
+  onReady : function() {
+
+    var mode = this.options.mode;
+
+    this.tmp.each(function(item) {
+
+      if (!item.options.mode) {
+
+        item.options.mode = mode;
+      }
+    });
+
     this.getNode().addClass('sylma-tab-head');
   },
 

@@ -79,6 +79,25 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Array">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <tpl:variable name="test" format="array">
+              <le:array explode=",">a,b,3</le:array>
+            </tpl:variable>
+            <tpl:if test="'a' in $test">use a</tpl:if>
+            <tpl:if test="'c' in $test">use c</tpl:if>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>use a</div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Containing loop" disabled="true">
     <!-- @todo : should work -->
     <tst:document>

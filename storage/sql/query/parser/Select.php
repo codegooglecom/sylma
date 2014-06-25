@@ -78,7 +78,7 @@ class Select extends Ordered implements common\argumentable {
 
       $this->launchException('No alias defined with this name', get_defined_vars());
     }
-    
+
     return true;
   }
 
@@ -159,6 +159,11 @@ class Select extends Ordered implements common\argumentable {
     return $result;
   }
 
+  /**
+   * @usedby sql\template\component\Collection::getDistinct()
+   * @usedby sql\template\component\Counter::setQuery()
+   * @usedby sql\template\component\view\Foreign::reflectValues()
+   */
   public function setMethod($sMethod) {
 
     $this->sMethod = $sMethod;

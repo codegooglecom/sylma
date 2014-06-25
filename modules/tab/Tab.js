@@ -2,6 +2,7 @@
 sylma.ui.tab.Tab = new Class({
 
   Extends : sylma.crud.Group,
+
   width : 0,
   position : 0,
 
@@ -24,9 +25,9 @@ sylma.ui.tab.Tab = new Class({
     this.getNode().setStyle('width', this.width);
   },
 
-  updateSuccess : function(response) {
+  updateSuccess : function(response, callback) {
 
-    this.parent(response);
+    this.parent(response, callback);
     this.prepareNode();
   },
 
@@ -35,17 +36,21 @@ sylma.ui.tab.Tab = new Class({
     return this.get('path') && !this.getNode().getChildren().length;
   },
 
-  show : function() {
+  show : function(callback) {
 
     if (this.needUpdate()) {
 
-      this.update({}, this.get('path'));
+      this.update(this.get('arguments'), this.get('path'), undefined, callback);
+    }
+    else {
+
+      callback && callback();
     }
   },
 
   getCaller : function() {
 
     return this.getParent(1).getHead().getCaller(this.position);
-  }
+  },
 
 });

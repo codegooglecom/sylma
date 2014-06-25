@@ -11,7 +11,14 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
   protected $bBuilded = false;
 
   /**
-   *
+   * @return sql\template\handler\Formed
+   */
+  protected function getHandler() {
+
+    return parent::getHandler();
+  }
+
+  /**
    * @return sql\query\parser\Select
    */
   public function getQuery($bDebug = true) {

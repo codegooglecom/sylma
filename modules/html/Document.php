@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\modules\html;
-use sylma\core, sylma\template\binder, sylma\dom, sylma\modules\less;
+use sylma\core, sylma\storage\fs, sylma\template\binder, sylma\dom, sylma\modules\less;
 
 class Document extends core\window\classes\Container {
 
@@ -153,9 +153,7 @@ class Document extends core\window\classes\Container {
     $system->addElement('div', $content);
   }
 
-  protected function cleanResult(dom\handler $doc) {
-
-    $cleaner = new Cleaner;
+  protected function cleanResult(dom\handler $doc, fs\file $file = null) {
 
     if (\Sylma::read('debug/html/foreign')) {
 
@@ -169,7 +167,7 @@ class Document extends core\window\classes\Container {
       }
     }
 
-    return $cleaner->clean($doc);
+    return parent::cleanResult($doc, $file);
   }
 
   public function prepare($sContent) {

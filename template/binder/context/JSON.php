@@ -56,13 +56,20 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     $classes = $contexts->get('js/classes', false);
 
     $this->setSettings(array(
-      'content' => $result instanceof dom\document ? (string) $result : $result,
+      'content' => $this->formatContent($result),
       'objects' => $contexts->get('js/load/objects', false),
       'classes' => $classes ? $classes->asStringVar() : null,
       'error' => $bError,
       'errors' => $errors,
       'messages' => $contexts->get('messages'),
     ));
+  }
+
+  protected function formatContent($result) {
+
+    $this->setDirectory(__FILE__);
+
+    return $result instanceof dom\document ? $this->cleanResult($result, $this->getFile('cleaner.xsl')) : $result;
   }
 
   public function setAction(action\handler $action) {

@@ -322,6 +322,46 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Multiple extract query">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource>
+          <sql:id>1</sql:id>
+        </sql:resource>
+        <view:schema>samples/user4.xql</view:schema>
+        <tpl:template>
+          <div>
+
+            <tpl:variable name="groups">
+              <tpl:apply select="group/extract()"/>
+            </tpl:variable>
+
+            <h3>
+              <tpl:read select="name"/>
+            </h3>
+
+            <tpl:if test="'group01' in $groups">
+              <span>use group01</span>
+            </tpl:if>
+
+            <tpl:if test="'group0x' in $groups">
+              <em>use group0x</em>
+            </tpl:if>
+
+          </div>
+        </tpl:template>
+        <tpl:template match="group:group">
+          <tpl:apply select="name"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>root</h3>
+        <span>use group01</span>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Multiple apply collection">
     <tst:document>
       <view:view user:ns="ns" group:ns="ns">

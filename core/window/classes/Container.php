@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\window\classes;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\core\functions, sylma\modules\html;
 
 class Container extends core\module\Domed {
 
@@ -240,6 +240,13 @@ class Container extends core\module\Domed {
   protected function createAction(fs\file $file, array $aArguments = array()) {
 
     return $this->create('action', array($file, $aArguments));
+  }
+
+  protected function cleanResult(dom\handler $doc, fs\file $file = null) {
+
+    $cleaner = new html\Cleaner($file);
+
+    return $cleaner->clean($doc);
   }
 
   public function prepare($sContent) {

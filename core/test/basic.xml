@@ -381,7 +381,36 @@
       $sResult = $manager->readArgument('result');
 
       $manager->assertEqual(json_decode($sResult, true), array(
-        'content' => '&lt;hello/>',
+        'content' => '&lt;hello>&lt;/hello>',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
+  <tst:test name="JSON call with empties">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/sample04.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample04.json');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $sResult = $manager->readArgument('result');
+
+      $manager->assertEqual(json_decode($sResult, true), array(
+        'content' => "&lt;div>\n  &lt;a href=\"#\">&lt;/a>\n  &lt;div>abc&lt;/div>\n  &lt;div>&lt;/div>\n  &lt;textarea>abc&lt;/textarea>\n  &lt;textarea>&lt;/textarea>\n&lt;/div>",
       ));
 
       return true;

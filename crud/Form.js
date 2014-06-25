@@ -3,7 +3,6 @@ sylma.crud = sylma.crud || {} ;
 sylma.crud.Form = new Class({
 
   Extends : sylma.ui.Container,
-  Implements : Events,
 
   mask : null,
 
@@ -11,10 +10,12 @@ sylma.crud.Form = new Class({
     mask : true
   },
 
+  errors : false,
+
   onLoad : function() {
 
     this.getNode().addEvent('submit', this.submit.bind(this));
-    this.updateMask(false);
+    this.hideMask();
   },
 
   prepareMask : function() {
@@ -56,12 +57,14 @@ sylma.crud.Form = new Class({
 
   getInputs : function() {
 
-    return this.getNode().getElements('input[type=^button], select, textarea');
+    return this.getNode().getElements('input, select, textarea');
   },
 
   clearInputs : function(inputs) {
 
-    inputs = inputs || this.getInputs();
+    inputs = inputs || this.getInputs().filter(function(item) {
+      return item.get('tag') !== 'input' || item.get('type') !== 'button';
+    });
 
     inputs.each(function(item) {
 
@@ -96,7 +99,14 @@ sylma.crud.Form = new Class({
 
   submit : function(e, args, callback) {
 
+    return this.submitSend(e, args, callback);
+  },
+
+  submitSend : function(e, args, callback) {
+
     var node = this.getNode();
+
+    this.fireEvent('submit');
 
     callback = callback || function(response) {
 
@@ -161,7 +171,7 @@ sylma.crud.Form = new Class({
 
           this.submitParse(response, args);
         }
-        
+
       }.bind(this));
 
     }.bind(this), 200);
@@ -199,12 +209,14 @@ sylma.crud.Form = new Class({
 
     this.parseMessages(response);
     this.submitReturn(response, args);
-    this.fireEvent('complete');
+    this.fireEvent('complete', [response, args]);
   },
 
   parseMessages : function(response) {
 
     var msg;
+
+    this.errors = false;
 
     if (response.messages) {
 
@@ -236,6 +248,8 @@ sylma.crud.Form = new Class({
       this.getObject(alias, true).highlight();
     }
 
+    this.errors = true;
+
     sylma.ui.showMessage(msg.content);
   },
 
@@ -263,16 +277,28 @@ sylma.crud.Form = new Class({
 
   submitReturn : function(response, args) {
 
-    var redirect = response.content;
-    var result = sylma.ui.parseMessages(response, null, redirect);
+    var redirect = !this.get('ajax');
+    //var content = response.content;
 
-    if (!result.errors && redirect) {
+    var result = sylma.ui.parseMessages(response, null, redirect && !this.errors);
+
+    if (result.errors || this.errors) {
+
+      this.hideMask();
+    }
+    else if (redirect) {
 
       window.location.href = document.referrer;
     }
     else {
 
-      this.hideMask();
+      this.submitSuccess();
     }
+  },
+
+  submitSuccess : function() {
+
+    this.fireEvent('success');
+    //throw new Error('Must do something');
   }
 });

@@ -6,10 +6,12 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:stp="http://2013.sylma.org/schema/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -26,12 +28,12 @@
             <sql:id>1</sql:id>
           </sql:resource>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <div>
               <h3><tpl:apply select="name"/></h3>
               <span><tpl:apply select="email"/></span>
             </div>
-          </view:template>
+          </tpl:template>
         </view:view>
       </crud:crud>
     </tst:document>
@@ -58,12 +60,12 @@
             <sql:id>1</sql:id>
           </sql:resource>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <div>
               <h3><tpl:apply select="name"/></h3>
               <span><tpl:apply select="email"/></span>
             </div>
-          </view:template>
+          </tpl:template>
         </crud:global>
       </crud:crud>
     </tst:document>
@@ -86,14 +88,14 @@
       <crud:crud>
         <crud:route name="view">
           <view:view mode="view">
-            <view:template match="user:*">
+            <tpl:template match="user:*">
               <input type="text" name="{alias()}" value="{apply()}"/>
-            </view:template>
+            </tpl:template>
           </view:view>
           <view:view name="sub" mode="view">
-            <view:template match="user:*">
+            <tpl:template match="user:*">
               <textarea type="text" name="{alias()}" value="{apply()}"/>
-            </view:template>
+            </tpl:template>
           </view:view>
         </crud:route>
         <crud:global user:ns="ns">
@@ -101,11 +103,11 @@
             <sql:id>2</sql:id>
           </sql:resource>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <form>
               <stp:apply select="name, email"/>
             </form>
-          </view:template>
+          </tpl:template>
         </crud:global>
       </crud:crud>
     </tst:document>
@@ -152,23 +154,23 @@
             </sql:resource>
           </crud:local>
           <view:view mode="view">
-            <view:template match="user:*">
+            <tpl:template match="user:*">
               <input type="text" name="{alias()}" value="{apply()}"/>
-            </view:template>
+            </tpl:template>
           </view:view>
           <view:view name="sub" mode="view">
-            <view:template match="user:*">
+            <tpl:template match="user:*">
               <textarea type="text" name="{alias()}" value="{apply()}"/>
-            </view:template>
+            </tpl:template>
           </view:view>
         </crud:route>
         <crud:global user:ns="ns">
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <form>
               <stp:apply select="name, email"/>
             </form>
-          </view:template>
+          </tpl:template>
         </crud:global>
       </crud:crud>
     </tst:document>
@@ -206,38 +208,38 @@
       <crud:crud>
         <crud:route>
           <crud:local>
-            <view:template>
+            <tpl:template>
               <div>
                 <tpl:apply select="name, email"/>
               </div>
-            </view:template>
+            </tpl:template>
           </crud:local>
           <view:view mode="view">
-            <view:template match="user:*">
+            <tpl:template match="user:*">
               <input type="text" name="{alias()}" value="{apply()}"/>
-            </view:template>
+            </tpl:template>
           </view:view>
           <view:view name="sub" mode="view">
-            <view:template match="user:*">
+            <tpl:template match="user:*">
               <textarea type="text" name="{alias()}" value="{apply()}"/>
-            </view:template>
+            </tpl:template>
           </view:view>
         </crud:route>
         <view:view name="second" mode="view">
-          <view:template match="user:*">
+          <tpl:template match="user:*">
             <button type="text" name="{alias()}" value="{apply()}"/>
-          </view:template>
+          </tpl:template>
         </view:view>
         <crud:global user:ns="ns">
           <sql:resource>
             <sql:id>2</sql:id>
           </sql:resource>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <form>
               <stp:apply select="name, email"/>
             </form>
-          </view:template>
+          </tpl:template>
         </crud:global>
       </crud:crud>
     </tst:document>
@@ -316,26 +318,26 @@
             <sql:id>1</sql:id>
           </sql:resource>
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template match="user:name">
+          <tpl:template match="user:name">
             <crud:include path="sub"/>
             <textarea type="text" name="{alias()}" value="{apply()}"/>
-          </view:template>
+          </tpl:template>
         </view:view>
         <view:view mode="view" name="sub">
           <sql:resource>
             <sql:id>2</sql:id>
           </sql:resource>
-          <view:template>
+          <tpl:template>
             <span><tpl:apply select="name"/></span>
-          </view:template>
+          </tpl:template>
         </view:view>
         <crud:global user:ns="ns">
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-          <view:template>
+          <tpl:template>
             <form>
               <tpl:apply select="name"/>
             </form>
-          </view:template>
+          </tpl:template>
         </crud:global>
       </crud:crud>
     </tst:document>
@@ -344,6 +346,42 @@
         <span>admin</span>
         <textarea type="text" name="name" value="root"/>
       </form>
+    </tst:node>
+    <tst:expected>
+
+
+      $node = $manager->getArgument('node');
+      $view = $manager->loadScript(array(
+        'arguments' => $manager->createArgument(array(
+          'default', 'sub'
+        )),
+      ));
+
+      return
+        $manager->compareNodes($view, $node)
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Include default">
+    <tst:document>
+      <crud:crud>
+        <view:view mode="view">
+          <xl:resource/>
+          <tpl:template>
+            <span>abc</span>
+          </tpl:template>
+        </view:view>
+        <view:view mode="view" name="sub">
+          <xl:resource/>
+          <tpl:template>
+            <h2>hello world</h2>
+            <crud:include/>
+          </tpl:template>
+        </view:view>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <span>abc</span>
     </tst:node>
     <tst:expected>
 
@@ -361,29 +399,29 @@
         <crud:route>
           <crud:local user:ns="ns">
             <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-            <view:template>
+            <tpl:template>
               <form>
                 <tpl:apply select="name"/>
               </form>
-            </view:template>
+            </tpl:template>
           </crud:local>
           <view:view mode="view">
             <sql:resource>
               <sql:id>1</sql:id>
             </sql:resource>
             <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-            <view:template match="user:name">
+            <tpl:template match="user:name">
               <crud:include path="sub"/>
               <textarea type="text" name="{alias()}" value="{apply()}"/>
-            </view:template>
+            </tpl:template>
           </view:view>
           <view:view mode="view" name="sub">
             <sql:resource>
               <sql:id>2</sql:id>
             </sql:resource>
-            <view:template>
+            <tpl:template>
               <span><tpl:apply select="name"/></span>
-            </view:template>
+            </tpl:template>
           </view:view>
         </crud:route>
       </crud:crud>

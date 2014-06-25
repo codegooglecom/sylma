@@ -20,18 +20,6 @@
   <tpl:import>../type/numeric.tpl</tpl:import>
   <tpl:import>../type/date.tpl</tpl:import>
 
-  <tpl:template match="*" mode="list/filters/js">
-    <js:include>Filters.js</js:include>
-    <js:include>FilterContainer.js</js:include>
-    <js:include>Filter.js</js:include>
-  </tpl:template>
-
-  <tpl:template match="*" mode="list/filters/css">
-    <le:context name="css">
-      <le:file>filters.less</le:file>
-    </le:context>
-  </tpl:template>
-
   <tpl:template match="*" mode="filters">
 
     <tpl:apply mode="list/filters/js"/>
@@ -41,14 +29,16 @@
       <div class="filter-container title" js:class="sylma.crud.list.FilterContainer">
         <tpl:apply mode="filters/corner"/>
       </div>
-      <tpl:apply use="list-cols" mode="filter" xmode="update"/>
+      <tpl:apply mode="filters/content"/>
     </div>
 
   </tpl:template>
-<!--
-  <tpl:template match="*" mode="filters/corner">
-    <a>filters</a>
+
+  <tpl:template match="*" mode="filters/content">
+    <tpl:apply use="list-cols" mode="filter" xmode="update"/>
   </tpl:template>
+<!--
+  <tpl:template match="*" mode="filters/corner"> </tpl:template>
 -->
   <tpl:template match="*" mode="filter">
     <div class="filter-container" js:class="sylma.crud.list.FilterContainer">

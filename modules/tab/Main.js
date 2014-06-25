@@ -10,9 +10,8 @@ sylma.ui.tab.Main = new Class({
   length : 0,
   first : null,
 
-  initialize : function(props) {
+  onLoad : function() {
 
-    this.parent(props);
     this.build(this.getObject('container').tmp);
   },
 
@@ -93,7 +92,7 @@ sylma.ui.tab.Main = new Class({
     return this.getObject('head');
   },
 
-  go : function(index) {
+  go : function(index, callback) {
 
     this.current = parseInt(index);
 
@@ -101,7 +100,7 @@ sylma.ui.tab.Main = new Class({
     this.getObject('head').downlightAll();
 
     this.getObject('head').getCaller(index).highlight();
-    this.getTab(index).show();
+    this.getTab(index).show(callback);
   },
 
   goNext : function() {

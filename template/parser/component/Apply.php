@@ -26,7 +26,7 @@ class Apply extends Child implements common\arrayable, parser\component {
 
   protected function buildDefault($sSelect, $sMode, $sXMode, array $aArguments) {
 
-    $sSelectOut = $sSelect ? ',@mode=' . $sSelect : '';
+    $sSelectOut = $sSelect ? ',@select=' . $sSelect : '';
     $sModeOut = $sMode ? ',@mode=' . $sMode : '';
     $sXModeOut = $sXMode ? ',@xmode=' . $sXMode : '';
 

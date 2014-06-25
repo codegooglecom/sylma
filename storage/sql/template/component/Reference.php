@@ -32,6 +32,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
 
       case 'alias' : $result = $this->getAlias(); break;
       case 'parent' : $result = $this->getHandler()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments); break;
+      case 'foreign' : $result = $this->getHandler()->parsePathToken($this->getForeign(), $aPath, $sMode, $bRead, $aArguments); break;
       //case 'all' : $result = $this->reflectFunctionAll($aPath, $sMode, $aArguments); break;
       case 'ref' : $result = $this->reflectFunctionRef($aPath, $sMode, $aArguments); break;
       case 'title' : $result = $this->getTitle(); break;

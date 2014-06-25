@@ -3,13 +3,7 @@ sylma.ui.tab.Caller = new Class({
 
   Extends : sylma.ui.Base,
 
-  options : {
-    mode : 'inside'
-  },
-
-  initialize : function(props) {
-
-    this.parent(props);
+  onLoad : function() {
 
     this.prepareNode();
   },
@@ -18,18 +12,30 @@ sylma.ui.tab.Caller = new Class({
 
     var node;
 
-    if (this.get('mode') == 'inside') {
+    switch (this.get('mode')) {
 
-      node = new Element('a', {
-        html : this.getNode().get('html')
-      });
+      case 'normal' :
 
-      this.getNode().empty().grab(node);
+        break;
+
+      case 'inside' :
+
+        node = new Element('a', {
+          html : this.getNode().get('html')
+        });
+
+        this.getNode().empty().grab(node);
+        this.buildLink(node);
+        break;
+
+      default :
+
+        node = this.getNode();
+        this.buildLink(node);
     }
-    else {
+  },
 
-      node = this.getNode();
-    }
+  buildLink: function(node) {
 
     var self = this;
 
@@ -42,12 +48,18 @@ sylma.ui.tab.Caller = new Class({
           self.go();
 
           e.preventDefault();
+
         }
       }
     });
   },
 
-  go : function() {
+  go : function(e) {
+
+    if (e) {
+
+      e.preventDefault();
+    }
 
     this.getParent(1).go(this.sylma.key);
   }

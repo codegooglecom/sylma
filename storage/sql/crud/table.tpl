@@ -15,7 +15,7 @@
       <tpl:apply mode="init/action"/>
     </tpl:variable>
 
-    <form js:class="sylma.crud.Form" class="sylma-form" action="{$action}" js:parent-name="form" method="post">
+    <form js:class="sylma.crud.Form" class="sylma-form" action="{$action}" method="post" js:name="form" js:parent-name="form">
 
       <tpl:apply mode="form/content"/>
 
@@ -40,9 +40,7 @@
     <tpl:apply mode="form/init"/>
     <tpl:apply mode="form"/>
 
-    <div class="form-actions">
-      <tpl:apply mode="form/action"/>
-    </div>
+    <tpl:apply mode="form/actions"/>
     <tpl:apply mode="form/token"/>
 
   </tpl:template>
@@ -59,9 +57,20 @@
     <tpl:apply use="form-cols" mode="container"/>
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="form/action">
-    <input type="submit" value="Envoyer"/>
+  <tpl:template match="*" mode="form/actions">
+    <div class="form-actions">
+      <tpl:apply mode="form/save"/>
+    </div>
   </tpl:template>
+
+  <tpl:template match="*" mode="form/save">
+    <tpl:variable name="value">
+      <tpl:apply mode="form/save/content"/>
+    </tpl:variable>
+    <input type="submit" value="{$value}"/>
+  </tpl:template>
+
+  <tpl:template match="*" mode="form/save/content">save</tpl:template>
 
   <tpl:template match="sql:table">
     <tpl:apply select="* ^ sql:foreign" mode="container"/>
