@@ -94,7 +94,18 @@
         <tpl:apply select="*" mode="hollow"/>
         <tpl:apply mode="content"/>
       </div>
-      <iframe js:node="frame" class="sylma-hidder"/>
+      <div class="window">
+        <div class="toolbar">
+          <input type="text"/>
+          <button>
+            <js:event name="click">
+              %object%.reload();
+            </js:event>
+            <tpl:text>↻</tpl:text>
+          </button>
+        </div>
+        <iframe js:node="frame" class="sylma-hidder"/>
+      </div>
     </div>
 
   </tpl:template>

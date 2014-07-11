@@ -3,7 +3,7 @@
   <ns0:page>
     <ns0:steps>
       <ns0:call path="/sylma/modules/stepper/test/samples/stepper01/sample" method="post"/>
-      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/modules/stepper/test/samples/schema01.xql" method="get"/>
+      <ns0:call path="/sylma/storage/sql/alter?file=/sylma/modules/stepper/test/samples/schema01.xql" method="get"/>
       <ns0:query creation="2014-03-12 17:24:01">../empty01.sql</ns0:query>
     </ns0:steps>
   </ns0:page>

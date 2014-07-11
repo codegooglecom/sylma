@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\alter;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\schema;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\schema, sylma\storage\xml;
 
 class Handler extends core\module\Domed implements core\stringable {
 
@@ -13,25 +13,38 @@ class Handler extends core\module\Domed implements core\stringable {
 
   protected static $aFiles = array();
 
-  public function __construct($bReset = true) {
+  public function __construct() {
 
     $this->setDirectory(__FILE__);
+  }
 
-    if ($bReset) {
+  public static function reset() {
 
-      self::$aFiles = array();
-    }
+    self::$aFiles = array();
+  }
+
+  public function setSettings($args = null, $bMerge = true) {
+
+    return parent::setSettings($args, $bMerge);
   }
 
   public function setFile(fs\file $file) {
 
     $parser = $this->getManager(self::PARSER_MANAGER);
-    $builder = $parser->loadBuilder($file, null, $this->getScript(self::ARGUMENTS));
-    $result = $builder->getSchema();
 
-    $this->setSchema($result);
+    if (!$this->getSettings(false)) {
+
+      $this->setSettings($this->getScript(self::ARGUMENTS));
+    }
+
+    $this->loadSchema($parser->loadBuilder($file, null, $this->getSettings()));
 
     return parent::setFile($file);
+  }
+
+  protected function loadSchema(schema\Builder $builder) {
+
+    $this->setSchema($builder->getSchema());
   }
 
   /**
@@ -105,6 +118,8 @@ class Handler extends core\module\Domed implements core\stringable {
       $table->asCreate($this->useDepth());
       $table->asUpdate();
     }
+
+    return 'Table altered';
   }
 }
 

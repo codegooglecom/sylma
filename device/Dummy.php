@@ -34,7 +34,7 @@ class Dummy extends \Mobile_Detect
 
     switch ($sName) {
 
-      case 'mobile' : $bResult = $sForce === 'mobile' || (!$sForce && $this->isMobile()); break;
+      case 'mobile' : $bResult = $sForce === 'mobile' || (!$sForce && $this->isMobile() && !$this->isTablet()); break;
       case 'tablet' : $bResult = $sForce === 'tablet' || (!$sForce && $this->isTablet()); break;
       case 'desktop' : $bResult = $sForce === 'desktop' || (!$sForce && !$this->isMobile() && !$this->isTablet()); break;
 

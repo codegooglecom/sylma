@@ -28,6 +28,7 @@
         <cls:class alias="connection" name="view\component\Connection"/>
         <cls:class alias="distinct" name="view\component\Distinct"/>
         <cls:class alias="function" name="view\component\_Function"/>
+        <cls:class alias="element" name="view\component\Element"/>
       </cls:classes>
     </component>
   </cls:classes>

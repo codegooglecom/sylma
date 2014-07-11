@@ -3,10 +3,10 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(8)"/>
-      <ns0:watcher element="#tester &gt; iframe">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe">
         <ns0:property name="z-index">70</ns0:property>
       </ns0:watcher>
-      <ns0:event name="click" element="#tester &gt; iframe;#content"/>
+      <ns0:event name="click" element="#tester &gt; div:nth-child(2) &gt; iframe;#content"/>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li &gt; div &gt; a"/>
       <ns0:watcher element="#tester &gt; div">
         <ns0:property name="z-index">60</ns0:property>

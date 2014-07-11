@@ -12,14 +12,14 @@
         <ns0:property name="height">64</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; button:nth-child(3)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2)">
         <ns0:property name="height">64</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(11)"/>
-      <ns0:event name="click" element="#tester &gt; iframe;#content"/>
+      <ns0:event name="click" element="#tester &gt; div:nth-child(2) &gt; iframe;#content"/>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2)">
         <ns0:property name="height">129</ns0:property>
       </ns0:watcher>
@@ -32,7 +32,7 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(2)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element=" &gt; div:nth-child(1) &gt; div">
@@ -49,10 +49,10 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/sylma/modules/stepper/test/samples">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(3) &gt; button:nth-child(3)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(3) &gt; div:nth-child(6) &gt; ul:nth-child(2) &gt; div:nth-child(7) &gt; li">

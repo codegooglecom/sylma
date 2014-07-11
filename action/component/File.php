@@ -11,22 +11,33 @@ class File extends reflector\component\Foreigner implements common\arrayable, co
     $this->setDirectory($this->getParser()->getSourceDirectory());
 
     $this->getWindow()->addControler('fs');
+
+    $this->allowForeign(true);
   }
 
   public function asArray() {
 
-    $sValue = $this->readx('');
+    if ($this->getNode()->isComplex()) {
 
-    if (substr($sValue, 0, 2) === '//') {
+      $value = $this->parseComponentRoot($this->getNode());
 
-      $result = $this->createDummy('distant', array($sValue));
+      $fs = $this->getWindow()->addControler('fs');
+      $result = $fs->call('getFile', array($value), '\sylma\storage\fs\file');
     }
     else {
 
-      $fs = $this->getWindow()->addControler('fs');
-      $file = $this->getSourceFile($sValue);
+      $sValue = $this->readx('');
 
-      $result = $fs->call('getFile', array((string) $file), '\sylma\storage\fs\file');
+      if (substr($sValue, 0, 2) === '//') {
+
+        $result = $this->createDummy('distant', array($sValue));
+      }
+      else {
+
+        $fs = $this->getWindow()->addControler('fs');
+        $file = $this->getSourceFile($sValue);
+        $result = $fs->call('getFile', array((string) $file), '\sylma\storage\fs\file');
+      }
     }
 
     return array($result);

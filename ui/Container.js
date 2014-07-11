@@ -253,7 +253,7 @@ sylma.ui.ContainerProps = {
       el.addClass('sylma-visible'); // @deprecated
 
 
-    }.delay(50));
+    }.delay(100));
   },
 
   /**
@@ -275,7 +275,7 @@ sylma.ui.ContainerProps = {
       el.removeClass('visible');
       el.removeClass('sylma-visible'); // @deprecated
 
-    }.delay(50));
+    }.delay(100));
   },
 
   toggleShow : function(el, val) {

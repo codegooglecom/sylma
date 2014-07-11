@@ -45,7 +45,7 @@
 
   <crud:route name="update" groups="form,crud">
 
-    <view:view mode="view" groups="view" sql:ns="ns">
+    <view:view mode="view" groups="view" _debug="x">
 
       <tpl:template>
         <tpl:apply mode="form/build" xmode="update"/>
@@ -65,7 +65,7 @@
 
   <!--<view:view mode="delete"/>-->
 
-  <crud:global ssd:ns="ns">
+  <crud:global ssd:ns="ns" sql:ns="ns">
 
     <tpl:constant name="form-cols">* ^ id,date-update,date-insert</tpl:constant>
     <tpl:constant name="list-cols">*</tpl:constant>

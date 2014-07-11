@@ -645,8 +645,8 @@
   <tst:test name="Multiple refs on same table">
     <tst:prepare>
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/user7.xql',
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/user7.xql',
       ));
 
       $manager->runQueryFile('samples/user7.sql');
@@ -699,8 +699,8 @@
   <tst:test name="Multiple refs on same table with templates">
     <tst:prepare>
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/user7.xql',
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/user7.xql',
       ));
 
       $manager->runQueryFile('samples/user7.sql');

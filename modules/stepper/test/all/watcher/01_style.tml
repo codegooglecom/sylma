@@ -12,23 +12,23 @@
         <ns0:property name="height">64</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; button:nth-child(3)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(1)"/>
-      <ns0:event name="click" element="#tester &gt; iframe;#content &gt; div &gt; button"/>
-      <ns0:watcher element="#tester &gt; iframe;#content &gt; div &gt; div">
+      <ns0:event name="click" element="#tester &gt; div:nth-child(2) &gt; iframe;#content &gt; div &gt; button"/>
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe;#content &gt; div &gt; div">
         <ns0:property name="height">100</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(10)"/>
-      <ns0:event name="click" element="#tester &gt; iframe;#content &gt; div &gt; div"/>
+      <ns0:event name="click" element="#tester &gt; div:nth-child(2) &gt; iframe;#content &gt; div &gt; div"/>
       <ns0:watcher element="#tester &gt; div">
         <ns0:property name="z-index">60</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li:nth-child(2) &gt; form &gt; button:nth-child(1)"/>
       <ns0:input element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li:nth-child(2) &gt; form &gt; div:nth-child(5) &gt; select">height</ns0:input>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(11)"/>
-      <ns0:event name="click" element="#tester &gt; iframe;#content"/>
+      <ns0:event name="click" element="#tester &gt; div:nth-child(2) &gt; iframe;#content"/>
       <ns0:watcher element="#tester &gt; div">
         <ns0:property name="z-index">60</ns0:property>
       </ns0:watcher>
@@ -47,7 +47,7 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(2)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li:nth-child(3)">

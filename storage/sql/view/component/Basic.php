@@ -8,7 +8,7 @@ class Basic extends reflector\component\Foreigner implements reflector\component
   /**
    * @return \sylma\storage\sql\view\Resource
    */
-  protected function getParser() {
+  protected function getHandler() {
 
     return parent::getParser();
   }

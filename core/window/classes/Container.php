@@ -93,12 +93,20 @@ class Container extends core\module\Domed {
 
     $file = $path->asFile();
 
+    $sDevice = '[unknown]';
+
+    if ($device = $this->getManager('device', false)) {
+
+      $sDevice = $device->isDevice('tablet') ? 'tablet' : ($device->isDevice('mobile') ? 'mobile' : 'desktop');
+    }
+
     $content = $this->createArgument(array(
       'ul' => array(
         '#li' => array(
           'user : ' . $user->getName(),
           'groups : ' . implode(',', $user->getGroups()),
           'time : ' . functions\numeric\formatFloat($init->getElapsedTime()),
+          'device : ' . $sDevice,
           array(
             'a' => array(
               '@href' => '#',

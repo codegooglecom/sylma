@@ -77,7 +77,7 @@ class Validate extends core\module\Domed implements core\stringable {
     }
     else {
 
-      $this->throwException('No file received');
+      //$this->throwException('No file received');
     }
 
     return $bResult;

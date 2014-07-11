@@ -116,7 +116,7 @@ abstract class Type extends core\module\Domed {
 
     if (!$bResult = $this->validateFormat()) {
 
-      $this->addMessage($this->translate("The field '%s' is not valid", $this->read('title')), $this->asAlias());
+      $this->addMessage($this->translate("The field '%s' : '%s' is not valid", $this->read('title'), $this->getValue()), $this->asAlias());
     }
 
     return $bResult;

@@ -43,7 +43,7 @@
     <tpl:import>index.tpl</tpl:import>
 
     <tpl:template>
-
+  
       <le:context name="js">
         <le:file>/#sylma/ui/Template.js</le:file>
         <le:file>/#sylma/ui/Extras.js</le:file>

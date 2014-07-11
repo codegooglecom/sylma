@@ -21,6 +21,24 @@
     2;admin;admin@sylma.org
     3;webmaster;webmaster@sylma.org
   </tst:datas>
+  <tst:test name="Complex file">
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <tpl:variable name="path">/#sylma/action/test/samples/style1.css</tpl:variable>
+          <span>
+            <le:file>
+              <tpl:read select="$path"/>
+            </le:file>
+          </span>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>/sylma/action/test/samples/style1.css</span>
+    </tst:node>
+  </tst:test>
   <tst:test name="Context with one file">
     <tst:node>
       <html:link href="/sylma/action/test/samples/style1.css" rel="stylesheet" type="text/css" media="all"/>

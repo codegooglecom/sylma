@@ -60,7 +60,7 @@ sylma.uploader.Dropper = new Class({
     }
     else {
 
-      sylma.ui.showMessage('No valid response');
+      //sylma.ui.showMessage('No valid response');
       //throw new Error('No valid response');
     }
 

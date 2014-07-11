@@ -6,6 +6,8 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\parser\languages\common;
 class Table extends sql\template\component\Table implements common\argumentable {
 
   protected $dummy;
+  protected $parentDummy;
+
   protected $sMode = 'insert';
   protected $bInsertQuery = false;
   protected $bElements = false;
@@ -22,7 +24,14 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function init($key = null, $parent = null) {
 
-    $this->loadDummy($key, $parent);
+    if ($key) {
+
+      $this->setKey($key);
+    }
+
+    $this->parentDummy = $parent;
+
+    //$this->loadDummy($key, $parent);
   }
 
   public function addElement(sql\schema\element $el, $content = null, array $aArguments = array()) {
@@ -100,11 +109,6 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     $window = $this->getWindow();
     $view = $this->getParser()->getView();
-
-    if ($key) {
-
-      $this->setKey($key);
-    }
 
     if (!$view->isInternal()) {
 
@@ -235,13 +239,18 @@ class Table extends sql\template\component\Table implements common\argumentable 
   /**
    * @usedby Foreign::buildMultiple()
    * @usedby Reference::reflectFunctionRef()
-   * @return common\_var
+   * @return common\_var|null
    */
   public function getDummy($bDebug = true) {
 
-    if ($bDebug && !$this->dummy) {
+    if (!$this->dummy) {
 
-      $this->launchException('No dummy defined');
+      $this->loadDummy($this->getKey(), $this->parentDummy);
+
+      if (!$this->dummy && $bDebug) {
+
+        $this->launchException('No dummy defined');
+      }
     }
 
     return $this->dummy;
@@ -313,7 +322,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   protected function callValidate() {
 
-    $this->addValidate($this->getDummy()->call('validate'));
+    $this->addValidate($this->getDummy(false)->call('validate'));
 
     return array_reverse($this->aValidates);
   }
@@ -344,10 +353,11 @@ class Table extends sql\template\component\Table implements common\argumentable 
   public function asArgument() {
 
     $window = $this->getWindow();
-    $aContent = $this->getContent();
-    $aContent[] = $window->createCondition($this->callValidate(), $this->loadTriggers());
 
-    return $this->getWindow()->createGroup($aContent);
+    // must be called first to fill content
+    $aValidate = $window->createCondition($this->callValidate(), $this->loadTriggers());
+
+    return $this->getWindow()->createGroup(array($this->getContent(), $aValidate));
   }
 }
 

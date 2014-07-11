@@ -118,6 +118,25 @@ EOT;
       <h3>webmaster</h3>
     </tst:node>
   </tst:test>
+  <tst:test name="multiple schemas">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource>
+          <sql:id>3</sql:id>
+        </sql:resource>
+        <view:schema>samples/unknown</view:schema>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <h3>
+            <tpl:read select="name"/>
+          </h3>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <h3>webmaster</h3>
+    </tst:node>
+  </tst:test>
   <tst:test name="cdata">
     <tst:document>
       <view:view sql:ns="ns">

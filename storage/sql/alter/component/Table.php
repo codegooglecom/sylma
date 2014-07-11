@@ -95,7 +95,7 @@ class Table extends sql\schema\component\Table implements sql\alter\alterable {
     }
 
 
-    $sQuery = "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ')';
+    $sQuery = "CREATE TABLE IF NOT EXISTS `{$this->getName()}` (" . implode(",\n", $aChildren) . ')  ENGINE=InnoDB';
 
     if ($sCharset = $this->getCharset()) {
 

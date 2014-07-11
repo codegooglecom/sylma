@@ -71,7 +71,7 @@ class File extends Resource implements fs\file {
 
   public function getExtension() {
 
-    return $this->sExtension;
+    return strtolower($this->sExtension);
   }
 
   public function getSize() {

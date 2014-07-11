@@ -263,6 +263,47 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Type reflector">
+    <tst:document>
+      <view:view user:ns="ns" mode="insert">
+        <sql:resource>
+          <sql:id>
+            <le:get-argument name="id" source="post"/>
+          </sql:id>
+        </sql:resource>
+        <view:schema>samples/user_field_reflector.xql</view:schema>
+        <view:template>
+          <tpl:apply select="name,no"/>
+        </view:template>
+        <view:template match="user:*">
+          <tpl:register/>
+        </view:template>
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-type-reflector');
+
+      return
+        array('post' => $manager->createArgument(array(
+          'name' => 'tester_reflector',
+          'no' => 123,
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->readArgument('result');
+
+      $user = $manager->runQuery("SELECT name,no FROM user_reflector WHERE id = $sID", 0);
+      $manager->runQuery("DELETE FROM user_reflector WHERE id = $sID", 2);
+
+      $manager->assertEqual($user->query(), array(
+        'name' => 'tester_reflector',
+        'no' => '123',
+      ));
+
+      return true;
+    </tst:expected>
+  </tst:test>
   <tst:test name="Really simple update" disabled="true">
     <tst:document>
       <view:view user:ns="ns" mode="update">

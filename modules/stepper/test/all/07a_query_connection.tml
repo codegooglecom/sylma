@@ -2,7 +2,7 @@
 <ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
   <ns0:page>
     <ns0:steps>
-      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/modules/stepper/test/samples/schema01b.xql" method="get"/>
+      <ns0:call path="/sylma/storage/sql/alter?file=/sylma/modules/stepper/test/samples/schema01b.xql" method="get"/>
       <ns0:query creation="2014-03-12 17:24:01" connection="test">../empty01.sql</ns0:query>
     </ns0:steps>
   </ns0:page>

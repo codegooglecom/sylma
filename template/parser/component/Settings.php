@@ -33,6 +33,8 @@ class Settings extends Child implements common\arrayable, template\parser\compon
     }
 
     $target->setSettings($this->getSettings());
+
+    $this->log('Settings');
   }
 
   public function asArray() {

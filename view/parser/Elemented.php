@@ -214,10 +214,17 @@ class Elemented extends template\parser\handler\Domed {
   protected function loadSchema() {
 
     $component = $this->loadSimpleComponent('component/schema', $this);
+    $schemas = $this->queryx('view:schema');
 
-    if ($el = $this->getx('view:schema')) {
+    if ($schemas->length) {
 
-      $result = $component->parseRoot($el->remove());
+      $schema = $schemas->getLast();
+      $result = $component->parseRoot($schema);
+
+      foreach ($schemas as $item) {
+
+        $item->remove();
+      }
     }
     else {
 

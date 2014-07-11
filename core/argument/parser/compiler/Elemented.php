@@ -24,7 +24,7 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
       $sDefault = self::DEFAULT_NS;
     }
-    
+
     $this->setNamespace($sDefault, self::DEFAULT_PREFIX);
 
     if ($el->getName() !== 'argument') {

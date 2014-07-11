@@ -78,8 +78,8 @@
 
       $manager->runQuery('DROP TABLE IF EXISTS user1e', 2);
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/user1e.xql',
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/user1e.xql',
       ));
 
       $manager->resetDB();
@@ -117,8 +117,9 @@
 
       $manager->runQuery('DROP TABLE IF EXISTS latin01', 2);
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/latin01.xql',
+      \sylma\storage\sql\alter\Handler::reset();
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/latin01.xql',
       ));
 
       $manager->runQuery("INSERT INTO latin01 (id, name, email) VALUES (1, 'Alexandra Glover', 'none')", 8);

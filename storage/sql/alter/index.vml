@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  builder:return="result"
+>
+
+  <tpl:settings>
+    <cls:classes>
+      <cls:class alias="tree">
+        <cls:classes>
+          <cls:class alias="cached" name="\sylma\storage\sql\alter\Handler"/>
+        </cls:classes>
+      </cls:class>
+    </cls:classes>
+  </tpl:settings>
+
+  <xl:resource/>
+
+  <tpl:template>
+
+    <h2>SQL Alter</h2>
+
+    <tpl:variable name="reset">
+      <le:get-argument name="reset" optional="x"/>
+    </tpl:variable>
+
+    <tpl:variable>
+      <tpl:read select="setSettings()">
+        <tpl:apply mode="settings"/>
+      </tpl:read>
+    </tpl:variable>
+
+    <tpl:if test="$reset">
+      <tpl:read select="reset()"/>
+    </tpl:if>
+    <tpl:read select="setFile()">
+      <le:file>
+        <le:get-argument name="file"/>
+      </le:file>
+    </tpl:read>
+    <tpl:read select="useDepth()">
+      <le:get-argument name="depth" optional="x"/>
+    </tpl:read>
+
+    <tpl:read select="asString()"/>
+
+  </tpl:template>
+
+  <tpl:template mode="settings">
+    <tpl:text>builder.xml</tpl:text>
+  </tpl:template>
+
+</view:view>

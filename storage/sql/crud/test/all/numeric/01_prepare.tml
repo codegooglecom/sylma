@@ -3,7 +3,7 @@
   <ns0:page>
     <ns0:steps>
       <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/numeric01.sql</ns0:query>
-      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/storage/sql/crud/test/samples/numeric01.xql" method="get"/>
+      <ns0:call path="/sylma/storage/sql/alter?file=/sylma/storage/sql/crud/test/samples/numeric01.xql" method="get"/>
       <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/numeric01.vml" method="get"/>
     </ns0:steps>
   </ns0:page>

@@ -22,6 +22,18 @@ class Cleaner extends core\module\Domed {
 
   public function clean(dom\handler $doc) {
 
+    $sResult = '';
+
+    if (!$doc->isEmpty()) {
+
+      $sResult = $this->cleanValid($doc);
+    }
+
+    return $sResult;
+  }
+  
+  protected function cleanValid(dom\handler $doc) {
+
     require_once('dom/handler.php');
 
     $cleaner = $this->getTemplate((string) $this->getFile());

@@ -386,6 +386,11 @@ sylma.stepper.Main = new Class({
   save : function() {
 
     var test = this.getTest().save();
+  },
+
+  reload : function() {
+
+    this.getWindow().location.reload();
   }
 
 });

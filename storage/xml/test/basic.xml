@@ -140,7 +140,7 @@
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Call">
+  <tst:test name="Call dummy">
     <tst:document>
       <view:view user:ns="ns">
         <tpl:settings>
@@ -162,7 +162,7 @@
       <span>/abc,/def</span>
     </tst:node>
   </tst:test>
-  <tst:test name="Parse result">
+  <tst:test name="Parse dummy result">
     <tst:document>
       <view:view user:ns="ns">
         <xl:resource/>

@@ -4,5 +4,6 @@
 >
   <directory path="core/exception/test/stepper"/>
   <directory path="modules/stepper/test/all"/>
+  <directory path="modules/users/test/stepper"/>
   <directory path="storage/sql/crud/test/all"/>
 </collection>

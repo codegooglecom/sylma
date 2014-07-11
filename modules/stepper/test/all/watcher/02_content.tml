@@ -8,14 +8,14 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(2)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2)">
         <ns0:property name="height">64</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(10)"/>
-      <ns0:event name="click" element="#tester &gt; iframe;#content &gt; div &gt; h4"/>
+      <ns0:event name="click" element="#tester &gt; div:nth-child(2) &gt; iframe;#content &gt; div &gt; h4"/>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2)">
         <ns0:property name="height">129</ns0:property>
       </ns0:watcher>
@@ -33,7 +33,7 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(2)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li">
@@ -71,7 +71,7 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(1) &gt; button:nth-child(2)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li">

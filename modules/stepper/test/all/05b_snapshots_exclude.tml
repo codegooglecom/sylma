@@ -7,11 +7,11 @@
         <ns0:property name="height">103</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li &gt; button:nth-child(3)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li &gt; form &gt; button"/>
-      <ns0:event name="click" element="#tester &gt; iframe;#content &gt; div &gt; a"/>
+      <ns0:event name="click" element="#tester &gt; div:nth-child(2) &gt; iframe;#content &gt; div &gt; a"/>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul &gt; div:nth-child(7) &gt; li">
         <ns0:property name="height">78</ns0:property>
       </ns0:watcher>
@@ -30,7 +30,7 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; button:nth-child(3)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul">
@@ -65,7 +65,7 @@
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
     <ns0:steps>
       <ns0:event name="click" element="#tester &gt; div &gt; div:nth-child(2) &gt; button:nth-child(3)"/>
-      <ns0:watcher element="#tester &gt; iframe" delay="3000">
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
         <ns0:property name="iframe">1</ns0:property>
       </ns0:watcher>
       <ns0:watcher element="#tester &gt; div &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul">

@@ -389,6 +389,35 @@
     </tst:expected>
   </tst:test>
 
+  <tst:test name="JSON call without result">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/sample_empty.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample_empty.json');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+
+    </tst:prepare>
+    <tst:expected>
+
+      $sResult = $manager->readArgument('result');
+
+      $manager->assertEqual(json_decode($sResult, true), array(
+        'content' => '',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+
   <tst:test name="JSON call with empties">
     <tst:prepare>
 

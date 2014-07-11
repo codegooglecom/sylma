@@ -19,8 +19,8 @@
 
       $manager->runQuery('DROP TABLE IF EXISTS test1', 2);
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/test1.xql',
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/test1.xql',
       ));
 
     </tst:prepare>
@@ -67,8 +67,8 @@
       $manager->runQuery('DROP TABLE IF EXISTS user', 2);
       $manager->runQuery('DROP TABLE IF EXISTS `group`', 2);
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/user2.xql',
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/user2.xql',
         'depth' => 1,
       ));
 
@@ -103,8 +103,8 @@
 
       $manager->runQuery('DROP TABLE IF EXISTS latin01', 2);
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/latin01.xql',
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/latin01.xql',
       ));
 
     </tst:prepare>
@@ -152,8 +152,8 @@
 
       $manager->runQuery('DROP TABLE IF EXISTS empty01', 2);
 
-      $manager->getAction('/#sylma/storage/sql/alter/index.eml', array(
-        'path' => '/#sylma/storage/sql/test/samples/empty01.xql',
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/empty01.xql',
       ));
 
     </tst:prepare>

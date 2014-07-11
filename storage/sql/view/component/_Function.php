@@ -9,25 +9,50 @@ class _Function extends Basic implements reflector\component, common\arrayable {
 
     $this->setNode($el);
     $this->allowText(true);
+    $this->allowForeign(TRUE);
   }
 
   public function asArray() {
+
+    $aResult = array();
 
     $tree = $this->getParser()->getCurrentTree();
     $query = $this->checkQuery($tree->getQuery());
 
     $sName = $this->readx('@name');
-    $sElement = $this->readx('@element');
-    $sAlias = $this->readx('@alias');
 
-    $element = $tree->getElement($sElement);
+    if (!$sElement = $this->readx('@element')) {
 
-    $content = $this->getWindow()->toString(array($sName, '(', $element, ')', " AS `$sAlias`"));
-    $query->setColumn($content, false, $sAlias);
+      $args = array();
+
+      foreach ($this->parseChildren($this->getNode()->getChildren()) as $arg) {
+
+        $args[] = $arg;
+        $args[] = ', ';
+      }
+
+      array_pop($args);
+    }
+    else {
+
+      $args = $tree->getElement($sElement);
+    }
+
+    $aContent = array($sName, '(', $args, ')');
+
+    if (!$sAlias = $this->readx('@alias', false)) {
+
+      $aResult = $aContent;
+    }
+    else {
+
+      $aContent[] = " AS `$sAlias`";
+      $query->setColumn($this->getWindow()->toString($aContent), false, $sAlias);
+    }
 
     $this->log("SQL : function [$sName]");
 
-    return array();
+    return $aResult;
   }
 
   protected function checkQuery(sql\query\parser\Select $query) {

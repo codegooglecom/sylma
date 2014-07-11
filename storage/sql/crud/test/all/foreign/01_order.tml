@@ -2,8 +2,8 @@
 <ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
   <ns0:page>
     <ns0:steps>
-      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/storage/sql/crud/test/samples/group01.xql&amp;depth=1" method="get"/>
-      <ns0:call path="/sylma/storage/sql/alter?path=/sylma/storage/sql/crud/test/samples/user01.xql&amp;depth=1" method="get"/>
+      <ns0:call path="/sylma/storage/sql/alter?file=/sylma/storage/sql/crud/test/samples/group01.xql&amp;depth=1" method="get"/>
+      <ns0:call path="/sylma/storage/sql/alter?file=/sylma/storage/sql/crud/test/samples/user01.xql&amp;depth=1" method="get"/>
       <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/users01.vml" method="get"/>
       <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/user01_clear.sql</ns0:query>
       <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/user01_group.sql</ns0:query>
