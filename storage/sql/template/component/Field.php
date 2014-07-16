@@ -104,5 +104,10 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
     return $result;
   }
+
+  public function reflectRegister() {
+
+    return null;
+  }
 }
 

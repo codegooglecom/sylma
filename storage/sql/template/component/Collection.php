@@ -64,11 +64,15 @@ class Collection extends Rooted implements sql\template\pathable {
   protected function postBuild($result) {
 
     $window = $this->getWindow();
+    $aResult = array();
 
-    $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource(), $this->getKey());
-    $loop->setContent($window->parseArrayables(array($result)));
+    if ($this->getQuery()->getColumns()) {
 
-    $aResult[] = $loop;
+      $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource(), $this->getKey());
+      $loop->setContent($window->parseArrayables(array($result)));
+
+      $aResult[] = $loop;
+    }
 
     return $aResult;
   }
@@ -216,6 +220,11 @@ class Collection extends Rooted implements sql\template\pathable {
       case 'count' :
 
         $result = $this->getCount();
+        break;
+
+      case 'count-distinct' :
+
+        $result = $this->getCounter()->setDistinct($this->getWindow()->parse($aArguments));
         break;
 
       case 'pager' :

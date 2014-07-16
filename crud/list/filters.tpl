@@ -48,6 +48,7 @@
 
   <tpl:template match="*" mode="filter/content">
     <div class="filter" js:class="sylma.crud.list.Filter">
+      <tpl:register/>
       <tpl:apply mode="input"/>
       <tpl:apply mode="input/clear"/>
     </div>

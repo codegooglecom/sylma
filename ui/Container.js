@@ -51,7 +51,12 @@ sylma.ui.ContainerProps = {
     var result = sylma.ui.parseMessages(response);
     var name = this.getNode().getParent().tagName || 'div';
     var target;
+    //inside = this.get('sylma-inside', false) || inside;
 
+    //if (typeOf(inside) === 'element') {
+
+      //target = inside;
+    //}
     if (this.get('sylma-inside', false)) {
 
       target = this.getNode().getFirst();
@@ -241,11 +246,16 @@ sylma.ui.ContainerProps = {
     }
   },
 
-  show : function(el) {
+  show : function(el, callback) {
 
     el = el || this.getNode();
 
     el.style.WebkitBackfaceVisibility = 'hidden';
+
+    if (callback) {
+
+      sylma.ui.addEventTransition(el, callback);
+    }
 
     (function() {
 

@@ -137,7 +137,7 @@
       </ul>
     </tst:node>
   </tst:test>
-  <tst:test name="Order function">
+  <tst:test name="Order static function">
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource multiple="x"/>
@@ -159,6 +159,29 @@
       <ul>
         <li>root</li>
       </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Order dummy function">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="x"/>
+        <view:schema>samples/user1c.xql</view:schema>
+        <tpl:template>
+          <span>
+            <tpl:apply select="*"/>
+            <sql:order>
+              <tpl:read select="'abc'"/>
+            </sql:order>
+          </span>
+        </tpl:template>
+        <tpl:template match="user:user1c">
+          <sql:function name="min" element="age" alias="abc"/>
+          <tpl:read select="column()/abc"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>8</span>
     </tst:node>
   </tst:test>
   <tst:test name="Dynamic order">

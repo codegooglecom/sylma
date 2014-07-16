@@ -37,6 +37,11 @@ class Prefixer extends \lessc {
     'transition-property' => array(
       'o' => self::MODE_PREFIX
     ),
+    'user-select' => array(
+      'moz' => self::MODE_PREFIX,
+      'o' => self::MODE_PREFIX,
+      'ms' => self::MODE_PREFIX,
+    ),
   );
 
   protected $aVendors = array(

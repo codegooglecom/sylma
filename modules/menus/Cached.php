@@ -31,7 +31,7 @@ class Cached extends core\module\Managed {
     }
     else {
 
-      $bResult = preg_match("`^$sPath`", $this->getPath());
+      $bResult = preg_match("`^$sPath/`", $this->getPath() . '/');
     }
 
     return  $bResult ? self::CLASS_ACTIVE : '';

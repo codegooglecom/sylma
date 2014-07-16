@@ -171,6 +171,34 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Count distinct">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user2.xql</view:schema>
+        <tpl:template>
+          <tpl:apply select="counter()"/>
+          <div>
+            <tpl:apply select="*"/>
+            <span><tpl:apply select="count()"/></span>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <tpl:apply select="group_id/ref()"/>
+        </tpl:template>
+        <tpl:template match="group:group">
+          <tpl:read select="parent()/parent()/collection()/count-distinct()">
+            <sql:element name="id"/>
+          </tpl:read>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <span>2</span>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Dummy calls">
     <tst:document>
       <view:view user:ns="ns">
@@ -263,6 +291,32 @@
     <tst:node>
       <div>
         <span>12.5</span>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Group by">
+    <tst:document>
+      <view:view user:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/product.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:product">
+          <sql:function name="min" element="price" alias="result"/>
+          <sql:group element="id"/>
+          <span>
+            <tpl:read select="column()/result"/>
+          </span>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <span>12.5</span>
+        <span>5</span>
       </div>
     </tst:node>
   </tst:test>

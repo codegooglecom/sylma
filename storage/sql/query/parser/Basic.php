@@ -133,7 +133,7 @@ abstract class Basic extends reflector\component\Foreigner implements common\ins
     }
   }
 
-  protected function getColumns() {
+  protected function parseColumns() {
 
     $aResult = array();
 

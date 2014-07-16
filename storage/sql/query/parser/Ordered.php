@@ -110,6 +110,16 @@ abstract class Ordered extends Joined {
       );
     }
 
+    foreach ($this->aColumns as $mKey => $col) {
+
+      if (is_string($mKey)) {
+
+        $aElements[$mKey] = array(
+          'alias' => $mKey,
+        );
+      }
+    }
+
     $result = $this->createObject('order', array($content));
 
     // On join, only first element is used as order, maybe todo

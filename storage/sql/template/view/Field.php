@@ -14,7 +14,7 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
 
     if ($result = parent::reflectApplySelf($sMode, $aArguments)) {
 
-      $this->addToQuery();
+      //$this->addToQuery();
     }
     else if (!$sMode) {
 
@@ -72,5 +72,11 @@ class Field extends sql\template\component\Field implements sql\template\pathabl
     return $this->reflectSelf(true);
   }
 
+  public function reflectRegister() {
+
+    $this->addToQuery();
+
+    return parent::reflectRegister();
+  }
 }
 

@@ -14,6 +14,7 @@ class Select extends Ordered implements common\argumentable {
 
   protected $aClones = array();
   protected $main;
+  protected $group;
 
   public function setElement(schema\parser\element $el, $bDistinct = false) {
 
@@ -82,7 +83,7 @@ class Select extends Ordered implements common\argumentable {
     return true;
   }
 
-  protected function getColumns() {
+  protected function parseColumns() {
 
     $aResult = array();
 
@@ -92,10 +93,15 @@ class Select extends Ordered implements common\argumentable {
     }
     else {
 
-      $aResult = parent::getColumns();
+      $aResult = parent::parseColumns();
     }
 
     return $aResult;
+  }
+
+  public function getColumns() {
+
+    return $this->aColumns;
   }
 
   public function isEmpty() {
@@ -225,9 +231,34 @@ class Select extends Ordered implements common\argumentable {
     parent::build();
   }
 
+  public function setGroup($group) {
+
+    $this->group = $group;
+
+    foreach ($this->getClones() as $clone) {
+
+      $clone->setGroup($group);
+    }
+  }
+
+  protected function getGroup() {
+
+    return $this->group ? array(' GROUP BY ', $this->group) : null;
+  }
+
   public function getString() {
 
-    $aQuery = array('SELECT ', $this->getColumns(), ' FROM ', $this->getTables(), $this->getJoins(), $this->getWheres(), $this->getOrder(), $this->getLimit());
+    $aQuery = array(
+      'SELECT ',
+      $this->parseColumns(),
+      ' FROM ',
+      $this->getTables(),
+      $this->getJoins(),
+      $this->getWheres(),
+      $this->getGroup(),
+      $this->getOrder(),
+      $this->getLimit(),
+    );
 
     return $this->getWindow()->createString($aQuery);
   }
@@ -255,11 +286,18 @@ class Select extends Ordered implements common\argumentable {
 
   public function asArgument() {
 
-    return $this->getWindow()->createGroup(array(
-      $this->buildDynamicWhere(),
-      $this->prepareOrder(),
-      $this->getVar()->getInsert(),
-    ))->asArgument();
+    $result = null;
+
+    if ($this->getColumns()) {
+
+      $result = $this->getWindow()->createGroup(array(
+        $this->buildDynamicWhere(),
+        $this->prepareOrder(),
+        $this->getVar()->getInsert(),
+      ))->asArgument();
+    }
+
+    return $result;
     //$content = $this->getString();
 
     //return $content->asArgument();

@@ -261,15 +261,19 @@
           <div><tpl:apply select="group_id/all()"/></div>
         </tpl:template>
         <tpl:template match="group:group">
-          <li><tpl:read select="parent()"/></li>
+          <li>
+            <tpl:read select="name"/>
+            <tpl:text> - </tpl:text>
+            <tpl:read select="parent()"/>
+          </li>
         </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
       <div>
-        <li>1</li>
-        <li>1</li>
-        <li>1</li>
+        <li>group01 - 1</li>
+        <li>group02 - 1</li>
+        <li>group03 - 1</li>
       </div>
     </tst:node>
   </tst:test>
@@ -284,15 +288,19 @@
           <div><tpl:apply select="group_id/all()"/></div>
         </tpl:template>
         <tpl:template match="group:group">
-          <li><tpl:apply select="parent()/value()"/></li>
+          <li>
+            <tpl:read select="name"/>
+            <tpl:text> - </tpl:text>
+            <tpl:apply select="parent()/value()"/>
+          </li>
         </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
       <div>
-        <li>1</li>
-        <li>1</li>
-        <li>1</li>
+        <li>group01 - 1</li>
+        <li>group02 - 1</li>
+        <li>group03 - 1</li>
       </div>
     </tst:node>
   </tst:test>
@@ -972,6 +980,7 @@
           <tpl:apply select="*"/>
         </tpl:template>
         <tpl:template match="*">
+          <tpl:register/>
           <input type="text" name="{alias('form')}" id="{alias()}"/>
         </tpl:template>
         <tpl:template match="user:group_id">
@@ -980,12 +989,12 @@
       </view:view>
     </tst:document>
     <tst:node>
-     <div>
-      <input type="text" name="id" id="id"/>
-      <input type="text" name="name" id="name"/>
-      <input type="text" name="group_id[id]" id="group_id"/>
-      <input type="text" name="group_id[name]" id="group_name"/>
-    </div>
+      <div>
+        <input type="text" name="id" id="id"/>
+        <input type="text" name="name" id="name"/>
+        <input type="text" name="group_id[id]" id="group_id"/>
+        <input type="text" name="group_id[name]" id="group_name"/>
+      </div>
     </tst:node>
   </tst:test>
 </tst:tests>

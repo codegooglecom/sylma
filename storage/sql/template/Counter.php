@@ -7,6 +7,7 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
 
   protected $bUsed = false;
   protected $query;
+  protected $content;
 
   public function setQuery(sql\query\parser\Select $query) {
 
@@ -35,6 +36,16 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
     return $this->bUsed;
   }
 
+  public function setDistinct($content) {
+
+    $this->content = $content;
+  }
+
+  protected function getDistinct() {
+
+    return $this->content;
+  }
+
   public function asArgument() {
 
     if ($this->isUsed()) {
@@ -46,7 +57,20 @@ class Counter extends reflector\component\Foreigner implements reflector\compone
       $query->clearOrder();
       //$query->clearJoins();
 
-      $query->setColumn('COUNT(*)');
+      if ($content = $this->getDistinct()) {
+
+        $aContent = array(
+          'COUNT(DISTINCT ',
+          $content,
+          ')',
+        );
+      }
+      else {
+
+        $aContent = array('COUNT(*)');
+      }
+
+      $query->setColumn($aContent);
 
       $result = $this->getQuery()->asArgument();
     }

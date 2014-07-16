@@ -158,5 +158,10 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
     return $result;
   }
+
+  public function reflectRegister() {
+
+    return null;
+  }
 }
 

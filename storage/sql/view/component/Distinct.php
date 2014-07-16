@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\view\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\parser\languages\common;
 
-class Distinct extends reflector\component\Foreigner implements reflector\component, common\arrayable {
+class Distinct extends Basic implements common\arrayable {
 
   protected $var;
 
