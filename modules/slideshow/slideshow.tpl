@@ -7,7 +7,7 @@
   xmlns:le="http://2013.sylma.org/action"
 >
 
-  <tpl:template>
+  <tpl:template mode="slideshow/contexts">
 
     <le:context name="css">
       <le:file>common.less</le:file>
@@ -17,22 +17,34 @@
     <js:include>Container.js</js:include>
     <js:include>Slide.js</js:include>
 
+  </tpl:template>
+
+  <tpl:template>
+
+    <tpl:apply mode="slideshow/contexts"/>
+
     <div js:class="sylma.slideshow.Container" js:parent-name="handler" js:name="handler" class="slideshow">
 
-      <js:option name="directory" cast="x">
-        <tpl:apply mode="slideshow/files" required="x"/>
-      </js:option>
-
-      <tpl:apply mode="top"/>
-
-      <div class="loading" js:node="loading"/>
-      <div class="container" js:node="container">
-        <tpl:apply mode="slideshow/container"/>
-      </div>
-
-      <tpl:apply mode="slideshow/pager"/>
+      <tpl:apply mode="slideshow/content"/>
 
     </div>
+
+  </tpl:template>
+
+  <tpl:template mode="slideshow/content">
+
+    <js:option name="directory" cast="x">
+      <tpl:apply mode="slideshow/files" required="x"/>
+    </js:option>
+
+    <tpl:apply mode="top"/>
+
+    <div class="loading" js:node="loading"/>
+    <div class="container" js:node="container">
+      <tpl:apply mode="slideshow/container"/>
+    </div>
+
+    <tpl:apply mode="slideshow/pager"/>
 
   </tpl:template>
 

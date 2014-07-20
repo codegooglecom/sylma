@@ -1,7 +1,7 @@
 
 sylma.slideshow = sylma.slideshow || {};
 
-sylma.slideshow.Container = new Class({
+sylma.slideshow.ContainerProps = {
 
   Extends : sylma.ui.Loader,
   current : 0,
@@ -9,6 +9,7 @@ sylma.slideshow.Container = new Class({
   period : 5000,
   infos : false,
   lastWidth : 0,
+  length : 0,
 
   /**
    * @type sylma.device.Browser
@@ -53,8 +54,8 @@ sylma.slideshow.Container = new Class({
     this.all = this.tmp;
     this.tmp = this.tmp.concat(this.tmp);
 
-    this.updateSize();
     this.preparePager();
+    this.updateSize();
   },
 
   scrollTop: function() {
@@ -218,6 +219,13 @@ sylma.slideshow.Container = new Class({
     return val ? 'left' : 'right';
   },
 
+  getImagePath: function(path, size) {
+
+    size = size || 'large';
+
+    return this.get('directory') + '/' + path + '?size=' + size;
+  },
+
   stopLoop : function() {
 
     window.clearInterval(this.loop);
@@ -260,22 +268,27 @@ sylma.slideshow.Container = new Class({
 
     if (this.lastWidth !== pageWidth) {
 
-      if (this.isMobile()) {
-
-        this.scrollTop();
-      }
-
-      this.updateWidth();
-
-      this.getContainer().setStyles({
-        width : this.getCollection().length * this.width
-      });
-
-      this.updateSlides();
-      this.goSlide(this.current, true);
+      this.updateSizeConfirm();
     }
 
     this.lastWidth = pageWidth;
+  },
+
+  updateSizeConfirm : function() {
+
+    if (this.isMobile()) {
+
+      this.scrollTop();
+    }
+
+    this.updateWidth();
+
+    this.getContainer().setStyles({
+      width : this.getCollection().length * this.width
+    });
+
+    this.updateSlides();
+    this.goSlide(this.current, true);
   },
 
   getHeight: function() {
@@ -454,33 +467,53 @@ sylma.slideshow.Container = new Class({
     if (notransition) this.useTransition(true);
   },
 
+  getPager: function() {
+
+    return this.getNode('pages');
+  },
+
   preparePager: function() {
 
-    var container = this.getNode('pages');
+    var container = this.getPager();
     var dots = [];
-    var handler = this;
 
     container.empty();
 
-    this.all.each(function() {
+    this.all.each(function(slide, key) {
 
-      var dot = new Element('a', {
-        href : 'javascript:void(0)',
-        events : {
-          click : function() {
-
-            handler.goPage(this.getAllPrevious().length);
-            handler.resetLoop();
-          }
-        }
-      });
+      var dot = this.createPage();
 
       dot.grab(new Element('span'));
       container.grab(dot);
 
       dots.push(dot);
-    });
 
+    }.bind(this));
+
+    this.pages = dots;
+
+    this.showPager();
+  },
+
+  createPage: function() {
+
+    var handler = this;
+
+    return new Element('a', {
+      href : 'javascript:void(0)',
+      events : {
+        click : function() {
+
+          handler.goPage(this.getAllPrevious().length);
+          handler.resetLoop();
+        }
+      }
+    });
+  },
+
+  showPager: function() {
+
+    var dots = this.pages;
     var current = 0;
     var length = this.all.length;
 
@@ -504,10 +537,11 @@ sylma.slideshow.Container = new Class({
 
   updatePage : function() {
 
+    var pager = this.getPager();
     var key = this.current;
-    var node = this.getNode('pages').getChildren()[key >= this.length ? key - this.length : key];
+    var node = pager.getChildren()[key >= this.length ? key - this.length : key];
 
-    this.getNode('pages').getChildren().removeClass('active');
+    pager.getChildren().removeClass('active');
 
     if (node) node.addClass('active');
   },
@@ -536,4 +570,6 @@ sylma.slideshow.Container = new Class({
       this.goSlide(target);
     }
   }
-});
+};
+
+sylma.slideshow.Container = new Class(sylma.slideshow.ContainerProps);

@@ -25,7 +25,7 @@ sylma.ui.ContainerProps = {
     Object.append(this.sylma.template, template);
   },
 
-  update : function(args, path, inside, callback, get) {
+  update : function(args, path, inside, callback, get, show) {
 
     if (inside !== undefined) this.set('sylma-inside', inside);
     get = get || get === undefined;
@@ -38,7 +38,7 @@ sylma.ui.ContainerProps = {
       url : path + '.json',
       onSuccess : function(response) {
 
-        this.updateSuccess(response, callback);
+        this.updateSuccess(response, callback, show);
 
       }.bind(this)
     });
@@ -46,8 +46,9 @@ sylma.ui.ContainerProps = {
     req.send();
   },
 
-  updateSuccess : function(response, callback) {
+  updateSuccess : function(response, callback, show) {
 
+    show = show === undefined || show;
     var result = sylma.ui.parseMessages(response);
     var name = this.getNode().getParent().tagName || 'div';
     var target;
@@ -69,7 +70,10 @@ sylma.ui.ContainerProps = {
     var node = sylma.ui.importNode(result.content, name);
     this.updateContent(result, node, target);
 
-    if (this.getNode().hasClass('hidder')) this.show();
+    if (show && this.getNode().hasClass('hidder')) {
+
+      this.show();
+    }
 
     callback && callback();
   },

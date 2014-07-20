@@ -83,7 +83,7 @@ class Module extends core\module\Domed {
     else {
 
       $aGroups[] = self::GROUP_AUTH;
-      
+
       $bRemember = true; //(bool) $post->get('remember', false);
       $user = $this->getManager('user');
       $user->authenticate($post->read('name'), $sResult, $aGroups);

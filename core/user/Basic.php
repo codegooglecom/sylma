@@ -7,6 +7,7 @@ class Basic extends core\module\Argumented implements core\user {
 
   const NS = 'http://2013.sylma.org/core/user';
   const PUBLIC_ALIAS = 'anonymouse';
+  const GROUP_TEST = 'test';
 
   //private $sUser = '';
   private $bValid = false;
@@ -102,6 +103,11 @@ class Basic extends core\module\Argumented implements core\user {
     else if (!$this->loadSession() && !$this->loadCookie()) {
 
       $this->loadDefault();
+    }
+
+    if (\Sylma::read('debug/enable')) {
+
+      $this->aGroups[] = self::GROUP_TEST;
     }
   }
 

@@ -8,26 +8,32 @@ sylma.slideshow.Slide = new Class({
     if (!this.prepared) {
 
       this.prepared = true;
-      var path = this.getDirectory() + '/' + this.get('path') + '?size=large';
 
       new Element('img', {
-        src : path,
+        src : this.getImagePath(),
         events : {
-          load : function(e) {
+          load : function() {
 
+            this.updateNode();
             this.getParent('handler').stopLoading();
-            this.getNodes().setStyle('background-image', "url('" + path + "')");
-
-            (function() {
-
-              this.getNodes().addClass('ready');
-
-            }).bind(this).delay(150);
 
           }.bind(this)
         }
       });
     }
+  },
+
+  updateNode : function(nodes, size) {
+
+    nodes = nodes || this.getNodes();
+
+    nodes.setStyle('background-image', "url('" + this.getImagePath(size) + "')");
+
+    (function() {
+
+      nodes.addClass('ready');
+
+    }).bind(this).delay(150);
   },
 
   setWidth : function(val) {
@@ -46,9 +52,9 @@ sylma.slideshow.Slide = new Class({
     return this.cloned;
   },
 
-  getDirectory : function() {
+  getImagePath : function(size) {
 
-    return this.getParent('handler').get('directory');
+    return this.getParent('handler').getImagePath(this.get('path'), size);
   }
 
 });

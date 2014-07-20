@@ -60,7 +60,7 @@ sylma.stepper.Watcher = new Class({
 
       var el = this.getSelector().getElement();
 
-      if (!el) {
+      if (!el && !reloads.length) {
 
         this.addDifference('no element found');
       }

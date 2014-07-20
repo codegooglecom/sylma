@@ -44,6 +44,10 @@
           </div>
         </form>
 
+        <le:context name="css">
+          <le:file>/#sylma/modules/users/login.less</le:file>
+        </le:context>
+
       </tpl:template>
 
     </view:view>

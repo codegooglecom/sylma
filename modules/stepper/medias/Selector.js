@@ -146,8 +146,12 @@ sylma.stepper.Selector = new Class({
   selectElement : function(target) {
 
     var el = this.getMask();
+    var margin = this.getFrame().getPosition();
+    var position = target.getPosition();
 
-    el.setPosition(target.getPosition());
+    position.y += margin.y;
+
+    el.setPosition(position);
     var size = target.getSize();
     el.setStyles({
       width: size.x + 2,
