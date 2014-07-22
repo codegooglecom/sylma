@@ -78,6 +78,8 @@ class Dummy extends core\module\Domed {
     $this->bReset = true;
 
     $this->setSettings(array(), false);
+    $this->loadDefaults();
+    
     $this->save();
   }
 

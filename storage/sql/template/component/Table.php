@@ -313,6 +313,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       case 'name' : $result = $this->getName(); break;
       case 'title' : $result = $this->getTitle(); break;
       case 'position' :$result = $this->getPosition();  break;
+      case 'length' :$result = $this->getLength();  break;
       case 'collection' :
 
         $result = $this->getHandler()->parsePathToken($this->getCollection(), $aPath, $sMode, $bRead, $aArguments);
@@ -356,6 +357,11 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
       $window->createOperator('+'),
       $window->createNumeric(1),
     ));
+  }
+
+  public function getLength() {
+
+    return $this->getQuery()->getVar()->call('getLength');
   }
 
   public function reflectApplyAll($sMode) {

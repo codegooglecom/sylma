@@ -15,7 +15,7 @@
   build:class="\sylma\core\argument\Readable"
   build:output="array"
 >
-
+ 
   <crud:global>
 
     <xl:resource file="schema.xml"/>
@@ -43,7 +43,7 @@
     <tpl:import>index.tpl</tpl:import>
 
     <tpl:template>
-  
+
       <le:context name="js">
         <le:file>/#sylma/ui/Template.js</le:file>
         <le:file>/#sylma/ui/Extras.js</le:file>

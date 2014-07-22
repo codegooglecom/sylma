@@ -29,7 +29,7 @@ sylma.stepper.Selector = new Class({
     }
   },
 
-  activate : function(callback) {
+  activate : function(callback, e) {
 
     this.onSelect = callback;
     this.activated = true;
@@ -45,6 +45,11 @@ sylma.stepper.Selector = new Class({
 
     document.body.adopt(overlay);
     overlay.tween('opacity', 0.35);
+
+    if (e) {
+
+      e.preventDefault();
+    }
 
     this.startCapture();
   },
@@ -162,7 +167,7 @@ sylma.stepper.Selector = new Class({
   select : function(target) {
 
     this.activated = false;
-
+if (!target) throw new Error('Target not found');
     //this.set('target', target);
     this.updateElement(target);
 

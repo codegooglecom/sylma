@@ -398,7 +398,7 @@ class Documented extends Logger implements reflector\documented {
 
       default :
 
-        $this->launchException("Unknown @return value : $sReturn");
+        $this->launchException("Unknown @return value : " . $this->getReturn());
     }
 
     $window->setReturn($sReturn);

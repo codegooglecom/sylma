@@ -214,7 +214,7 @@
   <tpl:template match="test:*" mode="selector">
     <div js:class="sylma.stepper.Selector" js:alias="selector" class="selector clearfix" title="{@element}">
       <button js:node="toggle" class="sylma-hidder edit">
-        <js:event name="click">%object%.activate(function(target) { this.changeElement(target); }.bind(%object%));</js:event>
+        <js:event name="click" arguments="e">%object%.activate(function(target) { this.changeElement(target); }.bind(%object%), e);</js:event>
         <tpl:text>◌</tpl:text>
       </button>
       <button type="button" class="sylma-hidder edit">

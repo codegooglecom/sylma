@@ -29,6 +29,7 @@ class Validate extends core\module\Domed implements core\stringable {
 
     preg_match('/\.(\w+)$/', $this->read('name'), $aMatch);
     $sExtension = $aMatch ? $aMatch[1] : '';
+    $sExtension = strtolower($sExtension);
 
     if ($this->read('error', false)) {
 

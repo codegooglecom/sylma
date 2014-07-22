@@ -199,6 +199,26 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Position vs length">
+    <tst:document>
+      <view:view user:ns="ns" group:ns="ns">
+        <sql:resource multiple="multiple"/>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <tpl:read select="name"/>
+          <tpl:if test="position() != length()">,</tpl:if>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>root,admin,webmaster</div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Dummy calls">
     <tst:document>
       <view:view user:ns="ns">
