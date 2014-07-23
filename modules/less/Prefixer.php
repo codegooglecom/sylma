@@ -24,6 +24,12 @@ class Prefixer extends \lessc {
     'transform' => array(
       'o' => self::MODE_PREFIX,
     ),
+    'transform-style' => array(
+      'o' => self::MODE_PREFIX,
+    ),
+    'perspective' => array(
+      'o' => self::MODE_PREFIX,
+    ),
 
     'transition' => array(
       'o' => self::MODE_PREFIX

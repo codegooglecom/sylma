@@ -105,7 +105,7 @@ class Basic extends core\module\Argumented implements core\user {
       $this->loadDefault();
     }
 
-    if (\Sylma::read('debug/enable')) {
+    if (\Sylma::isAdmin()) {
 
       $this->aGroups[] = self::GROUP_TEST;
     }

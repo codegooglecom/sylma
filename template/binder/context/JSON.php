@@ -10,6 +10,10 @@ class JSON extends window\classes\Container implements window\scripted, window\a
 
   public function __construct() {
 
+    if (\Sylma::isAdmin()) {
+
+      sleep($this->getManager('init')->read('debug/delay'));
+    }
   }
 
   public function setScript(core\request $path, core\argument $post, $sContext = '') {
