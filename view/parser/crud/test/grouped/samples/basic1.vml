@@ -14,11 +14,11 @@
       <sql:id>1</sql:id>
     </sql:resource>
     <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-    <view:template>
+    <tpl:template>
       <div>
         <h3><tpl:apply select="name"/></h3>
         <span><tpl:apply select="email"/></span>
       </div>
-    </view:template>
+    </tpl:template>
   </view:view>
 </crud:crud>

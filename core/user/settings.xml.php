@@ -12,6 +12,8 @@
 'session' => array(
   'name' => 'sylma-user',
   'lifetime' => '28800'),
+'login' => array(
+  'delay' => '1'),
 'classes' => array(
   'user' => array(
     'file' => '\sylma\core\user\Basic.php',

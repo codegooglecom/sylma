@@ -226,13 +226,13 @@ class Initializer extends module\Domed {
        //$this->launchException('Can execute only view');
      }
 
-     $sResult = (string) $this->prepareScript($file, $this->loadPOST(true), $path->getArguments());
+     $sResult = (string) $this->prepareScript($file, null, $path->getArguments());
     }
 
     return $sResult;
   }
 
-  protected function prepareScript(fs\file $file, core\argument $post, core\argument $args, core\argument $contexts = null) {
+  protected function prepareScript(fs\file $file, core\argument $post = null, core\argument $args = null, core\argument $contexts = null) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
@@ -335,6 +335,23 @@ class Initializer extends module\Domed {
   }
 
   public function loadPOST($bArgument = false) {
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0)
+    {
+      $displayMaxSize = ini_get('post_max_size');
+
+      switch(substr($displayMaxSize,-1))
+      {
+        case 'G':
+          $displayMaxSize = $displayMaxSize * 1024;
+        case 'M':
+          $displayMaxSize = $displayMaxSize * 1024;
+        case 'K':
+           $displayMaxSize = $displayMaxSize * 1024;
+      }
+
+      $this->launchException('Posted data is too large. '. $_SERVER['CONTENT_LENGTH']. ' bytes exceeds the maximum size of '. $displayMaxSize.' bytes.');
+    }
 
     return $bArgument ? $this->createArgument($_POST) : $_POST;
   }

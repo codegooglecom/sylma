@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+
+  <crud:global sql:ns="ns">
+
+    <tpl:template match="*" mode="file/argument">
+      <le:get-argument name="parent"/>
+    </tpl:template>
+
+  </crud:global>
+
+  <crud:group name="crud">
+
+    <tpl:template match="sql:table" mode="file/form/init">
+
+      <tpl:token name="action">
+        <le:path/>
+        <tpl:text>/upload.json?parent=</tpl:text>
+        <tpl:apply mode="file/argument"/>
+      </tpl:token>
+
+    </tpl:template>
+
+  </crud:group>
+
+  <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml">
+
+    <xl:resource/>
+
+    <tpl:template>
+
+      <tpl:apply mode="file/settings"/>
+
+      <tpl:read select="directory()">
+        <tpl:read select="$$uploader-dir" tpl:name="directory"/>
+      </tpl:read>
+
+      <tpl:if test="validate('files')">
+
+        <tpl:apply mode="file/validate" required="x"/>
+
+      </tpl:if>
+
+    </tpl:template>
+
+  </view:view>
+
+  <view:view
+    name="download"
+    groups="crud"
+
+    builder:class="\sylma\modules\uploader\Download"
+    builder:output="array"
+  >
+
+    <sql:resource/>
+
+    <tpl:import>/#sylma/storage/sql/crud/common.tpl</tpl:import>
+
+    <tpl:template>
+
+      <tpl:apply select="id" mode="filter/argument"/>
+
+      <le:array>
+        <tpl:read select="path" le:name="path"/>
+        <tpl:read select="name" le:name="name"/>
+        <tpl:read select="$$uploader-dir" le:name="directory"/>
+      </le:array>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

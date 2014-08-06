@@ -41,6 +41,10 @@ class GetArgument extends Named implements common\arrayable {
       $argument = $arguments->call('shift');
     }
 
+    $this->log('Get argument ' . is_string($name) ? $name : '[dynamic]', array(
+      'source' => $sSource,
+    ));
+
     return $this->readx('@escape') ? $this->reflectEscape($argument) : array($argument);
   }
 

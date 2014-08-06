@@ -208,7 +208,7 @@ class Builder extends core\module\Domed {
 
   protected function loadObjectScript(core\request $path, core\window\scripted $window) {
 
-    $window->setScript($path, $this->getInitializer()->loadPOST(true));
+    $window->setScript($path);
 
     return $window->asString();
   }

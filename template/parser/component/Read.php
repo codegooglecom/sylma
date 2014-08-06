@@ -10,11 +10,28 @@ class Read extends Child implements common\arrayable, parser\component {
     $this->setNode($el);
   }
 
+  protected function loadSelect($sResult) {
+
+    if (!$sResult) {
+
+      if ($sConstant = $this->readx('@use')) {
+
+        $sResult = $this->getParser()->getConstant($sConstant);
+      }
+      else if ($sValue = $this->readx('@read')) {
+
+
+        $sResult = $this->lookupPath($sValue);
+      }
+    }
+
+    return $sResult;
+  }
+
   public function build() {
 
     $sSelect = $this->readx('@select');
     $sMode = $this->readx('@mode');
-
 
     $sSelectOut = $sSelect ? ',@select=' . $sSelect : '';
     $sModeOut = $sMode ? ',@mode=' . $sMode : '';
@@ -23,7 +40,7 @@ class Read extends Child implements common\arrayable, parser\component {
 
     $aArguments = $this->getTemplate()->parseArguments($this->getNode()->getChildren());
 
-    $aResult = array($this->getTemplate()->readPath($sSelect, $sMode, $aArguments));
+    $aResult = array($this->getTemplate()->readPath($this->loadSelect($sSelect), $sMode, $aArguments));
 
     return $aResult;
   }

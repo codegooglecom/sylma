@@ -15,7 +15,7 @@
   build:class="\sylma\core\argument\Readable"
   build:output="array"
 >
- 
+
   <crud:global>
 
     <xl:resource file="schema.xml"/>

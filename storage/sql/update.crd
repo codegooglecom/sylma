@@ -13,7 +13,7 @@
     <sql:resource/>
 
     <crud:import>/#sylma/crud/all.tpl</crud:import>
-    <crud:import>/#sylma/storage/sql/crud/form.tpl</crud:import>
+    <crud:import>/#sylma/storage/sql/crud/all.tpl</crud:import>
 <!--
     <view:schema>user01.xql</view:schema>
 -->

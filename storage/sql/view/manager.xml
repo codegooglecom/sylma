@@ -8,6 +8,7 @@
     <update>/#sylma/storage/sql/template/update.xml</update>
     <insert>/#sylma/storage/sql/template/insert.xml</insert>
     <hollow>/#sylma/storage/sql/template/hollow.xml</hollow>
+    <delete>/#sylma/storage/sql/template/delete.xml</delete>
   </argument>
   <cls:classes>
     <cls:base>\sylma\storage\sql</cls:base>

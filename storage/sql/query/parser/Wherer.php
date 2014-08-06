@@ -60,8 +60,13 @@ abstract class Wherer extends Basic {
 
   protected function buildDynamicWhere() {
 
-    $aResult[] = $this->getDynamicWhere()->getInsert();
-    $aResult[] = $this->getDynamicWhereCalls();
+    $aResult = array();
+
+    if ($this->getDynamicWhere()) {
+
+      $aResult[] = $this->getDynamicWhere()->getInsert();
+      $aResult[] = $this->getDynamicWhereCalls();
+    }
 
     return $aResult;
   }

@@ -26,6 +26,9 @@
     <name>sylma-user</name>
     <lifetime>28800</lifetime>
   </session>
+  <login>
+    <delay>1</delay>
+  </login>
   <cls:classes>
     <cls:base>\sylma\core\user</cls:base>
     <cls:class alias="user" name="Basic"/>

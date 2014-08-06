@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\query\parser;
-use sylma\core, sylma\parser\languages\common, sylma\schema, sylma\storage\sql;
+use sylma\core, sylma\parser\languages\common, sylma\schema;
 
-class Select extends Ordered implements common\argumentable {
+class Select extends Ordered {
 
   protected $sMethod = '';
   protected $aElements = array();
@@ -298,9 +298,6 @@ class Select extends Ordered implements common\argumentable {
     }
 
     return $result;
-    //$content = $this->getString();
-
-    //return $content->asArgument();
   }
 }
 

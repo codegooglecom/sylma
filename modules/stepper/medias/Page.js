@@ -154,7 +154,7 @@ sylma.stepper.Page = new Class({
   test : function(callback, to, record) {
 
     var location = this.getParent('test').getLocation();
-    var url = this.getUrl();
+    var url = this.getURL();
 
     if (url && url !== location) {
 
@@ -237,7 +237,7 @@ sylma.stepper.Page = new Class({
     this.getParent('test').goPage(this);
 
     var current = location.pathname + location.search;
-    var url = this.getUrl();
+    var url = this.getURL();
 
     var diff = url && current !== url;
 
@@ -320,7 +320,7 @@ sylma.stepper.Page = new Class({
     }
   },
 
-  getUrl : function() {
+  getURL : function() {
 
     var parser = this.parseVariables(this.get('url'));
 
@@ -334,6 +334,13 @@ sylma.stepper.Page = new Class({
     }
 
     return parser.content;
+  },
+
+  goURL : function() {
+
+
+    var location = this.getWindow().location;
+    location.href = this.getURL();
   },
 
   updateName: function() {

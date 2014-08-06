@@ -7,7 +7,9 @@ class _String extends Type {
 
   protected function validateFormat() {
 
-    return is_string($this->getValue());
+    $val = $this->getValue();
+
+    return is_string($val) || is_numeric($val);
   }
 }
 

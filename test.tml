@@ -3,6 +3,7 @@
   xmlns="http://2013.sylma.org/modules/stepper/collection"
 >
   <directory path="core/exception/test/stepper"/>
+  <directory path="modules/uploader/test/stepper"/>
   <directory path="modules/stepper/test/all"/>
   <directory path="modules/users/test/stepper"/>
   <directory path="storage/sql/crud/test/all"/>

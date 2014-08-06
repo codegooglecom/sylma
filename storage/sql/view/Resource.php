@@ -126,6 +126,11 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
   protected function getSchema() {
 
+    if (!$this->schema) {
+
+      $this->launchException('No schema defined');
+    }
+
     return $this->schema;
   }
 

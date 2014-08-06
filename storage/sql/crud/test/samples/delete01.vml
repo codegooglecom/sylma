@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  extends="update01.vml"
+>
+
+  <crud:route>
+
+    <view:view>
+
+      <tpl:template mode="init/delete">
+        <crud:path path="delete"/>
+      </tpl:template>
+
+    </view:view>
+
+  </crud:route>
+
+  <view:view name="delete" mode="delete">
+
+    <tpl:template>
+      <tpl:apply select="id" mode="post"/>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

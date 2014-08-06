@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  xmlns:user="http://www.sylma.org/modules/uploader/test/user"
+  xmlns:file="http://www.sylma.org/modules/uploader/test/file"
+
+  extends="/#sylma/storage/sql/crud.tpl"
+>
+
+  <crud:global user:ns="ns" file:ns="ns">
+
+    <tpl:import>/#sylma/modules/uploader/fieldset.tpl</tpl:import>
+
+    <tpl:constant name="form-cols">* ^ id</tpl:constant>
+
+    <tpl:constant name="uploader-dir">/sylma/modules/uploader/test/medias</tpl:constant>
+
+  </crud:global>
+
+  <crud:group name="form">
+
+    <tpl:import>/#sylma/storage/sql/crud/form.tpl</tpl:import>
+
+    <sql:resource/>
+    <view:schema>default_user.xql</view:schema>
+
+  </crud:group>
+
+  <crud:group name="view">
+
+    <tpl:template mode="form/build">
+      <tpl:apply mode="file/container"/>
+    </tpl:template>
+
+    <tpl:template match="*" mode="file/form/init">
+
+      <tpl:token name="action">
+        <le:path/>
+        <tpl:text>/upload.json</tpl:text>
+      </tpl:token>
+
+    </tpl:template>
+
+    <tpl:template match="user:files" mode="container">
+      <tpl:apply mode="file/fieldset"/>
+    </tpl:template>
+
+  </crud:group>
+
+  <crud:route disabled="x"/>
+
+  <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml">
+
+    <xl:resource/>
+
+    <tpl:template>
+      <tpl:read select="directory()">
+        <tpl:read select="$$uploader-dir" tpl:name="directory"/>
+      </tpl:read>
+      <tpl:apply mode="upload">
+        <tpl:text tpl:name="alias">files</tpl:text>
+      </tpl:apply>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

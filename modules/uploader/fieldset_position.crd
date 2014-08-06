@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  extends="fieldset.crd, /#sylma/crud/move/move.crd"
+>
+
+  <crud:group name="crud">
+
+    <tpl:import>/#sylma/storage/sql/crud/common.tpl</tpl:import>
+    <tpl:import>position.tpl</tpl:import>
+
+    <tpl:template match="*" mode="move/filter">
+      <tpl:apply select="parent" mode="filter/post"/>
+    </tpl:template>
+
+    <tpl:template mode="parent">
+      <tpl:read select="$$parent"/>
+    </tpl:template>
+
+  </crud:group>
+
+  <view:view name="upload">
+
+    <tpl:import>/#sylma/storage/sql/crud/common.tpl</tpl:import>
+    <tpl:import>position.tpl</tpl:import>
+
+    <tpl:template mode="file/validate">
+
+      <tpl:variable name="id">
+        <crud:script path="insert" mode="post">
+          <tpl:apply mode="file/argument" crud:name="parent"/>
+          <tpl:read select="name" crud:name="name"/>
+          <tpl:read select="path" crud:name="path"/>
+          <tpl:read select="size" crud:name="size"/>
+          <tpl:read select="extension" crud:name="extension"/>
+          <le:get-argument name="position" source="post" le:name="position"/>
+        </crud:script>
+      </tpl:variable>
+
+      <crud:script path="view">
+        <tpl:read select="$id" le:name="id"/>
+      </crud:script>
+
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="list">
+
+    <tpl:template mode="file/fieldset">
+
+      <js:option name="move">
+        <crud:path path="move"/>
+      </js:option>
+
+      <tpl:apply mode="file/fieldset"/>
+
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

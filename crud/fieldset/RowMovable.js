@@ -3,6 +3,7 @@ sylma.crud.fieldset.RowMovable = new Class({
 
   Extends : sylma.crud.fieldset.Row,
   mask : null,
+  position : 0,
   offset : 0,
 
   buildMask : function(y) {
@@ -76,7 +77,8 @@ sylma.crud.fieldset.RowMovable = new Class({
       parent : node.getParent(),
       length : objects.length - 1,
       height : node.getSize().y,
-      current : this.getKey()
+      from : this.position,
+      current : this.position
     };
 
     scroll.offset = objects.pick().getNode().getPosition().y + this.offset - scroll.height / 2;
@@ -111,9 +113,9 @@ sylma.crud.fieldset.RowMovable = new Class({
 
     var length = scroll.length;
     var height = scroll.height;
-    var current = scroll.current;
+    var current = scroll.current - 1;
 
-    var children = scroll.parent.getChildren('.field-file');
+    var children = scroll.parent.getChildren('.row');
 
     this.updatePosition(to);
 
@@ -140,7 +142,7 @@ sylma.crud.fieldset.RowMovable = new Class({
       }
     }
 
-    this.scroll.current = key;
+    this.scroll.current = key + 1;
   },
 
   moveMask : function(target, height, dir) {
@@ -170,14 +172,10 @@ sylma.crud.fieldset.RowMovable = new Class({
     this.getNode().setStyle('top', val - this.offset);
   },
 
-  updatePositionInput : function(val) {
-
-    this.getNode('position').set('value', val);
-  },
-
   release: function() {
 
     this.moved = false;
+    this.position = this.scroll.current;
 
     this.getScroller().hide();
     this.getNode('move').removeClass('active');
@@ -196,12 +194,6 @@ sylma.crud.fieldset.RowMovable = new Class({
     });
 
     this.mask.destroy();
-
-    node.getParent().getChildren().each(function(el, key) {
-
-      var obj = el.retrieve('sylma-object');
-      obj.updatePositionInput(key + 1);
-    });
 
     window.removeEvents(this.events);
   }

@@ -25,7 +25,7 @@
     <view:view mode="view" _debug="x">
 
       <le:context name="css">
-        <le:file>/#sylma/modules/html/medias/form.css</le:file>
+        <le:file>/#sylma/modules/html/medias/form.less</le:file>
       </le:context>
 
     </view:view>

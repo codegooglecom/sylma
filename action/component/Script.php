@@ -5,7 +5,7 @@ use sylma\core, sylma\dom, sylma\parser\languages\common;
 
 class Script extends Caller implements common\arrayable {
 
-  public function asArray() {
+  public function build() {
 
     $path = $this->loadPath($this->readx('@path'));
 
@@ -24,14 +24,23 @@ class Script extends Caller implements common\arrayable {
       $sMode = 'get';
     }
 
-    if ($sMode === 'get') $sMode = 'arguments';
+    $args = $post = null;
 
-    $args = $this->createObject('argument', array(array_merge($path->getArguments()->query(), $this->loadArguments())), null, false);
+    if ($sMode === 'get') {
 
-    $result = $parser->call('load', array($fs->call('getFile', array((string) $path->asFile(true))), array(
-      $sMode => $args,
+      $args = $this->createObject('argument', array(array_merge($path->getArguments()->query(), $this->loadArguments())), null, false);
+    }
+    else {
+
+      $args = $this->createObject('argument', array($path->getArguments()->query()), null, false);
+      $post = $this->createObject('argument', array($this->loadArguments()), null, false);
+    }
+
+    $result = $parser->call('load', array($fs->call('getFile', array((string) $path->asFile(true))), array_filter(array(
+      'arguments' => $args,
+      'post' => $post,
       'contexts' => $this->getWindow()->getVariable('contexts'),
-    )));
+    ))));
 
     if ($this->readx('@hollow')) {
 
@@ -39,6 +48,11 @@ class Script extends Caller implements common\arrayable {
     }
 
     return array($result);
+  }
+
+  public function asArray() {
+
+    return $this->build();
   }
 }
 

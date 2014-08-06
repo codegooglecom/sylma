@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
+  xmlns:group="http://2013.sylma.org/view/test/sample2"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+
+  extends="basic1.vml, basic3.vml"
+>
+
+  <crud:global user:ns="ns">
+
+    <tpl:template match="user:email">myemail</tpl:template>
+    <tpl:template match="*" mode="sub">Hello world</tpl:template>
+
+  </crud:global>
+
+</crud:crud>

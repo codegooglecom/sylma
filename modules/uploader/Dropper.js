@@ -1,22 +1,22 @@
 
 sylma.uploader.Dropper = new Class({
 
-  Extends : sylma.crud.fieldset.Template,
-  position : 1,
-
-  initialize : function(props) {
-
-    this.parent(props);
-  },
+  Extends : sylma.ui.Container,
 
   onLoad : function() {
 
-    this.position = this.getParent('fieldset').getCount() + 1;
+    var main = this.getMain();
+
+    main.setDropper(this);
+    main.addEvent('complete', this.sendComplete.bind(this));
+  },
+
+  getMain : function() {
+
+    return this.getParent('uploader-container');
   },
 
   sendFile : function() {
-
-    var form = this.getParent('uploader-container').getObject('uploader');
 
     var input = this.getInput();
     var clone = input.clone(true);
@@ -25,14 +25,12 @@ sylma.uploader.Dropper = new Class({
     this.prepareNodes(clone);
 
     input.grab(clone, 'after');
-    form.getNode().grab(input);
+
+    input.dispose();
 
     this.highlight();
 
-    form.setPosition(this.position);
-    form.set('callback', this.updateFile.bind(this));
-
-    form.getNode().submit();
+    this.getMain().sendFile(input);
   },
 
   getInput : function() {
@@ -40,29 +38,7 @@ sylma.uploader.Dropper = new Class({
     return this.getNode().getElement('input');
   },
 
-  updateFile : function(content) {
-
-    var response = JSON.parse(content);
-
-    sylma.ui.parseMessages(response);
-
-    if (response.content) {
-
-      var content = this.getParent('fieldset').getObject('content');
-
-      sylma.ui.importNode(response.content).inject(content.getNode());
-
-      var props = this.importResponse(response, this);
-
-      content.initObject(props);
-
-      this.position++;
-    }
-    else {
-
-      //sylma.ui.showMessage('No valid response');
-      //throw new Error('No valid response');
-    }
+  sendComplete : function() {
 
     this.getInput().set('value');
     this.downlight();
@@ -71,13 +47,13 @@ sylma.uploader.Dropper = new Class({
   highlight : function() {
 
     this.getInput().set('disabled', true);
-    this.getNode('loading').addClass('sylma-visible');
+    this.getNode().addClass('loading');
   },
 
   downlight : function() {
 
     this.getInput().set('disabled');
-    this.getNode('loading').removeClass('sylma-visible');
+    this.getNode().removeClass('loading');
   }
 
 });

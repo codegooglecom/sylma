@@ -13,7 +13,6 @@
             <cls:base>\sylma\storage\sql\template\insert</cls:base>
             <cls:class alias="table" name="Table">
               <cls:classes>
-                <cls:class alias="cached" name="\sylma\schema\cached\form\Form"/>
                 <cls:class alias="sub" name="\sylma\schema\cached\form\Sub"/>
               </cls:classes>
             </cls:class>

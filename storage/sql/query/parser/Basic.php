@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\reflector, sylma\parser\languages\common, sylma\storage\sql;
 
-abstract class Basic extends reflector\component\Foreigner implements common\instruction {
+abstract class Basic extends reflector\component\Foreigner implements common\instruction, common\argumentable {
 
   protected $sMethod = 'get';
   protected $bMultiple = false;

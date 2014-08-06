@@ -8,19 +8,13 @@
   xmlns:js="http://2013.sylma.org/template/binder"
 >
 
-  <tpl:template match="sql:id" mode="label"/>
-
-  <tpl:template match="sql:id" mode="input">
-    <tpl:register/>
-    <tpl:apply mode="input/hidden"/>
-  </tpl:template>
-
   <tpl:template match="*" mode="reference/js">
     <js:include>/#sylma/ui/Clonable.js</js:include>
     <js:include>/#sylma/crud/Group.js</js:include>
     <js:include>/#sylma/crud/fieldset/Container.js</js:include>
     <js:include>/#sylma/crud/fieldset/Row.js</js:include>
     <js:include>/#sylma/crud/fieldset/RowMovable.js</js:include>
+    <js:include>/#sylma/crud/fieldset/RowForm.js</js:include>
     <js:include>/#sylma/crud/fieldset/Template.js</js:include>
   </tpl:template>
 

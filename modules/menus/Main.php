@@ -5,7 +5,7 @@ use sylma\core, sylma\storage\xml;
 
 class Main extends xml\tree\Argument {
 
-  protected function loadChild(core\argument $content) {
+  protected function loadChild(core\argument $content, $iPosition = null) {
 
     $result = parent::loadChild($content);
     $result->setDummy($this->getDummy());

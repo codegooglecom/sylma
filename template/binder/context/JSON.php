@@ -16,7 +16,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     }
   }
 
-  public function setScript(core\request $path, core\argument $post, $sContext = '') {
+  public function setScript(core\request $path, $sContext = '') {
 
     //$path->parse();
     $bError = null;
@@ -37,7 +37,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
 
     try {
 
-      $result = $this->runScript($path->getFile(), $path->getArguments(), $post, $debug);
+      $result = $this->runScript($path->getFile(), $path->getArguments(), $this->getManager('init')->loadPOST(true), $debug);
     }
     catch (core\exception $e) {
 
@@ -45,7 +45,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
       $e->save(false);
       $bError = true;
 
-      $messages->add('An error happened, the adminstrator has been informed.');
+      $messages->add(array('content' => 'An error has occured'));
     }
 
     if (\Sylma::isAdmin()) {

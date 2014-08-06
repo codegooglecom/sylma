@@ -36,6 +36,23 @@
         $manager->compareNodes($result, $node);
     </tst:expected>
   </tst:test>
+  <tst:test name="Disabled extends">
+    <tst:prepare>
+      $manager->set('result', $manager->load('samples/extends_disabled.vml'));
+    </tst:prepare>
+    <tst:node>
+      <div>
+        <h3>Hello</h3>
+      </div>
+    </tst:node>
+    <tst:expected>
+      $result = $manager->get('result');
+      $node = $manager->getArgument('node');
+
+      return
+        $manager->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
   <tst:test name="View extends">
     <tst:prepare>
       $manager->set('result', $manager->load('samples/extends2.vml'));
@@ -83,6 +100,39 @@
       return
         $manager->compareNodes($view1, $node1) &amp;&amp;
         $manager->compareNodes($view2, $node2)
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Multiple extends">
+    <tst:node name="main">
+      <div class="container">
+        <div>
+          <h3>root</h3>
+          <span>myemail</span>
+        </div>
+      </div>
+    </tst:node>
+    <tst:node name="sub">
+      <h3>Hello world</h3>
+    </tst:node>
+    <tst:expected>
+
+      $nodes = $manager->get('node');
+
+      $view1 = $manager->load('samples/extends_multiple.vml');
+      $view2 = $manager->load('samples/extends_multiple.vml', array(
+        'arguments' => $manager->createArgument(array(
+          'sub',
+        )),
+      ));
+
+      $node1 = $nodes->get('main');
+      $node2 = $nodes->get('sub');
+
+      $manager->compareNodes($view1, $node1);
+      $manager->compareNodes($view2, $node2);
+
+      return true;
+
     </tst:expected>
   </tst:test>
   <tst:test name="Global and local extends">

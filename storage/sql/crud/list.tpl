@@ -12,6 +12,7 @@
 >
 
   <tpl:import>/#sylma/crud/list/root.tpl</tpl:import>
+  <tpl:import>common.tpl</tpl:import>
   <tpl:import>foreign.tpl</tpl:import>
 
   <tpl:template match="sql:foreign" mode="input/foreign/events">

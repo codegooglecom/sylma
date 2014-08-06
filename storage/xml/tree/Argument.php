@@ -11,6 +11,11 @@ class Argument extends _Callable {
   protected $sName;
   protected $bRoot = false;
 
+  /**
+   * Current child array position
+   */
+  protected $iPosition = 0;
+
   public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
@@ -94,6 +99,7 @@ class Argument extends _Callable {
         break;
 
       case 'read' : $aResult[] = $this->reflectRead($aArguments); break;
+      case 'position' : $aResult[] = $this->getWindow()->argToInstance($this->getPosition()); break;
 
       default :
 
@@ -103,22 +109,41 @@ class Argument extends _Callable {
     return $aResult;
   }
 
-  public function reflectApplyAll($sMode, array $aArguments = array()) {
+  protected function getPosition() {
+
+    return $this->iPosition;
+  }
+
+  protected function setPosition($iPosition) {
+
+    $this->iPosition = $iPosition;
+  }
+
+    public function reflectApplyAll($sMode, array $aArguments = array()) {
 
     $aResult = array();
+    $iPosition = 0;
 
     foreach ($this->getOptions() as $child) {
 
-      $aResult[] = $this->loadChild($child)->reflectApply($sMode, $aArguments);
+      $aResult[] = $this->loadChild($child, $iPosition)->reflectApply($sMode, $aArguments);
+      $iPosition++;
     }
 
     return $aResult;
   }
 
-  protected function loadChild(core\argument $content) {
+  protected function loadChild(core\argument $content, $iPosition = null) {
 
     $result = new static($this->getParser());
     $result->setOptions($content);
+
+    if (is_null($iPosition)) {
+
+      $iPosition = $this->getPosition();
+    }
+    
+    $result->setPosition($iPosition);
 
     return $result;
   }
@@ -155,6 +180,11 @@ class Argument extends _Callable {
           $result = $this->reflectApplyDefault($sPath, $aPath, $sMode, true);
         }
       }
+    }
+
+    if (is_null($result)) {
+
+      $result = $this->getWindow()->argToInstance('');
     }
 
     return $result;

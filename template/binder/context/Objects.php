@@ -36,7 +36,7 @@ class Objects extends core\argument\Readable implements core\stringable {
     return end($this->aObjects);
   }
 
-  public function addOption($sName, $val) {
+  public function addOption($sName, $val = null) {
 
     if (!$this->getCurrent()) {
 

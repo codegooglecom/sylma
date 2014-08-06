@@ -35,6 +35,7 @@ sylma.stepper.Selector = new Class({
     this.activated = true;
 
     var mask = this.getMask();
+    this.toggleMask(true);
     //this.show(mask);
     var overlay = this.overlay = new Element('div', {
       id : 'overlay'

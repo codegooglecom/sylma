@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+  <view:view>
+    <tpl:template>
+      <div class="container">
+        <tpl:apply/>
+      </div>
+    </tpl:template>
+  </view:view>
+
+  <view:view name="sub">
+    <xl:resource/>
+    <tpl:template>
+      <h3>
+        <tpl:apply mode="sub"/>
+      </h3>
+    </tpl:template>
+  </view:view>
+</crud:crud>

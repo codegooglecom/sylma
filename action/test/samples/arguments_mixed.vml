@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+  <xl:resource/>
+
+  <view:template>
+    <div>
+      <h3>
+        <le:get-argument/>
+      </h3>
+      <span>
+        <le:get-argument name="content"/>
+        <le:get-argument name="name" source="post"/>
+      </span>
+    </div>
+  </view:template>
+
+</view:view>

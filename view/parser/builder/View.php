@@ -38,6 +38,7 @@ class View extends Variabled {
 
     switch ($sMode) {
 
+      case 'delete' :
       case 'insert' :
       case 'update' :
 
@@ -75,6 +76,7 @@ class View extends Variabled {
 
     switch ($sMode) {
 
+      case 'delete' :
       case 'insert' :
       case 'update' :
 
@@ -91,7 +93,7 @@ class View extends Variabled {
 
       default :
 
-        $this->launchException(sprintf('Unexpected mode : ""%s', $sMode), get_defined_vars());
+        $this->launchException('Unexpected mode : ' . $sMode, get_defined_vars());
     }
 
     $this->prepareFormed($window);
@@ -136,7 +138,7 @@ class View extends Variabled {
     return $this->getMode();
   }
 
-  protected function importView(dom\handler $source, dom\handler $target) {
+  protected function importView(dom\node $source, dom\node $target) {
 
     if ($sPath = $source->readx('@extends', array(), false)) {
 

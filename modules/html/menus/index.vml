@@ -42,9 +42,10 @@
   </tpl:template>
 
   <tpl:template match="menus:menu" mode="content">
-    <tpl:if test="@href = '/sylma/modules/users/crud'">
+    <tpl:argument name="title" default="@title"/>
+    <tpl:if test="$title = 'profil'">
       <tpl:variable name="href">
-        <le:path>/#sylma/modules/users/update</le:path>
+        <tpl:apply mode="profile/path"/>
         <tpl:text>?id=</tpl:text>
         <le:manager name="user"/>
       </tpl:variable>
@@ -56,6 +57,10 @@
       </tpl:else>
     </tpl:if>
 
+  </tpl:template>
+
+  <tpl:template match="menus:menu" mode="profile/path">
+    <le:path>/#sylma/modules/users/update</le:path>
   </tpl:template>
 
   <tpl:template match="menus:menus" mode="shortcuts">

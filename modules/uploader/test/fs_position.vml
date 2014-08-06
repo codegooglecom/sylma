@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+
+  xmlns:user="http://www.sylma.org/modules/uploader/test/user"
+  xmlns:file="http://www.sylma.org/modules/uploader/test/file"
+
+  extends="../fieldset_position.crd"
+>
+
+  <crud:global>
+
+    <tpl:constant name="uploader-dir">/sylma/modules/uploader/test/medias</tpl:constant>
+    <tpl:constant name="parent">parent</tpl:constant>
+
+  </crud:global>
+
+  <crud:group name="crud">
+
+    <view:schema>fs_position_file.xql</view:schema>
+
+  </crud:group>
+
+</crud:crud>

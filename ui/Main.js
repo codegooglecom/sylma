@@ -155,7 +155,7 @@ sylma.classes = {
 
           if (obj.onWindowLoad) obj.onWindowLoad();
           if (obj.onLoad) obj.onLoad();
-          
+
           obj.fireEvent('load');
         }
       }
@@ -289,7 +289,7 @@ sylma.classes = {
     /**
      * @param {bool} [get=FALSE] - Send request in GET, POST by default
      */
-    send : function(path, args, callback, get) {
+    send : function(path, args, callback, get, redirect) {
 
       args = args || {};
       //var self = this;
@@ -299,7 +299,7 @@ sylma.classes = {
         url : path + '.json',
         onSuccess: function(response) {
 
-          sylma.ui.parseMessages(response);
+          sylma.ui.parseMessages(response, null, redirect);
           if (callback) callback(response);
         }
       });

@@ -4,10 +4,11 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:ssd="http://2013.sylma.org/schema/ssd"
-  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
 >
 
   <crud:route groups="list,crud">
@@ -55,13 +56,30 @@
         <le:path/>/update/do.json
       </tpl:template>
 
+      <tpl:template mode="init/delete">
+        <crud:path path="delete"/>
+      </tpl:template>
+
     </view:view>
 
     <view:view name="do" mode="update" groups="do">
-      <sql:filter name="id"><le:get-argument name="id" source="post"/></sql:filter>
+
+      <tpl:template>
+        <tpl:apply select="id" mode="post"/>
+        <tpl:apply/>
+      </tpl:template>
+
     </view:view>
 
   </crud:route>
+
+  <view:view name="delete" mode="delete" groups="crud,form,do">
+
+    <tpl:template>
+      <tpl:apply select="id" mode="post"/>
+    </tpl:template>
+
+  </view:view>
 
   <!--<view:view mode="delete"/>-->
 
@@ -96,14 +114,14 @@
   <crud:group name="form">
 
     <sql:resource/>
-    <crud:import>all.tpl</crud:import>
+    <tpl:import>all.tpl</tpl:import>
 
   </crud:group>
 
   <crud:group name="list">
 
     <sql:resource multiple="multiple"/>
-    <crud:import>list/root.tpl</crud:import>
+    <tpl:import>list/root.tpl</tpl:import>
 
   </crud:group>
 

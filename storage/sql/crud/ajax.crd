@@ -19,7 +19,7 @@
 
       <div class="form hidder" js:class="sylma.ui.Container" js:name="form" js:parent-name="container">
 
-        <tpl:apply mode="ajax/form" required="x"/>
+        <tpl:apply mode="form/ajax" required="x"/>
 
       </div>
 
@@ -29,34 +29,31 @@
 
   <crud:group name="view">
 
+    <tpl:template match="*" mode="parent">
+
+      <tpl:variable name="parent">
+        <le:get-argument name="parent"/>
+      </tpl:variable>
+
+      <input type="hidden" name="{name()}" value="{$parent}"/>
+
+    </tpl:template>
+
     <tpl:template match="sql:table" mode="form/build">
 
       <tpl:apply mode="ajax"/>
 
     </tpl:template>
 
-    <tpl:template match="*" mode="ajax/form">
-
-      <tpl:variable name="action">
-        <tpl:apply mode="init/action"/>
-      </tpl:variable>
-
-      <form class="sylma-form" action="{$action}" js:parent-name="form" method="post" js:class="sylma.crud.Form">
-        <js:option name="ajax">1</js:option>
-        <js:method name="submitSuccess">
-
-          this.getParent('container').hide();
-          this.getParent('tab').getObject('list').update();
-
-        </js:method>
-        <tpl:apply mode="form/content"/>
-
-      </form>
-
-    </tpl:template>
-
     <tpl:template match="*" mode="form/actions/hidden">
       <input type="submit" style="display:none"/>
+    </tpl:template>
+
+    <tpl:template match="sql:table" mode="form/init">
+
+      <js:option name="ajax">1</js:option>
+      <tpl:apply mode="form/init"/>
+
     </tpl:template>
 
   </crud:group>
@@ -65,12 +62,30 @@
 
     <view:view>
 
+      <tpl:template match="*" mode="filters/content">
+
+        <tpl:variable name="parent">
+          <tpl:read select="dummy()/parent"/>
+        </tpl:variable>
+
+        <input type="hidden" name="parent" value="{$parent}"/>
+
+        <tpl:apply mode="filters/content"/>
+
+      </tpl:template>
+
       <tpl:template mode="actions"/>
 
       <tpl:template mode="list/form">
 
         <form class="list" js:name="list" js:class="sylma.crud.list.Table" action="" method="post" js:parent-name="table">
+
+          <js:option name="update">
+            <crud:path path="update"/>
+          </js:option>
+
           <tpl:apply mode="list/container"/>
+
         </form>
 
       </tpl:template>
@@ -78,6 +93,13 @@
     </view:view>
 
     <view:view name="list">
+
+      <tpl:template mode="init-container">
+
+        <tpl:apply mode="list/filter" required="x"/>
+        <tpl:apply mode="init-container"/>
+
+      </tpl:template>
 
       <tpl:template match="*" mode="row/action"/>
 
@@ -91,26 +113,46 @@
       <tpl:template match="*" mode="row">
 
         <tr js:class="sylma.crud.list.Row">
+
           <js:option name="id">
             <tpl:read select="id"/>
           </js:option>
-          <js:option name="url">
-            <tpl:apply mode="row/action/href"/>
-          </js:option>
           <js:method name="show">
-            this.getParent('tab').getObject('form').update({id : this.get('id')}, this.get('url'));
+            this.getParent('tab').getObject('form').update({id : this.get('id')}, this.getParent('table').get('update'));
           </js:method>
           <js:event name="click">
             %object%.onClick(e);
           </js:event>
+
           <td>
             <tpl:apply mode="row/action"/>
           </td>
+
           <tpl:apply use="list-cols" mode="cell"/>
+
         </tr>
       </tpl:template>
 
     </view:view>
+
+  </crud:route>
+
+  <crud:route name="insert">
+
+    <crud:local>
+
+      <tpl:template match="sql:table" mode="form">
+
+        <tpl:apply mode="form"/>
+        <tpl:apply mode="insert/filter" required="x"/>
+
+      </tpl:template>
+
+      <tpl:template match="*" mode="parent">
+        <tpl:apply mode="register"/>
+      </tpl:template>
+
+    </crud:local>
 
   </crud:route>
 
@@ -135,7 +177,7 @@
 
     </tpl:template>
 
-    <tpl:template mode="ajax/form"/>
+    <tpl:template mode="form/ajax"/>
 
   </view:view>
 

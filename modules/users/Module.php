@@ -7,10 +7,17 @@ class Module extends core\module\Domed {
   const NS = 'http://www.sylma.org/modules/users';
   const GROUP_AUTH = 'user';
 
-  public function __construct() {
+  public function __construct(core\argument $args, core\argument $post, core\argument $contexts) {
 
     $this->setDirectory(__file__);
-    //$this->setArguments('module.yml');
+
+    $this->aContext = array(
+      'arguments' => $args,
+      'post' => $post,
+      'contexts' => $contexts,
+    );
+
+    $this->setSettings(include('core/user/settings.xml.php'));
   }
 
   /**
@@ -55,11 +62,11 @@ class Module extends core\module\Domed {
     $sResult = '';
     $aGroups = array();
 
-    $contexts = $this->getActionContexts();
+    $contexts = $this->aContext['contexts'];
 
     $this->loadDefaultArguments();
 
-    $post = $this->createArgument($this->getManager('init')->loadPOST());
+    $post = $this->aContext['post'];
 
     $doc = $this->getScript('login/default/check', array(), $contexts->query() , $post->query());
 
@@ -76,9 +83,11 @@ class Module extends core\module\Domed {
 
     $msg = $contexts->get('messages');
 
+    sleep($this->read('login/delay'));
+
     if (!$sResult) {
 
-      $msg->add(array('content' => $this->translate('Authentication failed')));
+      $msg->add(array('content' => $this->translate('Authentication failed'), 'arguments' => array('error' => true)));
     }
     else {
 

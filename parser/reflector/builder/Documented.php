@@ -122,7 +122,7 @@ class Documented extends Logger implements reflector\documented {
 
   protected function getClass(dom\handler $doc) {
 
-    if (!$sResult = $doc->getRoot()->readAttribute('build:class', null, false)) {
+    if (!$sResult = $doc->getRoot()->readx('@build:class', array(self::BUILD_PREFIX => self::BUILD_NS), false)) {
 
       $sResult = $this->readArgument('cache/class');
     }
@@ -348,7 +348,7 @@ class Documented extends Logger implements reflector\documented {
     $sInstance = $this->getClass($this->getDocument());
     $result = $this->create('window', array($this, $this->getArgument(static::WINDOW_ARGS), $sInstance));
 
-    if ($sOutput = $this->getDocument()->getRoot()->readx('@build:output', array(self::BUILD_PREFIX => self::BUILD_NS), false)) {
+    if ($sOutput = $this->getDocument()->getRoot()->readx('@build:output', $this->getNS(), false)) {
 
       if ($sOutput !== 'dom') $result->setMode(2);
     }

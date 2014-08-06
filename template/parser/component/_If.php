@@ -42,14 +42,21 @@ class _If extends Unknowned implements common\arrayable, template_ns\parser\comp
 
     $this->setReflector($this->getWindow()->createCondition());
 
-    $test = $this->getTemplate()->getPather()->parseExpression($this->readx('@test'));
+    $test = $this->getTemplate()->getPather()->parseExpression($this->readx('@test'), true);
     $aChildren = $this->parseChildren($this->getNode()->getChildren());
 
     if ($this->getWindow()->isStatic($test)) {
 
       if ($sTest = implode('', $this->prepareEval($test))) {
 
-        eval("\$bResult = $sTest;");
+        try {
+
+          eval("\$bResult = $sTest;");
+
+        } catch (core\exception $e) {
+
+          $bResult = false;
+        }
       }
       else {
 

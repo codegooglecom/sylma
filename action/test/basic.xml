@@ -265,6 +265,28 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Call script with mixed arguments">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <le:script path="samples/arguments_mixed/2?content=hello" mode="post">
+              <tpl:read select="'webmaster'" le:name="name"/>
+            </le:script>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <div>
+          <h3>2</h3>
+          <span>hellowebmaster</span>
+        </div>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Call script hollow">
     <tst:document>
       <view:view sql:ns="ns">

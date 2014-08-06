@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  extends="standalone.crd"
+>
+
+  <crud:global>
+
+    <tpl:import>/#sylma/modules/uploader/form.tpl</tpl:import>
+    <tpl:import>/#sylma/modules/uploader/fieldset.tpl</tpl:import>
+
+    <tpl:template match="*" mode="file/update">
+
+      <tpl:apply mode="file/filter"/>
+
+      <tpl:variable name="extension">
+        <tpl:apply mode="file/extension"/>
+      </tpl:variable>
+
+      <div js:class="sylma.crud.fieldset.RowAjax" class="file row hidder visible form-reference file-{$extension}">
+
+        <js:option name="id">
+          <tpl:read select="id"/>
+        </js:option>
+
+        <tpl:apply mode="file/init"/>
+        <tpl:apply mode="file/view"/>
+        <tpl:apply mode="file/actions"/>
+      </div>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="file/ref">
+
+      <div js:class="sylma.crud.Group" js:name="content">
+        <tpl:apply select="*" mode="file/update"/>
+      </div>
+
+    </tpl:template>
+
+  </crud:global>
+
+  <crud:group name="form">
+
+    <tpl:import>/#sylma/crud/form.tpl</tpl:import>
+    <tpl:import>/#sylma/storage/sql/crud/reference.tpl</tpl:import>
+
+    <tpl:template match="*" mode="file/filter">
+      <sql:filter name="parent">
+        <tpl:apply mode="file/argument"/>
+      </sql:filter>
+    </tpl:template>
+
+  </crud:group>
+
+  <crud:group name="crud">
+    <tpl:import>/#sylma/storage/sql/crud/common.tpl</tpl:import>
+  </crud:group>
+
+  <view:view groups="form,crud">
+
+    <sql:resource/>
+
+    <tpl:template>
+
+      <tpl:apply mode="file/filter"/>
+      <tpl:apply mode="file/resources"/>
+      <tpl:apply mode="file/container"/>
+
+    </tpl:template>
+
+    <tpl:template mode="file/container">
+
+      <div js:class="sylma.uploader.Main" js:parent-name="uploader-container">
+        <tpl:apply mode="file/form"/>
+      </div>
+
+    </tpl:template>
+
+    <tpl:template mode="file/container">
+
+      <div js:class="sylma.uploader.MainFieldset" js:parent-name="uploader-container">
+        <crud:script path="list">
+          <le:get-argument name="parent" le:name="parent"/>
+        </crud:script>
+        <tpl:apply mode="file/form"/>
+      </div>
+
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="view" groups="crud">
+
+    <sql:resource/>
+
+    <tpl:template>
+      <tpl:apply select="id" mode="filter/argument"/>
+      <tpl:apply mode="file/update"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="insert" groups="form,crud" mode="insert">
+
+    <sql:resource/>
+
+    <tpl:template>
+      <tpl:apply select="* ^ id" mode="register"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="delete" groups="form,crud" mode="delete">
+
+    <sql:resource/>
+
+    <tpl:template>
+      <tpl:apply select="id" mode="filter/post"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml">
+
+    <xl:resource/>
+
+    <tpl:template mode="file/validate">
+
+      <crud:script path="insert" mode="post">
+        <tpl:apply mode="file/argument" crud:name="parent"/>
+        <tpl:read select="name" crud:name="name"/>
+        <tpl:read select="path" crud:name="path"/>
+        <tpl:read select="size" crud:name="size"/>
+        <tpl:read select="extension" crud:name="extension"/>
+      </crud:script>
+
+    </tpl:template>
+
+    <tpl:template mode="file/validate">
+
+      <tpl:variable name="id">
+        <tpl:apply mode="file/validate"/>
+      </tpl:variable>
+
+      <crud:script path="view">
+        <tpl:read select="$id" crud:name="id"/>
+      </crud:script>
+
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="list" groups="form,crud" builder:return="result">
+
+    <sql:resource multiple="x"/>
+
+    <tpl:import>/#sylma/storage/sql/crud/table.tpl</tpl:import>
+
+    <tpl:template>
+      <tpl:apply mode="file"/>
+    </tpl:template>
+
+    <tpl:template mode="file/content">
+
+      <div js:class="sylma.crud.fieldset.Container" js:parent-name="fieldset" class="fieldset">
+
+        <js:include>/#sylma/crud/fieldset/RowAjax.js</js:include>
+
+        <js:option name="delete">
+          <crud:path path="delete"/>
+        </js:option>
+
+        <js:option name="parent">
+          <le:get-argument name="parent"/>
+        </js:option>
+
+        <tpl:apply mode="file/fieldset"/>
+
+      </div>
+
+    </tpl:template>
+
+    <tpl:template mode="file/fieldset">
+
+      <tpl:apply mode="file/dropper">
+        <tpl:read select="'files'" tpl:name="alias"/>
+      </tpl:apply>
+
+      <tpl:apply mode="file/ref"/>
+      <tpl:apply mode="move/scroller"/>
+
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

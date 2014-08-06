@@ -5,9 +5,6 @@ use sylma\core, sylma\dom, sylma\storage\sql, sylma\parser\languages\common;
 
 class Table extends sql\template\component\Table implements common\argumentable {
 
-  protected $dummy;
-  protected $parentDummy;
-
   protected $sMode = 'insert';
   protected $bInsertQuery = false;
   protected $bElements = false;
@@ -93,40 +90,10 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $this->getSource()->call($sMethod, array($sName, false), $sFormat);
   }
 
-  protected function buildQuery() {
-
-    $result = parent::buildQuery();
-
-    if ($this->getDummy(false)) {
-
-      $result->setDummy($this->getDummy());
-    }
-
-    return $result;
-  }
-
   protected function loadDummy($key = null, $parent = null) {
 
+    $aArguments = $this->loadDummyArguments();
     $window = $this->getWindow();
-    $view = $this->getParser()->getView();
-
-    if (!$view->isInternal()) {
-
-      $sToken = (string) $view->getRoot()->asPath();
-      $token = $this->createObject('token', array($sToken), null, false);
-    }
-    else {
-
-      $token = null;
-    }
-
-    $aArguments = array(
-      $window->getVariable('arguments'),
-      $window->getVariable('post'),
-      $window->getVariable('contexts'),
-      $this->getMode(),
-      $token,
-    );
 
     if ($this->isSub()) {
 
@@ -236,34 +203,6 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $this->getKey();
   }
 
-  /**
-   * @usedby Foreign::buildMultiple()
-   * @usedby Reference::reflectFunctionRef()
-   * @return common\_var|null
-   */
-  public function getDummy($bDebug = true) {
-
-    if (!$this->dummy) {
-
-      $this->loadDummy($this->getKey(), $this->parentDummy);
-
-      if (!$this->dummy && $bDebug) {
-
-        $this->launchException('No dummy defined');
-      }
-    }
-
-    return $this->dummy;
-  }
-
-  /**
-   * @usedby Reference::reflectFunctionRef()
-   */
-  public function setDummy(common\_var $handler) {
-
-    $this->dummy = $handler;
-  }
-
   public function addTrigger(array $aContent) {
 
     $this->aTriggers[] = $aContent;
@@ -276,19 +215,25 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   protected function loadQuery() {
 
+    if ($dummy = $this->getDummy(false)) {
+
+      $this->getQuery()->setDummy($dummy);
+    }
+
     $view = $this->getParser()->getView();
-    $call = $this->getQuery()->getCall();
+
+    $aResult[] = $this->getQuery();
 
     if ($this->isSub()) {
 
-      $result = $call->getInsert();
+      //$result = $this->getQuery();
     }
     else {
 
-      $result = $view->addToResult(array($call), false, true);
+      $aResult[] = $view->addToResult(array($this->getQuery()->getVar()), false, true);
     }
 
-    return $result;
+    return $aResult;
   }
 
   protected function loadTriggers() {

@@ -1,0 +1,42 @@
+@import "../html/vars.less";
+
+.scroller
+{
+  position: absolute;
+  z-index: 70;
+
+  div
+  {
+    left: 0;
+    background-color: #1C94C4;
+    border: 1px solid #005568;
+    position: fixed;
+    height: 7%;
+    width: 100%;
+  }
+
+  .top
+  {
+    top: 0;
+  }
+
+  .bottom
+  {
+    bottom: 0;
+  }
+}
+
+.scroller.visible
+{
+  opacity: 0.25;
+}
+
+.row
+{
+  &.moved
+  {
+    position: absolute;
+    transition: none;
+    z-index: 5;
+  }
+}

@@ -206,6 +206,7 @@ sylma.stepper.Test = new Class({
     this.toggleSelect(true, function() {
 
       var pages = this.getPages();
+      this.getMain().toggleWindow(true);
 
       pages[0].goTest(function() {
 

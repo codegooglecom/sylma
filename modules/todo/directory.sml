@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <directory xmlns="http://www.sylma.org/storage/fs/security">
-  <file name="index.vml">
+  <propagate>
     <security>
       <owner>root</owner>
-      <group>admin</group>
+      <group>webmaster</group>
       <mode>710</mode>
     </security>
-  </file>
+  </propagate>
 </directory>

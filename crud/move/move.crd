@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+
+  <crud:group name="crud"/>
+  <crud:group name="form"/>
+
+  <view:view name="move" groups="crud" builder:return="result">
+
+    <sql:resource/>
+
+    <tpl:import>/#sylma/storage/sql/crud/common.tpl</tpl:import>
+
+    <tpl:template>
+
+      <tpl:apply select="id" mode="filter/post"/>
+
+      <crud:script path="move_one" mode="post">
+        <tpl:read select="id" crud:name="id"/>
+        <tpl:read select="position" crud:name="from"/>
+        <le:get-argument name="position" source="post" le:name="position"/>
+        <tpl:read use="parent" le:name="parent"/>
+      </crud:script>
+
+    </tpl:template>
+
+  </view:view>
+
+  <crud:route name="move_one">
+
+    <crud:local>
+
+      <sql:resource/>
+
+    </crud:local>
+
+    <view:view mode="update" groups="crud, form">
+
+      <tpl:template>
+
+        <tpl:apply select="id" mode="filter/post"/>
+        <tpl:apply select="position" mode="register"/>
+
+        <crud:script path="move_one/other">
+          <le:get-argument name="from" le:name="from" source="post"/>
+          <le:get-argument name="position" le:name="to" source="post"/>
+          <le:get-argument name="parent" le:name="parent" source="post"/>
+        </crud:script>
+
+      </tpl:template>
+
+    </view:view>
+
+    <view:view name="other" builder:return="result">
+
+      <xl:resource/>
+
+      <tpl:template>
+
+        <tpl:variable name="from">
+          <le:get-argument name="from"/>
+        </tpl:variable>
+
+        <tpl:variable name="to">
+          <le:get-argument name="to"/>
+        </tpl:variable>
+
+        <tpl:variable name="asc">
+          <tpl:read select="($from &lt; $to)"/>
+        </tpl:variable>
+
+        <tpl:variable name="min">
+          <tpl:read select="($asc ? $from : $to)"/>
+        </tpl:variable>
+
+        <tpl:variable name="max">
+          <tpl:read select="($asc ? $to : $from)"/>
+        </tpl:variable>
+
+        <crud:script path="move_multiple" mode="post">
+          <le:get-argument name="parent" le:name="parent"/>
+          <tpl:read select="$min" le:name="min"/>
+          <tpl:read select="$max" le:name="max"/>
+          <tpl:read select="($asc ? '-' : '+')" le:name="op"/>
+        </crud:script>
+
+      </tpl:template>
+
+    </view:view>
+
+  </crud:route>
+
+  <view:view name="move_multiple" mode="update" groups="crud">
+
+    <sql:resource/>
+
+    <tpl:template>
+
+      <sql:filter name="position" op="&gt;=">
+        <le:get-argument name="min" source="post"/>
+      </sql:filter>
+      <sql:filter name="position" op="&lt;=" optional="x">
+        <le:get-argument name="max" optional="x" source="post"/>
+      </sql:filter>
+
+      <tpl:apply mode="move/filter" required="x"/>
+
+      <tpl:apply select="position"/>
+
+    </tpl:template>
+
+    <tpl:template match="*">
+
+      <le:argument name="op" source="post" optional="x">
+        <le:default>-</le:default>
+      </le:argument>
+
+      <tpl:variable name="op">
+        <le:get-argument name="op" source="post"/>
+      </tpl:variable>
+
+      <tpl:register reflector="\sylma\schema\cached\form\Expression">
+        <le:string>
+          <sql:element/>
+          <tpl:read select="'{$op} 1'"/>
+        </le:string>
+      </tpl:register>
+
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="delete">
+
+    <tpl:template>
+      <tpl:apply/>
+      <crud:include path="delete_move"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="delete_move" groups="crud" builder:return="result">
+
+    <sql:resource/>
+
+    <tpl:template>
+      <tpl:apply select="id" mode="filter/post"/>
+      <crud:script path="move_multiple" mode="post">
+        <tpl:read use="parent" crud:name="parent"/>
+        <tpl:read select="position" crud:name="min"/>
+      </crud:script>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

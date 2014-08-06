@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+  <view:view>
+    <xl:resource/>
+    <tpl:template>
+      <div>
+      <crud:script path="sub">
+        <tpl:read select="'world'" crud:name="hello"/>
+      </crud:script>
+      </div>
+    </tpl:template>
+  </view:view>
+  <view:view name="sub">
+    <xl:resource/>
+    <tpl:template>
+      <span>
+        hello <le:get-argument name="hello"/>
+      </span>
+    </tpl:template>
+  </view:view>
+</crud:crud>

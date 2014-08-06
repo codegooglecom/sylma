@@ -1,16 +1,16 @@
 <?php
 
 namespace sylma\template\parser;
-use sylma\core;
+use sylma\core, sylma\template as template_ns;
 
 class Pather extends component\Child {
 
   const ALL_TOKEN = '*';
 
   protected $source;
-  protected $aOperators = array('<', '>', '=', '<=', '>=', '!=', 'and', 'or', '+', '*', '/', 'in');
+  protected $aOperators = array('<', '>', '=', '<=', '>=', '!=', 'and', 'or', '+', '*', '/', 'in', '?', ':');
 
-  public function setSource($source) {
+  public function setSource(template_ns\parser\tree $source) {
 
     if (!is_object($source)) {
 
@@ -20,6 +20,10 @@ class Pather extends component\Child {
     $this->source = $source;
   }
 
+  /**
+   *
+   * @return template_ns\parser\tree
+   */
   protected function getSource() {
 
     if (!$this->source) {
@@ -35,7 +39,7 @@ class Pather extends component\Child {
     return $this->aOperators;
   }
 
-  public function parseExpression($sPath) {
+  public function parseExpression($sPath, $bStatic = false) {
 
     $aResult = array();
 
@@ -49,73 +53,114 @@ class Pather extends component\Child {
 
       if ($bOp) {
 
-        if (!in_array($sToken, $this->getOperators())) {
+        $result = $this->parseExpressionOp($sToken, $bIN);
 
-          $this->launchException("Unknown operator : {$sToken}");
-        }
+        if (!is_null($result) && !$bIN) {
 
-        if ($sToken == 'in') {
-
-          $bIN = true;
-        }
-        else {
-
-          if ($sToken == '=') $sToken = '==';
-          $aResult[] = $window->createOperator($sToken);
+          $aResult[] = $result;
         }
 
         $bOp = false;
       }
       else {
 
-        $bNot = false;
-
-        if ($sToken{0} == '!') {
-
-          $bNot = true;
-          $sToken = (trim(substr($sToken, 1)));
-        }
-
-        if ($sValue = $this->matchString($sToken) or !is_null($sValue)) {
-
-          //$result = $window->createString($sValue);
-          $result = $this->getTemplate()->parseValue($sValue);
-        }
-        else if ($sValue = $this->matchNumeric($sToken) or !is_null($sValue)) {
-
-          //$result = $window->createNumeric($sToken);
-          $result = $sValue;
-        }
-        else if ($sToken) {
-
-          $result = $this->applyPath($sToken, '');
-        }
-        else {
-
-          $result = null;
-        }
-
-        if ($bNot) $result = $window->createNot($result);
+        $result = $this->parseExpressionValue($sToken, $bStatic);
 
         if ($bIN) {
 
-          $window = $this->getWindow();
           $needle = $window->extractValue(array_pop($aResult));
           $haystack = $window->extractValue($result);
           $aResult[] = $window->callFunction('in_array', 'php-boolean', array($needle, $haystack));
-
-          $bIN = false;
         }
         else {
 
           $aResult[] = $result;
         }
 
+        $bIN = false;
         $bOp = true;
       }
     }
 
     return $window->flattenArray($aResult);
+  }
+
+  protected function parseExpressionOp($sToken, &$bIN) {
+
+    if (!in_array($sToken, $this->getOperators())) {
+
+      $this->launchException("Unknown operator : {$sToken}");
+    }
+
+    $result = null;
+    $window = $this->getWindow();
+
+    if ($sToken == 'in') {
+
+      $bIN = true;
+    }
+    else {
+
+      if ($sToken == '=') {
+
+        $sToken = '==';
+      }
+
+      $result = $window->createOperator($sToken);
+    }
+
+    return $result;
+  }
+
+  protected function parseExpressionValue($sToken, $bStatic) {
+
+    $bNot = false;
+
+    $window = $this->getWindow();
+
+    if ($sToken{0} == '!') {
+
+      $bNot = true;
+      $sToken = (trim(substr($sToken, 1)));
+    }
+
+    if ($sValue = $this->matchString($sToken) or !is_null($sValue)) {
+
+      if ($bStatic) {
+
+        $result = $this->getTemplate()->parseValue($sValue);
+      }
+      else {
+
+        $result = $window->createString($sValue);
+      }
+    }
+    else if ($sValue = $this->matchNumeric($sToken) or !is_null($sValue)) {
+
+      if ($bStatic) {
+
+        $result = $sValue;
+      }
+      else {
+
+        $result = $window->createNumeric($sToken);
+      }
+    }
+    else if ($sToken) {
+
+      $result = $this->applyPath($sToken, '');
+    }
+    else {
+
+      $result = null;
+    }
+
+    if ($bNot) {
+
+      $result = $window->createNot($result);
+    }
+
+    return $result;
   }
 
   protected function matchExpression($sValue) {
@@ -179,8 +224,34 @@ class Pather extends component\Child {
     }
     else {
 
-      $aPaths = explode(',', $sPath);
-      $aResult = array_map('trim', $aPaths);
+      $aResult = array();
+      $sLast = '';
+      $bSub = 0;
+
+      foreach (str_split($sPath) as $sChar) {
+
+        if ($sChar === ',' && !$bSub) {
+
+          $aResult[] = $sLast;
+          $sLast = '';
+        }
+        else {
+
+          if ($sChar === '(') {
+
+            $bSub++;
+          }
+          else if ($sChar === ')') {
+
+            $bSub--;
+          }
+
+          $sLast .= $sChar;
+        }
+      }
+
+      $aResult[] = $sLast;
+      $aResult = array_map('trim', $aResult);
     }
 
     return $aResult;
@@ -293,7 +364,7 @@ class Pather extends component\Child {
 
     if ($sArguments) {
 
-      foreach (explode(',', $sArguments) as $sArgument) {
+      foreach (array_map('trim', explode(',', $sArguments)) as $sArgument) {
 
         if (strpos($sArgument, '=') !== false) {
 

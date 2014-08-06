@@ -128,5 +128,4 @@ sylma.stepper.Directory = new Class({
       dir : this.getPath()
     }, callback);
   }
-
 });

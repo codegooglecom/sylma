@@ -5,6 +5,7 @@ sylma.ui.tab.Tab = new Class({
 
   width : 0,
   position : 0,
+  obsolete : false,
 
   initialize : function(options) {
 
@@ -31,21 +32,39 @@ sylma.ui.tab.Tab = new Class({
     this.prepareNode();
   },
 
-  needUpdate : function() {
+  needUpdate : function(val) {
 
-    return this.get('path') && !this.getNode().getChildren().length;
+    if (val !== undefined) {
+
+      this.obsolete = val;
+    }
+
+    return this.obsolete || (this.get('path') && !this.getNode().getChildren().length);
   },
 
   show : function(callback) {
 
+    this.getNode().addClass('active');
+
     if (this.needUpdate()) {
 
+      this.obsolete = false;
       this.update(this.get('arguments'), this.get('path'), undefined, callback);
     }
     else {
 
       callback && callback();
     }
+  },
+
+  go : function(callback) {
+
+    this.getParent('tabs').go(this.getKey(), callback);
+  },
+
+  hide : function() {
+
+    this.getNode().removeClass('active');
   },
 
   getCaller : function() {

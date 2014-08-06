@@ -17,6 +17,8 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
   protected $aPaths = array();
   protected $aGroups = array();
 
+  protected $aDisabled = array();
+
   public function parseRoot(dom\element $el, fs\directory $base = null) {
 
     $el = $this->setNode($el, true);
@@ -62,40 +64,55 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
   protected function loadExtends() {
 
-    if ($sPath = $this->readx('@extends')) {
+    if ($sPaths = $this->readx('@extends')) {
 
-      $file = $this->getSourceFile($sPath);
+      foreach (array_reverse(array_map('trim', explode(',', $sPaths))) as $sPath) {
 
-      $reflector = clone $this;
-      $reflector->parseRoot($this->getRoot()->importDocument($file->getDocument(), $file)->getRoot(), $file->getParent());
+        $file = $this->getSourceFile($sPath);
 
-      foreach ($reflector->getPaths() as $path) {
+        $reflector = clone $this;
+        $reflector->parseRoot($this->getRoot()->importDocument($file->getDocument(), $file)->getRoot(), $file->getParent());
 
-        if ($parent = $this->getPath($path->getName())) {
-
-          $parent->merge($path);
-        }
-        else {
-
-          $this->addPath($path);
-        }
-      }
-
-      if ($this->getGlobal()) $this->getGlobal()->merge($reflector->getGlobal());
-      else if ($reflector->getGlobal()) $this->setGlobal($reflector->getGlobal());
-
-      foreach ($reflector->getGroups() as $group) {
-
-        if ($parent = $this->getGroup($group->getName(), false)) {
-
-          $parent->merge($group);
-        }
-        else {
-
-          $this->addGroup($group);
-        }
+        $this->extendSub($reflector);
       }
     }
+  }
+
+  protected function extendSub(self $reflector) {
+
+    foreach ($reflector->getPaths() as $path) {
+
+      if ($parent = $this->getPath($path->getName())) {
+
+        $parent->merge($path);
+      }
+      else {
+
+        $this->addPath($path);
+      }
+    }
+
+    if ($this->getGlobal()) {
+
+      $this->getGlobal()->merge($reflector->getGlobal());
+    }
+    else if ($reflector->getGlobal()) {
+
+      $this->setGlobal($reflector->getGlobal());
+    }
+
+    foreach ($reflector->getGroups() as $group) {
+
+      if ($parent = $this->getGroup($group->getName(), false)) {
+
+        $parent->merge($group);
+      }
+      else {
+
+        $this->addGroup($group);
+      }
+    }
+
   }
 
   protected function setGlobal(crud\Share $global) {
@@ -113,7 +130,16 @@ class Crud extends reflector\handler\Elemented implements reflector\elemented {
 
     $result = null;
 
-    if (!$el->readx('@disabled', array(), false)) {
+    if (!$sName = $el->readx('@name', array(), false)) {
+
+      $sName = 'default';
+    }
+
+    if ($el->readx('@disabled', array(), false)) {
+
+      $this->aDisabled[$sName] = true;
+    }
+    else if (!array_key_exists($sName, $this->aDisabled)) {
 
       $result = $this->parseComponent($el);
       $this->addPath($result);

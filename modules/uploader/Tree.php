@@ -10,6 +10,8 @@ class Tree extends xml\tree\Argument {
   const NS = 'http://2013.sylma.org/modules/uploader';
   const NAME = 'root';
 
+  protected $aExtensions = array();
+
   public function parseRoot(dom\element $el = null) {
 
     $this->setDirectory(__FILE__);
@@ -31,12 +33,16 @@ class Tree extends xml\tree\Argument {
     $this->setReflector($reflector);
 
     $this->getWindow()->add($reflector->getInsert());
-    $this->getWindow()->add($reflector->call('setExtensions', array($this->getExtensions())));
+  }
+
+  protected function setExtensions(array $aValues) {
+
+    $this->aExtensions = $aValues;
   }
 
   protected function getExtensions() {
 
-    return $this->getArgument('extensions')->query();
+    return $this->aExtensions;//$this->getArgument('extensions')->query();
   }
 
   protected function setReflector(common\_var $var) {
@@ -44,9 +50,9 @@ class Tree extends xml\tree\Argument {
     $this->reflector = $var;
   }
 
-  protected function getReflector() {
+  protected function getReflector($bDebug = true) {
 
-    if (!$this->reflector) {
+    if (!$this->reflector && $bDebug) {
 
       $this->launchException('No reflector defined');
     }
@@ -58,23 +64,59 @@ class Tree extends xml\tree\Argument {
 
     switch ($sName) {
 
-      case 'validate' :
-
-        $aFunctionArguments = $this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
-        $result = $this->getReflector()->call('validate', $aFunctionArguments);
-
-        break;
-      case 'max-size' : $result = ini_get('upload_max_filesize'); break;
-      case 'extensions' : $result = implode(', ', $this->getExtensions()); break;
+      case 'init' : $result = $this->reflectFunctionInit($this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false)); break;
+      case 'validate' : $result = $this->reflectFunctionValidate($this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false)); break;
+      case 'max-size' : $result = ini_get('upload_max_filesize') . 'B'; break;
+      //case 'extensions' : $result = implode(', ', $this->getExtensions()); break;
+      case 'extensions' : $result = $this->reflectFunctionExtensions($aPath, $sMode, $aArguments); break;
       case 'directory' : $result = $this->reflectDirectory($aArguments); break;
       case 'position' : $result = ''; break;
 
       default :
 
-        $this->launchException("Unknown function : $sName");
+        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $result;
+  }
+
+  protected function reflectSetExtensions() {
+
+    return $this->getReflector()->call('setExtensions', array($this->getExtensions()));
+  }
+
+  protected function reflectFunctionInit(array $aArguments) {
+
+    $this->setExtensions($aArguments);
+
+    return $this->getReflector(false) ? $this->reflectSetExtensions() : null;
+  }
+
+  protected function reflectFunctionValidate(array $aArguments) {
+
+    return $this->getReflector()->call('validate', $aArguments);
+  }
+
+  protected function reflectFunctionExtensions(array $aPath, $sMode, array $aArguments) {
+
+    $this->loadDefaultSettings();
+
+    if (!$aExtensions = $this->getExtensions()) {
+
+      $this->launchException('No extensions defined');
+    }
+
+    $root = $this->createArgument(array('#extension' => $aExtensions))->asDOM();
+    $parser = $this->getParser();
+    $aResult = array();
+
+    foreach ($root->getChildren() as $ext) {
+
+      $ext = $this->loadChild($this->createOptions($this->createDocument($ext)));
+      $aResult[] = $parser->applyPathTo($ext, $aPath, $sMode, $aArguments);
+    }
+
+    return $aResult;
   }
 
   protected function reflectDirectory(array $aArguments) {

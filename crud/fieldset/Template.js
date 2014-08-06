@@ -1,7 +1,7 @@
 
 sylma.crud.fieldset.Template = new Class({
 
-  Extends : sylma.crud.fieldset.RowMovable,
+  Extends : sylma.crud.fieldset.RowForm,
 
   initialize : function(props) {
 

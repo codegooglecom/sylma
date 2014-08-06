@@ -5,13 +5,13 @@
   xmlns:crud="http://2013.sylma.org/view/crud"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:stp="http://2013.sylma.org/schema/template"
   xmlns:ls="http://2013.sylma.org/parser/security"
-  xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:le="http://2013.sylma.org/action"
 
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  xmlns:user="http://2013.sylma.org/view/test/sample1"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -41,6 +41,35 @@
       <div>
         <h3>root</h3>
         <span>root@sylma.org</span>
+      </div>
+    </tst:node>
+    <tst:expected>
+      $result = $manager->loadScript();
+      $node = $manager->getArgument('node');
+
+      return
+        $manager->compareNodes($result, $node);
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Disabled view">
+    <tst:document>
+      <crud:crud>
+        <view:view mode="view">
+          <xl:resource/>
+          <tpl:template>
+            <div>
+              <h3>Hello</h3>
+            </div>
+          </tpl:template>
+        </view:view>
+        <view:view name="badview" disabled="x">
+          <view:unexisting/>
+        </view:view>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>Hello</h3>
       </div>
     </tst:node>
     <tst:expected>
@@ -105,7 +134,7 @@
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
           <tpl:template>
             <form>
-              <stp:apply select="name, email"/>
+              <tpl:apply select="name, email"/>
             </form>
           </tpl:template>
         </crud:global>
@@ -168,7 +197,7 @@
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
           <tpl:template>
             <form>
-              <stp:apply select="name, email"/>
+              <tpl:apply select="name, email"/>
             </form>
           </tpl:template>
         </crud:global>
@@ -237,7 +266,7 @@
           <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
           <tpl:template>
             <form>
-              <stp:apply select="name, email"/>
+              <tpl:apply select="name, email"/>
             </form>
           </tpl:template>
         </crud:global>
@@ -362,6 +391,50 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Path view">
+    <tst:document>
+      <crud:crud>
+        <crud:global>
+          <xl:resource/>
+        </crud:global>
+        <crud:route mode="view">
+          <view:view>
+            <tpl:template>
+              <div>
+                <h2>
+                  <crud:path path="/sub"/>
+                </h2>
+                <h3>
+                  <crud:path path="sub"/>
+                </h3>
+              </div>
+            </tpl:template>
+          </view:view>
+          <view:view mode="view" name="sub">
+            <tpl:template/>
+          </view:view>
+        </crud:route>
+        <view:view mode="view" name="sub">
+          <tpl:template/>
+        </view:view>
+      </crud:crud>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h2>/sylma/view/parser/crud/test/grouped/basicxml-path-view/default/sub</h2>
+        <h3>/sylma/view/parser/crud/test/grouped/basicxml-path-view/sub</h3>
+      </div>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+      $view = $manager->loadScript();
+
+      return
+        $manager->compareNodes($view, $node)
+
+    </tst:expected>
+  </tst:test>
   <tst:test name="Include default">
     <tst:document>
       <crud:crud>
@@ -387,6 +460,26 @@
 
       $node = $manager->getArgument('node');
       $view = $manager->loadScript();
+
+      return
+        $manager->compareNodes($view, $node)
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Script">
+    <tst:node>
+<div>
+  <span>
+ hello world
+ </span>
+</div>
+    </tst:node>
+    <tst:expected>
+
+      // Do not works as a document node, cause of path error
+
+      $node = $manager->getArgument('node');
+      $view = $manager->load('samples/script01.vml');
 
       return
         $manager->compareNodes($view, $node)

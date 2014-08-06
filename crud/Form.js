@@ -24,6 +24,11 @@ sylma.crud.Form = new Class({
     this.getNode().grab(this.mask, 'top'); //, 'before'
   },
 
+  getID : function() {
+
+    return this.getObject('id').getValue();
+  },
+
   showMask : function() {
 
     //var size = this.getNode().getSize();
@@ -208,30 +213,38 @@ sylma.crud.Form = new Class({
   submitParse : function(response, args) {
 
     this.parseMessages(response);
+
     this.submitReturn(response, args);
     this.fireEvent('complete', [response, args]);
   },
 
   parseMessages : function(response) {
 
-    var msg;
-
     this.errors = false;
 
     if (response.messages) {
 
-      for (var i in response.messages) {
-
-        msg = response.messages[i];
+      var messages = Object.filter(response.messages, function(msg) {
 
         if (msg.arguments) {
 
-          this.parseMessage(msg);
-          delete(response.messages[i]);
-        }
-      }
-    }
+          if (msg.arguments.error) {
 
+            sylma.ui.showMessage(msg.content);
+            this.errors = true;
+          }
+          else {
+
+            this.parseMessage(msg);
+          }
+        }
+
+        return !msg.arguments;
+
+      }.bind(this));
+
+      response.messages = messages;
+    }
   },
 
   parseMessage : function(msg) {
@@ -278,17 +291,18 @@ sylma.crud.Form = new Class({
   submitReturn : function(response, args) {
 
     var redirect = !this.get('ajax');
+    var error = this.errors || response.error;
     //var content = response.content;
 
-    var result = sylma.ui.parseMessages(response, null, redirect && !this.errors);
+    var result = sylma.ui.parseMessages(response, null, redirect && !error);
 
-    if (result.errors || this.errors) {
+    if (result.errors || error) {
 
       this.hideMask();
     }
     else if (redirect) {
 
-      window.location.href = document.referrer;
+      this.redirect();
     }
     else {
 
@@ -296,9 +310,57 @@ sylma.crud.Form = new Class({
     }
   },
 
+  redirect : function() {
+
+    window.location.href = document.referrer;
+  },
+
   submitSuccess : function() {
 
     this.fireEvent('success');
     //throw new Error('Must do something');
+  },
+
+  deleteItem : function() {
+
+    this.show(this.getNode('delete'));
+  },
+
+  deleteConfirm : function(callback) {
+
+    this.deleteSend(callback);
+  },
+
+  deleteSend: function(callback) {
+
+    var id = this.getNode().getElements('input[@name=id]').pick().get('value');
+
+    this.send(this.get('delete'), {id : id}, function(response) {
+
+      if (!response.error) {
+
+        this.deleteSuccess();
+        callback && callback();
+      }
+
+    }.bind(this), false, !this.get('ajax'));
+  },
+
+  deleteCancel : function() {
+
+    this.hide(this.getNode('delete'));
+  },
+
+  deleteSuccess : function() {
+
+    if (!this.get('ajax')) {
+
+      this.redirect();
+    }
+  },
+
+  cancel : function() {
+
+    window.history.go(-1);
   }
 });

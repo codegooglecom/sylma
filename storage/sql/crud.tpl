@@ -12,7 +12,7 @@
 
     <view:view name="list">
 
-      <crud:import>pager/pager.tpl</crud:import>
+      <tpl:import>pager/pager.tpl</tpl:import>
 
     </view:view>
 
@@ -20,13 +20,13 @@
 
   <crud:group name="form">
 
-    <crud:import>crud/form.tpl</crud:import>
+    <tpl:import>crud/form.tpl</tpl:import>
 
   </crud:group>
 
   <crud:group name="list">
 
-    <crud:import>crud/list.tpl</crud:import>
+    <tpl:import>crud/list.tpl</tpl:import>
 
   </crud:group>
 

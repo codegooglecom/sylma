@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page>
+    <ns0:steps>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/insert01.vml" method="get"/>
+      <ns0:query creation="2014-03-20 23:41:22" connection="test">../../samples/empty01.sql</ns0:query>
+    </ns0:steps>
+  </ns0:page>
   <ns0:page url="/sylma/storage/sql/crud/test/samples/insert01">
     <ns0:steps>
       <ns0:snapshot element="#content">
-        <ns0:content>{"name":"div","children":[{"name":"div","content":"","position":{"x":218,"y":159},"size":{"x":1044,"y":0}},{"name":"form","children":[{"name":"div","children":[{"name":"label","content":"name* :","position":{"x":440,"y":159},"size":{"x":180,"y":14}},{"name":"input","content":"","position":{"x":620,"y":159},"size":{"x":306,"y":23}}],"position":{"x":440,"y":159},"size":{"x":600,"y":23}},{"name":"div","children":[{"name":"label","content":"email* :","position":{"x":440,"y":188},"size":{"x":180,"y":14}},{"name":"input","content":"","position":{"x":620,"y":188},"size":{"x":306,"y":23}}],"position":{"x":440,"y":188},"size":{"x":600,"y":23}},{"name":"div","children":[{"name":"input","content":"","position":{"x":986,"y":236},"size":{"x":54,"y":25}}],"position":{"x":440,"y":223},"size":{"x":600,"y":38}}],"position":{"x":440,"y":159},"size":{"x":600,"y":102}}],"position":{"x":200,"y":136},"size":{"x":1080,"y":646}}</ns0:content>
+        <ns0:content>{"name":"div","children":[{"name":"div","content":"","position":{"x":218,"y":159},"size":{"x":1044,"y":0}},{"name":"form","children":[{"name":"div","children":[{"name":"label","content":"name* :","position":{"x":440,"y":159},"size":{"x":180,"y":14}},{"name":"input","content":"","position":{"x":620,"y":159},"size":{"x":306,"y":23}}],"position":{"x":440,"y":159},"size":{"x":600,"y":23}},{"name":"div","children":[{"name":"label","content":"email* :","position":{"x":440,"y":188},"size":{"x":180,"y":14}},{"name":"input","content":"","position":{"x":620,"y":188},"size":{"x":306,"y":23}}],"position":{"x":440,"y":188},"size":{"x":600,"y":23}},{"name":"div","children":[{"name":"button","content":"cancel","position":{"x":440,"y":236},"size":{"x":71,"y":25}},{"name":"button","content":"save","position":{"x":982,"y":236},"size":{"x":58,"y":25}}],"position":{"x":440,"y":223},"size":{"x":600,"y":38}}],"position":{"x":440,"y":159},"size":{"x":600,"y":102}}],"position":{"x":200,"y":136},"size":{"x":1080,"y":646}}</ns0:content>
       </ns0:snapshot>
       <ns0:input element="#form-name">John Smith</ns0:input>
       <ns0:input element="#form-email">john@example.org</ns0:input>
-      <ns0:event name="click" element="#content &gt; form &gt; div:nth-child(3) &gt; input"/>
+      <ns0:event name="click" element="#content &gt; form &gt; div:nth-child(3) &gt; button:nth-child(2)"/>
     </ns0:steps>
   </ns0:page>
   <ns0:page>
     <ns0:steps>
       <ns0:watcher element=" &gt; div:nth-child(1) &gt; div">
-        <ns0:property name="height">18</ns0:property>
+        <ns0:property name="height">16</ns0:property>
       </ns0:watcher>
     </ns0:steps>
   </ns0:page>

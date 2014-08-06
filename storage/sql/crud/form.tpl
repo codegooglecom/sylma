@@ -9,6 +9,7 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
+  <tpl:import>common.tpl</tpl:import>
   <tpl:import>table.tpl</tpl:import>
   <tpl:import>types.tpl</tpl:import>
   <tpl:import>foreign.tpl</tpl:import>

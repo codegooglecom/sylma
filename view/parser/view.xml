@@ -17,11 +17,7 @@
         <cls:base>\sylma\view\parser</cls:base>
         <component>
           <cls:classes>
-            <cls:class alias="template" name="component\Container">
-              <cls:classes>
-                <cls:class alias="include" name="crud\_Include"/>
-              </cls:classes>
-            </cls:class>
+            <cls:class alias="template" name="component\Container"/>
           </cls:classes>
         </component>
       </cls:classes>

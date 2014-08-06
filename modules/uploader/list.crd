@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  extends="/#sylma/storage/sql/crud/ajax.crd, standalone.crd"
+>
+
+  <crud:global>
+
+    <tpl:template match="*" mode="file/argument">
+      <le:get-argument name="parent"/>
+    </tpl:template>
+
+    <tpl:template mode="list/filter">
+
+      <tpl:apply select="parent" mode="filter/dummy"/>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="insert/filter">
+
+      <tpl:apply select="parent" mode="parent"/>
+
+    </tpl:template>
+
+  </crud:global>
+
+  <crud:group name="crud">
+
+    <tpl:constant name="list-cols">* ^ id, parent</tpl:constant>
+    <tpl:constant name="list-order">update</tpl:constant>
+
+    <tpl:import>/html/common.tpl</tpl:import>
+
+    <tpl:template match="sql:foreign" mode="container">
+      <tpl:apply mode="input/hidden"/>
+    </tpl:template>
+
+  </crud:group>
+
+  <crud:route name="insert">
+
+    <view:view mode="view">
+
+      <tpl:import>/#sylma/storage/sql/crud/table.tpl</tpl:import>
+      <tpl:import>/#sylma/modules/uploader/form.tpl</tpl:import>
+
+      <tpl:template>
+        <div class="form hidder" js:class="sylma.ui.Container" js:name="form" js:parent-name="container">
+          <div js:class="sylma.uploader.MainList" js:parent-name="uploader-container">
+
+            <js:include>MainList.js</js:include>
+
+            <crud:include path="form"/>
+            <tpl:apply mode="form/ajax" xmode="insert"/>
+          </div>
+        </div>
+      </tpl:template>
+
+      <tpl:template match="sql:table" mode="form/content">
+        <tpl:apply mode="file/dropper">
+          <tpl:read select="'files'" tpl:name="alias"/>
+        </tpl:apply>
+        <tpl:apply mode="form/actions"/>
+      </tpl:template>
+
+      <tpl:template match="*" mode="form/save"/>
+
+    </view:view>
+
+  </crud:route>
+
+  <view:view name="form" groups="crud">
+
+    <sql:resource/>
+    <tpl:import>/#sylma/modules/uploader/form.tpl</tpl:import>
+
+    <tpl:template>
+
+      <tpl:apply mode="file/form"/>
+
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="upload" builder:return="result">
+
+    <xl:resource/>
+
+    <tpl:template mode="file/validate">
+
+      <crud:script path="insert/do" mode="post">
+        <tpl:apply mode="file/argument" crud:name="parent"/>
+        <tpl:read select="name" crud:name="name"/>
+        <tpl:read select="path" crud:name="path"/>
+        <tpl:read select="size" crud:name="size"/>
+        <tpl:read select="extension" crud:name="extension"/>
+      </crud:script>
+
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

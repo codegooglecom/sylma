@@ -39,6 +39,30 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Collection position">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <ul>
+            <tpl:apply select="*"/>
+          </ul>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:read select="'{@name} - {position()}'"/>
+          </li>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>root - 0</li>
+        <li>admin - 1</li>
+        <li>webmaster - 2</li>
+      </ul>
+    </tst:node>
+  </tst:test>
   <tst:test name="Filtered collection">
     <tst:document>
       <view:view user:ns="ns">

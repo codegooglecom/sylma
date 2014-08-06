@@ -7,11 +7,16 @@ class Main extends core\module\Domed implements dom\domable {
 
   const PARSER_ACTION = 'action';
 
-  public function __construct() {
+  public function __construct($args, $post, $contexts) {
 
     $this->setDirectory(__file__);
 
     $this->setSettings(\Sylma::get('modules/rebuild'));
+    $this->aContexts = array(
+      'contexts' => $contexts,
+      'post' => $post,
+      'arguments' => $args,
+    );
   }
 
   /**
@@ -19,10 +24,12 @@ class Main extends core\module\Domed implements dom\domable {
    * @param type $sPath
    * @return string
    */
-  public function load($sPath) {
+  public function load($sPath, $bRun = true) {
+
+    $this->aContexts['arguments']->set('path');
 
     $file = $this->getFile($sPath);
-    $parent = $this->getControler('parser')->getContext('action/current');
+    //$parent = $this->getControler('parser')->getContext('action/current');
 
     dsp("Rebuild : $sPath");
 
@@ -35,9 +42,9 @@ class Main extends core\module\Domed implements dom\domable {
       }
       else {
 
-        $this->getManager(self::PARSER_MANAGER)->load($file, array(
-          'contexts' => $parent->getContexts(),
-        ), true, true);
+        $manager = $this->getManager(self::PARSER_MANAGER);
+
+        $manager->load($file, $this->aContexts, true, is_null($bRun) ? true : $bRun);
       }
     }
 //$parent->getContexts()->get('message');

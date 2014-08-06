@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\query\parser;
 use sylma\core, sylma\parser\languages\common, sylma\storage\sql;
 
-class Insert extends Basic implements common\argumentable {
+class Insert extends Wherer implements common\argumentable {
 
   protected $sMethod = 'insert';
   protected $aSets = array();
@@ -65,7 +65,17 @@ class Insert extends Basic implements common\argumentable {
 
   public function asArgument() {
 
-    return $this->getHandler() || $this->getColumns() ? $this->getCall()->getInsert() : null;
+    $result = null;
+
+    //if ($this->getHandler()) {
+
+      $result = $this->getWindow()->createGroup(array(
+        $this->buildDynamicWhere(),
+        $this->getVar()->getInsert(),
+      ))->asArgument();
+    //}
+
+    return $result;
   }
 }
 

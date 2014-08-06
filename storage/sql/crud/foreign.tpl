@@ -152,7 +152,7 @@
   <tpl:template match="*" mode="input/foreign/default">
     <tpl:text>&lt; Choose &gt;</tpl:text>
   </tpl:template>
-
+<!--
   <tpl:template match="sql:foreign" mode="select-test">
     <tpl:argument name="alias" default="alias('form')"/>
     <select id="form-{$alias}" name="{$alias}" class="field-input-element">
@@ -163,10 +163,11 @@
       <tpl:apply select="all()" mode="select-option-test"/>
     </select>
   </tpl:template>
-
+-->
   <tpl:template match="*" mode="select-option-test">
+    <tpl:argument name="value"/>
     <option value="{id}">
-      <tpl:if test="parent()/value() = id">
+      <tpl:if test="$value = id">
         <tpl:token name="selected">selected</tpl:token>
       </tpl:if>
       <tpl:apply mode="select-option-value" required="x"/>
@@ -296,11 +297,15 @@
 
   <tpl:template match="*" mode="select-test">
     <tpl:argument name="alias" default="alias('form')"/>
+    <tpl:argument name="value" default="value()"/>
     <select id="form-{$alias}" name="{$alias}">
+      <tpl:apply mode="input/foreign/events"/>
       <option value="0">
         <tpl:apply mode="input/foreign/default"/>
       </option>
-      <tpl:apply select="all()" mode="select-option-test"/>
+      <tpl:apply select="all()" mode="select-option-test">
+        <tpl:read select="$value" tpl:name="value"/>
+      </tpl:apply>
     </select>
   </tpl:template>
 

@@ -7,6 +7,9 @@ class Child extends reflector\component\Foreigner {
 
   protected $template;
 
+  /**
+   * @return template\parser\template
+   */
   public function getTemplate($sPath = '', $bDebug = true) {
 
     if (!$this->template && $bDebug) {

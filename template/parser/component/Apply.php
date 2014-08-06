@@ -3,7 +3,7 @@
 namespace sylma\template\parser\component;
 use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
 
-class Apply extends Child implements common\arrayable, parser\component {
+class Apply extends Read {
 
   public function parseRoot(dom\element $el) {
 
@@ -32,22 +32,9 @@ class Apply extends Child implements common\arrayable, parser\component {
 
     $this->startLog('Apply [' . $sSelectOut . $sModeOut . $sXModeOut . ']');
 
-    if (!$sSelect) {
-
-      if ($sConstant = $this->readx('@use')) {
-
-        $sSelect = $this->getParser()->getConstant($sConstant);
-      }
-      else if ($sValue = $this->readx('@read')) {
-
-$this->launchException("Not ready");
-        $sSelect = $this->lookupPath($sValue);
-      }
-    }
-
     $this->stopLog();
 
-    return $this->getTemplate()->applyPath($sSelect, $sMode, $aArguments);
+    return $this->getTemplate()->applyPath($this->loadSelect($sSelect), $sMode, $aArguments);
   }
 
   public function build() {

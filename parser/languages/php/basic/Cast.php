@@ -42,12 +42,19 @@ class Cast extends common\basic\Controled implements common\argumentable, common
 
   public function asArgument() {
 
-    return $this->getWindow()->createArgument(array(
-      'cast' => array(
-        '@type' => $this->getType(),
-        $this->getContent(),
-      ),
-    ));
+    $result = null;
+
+    if ($this->getContent()) {
+
+      $result = $this->getWindow()->createArgument(array(
+        'cast' => array(
+          '@type' => $this->getType(),
+          $this->getContent(),
+        ),
+      ));
+    }
+
+    return $result;
   }
 }
 

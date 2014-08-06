@@ -33,7 +33,9 @@ sylma.stepper.Main = new Class({
     }
     else if (this.options.directory) {
 
-      this.sylma.template.classes.directory = {
+      var classes = this.sylma.template.classes;
+
+      classes.directory = {
         name : 'sylma.stepper.DirectoryStandalone'
       };
 
@@ -89,7 +91,12 @@ sylma.stepper.Main = new Class({
       }
     });
 
-    frame.addClass('sylma-visible');
+    this.toggleWindow(true);
+  },
+
+  toggleWindow : function(val) {
+
+    this.toggleShow(this.getNode('window'), val);
   },
 
   prepareFrame : function(frame) {
@@ -132,7 +139,9 @@ sylma.stepper.Main = new Class({
 
   getFrames : function(frame) {
 
-    return this.getWindow(frame).document.body.getElements('iframe');
+    var body = this.getWindow(frame).document.body;
+
+    return body.getElements ? body.getElements('iframe') : [];
   },
 
   callTest : function() {
@@ -353,7 +362,11 @@ sylma.stepper.Main = new Class({
     frame.addEvents(events.frame);
 
     var win = this.getWindow(frame);
-    win.addEvents(events.window);
+
+    if (win.addEvents) {
+
+      win.addEvents(events.window);
+    }
   },
 
   stopCapture: function() {
@@ -371,7 +384,13 @@ sylma.stepper.Main = new Class({
       frames = frames || [frame];
 
       frame.removeEvents(events.frame);
-      this.getWindow(frame).removeEvents(events.window);
+
+      var window = this.getWindow(frame);
+
+      if (window.removeEvents) {
+
+        window.removeEvents(events.window);
+      }
 
       var subtoken = 'sub' + frames.length;
 

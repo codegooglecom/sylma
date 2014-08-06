@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+>
+
+  <crud:route>
+
+    <crud:local>
+
+      <sql:resource multiple="multiple"/>
+
+      <crud:import>/#sylma/crud/list/root.tpl</crud:import>
+      <crud:import>crud/list.tpl</crud:import>
+
+    </crud:local>
+
+    <view:view>
+
+
+
+    </view:view>
+
+    <!-- Internal list -->
+
+    <view:view name="list">
+
+      <tpl:template>
+        <tpl:apply mode="internal"/>
+      </tpl:template>
+
+      <crud:import>pager/pager.tpl</crud:import>
+
+    </view:view>
+
+  </crud:route>
+
+</crud:crud>

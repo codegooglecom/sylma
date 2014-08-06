@@ -31,6 +31,13 @@
                 <cls:class alias="path" name="crud\Path"/>
                 <cls:class alias="get-schema" name="component\getSchema"/>
                 <cls:class alias="pather" name="\sylma\storage\sql\template\Pather"/>
+                <cls:class alias="include" name="crud\_Include"/>
+                <cls:class alias="script" name="crud\Script">
+                  <cls:classes>
+                    <cls:class alias="path" name="\sylma\core\request\Builder"/>
+                    <cls:class alias="argument" name="\sylma\core\argument\Readable"/>
+                  </cls:classes>
+                </cls:class>
               </cls:classes>
             </cls:class>
           </cls:classes>

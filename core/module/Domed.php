@@ -101,9 +101,10 @@ abstract class Domed extends Filed {
    * @param array $aArguments
    * @return \sylma\core\request
    */
-  protected function createPath($sPath, array $aArguments = array()) {
+  protected function createPath($sPath, array $aArguments = array(), fs\directory $dir = null) {
 
-    $path = $this->create('path', array($sPath, $this->getDirectory('', false), $aArguments));
+    $dir = $dir ? $dir : $this->getDirectory('', false);
+    $path = $this->create('path', array($sPath, $dir, $aArguments));
 
     return $path;
   }

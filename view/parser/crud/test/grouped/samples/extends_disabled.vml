@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  extends="basic2.vml"
+>
+  
+  <view:view name="badview" disabled="x"/>
+
+</crud:crud>

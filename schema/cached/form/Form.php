@@ -190,11 +190,20 @@ class Form extends core\module\Domed {
 
   public function asString() {
 
-    $sResult = $this->getMode() === 'insert' ? $this->buildInsert() : $this->buildUpdate();
+    switch ($this->getMode()) {
+
+      case 'insert' : $sResult = $this->buildInsert(); $sMessage = 'inserted'; break;
+      case 'update' : $sResult = $this->buildUpdate(); $sMessage = 'updated'; break;
+      case 'delete' : $sResult = 1; $sMessage = 'deleted'; break;
+
+      default :
+
+        $this->launchException('Unknown mode');
+    }
 
     if ($this->getContext('messages', false)) {
 
-      $this->addMessage('Datas has been ' . ($this->getMode() == 'insert' ? 'inserted' : 'updated'));
+      $this->addMessage('Datas has been ' . $sMessage);
     }
 
     return $sResult;

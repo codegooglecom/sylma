@@ -34,8 +34,11 @@ sylma.stepper.Step = new Class({
         this.toggleShow(form, val);
       }
 
-      var selector = this.getSelector(false);
-      selector && selector.toggleMask(val);
+      if (val) {
+
+        var selector = this.getSelector(false);
+        selector && selector.toggleMask(val);
+      }
 
       result = val;
     }

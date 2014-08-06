@@ -13,8 +13,9 @@ class Element extends Basic implements common\arrayable {
   protected function build() {
 
     $tree = $this->getHandler()->getCurrentTree();
+    $sName = $this->readx('@name', false);
 
-    return $tree->getElement($this->readx('@name'));
+    return $sName ? $tree->getElement($sName) : $tree;
   }
 
   public function asArray() {

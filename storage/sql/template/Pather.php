@@ -93,6 +93,11 @@ class Pather extends template\parser\Pather {
 
   protected function parseArgumentDefault($sValue, $sMode, $bRead, $bApply) {
 
+    if (!$this->getSource() instanceof sql\template\pathable) {
+
+      $this->launchException('Cannot get only sql default');
+    }
+
     return $this->getSource()->getElement($sValue);
   }
 

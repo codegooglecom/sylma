@@ -950,17 +950,24 @@ EOT;
         <view:schema>samples/user1.xql</view:schema>
         <tpl:template>
           <div>
-            <h3><tpl:apply select="name"/></h3>
+            <h3><tpl:read select="name"/></h3>
             <span><tpl:apply use="path"/></span>
+            <em><tpl:read use="path"/></em>
             <h4><tpl:apply select="$$path"/></h4>
           </div>
         </tpl:template>
+        <tpl:template match="*">
+          <tpl:read/>
+          <tpl:text>!</tpl:text>
+        </tpl:template>
+
       </view:view>
     </tst:document>
     <tst:node>
       <div>
         <h3>admin</h3>
-        <span>admin@sylma.org</span>
+        <span>admin@sylma.org!</span>
+        <em>admin@sylma.org</em>
         <h4>email</h4>
       </div>
     </tst:node>

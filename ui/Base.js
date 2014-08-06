@@ -376,9 +376,9 @@ sylma.ui.BaseProps = {
     return result;
   },
 
-  send : function(path, args, callback, get) {
+  send : function(path, args, callback, get, redirect) {
 
-    return sylma.ui.send(path, args, callback, get);
+    return sylma.ui.send(path, args, callback, get, redirect);
   },
 
   toggleLight : function() {
@@ -446,14 +446,11 @@ sylma.ui.BaseProps = {
 
       var key = sylma.ui.extractFirst(response.objects);
 
-      if (!key) {
+      if (key) {
 
-        throw new Error('No root object found');
+        var result = response.objects[key];
+        result.parentObject = parent;
       }
-
-      var result = response.objects[key];
-      result.parentObject = parent;
-      //result.parentKey = key;
     }
 
     return result;

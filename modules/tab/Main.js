@@ -100,7 +100,13 @@ sylma.ui.tab.Main = new Class({
     this.getObject('head').downlightAll();
 
     this.getObject('head').getCaller(index).highlight();
-    this.getTab(index).show(callback);
+
+    Object.each(this.tabs, function(tab) {
+
+      tab.hide();
+    });
+
+    this.getTab(this.current).show(callback);
   },
 
   goNext : function() {

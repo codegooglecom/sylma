@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template, sylma\parser\languages\common;
 
 class Table extends Rooted implements sql\template\pathable, schema\parser\element {
 
@@ -14,6 +14,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected $bSub = false;
   protected $bStatic = false;
   protected $bMultiple = true;
+
+  protected $dummy;
+  protected $parentDummy;
 
   protected $loop;
   protected $connection;
@@ -141,6 +144,68 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $result;
   }
 
+  protected function loadDummyArguments() {
+
+    $window = $this->getWindow();
+    $view = $this->getParser()->getView();
+
+    if (!$view->isInternal()) {
+
+      $sToken = (string) $view->getRoot()->asPath();
+      $token = $this->createObject('token', array($sToken), null, false);
+    }
+    else {
+
+      $token = null;
+    }
+
+    $aArguments = array(
+      $window->getVariable('arguments'),
+      $window->getVariable('post'),
+      $window->getVariable('contexts'),
+      $this->getMode(),
+      $token,
+    );
+
+    return $aArguments;
+  }
+
+  protected function loadDummy($key = null, $parent = null) {
+
+    $var = $this->createDummy('cached', $this->loadDummyArguments(), null, true);
+
+    $this->setDummy($var);
+    return $var->getInsert();
+  }
+
+  /**
+   * @usedby Foreign::buildMultiple()
+   * @usedby Reference::reflectFunctionRef()
+   * @return common\_var|null
+   */
+  public function getDummy($bDebug = true) {
+
+    if (!$this->dummy) {
+
+      $this->loadDummy($this->getKey(), $this->parentDummy);
+
+      if (!$this->dummy && $bDebug) {
+
+        $this->launchException('No dummy defined');
+      }
+    }
+
+    return $this->dummy;
+  }
+
+  /**
+   * @usedby Reference::reflectFunctionRef()
+   */
+  public function setDummy(common\_var $handler) {
+
+    $this->dummy = $handler;
+  }
+
   public function getKey() {
 
     return parent::getKey();
@@ -171,8 +236,12 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
     $this->addColumn($el);
 
-    $query = $this->getQuery();
-    $query->setElement($el);
+    $this->checkQuery($this->getQuery())->setElement($el);
+  }
+
+  protected function checkQuery(sql\query\parser\Select $query) {
+
+    return $query;
   }
 
   public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array(), $bStatic = false) {

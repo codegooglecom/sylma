@@ -58,7 +58,7 @@
             <span>↴</span>
           </button>
           <button>
-            <js:event name="click">%object%.getFrame().toggleClass('sylma-visible');</js:event>
+            <js:event name="click">%object%.toggleWindow();</js:event>
             <tpl:text>◑</tpl:text>
           </button>
           <button>
@@ -94,7 +94,7 @@
         <tpl:apply select="*" mode="hollow"/>
         <tpl:apply mode="content"/>
       </div>
-      <div class="window">
+      <div class="window hidder visible" js:node="window">
         <div class="toolbar">
           <input type="text"/>
           <button>
@@ -104,7 +104,7 @@
             <tpl:text>↻</tpl:text>
           </button>
         </div>
-        <iframe js:node="frame" class="sylma-hidder"/>
+        <iframe js:node="frame"/>
       </div>
     </div>
 
@@ -193,7 +193,7 @@
       <a href="{@url}" js:node="name">
         <js:event name="click">
           e.preventDefault();
-          %object%.go();
+          %object%.goURL();
         </js:event>
         <tpl:read select="@url"/>
       </a>
@@ -331,6 +331,7 @@
         <option>&lt;choose&gt;</option>
         <option>reload</option>
         <option>content</option>
+        <option>display</option>
         <option>children</option>
         <option>class</option>
         <option>iframe</option>

@@ -470,7 +470,9 @@
         'error' => true,
         'messages' =>
           array(
-            0 => 'An error happened, the adminstrator has been informed.',
+            array(
+              'content' => 'An error has occured',
+            ),
           ),
         ));
 

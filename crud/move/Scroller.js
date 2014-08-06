@@ -1,5 +1,8 @@
 
-sylma.uploader.Scroller = new Class({
+sylma.crud = sylma.crud || {};
+sylma.crud.move = sylma.crud.move || {};
+
+sylma.crud.move.Scroller = new Class({
 
   Extends : sylma.ui.Container,
 

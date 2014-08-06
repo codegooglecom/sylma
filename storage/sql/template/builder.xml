@@ -24,6 +24,7 @@
             </cls:class>
             <cls:class alias="table" name="Table">
               <cls:classes>
+                <cls:class alias="cached" name="\sylma\schema\cached\form\Form"/>
                 <cls:class alias="token" name="\sylma\schema\cached\form\Token"/>
               </cls:classes>
             </cls:class>
@@ -44,8 +45,16 @@
                 <cls:class alias="order" name="cached\Order"/>
               </cls:classes>
             </cls:class>
-            <cls:class alias="update" name="query\parser\Update"/>
-            <cls:class alias="insert" name="query\parser\Insert"/>
+            <cls:class alias="update" name="query\parser\Update">
+              <cls:classes>
+                <cls:class alias="where" name="cached\Where"/>
+              </cls:classes>
+            </cls:class>
+            <cls:class alias="insert" name="query\parser\Insert">
+              <cls:classes>
+                <cls:class alias="where" name="cached\Where"/>
+              </cls:classes>
+            </cls:class>
             <cls:class alias="delete" name="query\parser\Delete"/>
           </cls:classes>
         </template>

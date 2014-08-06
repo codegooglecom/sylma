@@ -22,6 +22,11 @@ class Table extends sql\template\insert\Table {
 
       if ($this->isSub() and $id = $this->getElement('id', null, false)) {
 
+        if ($dummy = $this->getDummy(false)) {
+
+          $this->getQuery()->setDummy($dummy);
+        }
+
         $window = $this->getWindow();
         $source = $this->getDummy()->call('getID');
 

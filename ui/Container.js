@@ -29,6 +29,7 @@ sylma.ui.ContainerProps = {
 
     if (inside !== undefined) this.set('sylma-inside', inside);
     get = get || get === undefined;
+    args = args || this.get('arguments');
 
     path = path || this.get('path');
 
@@ -75,7 +76,10 @@ sylma.ui.ContainerProps = {
       this.show();
     }
 
-    callback && callback();
+    if (callback) { // because of onwindowload delay 10
+
+      callback.delay(15);
+    }
   },
 
   updateContent : function(result, node, target) {
@@ -85,13 +89,21 @@ sylma.ui.ContainerProps = {
       node.replaces(target);
 
       var props = this.importResponse(result, this.getParent());
-      this.initialize(props);
+
+      if (props) {
+
+        this.initialize(props);
+      }
     }
     else {
 
       this.getNode().adopt(node);
       var props = this.importResponse(result, this.getParent(), true);
-      if (props.objects) this.initObjects(props.objects);
+
+      if (props.objects) {
+
+        this.initObjects(props.objects);
+      }
     }
 
     this.onWindowLoad.delay(10, this);

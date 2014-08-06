@@ -40,6 +40,8 @@ sylma.stepper.Event = new Class({
       //if (!this.isgo) {
 
         this.log('Run');
+        this.getSelector().toggleMask(true);
+        this.getSelector().selectElement(el);
         el.focus();
         el.click();
       //}

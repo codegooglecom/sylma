@@ -43,6 +43,14 @@ sylma.stepper.Property = new Class({
         result = el.get('class');
         break;
 
+      case 'display' :
+
+        var position = el.getPosition();
+        var size = el.getSize();
+
+        result = [position.x, position.y, size.x, size.y].join(';');
+        break;
+
       case 'iframe' :
 
         result = 1;
@@ -97,6 +105,15 @@ sylma.stepper.Property = new Class({
       case 'class' :
 
         result = el.hasClass(value);
+        break;
+
+      case 'display' :
+
+        var vals = value.split(';');
+        var position = el.getPosition();
+        var size = el.getSize();
+//console.log(position.x,vals[0], '|', position.y,vals[1], '|', vals[2] && size.y,vals[3]);
+        result = position.x == vals[0] && position.y == vals[1] && size.x == vals[2] && size.y == vals[3];
         break;
 
       case 'iframe' :

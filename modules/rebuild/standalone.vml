@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  builder:return="result"
+>
+
+  <tpl:settings>
+    <cls:classes>
+      <cls:class alias="tree">
+        <cls:classes>
+          <cls:class alias="cached" name="\sylma\modules\rebuild\Main"/>
+        </cls:classes>
+      </cls:class>
+    </cls:classes>
+  </tpl:settings>
+
+  <xl:resource/>
+
+  <tpl:template>
+
+    <tpl:variable name="load">
+      <tpl:read select="load()">
+        <le:get-argument name="path"/>
+        <le:get-argument name="run" optional="x"/>
+      </tpl:read>
+    </tpl:variable>
+
+  </tpl:template>
+
+</view:view>

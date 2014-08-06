@@ -1,4 +1,6 @@
 
+sylma.crud = sylma.crud || {};
+
 sylma.crud.Group = new Class({
 
   Extends : sylma.ui.Clonable,

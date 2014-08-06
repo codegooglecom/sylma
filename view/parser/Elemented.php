@@ -140,19 +140,19 @@ class Elemented extends template\parser\handler\Domed {
   protected function build(template\parser\tree $tree, $sMode) {
 
     $window = $this->getWindow();
-
     $content = $tree->reflectApply();
     //$window->loadContent($content);
 
     switch ($sMode) {
 
+      case 'delete' :
       case 'update' :
       case 'insert' :
 
         $content = $window->parseArrayables(array($content));
 
         $window->add($this->cleanStrings($content));
-        $window->add($tree->asArgument());
+        $window->add($this->buildTree($tree));
         $result = $this->getResult();
 
         break;
@@ -169,6 +169,11 @@ class Elemented extends template\parser\handler\Domed {
     }
 
     return $result;
+  }
+
+  protected function buildTree(common\argumentable $tree) {
+
+    return $tree->asArgument();
   }
 
   protected function cleanStrings(array $aContent) {

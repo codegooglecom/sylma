@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\view\parser\crud;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template, sylma\view\parser;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template, sylma\view\parser\builder;
 
 class _Include extends template\parser\component\Child implements template\parser\component, common\arrayable {
 
@@ -10,7 +10,7 @@ class _Include extends template\parser\component\Child implements template\parse
     $this->setNode($el);
   }
 
-  protected function build(parser\builder\Router $root) {
+  protected function build(builder\Router $root) {
 
     $path = $root->getPath($this->readx('@path', false));
 /*

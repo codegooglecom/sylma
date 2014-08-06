@@ -647,4 +647,38 @@
       return true;
     </tst:expected>
   </tst:test>
+  <tst:test name="Simple delete">
+    <tst:document>
+      <view:view user:ns="ns" mode="delete">
+        <sql:resource>
+          <sql:id>
+            <le:get-argument name="id" source="post"/>
+          </sql:id>
+        </sql:resource>
+        <view:schema>samples/user1.xql</view:schema>
+        <tpl:template/>
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $manager->setToken('/sylma/view/test/grouped/formxml-simple-delete');
+
+      $sID = $manager->runQuery("INSERT INTO user (id, name, email) VALUES (30, 'deleter01', 'deleter01@sylma.org')", 8);
+      $manager->setArgument('id', $sID);
+
+      return
+        array('post' => $manager->createArgument(array(
+          'id' => $sID,
+        )))
+    </tst:load>
+    <tst:expected>
+      $sID = $manager->read('id');
+
+      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", 2);
+      $manager->assertEqual($user, false);
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
 </tst:tests>
