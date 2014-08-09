@@ -87,19 +87,38 @@ class ImageBuilder extends core\module\Filed {
     return $preview;
   }
 
-  public function build(fs\editable\file $file, $iWidth, $iHeight) {
+  public function build(fs\editable\file $file, $iWidth, $iHeight, $sFilter = '') {
 
     $sExtension = strtolower($file->getExtension());
     if ($sExtension == 'jpg') $sExtension = 'jpeg';
 
     $img = $this->resize($sExtension, $iWidth, $iHeight, true);
 
-    // imagefilter($img, IMG_FILTER_GRAYSCALE);
-    // imagestring($img, 2, 5, 15, date('H:i:s'), imagecolorallocate($img, 255, 216, 147));
+    if ($sFilter) {
+
+      $this->filter($img, $sFilter);
+    }
 
     $sFunction = 'image'.$sExtension;
 
     $sFunction($img, $file->getRealPath());
     imagedestroy($img);
+  }
+
+  protected function filter($img, $sFilter) {
+
+    //imagestring($img, 2, 5, 15, date('H:i:s'), imagecolorallocate($img, 255, 216, 147));
+    
+    switch ($sFilter) {
+
+      case 'grayscale' :
+
+        imagefilter($img, IMG_FILTER_GRAYSCALE);
+        break;
+
+      default :
+
+        $this->launchException("Unknown filter : '$sFilter'");
+    }
   }
 }

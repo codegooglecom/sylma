@@ -58,7 +58,7 @@ initializer :
   images :
     extensions : [jpg, jpeg, png, gif]
     rebuild : false
-    size :
+    format :
       small :
         width : 200
         height : 150

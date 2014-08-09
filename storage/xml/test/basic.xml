@@ -164,6 +164,33 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Match type">
+    <tst:document>
+      <view:view user:ns="ns">
+        <xl:resource file="samples/users.xml"/>
+        <tpl:template>
+          <div>
+            <tpl:apply select="*"/>
+          </div>
+        </tpl:template>
+        <tpl:template match="user:user">
+          <li>
+            <tpl:apply select="email"/>
+          </li>
+        </tpl:template>
+        <tpl:template match="user:email">
+          <input type="text" value="{read()}"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <li>
+          <input type="text" value="admin@sylma.org"/>
+        </li>
+      </div>
+    </tst:node>
+  </tst:test>
   <tst:test name="Call dummy">
     <tst:document>
       <view:view user:ns="ns">

@@ -7,9 +7,9 @@ class Image extends File {
 
   public function asString() {
 
-    if ($sSize = $this->getManager('path')->readArgument('size', false)) {
+    if ($sSize = $this->getManager('path')->readArgument('format', false)) {
 
-      $size = $this->get('size/' . $sSize);
+      $size = $this->get('format/' . $sSize);
 
       $file = $this->getFile();
 
@@ -22,7 +22,7 @@ class Image extends File {
       if (!$cache->doExist() || $cache->getLastChange() < $file->getLastChange() || $this->read('rebuild')) {
 
         $builder = $this->create('builder', array($file));
-        $builder->build($cache, $size->read('width'), $size->read('height'));
+        $builder->build($cache, $size->read('width'), $size->read('height'), $size->read('filter', false));
       }
 
       $this->setFile($cache);

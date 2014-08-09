@@ -81,8 +81,6 @@
 
   </view:view>
 
-  <!--<view:view mode="delete"/>-->
-
   <crud:global ssd:ns="ns" sql:ns="ns">
 
     <tpl:constant name="form-cols">* ^ id,date-update,date-insert</tpl:constant>

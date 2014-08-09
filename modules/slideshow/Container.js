@@ -223,7 +223,7 @@ sylma.slideshow.ContainerProps = {
 
     size = size || 'large';
 
-    return this.get('directory') + '/' + path + '?size=' + size;
+    return this.get('directory') + '/' + path + '?format=' + size;
   },
 
   stopLoop : function() {

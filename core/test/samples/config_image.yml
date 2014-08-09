@@ -1,0 +1,22 @@
+debug :
+  enable : false
+exception :
+  show : true
+initializer :
+  debug :
+    fatal : true
+  window :
+    fusion :
+      enable : true
+      update : true
+    html :
+      test : null
+      default :
+        action : /#sylma/core/test/samples/window01.vml
+        sub : null
+  images :
+    format :
+      gray :
+        width: 200
+        height: 150
+        filter : grayscale

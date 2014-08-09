@@ -165,7 +165,7 @@
   </tpl:template>
 -->
   <tpl:template match="*" mode="select-option-test">
-    <tpl:argument name="value"/>
+    <tpl:argument name="value" default="''"/>
     <option value="{id}">
       <tpl:if test="$value = id">
         <tpl:token name="selected">selected</tpl:token>

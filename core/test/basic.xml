@@ -652,8 +652,8 @@
       $manager->clearSylma($init, $user);
 
       $sPath = '/sylma/core/test/samples';
-      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
-      $init->setGET($sPath . '/image01.jpg', array('size' => 'small'));
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config_image.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET($sPath . '/image01.jpg', array('format' => 'small'));
       $sResult = $init->run($settings->get('initializer'), false);
 
       $manager->setArgument('result', $sResult);
@@ -663,6 +663,33 @@
     <tst:expected>
 
       $manager->assertEqual($manager->read('result'), $manager->getFile($manager->read('path') . '/image01_small.jpg')->read());
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Image filtered">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+      $manager->clearSylma($init, $user);
+
+      $sPath = '/sylma/core/test/samples';
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config_image.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET($sPath . '/image01.jpg', array('format' => 'gray'));
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $sResult);
+      $manager->setArgument('path', $sPath);
+
+    </tst:prepare>
+    <tst:expected>
+
+      //$manager->assertEqual($manager->read('result'), $manager->getFile($manager->read('path') . '/image01_grayscale.jpg')->read());
 
       return true;
 
