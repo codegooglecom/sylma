@@ -15,7 +15,7 @@
 
   <view:schema>user2.xql</view:schema>
 
-  <view:template>
+  <tpl:template>
     <le:context name="css">
       <le:file>style1.css</le:file>
     </le:context>
@@ -23,5 +23,5 @@
       <h3><tpl:apply select="name"/></h3>
       <a href="mailto:email">test</a>
     </div>
-  </view:template>
+  </tpl:template>
 </view:view>

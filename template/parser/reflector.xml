@@ -48,6 +48,7 @@
                   <cls:classes>
                     <cls:class alias="numeric" name="\sylma\schema\cached\view\Numeric"/>
                     <cls:class alias="string" name="\sylma\schema\cached\view\_String"/>
+                    <cls:class alias="price" name="\sylma\schema\cached\view\Price"/>
                   </cls:classes>
                 </cls:class>
 

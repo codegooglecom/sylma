@@ -11,7 +11,7 @@
 >
 
   <tpl:template match="sql:table" mode="file/view">
-    <img src="{$$uploader-dir}/{path}?size=small"/>
+    <img src="{$$uploader-dir}/{path}?format=small"/>
     <tpl:apply mode="file/view"/>
   </tpl:template>
 

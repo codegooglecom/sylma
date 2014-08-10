@@ -157,6 +157,11 @@ class Container extends core\module\Domed {
 
     if (!$file = $this->getFile(current($aPaths), false)) {
 
+      if (\Sylma::isAdmin()) {
+
+        dsp('Action not found');
+      }
+
       $this->send404();
       $content = $this->getError();
     }

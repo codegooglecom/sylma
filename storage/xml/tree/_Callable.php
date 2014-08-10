@@ -71,7 +71,11 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
       case 'return' : $result = $this->reflectReturn($aFunctionArguments[0]); break;
       default :
 
-        if ($aFunctionArguments) $aArguments = array($aFunctionArguments);
+        if ($aFunctionArguments) {
+
+          $aArguments = $aFunctionArguments;
+        }
+        
         $result = $this->reflectCall($sName, $aArguments);
     }
 

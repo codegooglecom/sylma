@@ -267,11 +267,9 @@ abstract class Domed extends Componented {
 
           break;
 
-        case $child::COMMENT : break;
-
         default :
 
-          $this->throwException('Node type not allowed here', array($child->asToken()));
+          $this->parseChildrenOther($child, $aResult);
       }
 
       $children->next();
@@ -338,6 +336,19 @@ abstract class Domed extends Componented {
   protected function parseChildrenText(dom\text $node, array &$aResult) {
 
     $aResult[] = $this->parseText($node);
+  }
+
+  protected function parseChildrenOther(dom\node $node, array &$aResult) {
+
+    switch ($node->getType()) {
+
+      case $node::COMMENT : break;
+      case $node::CDATA : $aResult[] = (string) $node; break;
+
+      default :
+
+        $this->throwException('Node type not allowed here', array($node->asToken()));
+    }
   }
 
   protected function parseAttribute(dom\attribute $attr) {

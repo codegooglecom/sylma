@@ -378,7 +378,7 @@ class Pather extends component\Child {
 
         if ($aMatch = $this->matchVariable($sValue)) {
 
-          $aResult = $this->parseVariable($aMatch, array(), $sMode);
+          $aResult[$mKey] = $this->parseVariable($aMatch, array(), $sMode);
         }
         else if ($sString = $this->matchString($sValue)) {
 

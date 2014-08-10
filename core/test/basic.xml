@@ -297,7 +297,6 @@
 
     </tst:expected>
   </tst:test>
-
   <tst:test name="Import multiple avoid duplicate" disabled="true">
     <!-- @todo decide whether to avoid it or not -->
     <tst:prepare>

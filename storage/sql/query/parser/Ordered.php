@@ -12,7 +12,29 @@ abstract class Ordered extends Joined {
 
   public function setOrderPath($sValue) {
 
-    $this->orderPath = $sValue;
+    $order = $this->create('order', array($sValue));
+
+    if ($template = $this->getParser()->getView()->getCurrentTemplate(false)) {
+
+      $table = $template->getTree();
+    }
+    else {
+
+      $table = $this->aTables[0];
+    }
+
+
+    $aElements = array();
+
+    foreach ($order->extractPath() as $aElement) {
+
+      $aElements[] = $table->getElement($aElement['name']);
+    }
+
+    $this->orderPath = array(
+      'elements' => $aElements,
+      'value' => $sValue
+    );
   }
 
   protected function getOrderPath() {
@@ -59,9 +81,9 @@ abstract class Ordered extends Joined {
     }
     else {
 
-      if ($sPath = $this->getOrderPath()) {
+      if ($aStatic = $this->getOrderPath()) {
 
-        $obj = $this->createOrderStatic($sPath, $aElements, $string);
+        $obj = $this->createOrderStatic($aStatic, $aElements, $string);
       }
       else if ($content = $this->getOrderDynamic()) {
 
@@ -80,20 +102,15 @@ abstract class Ordered extends Joined {
     return $aResult;
   }
 
-  protected function createOrderStatic($sPath, array &$aElements, schema\parser\type $string) {
+  protected function createOrderStatic(array $aStatic, array &$aArguments, schema\parser\type $string) {
 
-    $result = $this->createObject('order', array($sPath));
+    $result = $this->createObject('order', array($aStatic['value']));
 
-    $order = $this->create('order', array($sPath));
-    $table = $this->aTables[0];
+    foreach ($aStatic['elements'] as $element) {
 
-    foreach ($order->extractPath() as $aElement) {
-
-      $field = $table->getElement($aElement['name']);
-
-      $aElements[$field->getName()] = array(
-        'alias' => $field,
-        'string' => $field->getType()->doExtends($string),
+      $aArguments[$element->getName()] = array(
+        'alias' => $element,
+        'string' => $element->getType()->doExtends($string),
       );
     }
 
