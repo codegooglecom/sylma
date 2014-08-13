@@ -22,7 +22,6 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
   protected $bInitTemplate = false;
 
   protected $aFiles = array(
-    '/#sylma/ui/mootools.js',
     '/#sylma/ui/Main.js',
     '/#sylma/ui/Base.js',
     '/#sylma/ui/Container.js',
@@ -125,6 +124,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     $this->setContext($context);
 
     $aResult[] = $context->getInsert();
+    $aResult[] = $this->addScript($context, $this->read('mootools'));
 
     foreach ($this->aFiles as $sFile) {
 

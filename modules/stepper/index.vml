@@ -87,7 +87,7 @@
     </tpl:template>
 
   </view:view>
-
+ 
   <view:view name="loadDirectory"
     build:class="\sylma\core\argument\Readable"
     build:output="array"

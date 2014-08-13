@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\device;
-use sylma\core, sylma\dom, sylma\parser\reflector;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\view;
 
 class Elemented extends reflector\handler\Elemented implements reflector\elemented
 {
@@ -10,9 +10,14 @@ class Elemented extends reflector\handler\Elemented implements reflector\element
 
     $parser = $this->getParent();
 
-    $content = $parser->getCurrentTemplate()->parseChildren($children);
+    $content = $this->loadContent($parser, $children);
     $result = $parser->addToResult($content, false);
 
     return $result;
+  }
+
+  protected function loadContent(view\parser\Elemented $parser, dom\collection $children) {
+
+    return $parser->getCurrentTemplate()->parseChildren($children);
   }
 }

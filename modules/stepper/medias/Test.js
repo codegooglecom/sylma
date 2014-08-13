@@ -48,11 +48,16 @@ sylma.stepper.Test = new Class({
 
         this.loading = false;
 
-        Object.each(response.content.page, function(item) {
+        var content = response.content;
+
+        Object.each(content.page, function(item) {
 
           this.add('page', item);
 
         }.bind(this));
+
+        this.width = content.width;
+        this.height = content.height;
 
         callback && callback();
 
@@ -158,7 +163,12 @@ sylma.stepper.Test = new Class({
 
       if (!this.options.nofile) {
 
-        this.initPages(callback);
+        this.initPages(function() {
+
+          this.updateFrameSize();
+          callback && callback();
+
+        }.bind(this));
       }
       else {
 
@@ -217,6 +227,17 @@ sylma.stepper.Test = new Class({
     }.bind(this));
   },
 
+  updateFrameSize : function() {
+
+    var width = this.width;
+    var height = this.height;
+
+    if (width && height) {
+
+      this.getMain().updateFrameSize(width, height);
+    }
+  },
+
   testFrom: function() {
 
     this.getParent('directory').test(this.getKey());
@@ -256,7 +277,9 @@ sylma.stepper.Test = new Class({
   toJSON : function() {
 
     return {test : {
-      '#page' : this.getPages()
+      '#page' : this.getPages(),
+      '@width' : this.width,
+      '@height' : this.height
     }};
   },
 

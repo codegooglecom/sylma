@@ -83,15 +83,20 @@ sylma.stepper.Main = new Class({
     var frame = this.getFrame();
     this.prepareFrame(frame);
 
-    frame.set({
-      src : this.options.path,
-      styles : {
-        width : this.screen.x,
-        height : this.screen.y
-      }
-    });
+    this.updateFrameSize(this.screen.x, this.screen.y);
+    frame.set('src', this.options.path);
 
     this.toggleWindow(true);
+  },
+
+  updateFrameSize : function(w, h) {
+
+    var frame = this.getFrame();
+
+    frame.setStyles({
+      width : w + 'px',
+      height : h + 'px'
+    });
   },
 
   toggleWindow : function(val) {
@@ -112,7 +117,7 @@ sylma.stepper.Main = new Class({
 
           var script = document.createElement("script");
           script.type = 'text/javascript';
-          script.src = '/sylma/ui/mootools.js';
+          script.src = '/sylma/ui/mootools-min.js';
 
           script.addEventListener('load', function() {
 

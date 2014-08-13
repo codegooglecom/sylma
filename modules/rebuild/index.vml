@@ -27,7 +27,7 @@
 
   <le:context name="title">Rebuild</le:context>
   <le:context name="js">
-    <le:file>/#sylma/ui/mootools.js</le:file>
+    <le:file>/#sylma/ui/mootools-min.js</le:file>
     <le:file>/#sylma/ui/Main.js</le:file>
     <le:file>medias/main.js</le:file>
   </le:context>

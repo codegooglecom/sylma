@@ -14,7 +14,7 @@
 
   extends="/#sylma/modules/stepper/index.vml"
 >
- 
+  
   <crud:global>
 
     <tpl:settings>

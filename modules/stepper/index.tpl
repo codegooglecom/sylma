@@ -164,6 +164,10 @@
 
   <tpl:template match="test:test">
     <div js:class="sylma.stepper.Test" js:alias="test" class="test" js:parent-name="test">
+      <js:option name="width">
+        <tpl:read select="width"/>
+        <tpl:read select="height"/>
+      </js:option>
       <tpl:apply mode="rename"/>
       <button class="edit">
         <js:event name="click">%object%.test();</js:event>

@@ -1,4 +1,4 @@
-sylma.stepper.Property = new Class({
+sylma.stepper.PropertyClass = {
 
   Extends : sylma.stepper.Framed,
 
@@ -24,6 +24,23 @@ sylma.stepper.Property = new Class({
 
     var el = this.getParent().getSelector().getElement();
     var key = this.getSelect().getSelected().get('value')[0];
+    var result;
+
+    if (el) {
+
+      result = this.getValue(key, el);
+
+      this.options.name = key;
+      this.options.value = result === undefined ? '' : result;
+
+      this.updateValue();
+    }
+
+    return el;
+  },
+
+  getValue : function(key, el) {
+
     var result;
 
     switch (key) {
@@ -61,16 +78,15 @@ sylma.stepper.Property = new Class({
         result = el.getStyle(key).toInt();
     }
 
-    this.options.name = key;
-    this.options.value = result === undefined ? '' : result;
-
-    this.updateValue();
+    return result;
   },
 
   refresh : function() {
 
-    this.onChange();
-    this.getParent().hasError(false);
+    if (this.onChange()) {
+
+      this.getParent().hasError(false);
+    }
   },
 
   reset : function() {
@@ -148,4 +164,6 @@ sylma.stepper.Property = new Class({
       0 : this.options.value
     };
   }
-});
+};
+
+sylma.stepper.Property = new Class(sylma.stepper.PropertyClass);

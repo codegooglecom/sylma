@@ -3,6 +3,7 @@
   <ns0:page>
     <ns0:steps>
       <ns0:call path="/sylma/modules/stepper/test/samples/stepper01/sample?path=/sylma/modules/stepper/test/samples/sample03" method="post"/>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/modules/stepper/test/samples/sample03.vml&amp;run=0" method="get"/>
     </ns0:steps>
   </ns0:page>
   <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">

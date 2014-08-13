@@ -1,6 +1,4 @@
-var sylma = sylma || {
-  classes : {}
-};
+sylma.classes = sylma.classes || {};
 
 sylma.classes.binder = new Class({
 

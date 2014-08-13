@@ -197,6 +197,9 @@ class Browser extends core\module\Domed {
 
       $aPage['steps'][] = array('_all' => $aSteps);
       $aResult['page'][] = $aPage;
+
+      $aResult['width'] = $test->read('@width', false);
+      $aResult['height'] = $test->read('@height', false);
     }
 
     return array_filter($aResult);

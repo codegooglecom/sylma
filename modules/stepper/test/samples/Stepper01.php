@@ -33,7 +33,16 @@ class Stepper01 extends stepper\Browser {
   public function prepareSample() {
 
     $current = $this->getManager('fs')->extractDirectory(__FILE__);
-    $sample = $current->getFile('sample01.tml');
+
+    if ($sFile = $this->read('file', false)) {
+
+      $sample = $current->getFile($sFile);
+    }
+    else {
+
+      $sample = $current->getFile('sample01.tml');
+    }
+
     $doc = $sample->asDocument();
 
     if ($sPath = $this->read('path', false)) {

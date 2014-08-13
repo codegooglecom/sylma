@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page>
+    <ns0:steps>
+      <ns0:call path="/sylma/modules/stepper/test/samples/stepper01/sample?file=frame_size.tml" method="post"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/modules/stepper/test/samples/stepper01?dir=/test/tmp">
+    <ns0:steps>
+      <ns0:event name="click" element="#tester &gt; div:nth-child(1) &gt; div:nth-child(2) &gt; button:nth-child(3)"/>
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe" delay="3000">
+        <ns0:property name="iframe">1</ns0:property>
+      </ns0:watcher>
+      <ns0:watcher element="#tester &gt; div:nth-child(1) &gt; div:nth-child(2) &gt; div:nth-child(6) &gt; ul">
+        <ns0:property name="class">activated</ns0:property>
+      </ns0:watcher>
+      <ns0:watcher element="#tester &gt; div:nth-child(2) &gt; iframe">
+        <ns0:property name="display">1;52;600;400</ns0:property>
+      </ns0:watcher>
+    </ns0:steps>
+  </ns0:page>
+</ns0:test>

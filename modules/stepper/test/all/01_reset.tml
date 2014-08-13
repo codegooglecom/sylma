@@ -2,7 +2,8 @@
 <ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
   <ns0:page>
     <ns0:steps>
-      <ns0:call path="/sylma/modules/stepper/test/samples/stepper01/clear?dir=/test/tmp"/>
+      <ns0:call path="/sylma/modules/stepper/test/samples/stepper01/clear?dir=/test/tmp" method="post"/>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/modules/stepper/test/samples/stepper01.vml&amp;run=0" method="get"/>
     </ns0:steps>
   </ns0:page>
 </ns0:test>

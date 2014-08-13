@@ -59,7 +59,10 @@ class Initializer extends module\Domed {
     $this->setErrorReporting();
 
     //set_exception_handler("self::sendException");
-    ini_set('session.gc_maxlifetime', $this->readArgument('session/lifetime'));
+    $iLifetime = $this->readArgument('session/lifetime');
+    ini_set('session.gc_maxlifetime', $iLifetime);
+    session_set_cookie_params($iLifetime);
+    
     session_cache_expire(240);
 
     $this->startSession();

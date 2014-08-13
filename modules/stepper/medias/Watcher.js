@@ -1,4 +1,4 @@
-sylma.stepper.Watcher = new Class({
+sylma.stepper.WatcherClass = {
 
   Extends : sylma.stepper.Step,
 
@@ -58,7 +58,7 @@ sylma.stepper.Watcher = new Class({
         throw new Error('Cannot handle more than one reload property');
       }
 
-      var el = this.getSelector().getElement();
+      var el = this.getSelector().getElement(false);
 
       if (!el && !reloads.length) {
 
@@ -69,7 +69,7 @@ sylma.stepper.Watcher = new Class({
         var timeout1, previous;
         var interval1 = window.setInterval(function() {
 
-          el = this.getSelector().getElement();
+          el = this.getSelector().getElement(false);
 
           if (previous && el && el != previous) {
 
@@ -134,7 +134,7 @@ sylma.stepper.Watcher = new Class({
 
     var interval1 = window.setInterval(function() {
 
-      var el = selector.getElement();
+      var el = selector.getElement(false);
 
       if (el) {
 
@@ -214,4 +214,6 @@ sylma.stepper.Watcher = new Class({
     return {watcher : result};
   }
 
-});
+};
+
+sylma.stepper.Watcher = new Class(sylma.stepper.WatcherClass);

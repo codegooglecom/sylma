@@ -169,7 +169,7 @@ class Builder extends core\module\Domed {
     $sPattern = $alt->read('pattern', false);
 
     $iResult = 0;
-    
+
     if (!$sPattern || preg_match($sPattern, $sCurrent)) {
 
       $iWeight = $alt->read('weight', false);

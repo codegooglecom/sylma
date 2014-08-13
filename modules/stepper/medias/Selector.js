@@ -139,7 +139,7 @@ sylma.stepper.Selector = new Class({
   toggleMask : function(val) {
 
     var mask = this.getMask();
-    var element = this.getElement();
+    var element = this.getElement(false);
 
     if (val && element) {
 
@@ -252,9 +252,10 @@ if (!target) throw new Error('Target not found');
     this.changeElement(this.getElement().getPrevious());
   },
 
-  getElement : function() {
+  getElement : function(debug) {
 
     var path = this.options.element;
+    debug = debug === undefined ? true : debug;
 
     var win = this.getWindow();
     var result;
@@ -267,6 +268,11 @@ if (!target) throw new Error('Target not found');
         result = win.document.body.getElement(path);
 
       }.bind(this));
+    }
+
+    if (!result && debug) {
+
+      sylma.ui.showMessage('Cannot find element');
     }
 
     return result;

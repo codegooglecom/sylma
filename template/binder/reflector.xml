@@ -7,6 +7,7 @@
   <debug>
     <show>0</show>
   </debug>
+  <mootools>/#sylma/ui/mootools-min.js</mootools>
   <cls:classes>
     <cls:base>\sylma\template\binder</cls:base>
     <cls:class alias="class" name="_class\Template">

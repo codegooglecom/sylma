@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper" width="600" height="400">
+  <ns0:page url="/sylma/modules/stepper/test/samples/sample01">
+    <ns0:steps/>
+  </ns0:page>
+</ns0:test>
