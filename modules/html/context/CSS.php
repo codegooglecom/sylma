@@ -48,7 +48,7 @@ class CSS extends Basic implements dom\domable {
 
       array_unshift($aContent, implode("\n", $aImports));
     }
-
+    
     return parent::getCache($aFiles, $aContent);
   }
 

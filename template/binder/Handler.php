@@ -14,6 +14,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
   const OBJECTS_PATH = 'js/load/objects';
   const OBJECTS_CONTEXT = 'context/objects';
 
+  const CONTEXT_JS_COMMON = 'js-common';
   const CONTEXT_JS = 'js';
 
   const TEMPLATE_FILE = '/#sylma/ui/Template.js';
@@ -120,15 +121,18 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     $this->setDirectory(__FILE__);
 
+    $context_common = $contexts->call('get', array(self::CONTEXT_JS_COMMON), '\sylma\core\window\context')->getVar(false);
     $context = $contexts->call('get', array(self::CONTEXT_JS), '\sylma\core\window\context')->getVar(false);
     $this->setContext($context);
 
+    $aResult[] = $context_common->getInsert();
     $aResult[] = $context->getInsert();
-    $aResult[] = $this->addScript($context, $this->read('mootools'));
+    
+    $aResult[] = $this->addScript($context_common, $this->read('mootools'));
 
     foreach ($this->aFiles as $sFile) {
 
-      $aResult[] = $this->addScript($context, $sFile);
+      $aResult[] = $this->addScript($context_common, $sFile);
     }
 
     list($content, $classes) = $this->checkContext($contexts, self::CLASSES_PATH, self::CLASSES_CONTEXT, $window);

@@ -47,6 +47,7 @@ class JS extends Basic implements dom\domable {
   public function asDOM() {
 
     $aStrings = $this->loadContent();
+    $result = null;
 
     if ($aStrings = $this->loadContent()) {
 

@@ -4,7 +4,7 @@
     <le:string le:set-variable="id">sylma-binder-test</le:string>
   </le:settings>
   <le:context name="title">Test Binder</le:context>
-  <le:context name="js">
+  <le:context name="js-common">
     <lm:file path="/#sylma/ui/mootools-min.js"/>
     <lm:file path="/#sylma/ui/Main.js"/>
     <lm:file path="script.js"/>

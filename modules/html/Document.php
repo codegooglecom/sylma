@@ -32,6 +32,7 @@ class Document extends core\window\classes\Container {
     $contexts = $this->createArgument(array(
       'title' => array(),
       'css' => new less\Context(array(), $fusion, $js),
+      'js-common' => new context\JS(array(), $fusion),
       'js' => $js,
       'errors' =>  $messages,
       //'title' =>  new parser\context\Basic,

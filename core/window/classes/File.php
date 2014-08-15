@@ -27,7 +27,9 @@ class File extends core\module\Filed implements core\window\file {
     }
     else {
 
-      $init->setHeaderCache(3600 * 24 * 7);
+      $iCache = $this->getManager()->read('session/expires');
+
+      $init->setHeaderCache($iCache);
     }
 
     $init->setHeaderContent($init->getMime($file->getExtension()));

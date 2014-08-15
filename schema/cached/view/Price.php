@@ -7,7 +7,7 @@ class Price extends Numeric {
 
    public static function format($sValue, array $aSettings) {
 
-     return 'CHF ' . parent::format($sValue, $aSettings);
+     return \Sylma::read('schema/currency') . ' ' . parent::format($sValue, $aSettings) . '.-';
    }
 }
 

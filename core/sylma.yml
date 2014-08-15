@@ -132,6 +132,8 @@ initializer :
 
   session :
     lifetime : 403200
+    cache : 240
+    expires : 1015000
   maintenance :
     enable : false
     file : maintenance.html
@@ -169,6 +171,7 @@ dom:
 schema :
   token :
     duration : 7200
+  currency : CHF
 modules :
   captcha :
     fonts : fonts/truetype/ttf-dejavu

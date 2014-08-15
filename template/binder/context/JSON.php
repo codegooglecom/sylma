@@ -26,6 +26,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     $contexts = new core\argument\Readable(array(
       'errors' => $this->loadMessages(),
       'messages' => $messages,
+      'js-common' => new html\context\JS(),
       'js' => new html\context\JS(array(
         'load' => new template\binder\context\Load,
       )),

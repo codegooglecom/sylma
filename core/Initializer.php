@@ -62,8 +62,8 @@ class Initializer extends module\Domed {
     $iLifetime = $this->readArgument('session/lifetime');
     ini_set('session.gc_maxlifetime', $iLifetime);
     session_set_cookie_params($iLifetime);
-    
-    session_cache_expire(240);
+
+    session_cache_expire($this->readArgument('session/cache'));
 
     $this->startSession();
 

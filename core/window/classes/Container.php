@@ -78,7 +78,7 @@ class Container extends core\module\Domed {
     $user = $this->getManager('user');
     $init = $this->getManager('init');
 
-    $js = $this->getContexts()->get('js');
+    $js = $this->getContexts()->get('js-common');
     $js->add($this->getFile('/#sylma/ui/mootools-min.js'));
     $js->add($this->getFile('/#sylma/ui/Main.js'));
 

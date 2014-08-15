@@ -147,8 +147,12 @@ class Basic extends \Exception implements core\exception {
       $exception->importError($iNo, $sMessage, $sFile, $iLine);
       $exception->setVariables($aContext);
 
-      if (self::throwError()) throw $exception;
+      if (self::throwError()) {
+
+        throw $exception;
+      }
     //}
+
   }
 
   /**
