@@ -170,7 +170,7 @@ class Pather extends component\Child {
 
   protected function matchString($sValue) {
 
-    return $sValue && $sValue{0} == "'" ? substr($sValue, 1, -1) : null;
+    return $sValue && $sValue{0} == "'" ? mb_substr($sValue, 1, -1) : null;
   }
 
   protected function matchNumeric($sValue) {

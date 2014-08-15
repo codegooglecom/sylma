@@ -51,7 +51,7 @@ class Pathed extends Domed implements template_ns\parser\template {
 
       foreach ($aMatches as $i => $aResult) {
 
-        $iStart = $aResult[0][1];
+        $iStart = mb_strlen(substr($sValue, 0, $aResult[0][1]), 'utf-8');
 
         $iVarLength = mb_strlen($aResult[0][0]);
         $val = $this->applyPath($aResult[1][0], '');
