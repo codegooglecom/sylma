@@ -485,7 +485,7 @@ sylma.slideshow.ContainerProps = {
 
     this.all.each(function(slide, key) {
 
-      var dot = this.createPage(new Element('span'));
+      var dot = this.createPage(new Element('span'), key);
       container.grab(dot);
 
       dots.push(dot);
@@ -497,7 +497,7 @@ sylma.slideshow.ContainerProps = {
     this.showPager();
   },
 
-  createPage: function(dummy) {
+  createPage: function(dummy, key) {
 
     var handler = this;
 
@@ -506,7 +506,7 @@ sylma.slideshow.ContainerProps = {
       events : {
         click : function() {
 
-          handler.goPage(this.getAllPrevious().length);
+          handler.goPage(key);
           handler.resetLoop();
         }
       }
