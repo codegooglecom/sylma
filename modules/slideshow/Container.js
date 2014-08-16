@@ -34,7 +34,11 @@ sylma.slideshow.ContainerProps = {
     this.startLoading();
 
     this.hideInfos();
-    this.startLoop();
+
+    if (this.length > 1) {
+
+      this.startLoop();
+    }
   },
 
   prepareContainer: function() {
@@ -481,9 +485,7 @@ sylma.slideshow.ContainerProps = {
 
     this.all.each(function(slide, key) {
 
-      var dot = this.createPage();
-
-      dot.grab(new Element('span'));
+      var dot = this.createPage(new Element('span'));
       container.grab(dot);
 
       dots.push(dot);
@@ -495,11 +497,11 @@ sylma.slideshow.ContainerProps = {
     this.showPager();
   },
 
-  createPage: function() {
+  createPage: function(dummy) {
 
     var handler = this;
 
-    return new Element('a', {
+    var result = new Element('a', {
       href : 'javascript:void(0)',
       events : {
         click : function() {
@@ -509,6 +511,10 @@ sylma.slideshow.ContainerProps = {
         }
       }
     });
+
+    result.grab(dummy);
+
+    return result;
   },
 
   showPager: function() {

@@ -8,26 +8,32 @@ sylma.slideshow.Slide = new Class({
     if (!this.prepared) {
 
       this.prepared = true;
+      this.loadImage(this.getNodes(), this.getImagePath(), function() {
 
-      new Element('img', {
-        src : this.getImagePath(),
-        events : {
-          load : function() {
-
-            this.updateNode();
-            this.getParent('handler').stopLoading();
-
-          }.bind(this)
-        }
-      });
+        this.getParent('handler').stopLoading();
+        
+      }.bind(this));
     }
   },
 
-  updateNode : function(nodes, size) {
+  loadImage : function(nodes, src, callback) {
 
-    nodes = nodes || this.getNodes();
+    new Element('img', {
+      src : src,
+      events : {
+        load : function() {
 
-    nodes.setStyle('background-image', "url('" + this.getImagePath(size) + "')");
+          this.readyImage(nodes, src);
+          callback && callback();
+
+        }.bind(this)
+      }
+    });
+  },
+
+  readyImage : function(nodes, src) {
+
+    nodes.setStyle('background-image', "url('" + src + "')");
 
     (function() {
 
