@@ -89,6 +89,11 @@ class Sub extends Form {
     return $bResult;
   }
 
+  public function isUsed() {
+
+    return true;
+  }
+
   public function asString() {
 
     $sResult = $this->getMode() === 'insert' ? $this->buildInsert() : $this->buildUpdate();

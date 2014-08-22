@@ -137,7 +137,8 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
     $forms = $window->addVar($window->argToInstance(array()));
 
-    $aContent[] = $window->callFunction('array_push', 'php-boolean', array($forms, $table->getDummy()));
+    $push = $window->callFunction('array_push', 'php-boolean', array($forms, $table->getDummy()));
+    $aContent[] = $window->createCondition($table->getDummy()->call('isUsed'), $push);
 
     $loop1->setContent($aContent);
     $this->addContent($loop1);

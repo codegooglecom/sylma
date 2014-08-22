@@ -24,7 +24,7 @@
     <tpl:argument name="type" default="'text'"/>
     <tpl:argument name="object" default="alias('key')"/>
 
-    <div class="field-container clearfix field-{$type}" js:class="sylma.crud.Field">
+    <div class="field-container clearfix field-{$type} {$object}" js:class="sylma.crud.Field">
 
       <js:include>/#sylma/ui/Clonable.js</js:include>
       <js:include>/#sylma/crud/Field.js</js:include>
@@ -58,12 +58,22 @@
     <tpl:argument name="title" default="title()"/>
 
     <label for="form-{$alias}">
-      <tpl:apply mode="label/value">
+      <tpl:apply mode="label/content">
         <tpl:read select="$title" tpl:name="title"/>
       </tpl:apply>
-      <tpl:apply mode="label/optional"/>
-      <tpl:text> :</tpl:text>
     </label>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="label/content">
+
+    <tpl:argument name="title" default="title()"/>
+
+    <tpl:apply mode="label/value">
+      <tpl:read select="$title" tpl:name="title"/>
+    </tpl:apply>
+    <tpl:apply mode="label/optional"/>
+    <tpl:text> :</tpl:text>
 
   </tpl:template>
 
@@ -77,6 +87,5 @@
     <tpl:argument name="title" default="title()"/>
     <tpl:read select="$title"/>
   </tpl:template>
-
 
 </tpl:collection>
