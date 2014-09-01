@@ -175,7 +175,7 @@ sylma.stepper.Test = new Class({
         callback && callback();
       }
 
-      this.getParent('directory').goTest(this);
+      this.getParent('directory').goItem(this);
     }
     else {
 

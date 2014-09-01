@@ -57,6 +57,11 @@ class Logger extends core\module\Domed {
     if ($last = end($this->aComponents)) $last->set('exception', $sMessage);
   }
 
+  protected function show($mVar, $bToken = true) {
+
+    return \Sylma::show($mVar, $bToken);
+  }
+  
   public function asMessage() {
 
     $context = $this->getManager(self::PARSER_MANAGER)->getContext('errors');

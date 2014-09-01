@@ -10,13 +10,13 @@
   xmlns:build="http://2013.sylma.org/parser/reflector/builder"
 
   xmlns:cls="http://2013.sylma.org/core/factory"
-  xmlns:test="http://2013.sylma.org/modules/stepper"
+  xmlns:test="http://2014.sylma.org/modules/tester/stepper"
 
   build:class="\sylma\core\argument\Readable"
   build:output="array"
 >
 
-  <crud:global>
+  <crud:global test:ns="ns">
 
     <xl:resource file="schema.xml"/>
 
@@ -29,6 +29,39 @@
         </cls:class>
       </cls:classes>
     </tpl:settings>
+
+    <tpl:template mode="stepper/resources">
+
+      <js:include>/#sylma/ui/Template.js</js:include>
+      <js:include>/#sylma/ui/Extras.js</js:include>
+      <js:include>/#sylma/ui/Locale.js</js:include>
+      <js:include>/#sylma/ui/Date.js</js:include>
+      <js:include>medias/Listed.js</js:include>
+      <js:include>medias/ErrorHandler.js</js:include>
+      <js:include>medias/Main.js</js:include>
+      <js:include>medias/Framed.js</js:include>
+      <js:include>medias/Collection.js</js:include>
+      <js:include>medias/Container.js</js:include>
+      <js:include>medias/Group.js</js:include>
+      <js:include>medias/Directory.js</js:include>
+      <js:include>medias/DirectoryStandalone.js</js:include>
+      <js:include>medias/Test.js</js:include>
+      <js:include>medias/Page.js</js:include>
+      <js:include>medias/Variable.js</js:include>
+      <js:include>medias/Step.js</js:include>
+      <js:include>medias/Call.js</js:include>
+      <js:include>medias/Snapshot.js</js:include>
+      <js:include>medias/Event.js</js:include>
+      <js:include>medias/Input.js</js:include>
+      <js:include>medias/Watcher.js</js:include>
+      <js:include>medias/Property.js</js:include>
+      <js:include>medias/Element.js</js:include>
+      <js:include>medias/Selector.js</js:include>
+      <js:include>medias/Query.js</js:include>
+
+    </tpl:template>
+
+    <tpl:template match="test:module"/>
 
   </crud:global>
 
@@ -44,32 +77,7 @@
 
     <tpl:template>
 
-      <le:context name="js">
-        <le:file>/#sylma/ui/Template.js</le:file>
-        <le:file>/#sylma/ui/Extras.js</le:file>
-        <le:file>/#sylma/ui/Locale.js</le:file>
-        <le:file>/#sylma/ui/Date.js</le:file>
-        <le:file>medias/Listed.js</le:file>
-        <le:file>medias/ErrorHandler.js</le:file>
-        <le:file>medias/Main.js</le:file>
-        <le:file>medias/Framed.js</le:file>
-        <le:file>medias/Collection.js</le:file>
-        <le:file>medias/Directory.js</le:file>
-        <le:file>medias/DirectoryStandalone.js</le:file>
-        <le:file>medias/Test.js</le:file>
-        <le:file>medias/Page.js</le:file>
-        <le:file>medias/Variable.js</le:file>
-        <le:file>medias/Step.js</le:file>
-        <le:file>medias/Call.js</le:file>
-        <le:file>medias/Snapshot.js</le:file>
-        <le:file>medias/Event.js</le:file>
-        <le:file>medias/Input.js</le:file>
-        <le:file>medias/Watcher.js</le:file>
-        <le:file>medias/Property.js</le:file>
-        <le:file>medias/Element.js</le:file>
-        <le:file>medias/Selector.js</le:file>
-        <le:file>medias/Query.js</le:file>
-      </le:context>
+      <tpl:apply mode="stepper/resources"/>
 
       <tpl:apply/>
 
@@ -87,7 +95,7 @@
     </tpl:template>
 
   </view:view>
- 
+
   <view:view name="loadDirectory"
     build:class="\sylma\core\argument\Readable"
     build:output="array"

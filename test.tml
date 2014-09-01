@@ -1,7 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <collection
   xmlns="http://2013.sylma.org/modules/stepper/collection"
+  xmlns:tester="http://2014.sylma.org/modules/tester/stepper"
 >
+
+  <group name="core">
+    <tester:module dummy="\sylma\core\test\Handler"/>
+    <tester:module dummy="\sylma\parser\security\test\Module"/>
+    <tester:module dummy="\sylma\core\module\test\Basic"/>
+    <tester:module dummy="\sylma\dom\test\Basic"/>
+    <tester:module dummy="\sylma\dom\argument\test\Basic"/>
+  </group>
+  <group name="core/argument">
+    <tester:module dummy="\sylma\core\argument\test\Basic"/>
+    <tester:module dummy="\sylma\core\argument\parser\test\Basic"/>
+    <tester:module dummy="\sylma\core\argument\parser\test\Standalone"/>
+  </group>
+  <group name="core/factory">
+    <tester:module dummy="\sylma\core\factory\test\Basic"/>
+    <tester:module dummy="\sylma\core\factory\parser\test\Basic"/>
+  </group>
+  <group name="storage/fs">
+    <tester:module dummy="\sylma\storage\fs\test\Basic"/>
+    <tester:module dummy="\sylma\storage\fs\test\Editable"/>
+    <tester:module dummy="\sylma\storage\fs\test\Security"/>
+  </group>
+  <group name="template, view">
+    <tester:module dummy="\sylma\action\test\Handler"/>
+    <tester:module dummy="\sylma\schema\test\grouped\Grouped"/>
+    <tester:module dummy="\sylma\storage\sql\test\Handler"/>
+    <tester:module dummy="\sylma\view\test\grouped\Grouped"/>
+    <tester:module dummy="\sylma\storage\xml\test\Handler"/>
+    <tester:module dummy="\sylma\view\parser\crud\test\grouped\Grouped"/>
+  </group>
+  <group name="various">
+    <tester:module dummy="\sylma\device\test\Handler"/>
+    <tester:module dummy="\sylma\template\binder\test\Module"/>
+  </group>
   <directory path="core/exception/test/stepper"/>
   <directory path="modules/uploader/test/stepper"/>
   <directory path="modules/stepper/test/all"/>

@@ -10,7 +10,7 @@ class Grouped extends tester\Formed implements core\argumentable {
   public function __construct() {
 
     $this->setDirectory(__file__);
-    $this->resetDB();
+    //$this->resetDB();
     $this->resetToken();
 
     parent::__construct();

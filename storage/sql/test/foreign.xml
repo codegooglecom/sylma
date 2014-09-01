@@ -796,6 +796,15 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Update multiple">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO user (name) VALUES ('foreign01')", 8);
+      $manager->runQuery("INSERT INTO user_group (id_user, id_group) VALUES ($sID, 2)", 8);
+      $manager->runQuery("INSERT INTO user_group (id_user, id_group) VALUES ($sID, 3)", 8);
+
+      $manager->set('id', $sID);
+
+    </tst:prepare>
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>

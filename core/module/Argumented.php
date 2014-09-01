@@ -239,7 +239,7 @@ abstract class Argumented extends Managed {
 
     return $this->getSettings()->set($sPath, $mValue);
   }
-
+/*
   protected function dsp() {
 
     $mArgument = func_get_args();
@@ -252,6 +252,7 @@ abstract class Argumented extends Managed {
 
     return \Sylma::show($mVar, $bToken);
   }
+*/
 }
 
 

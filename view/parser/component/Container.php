@@ -29,7 +29,7 @@ class Container extends template_ns\parser\template\Argumented {
   }
 
   /**
-   * @used by self::parseMatchValue() anonymouse closure
+   * @used by self::parseMatchValue() anonymous closure
    */
   public function buildMatchValue(dom\element $el, $sPrefix, $sName) {
 

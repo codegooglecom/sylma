@@ -85,8 +85,8 @@
       <ip>0</ip>
       <group arg:type="token">famous,server</group>
     </user>
-    <user name="anonymouse">
-      <group arg:type="token">famous</group>
+    <user name="anonymous">
+      <group arg:type="token">anonymous</group>
     </user>
     <user name="authenticated">
       <group arg:type="token">users</group>

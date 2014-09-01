@@ -21,7 +21,9 @@ namespaces :
     'http://www.sylma.org/parser/action' : action
     'http://2013.sylma.org/core/argument' : argument
     'http://2013.sylma.org/view' : view
+    'http://2014.sylma.org/view' : view_2014
     'http://2013.sylma.org/view/crud' : view/crud
+    'http://2014.sylma.org/router' : router
     'http://www.w3.org/2001/XMLSchema' : schema/xsd
     'http://2013.sylma.org/storage/sql' : sql/schema
   cached :
@@ -39,6 +41,16 @@ classes :
       crud :
         name : \sylma\view\parser\builder\Router
         arguments : /#sylma/view/parser/view.xml
+  view_2014 :
+    classes :
+      xml :
+        name : \sylma\storage\xml\view\Builder
+        arguments : /#sylma/storage/xml/builder.xml
+      sql :
+        name : \sylma\storage\sql\view\Builder
+  router :
+    name : \sylma\router\Builder
+    _arguments : /#sylma/router/builder.xml
   schema :
     classes :
       ssd :

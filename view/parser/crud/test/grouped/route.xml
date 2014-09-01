@@ -76,6 +76,12 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Multiple routes">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO user (name, email) VALUES ('tester_crud2', 'tester_crud2@sylma.org')", 8);
+      $manager->set('id', $sID);
+
+    </tst:prepare>
     <tst:document>
       <crud:crud>
         <crud:route>

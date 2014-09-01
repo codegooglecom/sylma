@@ -18,14 +18,14 @@ class Initializer extends Parser implements core\argumentable {
 
     return $this->create('action', array($this->getFile($sPath)));
   }
-
+/*
   protected function prepareTest(dom\element $test, $controler) {
 
     $this->restoreSylma();
 
     return parent::prepareTest($test, $controler);
   }
-
+*/
   public function createUser($sAlias = '') {
 
     $manager = $this->getManager('user')->getManager();
@@ -82,6 +82,11 @@ class Initializer extends Parser implements core\argumentable {
   public function restoreSylma() {
 
     \Sylma::setManagers($this->getManagers());
+  }
+
+  protected function onFinish() {
+
+    header('HTTP/1.1 200 OK');
   }
 
   public function asArgument() {

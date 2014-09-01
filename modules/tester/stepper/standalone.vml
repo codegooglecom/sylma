@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  builder:return="result"
+>
+
+  <tpl:settings>
+    <cls:classes>
+      <cls:class alias="tree">
+        <cls:classes>
+          <cls:class alias="cached" name="\sylma\modules\tester\stepper\Standalone"/>
+        </cls:classes>
+      </cls:class>
+    </cls:classes>
+  </tpl:settings>
+
+  <xl:resource/>
+
+  <js:include>Standalone.js</js:include>
+
+  <tpl:template>
+
+    <tpl:apply select="initTest()">
+      <le:file>
+        <le:get-argument name="file"/>
+      </le:file>
+      <le:get-argument name="key"/>
+    </tpl:apply>
+
+    <tpl:apply select="asDOM()"/>
+
+  </tpl:template>
+
+</view:view>

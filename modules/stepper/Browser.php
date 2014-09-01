@@ -89,9 +89,42 @@ class Browser extends core\module\Domed {
 
     foreach ($collection as $dir) {
 
-      $aResult['directory'][] = array(
-        'path' => (string) $this->getDirectory($dir->read('@path'), true),
-      );
+      $aResult[] = $this->buildChild($dir);
+    }
+
+    return array('_all' => $aResult);
+  }
+
+  protected function buildChild(core\argument $child) {
+
+    switch ($child->getName()) {
+
+      case 'directory' :
+
+        $aResult = array(
+          'path' => (string) $this->getDirectory($child->read('@path'), true),
+          '_alias' => 'directory',
+        );
+        break;
+
+      case 'group' :
+
+        $aResult = array(
+          'name' => $child->read('@name'),
+          '_alias' => 'group',
+          '_all' => array(),
+        );
+
+        foreach ($child as $sub) {
+
+          $aResult['_all'][] = $this->buildChild($sub);
+        }
+
+        break;
+
+      default :
+
+        $this->launchException('Bad collection child');
     }
 
     return $aResult;
@@ -126,73 +159,7 @@ class Browser extends core\module\Domed {
 
         if ($step->isEmpty()) continue;
 
-        $aStep = array(
-          '_alias' => $step->getName(),
-        );
-
-        switch ($step->getName()) {
-
-          case 'event' :
-
-            $aStep['name'] = $step->read('@name');
-            $aStep['element'] = $step->read('@element');
-            break;
-
-          case 'input' :
-
-            $aStep['element'] = $step->read('@element');
-            $aStep['value'] = $step->read();
-            break;
-
-          case 'watcher' :
-
-            $aStep['element'] = $step->read('@element');
-            $aStep['delay'] = $step->read('@delay', false);
-
-
-            foreach ($step->query('property', false) as $property) {
-
-              $aStep['property'][] = array(
-                'name' => $property->read('@name'),
-                'value' => $property->read(),
-              );
-            }
-
-            $this->loadVariable($step, $aStep);
-
-            break;
-
-          case 'snapshot' :
-
-            $aStep['element'] = $step->read('@element');
-            $aStep['content'] = $step->read('content', false);
-
-            foreach ($step->query('exclude', false) as $exclude) {
-
-              $aStep['excludes'][] = array(
-                'element' => $exclude->read('@element'),
-              );
-            }
-            break;
-
-          case 'call' :
-
-            $aStep['path'] = $step->read('@path');
-            $aStep['get'] = $step->read('@method', false) === 'get';
-
-            $this->loadVariable($step, $aStep);
-            break;
-
-          case 'query' :
-
-            $aStep['value'] = $step->read();
-            $aStep['creation'] = $step->read('@creation');
-            $aStep['timeshift'] = $step->read('@timeshift', false);
-            $aStep['connection'] = $step->read('@connection', false);
-            break;
-        }
-
-        $aSteps[] = $aStep;
+        $aSteps[] = $this->buildStep($step);
       }
 
       $aPage['steps'][] = array('_all' => $aSteps);
@@ -203,6 +170,77 @@ class Browser extends core\module\Domed {
     }
 
     return array_filter($aResult);
+  }
+
+  protected function buildStep(core\argument $step) {
+
+    $aResult = array(
+      '_alias' => $step->getName(),
+    );
+
+    switch ($step->getName()) {
+
+      case 'event' :
+
+        $aResult['name'] = $step->read('@name');
+        $aResult['element'] = $step->read('@element');
+        break;
+
+      case 'input' :
+
+        $aResult['element'] = $step->read('@element');
+        $aResult['value'] = $step->read();
+        break;
+
+      case 'watcher' :
+
+        $aResult['element'] = $step->read('@element');
+        $aResult['delay'] = $step->read('@delay', false);
+
+
+        foreach ($step->query('property', false) as $property) {
+
+          $aResult['property'][] = array(
+            'name' => $property->read('@name'),
+            'value' => $property->read(),
+          );
+        }
+
+        $this->loadVariable($step, $aResult);
+
+        break;
+
+      case 'snapshot' :
+
+        $aResult['element'] = $step->read('@element');
+        $aResult['content'] = $step->read('content', false);
+
+        foreach ($step->query('exclude', false) as $exclude) {
+
+          $aResult['excludes'][] = array(
+            'element' => $exclude->read('@element'),
+          );
+        }
+        break;
+
+      case 'call' :
+
+        $aResult['path'] = $step->read('@path');
+        $aResult['get'] = $step->read('@method', false) === 'get';
+
+        $this->loadVariable($step, $aResult);
+        break;
+
+      case 'query' :
+
+        $aResult['value'] = $step->read();
+        $aResult['creation'] = $step->read('@creation');
+        $aResult['timeshift'] = $step->read('@timeshift', false);
+        $aResult['connection'] = $step->read('@connection', false);
+        break;
+    }
+
+    return $aResult;
   }
 
   protected function loadVariable(core\argument $step, array &$aStep) {

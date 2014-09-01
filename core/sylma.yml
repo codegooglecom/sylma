@@ -93,7 +93,7 @@ initializer :
         pattern : `^/(sylma/.+/test)`
       stepper :
         action : /sylma/modules/stepper/test/window.vml
-        pattern : `^/(sylma/modules/stepper/test)`
+        pattern : `^/(sylma/modules/stepper/test|sylma/modules/tester/stepper/standalone)`
         weight : 10
       crud :
         action : /sylma/modules/html/window.vml
@@ -149,12 +149,12 @@ users:
     name: server
     ip:
     groups:
-      - famous
+      - anonymous
       - server
     arguments: [ ]
-  anonymouse:
-    name: anonymouse
-    groups: [famous]
+  anonymous:
+    name: anonymous
+    groups: [anonymous]
     arguments:
       full-name: Anonymous
   authenticated:

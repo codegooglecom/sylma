@@ -1,3 +1,6 @@
+
+@import "vars.less";
+
 #content
 {
   min-height: 0;
@@ -12,7 +15,6 @@
     opacity: 0;
   }
 }
-
 
 .selector-mask
 {
@@ -123,24 +125,31 @@
     margin-top: 0.25em;
   }
 
+  .group > h4
+  {
+    font-weight: bold;
+  }
+
+  .container,
   .directory,
+  .group,
   .test
   {
     padding-top: 0.5em;
 
     &.error > h4
     {
-      color: red;
+      .error-title;
     }
+  }
 
-    .items
+  .items
+  {
+    overflow: hidden;
+
+    &.zoom.sylma-visible
     {
-      overflow: hidden;
-
-      &.sylma-visible
-      {
-        max-height: 300em;
-      }
+      max-height: 300em;
     }
   }
 
@@ -193,15 +202,16 @@
 
       &.error > a
       {
-        color: red;
+        .error-title;
       }
 
       li
       {
 
-        &.error > h4
+        &.error > h4,
+        &.error > strong
         {
-          color: red;
+          .error-title;
         }
 
         &.ready .selector button
@@ -213,11 +223,6 @@
         {
           font-size: 1.1em;
           line-height: 1.4em;
-        }
-
-        &.error > strong
-        {
-          color: red;
         }
 
         form
@@ -264,7 +269,8 @@
   }
 
   .page li,
-  .page > a
+  .page > a,
+  .step
   {
     padding-left: 0.5em;
     list-style-type: none;

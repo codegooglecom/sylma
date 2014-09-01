@@ -36,24 +36,33 @@
 
       $manager->setToken('/sylma/view/test/grouped/formxml-simple-insert');
 
+      $aUser = array(
+        'name' => 'tester',
+        'email' => 'tester@sylma.org',
+      );
+
+      $manager->set('user', $aUser);
+
       return
-        array('post' => $manager->createArgument(array(
-          'name' => 'tester',
-          'email' => 'tester@sylma.org',
-        )))
+        array('post' => $manager->createArgument($aUser))
     </tst:load>
     <tst:expected>
       $sID = $manager->readArgument('result');
       $manager->setArgument('id', $sID);
 
-      $user = $manager->runQuery("SELECT * FROM user WHERE id = $sID", 0);
+      $user = $manager->runQuery("SELECT name, email FROM user WHERE id = $sID", 0);
+      $manager->assertEquals($user->query(), $manager->get('user')->query());
 
-      return
-        $user->read('name') === 'tester' &amp;&amp;
-        $user->read('email') === 'tester@sylma.org';
+      return true;
     </tst:expected>
   </tst:test>
   <tst:test name="Simple update">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO user (name, email) VALUES ('tester', 'tester@sylma.org')", 8);
+      $manager->set('id', $sID);
+
+    </tst:prepare>
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>
@@ -95,6 +104,12 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Constant update">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO user (name, email) VALUES ('tester', 'tester02@sylma.org')", 8);
+      $manager->set('id', $sID);
+
+    </tst:prepare>
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>
@@ -134,6 +149,12 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Predefined update">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO user (name, email) VALUES ('tester', 'tester02@sylma.org')", 8);
+      $manager->set('id', $sID);
+
+    </tst:prepare>
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>
@@ -154,7 +175,7 @@
     <tst:load>
 
       $manager->setToken('/sylma/view/test/grouped/formxml-predefined-update');
-      $sID = $manager->readArgument('id');
+      $sID = $manager->read('id');
 
       return
         array('post' => $manager->createArgument(array(
@@ -162,7 +183,7 @@
         )))
     </tst:load>
     <tst:expected>
-      $sID = $manager->readArgument('id');
+      $sID = $manager->read('id');
 
       $user = $manager->runQuery("SELECT name, email FROM user WHERE id = $sID", 0);
 
@@ -175,6 +196,12 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Handler reflector">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO user (name, email) VALUES ('tester', 'tester02@sylma.org')", 8);
+      $manager->set('id', $sID);
+
+    </tst:prepare>
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>
@@ -193,7 +220,7 @@
     <tst:load>
 
       $manager->setToken('/sylma/view/test/grouped/formxml-handler-reflector');
-      $sID = $manager->readArgument('id');
+      $sID = $manager->read('id');
 
       return
         array('post' => $manager->createArgument(array(
@@ -218,6 +245,12 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Field inline reflector">
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO user (name, email) VALUES ('tester', 'tester02@sylma.org')", 8);
+      $manager->set('id', $sID);
+
+    </tst:prepare>
     <tst:document>
       <view:view user:ns="ns" mode="update">
         <sql:resource>

@@ -1,0 +1,57 @@
+
+@import "../../stepper/medias/vars.less";
+
+#tester
+{
+  .module
+  {
+    .file
+    {
+      margin-top: 0.25em;
+
+      h5
+      {
+        margin: 0;
+        font-size: 0.9em;
+        padding-top: 0.3em;
+        padding-bottom: 0.2em;
+      }
+
+      &.error > h5,
+      .error > h6
+      {
+        .error-title;
+      }
+
+      h6
+      {
+        margin: 0;
+        font-size: 0.8em;
+      }
+
+      ul
+      {
+        padding: 0;
+        float: none;
+        width: 100%;
+        margin-top: 0.2em;
+        border-top: 1px solid #ddd;
+
+        li.error
+        {
+          border-left-color: @error-color;
+        }
+      }
+
+      .test
+      {
+        margin: 0;
+      }
+
+      .test-js
+      {
+        font-style: italic;
+      }
+    }
+  }
+}

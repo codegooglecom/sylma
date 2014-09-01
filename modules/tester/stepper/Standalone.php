@@ -1,7 +1,7 @@
 <?php
 
-namespace sylma\template\binder\test;
-use sylma\core, sylma\dom, sylma\storage\fs, sylma\modules\tester, sylma\storage\sql;
+namespace sylma\modules\tester\stepper;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\modules\tester;
 
 class Standalone extends tester\Parser implements dom\domable {
 
@@ -10,12 +10,19 @@ class Standalone extends tester\Parser implements dom\domable {
 
   protected $iTestKey;
 
-  public function __construct(fs\file $file, $iTest) {
+  public function __construct(core\argument $args, core\argument $post, core\argument $contexts) {
 
-    $this->setDirectory(__file__);
+    $this->contexts = $contexts;
+  }
+
+  public function initTest(fs\file $file, $iTest) {
+
+    $this->setDirectory($file->getParent());
     $this->setNamespace(self::NS, 'self');
 
-    $this->resetDB();
+    $this->setManager($this);
+
+    //$this->resetDB();
 
     $this->setFile($file);
     $this->setTestKey($iTest);
@@ -44,7 +51,7 @@ class Standalone extends tester\Parser implements dom\domable {
 
   public function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array(), $bRun = true) {
 
-    return parent::getScript($sPath, $aArguments, $this->getActionContexts()->query(), $aPosts, $bRun);
+    return parent::getScript($sPath, $aArguments, $this->contexts->query(), $aPosts, $bRun);
   }
 
   public function asDOM() {
@@ -54,7 +61,7 @@ class Standalone extends tester\Parser implements dom\domable {
     $test = $this->loadTest($doc);
     $this->prepareTest($test, $this);
 
-    if (!$result = $this->parseResult($test, $this->getFile(), array('contexts' => $this->getActionContexts()))) {
+    if (!$result = $this->parseResult($test, $this->getFile(), array('contexts' => $this->contexts))) {
 
       $this->prepareTest($test, $this);
       $result = $this->get('result');
@@ -70,12 +77,10 @@ class Standalone extends tester\Parser implements dom\domable {
 
     $sExpected = $expected->readx();
 
-    $parent = $this->getManager('parser')->getContext('action/current');
-
     $sBind = $expected->readx('@bind', array(), false);
     if (!$sBind) $sBind = 'example';
 
-    $parent->getContext('js/load')->add("$(window).addEvent('load', function() { sylma.tester.main.run(function() { $sExpected; }, $sBind, $bCallback); });");
+    $this->contexts->get('js/load')->add("$(window).addEvent('load', function() { sylma.tester.main.run(function() { $sExpected; }, $sBind, $bCallback); });");
 
     return $result;
   }

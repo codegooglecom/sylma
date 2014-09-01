@@ -27,9 +27,7 @@ sylma.stepper.Main = new Class({
 
     if (this.options.collection) {
 
-      this.root = this.add('collection', {
-        items : this.get('items')
-      });
+      this.root = this.add('collection', this.get('items'));
     }
     else if (this.options.directory) {
 

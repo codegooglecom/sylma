@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<collection
+  xmlns="http://2013.sylma.org/modules/stepper/collection"
+  xmlns:tester="http://2014.sylma.org/modules/tester/stepper"
+>
+  <tester:module dummy="\sylma\modules\tester\test\Handler"/>
+</collection>

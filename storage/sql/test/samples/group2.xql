@@ -7,9 +7,12 @@
 >
 
   <table name="group" connection="test">
+
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
+
     <reference name="users" table="user:user2" foreign="user:group_id" import="user6.xql"/>
+    
   </table>
 
 </schema>

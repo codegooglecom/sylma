@@ -3,7 +3,7 @@
 namespace sylma\view\parser\crud\test\grouped;
 use sylma\core, sylma\modules\tester, sylma\storage\fs, sylma\storage\sql;
 
-class Grouped extends tester\Parser implements core\argumentable {
+class Grouped extends tester\Formed implements core\argumentable {
 
   const DB_MANAGER = 'mysql';
 
@@ -57,12 +57,6 @@ class Grouped extends tester\Parser implements core\argumentable {
     $result = $manager->load($this->getFile(), $aArguments, false);
 
     return $result;
-  }
-
-  public function runQuery($sValue, $bMultiple = true) {
-
-    $db = $this->getManager(self::DB_MANAGER)->getConnection(self::DB_CONNECTION);
-    return $bMultiple ? $db->query($sValue) : $db->get($sValue);
   }
 }
 

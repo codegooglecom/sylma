@@ -28,6 +28,20 @@
       <mode>740</mode>
     </security>
   </file>
+  <file name="image01_small.jpg">
+    <security>
+      <owner>root</owner>
+      <group>test01</group>
+      <mode>740</mode>
+    </security>
+  </file>
+  <file name="result01.css">
+    <security>
+      <owner>root</owner>
+      <group>test01</group>
+      <mode>740</mode>
+    </security>
+  </file>
   <file name="style01.css">
     <security>
       <owner>root</owner>

@@ -3,7 +3,7 @@
 namespace sylma\modules\tester;
 use sylma\core, sylma\dom, sylma\storage\fs;
 
-abstract class Prepare extends Basic {
+abstract class Prepare extends Stepper {
 
   const DB_ARGUMENTS = '/#sylma/view/test/database.xml';
   const DB_CONNECTION = 'test';
@@ -93,7 +93,7 @@ abstract class Prepare extends Basic {
 
       $sAlias = static::DB_ARGUMENTS;
     }
-    
+
     $arg = $this->createArgument($sAlias);
     $db = $this->getManager(static::DB_MANAGER)->getConnection(static::DB_CONNECTION);
 

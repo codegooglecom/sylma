@@ -1,20 +1,18 @@
 <?php
 
 namespace sylma\template\binder\test;
-use sylma\core, sylma\dom, sylma\storage\fs;
+use sylma\core, sylma\dom, sylma\storage\fs, sylma\modules\tester;
 
-class Module extends core\module\Domed implements dom\domable {
+class Module extends tester\Parser {
 
-  const NS = 'http://www.sylma.org/modules/tester/parser';
-
-  protected $iTestKey;
+  const TEST_ALIAS = 'testjs';
 
   public function __construct() {
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
   }
-
+/*
   public function asDOM() {
 
     $aTests = array();
@@ -43,5 +41,6 @@ class Module extends core\module\Domed implements dom\domable {
     $action->getContext('js')->add("$sParent.tests = $sTests;");
     $action->getContext('js/load')->add("$sParent.run()");
   }
+*/
 }
 

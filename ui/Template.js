@@ -108,6 +108,22 @@ sylma.ui.Template = new Class({
     sylma.ui.loadArray([this]);
   },
 
+  addChildren : function(children) {
+
+    if (children) {
+
+      Object.each(children, function(group, name) {
+
+        Object.each(group, function(item) {
+
+          this.add(name, item);
+
+        }.bind(this));
+
+      }.bind(this));
+    }
+  },
+
   destroy : function() {
 
     //this.parent();

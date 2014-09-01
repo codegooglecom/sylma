@@ -24,6 +24,11 @@
       $file->read() == 'abc';
   </tst:test>
   <tst:test name="Rename a file">
+
+    $dir = $controler->getDirectory();
+    $file = $dir->getFile('myfile.txt', \sylma\storage\fs\resource::DEBUG_EXIST);
+    $file->saveText('abc');
+
     $file = $controler->getFile('myfile.txt');
     $file->rename('newname.txt');
     $newFile = $controler->getFile('newname.txt');
@@ -33,6 +38,10 @@
       $newFile instanceof \sylma\storage\fs\file
   </tst:test>
   <tst:test name="Move a file">
+    $dir = $controler->getDirectory();
+    $file = $dir->getFile('newname.txt', \sylma\storage\fs\resource::DEBUG_EXIST);
+    $file->saveText('abc');
+
     $file = $controler->getFile('newname.txt');
     $sub = $controler->getDirectory()->addDirectory('mydir2');
 

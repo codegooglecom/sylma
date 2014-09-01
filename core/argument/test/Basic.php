@@ -23,14 +23,17 @@ class Basic extends tester\Prepare implements core\argumentable {
     $this->setControler($controler);
   }
 
-  protected function loadDocument(dom\handler $doc, fs\file $file) {
+  protected function openDocument(fs\file $file) {
 
-    if ($doc->getRoot() && ($sClass = $doc->getRoot()->readAttribute('class', $this->getNamespace(), false))) {
+    if ($result = parent::openDocument($file)) {
 
-       $this->getControler()->setArgument('class-alias', $sClass);
+      if ($result->getRoot() && ($sClass = $result->getRoot()->readAttribute('class', $this->getNamespace(), false))) {
+
+         $this->getControler()->setArgument('class-alias', $sClass);
+      }
     }
 
-    return parent::loadDocument($doc, $file);
+    return $result;
   }
 
   protected function test(dom\element $test, $sExpected, $controler, dom\document $doc, fs\file $file) {

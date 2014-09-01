@@ -4,24 +4,24 @@ sylma.stepper.Collection = new Class({
   Extends : sylma.stepper.Framed,
   Implements : sylma.stepper.Listed,
 
+  items : [],
+
   onLoad : function() {
 
     this.loadDirectories();
+/*
+    var items = [];
+
+    items.append(this.getObject('directory'));
+    items.append(this.getObject('module'));
+console.log(this);
+    this.items = items;
+*/
   },
 
   loadDirectories : function() {
 
-    var dirs = this.get('items');
-
-    if (dirs) {
-
-      Object.each(dirs.directory, function(item) {
-
-        this.add('directory', item);
-
-      }.bind(this));
-    }
-
+    //this.addChildren(this.get('items'));
     this.setCurrent(-1);
   },
 
@@ -34,10 +34,10 @@ sylma.stepper.Collection = new Class({
 
   getItems : function() {
 
-    return this.getObject('directory');
+    return this.tmp;
   },
 
-  goDirectory : function(test) {
+  goItem : function(test) {
 
     var key = test.getKey();
     this.setCurrent(key);

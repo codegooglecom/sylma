@@ -6,7 +6,7 @@ use \sylma\core, sylma\storage\fs, sylma\core\functions;
 class Basic extends core\module\Argumented implements core\user {
 
   const NS = 'http://2013.sylma.org/core/user';
-  const PUBLIC_ALIAS = 'anonymouse';
+  const PUBLIC_ALIAS = 'anonymous';
   const GROUP_TEST = 'test';
 
   //private $sUser = '';

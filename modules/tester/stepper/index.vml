@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:test="http://2014.sylma.org/modules/tester/stepper"
+
+  extends="/#sylma/modules/stepper/index.vml"
+>
+
+  <crud:global test:ns="ns">
+
+    <tpl:settings>
+      <cls:classes>
+        <cls:class alias="tree">
+          <cls:classes>
+            <cls:class alias="cached" name="\sylma\modules\tester\stepper\Dummy"/>
+          </cls:classes>
+        </cls:class>
+      </cls:classes>
+    </tpl:settings>
+
+    <tpl:template mode="stepper/resources">
+
+      <tpl:apply mode="stepper/resources"/>
+
+      <js:include>Module.js</js:include>
+      <js:include>File.js</js:include>
+      <js:include>Test.js</js:include>
+      <js:include>TestJS.js</js:include>
+
+      <le:context name="css">
+        <le:file>tester.less</le:file>
+      </le:context>
+
+    </tpl:template>
+
+    <tpl:template mode="stepper/options">
+
+      <js:option name="module.path" cast="x">
+        <le:path/>
+      </js:option>
+
+      <js:option name="module.standalone" cast="x">
+        <le:path>standalone</le:path>
+      </js:option>
+
+      <tpl:apply mode="stepper/options"/>
+
+    </tpl:template>
+
+    <tpl:template match="test:module">
+      <div js:class="sylma.tester.Module" js:alias="module" class="module container" js:parent-name="module">
+        <button class="edit">
+          <js:event name="click">%object%.test();</js:event>
+          <span>▷</span>
+        </button>
+        <button class="edit">
+          <js:event name="click">%object%.toggleSelect();</js:event>
+          <span>▶</span>
+        </button>
+        <h4>
+          <tpl:read select="dummy"/>
+        </h4>
+        <div js:node="items" class="sylma-hidder zoom items">
+          <tpl:apply select="*"/>
+        </div>
+      </div>
+    </tpl:template>
+
+    <tpl:template match="test:file">
+      <div js:class="sylma.tester.File" js:alias="file" class="file" js:parent-name="file">
+
+        <js:option name="path">
+          <tpl:read select="path"/>
+        </js:option>
+
+        <button class="edit">
+          <js:event name="click">%object%.test();</js:event>
+          <span>▷</span>
+        </button>
+        <button class="edit">
+          <js:event name="click">%object%.toggleSelect();</js:event>
+          <span>▶</span>
+        </button>
+        <h5 class="step">
+          <tpl:read select="name"/>
+        </h5>
+        <ul js:node="items" class="sylma-hidder zoom items">
+          <tpl:apply select="*"/>
+        </ul>
+      </div>
+    </tpl:template>
+
+    <tpl:template match="test:test">
+      <li js:class="sylma.tester.Test" js:alias="test" class="test step" js:parent-name="test">
+        <js:option name="id">
+          <tpl:read select="id"/>
+        </js:option>
+        <button class="edit">
+          <js:event name="click">%object%.test();</js:event>
+          <span>▷</span>
+        </button>
+        <h6>
+          <tpl:read select="name"/>
+        </h6>
+      </li>
+    </tpl:template>
+
+    <tpl:template match="test:test-js">
+      <li js:class="sylma.tester.TestJS" js:alias="testjs" class="test test-js step" js:parent-name="test">
+        <js:option name="id">
+          <tpl:read select="id"/>
+        </js:option>
+        <button class="edit">
+          <js:event name="click">%object%.test();</js:event>
+          <span>▷</span>
+        </button>
+        <h6>
+          <tpl:read select="name"/>
+        </h6>
+      </li>
+    </tpl:template>
+
+  </crud:global>
+
+  <view:view name="getModuleFiles"
+    build:class="\sylma\core\argument\Readable"
+    build:output="array"
+  >
+
+    <tpl:template>
+      <tpl:apply select="getModuleFiles()">
+        <le:get-argument name="class" source="post"/>
+      </tpl:apply>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="getModuleTests"
+    build:class="\sylma\core\argument\Readable"
+    build:output="array"
+  >
+
+    <tpl:template>
+      <tpl:apply select="getModuleTests()">
+        <le:get-argument name="class" source="post"/>
+        <le:file>
+          <le:get-argument name="file" source="post"/>
+        </le:file>
+      </tpl:apply>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="testModule"
+    build:return="result"
+  >
+
+    <tpl:template>
+      <tpl:apply select="testModule()">
+        <le:get-argument name="class" source="post"/>
+        <le:file>
+          <le:get-argument name="file" source="post"/>
+        </le:file>
+        <le:get-argument name="id" source="post"/>
+      </tpl:apply>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

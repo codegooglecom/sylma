@@ -33,7 +33,7 @@
       <tpl:apply mode="template/add"/>
       <tpl:apply mode="template"/>
       <div js:class="sylma.crud.Group" js:name="content">
-        <tpl:apply select="ref()" mode="update"/>
+        <tpl:apply select="ref()"/>
       </div>
     </fieldset>
   </tpl:template>

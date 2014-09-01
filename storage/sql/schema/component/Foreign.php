@@ -88,7 +88,7 @@ class Foreign extends Element implements sql\schema\foreign {
 
       if (is_null($this->elementRef)) {
 
-        $this->setElementRef(clone $this->importElementRef());
+        $this->setElementRef($this->importElementRef());
       }
       else {
 

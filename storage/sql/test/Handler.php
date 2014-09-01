@@ -10,10 +10,14 @@ class Handler extends tester\Formed implements core\argumentable {
   public function __construct() {
 
     $this->setDirectory(__file__);
-    $this->resetDB();
-    $this->resetDB('database.xml');
 
     parent::__construct();
+  }
+
+  protected function show() {
+    
+    $this->resetDB();
+    $this->resetDB('database.xml');
   }
 
   public function getSchema($sPath) {

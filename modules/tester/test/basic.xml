@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tst:tests
+  xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:cmp="http://2013.sylma.org/dom/compare"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+
+  <tst:description>Basic</tst:description>
+
+  <tst:test name="Success">
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <h3>Hello</h3>
+            <p>World</p>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h3>Hello</h3>
+        <p>World</p>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Error">
+    <tst:document>
+      <view:view>
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <h3>Hello</h3>
+            <p>World</p>
+          </div>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h2>Hello</h2>
+      </div>
+    </tst:node>
+  </tst:test>
+
+</tst:tests>

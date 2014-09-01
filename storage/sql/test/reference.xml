@@ -320,7 +320,16 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Form update">
-    <tst:dependancy>Form insert (prev)</tst:dependancy>
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO `group` (name) VALUES ('group_crud')", 8);
+
+      $manager->runQuery("INSERT INTO user (name, email, group_id) VALUES ('test_ref1', 'test_ref1@sylma.org', $sID)", 8);
+      $manager->runQuery("INSERT INTO user (name, email, group_id) VALUES ('test_ref2', 'test_ref2@sylma.org', $sID)", 8);
+
+      $manager->set('idref', $sID);
+
+    </tst:prepare>
     <tst:document>
 
       <view:view mode="update">
@@ -396,7 +405,18 @@
     </tst:expected>
   </tst:test>
   <tst:test name="Form update with ids">
-    <tst:dependancy>Form update (prev)</tst:dependancy>
+    <tst:prepare>
+
+      $sID = $manager->runQuery("INSERT INTO `group` (name) VALUES ('group_crud')", 8);
+
+      $iUser1 = $manager->runQuery("INSERT INTO user2 (name, email, group_id) VALUES ('test_ref1', 'test_ref1@sylma.org', $sID)", 8);
+      $iUser2 = $manager->runQuery("INSERT INTO user2 (name, email, group_id) VALUES ('test_ref2', 'test_ref2@sylma.org', $sID)", 8);
+
+      $manager->set('idref', $sID);
+      $manager->set('user1', $iUser1);
+      $manager->set('user2', $iUser2);
+
+    </tst:prepare>
     <tst:document>
 
       <view:view mode="update">
@@ -435,10 +455,10 @@
 
       $aUsers = array(
         array(
-          'id' => -7,
+          'id' => - $manager->read('user1'),
         ),
         array(
-          'id' => '8',
+          'id' => $manager->read('user2'),
           'name' => 'test_ref2c',
           'email' => 'test_ref2c@sylma.org',
         ),
@@ -463,6 +483,101 @@
 
       $group = $manager->runQuery("SELECT name FROM `group` WHERE id = $sID", false);
       $users = $manager->runQuery("SELECT id,name,email FROM user2 WHERE `group_id` = $sID", true);
+
+      array_shift($aUsers);
+
+      $manager->assertEquals($group->read('name'), 'group_crud_new');
+      $manager->assertEquals($users->query(), $aUsers);
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
+  <tst:test name="Form update with multiple same table" disabled="true">
+    <tst:prepare>
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/group2c.xql',
+      ));
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/user7.xql',
+      ));
+
+      $manager->runQueryFile('samples/user7.sql');
+
+      $sID = $manager->runQuery("INSERT INTO `group` (name) VALUES ('group_crud')", 8);
+
+      $manager->set('idref', $sID);
+
+
+    </tst:prepare>
+    <tst:document>
+
+      <view:view mode="update">
+
+        <sql:resource/>
+        <view:schema>samples/group2c.xql</view:schema>
+
+        <tpl:template>
+          <form>
+            <tpl:apply select="* ^ id"/>
+          </form>
+        </tpl:template>
+        <tpl:template match="sql:reference" sql:ns="ns">
+          <fieldset>
+            <div>
+              <tpl:apply select="ref()" mode="ref"/>
+            </div>
+          </fieldset>
+        </tpl:template>
+        <tpl:template match="*">
+          <input name="{alias('form')}" value="{value()}"/>
+          <tpl:register/>
+        </tpl:template>
+
+        <tpl:template match="sql:table" mode="ref">
+          <tpl:apply select="id,name"/>
+        </tpl:template>
+
+        <sql:filter name="id"><le:get-argument name="id" source="post"/></sql:filter>
+
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $sID = $manager->read('idref');
+
+      $aUsers = array(
+        array(
+          'id' => -7,
+        ),
+        array(
+          'id' => '8',
+          'name' => 'test_ref_multiple',
+          'email' => 'test_ref_multiple@sylma.org',
+        ),
+      );
+
+      $manager->set('users', $aUsers);
+
+      return array(
+        'post' => $manager->createArgument(array(
+          'id' => $sID,
+          'name' => 'group_ref_multiple',
+          'users' => $aUsers,
+        )),
+      );
+    </tst:load>
+    <tst:expected>
+
+      $sID = $manager->read('idref');
+      $aUsers = $manager->get('users')->asArray();
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $group = $manager->runQuery("SELECT name FROM `group` WHERE id = $sID", false);
+      $users = $manager->runQuery("SELECT id,name FROM user7 WHERE `group_id` = $sID", true);
 
       array_shift($aUsers);
 

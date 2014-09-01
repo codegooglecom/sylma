@@ -10,7 +10,7 @@ class Handler extends tester\Parser implements core\argumentable {
 
   public function __construct() {
 
-    $this->resetDB();
+    //$this->resetDB();
 
     $this->setDirectory(__file__);
 

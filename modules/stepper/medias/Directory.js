@@ -1,8 +1,7 @@
 
 sylma.stepper.Directory = new Class({
 
-  Extends : sylma.stepper.Framed,
-  Implements : sylma.stepper.Listed,
+  Extends : sylma.stepper.Container,
 
   loaded : false,
   loading: false,
@@ -14,69 +13,8 @@ sylma.stepper.Directory = new Class({
     return this.get('path');
   },
 
-  toggleSelect : function(val, callback) {
-
-    var el = this.getContainer();
-
-    this.toggleActivation(val);
-
-    if (this.toggleShow(el, val)) {
-
-      this.initTests(callback);
-      this.getParent('collection').goDirectory(this);
-    }
-    else {
-
-      this.setCurrent(-1);
-
-      this.getTests().each(function(item) {
-
-        item.toggleSelect(false);
-      });
-    }
-  },
-
-  getContainer: function() {
-
-    return this.getNode('items');
-  },
-
-  initTests : function(callback) {
-
-    if (!this.loaded && !this.loading) {
-
-      this.loading = true;
-
-      this.getParent('collection').loadDirectory(this.get('path'), function(response) {
-
-        if (!response.error) {
-
-          this.loaded = true;
-        }
-
-        this.loading = false;
-
-        if (response.content) {
-
-          Object.each(response.content.test, function(item) {
-
-            this.add('test', item);
-
-          }.bind(this));
-        }
-
-        callback && callback();
-
-      }.bind(this));
-    }
-    else {
-
-      callback && callback();
-    }
-  },
-
   createTest : function() {
-
+console.log(this);
     var result = this.addTest({}, true);
 
     result.toggleSelect(true);
@@ -110,15 +48,9 @@ sylma.stepper.Directory = new Class({
     return tests && tests[this.getCurrent()];
   },
 
-  goTest : function(test) {
+  loadItems : function(callback) {
 
-    var key = test.getKey();
-    this.setCurrent(key);
-
-    this.getTests().each(function(item, sub) {
-
-      if (sub !== key) item.toggleSelect(false);
-    });
+    return this.getParent('collection').loadDirectory(this.getPath(), callback);
   },
 
   loadTest : function(file, callback) {

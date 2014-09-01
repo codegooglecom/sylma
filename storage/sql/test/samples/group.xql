@@ -7,9 +7,10 @@
 >
 
   <table name="group" connection="test">
+
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
-    <!--<foreign occurs="0..n" name="users" target="user" linker="user_group" schema="user.xql"/>-->
+
   </table>
 
 </schema>

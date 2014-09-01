@@ -12,33 +12,43 @@
   xmlns:test="http://2013.sylma.org/modules/stepper"
 >
 
+  <tpl:template mode="stepper/options">
+
+    <js:option name="directory" cast="x">
+      <tpl:apply select="getDirectory()"/>
+    </js:option>
+    <js:option name="collection">
+      <tpl:apply select="getCollection()"/>
+    </js:option>
+    <js:option name="path" cast="x">
+      <tpl:apply mode="path"/>
+    </js:option>
+    <js:option name="query">
+      <le:path>query</le:path>
+    </js:option>
+    <js:option name="save">
+      <le:path>save</le:path>
+    </js:option>
+    <js:option name="loadTest">
+      <le:path>loadTest</le:path>
+    </js:option>
+    <js:option name="loadDirectory">
+      <le:path>loadDirectory</le:path>
+    </js:option>
+    <js:option name="items">
+      <tpl:apply select="getItems()"/>
+    </js:option>
+
+    <tpl:apply mode="stepper/options"/>
+
+  </tpl:template>
+
   <tpl:template>
 
     <div id="tester" js:class="sylma.stepper.Main" js:parent-name="main">
-      <js:option name="directory" cast="x">
-        <tpl:apply select="getDirectory()"/>
-      </js:option>
-      <js:option name="collection">
-        <tpl:apply select="getCollection()"/>
-      </js:option>
-      <js:option name="path" cast="x">
-        <tpl:apply mode="path"/>
-      </js:option>
-      <js:option name="query">
-        <le:path>query</le:path>
-      </js:option>
-      <js:option name="save">
-        <le:path>save</le:path>
-      </js:option>
-      <js:option name="loadTest">
-        <le:path>loadTest</le:path>
-      </js:option>
-      <js:option name="loadDirectory">
-        <le:path>loadDirectory</le:path>
-      </js:option>
-      <js:option name="items">
-        <tpl:apply select="getItems()"/>
-      </js:option>
+
+      <tpl:apply mode="stepper/options"/>
+
       <div js:node="board" class="board">
         <div class="actions">
           <button class="record">
@@ -91,8 +101,7 @@
             <tpl:text>♦</tpl:text>
           </button>
         </div>
-        <tpl:apply select="*" mode="hollow"/>
-        <tpl:apply mode="content"/>
+        <tpl:apply select="steps" mode="collection"/>
       </div>
       <div class="window hidder visible" js:node="window">
         <div class="toolbar">
@@ -137,9 +146,41 @@
     <tpl:apply select="*"/>
   </tpl:template>
 
-  <tpl:template match="test:collection" mode="content">
-    <div js:class="sylma.stepper.Collection" js:alias="collection" class="collection" js:parent-name="collection">
-      <tpl:apply select="*"/>
+  <tpl:template match="test:group" mode="hollow">
+    <tpl:apply select="*"/>
+  </tpl:template>
+
+  <tpl:template match="test:group" mode="directory">
+    <tpl:apply select="*" mode="hollow"/>
+  </tpl:template>
+
+  <tpl:template match="test:steps" mode="collection">
+
+    <tpl:apply select="group" mode="directory"/>
+
+    <div class="collection" js:class="sylma.stepper.Collection" js:alias="collection" js:parent-name="collection" js:all="x" js:autoload="x">
+      <tpl:apply select="group"/>
+      <tpl:apply select="group" mode="hollow"/>
+    </div>
+
+  </tpl:template>
+
+  <tpl:template match="test:group">
+    <div class="group" js:class="sylma.stepper.Group" js:alias="group" js:parent-name="group" js:all="x">
+      <button class="edit">
+        <js:event name="click">%object%.test();</js:event>
+        <span>▷</span>
+      </button>
+      <button class="edit">
+        <js:event name="click">%object%.toggleSelect();</js:event>
+        <span>▶</span>
+      </button>
+      <h4>
+        <tpl:read select="name"/>
+      </h4>
+      <div js:node="items" class="sylma-hidder zoom items">
+        <tpl:apply select="*"/>
+      </div>
     </div>
   </tpl:template>
 

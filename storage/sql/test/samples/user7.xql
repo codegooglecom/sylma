@@ -13,8 +13,9 @@
 
     <field name="id" type="sql:id"/>
     <field name="name" type="sql:string-short"/>
-    <foreign occurs="1..1" name="group_main" table="group:group" import="group.xql"/>
-    <foreign occurs="1..1" name="group_sub" table="group:group" import="group.xql"/>
+
+    <foreign occurs="1..1" name="group_main" table="group:group" import="group2c.xql"/>
+    <foreign occurs="1..1" name="group_sub" table="group:group" import="group2c.xql"/>
 
   </table>
 

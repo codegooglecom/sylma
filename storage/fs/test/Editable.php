@@ -3,7 +3,7 @@
 namespace sylma\storage\fs\test;
 use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
-class Editable extends tester\Basic implements core\argumentable {
+class Editable extends tester\Stepper implements core\argumentable {
 
   const NS = 'http://www.sylma.org/storage/fs/test';
 

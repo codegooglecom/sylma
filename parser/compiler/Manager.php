@@ -67,7 +67,7 @@ abstract class Manager extends core\module\Domed {
 
       if (!$cache) {
 
-        $this->launchException('No cache file found');
+        $this->launchException('No cache file found', get_defined_vars());
       }
 
       $result = $this->createCache($cache, $aArguments, $bExternal);
