@@ -3,12 +3,12 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:xl="http://2013.sylma.org/storage/xml"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:le="http://2013.sylma.org/action"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:cls="http://2013.sylma.org/core/factory"
 
+  xmlns:xl="http://2013.sylma.org/storage/xml"
 >
 
   <xl:resource/>
@@ -86,7 +86,7 @@
   </tpl:template>
 
   <tpl:template mode="login">
-    <a id="user-login" ls:mode="710" ls:group="famous" ls:owner="root" href="/sylma/modules/users/login">login</a>
+    <a id="user-login" ls:mode="710" ls:group="public" ls:owner="root" href="/sylma/modules/users/login">login</a>
   </tpl:template>
 
   <tpl:template mode="body/top">

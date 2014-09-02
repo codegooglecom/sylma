@@ -83,10 +83,10 @@
     <user name="server">
       <!-- server user for cron jobs -->
       <ip>0</ip>
-      <group arg:type="token">famous,server</group>
+      <group arg:type="token">public,server</group>
     </user>
-    <user name="anonymous">
-      <group arg:type="token">anonymous</group>
+    <user name="public">
+      <group arg:type="token">public</group>
     </user>
     <user name="authenticated">
       <group arg:type="token">users</group>

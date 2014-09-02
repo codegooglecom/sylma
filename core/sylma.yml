@@ -149,14 +149,14 @@ users:
     name: server
     ip:
     groups:
-      - anonymous
+      - public
       - server
     arguments: [ ]
-  anonymous:
-    name: anonymous
-    groups: [anonymous]
+  public:
+    name: public
+    groups: [public]
     arguments:
-      full-name: Anonymous
+      full-name: public
   authenticated:
     arguments: [ ]
     groups: [users]
