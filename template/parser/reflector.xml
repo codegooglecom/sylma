@@ -45,10 +45,12 @@
                 <cls:class alias="cdata" name="CData"/>
                 <cls:class alias="settings" name="Settings"/>
                 <cls:class alias="format" name="Format">
+                  <cls:base>\sylma\schema\cached\view</cls:base>
                   <cls:classes>
-                    <cls:class alias="numeric" name="\sylma\schema\cached\view\Numeric"/>
-                    <cls:class alias="string" name="\sylma\schema\cached\view\_String"/>
-                    <cls:class alias="price" name="\sylma\schema\cached\view\Price"/>
+                    <cls:class alias="numeric" name="Numeric"/>
+                    <cls:class alias="float" name="Float"/>
+                    <cls:class alias="string" name="_String"/>
+                    <cls:class alias="price" name="Price"/>
                   </cls:classes>
                 </cls:class>
 

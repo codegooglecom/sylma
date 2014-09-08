@@ -127,7 +127,7 @@ abstract class Basic extends core\module\Managed {
       $this->launchException('DOM exception : ' . $e->getMessage(), get_defined_vars());
     }
 
-    if ($mContent) {
+    if (!is_null($mContent)) {
 
       $el->set($mContent);
     }
