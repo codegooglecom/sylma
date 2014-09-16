@@ -36,7 +36,7 @@ class Foreign extends sql\template\component\Foreign {
     ));
   }
 
-  protected function reflectID() {
+  protected function reflectKey() {
 
     return $this->getParent()->getResult();
   }
@@ -53,7 +53,7 @@ class Foreign extends sql\template\component\Foreign {
     $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $val, $key);
 
     $junction->init($key, $this->getParent()->getDummy());
-    $junction->addElement($source, $this->reflectID());
+    $junction->addElement($source, $this->reflectKey());
     $junction->addElement($target, $val);
 
     $loop->addContent($junction);

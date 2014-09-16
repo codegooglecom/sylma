@@ -39,7 +39,7 @@
           <tpl:token name="action"><le:path>login-do</le:path>.json</tpl:token>
           <tpl:apply mode="init"/>
           <tpl:apply use="form-cols" mode="container"/>
-          <div class="form-actions">
+          <div class="actions">
             <input type="submit" value="Connection"/>
           </div>
         </form>

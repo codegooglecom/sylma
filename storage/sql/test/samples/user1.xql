@@ -8,8 +8,8 @@
 
   <table name="user" connection="test">
     <field name="id" type="sql:id"/>
-    <field name="name" type="xs:string"/>
-    <field name="email" type="xs:string"/>
+    <field name="name" type="sql:string"/>
+    <field name="email" type="sql:string"/>
   </table>
 
 </schema>

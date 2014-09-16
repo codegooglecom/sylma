@@ -1,0 +1,345 @@
+
+@import "/sylma/modules/html/medias/form_actions.less";
+
+@gray1 : #eee;
+@gray2 : #ddd;
+@gray3 : #ccc;
+@gray4 : #aaa;
+@gray5 : #666;
+
+.font1
+{
+  font-family: Arial;
+  font-size: 0.9em;
+}
+
+.content
+{
+  padding: 0;
+}
+
+.explorer
+{
+  @pipe : 0.3em;
+  @pipew : 1%;
+
+  overflow: hidden;
+  column-fill: auto;
+  padding: 1em;
+  height: 60em;
+
+  &.three
+  {
+    column-count: 3;
+  }
+
+  &.two
+  {
+    column-count: 2;
+  }
+
+  &.one
+  {
+    column-count: 1;
+  }
+
+  .tools
+  {
+    overflow: hidden;
+    margin-bottom: 1em;
+
+    @tool : 1.2em;
+
+    .tool
+    {
+      width: @tool;
+      height: @tool;
+      float: left;
+      line-height: @tool;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      cursor: pointer;
+
+      &:hover
+      {
+        background-color: @gray1;
+        color: @gray4;
+      }
+
+      &,
+      &:active
+      {
+        background-color: @gray4;
+        color: @gray1;
+      }
+    }
+
+    .new
+    {
+
+    }
+  }
+
+  .task
+  {
+
+    margin-bottom: 1em;
+    perspective: 800px;
+    transition: height 0.5s;
+    _min-height: 2em;
+
+    &.destroy
+    {
+      height: 0;
+    }
+
+    .item-tools
+    {
+      display: none;
+      opacity: 0;
+      float: right;
+    }
+
+    .side
+    {
+      position: absolute;
+      top: 0;
+      overflow: hidden;
+
+      background-color: #eee;
+      backface-visibility: hidden;
+
+      transition: transform 0.5s, height 0.5s, position 0s 0.5s, background 0.5s;
+      transform-style: preserve-3d;
+
+      &.view
+      {
+        transform: rotateX( 180deg );
+        cursor: pointer;
+        color: #444;
+
+        &:hover
+        {
+          color: black;
+          background-color: #bbb;
+        }
+      }
+
+      &.form
+      {
+        transform: rotateX( -180deg );
+      }
+
+      &.active
+      {
+        position: relative;
+        transform: rotateX( 0deg );
+      }
+
+      .container
+      {
+        padding: 0.75em;
+      }
+    }
+
+    button,
+    .actions button
+    {
+      border: none;
+      background-color: #aaa;
+      color: @gray2;
+
+      &:first-letter {
+        text-transform: initial !important;
+      }
+    }
+
+    input,
+    textarea,
+    select
+    {
+      border: 0;
+      background-color: #ddd;
+      width: 100%;
+      box-sizing: padding-box;
+
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    input,
+    select
+    {
+      height: 10pt;
+    }
+
+    .field-statut-invalid
+    {
+      input,
+      textarea,
+      select
+      {
+        background-color: #d7cdd4
+      }
+    }
+
+    .url
+    {
+      float: left;
+      font-style: italic;
+      color: @gray4;
+
+      input
+      {
+        font-size: 0.9em;
+      }
+    }
+
+    .description,
+    .description textarea
+    {
+      font-size: 13px;
+    }
+
+    .owner,
+    .delegate
+    {
+      width: 15%;
+
+      select
+      {
+        font-size: 1em;
+      }
+    }
+
+    .duration,
+    .duration_real
+    {
+      width: 7%;
+    }
+
+    .term,
+    .term_real
+    {
+      width: 10%;
+    }
+
+    .statut
+    {
+      float: right;
+      width: 20%;
+      margin-right: 0;
+    }
+
+    .actions
+    {
+      float: left;
+      width: 100%;
+      margin-top: @pipe;
+      padding-top: 0;
+      margin-bottom: 0;
+      border: 0;
+    }
+
+    .form
+    {
+      width: auto;
+      overflow: hidden;
+
+      .url,
+      .delegate,
+      .priority,
+      .duration,
+      .duration_real,
+      .term,
+      .term_real,
+      .statut
+      {
+        float: left;
+        margin-right: @pipew;
+        margin-top: @pipe;
+        overflow: hidden;
+      }
+
+      .top
+      {
+        overflow: hidden;
+      }
+
+      .url
+      {
+        width: 75%;
+      }
+
+      .priority
+      {
+        width: 3%;
+        margin-right: 0;
+      }
+
+      .delegate
+      {
+        float: left;
+        width: 20%;
+      }
+
+      .description
+      {
+        float: left;
+        width: 100%;
+        margin-top: @pipe / 2;
+      }
+    }
+
+    .view
+    {
+      .priority,
+      .users
+      {
+        float: right;
+      }
+
+      @priority: 1.2em;
+
+      .priority
+      {
+        width: @priority;
+        height: @priority;
+        line-height: @priority;
+        font-weight: bold;
+        margin-left: 0.5em;
+        background-color: @gray3;
+        border-radius: 2em;
+        color: @gray1;
+        text-align: center;
+      }
+
+      .time
+      {
+        color: @gray4;
+        font-style: italic;
+        margin-top: 0.1em;
+      }
+
+      .users
+      {
+        span,
+        .any
+        {
+          color: @gray4;
+        }
+
+        .delegate
+        {
+          color: @gray5;
+        }
+      }
+
+      .description
+      {
+        clear: both;
+      }
+    }
+  }
+}

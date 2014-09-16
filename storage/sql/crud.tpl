@@ -5,29 +5,9 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
 
-  extends="/#sylma/crud/full.crd"
+  extends="crud.crd"
 >
 
-  <crud:route>
-
-    <view:view name="list">
-
-      <tpl:import>pager/pager.tpl</tpl:import>
-
-    </view:view>
-
-  </crud:route>
-
-  <crud:group name="form">
-
-    <tpl:import>crud/form.tpl</tpl:import>
-
-  </crud:group>
-
-  <crud:group name="list">
-
-    <tpl:import>crud/list.tpl</tpl:import>
-
-  </crud:group>
+  <!-- @deprecated, use crud.crd instead -->
 
 </crud:crud>

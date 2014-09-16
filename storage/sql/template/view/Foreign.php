@@ -49,10 +49,10 @@ class Foreign extends sql\template\component\Foreign {
     list($junction, $source, $target) = $this->loadJunction();
 
     $query = $junction->getQuery();
-    $id = $parent->getElement('id', $parent->getNamespace());
+    $key = $parent->getElement($this->getKey(), $parent->getNamespace());
 
     $query->setElement($target);
-    $query->setWhere($source, '=', $id->reflectRead());
+    $query->setWhere($source, '=', $key->reflectRead());
     $query->setMethod('extract');
 
     return $query->getCall()->call('asArray');
@@ -123,8 +123,8 @@ class Foreign extends sql\template\component\Foreign {
 
     list($junctionTable, $junctionCurrent, $junctionTarget) = $this->loadJunction();
 
-    $query->addJoin($junctionTable, $junctionCurrent, $currentTable->getElement('id'));
-    $query->addJoin($targetTable, $junctionTarget, $targetTable->getElement('id'));
+    $query->addJoin($junctionTable, $junctionCurrent, $currentTable->getElement($this->getKey()));
+    $query->addJoin($targetTable, $junctionTarget, $targetTable->getElement($this->getKey()));
 
     return $this->getHandler()->parsePathToken($targetTable, $aPath, $sMode, false, $aArguments);
   }
@@ -140,9 +140,9 @@ class Foreign extends sql\template\component\Foreign {
     $element->setQuery($query);
     $element->insertQuery(false);
 
-    $id = $element->getElement('id', $element->getNamespace());
+    $key = $element->getElement($this->getKey(), $element->getNamespace());
 
-    $table = $query->addJoin($element, $id, $this);
+    $table = $query->addJoin($element, $key, $this);
     $this->setElementRef($table);
   }
 
@@ -151,7 +151,7 @@ class Foreign extends sql\template\component\Foreign {
     $parent = $this->getParent();
     $element = $this->getElementRef();
 
-    $id = $parent->getElement('id', $parent->getNamespace());
+    $key = $parent->getElement($this->getKey(), $parent->getNamespace());
 
     list($table, $field, $target) = $this->loadJunction();
 
@@ -161,10 +161,10 @@ class Foreign extends sql\template\component\Foreign {
     $result->setTable($element);
     $result->setQuery($table->getQuery());
 
-    $query->setWhere($field, '=', $id->reflectRead());
+    $query->setWhere($field, '=', $key->reflectRead());
 
     $element->setQuery($query);
-    $query->addJoin($element, $target, $element->getElement('id', $element->getNamespace()));
+    $query->addJoin($element, $target, $element->getElement($this->getKey(), $element->getNamespace()));
 
     return $result;
   }

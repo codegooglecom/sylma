@@ -15,7 +15,7 @@ class Handler extends tester\Formed implements core\argumentable {
   }
 
   protected function show() {
-    
+
     $this->resetDB();
     $this->resetDB('database.xml');
   }

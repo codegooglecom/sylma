@@ -3,7 +3,7 @@
 namespace sylma\parser\languages\php\basic;
 use sylma\core, sylma\parser\languages\common, sylma\dom;
 
-class _Switch extends common\basic\Controled implements common\argumentable, common\structure {
+class _Switch extends common\basic\Structured implements common\argumentable, common\structure {
 
   protected $aCases = array();
   protected $test;
@@ -26,7 +26,10 @@ class _Switch extends common\basic\Controled implements common\argumentable, com
 
   public function addCase($sName = null, $content = null) {
 
-    if (!$sName) $sName = '';
+    if (!$sName) {
+
+      $sName = '';
+    }
 
     if (!isset($this->aCases[$sName])) {
 
@@ -62,13 +65,24 @@ class _Switch extends common\basic\Controled implements common\argumentable, com
     return $aResult;
   }
 
-  public function setContents($aContents) {
+  public function setContents(array $aContents) {
 
     foreach ($aContents as $sKey => $item) {
 
-      $case = $this->aCases[$sKey];
+      if (isset($this->aCases[$sKey])) {
+
+        $case = $this->aCases[$sKey];
+      }
+      else {
+
+        $case = $this->createCase($sKey);
+        $this->aCases[$sKey] = $case;
+
+        $item = array($item, $this->getWindow()->createBreak());
+      }
+
       $case->setContent($item);
-    };
+    }
   }
 
   public function asArgument() {

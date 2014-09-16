@@ -29,7 +29,9 @@
 
   </crud:global>
 
-  <crud:route>
+  <crud:group name="crud"/>
+
+  <crud:route groups="crud">
 
     <view:view mode="hollow">
 

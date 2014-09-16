@@ -59,6 +59,11 @@ class Assign extends Controled implements common\argumentable, common\addable {
 
     $val = $this->getValue();
 
+    if (!$val) {
+
+      $this->getWindow()->throwException('No value defined');
+    }
+
     return $this->getControler()->createArgument(array(
       'assign' => array(
         'variable' => $this->getTarget(),

@@ -18,9 +18,9 @@ class Profiler extends Parser {
     return parent::parseResult($test, $file, $aArguments);
   }
 
-  protected function loadResult($manager, fs\file $file, array $aArguments, $bDelete = true) {
+  protected function loadResult($manager, fs\file $file, array $aArguments, $bRun = true, $bDelete = true) {
 
-    $result = parent::loadResult($manager, $file, $aArguments, $bDelete);
+    $result = parent::loadResult($manager, $file, $aArguments, $bRun, $bDelete);
 
     if ($this->profiler) {
 

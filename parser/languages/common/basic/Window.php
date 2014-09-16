@@ -108,7 +108,7 @@ abstract class Window extends core\module\Domed {
     }
     else if (is_object($mVal) && !$mVal instanceof common\usable) {
 
-      $this->throwException(sprintf('Cannot add %s to content', $this->show($mVal)));
+      $this->launchException('Cannot add to content', get_defined_vars());
     }
 
     return $mVal;
@@ -530,6 +530,11 @@ return; // todo, decide to use or not
     }
 
     return $this->create('loop', array($this, $looped, $var, null, $key));
+  }
+
+  public function createWhile($test, $content = null) {
+
+    return $this->create('while', array($this, $test, $content));
   }
 
   public function createTest($val1, $val2, $op = '==') {

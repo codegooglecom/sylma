@@ -442,4 +442,208 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Group order">
+    <tst:prepare>
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/country01.xql',
+      ));
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/city01.xql',
+      ));
+
+      $manager->runQueryFile('samples/country02.sql');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view user:ns="ns">
+
+        <sql:resource multiple="x"/>
+
+        <view:schema>samples/city01.xql</view:schema>
+
+        <tpl:template>
+
+          <sql:order>country,name</sql:order>
+
+          <ul>
+            <tpl:apply select="group()" mode="group">
+              <tpl:read select="country"/>
+            </tpl:apply>
+          </ul>
+        </tpl:template>
+
+        <tpl:template mode="group">
+          <li>
+            <h2>
+              <tpl:read select="country/name"/>
+            </h2>
+            <tpl:apply select="*"/>
+          </li>
+        </tpl:template>
+
+        <tpl:template match="sql:table">
+          <span>
+            <tpl:if test="position() = 1">
+              <tpl:read select="'[{name}]'"/>
+              <tpl:else>
+                <tpl:read select="name"/>
+              </tpl:else>
+            </tpl:if>
+          </span>
+        </tpl:template>
+
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <ul>
+        <li>
+          <h2>Turkey</h2>
+          <span>[Istanbul]</span>
+        </li>
+        <li>
+          <h2>India</h2>
+          <span>[Delhi]</span>
+        </li>
+        <li>
+          <h2>Russia</h2>
+          <span>[Iekaterinbourg]</span>
+          <span>Moscow</span>
+        </li>
+      </ul>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Group order dynamic" run="false">
+    <tst:prepare>
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/country01.xql',
+      ));
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/city01.xql',
+      ));
+
+      $manager->runQueryFile('samples/country02.sql');
+
+    </tst:prepare>
+    <tst:document>
+      <view:view user:ns="ns">
+
+        <sql:resource multiple="x"/>
+
+        <sql:order>
+          <le:get-argument name="order"/>
+        </sql:order>
+        <view:schema>samples/city01.xql</view:schema>
+
+        <tpl:template>
+          <ul>
+            <tpl:apply select="group()" mode="group">
+              <tpl:apply mode="group/filters"/>
+            </tpl:apply>
+          </ul>
+        </tpl:template>
+
+        <tpl:template mode="group/filters">
+          <tpl:variable name="group">
+            <tpl:apply mode="group/argument"/>
+          </tpl:variable>
+          <tpl:switch test="$group">
+            <tpl:case value="name">
+              <tpl:read select="name/format(end=1)"/>
+            </tpl:case>
+            <tpl:default>
+              <tpl:read select="country"/>
+            </tpl:default>
+          </tpl:switch>
+        </tpl:template>
+
+        <tpl:template mode="group">
+          <tpl:variable name="group">
+            <tpl:apply mode="group/argument"/>
+          </tpl:variable>
+          <li>
+            <h2>
+              <tpl:switch test="$group">
+                <tpl:case value="country">
+                  <tpl:read select="country/name"/>
+                </tpl:case>
+                <tpl:default>
+                  <tpl:read select="group-value()"/>
+                </tpl:default>
+              </tpl:switch>
+            </h2>
+            <tpl:apply select="*"/>
+          </li>
+        </tpl:template>
+
+        <tpl:template match="*" mode="group/argument">
+          <le:get-argument name="group"/>
+        </tpl:template>
+
+        <tpl:template match="sql:table">
+          <span>
+            <tpl:read select="name"/>
+          </span>
+        </tpl:template>
+
+      </view:view>
+    </tst:document>
+    <tst:node name="node1">
+      <ul>
+        <li>
+          <h2>D</h2>
+          <span>Delhi</span>
+        </li>
+        <li>
+          <h2>I</h2>
+          <span>Iekaterinbourg</span>
+          <span>Istanbul</span>
+        </li>
+        <li>
+          <h2>M</h2>
+          <span>Moscow</span>
+        </li>
+      </ul>
+    </tst:node>
+    <tst:node name="node2">
+      <ul>
+        <li>
+          <h2>India</h2>
+          <span>Delhi</span>
+        </li>
+        <li>
+          <h2>Russia</h2>
+          <span>Iekaterinbourg</span>
+          <span>Moscow</span>
+        </li>
+        <li>
+          <h2>Turkey</h2>
+          <span>Istanbul</span>
+        </li>
+      </ul>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $view1 = $manager->loadScript(array(
+        'order' => 'name',
+        'group' => 'name',
+      ));
+
+      $view2 = $manager->loadScript(array(
+        'order' => 'country,name',
+        'group' => 'country',
+      ));
+
+      $manager->compareNodes($view1, $node->get('node1'));
+      $manager->compareNodes($view2, $node->get('node2'));
+
+      return true;
+      
+    </tst:expected>
+  </tst:test>
 </tst:tests>

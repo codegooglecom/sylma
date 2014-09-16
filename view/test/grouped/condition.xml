@@ -4,11 +4,12 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:stp="http://2013.sylma.org/schema/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
 >
   <tst:description>Condition</tst:description>
   <tst:datas name="mysql://user">
@@ -24,7 +25,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:if test="name = 'admin'">
               <h3>is-admin</h3>
@@ -33,7 +34,7 @@
               <h3>is-root</h3>
             </tpl:if>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -49,7 +50,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:if test="name = 'admin'">
               <tpl:token name="class">is-admin</tpl:token>
@@ -61,7 +62,7 @@
               <h3>is-root</h3>
             </tpl:if>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -75,7 +76,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:if test="name = 'admin'">
               <tpl:token name="class">is-admin</tpl:token>
@@ -85,7 +86,7 @@
               <h3>is-root</h3>
             </tpl:if>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -101,7 +102,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:if test="name">
               <h3>is-admin</h3>
@@ -110,7 +111,7 @@
               <h3>is-root</h3>
             </tpl:if>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -126,16 +127,16 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name,email"/>
           </div>
-        </view:template>
-        <view:template match="user:*">
+        </tpl:template>
+        <tpl:template match="user:*">
           <li>
             <tpl:if test="alias() = 'name'">is-name</tpl:if>
           </li>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -152,12 +153,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:apply select="name,email"/>
           </div>
-        </view:template>
-        <view:template match="user:*">
+        </tpl:template>
+        <tpl:template match="user:*">
           <li>
             <tpl:if test="alias() = 'name'">
               <tpl:text>is-name</tpl:text>
@@ -166,7 +167,7 @@
               </tpl:else>
             </tpl:if>
           </li>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -183,14 +184,14 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:if test="name = 'admin'">
               <tpl:text>is-admin</tpl:text>
               <tpl:else>is-root</tpl:else>
             </tpl:if>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -204,7 +205,7 @@
           <sql:id>1</sql:id>
         </sql:resource>
         <view:schema>samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:if test="name = 'admin'">
               <tpl:token name="class">is-admin</tpl:token>
@@ -213,11 +214,45 @@
               </tpl:else>
             </tpl:if>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
       <div class="is-root"/>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Switch">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <section>
+              <tpl:apply mode="content">
+                <tpl:read select="'def'" tpl:name="val"/>
+              </tpl:apply>
+            </section>
+            <section>
+              <tpl:apply mode="content">
+                <tpl:read select="'abc'" tpl:name="val"/>
+              </tpl:apply>
+            </section>
+          </div>
+        </tpl:template>
+        <tpl:template mode="content">
+          <tpl:argument name="val"/>
+          <tpl:switch test="$val">
+            <tpl:case value="abc">world</tpl:case>
+            <tpl:default>hello</tpl:default>
+          </tpl:switch>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <section>hello</section>
+        <section>world</section>
+      </div>
     </tst:node>
   </tst:test>
 </tst:tests>

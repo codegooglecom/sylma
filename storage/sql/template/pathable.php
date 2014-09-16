@@ -11,5 +11,6 @@ interface pathable extends template\parser\tree  {
   //function reflectApplyDefault($sPath, array $aPath, $sMode = '');
   //function reflectApplyFunction($sName, array $aPath, $sMode);
   //function reflectApplyAll(array $aPath, $sMode);
+  function reflectRegister();
 }
 

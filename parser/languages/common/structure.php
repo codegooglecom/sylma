@@ -10,4 +10,6 @@ interface structure {
    * @return array
    */
   function getContent();
+
+  function isExtracted();
 }

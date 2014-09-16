@@ -24,7 +24,7 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     $messages = new html\context\Messages;
 
     $contexts = new core\argument\Readable(array(
-      'errors' => $this->loadMessages(),
+      'errors' => $this->initMessages(),
       'messages' => $messages,
       'js-common' => new html\context\JS(),
       'js' => new html\context\JS(array(
@@ -87,21 +87,10 @@ class JSON extends window\classes\Container implements window\scripted, window\a
     return $this->action;
   }
 
-  protected function loadMessages() {
-
-    if (!$result = $this->getManager('parser')->getContext('errors', false)) {
-
-      $result = new html\context\Messages;
-      $this->getManager('parser')->setContext('errors', $result);
-    }
-
-    return $result;
-  }
-
   protected function loadAction(action\handler $action) {
 
     $contexts = new core\argument\Readable(array(
-      'errors' => $this->loadMessages(),
+      'errors' => $this->initMessages(),
       'messages' => new html\context\Messages,
       'js' => new html\context\JS(),
     ));

@@ -1,0 +1,60 @@
+
+.form .actions,
+.sylma-form .actions
+{
+  border-top: 1px solid #ddd;
+  margin: 1em 0;
+  padding-top: 1em;
+  text-align: left;
+
+  button
+  {
+    padding: 0 0.5em;
+  }
+
+  button:first-letter
+  {
+    text-transform: uppercase;
+  }
+
+  .save
+  {
+    float: right;
+  }
+
+  .cancel,
+  .delete
+  {
+    display: inline-block;
+
+    span
+    {
+      padding: 0 0.5em;
+    }
+
+    .hidder
+    {
+      float: right;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 0;
+      transition: max-width 0.5s;
+
+      &.visible
+      {
+        max-width: 500px;
+      }
+
+      button
+      {
+        float: none;
+      }
+    }
+  }
+
+}
+
+
+
+

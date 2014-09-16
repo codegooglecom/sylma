@@ -13,6 +13,7 @@
     <cls:class alias="call" name="_Call"/>
     <cls:class alias="object-var" name="_ObjectVar"/>
     <cls:class alias="simple-var" name="_ScalarVar"/>
+    <cls:class alias="var-key" name="_VarKey"/>
     <cls:class alias="template" name="Template"/>
     <cls:class alias="function" name="_Function"/>
     <cls:class alias="closure" name="_Closure"/>
@@ -32,6 +33,7 @@
     <cls:class alias="case" name="_Case"/>
     <cls:class alias="test" name="Test"/>
     <cls:class alias="loop" name="_Foreach"/>
+    <cls:class alias="while" name="_While"/>
     <cls:class alias="cast" name="Cast"/>
     <cls:class alias="operator" name="\sylma\parser\languages\common\basic\Operator"/>
     <cls:class alias="group" name="\sylma\parser\languages\common\basic\Group"/>

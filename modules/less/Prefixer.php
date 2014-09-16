@@ -21,6 +21,13 @@ class Prefixer extends \lessc {
       'moz' => self::MODE_PREFIX,
     ),
 
+    'column-count' => array(
+      'moz' => self::MODE_PREFIX,
+    ),
+    'column-fill' => array(
+      'moz' => self::MODE_PREFIX,
+    ),
+
     'transform' => array(
       'o' => self::MODE_PREFIX,
     ),

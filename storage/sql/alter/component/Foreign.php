@@ -21,7 +21,9 @@ class Foreign extends sql\schema\component\Foreign implements sql\alter\alterabl
         $this->getParent()->buildSchema($file);
       }
 
-      $sResult = $this->asString() . ",CONSTRAINT FOREIGN KEY (`{$this->getName()}`) REFERENCES `{$ref->getName()}` (id)";
+      $sKey = $this->getKey();
+
+      $sResult = $this->asString() . ",CONSTRAINT FOREIGN KEY (`{$this->getName()}`) REFERENCES `{$ref->getName()}` ($sKey)";
     }
     else {
 
@@ -47,7 +49,12 @@ class Foreign extends sql\schema\component\Foreign implements sql\alter\alterabl
     }
 
     $sContent = $sDefault ? ' NULL' . ($this->getDefault() ? ' DEFAULT ' . $this->getDefault() : '') : ' NOT NULL';
+/*
+    $ref = $this->getElementRef()->getElement($this->getKey());
+    $sType = $ref->getType()->asString();
 
+    return $sType . $sContent;
+*/
     return "BIGINT UNSIGNED" . $sContent;
   }
 

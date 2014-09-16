@@ -138,6 +138,26 @@ h3
   margin-top: 0;
 }
 
+.loading
+{
+  @em : (1/40) + 0em;
+
+  position: absolute;
+  opacity: 0.35;
+  background: url('loader.gif') no-repeat 50% 50% rgba(0,0,0,0.8);
+  z-index: 2;
+  pointer-events:none;
+  transition: opacity 0.5s;
+  opacity: 0;
+  overflow: hidden;
+  max-height: 600px;
+}
+
+.loading.active
+{
+  opacity: 1;
+}
+
 /*** CRUD ***/
 
 .button {
@@ -215,75 +235,7 @@ button.button
   background-position: 0 -26px;
 }
 
-/* Admin big icones */
-
-.big-icone {
-  display: block;
-  float: left;
-  width: 175px;
-  /*min-height: 35px;*/
-  min-height: 100px;
-  padding-top: 15px;
-  margin-left: 10px;
-  margin-top:1em;
-  border: 1px solid #ccc;
-  text-align: center;
-  border-radius: 15px;
-  -webkit-border-radius: 15px;
-}
-
-.big-icone:hover {
-  -moz-box-shadow: 0 0 3px #CCCCCC;
-  -webkit-box-shadow: 0 0 3px #CCCCCC;
-}
-
-.big-icone ul {
-  margin: 15px 0 10px 35px;
-  text-align: left;
-  font-family: Tahoma;
-}
-
-.big-icone li a {
-  display: block;
-  height: 18px;
-}
-
-.big-icone p {
-  color: gray;
-  font-style: italic;
-  padding: 0.5em;
-  text-align: center;
-}
-
-.big-icone h4 {
-  font-size: 1.4em;
-  font-family: georgia;
-  font-style: italic;
-  font-weight: normal;
-  margin: 0;
-  padding: 0;
-}
-
-#admin-main {
-  width: 600px;
-  margin: 3em auto 0 auto;
-}
-
-#admin-main > ul {
-  float: none;
-  text-align: center;
-  margin-top: 6em;
-}
-
-#admin-main > ul li {
-  display: inline;
-  padding: 0 1em;
-  border-right: 1px solid gray;
-}
-
-#admin-main ul li:last-child {
-  border: 0;
-}
+/* Admin */
 
 #user-login {
     color: #DDDDDD;

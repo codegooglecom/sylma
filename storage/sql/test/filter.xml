@@ -26,6 +26,14 @@
     4;user1;user1@sylma.org;1;2035-01-18-00:00:00
   </tst:datas>
   <tst:test name="Simple filter">
+    <tst:prepare>
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/user1.xql',
+      ));
+
+    </tst:prepare>
+
     <tst:document>
       <view:view user:ns="ns">
         <sql:resource/>

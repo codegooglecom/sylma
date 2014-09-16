@@ -153,8 +153,7 @@ sylma.uiClass = {
 
         if (obj.onWindowLoad) obj.onWindowLoad();
         if (obj.onLoad) obj.onLoad();
-
-        obj.fireEvent('load');
+        if (obj.fireEvent) obj.fireEvent('load');
       }
     }
   },
@@ -230,8 +229,6 @@ sylma.uiClass = {
 
           $(document.body).grab(new Element('div', {id : 'sylma-messages'}), 'top');
         }
-
-        var el;
 
         for (var i in result.messages) {
 

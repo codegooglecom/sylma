@@ -61,7 +61,7 @@ class Logger extends core\module\Domed {
 
     return \Sylma::show($mVar, $bToken);
   }
-  
+
   public function asMessage() {
 
     $context = $this->getManager(self::PARSER_MANAGER)->getContext('errors');
@@ -72,7 +72,10 @@ class Logger extends core\module\Domed {
 //dsp($arg);
 //dsp($doc);
     $result = $this->getTemplate('components.xsl')->parseDocument($doc);
-    $context->add(array('content' => $result));
+
+    $cleaner = new \sylma\modules\html\Cleaner();
+    $context->add(array('content' => $cleaner->clean($result)));
+    //$context->add($result);
   }
 }
 

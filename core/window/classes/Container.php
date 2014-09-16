@@ -26,6 +26,17 @@ class Container extends core\module\Domed {
     //$this->content = $this->buildWindowScript($this->getPaths());
   }
 
+  protected function initMessages() {
+
+    if (!$messages = $this->getManager('parser')->getContext('errors', false)) {
+
+      $messages = new \sylma\modules\html\context\Messages;
+      $this->getManager('parser')->setContext('errors', $messages);
+    }
+
+    return $messages;
+  }
+
   protected function setPaths(array $aPaths) {
 
     $this->aPaths = $aPaths;

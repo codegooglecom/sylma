@@ -17,11 +17,7 @@ class Document extends core\window\classes\Container {
 
     $this->setSettings($this->getManager('init')->getArgument('window'));
 
-    if (!$messages = $this->getManager('parser')->getContext('errors', false)) {
-
-      $messages = new context\Messages;
-      $this->getManager('parser')->setContext('errors', $messages);
-    }
+    $messages = $this->initMessages();
 
     $fusion = $this->get('fusion');
     $load = new binder\context\Load;

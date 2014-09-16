@@ -291,6 +291,11 @@ class Window extends common\basic\Window implements php\window {
     return $result;
   }
 
+  public function createKey(common\_var $var, $sName) {
+
+    return $this->create('var-key', array($this, $var, $sName));
+  }
+
   protected function loadReturn($mReturn) {
 
     if (is_string($mReturn)) {

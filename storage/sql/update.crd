@@ -30,19 +30,21 @@
 
   </crud:global>
 
-  <crud:route>
+  <crud:group name="crud"/>
+
+  <crud:route groups="crud">
 
     <view:view mode="view" _debug="x">
-
-      <tpl:template>
-        <tpl:apply mode="js"/>
-        <tpl:apply mode="form/build" xmode="update"/>
-      </tpl:template>
 
       <tpl:template mode="form/token">
         <sql:token>
           <tpl:apply mode="form/token/content"/>
         </sql:token>
+      </tpl:template>
+
+      <tpl:template mode="form/build">
+        <tpl:apply mode="js"/>
+        <tpl:apply mode="form/build" xmode="update"/>
       </tpl:template>
 
     </view:view>
@@ -52,6 +54,10 @@
       <sql:filter name="id">
         <le:get-argument name="id" source="post"/>
       </sql:filter>
+
+      <tpl:template>
+        <tpl:apply mode="form" xmode="update"/>
+      </tpl:template>
 
     </view:view>
 

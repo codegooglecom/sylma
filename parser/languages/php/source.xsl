@@ -90,6 +90,16 @@
     <xsl:value-of select="$break"/>
   </xsl:template>
 
+  <xsl:template match="php:while">
+    <xsl:text>while (</xsl:text>
+    <xsl:apply-templates select="php:test/*"/>
+    <xsl:text>) {</xsl:text>
+    <xsl:value-of select="$break"/>
+    <xsl:apply-templates select="php:content/*"/>
+    <xsl:text>}</xsl:text>
+    <xsl:value-of select="$break"/>
+  </xsl:template>
+
   <xsl:template match="php:switch">
     <xsl:text>switch (</xsl:text>
     <xsl:apply-templates select="php:test/*"/>
@@ -178,6 +188,13 @@
   <xsl:template match="php:var">
     <xsl:text>$</xsl:text>
     <xsl:value-of select="@name"/>
+  </xsl:template>
+
+  <xsl:template match="php:key">
+    <xsl:apply-templates select="php:var/*"/>
+    <xsl:text>[</xsl:text>
+    <xsl:apply-templates select="php:name/*"/>
+    <xsl:text>]</xsl:text>
   </xsl:template>
 
   <xsl:template match="php:argument">

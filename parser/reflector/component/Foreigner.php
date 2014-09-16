@@ -142,7 +142,7 @@ class Foreigner extends reflector\basic\Reflector implements reflector\component
   }
 
     /**
-   * @return \sylma\parser\languages\common\_window
+   * @return \sylma\parser\languages\php\basic\Window
    */
   protected function getWindow() {
 

@@ -148,7 +148,7 @@ class Pather extends component\Child {
     }
     else if ($sToken) {
 
-      $result = $this->applyPath($sToken, '');
+      $result = $this->readPath($sToken, '');
     }
     else {
 

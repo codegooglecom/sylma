@@ -2,6 +2,7 @@
 <tst:tests
   xmlns:tst="http://www.sylma.org/modules/tester/parser"
   xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:crud="http://2013.sylma.org/view/crud"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:sql="http://2013.sylma.org/storage/sql"
@@ -1005,5 +1006,56 @@
         <input type="text" name="group_id[name]" id="group_name"/>
       </div>
     </tst:node>
+  </tst:test>
+  <tst:test name="Text key" run="false" disabled="true">
+    <tst:prepare>
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/foreign_text.xql',
+      ));
+
+    </tst:prepare>
+    <tst:document>
+      <crud:crud extends="/#sylma/storage/sql/crud.crd">
+        <crud:global>
+
+          <sql:resource/>
+          <view:schema>samples/foreign_text.xql</view:schema>
+
+          <tpl:import>/#sylma/storage/sql/crud/form.tpl</tpl:import>
+
+        </crud:global>
+        <view:view>
+
+        </view:view>
+        <view:view name="do">
+
+        </view:view>
+      </crud:crud>
+    </tst:document>
+    <tst:node name="node1">
+      <div><li>group02</li></div>
+    </tst:node>
+    <tst:expected>
+
+      $node = $manager->getArgument('node');
+
+      $sID = $manager->loadScript(array(
+        'do',
+      ), array(
+        'name' => 'user01',
+        'group' => 'group01',
+      ));
+
+      $view = $manager->loadScript(array(
+        'id' => $sID,
+      ));
+
+      $manager->compareNodes($view, $node->get('node1'));
+      //$manager->compareNodes($view2, $node->get('node2'));
+
+      return true;
+
+    </tst:expected>
   </tst:test>
 </tst:tests>

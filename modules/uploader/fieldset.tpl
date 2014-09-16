@@ -88,7 +88,7 @@
   </tpl:template>
 
   <tpl:template match="*" mode="file/actions">
-    <div class="actions">
+    <div class="item-actions">
       <tpl:apply mode="file/actions/content"/>
     </div>
   </tpl:template>

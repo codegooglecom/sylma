@@ -12,7 +12,7 @@
         <component>
           <cls:classes>
             <cls:base>\sylma\storage\sql\template\component</cls:base>
-            <cls:class alias="collection" name="Collection">
+            <cls:class alias="collection" name="CollectionGroup">
               <cls:classes>
                 <cls:class alias="token" name="\sylma\schema\cached\form\Token"/>
                 <cls:class alias="tree" name="\sylma\crud\_list\Tree">

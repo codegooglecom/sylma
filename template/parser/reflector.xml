@@ -31,6 +31,7 @@
                 </cls:class>
                 <cls:class alias="if" name="_If"/>
                 <cls:class alias="else" name="_Else"/>
+                <cls:class alias="switch" name="_Switch"/>
                 <!--<cls:class alias="browse" name="Browse"/>-->
                 <!--<cls:class alias="if" name="Condition"/>-->
                 <!--<cls:class alias="variable" name="Variable"/>-->

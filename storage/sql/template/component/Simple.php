@@ -95,5 +95,10 @@ class Simple extends xsd\component\SimpleType implements sql\template\pathable {
 
     $this->launchException('Cannot simply read type');
   }
+
+  public function reflectRegister() {
+
+    $this->launchException('Cannot register simple type');
+  }
 }
 

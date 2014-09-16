@@ -30,6 +30,9 @@ abstract class Logger extends core\module\Domed {
     $this->logger = $logger;
   }
 
+  /**
+   * @return reflector\logger\Logger
+   */
   protected function getLogger($bDebug = true) {
 
     if (!$this->logger) {

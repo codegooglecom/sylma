@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  xmlns:todo="http://2013.sylma.org/modules/todo"
+  xmlns:stat="http://2013.sylma.org/modules/todo/statut"
+  xmlns:proj="http://2013.sylma.org/modules/todo/project"
+
+  xmlns:user="http://2013.sylma.org/core/user"
+  xmlns:group="http://2013.sylma.org/core/user/group"
+
+  extends="config.crd, /#sylma/storage/sql/crud.crd"
+>
+
+  <crud:global todo:ns="ns" stat:ns="ns" proj:ns="ns">
+
+    <tpl:constant name="form-cols">url, delegate, priority, description, term, term_real, duration, duration_real, statut</tpl:constant>
+
+    <tpl:template match="stat:todo_statut" mode="select-option-value">
+      <tpl:read select="value"/>
+    </tpl:template>
+
+    <tpl:template match="proj:todo_project" mode="select-option-value">
+      <tpl:read select="name"/>
+    </tpl:template>
+<!--
+    <tpl:template match="user:user | group:group" mode="select-option-value">
+      <tpl:read select="name"/>
+    </tpl:template>
+-->
+    <tpl:template match="todo:*" mode="label"/>
+
+    <tpl:template mode="form/build">
+
+      <tpl:variable name="action">
+        <tpl:apply mode="init/action"/>
+      </tpl:variable>
+
+      <form class="form container" action="{$action}" js:name="form" js:parent-name="form" method="post" js:class="sylma.modules.todo.Form">
+
+        <js:include>/#sylma/crud/FormAjax.js</js:include>
+
+        <js:option name="mode">
+          <tpl:apply mode="mode"/>
+        </js:option>
+        <js:option name="ajax">1</js:option>
+
+        <tpl:apply select="owner" mode="register"/>
+        <tpl:apply select="project" mode="register"/>
+
+        <tpl:apply mode="form/init"/>
+        <tpl:apply mode="form/content"/>
+
+      </form>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="mode" xmode="insert">insert</tpl:template>
+    <tpl:template match="*" mode="mode" xmode="update">update</tpl:template>
+
+    <tpl:template match="todo:project" mode="register">
+      <tpl:register>
+        <tpl:apply mode="project" required="x"/>
+      </tpl:register>
+    </tpl:template>
+
+    <!-- @TODO remove -->
+    <tpl:template match="*" mode="project">7</tpl:template>
+
+    <tpl:template match="todo:delegate" mode="input">
+      <crud:script path="delegate">
+        <tpl:read crud:name="value"/>
+      </crud:script>
+    </tpl:template>
+
+    <tpl:template match="todo:owner" mode="register" xmode="update"/>
+
+    <tpl:template match="todo:owner" mode="register" xmode="insert">
+      <tpl:register>
+        <le:manager name="user" call="getName"/>
+      </tpl:register>
+    </tpl:template>
+
+  </crud:global>
+
+  <crud:route disabled="true"/>
+
+  <view:view name="delegate">
+
+    <sql:resource multiple="x"/>
+    <view:schema>/#sylma/modules/users/schema.xql</view:schema>
+
+    <tpl:import>/#sylma/storage/sql/crud/form.tpl</tpl:import>
+
+    <tpl:template>
+
+      <tpl:variable name="value">
+        <le:get-argument name="value"/>
+      </tpl:variable>
+
+      <select id="form-delegate" name="delegate">
+        <option value="0">
+          <tpl:apply mode="input/foreign/default"/>
+        </option>
+        <tpl:apply select="*" mode="select-option-test">
+          <tpl:read select="$value" tpl:name="value"/>
+        </tpl:apply>
+      </select>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="select-option-test">
+      <tpl:argument name="value"/>
+      <option>
+        <tpl:if test="$value = name">
+          <tpl:token name="selected">selected</tpl:token>
+        </tpl:if>
+        <tpl:read select="name"/>
+      </option>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

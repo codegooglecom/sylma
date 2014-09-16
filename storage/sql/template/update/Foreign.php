@@ -5,9 +5,9 @@ use sylma\core, sylma\storage\sql;
 
 class Foreign extends sql\template\insert\Foreign {
 
-  protected function reflectID() {
+  protected function reflectKey() {
 
-    return $this->getParent()->getElementArgument('id');
+    return $this->getParent()->getElementArgument($this->getKey());
   }
 
   protected function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
@@ -15,7 +15,7 @@ class Foreign extends sql\template\insert\Foreign {
     $del = $this->loadSimpleComponent('template/delete');
 
     $del->setTable($junction);
-    $del->setWhere($source, '=', $this->reflectID());
+    $del->setWhere($source, '=', $this->reflectKey());
 
     $aContent[] = $del;
     $aContent[] = parent::buildMultiple($junction, $source, $target);

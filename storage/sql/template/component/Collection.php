@@ -18,6 +18,7 @@ class Collection extends Rooted implements sql\template\pathable {
    */
   protected $aStart = array();
   protected $bBuilded = false;
+  protected $bPreBuilt = false;
 
   public function getElement($sName, $sNamespace = null) {
 
@@ -49,6 +50,13 @@ class Collection extends Rooted implements sql\template\pathable {
 
   protected function preBuild() {
 
+    if ($this->bPreBuilt) {
+
+      return null;
+    }
+
+    $this->bPreBuilt = true;
+
     $window = $this->getWindow();
 
     $source = $window->createVariable('', '\sylma\core\argument', false);
@@ -61,20 +69,22 @@ class Collection extends Rooted implements sql\template\pathable {
     $this->getTable()->insertQuery(false);
   }
 
-  protected function postBuild($result) {
+  protected function postBuild($content = null) {
 
     $window = $this->getWindow();
-    $aResult = array();
+    $loop = null;
 
     if ($this->getQuery()->getColumns()) {
 
       $loop = $window->createLoop($this->getQuery()->getVar(), $this->getSource(), $this->getKey());
-      $loop->setContent($window->parseArrayables(array($result)));
 
-      $aResult[] = $loop;
+      if ($content) {
+
+        $loop->setContent($window->parseArrayables(array($content)));
+      }
     }
 
-    return $aResult;
+    return $loop;
   }
 
   public function reflectRead(array $aPath = array(), array $aArguments = array()) {
@@ -115,16 +125,7 @@ class Collection extends Rooted implements sql\template\pathable {
       $result = null;
     }
 
-    $aResult = array();
-
-    if (!$sMode) {
-
-      //$aResult[] = $this->getCounter();
-    }
-
-    $aResult[] = $result;
-
-    return $aResult;
+    return array($result);
   }
 
   protected function prepareApply() {
@@ -290,6 +291,11 @@ class Collection extends Rooted implements sql\template\pathable {
     }
 
     return $result;
+  }
+
+  public function reflectRegister() {
+
+    $this->launchException('Cannot register collection');
   }
 
   protected function setTree(template\parser\tree $tree) {

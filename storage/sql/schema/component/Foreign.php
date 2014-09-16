@@ -11,6 +11,8 @@ class Foreign extends Element implements sql\schema\foreign {
   protected $elementRef;
   protected $aJunction = array();
 
+  protected $sKey = 'id';
+
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el, false);
@@ -30,6 +32,24 @@ class Foreign extends Element implements sql\schema\foreign {
   protected function loadType() {
 
     $this->setType($this->getParser()->getType('foreign', $this->getParser()->getNamespace(self::PREFIX)));
+  }
+
+  protected function loadKey() {
+
+    if ($sKey = $this->readx('@key', array(), false)) {
+
+      $this->setName($sKey);
+    }
+  }
+
+  protected function setKey($sKey) {
+
+    $this->sKey = $sKey;
+  }
+
+  protected function getKey() {
+
+    return $this->sKey;
   }
 
   protected function loadElementRef() {

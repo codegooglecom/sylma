@@ -24,8 +24,8 @@
 
     <view:schema>schema.xql</view:schema>
 
-    <tpl:constant name="list-cols">project,description,url,update,statut,priority</tpl:constant>
-    <tpl:constant name="form-cols">* ^ id,update,insert</tpl:constant>
+    <tpl:constant name="list-cols">project, description, url, update, statut, priority, duration, term</tpl:constant>
+    <tpl:constant name="form-cols">* ^ id, update, insert, parent, owner, delegate, duration_sub, duration_sub_real, tags</tpl:constant>
     <tpl:constant name="list-order">!update</tpl:constant>
 
     <tpl:template match="stat:todo_statut" mode="select-option-value">
@@ -52,7 +52,7 @@
 
     <view:view name="do">
 
-      <tpl:constant name="form-cols">* ^ id,update</tpl:constant>
+      <tpl:constant name="form-cols">* ^ id, update, insert, parent, owner, delegate, duration_sub, duration_sub_real, tags</tpl:constant>
 
     </view:view>
 

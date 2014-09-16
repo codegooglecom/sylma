@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  xmlns:todo="http://2013.sylma.org/modules/todo"
+  xmlns:stat="http://2013.sylma.org/modules/todo/statut"
+  xmlns:proj="http://2013.sylma.org/modules/todo/project"
+
+  xmlns:user="http://2013.sylma.org/core/user"
+  xmlns:group="http://2013.sylma.org/core/user/group"
+
+  extends="config.crd"
+>
+
+  <crud:global>
+
+    <tpl:template match="todo:todo">
+
+      <tpl:argument name="view" default="'active'"/>
+      <tpl:argument name="form" default="''"/>
+
+      <tpl:apply mode="filter"/>
+
+      <div class="task" js:class="sylma.modules.todo.Task" js:parent-name="task" js:name_="task">
+
+        <js:option name="id">
+          <tpl:read select="id"/>
+        </js:option>
+
+        <div class="view side {$view} loader" js:class="sylma.ui.Loader" js:name="view" js:parent-name="side">
+
+          <js:option name="loaderPosition">0</js:option>
+
+          <js:option name="path">
+            <crud:path path="view"/>
+          </js:option>
+          <js:option name="loaded">
+            <tpl:read select="$view"/>
+          </js:option>
+          <js:option name="side">
+            <tpl:read select="$form"/>
+          </js:option>
+          <js:option name="sylma-inside">1</js:option>
+
+          <tpl:apply mode="view"/>
+
+        </div>
+
+        <div class="form side loader" js:class="sylma.ui.Loader" js:name="form" js:parent-name="side">
+
+          <js:option name="loaderPosition">0</js:option>
+
+          <js:option name="path">
+            <le:path>form/update</le:path>
+          </js:option>
+          <js:option name="side">
+            <tpl:read select="$view"/>
+          </js:option>
+          <js:option name="loaded">
+            <tpl:read select="$form"/>
+          </js:option>
+          <js:option name="sylma-inside">1</js:option>
+
+          <tpl:apply mode="form"/>
+
+        </div>
+
+      </div>
+
+    </tpl:template>
+
+    <tpl:template match="todo:todo" mode="view/item">
+
+      <div class="container" js:class="sylma.ui.Container" js:name="container">
+
+        <js:event name="click">
+          %object%.getParent('task').toggleSide(true, false);
+        </js:event>
+
+        <div class="url">
+          <tpl:read select="url"/>
+        </div>
+        <div class="priority">
+          <tpl:read select="priority"/>
+        </div>
+        <div class="users">
+          <span class="owner">
+            <tpl:read select="owner"/>
+          </span>
+          <tpl:text> : </tpl:text>
+          <span class="delegate">
+            <tpl:if test="delegate">
+              <tpl:read select="delegate"/>
+              <tpl:else>
+                <em class="any">any</em>
+              </tpl:else>
+            </tpl:if>
+          </span>
+        </div>
+        <div class="description" js:node="description">
+          <tpl:apply select="description"/>
+        </div>
+        <tpl:if test="term or duration or duration_sub">
+          <div class="time">
+            <span class="term">
+              <tpl:if test="term_real">
+                <tpl:read select="term_real"/>
+                <tpl:else>
+                  <tpl:read select="term/format()"/>
+                </tpl:else>
+              </tpl:if>
+            </span>
+            <tpl:if test="duration and term">
+              <tpl:text> - </tpl:text>
+            </tpl:if>
+            <tpl:if test="duration">
+              <span class="duration">
+                <tpl:read select="(duration + duration_sub)"/>h
+              </span>
+            </tpl:if>
+          </div>
+        </tpl:if>
+
+        <div class="item-tools">
+          <span class="tool new">
+            <js:event name="click">
+              %object%.getParent('task').createTask();
+            </js:event>
+            <tpl:text>+</tpl:text>
+          </span>
+        </div>
+      </div>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="filter">
+
+      <sql:filter name="parent" optional="x">
+        <tpl:apply mode="parent"/>
+      </sql:filter>
+
+      <!-- @TODO remove -->
+      <sql:filter name="project">7</sql:filter>
+
+    </tpl:template>
+
+  </crud:global>
+
+  <view:view>
+
+    <xl:resource/>
+
+    <le:context name="css">
+      <le:file>main.less</le:file>
+    </le:context>
+
+    <tpl:import>/#sylma/modules/datepicker/init.tpl</tpl:import>
+
+    <tpl:template mode="todo/resources">
+
+      <js:include>/#sylma/ui/Loader.js</js:include>
+      <js:include>Explorer.js</js:include>
+      <js:include>Task.js</js:include>
+      <js:include>/#sylma/crud/Form.js</js:include>
+      <js:include>/#sylma/crud/FormAjax.js</js:include>
+      <js:include>Form.js</js:include>
+      <js:include>/#sylma/ui/Clonable.js</js:include>
+      <js:include>/#sylma/crud/Field.js</js:include>
+
+    </tpl:template>
+
+    <tpl:template>
+
+      <tpl:apply mode="todo/resources"/>
+      <tpl:apply mode="date/prepare"/>
+
+      <tpl:apply mode="head"/>
+      <crud:include path="list"/>
+
+    </tpl:template>
+
+  </view:view>
+
+  <crud:group name="list">
+
+    <sql:resource multiple="x"/>
+
+    <tpl:template mode="config">
+
+      <sql:order>statut,!term,id</sql:order>
+      <sql:limit>30</sql:limit>
+
+    </tpl:template>
+
+    <tpl:template mode="collection">
+
+      <tpl:apply select="group()" mode="group">
+        <tpl:read select="statut"/>
+      </tpl:apply>
+
+    </tpl:template>
+
+    <tpl:template match="*" mode="parent">
+      <le:get-argument name="parent" optional="x"/>
+    </tpl:template>
+
+  </crud:group>
+
+  <view:view name="list" groups="crud,list" _debug="x">
+
+    <tpl:template>
+
+      <tpl:apply mode="config"/>
+
+      <div class="explorer three" js:class="sylma.modules.todo.Explorer" js:parent-name="explorer">
+
+        <js:option name="ids">
+          <crud:path path="ids"/>
+        </js:option>
+
+        <js:option name="task">
+          <crud:path path="task"/>
+        </js:option>
+
+        <div class="tools">
+          <span class="tool new">
+            <js:event name="click">
+              %object%.createTask();
+            </js:event>
+            <tpl:text>+</tpl:text>
+          </span>
+          <span class="tool refresh">
+            <js:event name="click">
+              %object%.updateCollection();
+            </js:event>
+            <tpl:text>F</tpl:text>
+          </span>
+        </div>
+
+        <div class="new" js:class="sylma.ui.Container" js:name="new">
+
+          <js:option name="path">
+            <crud:path path="new"/>
+          </js:option>
+          <js:option name="sylma-inside">1</js:option>
+
+        </div>
+
+        <div class="collection" js:class="sylma.ui.Container" js:name="collection">
+          <tpl:apply mode="collection"/>
+        </div>
+
+      </div>
+
+    </tpl:template>
+
+    <tpl:template mode="group">
+      <div class="group" js:class="sylma.ui.Container">
+        <h3>
+          <tpl:read select="statut/value"/>
+        </h3>
+        <tpl:apply select="*"/>
+      </div>
+    </tpl:template>
+
+    <tpl:template match="*" mode="view">
+      <tpl:apply mode="view/item"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="ids" groups="crud,list" builder:return="array">
+
+    <tpl:template>
+
+      <tpl:apply mode="config"/>
+      [<tpl:apply mode="collection"/>null]
+
+    </tpl:template>
+
+    <tpl:template mode="group">[<tpl:apply select="*"/>0],</tpl:template>
+
+    <tpl:template match="todo:todo">
+      <tpl:apply mode="filter"/>
+      <tpl:read select="id"/>
+      <tpl:text>,</tpl:text>
+    </tpl:template>
+
+  </view:view>
+
+  <crud:group name="view">
+    <tpl:import>/#sylma/storage/sql/crud/common.tpl</tpl:import>
+  </crud:group>
+
+  <view:view name="task" groups="crud,view">
+
+    <sql:resource/>
+
+    <tpl:template>
+      <tpl:apply select="id" mode="filter/argument" required="x"/>
+      <tpl:apply>
+        <tpl:read select="''" tpl:name="view"/>
+      </tpl:apply>
+    </tpl:template>
+
+    <tpl:template match="*" mode="view">
+      <tpl:apply mode="view/item"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="view" groups="crud,view">
+
+    <sql:resource/>
+
+    <tpl:template>
+      <tpl:apply select="id" mode="filter/argument" required="x"/>
+      <tpl:apply mode="view/item"/>
+    </tpl:template>
+
+  </view:view>
+
+  <view:view name="new" groups="crud">
+
+    <sql:resource/>
+
+    <tpl:template>
+      <tpl:apply>
+        <tpl:read select="''" tpl:name="view"/>
+        <tpl:read select="'active'" tpl:name="form"/>
+      </tpl:apply>
+    </tpl:template>
+
+    <tpl:template match="*" mode="form">
+      <le:script path="form/insert"/>
+    </tpl:template>
+
+  </view:view>
+
+</crud:crud>

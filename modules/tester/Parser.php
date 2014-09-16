@@ -93,7 +93,10 @@ class Parser extends Prepare {
         }
       }
 
-      $result = $this->loadResult($manager, $file, $aArguments, !$test->getx('self:expected', array(), false));
+      $bExpected = !$test->getx('self:expected', array(), false);
+      $sRun = $test->readx('@run', array(), false);
+
+      $result = $this->loadResult($manager, $file, $aArguments, $sRun !== 'false', $bExpected);
 
     } catch (\sylma\core\exception $e) {
 
@@ -108,12 +111,16 @@ class Parser extends Prepare {
     return $this->catchExceptionCheck($test->readAttribute(self::PARSER_EXCEPTION, null, false), $test, $e, $file);
   }
 
-  protected function loadResult($manager, fs\file $file, array $aArguments, $bDelete = true) {
+  protected function loadResult($manager, fs\file $file, array $aArguments, $bRun = true, $bDelete = true) {
 
+    $result = null;
     $this->setFile($file);
 
-    $result = $manager->load($file, $aArguments, false, static::DEBUG_RUN);
-    if ($bDelete) $file->delete();
+    if ($bRun) {
+
+      $result = $manager->load($file, $aArguments, false, static::DEBUG_RUN);
+      if ($bDelete) $file->delete();
+    }
 
     return $result;
   }

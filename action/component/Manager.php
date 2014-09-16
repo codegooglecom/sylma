@@ -12,7 +12,18 @@ class Manager extends reflector\component\Foreigner implements common\arrayable 
 
   public function asArray() {
 
-    return array($this->getWindow()->getSylma()->call('getManager', array($this->readx('@name'))));
+    $manager = $this->getWindow()->getSylma()->call('getManager', array($this->readx('@name')));
+
+    if ($sCall = $this->readx('@call', false)) {
+
+      $result = $manager->call($sCall);
+    }
+    else {
+
+      $result = $manager;
+    }
+
+    return array($result);
   }
 }
 

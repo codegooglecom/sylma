@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<crud:crud
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:js="http://2013.sylma.org/template/binder"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  xmlns:todo="http://2013.sylma.org/modules/todo"
+  xmlns:stat="http://2013.sylma.org/modules/todo/statut"
+  xmlns:proj="http://2013.sylma.org/modules/todo/project"
+
+  xmlns:user="http://2013.sylma.org/core/user"
+  xmlns:group="http://2013.sylma.org/core/user/group"
+>
+
+  <crud:global todo:ns="ns" stat:ns="ns" proj:ns="ns" user:ns="ns" group:ns="ns">
+
+
+
+  </crud:global>
+
+  <crud:group name="crud">
+
+    <view:schema>../schema.xql</view:schema>
+
+  </crud:group>
+
+</crud:crud>

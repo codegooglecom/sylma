@@ -23,7 +23,7 @@ class Grouped extends tester\Formed implements core\argumentable {
     return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $aArguments, $bUpdate);
   }
 
-  protected function loadResult($manager, fs\file $file, array $aArguments, $bDelete = true) {
+  protected function loadResult($manager, fs\file $file, array $aArguments, $bRun = true, $bDelete = true) {
 
     $this->setFile($file);
 

@@ -17,7 +17,7 @@ class _Else extends Unknowned implements template_ns\parser\component {
 
   public function parseContent() {
 
-    return $this->parseChildren($this->getNode()->getChildren());
+    return $this->getWindow()->parse($this->parseChildren($this->getNode()->getChildren()));
   }
 }
 

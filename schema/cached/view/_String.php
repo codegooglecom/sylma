@@ -21,6 +21,13 @@ class _String extends Basic {
       $sValue = nl2br($sValue);
     }
 
+    if (isset($aSettings['end'])) {
+
+      $iEnd = $aSettings['end'];
+
+      $sValue = mb_substr($sValue, 0, $iEnd);
+    }
+
     return $sValue;
   }
 }

@@ -27,7 +27,7 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
       $this->launchException('No query defined');
     }
-    
+
     return $this->query;
   }
 
