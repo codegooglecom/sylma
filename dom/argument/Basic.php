@@ -3,7 +3,7 @@
 namespace sylma\dom\argument;
 use sylma\core, sylma\dom;
 
-abstract class Basic extends core\module\Controled {
+abstract class Basic extends core\module\Managed {
 
   const NS = 'http://www.sylma.org/dom/argument';
   //const PREFIX_DEFAULT = 'self';

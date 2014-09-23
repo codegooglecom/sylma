@@ -13,7 +13,7 @@
   xmlns:user="http://www.sylma.org/modules/uploader/test/user"
   xmlns:file="http://www.sylma.org/modules/uploader/test/file"
 
-  extends="/#sylma/storage/sql/crud.tpl"
+  extends="/#sylma/storage/sql/crud.crd"
 >
 
   <crud:global user:ns="ns" file:ns="ns">
@@ -57,9 +57,7 @@
   </crud:group>
 
   <crud:route disabled="x"/>
-<crud:route name="update">
-  <view:view name="do" debug="x"/>
-</crud:route>
+
   <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml">
 
     <xl:resource/>

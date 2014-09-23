@@ -78,31 +78,3 @@ function inter_color($fValue) {
   return "rgb($iColor, $iColor, 213)";
 }
 
-/* Display function */
-
-/*
- *
- **/
-function dspf($mVar, $sStatut = SYLMA_MESSAGES_DEFAULT_STAT) {
-
-  dspm(view($mVar, false), $sStatut);
-}
-
-function dspm($mVar, $sStatut = SYLMA_MESSAGES_DEFAULT_STAT) {
-
-  Controler::addMessage($mVar, $sStatut);
-}
-
-function dspl($sVar) {
-
-  $fp = fopen(MAIN_DIRECTORY.Controler::getSettings('@path-config').'/debug.log', 'a+');
-  fwrite($fp, "----\n".$sVar."\n"); //.Controler::getBacktrace()
-  fclose($fp);
-}
-
-function view($mVar, $bFormat = false) {
-
-  return Controler::formatResource($mVar, $bFormat);
-}
-
-

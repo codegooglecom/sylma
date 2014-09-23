@@ -110,7 +110,7 @@ abstract class Filed extends Sessioned {
     $this->getDirectory();
   }
 
-  protected function loadControler($sName) {
+  protected function loadManager($sName, $bDebug = true) {
 
     $result = null;
 
@@ -120,7 +120,7 @@ abstract class Filed extends Sessioned {
     }
     else {
 
-      $result = parent::loadControler($sName);
+      $result = parent::loadManager($sName, $bDebug);
     }
 
     return $result;

@@ -1,0 +1,75 @@
+@import url(list.less);
+
+.list
+{
+
+  .filters
+  {
+    overflow: hidden;
+    width: 102%;
+
+    &.hidder
+    {
+      opacity: 1;
+      max-height: 0;
+    }
+
+    &.visible
+    {
+      max-height: 10em;
+    }
+
+    .filter-container
+    {
+      height: 2.5em;
+      border-bottom: 1px solid #ccc;
+
+      float: left;
+
+      &.title a
+      {
+        display: inline;
+        ._title;
+      }
+
+      .filter
+      {
+        clear: both;
+        white-space: nowrap;
+
+        .field
+        {
+          padding-right: 0;
+          float: none;
+          margin-top: 1px;
+        }
+
+      }
+
+      .close
+      {
+        position: relative;
+        font-weight: bold;
+        line-height: 2.2em;
+        margin-left: -1.5em;
+        opacity: 0.15;
+
+        &:hover
+        {
+          opacity: 0.35;
+          cursor: pointer;
+        }
+      }
+
+      .date-container
+      {
+        display: inline-block;
+      }
+
+      .field-integer
+      {
+        width: 3em;
+      }
+    }
+  }
+}

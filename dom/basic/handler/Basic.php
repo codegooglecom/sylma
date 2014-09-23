@@ -356,9 +356,4 @@ abstract class Basic extends core\module\Managed {
     if ($bFormat) $this->getRoot()->prepareHTML();
     $file->saveText($this->asString(dom\handler::STRING_HEAD));
   }
-
-  public function dsp() {
-
-    dspm($this->asString());
-  }
 }

@@ -108,7 +108,7 @@ class Manager extends core\module\Namespaced implements fs\security\manager {
       $sGroup = $el->readByName('group', self::NS);
       $sMode = $el->readByName('mode', self::NS);
 
-      $user = $this->getControler()->getControler('user');
+      $user = $this->getControler()->getControler(self::USER_CONTROLER);
       $iMode = $user->getMode($sOwner, $sGroup, $sMode);
 
       if ($iMode !== null) {

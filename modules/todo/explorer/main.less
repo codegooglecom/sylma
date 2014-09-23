@@ -52,14 +52,20 @@
 
     .tool
     {
-      width: @tool;
-      height: @tool;
       float: left;
       line-height: @tool;
       text-align: center;
       font-size: 2em;
       font-weight: bold;
       cursor: pointer;
+      display: inline-block;
+
+      &.button
+      {
+        width: @tool;
+        height: @tool;
+        margin-left: 0;
+      }
 
       &:hover
       {
@@ -72,6 +78,13 @@
       {
         background-color: @gray4;
         color: @gray1;
+      }
+
+      h3
+      {
+        display: inline-block;
+        margin: 0;
+        font-size: 1em;
       }
     }
 
@@ -88,11 +101,6 @@
     perspective: 800px;
     transition: height 0.5s;
     _min-height: 2em;
-
-    &.destroy
-    {
-      height: 0;
-    }
 
     .item-tools
     {

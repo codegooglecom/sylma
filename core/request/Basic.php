@@ -216,7 +216,7 @@ class Basic extends core\module\Filed implements core\request {
 
         default :
 
-          $this->dspm(xt('Unknown base type %s', new HTML_Strong($aMatches[1])), 'warning');
+          $this->launchException('Unknown base type : ' . $aMatches[1]);
       }
     }
 

@@ -3,6 +3,8 @@
   <ns0:page>
     <ns0:steps>
       <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/list01.vml" method="get"/>
+      <ns0:query creation="2014-03-20 23:41:22" connection="test">../../samples/empty01.sql</ns0:query>
+      <ns0:query creation="2014-03-12 13:34:50" connection="test">../../samples/list01.sql</ns0:query>
     </ns0:steps>
   </ns0:page>
   <ns0:page url="/sylma/storage/sql/crud/test/samples/list01?sylma-reset=1">

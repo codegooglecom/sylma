@@ -310,13 +310,13 @@
   </tpl:template>
 
   <tpl:template match="sql:foreign" mode="filter/content">
-    <div class="filter" js:class="sylma.crud.list.Filter">
+    <div class="filter" js:class="sylma.crud.collection.Filter">
       <tpl:apply mode="input"/>
     </div>
   </tpl:template>
 
   <tpl:template match="sql:foreign" mode="filter/text">
-    <div class="filter" js:class="sylma.crud.list.Filter">
+    <div class="filter" js:class="sylma.crud.collection.Filter">
       <tpl:apply mode="input/build"/>
       <tpl:apply mode="input/clear"/>
     </div>

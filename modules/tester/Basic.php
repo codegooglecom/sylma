@@ -215,8 +215,7 @@ abstract class Basic extends Asserter {
 
   public function setControler($controler, $sName = '') {
 
-    if ($sName) parent::setControler($controler, $sName);
-    else $this->controler = $controler;
+    return parent::setControler($controler, $sName);
   }
 
   public function getNamespace($sPrefix = null) {

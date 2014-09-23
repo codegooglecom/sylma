@@ -27,13 +27,21 @@ abstract class Resource implements fs\resource {
     if ($sName) {
 
       $controler = $this->getControler();
-      return $controler->getControler($sName);
+      $result = $controler->getControler($sName);
     }
     else {
 
-      if ($this->getParent()) return $this->getParent()->getControler();
-      return $this->controler;
+      if ($this->getParent()) {
+
+        $result = $this->getParent()->getControler();
+      }
+      else {
+
+        $result = $this->controler;
+      }
     }
+
+    return $result;
   }
 
   public function doExist() {

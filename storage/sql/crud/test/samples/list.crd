@@ -13,7 +13,7 @@
 
     <sql:resource multiple="multiple"/>
 
-    <tpl:import>../../list.tpl</tpl:import>
+    <tpl:import>../../collection.tpl</tpl:import>
 
     <tpl:constant name="list-cols">*</tpl:constant>
     <tpl:constant name="list-order">name</tpl:constant>

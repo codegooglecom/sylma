@@ -11,7 +11,7 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
-  <tpl:import>/#sylma/crud/list/root.tpl</tpl:import>
+  <tpl:import>/#sylma/crud/collection/root.tpl</tpl:import>
   <tpl:import>common.tpl</tpl:import>
   <tpl:import>foreign.tpl</tpl:import>
 
@@ -35,8 +35,8 @@
 
   <tpl:template match="sql:datetime" mode="filter">
     <tpl:argument name="alias" default="alias('form')"/>
-    <div class="filter-container"  js:class="sylma.crud.list.FilterContainer">
-      <div class="filter" js:class="sylma.crud.list.Filter">
+    <div class="filter-container"  js:class="sylma.crud.collection.FilterContainer">
+      <div class="filter" js:class="sylma.crud.collection.Filter">
         <tpl:apply mode="date">
           <tpl:read select="'{$alias}_from'" tpl:name="alias"/>
           <tpl:read select="parent()/collection()/dummy()/default()" tpl:name="value">
@@ -46,7 +46,7 @@
        <tpl:apply mode="input/clear"/>
       </div>
       <!--
-      <div class="filter sylma-hidder" js:class="sylma.crud.list.Filter">
+      <div class="filter sylma-hidder" js:class="sylma.crud.collection.Filter">
         <tpl:apply mode="date">
           <tpl:read select="'{$alias}_to'" tpl:name="alias"/>
           <tpl:read select="parent()/dummy()/default()" tpl:name="value">

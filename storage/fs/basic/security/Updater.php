@@ -6,11 +6,22 @@ use \sylma\core, \sylma\dom, \sylma\storage\fs;
 require_once('Manager.php');
 require_once('storage/fs/security/updater.php');
 
+/**
+ * @deprecated do not use
+ */
 class Updater extends Manager implements fs\security\updater {
-  
+
+   public function __construct(fs\directory $dir) {
+
+     $this->launchException('This class must not be used');
+   }
+
   public function build() {
 
-    if ($this->getDocument()) dspm(xt('Le fichier de sécurité dans %s existe déjà', $this->getParent()), 'file/error');
+    if ($this->getDocument()) {
+
+      $this->launchException('Security file already exists');
+    }
     else {
 
       $doc = new \XML_Document;

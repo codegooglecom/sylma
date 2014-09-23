@@ -288,32 +288,22 @@
         <tpl:template>
           <div js:class="sylma.ui.Container" js:parent="example" js:name="container">
             <div js:class="sylma.ui.Template" js:alias="users" js:all="x">
-              <js:method name="test" arguments="test,destroy">
-
-                if (this.current === undefined) {
-
-                  this.current = 1;
-                  this.testFirst(test, destroy, this.current);
-                }
-                else {
-
-                  this.testSecond(test, destroy, this.current);
-                }
-
-              </js:method>
-              <js:method name="testFirst" arguments="test,destroy,current">
-
-                var self = this.tmp[current];
+              <js:method name="testFirstBefore" arguments="test">
+//console.log('first before');
+                var self = this.tmp[1];
 
                 sylma.tester.assertEquals(self, test, 'self1');
                 sylma.tester.assertEquals(this.tmp.length, 3, 'tmp1');
 
-                var before = {
+                this.before = {
                    first : this.tmp[0],
                    last : this.tmp[2]
                 };
 
-                destroy();
+              </js:method>
+              <js:method name="testFirstAfter" arguments="test">
+//console.log('first after');
+                var before = this.before;
 
                 after = {
                   first : this.tmp[0],
@@ -332,18 +322,21 @@
                 sylma.tester.assertEquals(this.getNode().get('text'), 'webmaster@sylma.orgadmin@sylma.org.');
                 sylma.tester.assertEquals(this.getNode().getChildren().length, 3, 'node1');
 
+                after.last.testBefore();
                 after.last.remove();
 
               </js:method>
-              <js:method name="testSecond" arguments="test,destroy,current">
-
-                var self = this.tmp[current];
+              <js:method name="testSecondBefore" arguments="test">
+//console.log('second before');
+                var self = this.tmp[1];
 
                 sylma.tester.assertEquals(self, test, 'self2');
                 sylma.tester.assertEquals(this.tmp.length, 2, 'tmp2');
 
-                destroy();
+              </js:method>
 
+              <js:method name="testSecondAfter" arguments="test">
+//console.log('second after');
                 //sylma.tester.assertEquals(this.tmp, [], 'tmp3');
 
                 /* @todo dom compare */
@@ -359,9 +352,18 @@
         </tpl:template>
         <tpl:template match="user:user">
           <div js:class="sylma.ui.Template" js:alias="user" class="sylma-hidder sylma-visible">
-            <js:method name="destroy">
+            <js:method name="testBefore" arguments="first">
+//console.log('test before', first);
+              var parent = this.getParent();
+              if (first) parent.testFirstBefore(this);
+              else parent.testSecondBefore(this);
 
-              this.getParent().test(this, this.parent.bind(this));
+            </js:method>
+            <js:method name="testAfter" arguments="first">
+//console.log('test after', first);
+              var parent = this.getParent();
+              if (first) parent.testFirstAfter(this);
+              else parent.testSecondAfter(this);
 
             </js:method>
             <span>
@@ -390,17 +392,26 @@
                 var user1 = this;
                 var parent = this.getParent();
 
+                this.addEvent('remove', this.testAfter.bind(this, true));
+
                 parent.add('user', {
                   email : 'admin@sylma.org',
                   _init : {
                     onLoad : function() {
+
+                      this.addEvent('remove', this.testAfter.bind(this));
 
                       sylma.tester.assertEquals(parent.tmp.length, 3, 'callback1');
 
                       /* @todo dom compare */
                       sylma.tester.assertEquals(test.getNode().get('text').replace(/\s*/g, ''), 'webmaster@sylma.orgroot@sylma.orgadmin@sylma.org..');
 
-                      user1.remove.delay(100, user1);
+                      (function() {
+
+                        user1.testBefore(true);
+                        user1.remove();
+
+                      }.delay(100, this));
                     }
                   }
                 });

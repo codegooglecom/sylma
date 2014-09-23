@@ -75,7 +75,7 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
 
           $aArguments = $aFunctionArguments;
         }
-        
+
         $result = $this->reflectCall($sName, $aArguments);
     }
 

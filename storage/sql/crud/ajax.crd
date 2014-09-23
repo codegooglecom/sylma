@@ -78,7 +78,7 @@
 
       <tpl:template mode="list/form">
 
-        <form class="list" js:name="list" js:class="sylma.crud.list.Table" action="" method="post" js:parent-name="table">
+        <form class="list" js:name="list" js:class="sylma.crud.collection.Table" action="" method="post" js:parent-name="table">
 
           <js:option name="update">
             <crud:path path="update"/>
@@ -112,7 +112,7 @@
 
       <tpl:template match="*" mode="row">
 
-        <tr js:class="sylma.crud.list.Row">
+        <tr js:class="sylma.crud.collection.Row">
 
           <js:option name="id">
             <tpl:read select="id"/>

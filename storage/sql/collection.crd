@@ -15,8 +15,8 @@
 
       <sql:resource multiple="multiple"/>
 
-      <crud:import>/#sylma/crud/list/root.tpl</crud:import>
-      <crud:import>crud/list.tpl</crud:import>
+      <crud:import>/#sylma/crud/collection/root.tpl</crud:import>
+      <crud:import>crud/collection.tpl</crud:import>
 
     </crud:local>
 

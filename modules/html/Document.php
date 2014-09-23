@@ -116,6 +116,13 @@ class Document extends core\window\classes\Container {
 
         break;
 
+      case 'js' :
+      case 'js-common' :
+
+        //$content = $context->asArray();
+        $this->result->getx('html:body')->add($context);
+        break;
+
       case 'title' :
 
         if ($context && $context->query()) {
@@ -132,11 +139,19 @@ class Document extends core\window\classes\Container {
 
       default :
 
-        if ($context instanceof dom\domable) $content = $context;
-        else $content = $context->asArray();
-//dsp($sName);
-//dsp($content);
-        if ($content) $this->addHeadContent($content);
+        if ($context instanceof dom\domable) {
+
+          $content = $context;
+        }
+        else {
+
+          $content = $context->asArray();
+        }
+
+        if ($content) {
+
+          $this->addHeadContent($content);
+        }
     }
   }
 

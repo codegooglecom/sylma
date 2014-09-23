@@ -118,7 +118,7 @@ class Sylma {
 
     if (!$controler && $bLoad) {
 
-      $controler = self::loadControler($sName);
+      $controler = self::loadManager($sName);
     }
 
     if (!$controler && $bLoad && $bDebug) {
@@ -139,7 +139,7 @@ class Sylma {
     self::$aControlers = $aManagers;
   }
 
-  protected static function loadControler($sName) {
+  protected static function loadManager($sName) {
 
     $result = null;
 

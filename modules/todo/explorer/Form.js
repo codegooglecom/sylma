@@ -21,8 +21,14 @@ sylma.modules.todo.Form = new Class({
   submitSuccess : function() {
 
     this.hideMask();
-    this.getParent('task').toggleSide(true, true, false);
+    this.getParent('task').disabled = true;
+    //this.getParent('task').toggleSide(true, true, false);
     this.getParent('explorer').updateCollection();
+  },
+
+  deleteSuccess : function() {
+
+    this.getParent('task').remove();
   },
 
   getMode : function() {

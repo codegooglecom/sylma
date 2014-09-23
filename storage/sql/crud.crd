@@ -26,7 +26,7 @@
 
   <crud:group name="list">
 
-    <tpl:import>crud/list.tpl</tpl:import>
+    <tpl:import>crud/collection.tpl</tpl:import>
 
   </crud:group>
 

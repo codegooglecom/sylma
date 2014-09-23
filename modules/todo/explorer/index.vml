@@ -23,6 +23,18 @@
 
   <crud:global>
 
+    <tpl:template mode="dummy/config">
+
+      <tpl:variable name="token">
+        <tpl:apply mode="dummy/path"/>
+      </tpl:variable>
+
+      <tpl:apply select="dummy()/setToken($token)"/>
+
+      <tpl:read select="dummy()/save()"/>
+
+    </tpl:template>
+
     <tpl:template match="todo:todo">
 
       <tpl:argument name="view" default="'active'"/>
@@ -155,49 +167,43 @@
 
   </crud:global>
 
-  <view:view>
-
-    <xl:resource/>
-
-    <le:context name="css">
-      <le:file>main.less</le:file>
-    </le:context>
-
-    <tpl:import>/#sylma/modules/datepicker/init.tpl</tpl:import>
-
-    <tpl:template mode="todo/resources">
-
-      <js:include>/#sylma/ui/Loader.js</js:include>
-      <js:include>Explorer.js</js:include>
-      <js:include>Task.js</js:include>
-      <js:include>/#sylma/crud/Form.js</js:include>
-      <js:include>/#sylma/crud/FormAjax.js</js:include>
-      <js:include>Form.js</js:include>
-      <js:include>/#sylma/ui/Clonable.js</js:include>
-      <js:include>/#sylma/crud/Field.js</js:include>
-
-    </tpl:template>
-
-    <tpl:template>
-
-      <tpl:apply mode="todo/resources"/>
-      <tpl:apply mode="date/prepare"/>
-
-      <tpl:apply mode="head"/>
-      <crud:include path="list"/>
-
-    </tpl:template>
-
-  </view:view>
-
   <crud:group name="list">
 
     <sql:resource multiple="x"/>
+    <tpl:import>/#sylma/crud/collection/dummy.tpl</tpl:import>
+
+    <tpl:template>
+
+      <tpl:apply select="source()"/>
+      <tpl:apply mode="dummy/config"/>
+      <tpl:apply mode="config"/>
+
+      <div class="collection" js:class="sylma.ui.Container" js:name="collection">
+
+        <js:option name="path">
+          <crud:path path="list"/>
+        </js:option>
+
+        <tpl:apply mode="collection"/>
+      </div>
+
+    </tpl:template>
 
     <tpl:template mode="config">
 
-      <sql:order>statut,!term,id</sql:order>
+      <sql:order>
+        <tpl:read select="dummy()/sort"/>
+      </sql:order>
+
       <sql:limit>30</sql:limit>
+
+    </tpl:template>
+
+    <tpl:template match="todo:todo" mode="config">
+
+      <tpl:variable name="unread">
+        <tpl:read select="id,statut/id,statut/value,term,description"/>
+      </tpl:variable>
 
     </tpl:template>
 
@@ -215,35 +221,97 @@
 
   </crud:group>
 
-  <view:view name="list" groups="crud,list" _debug="x">
+  <view:view groups="crud">
+
+    <sql:resource multiple="x"/>
+
+    <le:context name="css">
+      <le:file>main.less</le:file>
+    </le:context>
+
+    <tpl:import>/#sylma/modules/datepicker/init.tpl</tpl:import>
+    <tpl:import>/#sylma/crud/collection/dummy.tpl</tpl:import>
+
+    <tpl:template mode="todo/resources">
+
+      <js:include>/#sylma/ui/Loader.js</js:include>
+      <js:include>Explorer.js</js:include>
+      <js:include>Task.js</js:include>
+      <js:include>/#sylma/crud/Form.js</js:include>
+      <js:include>/#sylma/crud/FormAjax.js</js:include>
+      <js:include>Form.js</js:include>
+      <js:include>/#sylma/ui/Clonable.js</js:include>
+      <js:include>/#sylma/crud/Field.js</js:include>
+      <js:include>/#sylma/crud/collection/Sorter.js</js:include>
+      <js:include>/#sylma/crud/collection/Head.js</js:include>
+
+    </tpl:template>
 
     <tpl:template>
 
-      <tpl:apply mode="config"/>
+      <tpl:apply mode="todo/resources"/>
+      <tpl:apply mode="date/prepare"/>
+
+      <tpl:apply select="source()"/>
+
+      <tpl:apply select="dummy()/setDefaults()">
+        <le:array>
+          <tpl:read select="'todo_statut_id,!term,description'" le:name="sort"/>
+        </le:array>
+      </tpl:apply>
+
+      <tpl:apply mode="dummy/config"/>
 
       <div class="explorer three" js:class="sylma.modules.todo.Explorer" js:parent-name="explorer">
 
+        <js:option name="datas">
+          <tpl:apply select="dummy()/query()"/>
+        </js:option>
         <js:option name="ids">
           <crud:path path="ids"/>
         </js:option>
-
         <js:option name="task">
           <crud:path path="task"/>
         </js:option>
 
         <div class="tools">
-          <span class="tool new">
+          <span class="tool button new">
             <js:event name="click">
               %object%.createTask();
             </js:event>
             <tpl:text>+</tpl:text>
           </span>
-          <span class="tool refresh">
-            <js:event name="click">
-              %object%.updateCollection();
-            </js:event>
-            <tpl:text>F</tpl:text>
-          </span>
+          <div class="tool sort" js:class="sylma.crud.collection.Sorter" js:parent-name="head">
+
+            <js:method name="getValue">
+              return this.getParent('explorer').options.datas.sort;
+            </js:method>
+
+            <js:method name="updateContainer" arguments="name, dir">
+              this.getParent('explorer').updateList({
+                sort : 'todo_statut_id,' + this.buildValue(name, dir) + ',description'
+              });
+            </js:method>
+
+            <h3>
+              <js:event name="click">
+                %object%.open();
+              </js:event>
+              <tpl:text>sort</tpl:text>
+            </h3>
+            <span js:class="sylma.crud.collection.Head">
+
+              <js:include>/#sylma/crud/collection/Head.js</js:include>
+
+              <js:option name="dir">1</js:option>
+              <js:option name="name">term</js:option>
+
+              <js:event name="click">
+                %object%.update();
+              </js:event>
+              <tpl:text>term</tpl:text>
+            </span>
+          </div>
         </div>
 
         <div class="new" js:class="sylma.ui.Container" js:name="new">
@@ -255,13 +323,15 @@
 
         </div>
 
-        <div class="collection" js:class="sylma.ui.Container" js:name="collection">
-          <tpl:apply mode="collection"/>
-        </div>
+        <crud:include path="list"/>
 
       </div>
 
     </tpl:template>
+
+  </view:view>
+
+  <view:view name="list" groups="crud,list" _debug="x">
 
     <tpl:template mode="group">
       <div class="group" js:class="sylma.ui.Container">
@@ -273,6 +343,7 @@
     </tpl:template>
 
     <tpl:template match="*" mode="view">
+      <tpl:apply mode="config"/>
       <tpl:apply mode="view/item"/>
     </tpl:template>
 
@@ -282,6 +353,9 @@
 
     <tpl:template>
 
+      <tpl:apply select="source()"/>
+      <tpl:apply mode="dummy/config"/>
+
       <tpl:apply mode="config"/>
       [<tpl:apply mode="collection"/>null]
 
@@ -290,6 +364,7 @@
     <tpl:template mode="group">[<tpl:apply select="*"/>0],</tpl:template>
 
     <tpl:template match="todo:todo">
+      <tpl:apply mode="config"/>
       <tpl:apply mode="filter"/>
       <tpl:read select="id"/>
       <tpl:text>,</tpl:text>

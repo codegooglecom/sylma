@@ -119,7 +119,7 @@
   <crud:group name="list">
 
     <sql:resource multiple="multiple"/>
-    <tpl:import>list/root.tpl</tpl:import>
+    <tpl:import>collection/root.tpl</tpl:import>
 
   </crud:group>
 

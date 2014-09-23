@@ -399,6 +399,7 @@ sylma.ui.BaseProps = {
   remove : function(destroy) {
 
     var node = this.getNode();
+    this.destroy();
 
     new Fx.Morph(node, {
       //duration : 'long',
@@ -406,7 +407,7 @@ sylma.ui.BaseProps = {
 
         // TODO : node.destroy() send "too much recursion" error, maybe too much events
         node.dispose();
-        this.destroy();
+        this.fireEvent('remove');
 
       }.bind(this)
     }).start('.destroy');
