@@ -35,7 +35,7 @@
         <head>
           <title>Sylma</title>
           <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-          <link href="/tmp/1000489276.css" type="text/css" media="all" rel="stylesheet"/>
+          <link href="/tmp/3ba2413c.css" type="text/css" media="all" rel="stylesheet"/>
         </head>
         <body>
           <div id="sylma-messages"/>
@@ -220,12 +220,12 @@
     <tst:node>
       <html anyclass="x">
         <head>
-          <link href="/tmp/1538782558.css" type="text/css" media="all" rel="stylesheet"/>
+          <link href="/tmp/5bb7f55e.css" type="text/css" media="all" rel="stylesheet"/>
         </head>
         <body>
           <div id="messages"/>
           <hello/>
-          <script src="/tmp/4216214821.js" type="text/javascript"> </script>
+          <script src="/tmp/fb4e5525.js" type="text/javascript"> </script>
           <script type="text/javascript"> </script>
         </body>
       </html>
@@ -276,7 +276,7 @@
         <body>
           <div id="messages"/>
           <hello/>
-          <script src="/tmp/4216214821.js" type="text/javascript"> </script>
+          <script src="/tmp/fb4e5525.js" type="text/javascript"> </script>
           <script type="text/javascript"> </script>
           <script src="//example.org/_badurl" type="text/javascript"> </script>
         </body>
@@ -287,7 +287,7 @@
       $result = $manager->get('result');
       $node = $manager->get('node');
 
-      $manager->compareNodes($node, $result);
+      $manager->compareNodes($result, $node);
 
       return true;
 

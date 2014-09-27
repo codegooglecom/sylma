@@ -1,7 +1,7 @@
 debug :
   enable : false
 exception :
-  show : false
+  show : true
 initializer :
   debug :
     fatal : true

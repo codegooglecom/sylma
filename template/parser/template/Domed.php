@@ -93,7 +93,7 @@ class Domed extends Basic {
 
   protected function launchException($sMessage, array $aVars = array(), array $mSender = array()) {
 
-    $mSender[] = ($this->getNode(false) ? $this->getNode()->asToken() : '[no-node]') . ' @match ' . $this->getMatch();
+    $mSender[] = ($this->getNode(false) ? $this->getNode()->asToken() : '[no-node]') . ' @match ' . $this->getMatchString();
     $aVars[] = $this->getNode(false);
 
     parent::launchException($sMessage, $aVars, $mSender);

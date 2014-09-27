@@ -29,16 +29,16 @@
       <js:option name="useID">
         <tpl:read select="use-id()"/>
       </js:option>
-      <tpl:apply mode="legend"/>
-      <tpl:apply mode="template/add"/>
-      <tpl:apply mode="template"/>
+      <tpl:apply mode="fieldset/legend"/>
+      <tpl:apply mode="fieldset/template/add"/>
+      <tpl:apply mode="fieldset/template"/>
       <div js:class="sylma.crud.Group" js:name="content">
-        <tpl:apply select="ref()"/>
+        <tpl:apply select="ref()" mode="fieldset" xmode="update"/>
       </div>
     </fieldset>
   </tpl:template>
 
-  <tpl:template match="sql:reference" mode="template/add">
+  <tpl:template match="sql:reference" mode="fieldset/template/add">
     <button type="button" js:name="add" js:class="sylma.ui.Clonable">
       <js:event name="click">
         %parent%.addTemplate();
@@ -47,9 +47,9 @@
     </button>
   </tpl:template>
 
-  <tpl:template match="sql:reference" mode="template">
+  <tpl:template match="sql:reference" mode="fieldset/template">
     <div js:name="template" js:class="sylma.crud.fieldset.Template" class="form-reference clearfix sylma-hidder" style="display: none">
-      <tpl:apply select="static()" mode="empty"/>
+      <tpl:apply select="static()" mode="fieldset/content" xmode="insert"/>
       <tpl:apply mode="row/remove"/>
     </div>
   </tpl:template>

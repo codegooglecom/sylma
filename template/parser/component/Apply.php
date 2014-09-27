@@ -88,10 +88,5 @@ class Apply extends Read {
 
     return $sResult;
   }
-
-  public function asArray() {
-
-    return $this->build();
-  }
 }
 

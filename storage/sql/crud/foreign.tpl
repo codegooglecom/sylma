@@ -38,15 +38,9 @@
       <js:name>
         <tpl:read select="alias('key')"/>
       </js:name>
-      <tpl:apply mode="legend"/>
+      <tpl:apply mode="fieldset/legend"/>
       <tpl:apply mode="input/boolean"/>
     </fieldset>
-  </tpl:template>
-
-  <tpl:template match="*" mode="legend">
-    <legend>
-      <tpl:read select="title()"/>
-    </legend>
   </tpl:template>
 
   <tpl:template match="sql:foreign" mode="input" xmode="insert">
@@ -74,7 +68,7 @@
 
   </tpl:template>
 
-  <view:template match="sql:foreign" mode="input/boolean" xmode="update">
+  <tpl:template match="sql:foreign" mode="input/boolean" xmode="update">
 
     <tpl:if test="is-multiple()">
 
@@ -92,7 +86,7 @@
 
     <tpl:apply mode="register"/>
 
-  </view:template>
+  </tpl:template>
 
   <tpl:template match="*" mode="foreign/single/boolean/empty">
 

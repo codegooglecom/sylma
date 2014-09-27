@@ -57,7 +57,7 @@
 
   <tpl:template match="*" mode="file/fieldset">
     <fieldset js:class="sylma.crud.fieldset.Container" js:parent-name="fieldset">
-      <tpl:apply mode="legend"/>
+      <tpl:apply mode="fieldset/legend"/>
       <tpl:apply mode="file"/>
     </fieldset>
   </tpl:template>

@@ -231,8 +231,9 @@ class Basic extends \Exception implements core\exception {
     $sClass = $this->strongLast($sClass);
 
     $bHTML = $bHTML ? \Sylma::read('debug/backtrace/html') : false;
+    $bArgs = \Sylma::read('debug/backtrace/arguments');
 
-    if (array_key_exists('args', $aError)) { // TODO
+    if ($bArgs && array_key_exists('args', $aError)) { // TODO
 
       $sFunctionArgs = count($aError['args']);
 

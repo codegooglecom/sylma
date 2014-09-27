@@ -57,7 +57,7 @@ class Table extends sql\template\insert\Table {
     return $result;
   }
 
-  public function loadSingleReference($sName, self $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
+  public function loadSingleReference($sName, sql\template\insert\Table $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
 
     $window = $this->getWindow();
 

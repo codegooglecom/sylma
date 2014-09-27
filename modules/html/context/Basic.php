@@ -95,8 +95,8 @@ class Basic extends core\argument\Readable implements window\context {
    */
   protected function getCache(array $aFiles, $aContent) {
 
-    $sName = crc32(implode('', array_keys($aFiles))) . '.' . static::EXTENSION;
-    
+    $sName =  hash("crc32b", implode('', array_keys($aFiles))) . '.' . static::EXTENSION;
+
     $fs = \Sylma::getManager('fs/tmp');
     $cache = $fs->getFile($sName, null, false);
     $dir = $fs->getDirectory();

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page>
+    <ns0:steps>
+      <ns0:call path="/sylma/storage/sql/alter?file=/sylma/storage/sql/crud/test/samples/user_multiple.xql" method="get"/>
+      <ns0:query creation="2014-03-23 12:03:12" connection="test">../../samples/user_multiple.sql</ns0:query>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/storage/sql/crud/test/samples/user_multiple.vml" method="get"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/storage/sql/crud/test/samples/user_multiple/insert">
+    <ns0:steps>
+      <ns0:snapshot element="#content &gt; form">
+        <ns0:content>{"name":"form","children":[{"name":"div","children":[{"name":"label","content":"name* :","position":{"x":440,"y":159},"size":{"x":180,"y":14}},{"name":"input","content":"","position":{"x":620,"y":159},"size":{"x":306,"y":23}}],"position":{"x":440,"y":159},"size":{"x":600,"y":23}},{"name":"fieldset","children":[{"name":"legend","content":"group","position":{"x":450,"y":188},"size":{"x":50,"y":20}},{"name":"div","children":[{"name":"input","content":"","position":{"x":454,"y":221},"size":{"x":14,"y":14}},{"name":"label","content":"green","position":{"x":471,"y":218},"size":{"x":17,"y":14}}],"position":{"x":450,"y":218},"size":{"x":55,"y":20}},{"name":"div","children":[{"name":"input","content":"","position":{"x":521,"y":221},"size":{"x":14,"y":14}},{"name":"label","content":"blue","position":{"x":538,"y":218},"size":{"x":14,"y":14}}],"position":{"x":517,"y":218},"size":{"x":46,"y":20}},{"name":"div","children":[{"name":"input","content":"","position":{"x":579,"y":221},"size":{"x":14,"y":14}},{"name":"label","content":"yellow","position":{"x":596,"y":218},"size":{"x":17,"y":14}}],"position":{"x":575,"y":218},"size":{"x":58,"y":20}}],"position":{"x":440,"y":188},"size":{"x":600,"y":60}},{"name":"div","children":[{"name":"button","content":"cancel","position":{"x":440,"y":273},"size":{"x":71,"y":25}},{"name":"button","content":"save","position":{"x":982,"y":273},"size":{"x":58,"y":25}}],"position":{"x":440,"y":260},"size":{"x":600,"y":38}}],"position":{"x":440,"y":159},"size":{"x":600,"y":139}}</ns0:content>
+      </ns0:snapshot>
+      <ns0:input element="#form-name">Eric</ns0:input>
+      <ns0:event name="click" element="#content &gt; form &gt; fieldset &gt; div:nth-child(2) &gt; input"/>
+      <ns0:event name="click" element="#content &gt; form &gt; fieldset &gt; div:nth-child(3) &gt; input"/>
+      <ns0:event name="click" element="#content &gt; form &gt; div:nth-child(3) &gt; button:nth-child(2)"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page>
+    <ns0:steps>
+      <ns0:watcher element=" &gt; div:nth-child(1) &gt; div:nth-child(1)">
+        <ns0:property name="height">16</ns0:property>
+      </ns0:watcher>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/storage/sql/crud/test/samples/user_multiple/update?id=1">
+    <ns0:steps>
+      <ns0:snapshot element="#content &gt; form">
+        <ns0:content>{"name":"form","children":[{"name":"input","content":"","position":{"x":0,"y":0},"size":{"x":0,"y":0}},{"name":"div","children":[{"name":"label","content":"name* :","position":{"x":440,"y":159},"size":{"x":180,"y":14}},{"name":"input","content":"","position":{"x":620,"y":159},"size":{"x":306,"y":23}}],"position":{"x":440,"y":159},"size":{"x":600,"y":23}},{"name":"fieldset","children":[{"name":"legend","content":"group","position":{"x":450,"y":188},"size":{"x":50,"y":20}},{"name":"div","children":[{"name":"input","content":"","position":{"x":454,"y":221},"size":{"x":14,"y":14}},{"name":"label","content":"green","position":{"x":471,"y":218},"size":{"x":17,"y":14}}],"position":{"x":450,"y":218},"size":{"x":55,"y":20}},{"name":"div","children":[{"name":"input","content":"","position":{"x":521,"y":221},"size":{"x":14,"y":14}},{"name":"label","content":"blue","position":{"x":538,"y":218},"size":{"x":14,"y":14}}],"position":{"x":517,"y":218},"size":{"x":46,"y":20}},{"name":"div","children":[{"name":"input","content":"","position":{"x":579,"y":221},"size":{"x":14,"y":14}},{"name":"label","content":"yellow","position":{"x":596,"y":218},"size":{"x":17,"y":14}}],"position":{"x":575,"y":218},"size":{"x":58,"y":20}}],"position":{"x":440,"y":188},"size":{"x":600,"y":60}},{"name":"div","children":[{"name":"button","content":"cancel","position":{"x":440,"y":273},"size":{"x":71,"y":25}},{"name":"div","children":[{"name":"button","content":"delete","position":{"x":513,"y":273},"size":{"x":71,"y":25}},{"name":"div","children":[{"name":"span","content":"?","position":{"x":584,"y":280},"size":{"x":19,"y":14}},{"name":"button","content":"yes","position":{"x":606,"y":273},"size":{"x":51,"y":25}},{"name":"button","content":"no","position":{"x":660,"y":273},"size":{"x":47,"y":25}}],"position":{"x":584,"y":273},"size":{"x":0,"y":25}}],"position":{"x":513,"y":273},"size":{"x":71,"y":25}},{"name":"button","content":"save","position":{"x":982,"y":273},"size":{"x":58,"y":25}}],"position":{"x":440,"y":260},"size":{"x":600,"y":38}}],"position":{"x":440,"y":159},"size":{"x":600,"y":139}}</ns0:content>
+      </ns0:snapshot>
+      <ns0:input element="#form-name">Erik</ns0:input>
+      <ns0:event name="click" element="#content &gt; form &gt; fieldset &gt; div:nth-child(2) &gt; input"/>
+      <ns0:event name="click" element="#content &gt; form &gt; fieldset &gt; div:nth-child(4) &gt; input"/>
+      <ns0:event name="click" element="#content &gt; form &gt; div:nth-child(4) &gt; button:nth-child(3)"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page>
+    <ns0:steps>
+      <ns0:watcher element=" &gt; div:nth-child(1) &gt; div">
+        <ns0:property name="height">16</ns0:property>
+      </ns0:watcher>
+    </ns0:steps>
+  </ns0:page>
+</ns0:test>

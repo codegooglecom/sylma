@@ -47,6 +47,9 @@ class Read extends Child implements common\arrayable, parser\component {
 
   public function asArray() {
 
+    // Ensure it's parsed into template
+    //$this->getHandler()->getCurrentTemplate();
+
     return $this->build();
   }
 }

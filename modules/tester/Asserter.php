@@ -31,7 +31,7 @@ abstract class Asserter extends core\module\Domed {
         $sPost = $this->findDiff($val1, $val2);
       }
 
-      $this->launchException("Values not equal in '{$this->getCount()}'" . $sPost, get_defined_vars());
+      $this->launchException("Values not equal in  '{$this->getCount()}'" . $sPost, get_defined_vars());
     }
 
     $this->updateCount();
@@ -39,8 +39,15 @@ abstract class Asserter extends core\module\Domed {
 
   protected function findDiff($sVal1, $sVal2) {
 
+    $iStart = 5;
+    $iEnd = 11;
+
     $iDiff = strspn($sVal1 ^ $sVal2, "\0");
-    return ' at char. ' . $iDiff . ' in the middle of : "' . mb_substr($sVal1, $iDiff - 5, 11) . '"' . ', expecting : "' . mb_substr($sVal2, $iDiff - 5, 11) . '"';
+    $sVal1 = mb_check_encoding($sVal1) ? mb_substr($sVal1, $iDiff - $iStart, $iEnd) : substr($sVal1, $iDiff - $iStart, $iEnd);
+    $sVal2 = mb_check_encoding($sVal2) ? mb_substr($sVal2, $iDiff - $iStart, $iEnd) : substr($sVal2, $iDiff - $iStart, $iEnd);
+
+
+    return ' at char. ' . $iDiff . ' in the middle of : "' . $sVal1 . '"' . ', expecting : "' . $sVal2 . '"';
   }
 
   protected function updateCount() {

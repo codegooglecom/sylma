@@ -9,6 +9,7 @@ debug :
   backtrace :
     show : true
     html : true
+    arguments : true
   html :
     foreign : false
     show : true

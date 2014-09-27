@@ -178,6 +178,7 @@
     </tst:node>
   </tst:test>
   <tst:test name="Simple else">
+    <!-- Uses value() to ensure use of template -->
     <tst:document>
       <view:view sql:ns="ns">
         <sql:resource>
@@ -187,15 +188,17 @@
         <tpl:template>
           <div>
             <tpl:if test="name = 'admin'">
-              <tpl:text>is-admin</tpl:text>
-              <tpl:else>is-root</tpl:else>
+              <tpl:read select="'{name/value()}-notok'"/>
+              <tpl:else>
+                <tpl:read select="'{name/value()}-ok'"/>
+              </tpl:else>
             </tpl:if>
           </div>
         </tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
-      <div>is-root</div>
+      <div>root-ok</div>
     </tst:node>
   </tst:test>
   <tst:test name="Token in else">
