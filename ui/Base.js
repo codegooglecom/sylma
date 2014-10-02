@@ -13,7 +13,8 @@ sylma.ui.BaseProps = {
   windowLoaded : false,
   sylma : {
     key : null,
-    parents : {}
+    parents : {},
+    nodes : {}
   },
 
   objects : {},
@@ -207,9 +208,10 @@ sylma.ui.BaseProps = {
         throw new Error('Node ' + key + ' not found');
       }
 
-      this.nodes[key] = node; //.length ? node[0] : node;
-
+      this.sylma.nodes[key] = node; //.length ? node[0] : node;
     }
+
+    //this.nodes = {};
   },
 
   initMethods : function(methods) {
@@ -236,6 +238,8 @@ sylma.ui.BaseProps = {
         this.initEvent(events[name]);
       }
     }
+
+    //this.sylma.events = {};
   },
 
   initEvent : function(event) {
@@ -299,12 +303,12 @@ sylma.ui.BaseProps = {
 
     if (name) {
 
-      if (!this.nodes[name]) {
+      if (!this.sylma.nodes[name]) {
 
         if (debug) throw new Error('Unknow node ' + name);
       }
 
-      result = this.nodes[name];
+      result = this.sylma.nodes[name];
     }
     else {
 

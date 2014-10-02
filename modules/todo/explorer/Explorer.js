@@ -72,65 +72,98 @@ sylma.modules.todo.Explorer = new Class({
     var removes = [];
     var adds = [];
 
-    keys.slice(0, -1).each(function(groupKey, key) {
+    var groupKey, group;
+    var offset = 0;
+    var update = false;
+    var len = keys.length - 1;
+    var start = 0;
 
-      var group = groups[key];
-      var offset = 0;
+    for (var key = 0; key < len; key++) {
 
-      groupKey.slice(0, -1).each(function(id, subkey) {
+      groupKey = keys[key];
+      group = groups[key];
+      offset = 0;
+//console.log(key, len, keys.length, groupKey && groupKey.name, group && group.options.name);
+      if (!groupKey || !group || groupKey.name != group.options.name) {
 
-        var task = group.tmp[subkey + offset];
-//console.log(id, task);
+        update = true;
+        break;
+      }
 
-        if (task) {
-//console.log('task');
-          if (task.options.id == id) {
-//console.log('==');
-            if (task.disabled) {
+      groupKey.tasks.slice(0, -1).each(function(id, subkey) {
 
-              updates.push(task);
-            }
-          }
-          else {
-//console.log('!=');
-            var next = group.tmp[subkey + offset + 1];
+        offset = this.compareTasks(group, id, subkey, offset, adds, removes, updates)
 
-            if (next && next.options.id == id) {
-//console.log('next');
-              removes.push(task);
-              offset++;
-            }
-            else {
-//console.log('add1');
-              adds.push({
-                id : id,
-                key : subkey,
-                group : group,
-                node : task.getNode()
-              });
-              offset--;
-            }
-          }
-        }
-        else {
-//console.log('!task');
-          adds.push({
-            id : id,
-            key : subkey,
-            group : group
-          });
-        }
       }.bind(this));
+//console.log(offset, groupKey.length - 1, group.tmp.length);
+      if (!(groupKey.tasks.length - 1 < group.tmp.length) != !offset) {
 
-      if (groupKey.length - 1 < group.length) {
-
-        group.slice(groupKey.length - 1).each(function(task) {
+        start = offset ? offset - 1: -1;
+//console.log(key);
+        group.tmp.slice(groupKey.tasks.length + start).each(function(task) {
 
           removes.push(task);
         });
       }
+    }
 
-    }.bind(this));
+    if (update) {
+
+      this.updateList();
+    }
+    else {
+
+      this.applyTasks(adds, removes, updates);
+    }
+  },
+
+  compareTasks : function(group, id, subkey, offset, adds, removes, updates) {
+
+    var task = group.tmp[subkey + offset];
+
+    if (task) {
+
+      if (task.options.id == id) {
+
+        if (task.disabled) {
+
+          updates.push(task);
+        }
+      }
+      else {
+
+        var next = group.tmp[subkey + offset + 1];
+
+        if (next && next.options.id == id) {
+
+          removes.push(task);
+          offset++;
+        }
+        else {
+
+          adds.push({
+            id : id,
+            key : subkey,
+            group : group,
+            node : task.getNode()
+          });
+          offset--;
+        }
+      }
+    }
+    else {
+
+      adds.push({
+        id : id,
+        key : subkey,
+        group : group
+      });
+    }
+
+    return offset;
+  },
+
+  applyTasks: function(adds, removes, updates) {
 
     removes.each(function(item) {
 
@@ -163,9 +196,7 @@ sylma.modules.todo.Explorer = new Class({
 
       item.disabled = false;
       item.toggleSide(true, true);
-      //item.checkView();
     });
-
   },
 
   updateList : function(args) {

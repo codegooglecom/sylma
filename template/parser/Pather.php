@@ -8,7 +8,7 @@ class Pather extends component\Child {
   const ALL_TOKEN = '*';
 
   protected $source;
-  protected $aOperators = array('<', '>', '=', '<=', '>=', '!=', 'and', 'or', '+', '*', '/', 'in', '?', ':');
+  protected $aOperators = array('<', '>', '=', '<=', '>=', '!=', 'and', 'or', '+', '*', '/', 'in', '?', ':', '%');
 
   public function setSource(template_ns\parser\tree $source) {
 
@@ -384,7 +384,7 @@ class Pather extends component\Child {
 
           $aResult[$mKey] = $sString;
         }
-        else if ($this->matchNumeric($sValue)) {
+        else if ($this->matchNumeric($sValue) !== null) {
 
           $aResult[$mKey] = $sValue;
         }

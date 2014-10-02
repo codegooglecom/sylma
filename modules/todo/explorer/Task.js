@@ -2,7 +2,6 @@
 sylma.modules.todo.Task = new Class({
 
   Extends : sylma.ui.Container,
-  side : false,
   disabled : false,
 
   toggleSide : function(refresh, remove, both) {
@@ -69,10 +68,26 @@ sylma.modules.todo.Task = new Class({
 
   checkView: function (view, form, refresh, remove, both) {
 
-    //if (refresh) {
+    if (refresh) {
 
-      this.toggleContainers(form.getNode(), view.getNode());
-    //}
+      view.getObject('container').update({
+        id : this.options.id
+      }, null, false, function() {
+
+        this.toggleView(view, form, remove, both);
+
+      }.bind(this));
+    }
+    else {
+
+      this.toggleView(view, form, remove, both);
+    }
+
+  },
+
+  toggleView : function(view, form, remove, both) {
+
+    this.toggleContainers(form.getNode(), view.getNode());
 
     if (both) {
 

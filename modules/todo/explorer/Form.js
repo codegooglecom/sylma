@@ -23,6 +23,12 @@ sylma.modules.todo.Form = new Class({
     this.hideMask();
     this.getParent('task').disabled = true;
     //this.getParent('task').toggleSide(true, true, false);
+
+    if (this.getMode() === 'insert') {
+
+      this.removeNew();
+    }
+    
     this.getParent('explorer').updateCollection();
   },
 
@@ -36,13 +42,18 @@ sylma.modules.todo.Form = new Class({
     return this.options.mode;
   },
 
+  removeNew : function() {
+
+    this.getParent('task').remove();
+  },
+
   cancel : function () {
 
     this.getParent('task').toggleSide(false, true);
 
     if (this.getMode() === 'insert') {
 
-      this.getParent('task').remove();
+      this.removeNew();
     }
   }
 });

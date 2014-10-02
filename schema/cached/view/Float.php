@@ -17,7 +17,7 @@ class Float extends Numeric {
       }
       else {
 
-        $iCount = 1;
+        $iCount = 0;
       }
 
       $sValue = round($sValue, $iCount);

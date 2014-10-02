@@ -52,16 +52,12 @@
 
           <js:option name="loaderPosition">0</js:option>
 
-          <js:option name="path">
-            <crud:path path="view"/>
-          </js:option>
           <js:option name="loaded">
             <tpl:read select="$view"/>
           </js:option>
           <js:option name="side">
             <tpl:read select="$form"/>
           </js:option>
-          <js:option name="sylma-inside">1</js:option>
 
           <tpl:apply mode="view"/>
 
@@ -93,6 +89,10 @@
     <tpl:template match="todo:todo" mode="view/item">
 
       <div class="container" js:class="sylma.ui.Container" js:name="container">
+
+        <js:option name="path">
+          <crud:path path="view"/>
+        </js:option>
 
         <js:event name="click">
           %object%.getParent('task').toggleSide(true, false);
@@ -210,13 +210,77 @@
     <tpl:template mode="collection">
 
       <tpl:apply select="group()" mode="group">
-        <tpl:read select="statut"/>
+        <tpl:apply mode="group/filters"/>
       </tpl:apply>
 
     </tpl:template>
 
     <tpl:template match="*" mode="parent">
       <le:get-argument name="parent" optional="x"/>
+    </tpl:template>
+
+    <tpl:template mode="group/filters">
+      <tpl:variable name="group">
+        <tpl:apply mode="group/argument"/>
+      </tpl:variable>
+
+      <tpl:switch test="$group">
+        <tpl:case value="term">
+          <tpl:read select="term/format(pattern='%B')"/>
+        </tpl:case>
+        <tpl:case value="delegate">
+          <tpl:read select="delegate/format(end=1)"/>
+        </tpl:case>
+        <tpl:case value="priority">
+          <tpl:read select="priority"/>
+        </tpl:case>
+        <tpl:case value="duration">
+          <tpl:variable name="value">
+            <tpl:format type="float" arguments="round=0">
+              <tpl:read select="(duration * 0.125)"/>
+            </tpl:format>
+          </tpl:variable>
+          <tpl:read select="($value * 100)"/>
+        </tpl:case>
+        <tpl:default>
+          <tpl:read select="statut/id"/>
+        </tpl:default>
+      </tpl:switch>
+
+    </tpl:template>
+
+    <tpl:template mode="group">
+      <tpl:variable name="group">
+        <tpl:apply mode="group/argument"/>
+      </tpl:variable>
+      <div class="group" js:class="sylma.ui.Container">
+        <js:option name="name">
+          <tpl:read select="group-value()"/>
+        </js:option>
+        <h3>
+          <tpl:switch test="$group">
+            <tpl:case value="statut">
+              <tpl:read select="statut/value"/>
+            </tpl:case>
+            <tpl:case value="duration">
+              <tpl:variable name="mod">
+                <tpl:format type="float" arguments="round=0">
+                  <tpl:read select="(duration * 0.125)"/>
+                </tpl:format>
+              </tpl:variable>
+              <tpl:read select="'{($mod * 8)} - {($mod * 8 + 8)} h'"/>
+            </tpl:case>
+            <tpl:default>
+              <tpl:read select="group-value()"/>
+            </tpl:default>
+          </tpl:switch>
+        </h3>
+        <tpl:apply select="*"/>
+      </div>
+    </tpl:template>
+
+    <tpl:template match="*" mode="group/argument">
+      <tpl:read select="dummy()/group"/>
     </tpl:template>
 
   </crud:group>
@@ -256,7 +320,7 @@
 
       <tpl:apply select="dummy()/setDefaults()">
         <le:array>
-          <tpl:read select="'todo_statut_id,!term,description'" le:name="sort"/>
+          <tpl:read select="'id,!term,description'" le:name="sort"/>
         </le:array>
       </tpl:apply>
 
@@ -288,8 +352,13 @@
             </js:method>
 
             <js:method name="updateContainer" arguments="name, dir">
+
+              var orders = this.updateMultiple(name, dir);
+              var content = this.buildValues(orders);
+
               this.getParent('explorer').updateList({
-                sort : 'todo_statut_id,' + this.buildValue(name, dir) + ',description'
+                sort : content,
+                group : name
               });
             </js:method>
 
@@ -299,18 +368,22 @@
               </js:event>
               <tpl:text>sort</tpl:text>
             </h3>
-            <span js:class="sylma.crud.collection.Head">
-
-              <js:include>/#sylma/crud/collection/Head.js</js:include>
-
-              <js:option name="dir">1</js:option>
-              <js:option name="name">term</js:option>
-
-              <js:event name="click">
-                %object%.update();
-              </js:event>
-              <tpl:text>term</tpl:text>
-            </span>
+            <tpl:apply mode="sort">
+              <tpl:read select="'statut'" tpl:name="name"/>
+            </tpl:apply>
+            <tpl:apply mode="sort">
+              <tpl:read select="'term'" tpl:name="name"/>
+              <tpl:read select="'0'" tpl:name="dir"/>
+            </tpl:apply>
+            <tpl:apply mode="sort">
+              <tpl:read select="'priority'" tpl:name="name"/>
+            </tpl:apply>
+            <tpl:apply mode="sort">
+              <tpl:read select="'duration'" tpl:name="name"/>
+            </tpl:apply>
+            <tpl:apply mode="sort">
+              <tpl:read select="'delegate'" tpl:name="name"/>
+            </tpl:apply>
           </div>
         </div>
 
@@ -329,22 +402,41 @@
 
     </tpl:template>
 
+    <tpl:template mode="sort">
+
+      <tpl:argument name="name"/>
+      <tpl:argument name="dir" default="'1'"/>
+
+      <span js:class="sylma.crud.collection.Head">
+
+        <js:include>/#sylma/crud/collection/Head.js</js:include>
+
+        <js:option name="dir">
+          <tpl:read select="$dir"/>
+        </js:option>
+        <js:option name="name">
+          <tpl:read select="$name"/>
+        </js:option>
+
+        <js:event name="click">
+          %object%.update();
+        </js:event>
+        <tpl:text>
+          <tpl:read select="$name"/>
+        </tpl:text>
+      </span>
+
+    </tpl:template>
+
   </view:view>
 
   <view:view name="list" groups="crud,list" _debug="x">
 
-    <tpl:template mode="group">
-      <div class="group" js:class="sylma.ui.Container">
-        <h3>
-          <tpl:read select="statut/value"/>
-        </h3>
-        <tpl:apply select="*"/>
-      </div>
-    </tpl:template>
-
     <tpl:template match="*" mode="view">
       <tpl:apply mode="config"/>
-      <tpl:apply mode="view/item"/>
+      <crud:script path="view">
+        <tpl:read select="id" crud:name="id"/>
+      </crud:script>
     </tpl:template>
 
   </view:view>
@@ -361,7 +453,7 @@
 
     </tpl:template>
 
-    <tpl:template mode="group">[<tpl:apply select="*"/>0],</tpl:template>
+    <tpl:template mode="group">{"name":"<tpl:read select="group-value()"/>","tasks":[<tpl:apply select="*"/>0]},</tpl:template>
 
     <tpl:template match="todo:todo">
       <tpl:apply mode="config"/>
@@ -388,7 +480,7 @@
     </tpl:template>
 
     <tpl:template match="*" mode="view">
-      <tpl:apply mode="view/item"/>
+      <crud:include path="view"/>
     </tpl:template>
 
   </view:view>

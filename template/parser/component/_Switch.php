@@ -33,7 +33,8 @@ class _Switch extends Unknowned implements common\arrayable, template_ns\parser\
 
     foreach ($this->queryx('*') as $el) {
 
-      $aCases[$el->readx('@value', array(), false)] = $window->toString($this->parseComponentRoot($el));
+      $aContent = $this->parseChildren($el->getChildren());
+      $aCases[$el->readx('@value', array(), false)] = $window->parse($aContent);
     }
 
     $result->setContents($aCases);

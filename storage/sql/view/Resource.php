@@ -1,13 +1,13 @@
 <?php
 
 namespace sylma\storage\sql\view;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\storage\fs, sylma\storage\sql;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\view, sylma\storage\fs, sylma\storage\sql;
 
 /**
  * Load query
  * Load schema by sending arguments
  */
-class Resource extends reflector\handler\Elemented implements reflector\elemented {
+class Resource extends reflector\handler\Elemented implements reflector\elemented, view\parser\resource {
 
   protected $ID;
   protected $tree;

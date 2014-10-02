@@ -31,7 +31,7 @@ class Cleaner extends core\module\Domed {
 
     return $sResult;
   }
-  
+
   protected function cleanValid(dom\handler $doc) {
 
     require_once('dom/handler.php');

@@ -201,7 +201,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
 
     if (is_string($mValue)) {
 
-      $mResult = htmlspecialchars($mValue);
+      $mResult = htmlspecialchars($mValue, \ENT_NOQUOTES);
     }
     else if (is_array($mValue)) {
 

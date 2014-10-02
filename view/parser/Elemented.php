@@ -211,9 +211,15 @@ class Elemented extends template\parser\handler\Domed {
       $item->remove();
     }
 
+    $this->checkResource($result);
     $result->setMode($sMode);
 
     return $result;
+  }
+
+  protected function checkResource(resource $resource) {
+
+    return $resource;
   }
 
   protected function loadSchema() {

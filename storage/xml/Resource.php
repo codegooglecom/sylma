@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\xml;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template;
+use sylma\core, sylma\dom, sylma\parser\reflector, sylma\template, sylma\view;
 
-class Resource extends reflector\handler\Elemented implements reflector\elemented {
+class Resource extends reflector\handler\Elemented implements reflector\elemented, view\parser\resource {
 
   protected $tree;
   protected $reflector;
@@ -45,7 +45,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
   public function setSchema() {
 
-    $this->launchException('Not yet ready');
+    $this->launchException('Cannot set XML schema yet');
   }
 
   public function setSettings($args = null, $bMerge = true) {
@@ -92,7 +92,7 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
     return $current ? $current : $this->getTree();
   }
 
-  public function setMode() {
+  public function setMode($sMode) {
 
     return null;
   }

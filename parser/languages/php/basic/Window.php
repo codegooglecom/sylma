@@ -235,6 +235,9 @@ class Window extends common\basic\Window implements php\window {
     return $this->create('condition', array($this, $test, $content));
   }
 
+  /**
+   * @return _Switch
+   */
   public function createSwitch($test) {
 
     return $this->create('switch', array($this, $test));

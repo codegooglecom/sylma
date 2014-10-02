@@ -258,4 +258,29 @@
       </div>
     </tst:node>
   </tst:test>
+  <tst:test name="Variable in case">
+    <tst:document>
+      <view:view sql:ns="ns">
+        <xl:resource/>
+        <tpl:template>
+          <div>
+            <tpl:apply mode="content">
+              <tpl:read select="'abc'" tpl:name="val"/>
+            </tpl:apply>
+          </div>
+        </tpl:template>
+        <tpl:template mode="content">
+          <tpl:switch test="'myval'">
+            <tpl:case value="myval">
+              <tpl:variable name="test">abc</tpl:variable>
+              <tpl:read select="$test"/>
+            </tpl:case>
+          </tpl:switch>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>abc</div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

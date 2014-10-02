@@ -12,10 +12,10 @@ class Format extends Child implements common\arrayable, parser\component {
 
   public function build() {
 
-    $aArguments = $this->getHandler()->getPather()->parseArguments($this->readx('@arguments'));
-    $content = $this->getWindow()->parse($this->parseComponentRoot($this->getNode()), false);
+    $aArguments = $this->getHandler()->getPather()->parseArguments($this->readx('@arguments'), '', true, true);
+    $content = $this->getWindow()->toString($this->parseComponentRoot($this->getNode()));
 
-    $reflector = $this->createDummy($this->readx('@type'), $aArguments, null, false, true);
+    $reflector = $this->createDummy($this->readx('@type', true), $aArguments, null, false, true);
     $result = $reflector->call('format', array($content, $aArguments));
 
     return $result;
