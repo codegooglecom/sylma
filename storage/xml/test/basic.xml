@@ -186,6 +186,31 @@
       <span>/abc,/def</span>
     </tst:node>
   </tst:test>
+  <tst:test name="Call dummy with arguments">
+    <tst:document>
+      <view:view user:ns="ns">
+        <tpl:settings>
+          <cls:classes>
+            <cls:class alias="tree">
+              <cls:classes>
+                <cls:class alias="cached" name="\sylma\storage\xml\test\samples\Cached01"/>
+              </cls:classes>
+            </cls:class>
+          </cls:classes>
+        </tpl:settings>
+        <xl:resource/>
+        <tpl:template>
+          <tpl:argument name="val" default="'hello'"/>
+          <span>
+            <tpl:apply select="getPaths($val)"/>
+          </span>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <span>hello,/def</span>
+    </tst:node>
+  </tst:test>
   <tst:test name="Parse dummy result">
     <tst:document>
       <view:view user:ns="ns">

@@ -5,9 +5,14 @@ use sylma\core;
 
 class Cached01 extends core\module\Argumented {
 
-  public function getPaths() {
+  public function getPaths($sValue = '') {
 
-    return implode(',', array('/abc', '/def'));
+    if (!$sValue) {
+
+      $sValue = '/abc';
+    }
+    
+    return implode(',', array($sValue, '/def'));
   }
 }
 

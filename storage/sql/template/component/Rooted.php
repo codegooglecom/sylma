@@ -100,11 +100,6 @@ class Rooted extends sql\schema\component\Table {
     return $this->getParser()->lookupTemplate($this, 'element', $sMode, $this->isRoot());
   }
 
-  protected function parsePathTokens($aPath, $sMode) {
-
-    return $this->getParser()->parsePathTokens($this, $aPath, $sMode);
-  }
-
   public function addTrigger(array $aContent) {
 
     //return $this->getWindow()->createGroup($aContent);

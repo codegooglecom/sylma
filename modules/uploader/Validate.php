@@ -37,7 +37,8 @@ class Validate extends core\module\Domed implements core\stringable {
     }
     else if (!in_array($sExtension, $this->aExtensions)) {
 
-      $this->addMessage("Extension not allowed in <em>{$this->read('name')}</em>");
+      $sExtensions = implode(', ', $this->aExtensions);
+      $this->addMessage("Extension not allowed in <em>{$this->read('name')}</em>, $sExtensions expected.");
       $this->set('error', true);
     }
     else {
@@ -68,6 +69,11 @@ class Validate extends core\module\Domed implements core\stringable {
   }
 
   public function validate($sAlias) {
+
+    if (!$this->aExtensions) {
+
+      $this->launchException('No extension defined');
+    }
 
     $bResult = false;
 

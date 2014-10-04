@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\parser\template;
-use sylma\core, sylma\dom, sylma\template as template_ns;
+use sylma\core, sylma\dom, sylma\template;
 
-class Domed extends Basic {
+abstract class Domed extends Basic {
 
   protected $aComponents = array();
 
@@ -45,7 +45,7 @@ class Domed extends Basic {
     }
   }
 
-  protected function addComponent(template_ns\parser\component $sub) {
+  protected function addComponent(template\parser\component $sub) {
 
     $sub->setTemplate($this); // first set for component build
 
@@ -75,7 +75,7 @@ class Domed extends Basic {
   /**
    * @uses \sylma\template\binder\Handler::onClose()
    */
-  protected function loadAttributes(dom\element $el, template_ns\element $component) {
+  protected function loadAttributes(dom\element $el, template\element $component) {
 
     if ($this->useForeignAttributes($el)) {
 

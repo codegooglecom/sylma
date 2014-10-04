@@ -17,6 +17,7 @@ sylma.stepper.Main = new Class({
   events : {},
   variables : {},
   updating : false,
+  stop : false,
 
   /**
    * Collection or Directory
@@ -403,6 +404,29 @@ sylma.stepper.Main = new Class({
 
       }.bind(this));
     }
+  },
+
+  testAll: function (button) {
+
+    button.toggleClass('active');
+
+    if (button.hasClass('active')) {
+
+      button.store('content', button.get('html'));
+      button.set('html', '■');
+
+      this.getRoot().test();
+    }
+    else {
+
+      this.stop = button;
+    }
+  },
+
+  stopTest : function() {
+
+    this.stop.set('html', this.stop.retrieve('content'));
+    this.stop = false;
   },
 
   save : function() {

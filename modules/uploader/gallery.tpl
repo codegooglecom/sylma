@@ -10,7 +10,7 @@
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
 >
 
-  <tpl:template match="sql:table" mode="file/view">
+  <tpl:template match="*" mode="file/view">
     <img src="{$$uploader-dir}/{path}?format=small"/>
     <tpl:apply mode="file/view"/>
   </tpl:template>

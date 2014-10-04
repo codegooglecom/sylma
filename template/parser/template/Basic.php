@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\template\parser\template;
-use sylma\core, sylma\parser\languages\common, sylma\template as template_ns;
+use sylma\core, sylma\parser\languages\common, sylma\template as template;
 
-class Basic extends template_ns\parser\component\Child implements core\tokenable, common\arrayable {
+abstract class Basic extends template\parser\component\Child implements core\tokenable, common\arrayable, template\parser\template {
 
   const NAME_DEFAULT = '*';
 
@@ -73,7 +73,7 @@ class Basic extends template_ns\parser\component\Child implements core\tokenable
     return $this->sMatch;
   }
 
-  public function setTree(template_ns\parser\tree $tree) {
+  public function setTree(template\parser\tree $tree) {
 
     if (!$this->bCloned && $this->getMatch()) {
 

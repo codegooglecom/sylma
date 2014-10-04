@@ -67,6 +67,7 @@ sylma.stepper.Listed = new Class({
   testFinish : function() {
 
     sylma.ui.showMessage('All tests passed');
+    this.getMain().stopTest();
     this.getMain().resumeRecord();
   },
 
@@ -162,7 +163,16 @@ sylma.stepper.Listed = new Class({
 
     items[key].test(function() {
 
-      this.testNextItem(items, key + 1, callback, record);
+      var main = this.getMain();
+
+      if (main.stop) {
+
+        main.stopTest();
+      }
+      else {
+
+        this.testNextItem(items, key + 1, callback, record);
+      }
 
     }.bind(this));
   },

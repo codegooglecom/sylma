@@ -62,7 +62,7 @@ class Apply extends Read {
       $result = $this->buildDefault($sSelect, $sMode, $sXMode, $aArguments);
     }
 
-    $aResult = $this->getWindow()->parseArrayables(array($result));
+    $aResult = $this->getWindow()->parse($result, true);
 
     if (!$result && !$aResult && $this->readx('@required')) {
 

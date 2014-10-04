@@ -224,11 +224,24 @@ return; // todo, decide to use or not
     return $result;
   }
 
+  /**
+   * Main function to resolve asArray() methods
+   * @param mixed $mContent
+   * @param boolean $bArray @deprecated
+   * @return mixed
+   */
   public function parse($mContent, $bArray = false) {
 
-    if (!$mContent) {
+    if (is_null($mContent)) {
 
-      $mResult = $mContent;
+      if ($bArray) {
+
+        $mResult = array();
+      }
+      else {
+
+        $mResult = null;
+      }
     }
     else if (is_array($mContent)) {
 
@@ -237,7 +250,15 @@ return; // todo, decide to use or not
     else {
 
       $aResult = $this->parseArrayables(array($mContent));
-      $mResult = $bArray ? $aResult : current($aResult);
+
+      if (count($aResult) > 1 || $bArray) {
+
+        $mResult = $aResult;
+      }
+      else {
+
+        $mResult = current($aResult);
+      }
     }
 
     return $mResult;

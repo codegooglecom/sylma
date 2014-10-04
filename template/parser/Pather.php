@@ -178,6 +178,15 @@ class Pather extends component\Child {
     return is_numeric($sValue) ? $sValue : null;
   }
 
+  /**
+   * @usedby template\parser\component\Argument::getDefault()
+   * @usedby template\parser\component\Apply::buildDefault()
+   * @usedby template\parser\component\Read::build()
+   * 
+   * @return array|\sylma\parser\languages\common\argumentable
+   * Multiple path (with comma ex: id,name) return array.
+   * Simple path (without comma) return object or array.
+   */
   public function applyPath($sPath, $sMode, array $aArguments = array()) {
 
     if ($sPath) {
@@ -186,19 +195,31 @@ class Pather extends component\Child {
 
       if ($this->matchAll($sPath)) {
 
-        $aResult = $this->parsePathAll($sPath, $sMode, $aArguments);
+        $mResult = $this->parsePathAll($sPath, $sMode, $aArguments);
       }
       else {
 
-        $aResult = $this->parsePathTokens($this->parsePaths($sPath), $sMode, false, $aArguments);
+        $aPath = $this->parsePaths($sPath);
+
+        if (count($aPath) === 1) {
+
+          $aPath = $this->parsePath(current($aPath));
+          $sPath = array_shift($aPath);
+
+          $mResult = $this->parsePathTokenValue($sPath, $aPath, $sMode, false, $aArguments);
+        }
+        else {
+
+          $mResult = $this->parsePathTokens($aPath, $sMode, false, $aArguments);
+        }
       }
     }
     else {
 
-      $aResult = $this->getSource()->reflectApply($sMode, $aArguments);
+      $mResult = $this->getSource()->reflectApply($sMode, $aArguments);
     }
 
-    return $aResult;
+    return $mResult;
   }
 
   public function readPath($sPath, $sMode, array $aArguments = array()) {
@@ -272,15 +293,23 @@ class Pather extends component\Child {
   }
 
   public function parsePathTokens(array $aPaths, $sMode, $bRead = false, array $aArguments = array()) {
+/*
+    if (count($aPaths) > 1) {
+*/
+      $mResult = array();
 
-    $aResult = array();
+      foreach ($aPaths as $sPath) {
 
-    foreach ($aPaths as $sPath) {
-
-      $aResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode, $bRead, $aArguments);
+        $mResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode, $bRead, $aArguments);
+      }
+/*
     }
+    else {
 
-    return $aResult;
+      $mResult = $this->parsePathToken(current($aPaths), $sMode, $bRead, $aArguments);
+    }
+*/
+    return $mResult;
   }
 
   public function parsePathToken(array $aPath, $sMode, $bRead, array $aArguments = array()) {
@@ -302,7 +331,7 @@ class Pather extends component\Child {
 
     if ($aMatch = $this->matchVariable($sPath)) {
 
-      $aResult = $this->parseVariable($aMatch, $aPath, $sMode);
+      $mResult = $this->parseVariable($aMatch, $aPath, $sMode);
     }
     else if ($sValue = $this->matchExpression($sPath)) {
 
@@ -311,26 +340,26 @@ class Pather extends component\Child {
         $this->launchException('Expression must not contains sub path');
       }
 
-      $aResult = array($this->getWindow()->createExpression($this->parseExpression($sValue)));
+      $mResult = array($this->getWindow()->createExpression($this->parseExpression($sValue)));
     }
     else if ($sValue = $this->matchString($sPath) or !is_null($sValue)) {
 
-      $aResult = $this->getParser()->xmlize(array($this->getTemplate()->parseValue($sValue)));
+      $mResult = $this->getParser()->xmlize($this->getTemplate()->parseValue($sValue));
     }
     else if ($aMatch = $this->matchFunction($sPath)) {
 
-      $aResult = $this->parsePathFunction($aMatch, $aPath, $sMode, $bRead, $aArguments);
+      $mResult = $this->parsePathFunction($aMatch, $aPath, $sMode, $bRead, $aArguments);
     }
     else if ($sPath) {
 
-      $aResult = $this->parsePathDefault($sPath, $aPath, $sMode, $bRead, $aArguments);
+      $mResult = $this->parsePathDefault($sPath, $aPath, $sMode, $bRead, $aArguments);
     }
     else {
 
       $this->launchException('Invalid path token', get_defined_vars());
     }
 
-    return $aResult;
+    return $mResult;
   }
 
   protected function parsePathDefault($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {

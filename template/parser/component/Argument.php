@@ -17,8 +17,8 @@ class Argument extends Variable implements parser\component, common\arrayable {
 
   public function setContent($mContent) {
 
-    $result = parent::setContent($this->getWindow()->parseArrayables(array($mContent)));
-    //$result = $this->loadVar($mContent);
+    $result = parent::setContent($this->getWindow()->parse($mContent));
+
     return $result;
   }
 

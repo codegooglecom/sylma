@@ -55,8 +55,8 @@
             <js:event name="click">%object%.record();</js:event>
             <span>●</span>
           </button>
-          <button>
-            <js:event name="click">%object%.getRoot().test();</js:event>
+          <button class="read">
+            <js:event name="click">%object%.testAll(this);</js:event>
             <tpl:text>▶</tpl:text>
           </button>
           <button>

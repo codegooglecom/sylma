@@ -473,7 +473,7 @@
     <sql:resource/>
 
     <tpl:template>
-      <tpl:apply select="id" mode="filter/argument" required="x"/>
+      <tpl:apply select="id" mode="filter/argument"/>
       <tpl:apply>
         <tpl:read select="''" tpl:name="view"/>
       </tpl:apply>
@@ -490,7 +490,7 @@
     <sql:resource/>
 
     <tpl:template>
-      <tpl:apply select="id" mode="filter/argument" required="x"/>
+      <tpl:apply select="id" mode="filter/argument"/>
       <tpl:apply mode="view/item"/>
     </tpl:template>
 

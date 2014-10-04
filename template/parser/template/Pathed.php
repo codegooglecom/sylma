@@ -1,14 +1,14 @@
 <?php
 
 namespace sylma\template\parser\template;
-use sylma\core, sylma\template as template_ns;
+use sylma\core, sylma\template;
 
-class Pathed extends Domed implements template_ns\parser\template {
+abstract class Pathed extends Domed {
 
   protected $pather;
 
   /**
-   * @return template_ns\parser\Pather
+   * @return template\parser\Pather
    */
   public function getPather() {
 
@@ -38,7 +38,7 @@ class Pathed extends Domed implements template_ns\parser\template {
   }
 
   /**
-   * @usedby template_ns\parser\Pather::parseExpression()
+   * @usedby template\parser\Pather::parseExpression()
    */
   public function parseValue($sValue) {
 

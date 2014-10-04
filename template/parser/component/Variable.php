@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser, sylma\parser\languages\php;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
 
 class Variable extends Child implements common\arrayable, parser\component {
 

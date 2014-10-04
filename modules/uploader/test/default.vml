@@ -58,11 +58,12 @@
 
   <crud:route disabled="x"/>
 
-  <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml">
+  <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml" debug="x">
 
     <xl:resource/>
 
     <tpl:template>
+      <tpl:apply mode="file/settings"/>
       <tpl:read select="directory()">
         <tpl:read select="$$uploader-dir" tpl:name="directory"/>
       </tpl:read>
