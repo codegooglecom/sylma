@@ -164,12 +164,7 @@
     <div js:class="sylma.crud.fieldset.Row" class="form-reference clearfix sylma-hidder sylma-visible">
       <tpl:apply mode="fieldset/content"/>
       <tpl:apply mode="row/remove"/>
-      <tpl:apply mode="fieldset/register"/>
     </div>
-  </tpl:template>
-
-  <tpl:template match="sql:table" mode="fieldset/register">
-    <tpl:apply select="* ^ sql:foreign" mode="register"/>
   </tpl:template>
 
   <tpl:template match="*" mode="fieldset/legend">

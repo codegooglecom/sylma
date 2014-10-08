@@ -13,6 +13,7 @@ class Tree extends reflector\component\Foreigner implements reflector\component,
   protected $offset;
   protected $count;
   protected $bCount = false;
+  protected $page;
 
   public function parseRoot(dom\element $el) {
 
@@ -108,6 +109,7 @@ class Tree extends reflector\component\Foreigner implements reflector\component,
       case 'is-multiple' : $aResult[] = $var->call('isMultiple'); break;
       case 'is-first' : $aResult[] = $var->call('isFirst');; break;
       case 'is-last' : $aResult[] = $var->call('isLast'); break;
+      case 'pages' : $aResult[] = $this->reflectPages($sMode); break;
 
       default :
 
@@ -117,7 +119,27 @@ class Tree extends reflector\component\Foreigner implements reflector\component,
     return $aResult;
   }
 
-  public function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
+  protected function reflectPages($sMode) {
+
+    $window = $this->getWindow();
+
+    $val = $window->createVariable('', 'php-null');
+    $last = $this->reflectApplyDefault('last');
+    $loop = $window->createLoop($window->callFunction('range', 'php-array', array(1, $last)), $val);
+
+    $this->page = $val;
+
+    if ($result = $this->getParser()->lookupTemplate('page', $this->getNamespace(), $sMode)) {
+
+      $result->setTree($this);
+
+      $loop->setContent($window->parse($result, true));
+    }
+
+    return $loop;
+  }
+
+  public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false, array $aArguments = array()) {
 
     $var = $this->getVar();
     //$aResult[] = $this->loadCount();
@@ -129,6 +151,7 @@ class Tree extends reflector\component\Foreigner implements reflector\component,
       case 'last' : $aResult = $var->call('getLast'); break;
       case 'prev' :
       case 'previous' : $aResult = $var->call('getPrevious'); break;
+      case 'page' : $aResult = $this->page; break;
 
       default :
 

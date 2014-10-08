@@ -10,7 +10,7 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:xl="http://2013.sylma.org/storage/xml"
 
-  extends="../crud.tpl"
+  extends="../crud.crd"
 >
 
   <crud:global>

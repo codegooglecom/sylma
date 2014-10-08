@@ -3,7 +3,7 @@
   <propagate>
     <security>
       <owner>root</owner>
-      <group>webmaster</group>
+      <group>admin</group>
       <mode>710</mode>
     </security>
   </propagate>

@@ -39,8 +39,6 @@
     <tpl:constant name="list-cols">* ^ id, parent</tpl:constant>
     <tpl:constant name="list-order">update</tpl:constant>
 
-    <tpl:import>/html/common.tpl</tpl:import>
-
     <tpl:template match="sql:foreign" mode="container">
       <tpl:apply mode="input/hidden"/>
     </tpl:template>

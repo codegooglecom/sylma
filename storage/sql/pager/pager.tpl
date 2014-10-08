@@ -11,13 +11,18 @@
   xmlns:ls="http://2013.sylma.org/parser/security"
 >
 
-  <view:template mode="pager/init">
+  <tpl:template mode="pager/init">
 
     <js:include>Pager.js</js:include>
 
-  </view:template>
+  </tpl:template>
 
-  <view:template mode="pager/argument">
+  <!-- @deprecated, use pager/post, dummy or get instead -->
+  <tpl:template mode="pager/argument">
+    <tpl:deprecated/>
+  </tpl:template>
+
+  <tpl:template mode="pager/post">
 
     <tpl:apply mode="pager/init"/>
 
@@ -34,9 +39,28 @@
       </sql:count>
     </sql:pager>
 
-  </view:template>
+  </tpl:template>
 
-  <view:template match="*" mode="pager/dummy">
+  <tpl:template mode="pager/get">
+
+    <tpl:apply mode="pager/init"/>
+
+    <le:argument name="sylma-page" format="integer">
+      <le:default>1</le:default>
+    </le:argument>
+
+    <sql:pager>
+      <sql:current>
+        <le:get-argument name="sylma-page"/>
+      </sql:current>
+      <sql:count>
+        <tpl:apply mode="pager/count"/>
+      </sql:count>
+    </sql:pager>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/dummy">
 
     <tpl:apply mode="pager/init"/>
 
@@ -49,82 +73,114 @@
       </sql:count>
     </sql:pager>
 
-  </view:template>
+  </tpl:template>
 
   <tpl:template mode="pager/count">10</tpl:template>
 
-  <view:template match="sql:pager">
+  <tpl:template match="sql:pager">
 
     <tpl:apply select="init()"/>
 
     <div class="pager" js:class="sylma.crud.Pager" js:name="pager">
-<!--
-      <tpl:if test="!is-multiple()">
-        <tpl:token name="class">form-disable</tpl:token>
-      </tpl:if>
--->
+
       <div class="clearfix">
 
-        <a href="#" title="Page précédente" class="button pager-previous">
-          <tpl:if test="is-first()">
-            <tpl:token name="class">form-disable</tpl:token>
-          </tpl:if>
-          <js:option name="prev">
-            <tpl:apply select="previous"/>
-          </js:option>
-          <js:event name="click">
-            %object%.goPage(%object%.get('prev'), e);
-          </js:event>
-          &lt;&lt;
-        </a>
-
-        <span class="button pager-infos">
-
-          <a href="#" title="Première page" class="pager-current">
-            <tpl:if test="is-first()">
-              <tpl:token name="class">form-disable</tpl:token>
-            </tpl:if>
-            <js:event name="click">
-              %object%.goPage(1, e);
-            </js:event>
-            <tpl:read select="current"/>
-          </a>
-
-          <span class="pager-separator">/</span>
-
-          <a href="#" title="Dernière page" class="pager-total">
-            <tpl:if test="is-last()">
-              <tpl:token name="class">form-disable</tpl:token>
-            </tpl:if>
-            <js:option name="last">
-              <tpl:apply select="last"/>
-            </js:option>
-            <js:event name="click">
-              %object%.goPage(%object%.get('last'), e);
-            </js:event>
-            <tpl:read select="last"/>
-          </a>
-
-        </span>
-
-        <a href="#" title="Page suivante" class="button pager-next">
-          <tpl:if test="is-last()">
-            <tpl:token name="class">form-disable</tpl:token>
-          </tpl:if>
-          <js:option name="next">
-            <tpl:apply select="next"/>
-          </js:option>
-          <js:event name="click">
-            %object%.goPage(%object%.get('next'), e);
-          </js:event>
-          &gt;&gt;
-        </a>
+        <tpl:apply mode="pager/previous"/>
+        <tpl:apply mode="pager/current"/>
+        <tpl:apply mode="pager/next"/>
 
         <input type="hidden" name="sylma-page" value="{current}" js:node="input"/>
 
       </div>
     </div>
 
-  </view:template>
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/previous">
+
+    <a href="javascript:void(0)" title="Page précédente" class="button pager-previous previous">
+      <tpl:if test="is-first()">
+        <tpl:token name="class">form-disable</tpl:token>
+      </tpl:if>
+      <js:option name="prev">
+        <tpl:apply select="previous"/>
+      </js:option>
+      <js:event name="click">
+        %object%.goPage(%object%.get('prev'), e);
+      </js:event>
+      <tpl:apply mode="pager/previous/content"/>
+    </a>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/previous/content">&lt;&lt;</tpl:template>
+
+  <tpl:template match="*" mode="pager/current">
+
+    <span class="button pager-infos">
+
+      <a href="javascript:void(0)" title="Première page" class="pager-current">
+        <tpl:if test="is-first()">
+          <tpl:token name="class">form-disable</tpl:token>
+        </tpl:if>
+        <js:event name="click">
+          %object%.goPage(1, e);
+        </js:event>
+        <tpl:read select="current"/>
+      </a>
+
+      <span class="pager-separator">/</span>
+
+      <a href="javascript:void(0)" title="Dernière page" class="pager-total">
+        <tpl:if test="is-last()">
+          <tpl:token name="class">form-disable</tpl:token>
+        </tpl:if>
+        <js:option name="last">
+          <tpl:apply select="last"/>
+        </js:option>
+        <js:event name="click">
+          %object%.goPage(%object%.get('last'), e);
+        </js:event>
+        <tpl:read select="last"/>
+      </a>
+
+    </span>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/pages">
+    <div class="pages">
+      <tpl:apply select="pages()" mode="pager/page"/>
+    </div>
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/page">
+    <a href="javascript:void(0)" class="page {(page = current ? 'active' : '')}" data-page="{page}">
+      <js:event name="click">
+        %object%.goPage(this.get('data-page'), e);
+      </js:event>
+      <tpl:read select="page"/>
+    </a>
+    <tpl:if test="page != last">-</tpl:if>
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/next">
+
+    <a href="javascript:void(0)" title="Page suivante" class="button pager-next next">
+      <tpl:if test="is-last()">
+        <tpl:token name="class">form-disable</tpl:token>
+      </tpl:if>
+      <js:option name="next">
+        <tpl:apply select="next"/>
+      </js:option>
+      <js:event name="click">
+        %object%.goPage(%object%.get('next'), e);
+      </js:event>
+      <tpl:apply mode="pager/next/content"/>
+    </a>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/next/content">&gt;&gt;</tpl:template>
 
 </view:view>

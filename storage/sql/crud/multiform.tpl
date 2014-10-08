@@ -36,41 +36,46 @@
     <tpl:argument name="path" default="''"/>
     <tpl:argument name="key" default="position()"/>
 
-    <li js:class="sylma.ui.tab.Caller">
+    <li js:class="sylma.crud.multiform.TabSub">
+
       <js:option name="path">
         <tpl:read select="$path"/>
       </js:option>
       <js:option name="key">
         <tpl:read select="$key"/>
       </js:option>
-      <a href="javascript:void(0)">
-        <js:event name="click">
 
-          %object%.go(e);
+      <js:include>TabSub.js</js:include>
 
-        </js:event>
-        <tpl:read select="$title"/>
-        <tpl:if test="$path">
-          <span class="new">
-            <js:event name="click" arguments="e">
-              var tabs = %object%.getParent('tabs');
-              var key = %object%.get('key');
-              var path = %object%.get('path');
-              var id = %object%.getParent('handler').getID();
+      <tpl:apply mode="tab/content">
+        <tpl:read select="$title" tpl:name="title"/>
+        <tpl:read select="$path" tpl:name="path"/>
+      </tpl:apply>
 
-              tabs.go(key, function() {
-
-                tabs.getTab(key).getObject('form').update({parent: id}, path);
-              });
-
-              e.stopPropagation();
-
-            </js:event>
-            <tpl:text>+</tpl:text>
-          </span>
-        </tpl:if>
-      </a>
     </li>
+
+  </tpl:template>
+
+  <tpl:template mode="tab/content">
+
+    <tpl:argument name="title"/>
+    <tpl:argument name="path"/>
+
+    <a href="javascript:void(0)">
+      <js:event name="click">
+        %object%.go(e);
+      </js:event>
+      <tpl:read select="$title"/>
+      <tpl:if test="$path">
+        <span class="new">
+          <js:event name="click" arguments="e">
+            %object%.createItem(e);
+          </js:event>
+          <tpl:text>+</tpl:text>
+        </span>
+      </tpl:if>
+    </a>
+
   </tpl:template>
 
 </tpl:collection>

@@ -160,9 +160,9 @@
         <tpl:apply mode="parent"/>
       </sql:filter>
 
-      <!-- @TODO remove -->
+<!--
       <sql:filter name="project">7</sql:filter>
-
+-->
     </tpl:template>
 
   </crud:global>

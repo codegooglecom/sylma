@@ -58,6 +58,7 @@
       <input type="hidden" name="position" js:node="position"/>
       <iframe name="{$name}" js:node="iframe"/>
     </form>
+
   </tpl:template>
 
   <tpl:template match="*" mode="file/form/init">

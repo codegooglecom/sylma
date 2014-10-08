@@ -1,4 +1,6 @@
 
+sylma.crud = sylma.crud || {};
+
 sylma.crud.Pager = new Class({
 
   Extends : sylma.ui.Container,
@@ -11,6 +13,11 @@ sylma.crud.Pager = new Class({
   getInput : function() {
 
     return this.getNode('input');
+  },
+
+  getValue : function() {
+
+    return this.getNode('input').get('value');
   },
 
   goPage : function(val, e) {

@@ -58,7 +58,7 @@
 
   <crud:route disabled="x"/>
 
-  <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml" debug="x">
+  <view:view name="upload" extends="/#sylma/modules/uploader/validate.vml">
 
     <xl:resource/>
 

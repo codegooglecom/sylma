@@ -9,12 +9,15 @@ class Field extends sql\template\component\Field {
 
   public function reflectRegister($content = null, $sReflector = '', $sMode = '') {
 
-    $this->setReflectorName($sReflector);
-    $this->getParent()->addElement($this, $content, array(
-      'optional' => $this->isOptional(),
-      'default' => $this->getDefault(),
-      'mode' => $sMode,
-    ));
+    if (!$this->getTable()->isStatic()) {
+
+      $this->setReflectorName($sReflector);
+      $this->getParent()->addElement($this, $content, array(
+        'optional' => $this->isOptional(),
+        'default' => $this->getDefault(),
+        'mode' => $sMode,
+      ));
+    }
   }
 
   protected function reflectSelf($bHTML = false) {

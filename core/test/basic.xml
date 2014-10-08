@@ -175,8 +175,7 @@
 
       $css = $manager->getFile('samples/result01.css');
 
-      $fs = $manager->getManager('fs/tmp');
-      $tmp = $fs->getFile('1538782558.css');
+      $tmp = $manager->getFile('samples/5bb7f55e.css');
 
       $manager->assertEqual($tmp->read(), $css->read());
 
@@ -240,7 +239,7 @@
       $css = $manager->getFile('samples/result01.css');
 
       $fs = $manager->getManager('fs/tmp');
-      $tmp = $fs->getFile('1538782558.css');
+      $tmp = $fs->getFile('5bb7f55e.css');
 
       $manager->assertEqual($tmp->read(), $css->read());
 
