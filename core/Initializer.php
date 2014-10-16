@@ -6,6 +6,7 @@ use sylma\parser\action, sylma\core, sylma\storage\fs;
 class Initializer extends module\Domed {
 
   const NS = 'http://www.sylma.org/core/initializer';
+  const AUTOLOAD_MANAGER = 'autoload';
 
   protected $iStartTime = 0;
   protected static $aStats = array();
@@ -51,6 +52,8 @@ class Initializer extends module\Domed {
   }
 
   public function run($settings) {
+
+    \Sylma::getManager(self::AUTOLOAD_MANAGER)->loadNamespaces($settings->query('autoload'));
 
     $this->setArguments($this->createArgument($settings->query()));
     $this->setSettings($this->getArguments());

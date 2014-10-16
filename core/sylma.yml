@@ -15,10 +15,13 @@ debug :
     show : true
   xml :
     import : false
+
 namespaces :
   html : http://www.w3.org/1999/xhtml
+
 render :
   gzip : true
+
 exception :
   show : false
   send : false
@@ -26,6 +29,7 @@ exception :
     enable : false
     to : none
   file : error.log
+
 initializer :
   debug :
     update : null
@@ -33,6 +37,7 @@ initializer :
     profile : false
     fatal : false
     delay : 0
+  autoload : []
   output :
     indent : true
   mime :

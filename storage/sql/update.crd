@@ -4,11 +4,12 @@
   xmlns:view="http://2013.sylma.org/view"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
 >
 
-  <crud:global>
+  <crud:global sql:ns="ns">
 
     <sql:resource/>
 
@@ -58,6 +59,8 @@
       <tpl:template>
         <tpl:apply mode="form" xmode="update"/>
       </tpl:template>
+
+      <tpl:template match="sql:foreign" mode="container/multiple"/>
 
     </view:view>
 

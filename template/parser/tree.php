@@ -11,6 +11,7 @@ interface tree extends core\tokenable {
   function reflectApply($sMode);
   function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array());
   function reflectApplyDefault($sPath, array $aPath, $sMode, $bRead = false, array $aArguments = array());
+  //function applyQuery(query $query);
   //reflectApplyAll(array $aPath, $sMode, array $aArguments = array())
 }
 

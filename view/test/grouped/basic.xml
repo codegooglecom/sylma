@@ -6,14 +6,14 @@
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
+  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:cls="http://2013.sylma.org/core/factory"
 
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:xl="http://2013.sylma.org/storage/xml"
 
   xmlns:user="http://2013.sylma.org/view/test/sample1"
   xmlns:group="http://2013.sylma.org/view/test/sample2"
-
-  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
 >
   <tst:description>Basic</tst:description>
   <tst:datas name="mysql://user">
@@ -256,8 +256,8 @@ EOT;
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Required apply on complex" catch="\sylma\core\exception" disabled="true">
-    <!-- Exception on build -->
+  <tst:test name="Required apply on complex" parser-exception="\sylma\core\exception" disabled="true">
+    <!-- Disabled because it can't be checked only on result -->
     <tst:document>
       <view:view sql:ns="ns">
         <sql:resource>

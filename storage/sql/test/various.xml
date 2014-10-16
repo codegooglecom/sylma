@@ -442,6 +442,27 @@
       </ul>
     </tst:node>
   </tst:test>
+  <tst:test name="Required on table">
+    <!-- table is parsed before render and can return null although it has found a template -->
+    <tst:document>
+      <view:view sql:ns="ns">
+        <sql:resource/>
+        <view:schema>samples/user2.xql</view:schema>
+        <tpl:template>
+          <h3>
+            <tpl:apply select="group_id/id" required="x"/>
+            <tpl:read select="name"/>
+          </h3>
+        </tpl:template>
+        <tpl:template match="*">
+          <sql:filter>2</sql:filter>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <h3>root</h3>
+    </tst:node>
+  </tst:test>
   <tst:test name="Group order">
     <tst:prepare>
 
@@ -643,7 +664,7 @@
       $manager->compareNodes($view2, $node->get('node2'));
 
       return true;
-      
+
     </tst:expected>
   </tst:test>
 </tst:tests>

@@ -27,7 +27,7 @@ class Sylma {
    */
   private static $settings = null;
 
-  protected static $aControlers;
+  protected static $aControlers = array();
   protected static $aFiles = array();
 
   public static $sExceptionFile = 'core/exception/Basic.php';
@@ -50,7 +50,8 @@ class Sylma {
     //xdebug_disable();
     set_error_handler(self::$sExceptionClass . "::loadError");
 
-    spl_autoload_register('\Sylma::autoload');
+    $autoload = self::getManager('autoload');
+    $autoload->register('sylma', self::$SHORT_PATH . '/');
 
     ini_set("default_charset", 'utf-8');
     mb_internal_encoding('utf-8');
@@ -84,26 +85,6 @@ class Sylma {
 
     //var_dump(xdebug_get_code_coverage());
     //session_write_close();
-  }
-
-  public static function autoload($sClass) {
-
-    if (preg_match('/^sylma\\\/', $sClass)) {
-
-      $sClass = self::$SHORT_PATH . substr($sClass, 5);
-      //$sClass = preg_replace('/^(sylma)/', self::$SHORT_PATH, $sClass);
-    }
-    else if ($iSlash = strpos($sClass, '\\') and $iSlash !== -1) {
-
-      $sClass = substr($sClass, $iSlash + 1);
-    }
-
-    include_once(self::classToFile($sClass));
-  }
-
-  public static function classToFile($sClass) {
-
-    return str_replace('\\', '/', $sClass . '.php');
   }
 
   public static function setManager($sName, $controler) {
@@ -145,6 +126,13 @@ class Sylma {
 
     switch ($sName) {
 
+      case 'autoload' :
+
+        self::load('/core/Autoload.php');
+        $result = new core\Autoload();
+
+      break;
+
       /** Parsers **/
 
       case 'parser' :
@@ -160,16 +148,6 @@ class Sylma {
       break;
 
       /** Others **/
-
-      /*
-      case 'fs' :
-
-        require_once('storage/fs/Controler.php');
-        $result = new storage\fs\Controler('', false, false);
-        $result->loadDirectory();
-
-      break;
-      */
 
       case 'fs/editable' :
 
@@ -231,27 +209,18 @@ class Sylma {
         $result = $init->loadRedirect();
 
       break;
-/*
-      case 'argument/parser' :
-
-        $result = new core\argument\parser\Manager;
-
-      break;
-*/
-      case 'timer' :
-
-        $timer = new modules\timer\Controler;
-
-        $result = $timer->create('timer');
-
-      break;
 
       case 'mysql' :
 
         $result = new storage\sql\Manager(new core\argument\Readable(self::get('database')->query()));
+
+      break;
     }
 
-    if ($result) self::setManager($sName, $result);
+    if ($result) {
+
+      self::setManager($sName, $result);
+    }
 
     return $result;
   }

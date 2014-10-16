@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\template\parser\component;
-use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\template\parser;
+use sylma\core, sylma\dom;
 
 class Apply extends Read {
 
@@ -63,12 +63,12 @@ class Apply extends Read {
     }
 
     $aResult = $this->getWindow()->parse($result, true);
-
+/*
     if (!$result && !$aResult && $this->readx('@required')) {
 
       $this->launchException('Apply require a template');
     }
-
+*/
     if ($sXMode) {
 
       $this->getHandler()->stopXMode();
