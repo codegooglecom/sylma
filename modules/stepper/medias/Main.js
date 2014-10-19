@@ -425,8 +425,11 @@ sylma.stepper.Main = new Class({
 
   stopTest : function() {
 
-    this.stop.set('html', this.stop.retrieve('content'));
-    this.stop = false;
+    if (this.stop) {
+
+      this.stop.set('html', this.stop.retrieve('content'));
+      this.stop = false;
+    }
   },
 
   save : function() {

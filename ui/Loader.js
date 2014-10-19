@@ -15,11 +15,7 @@ sylma.ui.Loader = new Class({
 
     if (!node) {
 
-      node = new Element('div', {
-        'class' : 'loading'
-      });
-
-      this.loaderNode = node;
+      this.loaderNode = node = this.buildLoader();
     }
 
     this.getNode().grab(node, 'before');
@@ -43,6 +39,20 @@ sylma.ui.Loader = new Class({
     });
 
     node.addClass('active');
+
+    var mainNode = this.getNode();
+
+    if (mainNode) {
+
+      mainNode.addClass('loading');
+    }
+  },
+
+  buildLoader : function() {
+
+    return new Element('div', {
+      'class' : 'loader'
+    });
   },
 
   getContainer : function() {
@@ -59,6 +69,13 @@ sylma.ui.Loader = new Class({
       node.setStyles({
         height : 0
       });
+    }
+
+    var mainNode = this.getNode();
+
+    if (mainNode) {
+
+      mainNode.removeClass('loading');
     }
   },
 

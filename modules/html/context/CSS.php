@@ -37,7 +37,15 @@ class CSS extends Basic implements dom\domable {
 
   protected function readFile(fs\file $file) {
 
-    $sResult = $this->parse(parent::readFile($file), $file->getParent());
+    try {
+
+      $sResult = $this->parse(parent::readFile($file), $file->getParent());
+
+    } catch (core\exception $e) {
+
+      $e->addPath($file->asToken());
+      throw $e;
+    }
 
     return "/** @file $file **/\n\n" . $sResult;
   }
@@ -48,7 +56,7 @@ class CSS extends Basic implements dom\domable {
 
       array_unshift($aContent, implode("\n", $aImports));
     }
-    
+
     return parent::getCache($aFiles, $aContent);
   }
 

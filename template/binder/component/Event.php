@@ -13,7 +13,7 @@ class Event extends Method {
     $this->setNode($el);
     $this->loadID();
 
-    $this->build();
+    //$this->build();
   }
 
   protected function build() {
