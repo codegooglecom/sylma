@@ -337,7 +337,7 @@ sylma.uiClass = {
   addEventTransition : function(el, callback, property, remove) {
 
     property = property || 'opacity';
-    var name = Browser.firefox ? 'transitionend' : this.getVendorPrefix('transition') + 'End';
+    var name = Browser.name === 'firefox' ? 'transitionend' : this.getVendorPrefix('transition') + 'End';
 
     switch (property) {
 

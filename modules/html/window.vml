@@ -35,19 +35,21 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <tpl:apply mode="head"/>
       </head>
-      <body>
-        <!--[if lt IE 7]>
-        <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;'>
-          <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
-            <img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0024_french.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." />
-          </a>
-        </div>
-        <![endif]-->
-        <div id="sylma-messages"/>
-        <tpl:apply mode="body/content"/>
-
-      </body>
+      <tpl:apply mode="body"/>
     </html>
+  </tpl:template>
+
+  <tpl:template mode="body">
+    <body>
+
+      <tpl:apply mode="messages"/>
+      <tpl:apply mode="body/content"/>
+
+    </body>
+  </tpl:template>
+
+  <tpl:template mode="messages">
+    <div id="sylma-messages"/>
   </tpl:template>
 
   <tpl:template mode="head">
@@ -78,10 +80,8 @@
 
     <tpl:apply mode="body/top"/>
 
-    <div id="body">
-      <div id="messages"/>
-      <tpl:apply mode="body/action"/>
-    </div>
+    <div id="messages"/>
+    <tpl:apply mode="body/action"/>
 
   </tpl:template>
 

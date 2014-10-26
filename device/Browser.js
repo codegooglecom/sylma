@@ -82,7 +82,6 @@ sylma.device.Browser = new Class({
 
   /**
    * @from https://gist.github.com/nateps/1172490
-   * @required #body
    */
   setupScroll : function() {
 
@@ -92,7 +91,7 @@ sylma.device.Browser = new Class({
         ipad = ~ua.indexOf('iPad');
 
     var ua = this.ua = {
-      page : $('body'),
+      page : $(window.document.body),
       iphone : iphone,
       ipad : ipad,
       ios : iphone || ipad,

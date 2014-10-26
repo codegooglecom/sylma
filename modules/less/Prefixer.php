@@ -55,6 +55,7 @@ class Prefixer extends \lessc {
       'o' => self::MODE_PREFIX,
       'ms' => self::MODE_PREFIX,
     ),
+    'overflow-scrolling' => array(),
   );
 
   protected $aVendors = array(
