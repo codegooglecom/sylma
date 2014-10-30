@@ -91,7 +91,7 @@
 
       <div js:class="sylma.uploader.MainFieldset" js:parent-name="uploader-container">
         <crud:script path="list">
-          <le:get-argument name="parent" le:name="parent"/>
+          <tpl:apply mode="file/argument" crud:name="parent"/>
         </crud:script>
         <tpl:apply mode="file/form"/>
       </div>
@@ -182,7 +182,7 @@
         </js:option>
 
         <js:option name="parent">
-          <le:get-argument name="parent"/>
+          <tpl:apply mode="file/argument"/>
         </js:option>
 
         <tpl:apply mode="file/fieldset"/>

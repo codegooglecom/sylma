@@ -77,10 +77,5 @@ sylma.ui.Loader = new Class({
 
       mainNode.removeClass('loading');
     }
-  },
-
-  isMobile: function() {
-
-    return this.getParent('main').isMobile();
   }
 });

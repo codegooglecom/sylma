@@ -1,6 +1,9 @@
 
 sylma.slideshow = sylma.slideshow || {};
 
+/**
+ * @required parent 'main'
+ */
 sylma.slideshow.ContainerProps = {
 
   Extends : sylma.ui.Loader,
@@ -11,33 +14,29 @@ sylma.slideshow.ContainerProps = {
   lastWidth : 0,
   length : 0,
 
-  /**
-   * @type sylma.device.Browser
-   */
-  device : null,
-
   onLoad : function() {
 
-    this.device = this.getParent('main').getDevice();
+    var main = this.getParent('main');
 
-    if (this.isMobile()) {
+    if (main) {
 
-      this.device.setupScroll();
+      this.device = main.getDevice();
+    }
+    else {
+
+      this.device = new sylma.device.Browser();
     }
 
-    this.prepareContainer();
+    if (this.prepareContainer()) {
 
-    this.getCollection()[this.current].prepare();
+      this.getCollection()[this.current].prepare();
+      this.startLoading();
+      this.hideInfos();
 
-    this.prepareMobile();
+      if (this.length > 1) {
 
-    this.startLoading();
-
-    this.hideInfos();
-
-    if (this.length > 1) {
-
-      this.startLoop();
+        this.startLoop();
+      }
     }
   },
 
@@ -58,16 +57,12 @@ sylma.slideshow.ContainerProps = {
     this.all = this.tmp;
     this.tmp = this.tmp.concat(this.tmp);
 
-    this.preparePager();
-    this.updateSize();
-  },
+    if (this.length) {
 
-  scrollTop: function() {
-
-    if (!this.device.scrollTop() && Browser.safari) {
-
-      $('body').setStyle('height', '100%');
+      this.updateSize();
     }
+
+    return this.length;
   },
 
   toggleInfos : function() {
@@ -95,81 +90,6 @@ sylma.slideshow.ContainerProps = {
 
       infos.setStyle('margin-top', - infos.getStyle('height').toInt());
     }
-  },
-
-  touchStart : function(e) {
-
-    var mobile = this.device;
-
-    this.prepareSlide(this.getPrevious(true));
-    this.prepareSlide(this.getNext(true));
-
-    this.stopLoop();
-    this.useTransition(false);
-    this.swipe = {
-
-      position : mobile.getPosition(e).x,
-      margin : this.getMargin(),
-      current : this.current
-    };
-
-    e.preventDefault();
-  },
-
-  touchEnd : function(e) {
-
-    if (this.swipe) {
-
-      this.current = Math.round(-this.swipe.current / this.width);
-      var length = this.getCollection().length;
-
-      if (this.current >= length) this.current = length - 1;
-
-      this.useTransition(true);
-
-      this.prepareSlide(this.getPrevious());
-      this.prepareSlide(this.getNext());
-
-      this.goSlide(this.current, false, 'fast');
-      this.startLoop();
-
-      this.swipe = null;
-    }
-  },
-
-  touchMove : function(e) {
-
-    var mobile = this.device;
-
-    if (this.swipe) {
-
-      var position = mobile.getPosition(e).x;
-      this.swipe.current = this.swipe.margin - (this.swipe.position - position);
-      this.getContainer().setStyle('margin-left', this.swipe.current);
-
-      e.preventDefault();
-    }
-  },
-
-  prepareMobile : function() {
-
-    var mobile = this.device;
-
-    this.events = {
-
-      touchstart : this.touchStart.bind(this),
-      touchend : this.touchEnd.bind(this),
-      touchmove : this.touchMove.bind(this)
-    };
-
-    $(window).addEvent('resize', this.updateSize.bind(this));
-
-    Object.each(mobile.parseEvents(this.events), function(event, key) {
-
-      this.getContainer().addListener(key, event);
-
-    }.bind(this));
-
   },
 
   /**
@@ -268,7 +188,7 @@ sylma.slideshow.ContainerProps = {
 
   updateSize : function() {
 
-    var pageWidth = $('body').offsetWidth;
+    var pageWidth = $(window.document.body).offsetWidth;
 
     if (this.lastWidth !== pageWidth) {
 
@@ -279,11 +199,6 @@ sylma.slideshow.ContainerProps = {
   },
 
   updateSizeConfirm : function() {
-
-    if (this.isMobile()) {
-
-      this.scrollTop();
-    }
 
     this.updateWidth();
 
@@ -425,7 +340,6 @@ sylma.slideshow.ContainerProps = {
 
     this.updateRelated();
     this.updateSlide(-key * this.width, notransition);
-    this.updatePage();
   },
 
   updateRelated : function() {
@@ -471,111 +385,6 @@ sylma.slideshow.ContainerProps = {
     if (notransition) this.useTransition(true);
   },
 
-  getPager: function() {
-
-    return this.getNode('pages');
-  },
-
-  preparePager: function() {
-
-    var container = this.getPager();
-    var dots = [];
-
-    container.empty();
-
-    this.all.each(function(slide, key) {
-
-      var dot = this.createPage(new Element('span'), key);
-      container.grab(dot);
-
-      dots.push(dot);
-
-    }.bind(this));
-
-    this.pages = dots;
-
-    this.showPager();
-  },
-
-  createPage: function(dummy, key) {
-
-    var handler = this;
-
-    var result = new Element('a', {
-      href : 'javascript:void(0)',
-      events : {
-        click : function() {
-
-          handler.goPage(key);
-          handler.resetLoop();
-        }
-      }
-    });
-
-    result.grab(dummy);
-
-    return result;
-  },
-
-  showPager: function() {
-
-    var dots = this.pages;
-    var current = 0;
-    var length = this.all.length;
-
-    (function() {
-
-      var loop = function() {
-
-        dots[current].addClass('visible');
-        current++;
-
-        if (current === length) {
-
-          this.updatePage();
-          window.clearInterval(loop);
-        }
-
-      }.periodical(50, this);
-
-    }.delay(150, this));
-  },
-
-  updatePage : function() {
-
-    var pager = this.getPager();
-    var key = this.current;
-    var node = pager.getChildren()[key >= this.length ? key - this.length : key];
-
-    pager.getChildren().removeClass('active');
-
-    if (node) node.addClass('active');
-  },
-
-  goPage : function(key) {
-
-    var target;
-
-    if (this.current > this.length - 1) {
-
-      if (key !== this.current - this.length) {
-
-        target = key + this.length;
-      }
-    }
-    else {
-
-      if (key !== this.current) {
-
-        target = key;
-      }
-    }
-
-    if (target !== undefined) {
-
-      this.goSlide(target);
-    }
-  }
 };
 
 sylma.slideshow.Container = new Class(sylma.slideshow.ContainerProps);

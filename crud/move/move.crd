@@ -12,7 +12,13 @@
   xmlns:xl="http://2013.sylma.org/storage/xml"
 >
 
-  <crud:group name="crud"/>
+  <crud:group name="crud">
+
+    <tpl:template match="*" mode="move/parent">
+      <tpl:read use="parent" le:name="parent"/>
+    </tpl:template>
+
+  </crud:group>
   <crud:group name="form"/>
 
   <view:view name="move" groups="crud" builder:return="result">
@@ -29,7 +35,7 @@
         <tpl:read select="id" crud:name="id"/>
         <tpl:read select="position" crud:name="from"/>
         <le:get-argument name="position" source="post" le:name="position"/>
-        <tpl:read use="parent" le:name="parent"/>
+        <tpl:apply mode="move/parent" le:name="parent"/>
       </crud:script>
 
     </tpl:template>
@@ -156,7 +162,7 @@
     <tpl:template>
       <tpl:apply select="id" mode="filter/post"/>
       <crud:script path="move_multiple" mode="post">
-        <tpl:read use="parent" crud:name="parent"/>
+        <tpl:apply mode="move/parent" crud:name="parent"/>
         <tpl:read select="position" crud:name="min"/>
       </crud:script>
     </tpl:template>

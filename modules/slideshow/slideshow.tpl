@@ -14,6 +14,7 @@
     </le:context>
 
     <js:include>/#sylma/ui/Loader.js</js:include>
+    <js:include>/#sylma/device/Browser.js</js:include>
     <js:include>Container.js</js:include>
     <js:include>Slide.js</js:include>
 
@@ -23,7 +24,7 @@
 
     <tpl:apply mode="slideshow/contexts"/>
 
-    <div js:class="sylma.slideshow.Container" js:parent-name="handler" js:name="handler" class="slideshow">
+    <div js:class="sylma.slideshow.Container" js:parent-name="handler" js:name="slideshow" class="slideshow">
 
       <tpl:apply mode="slideshow/content"/>
 
@@ -81,10 +82,14 @@
         <tpl:read select="path"/>
       </js:option>
       <js:option name="id">
-        <tpl:read select="parent()/parent()/id"/>
+        <tpl:apply mode="slideshow/parent"/>
       </js:option>
     </div>
 
+  </tpl:template>
+
+  <tpl:template match="*" mode="slideshow/parent">
+    <tpl:read select="parent()/parent()/id"/>
   </tpl:template>
 
 </tpl:templates>
