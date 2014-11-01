@@ -79,9 +79,11 @@
 
   <tpl:template match="*" mode="label/optional">
     <tpl:if test="!is-optional()">
-      <tpl:text>*</tpl:text>
+      <tpl:apply mode="label/optional/content"/>
     </tpl:if>
   </tpl:template>
+
+  <tpl:template match="*" mode="label/optional/content">*</tpl:template>
 
   <tpl:template match="*" mode="label/value">
     <tpl:argument name="title" default="title()"/>

@@ -159,7 +159,7 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->addTrigger(array($loop2));
   }
 
-  public function loadSingleReference($sName, self $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
+  public function loadSingleReference($sName, sql\template\insert\Table $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
 
     $this->launchException('Single foreign insert as reference not implemented');
   }

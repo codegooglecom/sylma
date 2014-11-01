@@ -65,7 +65,7 @@
 
   <tpl:template match="sql:table" mode="form/content">
 
-    <tpl:apply mode="css"/>
+    <tpl:apply mode="form/resources"/>
 
     <js:include>/#sylma/crud/Form.js</js:include>
 
@@ -77,7 +77,7 @@
 
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="css">
+  <tpl:template match="*" mode="form/resources">
 
     <le:context name="css">
       <le:file>/#sylma/modules/html/medias/form.less</le:file>
