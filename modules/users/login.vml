@@ -34,7 +34,7 @@
         <form js:class="sylma.crud.Form" method="post">
 
           <tpl:apply mode="js"/>
-          <tpl:apply mode="css"/>
+          <tpl:apply mode="form/resources"/>
 
           <tpl:token name="action"><le:path>login-do</le:path>.json</tpl:token>
           <tpl:apply mode="init"/>
