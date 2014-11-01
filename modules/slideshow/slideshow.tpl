@@ -38,6 +38,10 @@
       <tpl:apply mode="slideshow/files" required="x"/>
     </js:option>
 
+    <js:option name="delay" cast="x">
+      <tpl:apply mode="slideshow/delay"/>
+    </js:option>
+
     <tpl:apply mode="top"/>
 
     <div class="loading" js:node="loading"/>
@@ -48,6 +52,8 @@
     <tpl:apply mode="slideshow/pager"/>
 
   </tpl:template>
+
+  <tpl:template match="*" mode="slideshow/delay">12000</tpl:template>
 
   <tpl:template mode="slideshow/container">
     <tpl:apply mode="query"/>

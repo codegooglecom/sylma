@@ -11,7 +11,7 @@ sylma.slideshow.Slide = new Class({
       this.loadImage(this.getNodes(), this.getImagePath(), function() {
 
         this.getParent('handler').stopLoading();
-        
+
       }.bind(this));
     }
   },

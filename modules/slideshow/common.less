@@ -27,9 +27,20 @@
     background-position: 50% 50%;
     margin-left: 0;
     opacity: 0;
+    position: absolute;
 
     transition: opacity 1s;
 
+    &.ready.visible
+    {
+      opacity: 1;
+    }
+  }
+
+  &.slider .slide
+  {
+    position: relative;
+    
     &.ready
     {
       opacity: 1;

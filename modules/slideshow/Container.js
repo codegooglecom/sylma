@@ -7,6 +7,7 @@ sylma.slideshow = sylma.slideshow || {};
 sylma.slideshow.ContainerProps = {
 
   Extends : sylma.ui.Loader,
+
   current : 0,
   width : 0,
   period : 5000,
@@ -17,6 +18,8 @@ sylma.slideshow.ContainerProps = {
   onLoad : function() {
 
     var main = this.getParent('main');
+
+    this.period = this.options.delay || this.period;
 
     if (main) {
 
@@ -32,6 +35,7 @@ sylma.slideshow.ContainerProps = {
       this.getCollection()[this.current].prepare();
       this.startLoading();
       this.hideInfos();
+      this.updateSlide(0);
 
       if (this.length > 1) {
 
@@ -42,25 +46,8 @@ sylma.slideshow.ContainerProps = {
 
   prepareContainer: function() {
 
-    this.updateWidth();
-
-    var node = this.getContainer();
-
-    this.getCollection().each(function(item) {
-
-      node.grab(item.clone());
-
-    }.bind(this));
-
     this.length = this.tmp.length;
-
     this.all = this.tmp;
-    this.tmp = this.tmp.concat(this.tmp);
-
-    if (this.length) {
-
-      this.updateSize();
-    }
 
     return this.length;
   },
@@ -181,49 +168,11 @@ sylma.slideshow.ContainerProps = {
     return this.getNode('container');
   },
 
-  updateWidth: function() {
-
-    this.width = this.getNode().getParent().getStyle('width').toInt();
-  },
-
-  updateSize : function() {
-
-    var pageWidth = $(window.document.body).offsetWidth;
-
-    if (this.lastWidth !== pageWidth) {
-
-      this.updateSizeConfirm();
-    }
-
-    this.lastWidth = pageWidth;
-  },
-
-  updateSizeConfirm : function() {
-
-    this.updateWidth();
-
-    this.getContainer().setStyles({
-      width : this.getCollection().length * this.width
-    });
-
-    this.updateSlides();
-    this.goSlide(this.current, true);
-  },
-
   getHeight: function() {
 
     var result = this.getNode().getStyle('height').toInt();
 
     return result < 100 ? 0 : result;
-  },
-
-  updateSlides : function() {
-
-    this.getCollection().each(function(item) {
-
-      item.setWidth(this.width);
-
-    }.bind(this));
   },
 
   getCollection: function() {
@@ -245,18 +194,13 @@ sylma.slideshow.ContainerProps = {
     node.toggleClass('notransition', !val);
   },
 
-  getNext : function(update) {
+  getNext : function() {
 
     var result;
 
-    if (this.current === this.tmp.length - 1) {
+    if (this.current === this.length - 1) {
 
-      if (update) {
-
-        this.updateSlide(this.getMargin() + this.getSemiWidth(), true);
-      }
-
-      result = this.length;
+      result = 0;
     }
     else {
 
@@ -266,16 +210,11 @@ sylma.slideshow.ContainerProps = {
     return result;
   },
 
-  getPrevious : function(update) {
+  getPrevious : function() {
 
     var result;
 
     if (this.current === 0) {
-
-      if (update) {
-
-        this.updateSlide(this.getMargin() - this.getSemiWidth(), true);
-      }
 
       result = this.length - 1;
     }
@@ -285,17 +224,6 @@ sylma.slideshow.ContainerProps = {
     }
 
     return result;
-  },
-
-  getSemiWidth: function() {
-
-    return this.width * (this.tmp.length / 2);
-  },
-
-  getMargin: function() {
-
-    //return this.getContainer().getStyle('margin-left').toInt();
-    return this.getContainer().getComputedStyle('margin-left').toInt();
   },
 
   goNext: function(speed) {
@@ -338,53 +266,17 @@ sylma.slideshow.ContainerProps = {
       this.updateSpeed(speed);
     }
 
-    this.updateRelated();
-    this.updateSlide(-key * this.width, notransition);
+    this.updateSlide(key, notransition);
   },
 
-  updateRelated : function() {
+  updateSlide : function(key, notransition) {
 
-    var related = this.getNode('related');
+    this.all.each(function(slide) {
+      slide.getNode().removeClass('visible');
+    });
 
-    if (related) {
-
-      var item = this.getCollection()[this.current];
-      var token = 'portfolio';
-      var old = related.retrieve(token);
-
-      if (old) {
-
-        this.hide(old, function() {
-
-          old.dispose();
-        });
-      }
-
-      var content = new Element('span', {
-        html : item.get('name'),
-        'class' : 'sylma-hidder'
-      });
-
-      related.set('href', this.get('project') + item.get('id'));
-      related.grab(content);
-
-      (function() {
-
-        this.show(content);
-
-      }).bind(this).delay(1);
-
-      related.store(token, content);
-    }
-  },
-
-  updateSlide : function(margin, notransition) {
-
-    if (notransition) this.useTransition(false);
-    this.getContainer().setStyle('margin-left', margin);
-    if (notransition) this.useTransition(true);
-  },
-
+    this.all[key].getNode().addClass('visible');
+  }
 };
 
 sylma.slideshow.Container = new Class(sylma.slideshow.ContainerProps);
