@@ -1,19 +1,24 @@
 
 sylma.slideshow.MobileProps = {
 
-  Extends : sylma.slideshow.PagerProps,
+  Extends : sylma.slideshow.Pager,
 
   /**
    * @type sylma.device.Browser
    */
   device : null,
 
+  options : {
+    scrollTop : false,
+    scrollPrevent : false
+  },
+
   onLoad : function() {
 
     var main = this.getParent('main');
     this.device = main.getDevice();
 
-    if (this.isMobile()) {
+    if (this.get('scrollTop') && this.isMobile()) {
 
       this.device.setupScroll();
     }
@@ -76,7 +81,10 @@ sylma.slideshow.MobileProps = {
       current : this.current
     };
 
-    e.preventDefault();
+    if (this.get('scrollPrevent')) {
+
+      e.preventDefault();
+    }
   },
 
   touchEnd : function(e) {
@@ -110,7 +118,10 @@ sylma.slideshow.MobileProps = {
       this.swipe.current = this.swipe.margin - (this.swipe.position - position);
       this.getContainer().setStyle('margin-left', this.swipe.current);
 
-      e.preventDefault();
+      if (this.get('scrollPrevent')) {
+
+        e.preventDefault();
+      }
     }
   },
 

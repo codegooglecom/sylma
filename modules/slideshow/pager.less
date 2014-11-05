@@ -1,0 +1,57 @@
+
+.less-fix-parse {}
+
+.slideshow
+{
+  .pager
+  {
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+
+    .pages
+    {
+      text-align: center;
+      width: 100%;
+      position: absolute;
+      width: 100%;
+      z-index: 1;
+
+      transition: width 0.5s;
+
+      @size: 7;
+      @padding: 6;
+
+      a
+      {
+        display: inline-block;
+        padding: @padding * @em 4 * @em;
+        opacity: 0;
+
+        transition: opacity 0.5s;
+
+        &.visible
+        {
+          opacity: 1;
+        }
+      }
+
+      span
+      {
+        display: inline-block;
+        height: @size * @em;
+        width: @size * @em;
+        border-radius: @size * @em;
+        border: 1px solid white;
+        background-color: transparent;
+
+        transition: background-color 0.5s;
+      }
+
+      &.active span
+      {
+        background-color: white;
+      }
+    }
+  }
+}

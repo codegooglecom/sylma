@@ -1,7 +1,7 @@
 
 sylma.slideshow.SliderProps = {
 
-  Extends : sylma.slideshow.Pager,
+  Extends : sylma.slideshow.Mobile,
 
   prepareContainer: function() {
 
@@ -15,17 +15,15 @@ sylma.slideshow.SliderProps = {
 
     }.bind(this));
 
-    this.length = this.tmp.length;
-
-    this.all = this.tmp;
+    var result = this.parent();
     this.tmp = this.tmp.concat(this.tmp);
 
-    if (this.length) {
+    if (result) {
 
       this.updateSize();
     }
 
-    return this.length;
+    return result;
   },
 
   updateWidth: function() {
@@ -74,7 +72,7 @@ sylma.slideshow.SliderProps = {
 
       if (update) {
 
-        this.updateSlide(this.getMargin() + this.getSemiWidth(), true);
+        this.updateSlideMargin(this.getMargin() + this.getSemiWidth(), true);
       }
 
       result = this.length;
@@ -95,7 +93,7 @@ sylma.slideshow.SliderProps = {
 
       if (update) {
 
-        this.updateSlide(this.getMargin() - this.getSemiWidth(), true);
+        this.updateSlideMargin(this.getMargin() - this.getSemiWidth(), true);
       }
 
       result = this.length - 1;
@@ -121,8 +119,13 @@ sylma.slideshow.SliderProps = {
 
   updateSlide : function(key, notransition) {
 
+    this.updateSlideMargin(-key * this.width, notransition);
+  },
+
+  updateSlideMargin : function(margin, notransition) {
+
     if (notransition) this.useTransition(false);
-    this.getContainer().setStyle('margin-left', -key * this.width);
+    this.getContainer().setStyle('margin-left', margin);
     if (notransition) this.useTransition(true);
   }
 

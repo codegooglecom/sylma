@@ -1,7 +1,7 @@
 
 sylma.slideshow.PagerProps = {
 
-  Extends : sylma.slideshow.ContainerProps,
+  Extends : sylma.slideshow.Container,
 
   prepareContainer : function() {
 
@@ -10,7 +10,6 @@ sylma.slideshow.PagerProps = {
     if (this.length) {
 
       this.preparePager();
-      this.updateSize();
     }
 
     return result;

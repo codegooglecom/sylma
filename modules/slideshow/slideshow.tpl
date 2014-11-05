@@ -7,11 +7,15 @@
   xmlns:le="http://2013.sylma.org/action"
 >
 
-  <tpl:template mode="slideshow/contexts">
+  <tpl:template mode="slideshow/contexts/css">
 
     <le:context name="css">
       <le:file>common.less</le:file>
     </le:context>
+
+  </tpl:template>
+
+  <tpl:template mode="slideshow/contexts">
 
     <js:include>/#sylma/ui/Loader.js</js:include>
     <js:include>/#sylma/device/Browser.js</js:include>

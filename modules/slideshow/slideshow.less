@@ -1,0 +1,48 @@
+
+.slideshow
+{
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+
+  .container
+  {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+
+    transition: margin 1s, opacity 0.2s;
+  }
+
+  .slide
+  {
+    width: 100%;
+    height: 100%;
+    float: left;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: cover;
+    background-position: 50% 50%;
+    margin-left: 0;
+    opacity: 0;
+    position: absolute;
+
+    transition: opacity 1s;
+
+    &.ready.visible
+    {
+      opacity: 1;
+    }
+  }
+
+  &.slider .slide
+  {
+    position: initial;
+
+    &.ready
+    {
+      opacity: 1;
+    }
+  }
+}
