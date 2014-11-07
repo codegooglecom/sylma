@@ -14,6 +14,11 @@ sylma.slideshow.ContainerProps = {
   infos : false,
   lastWidth : 0,
   length : 0,
+  fullscreen : false,
+
+  options : {
+    useLoop : true
+  },
 
   onLoad : function() {
 
@@ -146,6 +151,14 @@ sylma.slideshow.ContainerProps = {
 
     this.stopLoop();
 
+    if (this.get('useLoop')) {
+
+      this.startLoopConfirm();
+    }
+  },
+
+  startLoopConfirm: function() {
+
     this.prepareSlide(this.getPrevious());
     this.prepareSlide(this.getNext());
 
@@ -276,7 +289,88 @@ sylma.slideshow.ContainerProps = {
     });
 
     this.all[key].getNode().addClass('visible');
-  }
+  },
+
+  toggleFullscreen: function () {
+
+    var node = this.getNode().getParent();
+    var body = window.document.body;
+
+    if (!this.morpher) {
+
+      this.morpher = new sylma.ui.Morph(node, {
+        top : 0,
+        height : window.innerHeight,
+        transition : 'height'
+      });
+
+      this.morpher.addEvent('openPrepare', function() {
+        body.addClass('fullscreen');
+      });
+
+      this.morpher.addEvent('openComplete', function() {
+
+        this.getCollection().each(function(slide) {
+
+          slide.toggleFullscreen(this.fullscreen);
+
+        }.bind(this));
+      }.bind(this));
+
+    }
+
+    this.fullscreen = !this.fullscreen;
+
+    this.set('useLoop', !this.fullscreen);
+
+    var container = $('main');
+    var node = this.getNode();
+
+    if (this.fullscreen) {
+
+      this.stopLoop();
+
+      container.setStyles({
+        height: window.innerHeight - node.getPosition().y,
+        //padding: 0
+      });
+
+      this.resizeHeight = function() {
+        window.scrollTo(0, 0);
+        node.setStyles({
+          height : window.getSize().y
+        });
+      }
+
+      window.addEvent('resize', this.resizeHeight);
+    }
+    else {
+
+      body.removeClass('fullscreen');
+      window.removeEvent('resize', this.resizeHeight);
+      node.setStyles({
+        height : null
+      });
+
+      container.setStyles({
+        height: null,
+        padding: null
+      });
+
+      body.setStyles({
+        height: null
+      });
+
+      this.startLoop();
+    }
+
+    this.morpher.toggle(null, {
+      height : null,
+      width : null
+    });
+  },
+
+
 };
 
 sylma.slideshow.Container = new Class(sylma.slideshow.ContainerProps);

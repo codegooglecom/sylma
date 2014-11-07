@@ -61,6 +61,11 @@ sylma.slideshow.Slide = new Class({
   getImagePath : function(size) {
 
     return this.getParent('handler').getImagePath(this.get('path'), size);
+  },
+
+  toggleFullscreen : function(toggle) {
+
+    
   }
 
 });
