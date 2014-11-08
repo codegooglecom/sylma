@@ -76,10 +76,12 @@ sylma.slideshow.MobileProps = {
     this.stopLoop();
     this.useTransition(false);
 
+    var margin = this.getMargin();
+
     this.swipe = {
       position : mobile.getPosition(e).x,
-      margin : this.getMargin(),
-      current : this.current,
+      margin : margin,
+      current : margin,
       minPrevent : this.options.minPrevent
     };
 
