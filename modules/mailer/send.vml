@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:view
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+>
+
+  <xl:resource/>
+
+  <tpl:template>
+
+    <tpl:settings>
+      <cls:classes>
+        <cls:class alias="cached" name="\sylma\modules\mailer\Mailer"/>
+      </cls:classes>
+    </tpl:settings>
+
+    <tpl:apply select="send()">
+      <le:get-argument name="from"/>
+      <le:get-argument name="to"/>
+      <le:get-argument name="subject"/>
+      <le:get-argument name="content"/>
+      <le:get-argument name="html" optional="x"/>
+    </tpl:apply>
+
+  </tpl:template>
+
+</view:view>
