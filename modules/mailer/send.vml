@@ -5,9 +5,12 @@
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:cls="http://2013.sylma.org/core/factory"
   xmlns:le="http://2013.sylma.org/action"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
 
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:xl="http://2013.sylma.org/storage/xml"
+
+  builder:return="result"
 >
 
   <xl:resource/>
