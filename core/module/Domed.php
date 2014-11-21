@@ -9,8 +9,6 @@ use \sylma\dom, \sylma\core, sylma\storage\fs;
  */
 abstract class Domed extends Filed {
 
-  const ARGUMENTS = 'domed.yml';
-
   const DOM_CONTROLER = 'dom';
   const DOM_DOCUMENT_ALIAS = 'handler';
   const DOM_ARGUMENT_ALIAS = 'argument';
@@ -29,8 +27,6 @@ abstract class Domed extends Filed {
   protected static $sFactoryClass = '\sylma\core\factory\Cached';
 
   protected $aDefaultArguments = array('classes' => array(
-    'action' => array(
-      'name' => '\sylma\parser\action\handler\Basic'),
     'template' => array(
       'name' => '\sylma\parser\xslt\Processor'),
     'options' => array(
@@ -81,13 +77,6 @@ abstract class Domed extends Filed {
     if ($mContent) $result->set($mContent);
 
     return $result;
-  }
-
-  protected function readAction($sPath, array $aArguments = array()) {
-
-    $controler = $this->getControler('action');
-
-    return $controler->getAction($sPath, $aArguments, $this->getDirectory());
   }
 
   protected function getScriptFile(fs\file $file, array $aArguments = array()) {
@@ -144,11 +133,6 @@ abstract class Domed extends Filed {
       case 'xml' :
 
         $result = $this->getScriptFile($file, $aArguments);
-        break;
-
-      case 'eml' :
-
-        $result = $this->readAction((string) $path, $aArguments);
         break;
 
       default :

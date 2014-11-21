@@ -312,10 +312,12 @@ class Basic extends \Exception implements core\exception {
 
     $aPath = $this->getPath();
 
-    $aResult['message'] = $this->parseString( htmlspecialchars($this->getMessage())) . '<br/>';
-    $aResult['paths'] = $this->readPaths($aPath);
-
-    $aResult['vars'] = $this->loadVariables($bHTML);
+    $aResult = array(
+      'message' => $this->parseString( htmlspecialchars($this->getMessage())) . '<br/>',
+      'paths' => $this->readPaths($aPath),
+      'vars' => $this->loadVariables($bHTML),
+      'trace' => null,
+    );
 
     if ($bTrace) {
 

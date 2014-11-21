@@ -7,6 +7,9 @@
 
   build:target="[current()]"
 >
+
+  <!-- TODO : not updated -->
+
   <debug>
     <enable arg:type="bool">1</enable>
     <rights arg:type="bool">0</rights>
@@ -62,7 +65,6 @@
       <cls:class alias="html" name="\sylma\modules\html\Document"/>
       <cls:class alias="redirect" name="\sylma\core\Redirect"/>
       <cls:class alias="path" name="\sylma\core\request\Basic"/>
-      <cls:class alias="action" name="\sylma\parser\action\handler\Basic"/>
       <cls:class alias="window" name="\sylma\core\window\classes\File"/>
       <cls:class alias="json" name="\sylma\core\window\classes\Context"/>
     </cls:classes>

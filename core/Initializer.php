@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core;
-use sylma\parser\action, sylma\core, sylma\storage\fs;
+use sylma\core, sylma\storage\fs;
 
 class Initializer extends module\Domed {
 
@@ -160,12 +160,10 @@ class Initializer extends module\Domed {
 
     $sExtension = $path->parseExtension(true);
 
-    if ($path->getExtension() == $this->readArgument('redirect/extension')) {
+    if ($sExtension == $this->readArgument('redirect/extension')) {
 
-      // Redirect
-      $builder = $this->createWindowBuilder();
-      $action = $builder->loadAction($path);
-      $redirect = $action->asObject();
+      $path->parse();
+      $redirect = $this->prepareScript($path->asFile(), $path->getArguments());
 
       if (!$redirect instanceof core\redirect) {
 
@@ -174,7 +172,7 @@ class Initializer extends module\Domed {
 
       $this->runRedirect($redirect);
     }
-    else if (in_array($path->getExtension(), $this->query('executables'))) {
+    else if (in_array($sExtension, $this->query('executables'))) {
 
       $sResult = $this->runExecutable($path);
     }
@@ -232,19 +230,18 @@ class Initializer extends module\Domed {
        //$this->launchException('Can execute only view');
      }
 
-     $sResult = (string) $this->prepareScript($file, null, $path->getArguments());
+     $sResult = (string) $this->prepareScript($file, $path->getArguments());
     }
 
     return $sResult;
   }
 
-  protected function prepareScript(fs\file $file, core\argument $post = null, core\argument $args = null, core\argument $contexts = null) {
+  protected function prepareScript(fs\file $file, core\argument $args = null, core\argument $contexts = null) {
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
     $result = $builder->load($file, array(
       'arguments' => $args,
-      //'post' => $post,
       'contexts' => $contexts,
     ), $this->readArgument('debug/update', false), $this->readArgument('debug/run'), true);
 

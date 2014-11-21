@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\argument\parser\test;
-use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs, \sylma\parser\action;
+use \sylma\modules\tester, \sylma\core, \sylma\dom, \sylma\storage\fs;
 
 class Standalone extends tester\Prepare implements core\argumentable {
 
@@ -13,10 +13,8 @@ class Standalone extends tester\Prepare implements core\argumentable {
 
     $this->setDirectory(__file__);
     $this->setNamespace(self::NS, 'self');
-    $this->setNamespace(action\handler::NS, 'le', false);
 
     //if (!$controler) $controler = $this;
-    //if (!$controler) $controler = \Sylma::getControler('action');
 
     $this->setControler($this->getControler('parser'));
     $this->setFiles(array($this->getFile('standalone.xml')));

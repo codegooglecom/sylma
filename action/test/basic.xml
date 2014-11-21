@@ -162,63 +162,6 @@
       return true;
     </tst:expected>
   </tst:test>
-  <tst:test name="Call action">
-    <tst:document>
-      <view:view>
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user2.xql</view:schema>
-        <tpl:template>
-          <div>
-            <le:action path="samples/action1"/>
-            <a href="mailto:email">test</a>
-          </div>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div>hello<a href="mailto:email">test</a></div>
-    </tst:node>
-    <tst:expected>
-
-      $result = $manager->get('result');
-      $node = $manager->get('node');
-
-      return $manager->compareNodes($result, $node);
-
-    </tst:expected>
-  </tst:test>
-  <tst:test name="Call action with arguments">
-    <tst:document>
-      <view:view>
-        <sql:resource>
-          <sql:id>2</sql:id>
-        </sql:resource>
-        <view:schema>samples/user2.xql</view:schema>
-        <tpl:template>
-          <div>
-            <le:action path="samples/action2">
-              <le:string le:name="hello">world</le:string>
-              <tpl:read le:name="email" select="email"/>
-            </le:action>
-            <a href="mailto:email">test</a>
-          </div>
-        </tpl:template>
-      </view:view>
-    </tst:document>
-    <tst:node>
-      <div>helloworldadmin@sylma.org<a href="mailto:email">test</a></div>
-    </tst:node>
-    <tst:expected>
-
-      $result = $manager->get('result');
-      $node = $manager->get('node');
-
-      return $manager->compareNodes($result, $node);
-
-    </tst:expected>
-  </tst:test>
   <tst:test name="Call script">
     <tst:document>
       <view:view sql:ns="ns">

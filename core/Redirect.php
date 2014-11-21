@@ -3,7 +3,7 @@
 namespace sylma\core;
 use sylma\core;
 
-class Redirect extends core\module\Argumented {
+class Redirect extends core\module\Argumented implements core\stringable {
 
   private $sPath = null; // URL cible
   private $oSource = null; // URL de provenance
@@ -70,6 +70,11 @@ class Redirect extends core\module\Argumented {
   public function setExtension($sExtension) {
 
     $this->sExtension = $sExtension;
+  }
+
+  public function asString() {
+
+    return 'Redirect : ' . $this->getPath();
   }
 
   public function __sleep() {

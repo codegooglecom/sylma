@@ -71,6 +71,11 @@ class Module extends core\module\Domed {
 
     return $sResult;
   }
+
+  public function logout() {
+
+    return $this->getManager('user')->logout();
+  }
 }
 
 

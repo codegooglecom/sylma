@@ -18,7 +18,6 @@ namespaces :
     'http://2014.sylma.org/device' : device
   manager :
     'http://2013.sylma.org/template' : template
-    'http://www.sylma.org/parser/action' : action
     'http://2013.sylma.org/core/argument' : argument
     'http://2013.sylma.org/view' : view
     'http://2014.sylma.org/view' : view_2014

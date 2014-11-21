@@ -108,9 +108,6 @@ initializer :
         sub :
           default :
             action : /#sylma/modules/html/container.vml
-    classes :
-      action :
-        name : \sylma\parser\action\handler\Basic
   redirect :
     extension : redirect
   classes :
@@ -131,8 +128,6 @@ initializer :
           name : \sylma\core\window\classes\Image
         window :
           name : \sylma\core\window\classes\File
-        action :
-          name : \sylma\parser\action\handler\Basic
         device :
           name : \sylma\device\Dummy
 
@@ -186,10 +181,10 @@ modules :
   rebuild :
     exclude :
       run :
-        - /sylma/modules/users/logout.eml
+        - /sylma/modules/users/logout.vml
 path :
   extensions :
-    executable : [eml, vml]
+    executable : [vml]
     readable : [css, js, webm, jpg, jpeg, gif, png, pdf, eot, ttf, woff, vcf, less]
 
 directory :

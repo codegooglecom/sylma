@@ -35,17 +35,8 @@ class Main extends core\module\Domed implements dom\domable {
 
     if (!in_array((string) $file, $this->get('exclude/run')->query())) {
 
-      if ($file->getExtension() == 'eml') {
-
-        $action = $this->getManager(self::PARSER_ACTION)->getAction((string) $file->asPath());
-        $action->getContext('default');
-      }
-      else {
-
-        $manager = $this->getManager(self::PARSER_MANAGER);
-
-        $manager->load($file, $this->aContexts, true, is_null($bRun) ? true : $bRun);
-      }
+      $manager = $this->getManager(self::PARSER_MANAGER);
+      $manager->load($file, $this->aContexts, true, is_null($bRun) ? true : $bRun);
     }
 //$parent->getContexts()->get('message');
     return '1';
@@ -56,7 +47,7 @@ class Main extends core\module\Domed implements dom\domable {
     $this->loadDefaultSettings();
 
     $common = $this->createArgument(array(
-      'extensions' => array('eml','vml'),
+      'extensions' => array('vml'),
       'mode' => 'argument',
     ));
 

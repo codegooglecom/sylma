@@ -15,6 +15,4 @@ interface documented {
    * @return dom\handler Render ready document
    */
   function parseDocument(dom\handler $doc);
-
-  //function setParent(parser\action\cached $parent);
 }

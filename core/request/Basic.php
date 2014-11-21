@@ -14,8 +14,6 @@ class Basic extends core\module\Filed implements core\request {
 
   protected static $sArgumentClass = 'sylma\core\argument\Readable';
 
-  const NS = 'http://www.sylma.org/parser/action/path';
-
   /**
    * @param string $sPath Path to look for an action
    * @param array $aArguments List of any arguments to add to the path
@@ -28,7 +26,6 @@ class Basic extends core\module\Filed implements core\request {
     $sPath = $this->resolvePath($sPath, $dir);
 
     $this->setPath($sPath);
-    $this->setNamespace(self::NS);
 
     //$this->setSettings($arg);
     $this->loadSettings();

@@ -7,8 +7,6 @@
   xmlns:xl="http://2013.sylma.org/storage/xml"
 
   xmlns:ls="http://2013.sylma.org/parser/security"
-  xmlns:le="http://www.sylma.org/parser/action"
-  xmlns:lm="http://www.sylma.org/parser/action/basic"
 >
   <tst:description>Basic</tst:description>
   <tst:test name="Read tester01">

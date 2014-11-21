@@ -31,11 +31,6 @@
         <cls:class alias="array" name="_Array"/>
         <cls:class alias="boolean" name="_Boolean"/>
         <cls:class alias="object" name="_Object"/>
-        <cls:class alias="action" name="Action">
-          <cls:classes>
-            <cls:class alias="path" name="\sylma\core\request\Builder"/>
-          </cls:classes>
-        </cls:class>
         <cls:class alias="manager" name="Manager"/>
       </cls:classes>
     </component>

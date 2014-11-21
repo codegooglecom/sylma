@@ -141,12 +141,6 @@ class Sylma {
 
       break;
 
-      case 'action' :
-
-        $result = new \sylma\parser\action\Manager();
-
-      break;
-
       /** Others **/
 
       case 'fs/editable' :

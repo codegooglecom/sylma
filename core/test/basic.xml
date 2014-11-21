@@ -474,36 +474,6 @@
     </tst:expected>
   </tst:test>
 
-  <tst:test name="Call action" disabled="true">
-    <tst:prepare>
-
-      $action = $manager->createAction('/sylma/core/test/samples/action01.eml');
-      $action->getContext('default');
-
-      $init = $manager->create('init');
-      $user = $manager->createUser('tester01');
-      $manager->clearSylma($init, $user);
-
-      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
-      $init->setGET('/sylma/core/test/samples/action01');
-      $sResult = $init->run($settings->get('initializer'), false);
-
-      $manager->setArgument('result', $manager->createDocument($sResult));
-
-    </tst:prepare>
-    <tst:node>
-      <html anyclass="x">
-        <head>
-          <script type="text/javascript" cmp:ignore="x"/>
-        </head>
-        <body>
-          <div id="messages"/>
-          <hello>world</hello>
-        </body>
-      </html>
-    </tst:node>
-  </tst:test>
-
   <tst:test name="PHP error">
     <tst:prepare>
 

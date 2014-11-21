@@ -17,7 +17,7 @@ class Manager extends compiler\Manager {
   protected $aContexts = array();
 
   /**
-   * For stats, TODO set to protected as soon as parser\action has been removed
+   * For stats
    */
   public $aBuilded = array();
 

@@ -182,46 +182,8 @@ class Builder extends core\module\Domed {
   public function loadObject(core\request $path, $window) {
 
     $path->parse();
-    $file = $path->getFile();
-
-    switch ($file->getExtension()) {
-
-      case 'eml' : $result = $this->loadObjectAction($path, $window); break;
-      case 'vml' : $result = $this->loadObjectScript($path, $window); break;
-
-      default :
-
-        $this->launchException(sprintf('Unknown exectuable extension : %s', $file->getExtension()));
-    }
-
-    return $result;
-  }
-
-  protected function loadObjectAction(core\request $path, core\window\action $window) {
-
-    $action = $this->loadAction($path);
-
-    $window->setAction($action, $path->getExtension());
-
-    return $window->asString();
-  }
-
-  protected function loadObjectScript(core\request $path, core\window\scripted $window) {
-
     $window->setScript($path);
 
     return $window->asString();
-  }
-
-  public function loadAction(core\request $path) {
-
-    $path->parse();
-
-    return $this->createAction($path->getFile(), $path->getArguments()->asArray());
-  }
-
-  protected function createAction(fs\file $file, array $aArguments = array()) {
-
-    return $this->create('action', array($file, $aArguments));
   }
 }

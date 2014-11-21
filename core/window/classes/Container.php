@@ -215,7 +215,6 @@ class Container extends core\module\Domed {
 
     switch ($file->getExtension()) {
 
-      case 'eml' : $result = $this->runAction($file, $args, $post); break;
       case 'vml' : $result = $this->runScript($file, $args, $post); break;
       default :
 
@@ -247,23 +246,6 @@ class Container extends core\module\Domed {
     ), $debug->read('debug/update', false), $debug->read('debug/run', false), true);
 
     return $result;
-  }
-
-  /**
-   * @deprecated
-   */
-  protected function runAction(fs\file $file, core\argument $args) {
-
-    $result = $this->createAction($file, $args->asArray());
-    $result->setContexts($this->getContexts());
-    //$result->setParentParser($window);
-
-    return $result->asString();
-  }
-
-  protected function createAction(fs\file $file, array $aArguments = array()) {
-
-    return $this->create('action', array($file, $aArguments));
   }
 
   protected function cleanResult(dom\handler $doc, fs\file $file = null) {
