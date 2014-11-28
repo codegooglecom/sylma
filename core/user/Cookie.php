@@ -3,8 +3,6 @@
 namespace sylma\core\user;
 use sylma\core;
 
-require_once('core/module/Argumented.php');
-
 class Cookie extends core\module\Argumented {
 
   protected $sContent = '';
@@ -14,11 +12,9 @@ class Cookie extends core\module\Argumented {
    */
   public $iExpiration = 0;
 
-  // controler :: nothing, @todo
+  public function __construct(Manager $manager, core\argument $args) {
 
-  public function __construct(Controler $controler, core\argument $args) {
-
-    $this->setControler($controler);
+    $this->setManager($manager);
     $this->setArguments($args);
 
     $this->validate();

@@ -174,7 +174,15 @@ class File extends Resource implements fs\file {
     return $this->getParent()->getSettings($bRecursive);
   }
 
+  /**
+   * @deprecated : use self::asArray() instead
+   */
   public function readArray() {
+
+    return $this->asArray();
+  }
+  
+  public function asArray() {
 
     return file($this->getRealPath(), FILE_SKIP_EMPTY_LINES);
   }

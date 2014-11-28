@@ -27,7 +27,12 @@ class _String extends Basic {
 
       $sValue = mb_substr($sValue, 0, $iEnd);
     }
+/*
+    if (isset($aSettings['html'])) {
 
+      $sValue = html_entity_decode($sValue);
+    }
+*/
     return $sValue;
   }
 }

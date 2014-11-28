@@ -65,15 +65,10 @@ class Insert extends Wherer implements common\argumentable {
 
   public function asArgument() {
 
-    $result = null;
-
-    //if ($this->getHandler()) {
-
-      $result = $this->getWindow()->createGroup(array(
-        $this->buildDynamicWhere(),
-        $this->getVar()->getInsert(),
-      ))->asArgument();
-    //}
+    $result = $this->getWindow()->createGroup(array(
+      $this->buildDynamicWhere(),
+      $this->getVar()->getInsert(),
+    ))->asArgument();
 
     return $result;
   }

@@ -121,8 +121,6 @@ class File extends fs\basic\File implements fs\editable\file {
 
     $bResult = false;
 
-    if (!$sContent) $this->throwException('Empty text not allowed as file\'s content');
-
     if (!$this->checkRights(\Sylma::MODE_WRITE)) {
 
       $this->throwException('You have not right to edit this file');
@@ -131,7 +129,6 @@ class File extends fs\basic\File implements fs\editable\file {
     $bResult = file_put_contents($this->getRealPath(), $sContent);
     if (!$this->doExist()) chmod($this->getRealPath(), 0750);
 
-    if (!$bResult) $this->throwException ('Cannot save text content for unknown reason');
     $this->bExist = true;
 
     //$this->iChanged = null;

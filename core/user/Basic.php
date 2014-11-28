@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\core\user;
-use \sylma\core, sylma\storage\fs, sylma\core\functions;
+use \sylma\core, sylma\storage\fs;
 
 class Basic extends core\module\Argumented implements core\user {
 
@@ -27,13 +27,13 @@ class Basic extends core\module\Argumented implements core\user {
 
   // controler :: create, getDocument, createArgument
 
-  public function __construct(Controler $controler, $sName = '', array $aGroups = array(), $bPrivate = false) {
+  public function __construct(Manager $manager, $sName = '', array $aGroups = array(), $bPrivate = false) {
 
     $this->setName($sName);
     $this->setNamespace(self::NS);
-    $this->setControler($controler);
+    $this->setManager($manager);
 
-    $this->setArguments($controler->getArguments());
+    $this->setArguments($manager->getArguments());
 
     /*if ($aOptions) {
 
@@ -184,7 +184,7 @@ class Basic extends core\module\Argumented implements core\user {
         $this->throwException(t('Cannot get directory of an unnamed user'));
       }
 
-      $fs = $this->getControler('fs');
+      $fs = $this->getManager('fs');
       $dir = $fs->getDirectory($this->readArgument('path') . '/' . $this->getName());
 
       $this->setDirectory($dir);
@@ -250,7 +250,7 @@ class Basic extends core\module\Argumented implements core\user {
 
   protected function buildCookie() {
 
-    $this->cookie = $this->getControler()->create('cookie', array($this->getControler(), $this->getArgument('cookies')));
+    $this->cookie = $this->getManager()->create('cookie', array($this->getManager(), $this->getArgument('cookies')));
   }
 
   protected function loadCookie() {

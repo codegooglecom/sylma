@@ -180,11 +180,6 @@ class Parser extends Prepare {
     return $this->getManager(self::PARSER_MANAGER)->load($this->getFile($sPath), $this->buildScriptArguments($aArguments, $aContexts, $aPosts), true, $bRun);
   }
 
-  public function getAction($sPath, array $aArguments = array()) {
-
-    return $this->getManager('action')->runAction($sPath, $aArguments);
-  }
-
   public function buildScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
 
     return $this->getScript($sPath, $aArguments, $aContexts, $aPosts, false);

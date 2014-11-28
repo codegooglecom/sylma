@@ -477,9 +477,14 @@
   <tst:test name="PHP error">
     <tst:prepare>
 
-      $manager->buildScript('/sylma/core/test/samples/window01.vml');
-      $manager->buildScript('/sylma/core/test/samples/sample02.vml');
-      $manager->buildScript('/sylma/modules/html/error.vml');
+      $manager->buildScript('/#sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/#sylma/core/test/samples/sample02.vml');
+
+      $manager->buildScript('/#sylma/modules/html/error.vml');
+
+      $log = $manager->getManager('fs/cache')->getFile(\sylma\core\exception\Basic::getLogPath());
+      $manager->set('log', $log);
+      $log->saveText('');
 
       $init = $manager->create('init');
       $user = $manager->createUser('tester01');
@@ -508,20 +513,34 @@
         </body>
       </html>
     </tst:node>
+    <tst:expected>
+
+      $manager->restoreSylma();
+
+      $rows = $manager->get('log')->asArray();
+
+      $manager->assertEquals(count($rows), 1);
+      preg_match('/-\s([\w\s]+)/', current($rows), $aMatch);
+      $manager->assertEquals($aMatch[1], 'Division by zero');
+
+      return true;
+
+    </tst:expected>
   </tst:test>
 
-  <tst:test name="Restricted access">
+  <tst:test name="Content restricted">
     <tst:prepare>
 
       $manager->buildScript('/sylma/core/test/samples/window01.vml');
       $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+      $manager->buildScript('/sylma/modules/html/error.vml');
 
       $init = $manager->create('init');
       $user = $manager->createUser('tester02');
 
       $manager->clearSylma($init, $user);
 
-      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/error.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
       $init->setGET('/sylma/core/test/samples/sample01');
       $sResult = $init->run($settings->get('initializer'), false);
 
@@ -545,6 +564,72 @@
     </tst:node>
   </tst:test>
 
+  <tst:test name="Container restricted">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window01.vml');
+      $manager->buildScript('/sylma/core/test/samples/container-restricted-window.vml');
+      $manager->buildScript('/sylma/core/test/samples/container-restricted.vml');
+      $manager->buildScript('/sylma/modules/html/error.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester02');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/container-restricted.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <html anyclass="x">
+        <head/>
+        <body>
+          <div id="messages"/>
+          <div class="container">
+            <div id="error" class="content">
+              <p>An error occured, the administrator has been informed.</p>
+              <a href="/">Click here to go to homepage</a>
+            </div>
+          </div>
+          <script type="text/javascript" cmp:ignore="x"/>
+        </body>
+      </html>
+    </tst:node>
+  </tst:test>
+
+  <tst:test name="Imports">
+    <tst:prepare>
+
+      $manager->buildScript('/sylma/core/test/samples/window03.vml');
+      $manager->buildScript('/sylma/core/test/samples/container01.vml');
+      $manager->buildScript('/sylma/core/test/samples/sample01.vml');
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01');
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/imports.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/sample01');
+      $sResult = $init->run($settings->get('initializer'), false);
+
+      $manager->setArgument('result', $manager->createDocument($sResult));
+
+    </tst:prepare>
+    <tst:node>
+      <app xmlns="">
+        <div>
+          <hello/>
+        </div>
+      </app>
+    </tst:node>
+  </tst:test>
+
   <tst:test name="Directory without index">
     <tst:prepare>
 
@@ -555,7 +640,7 @@
 
       $manager->clearSylma($init, $user);
 
-      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/config02.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/error.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
       $init->setGET('/sylma/core/test/samples/sub');
       $sResult = $init->run($settings->get('initializer'), false);
 

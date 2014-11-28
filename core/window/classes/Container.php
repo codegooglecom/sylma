@@ -208,7 +208,7 @@ class Container extends core\module\Domed {
 
     $this->loadDefaultSettings();
 
-    return $this->runScript($this->getFile($this->read('error/action')));
+    return $this->runScript($this->getFile($this->read('error/path')));
   }
 
   protected function prepareMain(fs\file $file, core\argument $args, core\argument $post) {

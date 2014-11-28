@@ -63,12 +63,12 @@ class Apply extends Read {
     }
 
     $aResult = $this->getWindow()->parse($result, true);
-/*
-    if (!$result && !$aResult && $this->readx('@required')) {
+
+    if (\Sylma::read('template/required') && !$result && !$aResult && $this->readx('@required')) {
 
       $this->launchException('Apply require a template');
     }
-*/
+
     if ($sXMode) {
 
       $this->getHandler()->stopXMode();

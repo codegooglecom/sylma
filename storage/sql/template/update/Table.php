@@ -22,37 +22,44 @@ class Table extends sql\template\insert\Table {
 
       if ($this->isSub() and $id = $this->getElement('id', null, false)) {
 
-        if ($dummy = $this->getDummy(false)) {
-
-          $this->getQuery()->setDummy($dummy);
-        }
-
-        $window = $this->getWindow();
-        $source = $this->getDummy()->call('getID');
-
-        $update = $this->getQuery();
-        $update->setWhere($id, '=', $source);
-        $this->getParent()->filterQuery($update);
-
-        $insert = $this->createQuery('insert');
-        $insert->setDummy($this->getDummy());
-
-        $delete = $this->createQuery('delete');
-        $delete->setDummy($this->getDummy());
-        $delete->setWhere($id, '=', $source);
-        $this->getParent()->filterQuery($delete);
-
-        $result = $window->createSwitch($this->getDummy()->call('getMode'));
-
-        $result->addCase('insert', $insert->getCall()->getInsert());
-        $result->addCase('update', $update->getCall()->getInsert());
-        $result->addCase('delete', $delete->getCall()->getInsert());
+        $result = $this->loadSub($id);
       }
       else {
 
         $result = parent::loadQuery();
       }
     }
+
+    return $result;
+  }
+
+  protected function loadSub(sql\schema\field $id) {
+
+    if ($dummy = $this->getDummy(false)) {
+
+      $this->getQuery()->setDummy($dummy);
+    }
+
+    $window = $this->getWindow();
+    $source = $this->getDummy()->call('getID');
+
+    $update = $this->getQuery();
+    $update->setWhere($id, '=', $source);
+    $this->getParent()->filterQuery($update);
+
+    $insert = $this->createQuery('insert');
+    $insert->setDummy($this->getDummy());
+
+    $delete = $this->createQuery('delete');
+    $delete->setDummy($this->getDummy());
+    $delete->setWhere($id, '=', $source);
+    $this->getParent()->filterQuery($delete);
+
+    $result = $window->createSwitch($this->getDummy()->call('getMode'));
+
+    $result->addCase('insert', $insert->getCall()->getInsert());
+    $result->addCase('update', $update->getCall()->getInsert());
+    $result->addCase('delete', $delete->getCall()->getInsert());
 
     return $result;
   }

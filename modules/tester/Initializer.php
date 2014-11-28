@@ -57,6 +57,8 @@ class Initializer extends Parser implements core\argumentable {
       $user = $this->createUser();
     }
 
+    $this->setManagers(\Sylma::getManagers());
+
     \Sylma::setManagers(array(
       'parser' => $this->read('parser') ? \Sylma::getManager('parser') : null,
       'init' => $init,

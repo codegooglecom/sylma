@@ -1,12 +1,22 @@
+
+# Imported files are erased by values in the same file, only works in server.yml file
+# imports :
+  # Required to run sylma tests
+  # - protected/sylma/core/test.yml
+
 debug :
+  # WARNING : if TRUE display various admin stuffs to everbody
   enable : false
+  # WARNING : if TRUE everybody has admin rights
   rights: false
   show : false
+  # if TRUE : log parse component messages, require lot of memory, can reach memory limits
   parser : false
   email :
     enable : false
     default : example@example.org
   backtrace :
+    # If TRUE : show all backtrace rows : require a lot of memory, can reach memory limits
     show : true
     html : true
     arguments : true
@@ -20,23 +30,38 @@ namespaces :
   html : http://www.w3.org/1999/xhtml
 
 render :
+  # If some text is added after compression (i.e. with echo) it will result in an encoding error page
   gzip : true
 
+# By default, all exceptions are shown to admin, and log into file for others.
+# You can save it into DB, or sent it by mail.
+
 exception :
-  show : false
+  # if TRUE all exception will be sent (db, then mail), even if it's shown to admin
   send : false
+  database :
+    # require datebase default connection
+    enable : true
   mail :
     enable : false
     to : none
+  # /#cache/..
   file : error.log
+  # WARNING : if TRUE everybody will see exception message and vars
+  show : false
 
 initializer :
   debug :
+    # Update window
     update : null
+    # if FALSE main script will not be executed
     run : true
+    # Require Facebook XHProf
     profile : false
     fatal : false
+    # Delay JSON calls for test purposes
     delay : 0
+  # Specify custom namespaces
   autoload : []
   output :
     indent : true
@@ -83,28 +108,20 @@ initializer :
       update : false
       debug : false
     error :
-      window : /#sylma/modules/html/window.vml
-      action : /#sylma/modules/html/error.vml
+      # All exceptions, 404 and restricted will lead to these pages when public
+      action : /#sylma/modules/html/window.vml
+      path : /#sylma/modules/html/error.vml
+      sub :
+        default :
+          action : /#sylma/modules/html/container.vml
     debug :
+      # Update called script
       update : null
+      # if FALSE main script will not be executed
       run : true
     html :
       default :
         action : /#sylma/modules/html/window.vml
-        sub :
-          default :
-            action : /#sylma/modules/html/container.vml
-      test :
-        action : /sylma/modules/html/window.vml
-        pattern : `^/(sylma/.+/test)`
-      stepper :
-        action : /sylma/modules/stepper/test/window.vml
-        pattern : `^/(sylma/modules/stepper/test|sylma/modules/tester/stepper/standalone)`
-        weight : 10
-      crud :
-        action : /sylma/modules/html/window.vml
-        pattern : `^/(sylma/storage/sql/crud/test)`
-        weight : 10
         sub :
           default :
             action : /#sylma/modules/html/container.vml
@@ -182,6 +199,11 @@ modules :
     exclude :
       run :
         - /sylma/modules/users/logout.vml
+
+template :
+  # @todo : required attribute need refactoring to work
+  required : true
+
 path :
   extensions :
     executable : [vml]

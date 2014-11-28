@@ -10,6 +10,7 @@ class Formed extends Profiler {
   const MODE_READ = 2;
   const MODE_EXTRACT = 4;
   const MODE_INSERT = 8;
+  const MODE_DELETE = 8;
 
   protected function createToken() {
 
@@ -38,9 +39,9 @@ class Formed extends Profiler {
     return $this->runQuery($this->getFile($sPath)->read(), self::MODE_INSERT);
   }
 
-  public function runQuery($sValue, $iMode = self::MODE_QUERY) {
+  public function runQuery($sValue, $iMode = self::MODE_QUERY, $sConnection = self::DB_CONNECTION) {
 
-    $db = $this->getManager(self::DB_MANAGER)->getConnection(self::DB_CONNECTION);
+    $db = $this->getManager(self::DB_MANAGER)->getConnection($sConnection);
 
     if (!$iMode) {
 

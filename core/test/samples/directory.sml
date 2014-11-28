@@ -14,7 +14,7 @@
       <mode>700</mode>
     </security>
   </file>
-  <file name="window-restricted.vml">
+  <file name="container-restricted.vml">
     <security>
       <owner>root</owner>
       <group>test01</group>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:test xmlns:ns0="http://2013.sylma.org/modules/stepper">
+  <ns0:page>
+    <ns0:steps>
+      <ns0:query creation="2014-11-20 16:38:49">../empty.sql</ns0:query>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/core/exception/test/samples/error.vml&amp;run=0" method="get"/>
+      <ns0:call path="/sylma/modules/users/logout" method="get"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/core/exception/test/samples/error">
+    <ns0:steps>
+      <ns0:snapshot element="#content">
+        <ns0:content>{"name":"div","children":[{"name":"div","content":"","position":{"x":218,"y":117},"size":{"x":1044,"y":0}},{"name":"div","children":[{"name":"div","children":[{"name":"p","content":"An error occured, the administrator has been informed.","position":{"x":218,"y":129},"size":{"x":1044,"y":14}},{"name":"a","content":"Click here to go to homepage","position":{"x":218,"y":155},"size":{"x":160,"y":14}}],"position":{"x":218,"y":129},"size":{"x":1044,"y":40}}],"position":{"x":218,"y":129},"size":{"x":1044,"y":40}}],"position":{"x":200,"y":94},"size":{"x":1080,"y":646}}</ns0:content>
+      </ns0:snapshot>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page>
+    <ns0:steps>
+      <ns0:call path="/sylma/core/exception/test/login" method="post"/>
+    </ns0:steps>
+  </ns0:page>
+  <ns0:page url="/sylma/core/exception">
+    <ns0:steps>
+      <ns0:snapshot element="#content &gt; div:nth-child(2) &gt; form &gt; table &gt; tbody">
+        <ns0:content>{"name":"tbody","children":[{"name":"tr","children":[{"name":"td","children":[{"name":"a","content":"\n E\n ","position":{"x":223,"y":247},"size":{"x":24,"y":24}}],"position":{"x":218,"y":241},"size":{"x":29,"y":42}},{"name":"td","content":"Division by zero","position":{"x":247,"y":241},"size":{"x":99,"y":42}},{"name":"td","ignore":true,"position":{"x":346,"y":241},"size":{"x":82,"y":42}},{"name":"td","content":"","position":{"x":428,"y":241},"size":{"x":92,"y":42}}],"position":{"x":218,"y":241},"size":{"x":302,"y":42}},{"name":"tr","children":[{"name":"td","children":[{"name":"div","children":[{"name":"div","children":[{"name":"a","content":"&lt;&lt;","position":{"x":310,"y":295},"size":{"x":30,"y":24}},{"name":"span","children":[{"name":"a","content":"1","position":{"x":353,"y":300},"size":{"x":11,"y":14}},{"name":"span","content":"/","position":{"x":367,"y":300},"size":{"x":9,"y":14}},{"name":"a","content":"1","position":{"x":379,"y":300},"size":{"x":11,"y":14}}],"position":{"x":348,"y":295},"size":{"x":47,"y":24}},{"name":"a","content":"&gt;&gt;","position":{"x":403,"y":295},"size":{"x":30,"y":24}},{"name":"input","content":"","position":{"x":0,"y":0},"size":{"x":0,"y":0}}],"position":{"x":294,"y":295},"size":{"x":150,"y":24}}],"position":{"x":218,"y":295},"size":{"x":302,"y":24}}],"position":{"x":218,"y":283},"size":{"x":302,"y":49}}],"position":{"x":218,"y":283},"size":{"x":302,"y":49}}],"position":{"x":218,"y":241},"size":{"x":302,"y":91}}</ns0:content>
+      </ns0:snapshot>
+    </ns0:steps>
+  </ns0:page>
+</ns0:test>

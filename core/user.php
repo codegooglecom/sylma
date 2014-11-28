@@ -5,8 +5,8 @@ use sylma\core;
 
 interface user {
 
-  function __construct(core\user\Controler $controler, $sName = '', array $aGroups = array(), $bPrivate = false);
-  
+  function __construct(core\user\Manager $controler, $sName = '', array $aGroups = array(), $bPrivate = false);
+
   function isPublic();
   function isPrivate();
 

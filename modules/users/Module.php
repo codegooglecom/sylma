@@ -25,43 +25,29 @@ class Module extends core\module\Domed {
    */
   public function login() {
 
-    $sResult = '';
-    $aGroups = array();
-
-    $contexts = $this->aContext['contexts'];
-
     $this->loadDefaultArguments();
 
+    $contexts = $this->aContext['contexts'];
     $post = $this->aContext['post'];
 
-    $doc = $this->getScript('login/default/check', array(), $contexts->query() , $post->query());
-
-    if (!$doc->isEmpty()) {
-
-      list($sID, $sPassword, $sGroups) = explode(' ', $doc->readx());
-      $aGroups = array_filter(explode(',', $sGroups));
-
-      if ($sPassword == crypt($post->read('password'), $sPassword)) {
-
-        $sResult = $sID;
-      }
-    }
+    $aUser = $this->authenticate($post->read('name', false), $post->read('password', false));
 
     $msg = $contexts->get('messages');
 
     sleep($this->read('login/delay'));
 
-    if (!$sResult) {
+    if (!$aUser['id']) {
 
       $msg->add(array('content' => $this->translate('Authentication failed'), 'arguments' => array('error' => true)));
     }
     else {
 
+      $aGroups = $aUser['groups'];
       $aGroups[] = self::GROUP_AUTH;
 
       $bRemember = true; //(bool) $post->get('remember', false);
       $user = $this->getManager('user');
-      $user->authenticate($post->read('name'), $sResult, $aGroups);
+      $user->authenticate($post->read('name'), $aUser['id'], $aGroups);
 
       \Sylma::setManager('user', $user);
       $user->load($bRemember);
@@ -69,7 +55,34 @@ class Module extends core\module\Domed {
       $msg->add(array('content' => $this->translate('Authentication successed')));
     }
 
-    return $sResult;
+    return $aUser['id'];
+  }
+
+  public function authenticate($sName, $sPassword) {
+
+    $sResult = '';
+    $aGroups = array();
+    $contexts = $this->aContext['contexts'];
+
+    $doc = $this->getScript('login/default/check', array(), $contexts->query(), array(
+      'name' => $sName,
+    ));
+
+    if (!$doc->isEmpty()) {
+
+      list($sID, $sPasswordHash, $sGroups) = explode(' ', $doc->readx());
+      $aGroups = array_filter(explode(',', $sGroups));
+
+      if ($sPasswordHash == crypt($sPassword, $sPasswordHash)) {
+
+        $sResult = $sID;
+      }
+    }
+
+    return array(
+      'id' => $sResult,
+      'groups' => $aGroups
+    );
   }
 
   public function logout() {

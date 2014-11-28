@@ -76,24 +76,38 @@ class Builder extends core\module\Domed {
     $aPaths = $this->buildWindowStack($settings, $sCurrent);
     $aPaths[] = (string) $path->asFile();
 
+    $bAccess = true;
+
+    foreach ($aPaths as $sFile) {
+
+      $file = $this->getFile($sFile, false);
+
+      if (!$file || !$file->checkRights(\Sylma::MODE_EXECUTE)) {
+
+        $bAccess = false;
+        break;
+      }
+    }
+
+    if (!$bAccess) {
+
+      $this->getInitializer()->send404();
+
+      $aPaths = $this->buildWindowStack($this->createArgument(array($this->get('error'))), '');
+      $aPaths[] = $this->read('error/path');
+    }
+
     $aPaths = array_reverse($aPaths);
     $sMain = array_pop($aPaths);
 
-    $file = $this->getFile($sMain);
-
-    if (!$file->checkRights(\Sylma::MODE_EXECUTE)) {
-
-      $this->getInitializer()->send404();
-      $file = $this->getErrorWindow();
-      $aPaths = array($this->getErrorPath());
-    }
+    $window = $this->getFile($sMain);
 
     $args = $path->getArguments();
     $args->set('sylma-paths', $aPaths);
 
     $builder = $this->getManager(self::PARSER_MANAGER);
 
-    return $builder->load($file, array(
+    return $builder->load($window, array(
       'arguments' => $args,
       //'post' => $this->loadPost(true),
     ), $bUpdate, $bRun);
@@ -106,7 +120,7 @@ class Builder extends core\module\Domed {
 
   protected function getErrorPath() {
 
-    return $this->read('error/action');
+    return $this->read('error/path');
   }
 
   protected function buildWindowStack(core\argument $arg, $sPath) {
@@ -127,7 +141,7 @@ class Builder extends core\module\Domed {
 
     } while ($arg);
 
-    return $aResult;
+    return array_filter($aResult);
   }
 
   /**

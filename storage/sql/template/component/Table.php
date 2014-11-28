@@ -89,6 +89,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $this->collection;
   }
 
+  /**
+   * @return string select|insert|update|delete
+   */
   protected function getMode() {
 
     return $this->sMode;
@@ -180,7 +183,6 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   /**
    * @usedby Foreign::buildMultiple()
-   * @usedby Reference::reflectFunctionRef()
    * @return common\_var|null
    */
   public function getDummy($bDebug = true) {

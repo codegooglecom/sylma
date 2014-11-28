@@ -13,6 +13,7 @@ class Reference extends sql\template\component\Reference {
   protected function importElementRef() {
 
     $this->getParser()->changeMode($this->useID() ? 'update' : 'insert');
+    //$this->getParser()->changeMode($this->useID() ? $this->getParent()->getMode() : 'insert');
     $result = parent::importElementRef();
     $this->getParser()->resetMode();
 

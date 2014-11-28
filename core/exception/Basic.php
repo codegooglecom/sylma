@@ -316,7 +316,7 @@ class Basic extends \Exception implements core\exception {
       'message' => $this->parseString( htmlspecialchars($this->getMessage())) . '<br/>',
       'paths' => $this->readPaths($aPath),
       'vars' => $this->loadVariables($bHTML),
-      'trace' => null,
+      'trace' => 'no trace',
     );
 
     if ($bTrace) {
@@ -324,7 +324,7 @@ class Basic extends \Exception implements core\exception {
       $aResult['trace'] = $this->loadTraces($bHTML);
     }
 
-    if (\Sylma::read('exception/show')) {
+    if (\Sylma::isAdmin() || \Sylma::read('exception/show')) {
 
       $this->show($aResult, $bPrint);
     }
@@ -360,18 +360,26 @@ class Basic extends \Exception implements core\exception {
 
   protected function send(array $aResult) {
 
+    $bResult = false;
+
     try {
 
-      if (!$this->insert($aResult)) {
+      if (\Sylma::read('exception/database/enable') && \Sylma::get('database/default', false)) {
 
-        $this->mail($aResult);
+        $bResult = !$this->insert($aResult);
       }
-
     }
     catch (core\exception $e) {
 
-      $this->mail($aResult);
+
     }
+
+    if (!$bResult) {
+
+      $bResult = $this->mail($aResult);
+    }
+
+    return $bResult;
   }
 
   protected function insert($aContent) {
@@ -434,13 +442,22 @@ class Basic extends \Exception implements core\exception {
     }
   }
 
+  /**
+   * @usedby /#sylma/core/test/basic.xml "PHP Error" test
+   * @return string
+   */
+  public static function getLogPath() {
+
+    return \Sylma::read('exception/file');
+  }
+
   protected function logFile($sValue) {
 
     try {
 
-      $sPath = $_SERVER['DOCUMENT_ROOT'] . '/cache/' . \Sylma::read('exception/file');
+      $sPath = $_SERVER['DOCUMENT_ROOT'] . '/cache/' . self::getLogPath();
 
-      if (!file_put_contents($sPath, $sValue, \FILE_APPEND)) {
+      if (!file_put_contents($sPath, $sValue, \FILE_APPEND . "\n")) {
 
         // :(
       }

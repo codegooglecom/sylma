@@ -1,0 +1,8 @@
+
+initializer :
+  window :
+    html :
+      default :
+        sub :
+          default :
+            action : /#sylma/core/test/samples/container01.vml

@@ -1,0 +1,14 @@
+debug :
+  enable : true
+exception :
+  show : true
+
+imports :
+  - protected/sylma/core/test/samples/imports-sub.yml
+
+
+initializer :
+  window :
+    html :
+      default :
+        action : /#sylma/core/test/samples/window03.vml

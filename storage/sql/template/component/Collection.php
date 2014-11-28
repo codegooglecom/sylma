@@ -3,7 +3,7 @@
 namespace sylma\storage\sql\template\component;
 use sylma\core, sylma\storage\sql, sylma\template;
 
-class Collection extends Rooted implements sql\template\pathable {
+class Collection extends Dummed implements sql\template\pathable {
 
   protected $table;
   protected $pager;
@@ -186,19 +186,6 @@ class Collection extends Rooted implements sql\template\pathable {
     return $aResult;
   }
 
-  protected function getDummy() {
-
-    if (!$this->dummy) {
-
-      $result = $this->getWindow()->createVar($this->buildReflector(array(), 'dummy'));
-      $this->aStart[] = $result->getInsert();
-
-      $this->dummy = $result;
-    }
-
-    return $this->dummy;
-  }
-
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
@@ -233,16 +220,6 @@ class Collection extends Rooted implements sql\template\pathable {
         $result = $this->getPager()->reflectApply($sMode);
         break;
 
-      case 'dummy' :
-
-        $result = $this->reflectDummy($aPath, $aArguments, $sMode, $bRead);
-        break;
-
-      case 'source' :
-
-        $result = $this->reflectSource($aPath, $aArguments, $sMode);
-        break;
-
       case 'distinct' :
 
         $aFunctionArguments = $this->getHandler()->getPather()->parseArguments($sArguments, $sMode, $bRead, false);
@@ -264,30 +241,7 @@ class Collection extends Rooted implements sql\template\pathable {
 
       default :
 
-        $result = $this->getHandler()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
-    }
-
-    return $result;
-  }
-
-  protected function reflectDummy(array $aPath, array $aArguments = array(), $sMode = '', $bRead) {
-
-    return $this->getHandler()->parsePathToken($this->getTree(), $aPath, $sMode, $bRead, $aArguments);
-  }
-
-  protected function reflectSource(array $aPath, array $aArguments = array(), $sMode = '') {
-
-    $result = null;
-
-    if (!$this->getTree()) {
-
-      $window = $this->getWindow();
-      $tree = $this->create('tree', array($this->getHandler(), $this->getFactory()->findClass('tree')));
-
-      $result = $tree->loadDummy();
-
-      //$this->getTable()->setSource($tree->getDummy());
-      $this->setTree($tree);
+        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $result;
@@ -296,20 +250,6 @@ class Collection extends Rooted implements sql\template\pathable {
   public function reflectRegister() {
 
     $this->launchException('Cannot register collection');
-  }
-
-  protected function setTree(template\parser\tree $tree) {
-
-    $this->tree = $tree;
-  }
-
-  /**
-   * @usedby sql\template\component\Table::startStatic()
-   * @return xml\tree
-   */
-  public function getTree() {
-
-    return $this->tree;
   }
 
   protected function getDistinct(array $aFunctionArguments, array $aPath, $sMode, array $aArguments = array()) {

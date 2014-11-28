@@ -10,12 +10,12 @@
     <field name="id" type="sql:id"/>
     <field name="message" type="sql:string"/>
     <field name="message_html" type="sql:html"/>
-    <field name="context" type="sql:html"/>
-    <field name="backtrace" type="sql:html"/>
+    <field name="context" type="sql:html" default="null"/>
+    <field name="backtrace" type="sql:html" default="null"/>
     <field name="session" type="sql:string-long"/>
     <field name="request" type="sql:string-long"/>
-    <field name="server" type="sql:string-long"/>
-    <field name="files" type="sql:string-long"/>
+    <field name="server" type="sql:string-long" default="null"/>
+    <field name="files" type="sql:string-long" default="null"/>
     <field name="archive" type="sql:boolean" default="null"/>
     <field name="insert" type="sql:datetime"/>
   </table>

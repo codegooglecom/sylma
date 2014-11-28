@@ -3,7 +3,7 @@
 namespace sylma\core\user;
 use sylma\core;
 
-class Controler extends core\module\Filed {
+class Manager extends core\module\Filed {
 
   protected $user;
 

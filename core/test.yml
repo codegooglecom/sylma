@@ -1,0 +1,44 @@
+debug :
+  enable : false
+  rights: false
+  show : false
+
+exception :
+  show : false
+
+initializer :
+  debug :
+    update : null
+    delay : 0
+  autoload : []
+  window :
+    fusion :
+      enable : true
+      update : false
+      debug : false
+    debug :
+      update : null
+      run : true
+    html :
+      test :
+        action : /sylma/modules/html/window.vml
+        pattern : `^/(sylma/.+/test)`
+        sub :
+          default :
+            action : /#sylma/modules/html/container.vml
+
+      stepper :
+        action : /sylma/modules/stepper/test/window.vml
+        pattern : `^/(sylma/modules/stepper/test|sylma/modules/tester/stepper/standalone)`
+        weight : 10
+      crud :
+        action : /sylma/modules/html/window.vml
+        pattern : `^/(sylma/storage/sql/crud/test)`
+        weight : 10
+        sub :
+          default :
+            action : /#sylma/modules/html/container.vml
+
+device :
+  enable : true
+  force : null

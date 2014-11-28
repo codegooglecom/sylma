@@ -107,11 +107,6 @@ abstract class Domed extends Filed {
     );
   }
 
-  protected function getActionContexts() {
-
-    return $this->getManager(self::PARSER_MANAGER)->getContext('action/current')->getContexts();
-  }
-
   protected function getScript($sPath, array $aArguments = array(), array $aContexts = array(), array $aPosts = array()) {
 
     if (strpos($sPath, '.') !== false) {

@@ -1,3 +1,4 @@
+
 debug :
   enable : false
 exception :
@@ -10,7 +11,6 @@ initializer :
       enable : true
       update : true
     html :
-      test : null
       default :
         action : /#sylma/core/test/samples/window01.vml
         sub : null

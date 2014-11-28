@@ -1,0 +1,18 @@
+
+debug :
+  enable : true
+
+exception :
+  show : true
+
+initializer :
+  window :
+    error :
+      action : /#sylma/core/test/samples/window01.vml
+      sub : null
+    html :
+      default :
+        action : /#sylma/core/test/samples/container-restricted-window.vml
+        sub :
+          default :
+            action : /#sylma/core/test/samples/container-restricted.vml

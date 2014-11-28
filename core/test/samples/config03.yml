@@ -5,9 +5,9 @@ initializer :
     fatal : true
   window :
     error :
-      window : /#sylma/core/test/samples/window01.vml
+      action : /#sylma/core/test/samples/window01.vml
+      sub : null
     html :
-      test : null
       default :
         action : /#sylma/core/test/samples/window02.vml
         sub : null

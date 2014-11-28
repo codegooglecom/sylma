@@ -71,15 +71,19 @@ class Sylma {
     catch (core\exception $e) {
 
       $e->save();
+      self::get('render')->set('gzip', false);
+
+      self::$result = 'An error occured<br/><a href="/">Click here to go to homepage</a>';
+      header('HTTP/1.0 404 Not Found');
 
       if (!self::isAdmin()) {
 
-        header('HTTP/1.0 404 Not Found');
+
         //self::$result = $init->getError();
       }
       else {
 
-        self::get('render')->set('gzip', false);
+
       }
     }
 
@@ -186,7 +190,7 @@ class Sylma {
 
       case 'user' :
 
-        $result = new core\user\Controler;
+        $result = new core\user\Manager;
         $result = $result->getUser();
 
       break;

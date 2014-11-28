@@ -22,14 +22,23 @@ class Initializer extends module\Domed {
    */
   public function loadSettings($sServer, $sSylma) {
 
-    //$settings = $this->createArgument($sSylma, \Sylma::NS);
-    //require_once(self::$sArgumentFile);
-    $settings = new \sylma\core\argument\Filed($sSylma, array(\Sylma::NS));
+    $result = new \sylma\core\argument\Filed($sSylma, array(\Sylma::NS));
 
-    if ($sServer) $settings->mergeFile($sServer);
+    if ($sServer) {
 
-    return $settings;
+      $server = new \sylma\core\argument\Filed($sServer, array(\Sylma::NS));
+
+      foreach ($server->query('imports', false) as $sFile) {
+
+        $result->mergeFile($sFile);
+      }
+
+      $result->merge($server);
+    }
+
+    return $result;
   }
+
 
   public function createArgument($mArguments, $sNamespace = '') {
 
@@ -52,6 +61,7 @@ class Initializer extends module\Domed {
   }
 
   public function run($settings) {
+//print_r($settings->query('imports', false));
 
     \Sylma::getManager(self::AUTOLOAD_MANAGER)->loadNamespaces($settings->query('autoload'));
 
@@ -116,9 +126,9 @@ class Initializer extends module\Domed {
     // Reload last alternatives mime-type results - $_SESSION['results']
     //self::loadResults();
 
-    if ($file = $path->asFile()) {
+    if ($sFile = $path->asFile()) {
 
-      $sResult = $this->createWindowBuilder()->createWindow($file, $this->get('images'));
+      $sResult = $this->createWindowBuilder()->createWindow($sFile, $this->get('images'));
     }
     else {
 

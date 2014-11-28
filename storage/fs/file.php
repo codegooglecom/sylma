@@ -23,7 +23,7 @@ interface file extends fs\resource {
   /**
    * @return array The content of the file as an array of lines, usefull for YAML loads
    */
-  function readArray();
+  function asArray();
 
   /**
    * Get file name without extension
