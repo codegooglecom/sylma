@@ -41,7 +41,8 @@ sylma.stepper.Snapshot = new Class({
 
   test : function(callback) {
 
-    this.testConfirm.delay(200, this, callback);
+    //this.testConfirm.delay(200, this, callback);
+    this.testConfirm(callback);
   },
 
   testConfirm: function (callback) {
