@@ -38,27 +38,38 @@ class Foreign extends sql\template\component\Foreign {
 
   protected function reflectKey() {
 
-    return $this->getParent()->getResult();
+    return $this->getParent()->getQuery()->getVar();
   }
 
   /**
    * @uses Table::getDummy()
    * @return array
    */
-  protected function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
+  public function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
+
+    if ($this->getParent()->isSub()) {
+
+      $dummy = $this->getParent()->getDummy();
+      $collection = $dummy->call('getElement', array($this->getName()))->call('getValue');
+    }
+    else {
+
+      $collection = $this->getParent()->getElementArgument($this->getName(), 'get');
+    }
 
     $window = $this->getWindow();
     $val = $window->createVariable('', 'php-null');
     $key = $window->createVariable('', 'php-integer');
-    $loop = $window->createLoop($this->getParent()->getElementArgument($this->getName(), 'get'), $val, $key);
+    $loop = $window->createLoop($collection, $val, $key);
 
-    $junction->init($key, $this->getParent()->getDummy());
+    $junction->init($key, $this->getParent()->getDummy(false));
     $junction->addElement($source, $this->reflectKey());
     $junction->addElement($target, $val);
 
     $loop->addContent($junction);
 
-    return array($loop);
+    $result = $loop;
+    return $result;
   }
 
   public function reflectRegister($content = null, $sReflector = '', $sMode = '') {
@@ -66,7 +77,27 @@ class Foreign extends sql\template\component\Foreign {
     if ($this->getMaxOccurs(true)) {
 
       list($junction, $source, $target) = $this->loadJunction();
-      $this->getParent()->addTrigger($this->buildMultiple($junction, $source, $target));
+
+      if ($this->getParent()->isSub()) {
+
+        $self = $this;
+        $table = $this->getParent();
+        $table->addElement($this, $table->getElementArgument($this->getName(), 'query'), array(
+          'multiple' => true,
+        ));
+
+        $caller = $this->getWindow()->createCaller(function() use ($junction, $source, $target, $self) {
+
+          return $self->buildMultiple($junction, $source, $target);
+        });
+
+        $this->getParent()->addTrigger(array($caller));
+      }
+      else {
+
+        list($junction, $source, $target) = $this->loadJunction();
+        $this->getParent()->addTrigger(array($this->buildMultiple($junction, $source, $target)));
+      }
     }
     else {
 

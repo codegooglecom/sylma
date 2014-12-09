@@ -31,7 +31,7 @@
 
   <tpl:template match="*" mode="filter/dummy">
     <sql:filter>
-      <tpl:read select="parent()/dummy()/default()">
+      <tpl:read select="root()/dummy()/default()">
         <tpl:read select="name()"/>
       </tpl:read>
     </sql:filter>

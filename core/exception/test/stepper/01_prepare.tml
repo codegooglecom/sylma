@@ -4,6 +4,7 @@
     <ns0:steps>
       <ns0:call path="/sylma/core/exception/test/check-config" method="get"/>
       <ns0:call path="/sylma/storage/sql/alter?file=/sylma/core/exception/schema.xql&amp;depth=1" method="get"/>
+      <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/core/exception/test/login.vml" method="get"/>
       <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/core/exception/index.vml" method="get"/>
       <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/core/exception/insert.vml" method="get"/>
       <ns0:call path="/sylma/modules/rebuild/standalone?path=/sylma/modules/html/error.vml" method="get"/>

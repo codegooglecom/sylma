@@ -9,20 +9,18 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
 >
 
-  <crud:route>
+  <crud:group name="collection">
 
-    <crud:local>
+    <sql:resource multiple="multiple"/>
 
-      <sql:resource multiple="multiple"/>
+    <crud:import>/#sylma/crud/collection/root.tpl</crud:import>
+    <crud:import>crud/collection.tpl</crud:import>
 
-      <crud:import>/#sylma/crud/collection/root.tpl</crud:import>
-      <crud:import>crud/collection.tpl</crud:import>
+  </crud:group>
 
-    </crud:local>
+  <crud:route groups="collection">
 
     <view:view>
-
-
 
     </view:view>
 

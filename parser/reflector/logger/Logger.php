@@ -1,7 +1,7 @@
 <?php
 
 namespace sylma\parser\reflector\logger;
-use sylma\core;
+use sylma\core, sylma\dom;
 
 class Logger extends core\module\Domed {
 
@@ -57,25 +57,46 @@ class Logger extends core\module\Domed {
     if ($last = end($this->aComponents)) $last->set('exception', $sMessage);
   }
 
-  protected function show($mVar, $bToken = true) {
+  protected function show($mVar) {
 
-    return \Sylma::show($mVar, $bToken);
+    $result = $this->createDocument();
+    $root = $result->addElement('ul', null, array(), \Sylma::read('namespaces/html'));
+
+    if (is_array($mVar)) {
+
+      foreach ($mVar as $item) {
+
+        $root->addElement('li', $this->parseString($item));
+      }
+    }
+    else if (is_string($mVar)) {
+
+      $root->addElement('li', $this->parseString($mVar));
+    }
+    else {
+
+      $this->launchException('Cannot show var', get_defined_vars());
+    }
+
+    return $result;
+  }
+
+  protected function parseString($sValue) {
+
+    $formater = $this->getManager('formater');
+
+    return $formater->stringToDOM($formater->parseTokens($sValue));
   }
 
   public function asMessage() {
 
     $context = $this->getManager(self::PARSER_MANAGER)->getContext('errors');
-    //$context->add(current($this->aComponents)->asDOM());
-    //$test = $this->createArgument($arg->asArray(true));
-
     $doc = $this->getRoot()->asDOM();
-//dsp($arg);
-//dsp($doc);
+
     $result = $this->getTemplate('components.xsl')->parseDocument($doc);
 
     $cleaner = new \sylma\modules\html\Cleaner();
     $context->add(array('content' => $cleaner->clean($result)));
-    //$context->add($result);
   }
 }
 

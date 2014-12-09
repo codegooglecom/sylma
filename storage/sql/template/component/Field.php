@@ -70,7 +70,7 @@ abstract class Field extends sql\schema\component\Field implements sql\template\
 
       default :
 
-        $this->launchException(sprintf('Uknown function "%s"', $sName), get_defined_vars());
+        $result = $this->getHandler()->getCurrentTemplate()->reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $result;

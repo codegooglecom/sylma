@@ -19,7 +19,7 @@
     <tpl:constant name="form-cols">* ^ id</tpl:constant>
 
     <tpl:template mode="init/action">
-      <crud:path/>/do.json
+      <crud:path path="do"/>.json
     </tpl:template>
 
     <tpl:template mode="form/token/content">

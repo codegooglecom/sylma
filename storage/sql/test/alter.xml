@@ -171,4 +171,30 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Foreign multiple not created" disabled="true">
+    <!-- Usefull ? -->
+    <tst:prepare>
+
+      $manager->runQuery('DROP TABLE IF EXISTS fm_user_tag', 2);
+      $manager->runQuery('DROP TABLE IF EXISTS fm_user_group', 2);
+      $manager->runQuery('DROP TABLE IF EXISTS fm_user', 2);
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/foreign-multiple-user.xql',
+      ));
+
+    </tst:prepare>
+    <tst:expected>
+
+      $user = $manager->runQuery("SHOW COLUMNS FROM `fm_user`", 0);
+
+      $manager->assertEquals($user->asArray(), array(
+        'name' => '',
+        'email' => '',
+      ));
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
 </tst:tests>

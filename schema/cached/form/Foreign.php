@@ -14,5 +14,20 @@ class Foreign extends _Integer {
 
     return !$this->getValue();
   }
+
+  protected function validateValue() {
+
+    if ($this->isMultiple()) {
+
+      $this->isUsed(false);
+      $bResult = is_array($this->getValue());
+    }
+    else {
+
+      $bResult = parent::validateValue();
+    }
+
+    return $bResult;
+  }
 }
 

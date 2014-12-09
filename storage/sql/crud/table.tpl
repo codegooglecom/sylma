@@ -9,7 +9,7 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
 >
 
-  <tpl:template match="sql:table" mode="form/build">
+  <tpl:template match="*" mode="form/build">
 
     <tpl:variable name="action">
       <tpl:apply mode="init/action"/>
@@ -53,7 +53,7 @@
     <tpl:apply mode="title"/>
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="form/content" xmode="update">
+  <tpl:template match="*" mode="form/content" xmode="update">
 
     <js:option name="delete" cast="x">
       <tpl:apply mode="init/delete"/>
@@ -63,7 +63,7 @@
 
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="form/content">
+  <tpl:template match="*" mode="form/content">
 
     <tpl:apply mode="form/resources"/>
 
@@ -85,7 +85,7 @@
 
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="form">
+  <tpl:template match="*" mode="form">
     <tpl:apply use="form-cols" mode="container"/>
   </tpl:template>
 

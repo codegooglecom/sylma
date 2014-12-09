@@ -70,8 +70,7 @@ class Reference extends sql\schema\component\Reference implements sql\template\p
 
   protected function reflectFunctionRef(array $aPath, $sMode, array $aArguments = array()) {
 
-    //return $this->getElementRef()->reflectApply($sMode, $aPath, true);
-    return null;
+    return $this->getElementRef()->reflectApply($sMode, $aPath, true);
   }
 
   public function reflectApply($sMode = '', array $aArguments = array()) {

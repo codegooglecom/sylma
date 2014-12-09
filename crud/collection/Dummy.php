@@ -13,7 +13,7 @@ class Dummy extends core\module\Domed {
 
     $this->setSettings($args);
     $this->setSettings($post);
-//dsp($this->getSettings());
+
     if ($this->read('sylma-reset', false)) {
 
       $this->reset();
@@ -29,7 +29,6 @@ class Dummy extends core\module\Domed {
 
     $this->sToken = $sValue;
     $this->loadDatas();
-
   }
 
   public function setDefaults(array $aDefaults) {

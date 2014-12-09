@@ -10,7 +10,7 @@ class Foreign extends sql\template\insert\Foreign {
     return $this->getParent()->getElementArgument($this->getKey());
   }
 
-  protected function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
+  public function buildMultiple(sql\schema\table $junction, sql\schema\foreign $source, sql\schema\foreign $target) {
 
     $del = $this->loadSimpleComponent('template/delete');
 

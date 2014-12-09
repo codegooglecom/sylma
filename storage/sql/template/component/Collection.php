@@ -10,9 +10,6 @@ class Collection extends Dummed implements sql\template\pathable {
   protected $counter;
   protected $key;
 
-  protected $dummy;
-  protected $tree;
-
   /**
    * Before loop
    */
@@ -250,6 +247,14 @@ class Collection extends Dummed implements sql\template\pathable {
   public function reflectRegister() {
 
     $this->launchException('Cannot register collection');
+  }
+
+  protected function loadDummy() {
+
+    $result = $this->getWindow()->createVar($this->buildReflector(array(), 'dummy'));
+    $this->aStart[] = $result->getInsert();
+
+    return $result;
   }
 
   protected function getDistinct(array $aFunctionArguments, array $aPath, $sMode, array $aArguments = array()) {

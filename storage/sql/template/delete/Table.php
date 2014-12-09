@@ -15,10 +15,12 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function asArgument() {
 
+    $dummy = $this->getDummy();
+
     //$content = $this->getWindow()->createGroup(array($this->getDummy()->call('asString')));
     $aResult[] = $this->getQuery();
-    $aResult[] = $this->loadDummy();
-    $content = array($this->getDummy()->call('asString'));
+    $aResult[] = $dummy->getInsert();
+    $content = array($dummy->call('asString'));
     $aResult[] = $this->getHandler()->getView()->addToResult($content, false);
 
     return $this->getWindow()->createGroup($aResult);

@@ -13,7 +13,7 @@ sylma.crud.Field = new Class({
     if (this.change && inputs) {
 
       this.prepareNodes(inputs);
-      inputs.addEvent('change', this.change.callback);
+      inputs.addEvent('input', this.change.callback);
     }
   },
 

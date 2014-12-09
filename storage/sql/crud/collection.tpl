@@ -69,7 +69,7 @@
 
   <tpl:template match="sql:datetime" mode="filter/internal">
     <sql:filter optional="x" op="&gt;=">
-      <tpl:read select="parent()/dummy()/default()" tpl:name="value">
+      <tpl:read select="parent()/collection()/dummy()/default()" tpl:name="value">
         <tpl:read select="'{alias()}_from'"/>
       </tpl:read>
     </sql:filter>

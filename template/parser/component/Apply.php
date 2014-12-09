@@ -29,12 +29,25 @@ class Apply extends Read {
     $sSelectOut = $sSelect ? ',@select=' . $sSelect : '';
     $sModeOut = $sMode ? ',@mode=' . $sMode : '';
     $sXModeOut = $sXMode ? ',@xmode=' . $sXMode : '';
+    $iArguments = count($aArguments);
+    $sArguments = $iArguments ? "($iArguments)" : '';
 
-    $this->startLog('Apply [' . $sSelectOut . $sModeOut . $sXModeOut . ']');
+    $sElement = $this->getNode()->asToken();
+    $this->startLog('Apply [' . $sSelectOut . $sModeOut . $sXModeOut . "]$sArguments", array('element' => $sElement));
 
     $this->stopLog();
 
-    return $this->getTemplate()->applyPath($this->loadSelect($sSelect), $sMode, $aArguments);
+    try {
+
+      $result = $this->getTemplate()->applyPath($this->loadSelect($sSelect), $sMode, $aArguments);
+
+    } catch (core\exception $e) {
+
+      $e->addPath($this->getNode()->asToken());
+      throw $e;
+    }
+
+    return $result;
   }
 
   public function build() {

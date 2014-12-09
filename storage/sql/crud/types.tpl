@@ -29,8 +29,10 @@
   </tpl:template>
 
   <tpl:template match="sql:string-long" mode="input">
-    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field field-text field-input-element">
+    <tpl:argument name="class" default="'text'"/>
+    <textarea id="form-{alias('form')}" name="{alias('form')}" class="field field-{$class}">
       <tpl:apply mode="input/value"/>
+      <tpl:apply mode="input/events"/>
     </textarea>
   </tpl:template>
 

@@ -14,13 +14,20 @@ abstract class Pathed extends Domed {
 
     //if (!$this->pather) {
 
-      $pather = $this->loadSimpleComponent('pather');
-
-      $pather->setSource($this->getTree());
-      $pather->setTemplate($this);
+      $result = $this->buildPather($this->getTree());
     //}
 
-    return $pather;
+    return $result;
+  }
+
+  protected function buildPather(template\parser\tree $tree) {
+
+    $result = $this->loadSimpleComponent('pather');
+
+    $result->setSource($tree);
+    $result->setTemplate($this);
+
+    return $result;
   }
 
   public function readPath($sPath, $sMode, array $aArguments = array()) {
@@ -79,12 +86,13 @@ abstract class Pathed extends Domed {
     return $mResult;
   }
 
-  public function reflectApplyFunction($sName, $sArguments = '') {
+  public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
       case 'directory' : $result = $this->reflectDirectory($sArguments); break;
       case 'gen' : $result = $this->reflectFunctionGen($sArguments); break;
+      case 'root' : $result = $this->reflectFunctionRoot($aPath, $sMode, $bRead, $aArguments); break;
 
       default :
 
@@ -92,6 +100,13 @@ abstract class Pathed extends Domed {
     }
 
     return $result;
+  }
+
+  protected function reflectFunctionRoot(array $aPath, $sMode, $bRead = false, array $aArguments = array()) {
+
+    $pather = $this->buildPather($this->getHandler()->getResource()->getTree());
+
+    return $pather->parsePathToken($aPath, $sMode, $bRead, $aArguments);
   }
 
   protected function reflectFunctionGen($sArguments) {

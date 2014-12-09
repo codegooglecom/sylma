@@ -160,5 +160,10 @@ class Basic extends sql\schema\Handler {
 
     return $result;
   }
+
+  public function getCurrentTemplate() {
+
+    return $this->getView()->getCurrentTemplate();
+  }
 }
 

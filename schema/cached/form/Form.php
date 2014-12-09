@@ -115,23 +115,33 @@ class Form extends core\module\Domed {
     return $mResult;
   }
 
-  protected function getElements() {
+  protected function getElements($bOnlyUsed = true) {
 
-    return $this->aElements;
+    if ($bOnlyUsed) {
+
+      $aResult = array_filter($this->aElements, function(Type $item) {
+        return $item->isUsed();
+      });
+    }
+    else {
+
+      $aResult = $this->aElements;
+    }
+
+    return $aResult;
   }
 
   protected function validateElements() {
 
     $bResult = true;
-    $aResult = array();
 
-    foreach ($this->getElements() as $sName => $element) {
+    foreach ($this->getElements() as $element) {
 
-      if (!$element->validate()) $bResult = false;
-      if ($element->isUsed()) $aResult[$sName] = $element;
+      if (!$element->validate()) {
+
+        $bResult = false;
+      }
     }
-
-    $this->aElements = $aResult;
 
     return $bResult;
   }

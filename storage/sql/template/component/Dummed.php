@@ -1,9 +1,12 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\template;
+use sylma\core, sylma\template, sylma\parser\languages\common;
 
 class Dummed extends Rooted {
+
+  protected $dummy;
+  protected $tree;
 
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
@@ -21,23 +24,44 @@ class Dummed extends Rooted {
 
       default :
 
-        $result = $this->getHandler()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
+        $result = $this->getHandler()->getCurrentTemplate()->reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $result;
   }
 
-  protected function getDummy() {
+  /**
+   * @usedby Reference::reflectFunctionRef()
+   */
+  public function setDummy(common\_var $handler) {
+
+    $this->dummy = $handler;
+  }
+
+  /**
+   * @usedby Foreign::buildMultiple()
+   * @return common\_var|null
+   */
+  public function getDummy($bDebug = true) {
 
     if (!$this->dummy) {
 
-      $result = $this->getWindow()->createVar($this->buildReflector(array(), 'dummy'));
-      $this->aStart[] = $result->getInsert();
+      if ($dummy = $this->loadDummy()) {
 
-      $this->dummy = $result;
+        $this->setDummy($dummy);
+      }
+      else if ($bDebug) {
+
+        $this->launchException('No dummy defined');
+      }
     }
 
     return $this->dummy;
+  }
+
+  protected function loadDummy() {
+
+    $this->launchException('Must be overrided');
   }
 
   protected function reflectDummy(array $aPath, array $aArguments = array(), $sMode = '', $bRead) {

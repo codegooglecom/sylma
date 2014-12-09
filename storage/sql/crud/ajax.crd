@@ -65,7 +65,7 @@
       <tpl:template match="*" mode="filters/content">
 
         <tpl:variable name="parent">
-          <tpl:read select="dummy()/parent"/>
+          <tpl:read select="collection()/dummy()/parent"/>
         </tpl:variable>
 
         <input type="hidden" name="parent" value="{$parent}"/>

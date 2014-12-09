@@ -76,6 +76,8 @@ sylma.ui.ContainerProps = {
       this.show();
     }
 
+    this.fireEvent('update', node);
+
     if (callback) { // because of onwindowload delay 10
 
       callback.delay(15);
@@ -309,7 +311,7 @@ sylma.ui.ContainerProps = {
     var result;
     el = el || this.getNode();
 
-    if (val === false || (val === undefined && (el.hasClass('sylma-visible') || el.hasClass('visible')))) {
+    if (val === false || (val === undefined && this.isShowed(el))) {
 
       result = false;
       this.hide(el);
@@ -321,6 +323,13 @@ sylma.ui.ContainerProps = {
     }
 
     return result;
+  },
+
+  isShowed : function(el) {
+
+    el = el || this.getNode();
+
+    return el.hasClass('sylma-visible') || el.hasClass('visible');
   },
 
   destroyChild : function(key, alias) {

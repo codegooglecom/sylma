@@ -26,6 +26,11 @@
               <cls:classes>
                 <cls:class alias="cached" name="\sylma\schema\cached\form\Form"/>
                 <cls:class alias="token" name="\sylma\schema\cached\form\Token"/>
+                <cls:class alias="tree" name="\sylma\crud\collection\Tree">
+                  <cls:classes>
+                    <cls:class alias="dummy" name="\sylma\crud\collection\Dummy"/>
+                  </cls:classes>
+                </cls:class>
               </cls:classes>
             </cls:class>
             <cls:class alias="field" name="Field"/>

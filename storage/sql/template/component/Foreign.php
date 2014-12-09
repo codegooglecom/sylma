@@ -79,12 +79,12 @@ class Foreign extends sql\schema\component\Foreign implements sql\template\patha
 
       case 'parent' :
 
-        $result = $this->getParser()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
+        $result = $this->getHandler()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
         break;
 
       default :
 
-        $this->launchException("Invalid function name : '{$sName}'");
+        $result = $this->getHandler()->getCurrentTemplate()->reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
         //$result = $this->getParser()->parsePathFunction($this, $aMatch, $aPath, $sMode);
     }
 

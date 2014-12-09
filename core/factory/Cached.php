@@ -134,7 +134,7 @@ class Cached extends core\module\Argumented implements core\factory {
 
     $result = null;
 
-    if (!$sClass = $class->read('name')) { // has name ?
+    if (!$sClass = $class->read('name', false)) { // has name ?
 
       $this->throwException(sprintf('Cannot build object. No "name" defined in class'), array(), 3);
     }

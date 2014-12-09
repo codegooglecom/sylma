@@ -12,6 +12,8 @@ class Table extends sql\template\component\Table implements common\argumentable 
   protected $aContent = array();
   protected $aValidates = array();
 
+  protected $parentDummy;
+
   public function parseRoot(dom\element $el) {
 
     parent::parseRoot($el);
@@ -90,7 +92,10 @@ class Table extends sql\template\component\Table implements common\argumentable 
     return $this->getSource()->call($sMethod, array($sName, false), $sFormat);
   }
 
-  protected function loadDummy($key = null, $parent = null) {
+  protected function loadDummy() {
+
+    $key = $this->getKey();
+    $parent = $this->parentDummy;
 
     $aArguments = $this->loadDummyArguments();
     $window = $this->getWindow();
@@ -158,6 +163,27 @@ class Table extends sql\template\component\Table implements common\argumentable 
     $this->addValidate($valid);
     $this->addTrigger(array($loop2));
   }
+
+  /*
+   * WIP
+  public function loadMultipleForeign(self $junction, sql\schema\element $source, sql\schema\element $target) {
+
+    $window = $this->getWindow();
+    $val = $window->createVariable('', 'php-null');
+    $key = $window->createVariable('', 'php-integer');
+    $loop = $window->createLoop($this->getElementArgument($this->getName(), 'get'), $val, $key);
+
+    $junction->init($key, $this->getDummy());
+    $junction->addElement($source, $this->getKey());
+
+    $loop->addContent($junction->getValidation());
+
+    $junction->addElement($target, $val);
+
+    $this->addContent($loop);
+    $this->addTrigger(array($junction));
+  }
+  */
 
   public function loadSingleReference($sName, sql\template\insert\Table $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
 

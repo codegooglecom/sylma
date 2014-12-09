@@ -588,4 +588,128 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Form insert simple with foreign multiple">
+    <tst:prepare>
+/*
+      $manager->runQuery( 'DROP TABLE IF EXISTS fm_user_tag;' .
+                          'DROP TABLE IF EXISTS fm_user_group;' .
+                          'DROP TABLE IF EXISTS fm_user;' .
+                          'DROP TABLE IF EXISTS fm_group;' .
+                          'DROP TABLE IF EXISTS fm_tag;', $manager::MODE_DELETE);
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/foreign-multiple-group.xql',
+      ));
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/foreign-multiple-tag.xql',
+      ));
+
+      $manager->getScript('/#sylma/storage/sql/alter/index.vml', array(
+        'file' => '/#sylma/storage/sql/test/samples/foreign-multiple-user.xql',
+      ));
+
+      $manager->runQueryFile('samples/foreign-multiple.sql');
+*/
+    </tst:prepare>
+    <tst:document>
+
+      <view:view mode="insert">
+
+        <sql:resource/>
+        <view:schema>samples/foreign-multiple-group.xql</view:schema>
+
+        <tpl:template>
+          <form>
+            <tpl:apply select="name,users"/>
+          </form>
+        </tpl:template>
+
+        <tpl:template match="sql:reference">
+          <fieldset>
+            <tpl:apply select="ref()" mode="ref"/>
+          </fieldset>
+        </tpl:template>
+
+        <tpl:template match="*">
+          <tpl:register/>
+        </tpl:template>
+
+        <tpl:template match="sql:table" mode="ref">
+          <tpl:apply select="name,tags"/>
+        </tpl:template>
+
+        <tpl:template match="sql:foreign">
+          <fieldset>
+            <tpl:register/>
+            <tpl:apply select="all()" mode="foreign"/>
+          </fieldset>
+        </tpl:template>
+
+        <tpl:template match="sql:table" mode="foreign">
+          <tpl:apply select="name"/>
+        </tpl:template>
+
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      $aValues = array(
+        'name' => 'group_foreign',
+        'users' => array(
+          array(
+            'name' => 'test_foreign01',
+            'tags' => array('1','3'),
+          ),
+          array(
+            'name' => 'test_foreign02',
+            'tags' => array('2'),
+          )
+        ),
+      );
+
+      $manager->set('values', $aValues);
+
+      return array(
+        'post' => $manager->createArgument($aValues),
+      );
+
+    </tst:load>
+    <tst:expected>
+
+      $sID = $manager->read('result');
+      $vals = $manager->get('values');
+
+      if (!is_numeric($sID)) \Sylma::throwException('Bad result');
+
+      $group = $manager->runQuery("SELECT name FROM fm_group WHERE id = $sID", $manager::MODE_GET);
+      $users = $manager->runQuery("SELECT u.id, u.name FROM fm_user AS u WHERE u.group = $sID", $manager::MODE_QUERY);
+
+      $user1 = $users->current();
+      $tags1 = $manager->runQuery("SELECT t.id FROM fm_tag AS t LEFT JOIN fm_user_tag AS ut ON ut.id_fm_tag = t.id WHERE ut.id_fm_user = " . $user1->read('id'), $manager::MODE_EXTRACT);
+
+      $users->next();
+      $user2 = $users->current();
+      $tags2 = $manager->runQuery("SELECT t.id FROM fm_tag AS t LEFT JOIN fm_user_tag AS ut ON ut.id_fm_tag = t.id WHERE ut.id_fm_user = " . $user2->read('id'), $manager::MODE_EXTRACT);
+
+      $aValues = array(
+        'name' => $group->read('name'),
+        'users' => array(
+          array(
+            'name' => $user1->read('name'),
+            'tags' => $tags1->query(),
+          ),
+          array(
+            'name' => $user2->read('name'),
+            'tags' => $tags2->query(),
+          ),
+        ),
+      );
+
+      $manager->assertEquals($vals->asArray(), $aValues);
+
+      return true;
+
+    </tst:expected>
+  </tst:test>
 </tst:tests>

@@ -94,37 +94,10 @@ class Basic extends \Exception implements core\exception {
     return $aResult;
   }
 
+
   protected function parseString($sValue) {
 
-    $aResult = array();
-
-    if ($fs = \Sylma::getManager('fs', false, false)) {
-
-      if (preg_match_all('/@file [^\s]*/', $sValue, $aMatch, PREG_OFFSET_CAPTURE)) {
-
-        $sFile = substr($aMatch[0][0][0], 6);
-        $iFile = $aMatch[0][0][1];
-        $iLength = strlen($sFile) + 6;
-
-        $aResult[] = substr($sValue, 0, $iFile) . ' ';
-        $aResult[] = '@file';
-
-        $sDirectory = $fs->getDirectory()->getSystemPath();
-
-        $aResult[] = '<a href="netbeans://' . $sDirectory . $sFile.'">' . $sFile . '</a>';
-        $aResult[] = substr($sValue, $iFile + $iLength);
-      }
-      else {
-
-        $aResult[] = $sValue;
-      }
-    }
-    else {
-
-      $aResult[] = $sValue;
-    }
-
-    return implode(' ', $aResult);
+    return \Sylma::getManager('formater')->parseTokens($sValue);
   }
 
   protected function getPath() {

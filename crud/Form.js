@@ -254,11 +254,18 @@ sylma.crud.Form = new Class({
 
     if (path.sub) {
 
-      this.getObject(path.alias).highlight(path.sub);
+      alias = path.alias;
+    }
+
+    var field = this.getObject(alias);
+
+    if (field) {
+
+      field.highlight(path.sub);
     }
     else {
 
-      this.getObject(alias, true).highlight();
+      console.log("Field '" + alias + "' is missing");
     }
 
     this.errors = true;

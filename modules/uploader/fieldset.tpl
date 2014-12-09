@@ -58,7 +58,7 @@
   <tpl:template match="*" mode="fieldset/content">
     <tpl:apply select="* ^ sql:foreign" mode="register"/>
   </tpl:template>
-  
+
   <tpl:template match="*" mode="file/fieldset">
     <fieldset js:class="sylma.crud.fieldset.Container" js:parent-name="fieldset">
       <tpl:apply mode="fieldset/legend"/>
@@ -66,7 +66,7 @@
     </fieldset>
   </tpl:template>
 
-  <tpl:template match="*" mode="file/update">
+  <tpl:template match="*" mode="file/update" xmode="update">
 
     <tpl:argument name="position" default="position()"/>
     <tpl:argument name="alias"/>

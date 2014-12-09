@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\template\component;
-use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template, sylma\parser\languages\common;
+use sylma\core, sylma\dom, sylma\storage\sql, sylma\schema, sylma\template;
 
-class Table extends Rooted implements sql\template\pathable, schema\parser\element {
+class Table extends Dummed implements sql\template\pathable, schema\parser\element {
 
   const MODE_EMPTY = 'sylma:empty';
 
@@ -14,9 +14,6 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
   protected $bSub = false;
   protected $bStatic = false;
   protected $bMultiple = true;
-
-  protected $dummy;
-  protected $parentDummy;
 
   protected $loop;
   protected $connection;
@@ -91,8 +88,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
   /**
    * @return string select|insert|update|delete
+   * @usedby sql\template\insert\Reference::importElementRef()
    */
-  protected function getMode() {
+  public function getMode() {
 
     return $this->sMode;
   }
@@ -173,39 +171,9 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
     return $aArguments;
   }
 
-  protected function loadDummy($key = null, $parent = null) {
+  protected function loadDummy() {
 
-    $var = $this->createDummy('cached', $this->loadDummyArguments(), null, true);
-
-    $this->setDummy($var);
-    return $var->getInsert();
-  }
-
-  /**
-   * @usedby Foreign::buildMultiple()
-   * @return common\_var|null
-   */
-  public function getDummy($bDebug = true) {
-
-    if (!$this->dummy) {
-
-      $this->loadDummy($this->getKey(), $this->parentDummy);
-
-      if (!$this->dummy && $bDebug) {
-
-        $this->launchException('No dummy defined');
-      }
-    }
-
-    return $this->dummy;
-  }
-
-  /**
-   * @usedby Reference::reflectFunctionRef()
-   */
-  public function setDummy(common\_var $handler) {
-
-    $this->dummy = $handler;
+    return $this->createDummy('cached', $this->loadDummyArguments(), null, true);
   }
 
   public function getKey() {
@@ -395,11 +363,6 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
         $result = $this->getHandler()->parsePathToken($this->getParent(), $aPath, $sMode, $bRead, $aArguments);
         break;
 
-      case 'dummy' :
-
-        $result = $this->getCollection()->reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
-        break;
-
       case 'column' :
 
         $result = $this->reflectColumn(array_pop($aPath));
@@ -407,7 +370,7 @@ class Table extends Rooted implements sql\template\pathable, schema\parser\eleme
 
       default :
 
-        $result = $this->getHandler()->getView()->getCurrentTemplate()->reflectApplyFunction($sName, $sArguments);
+        $result = parent::reflectApplyFunction($sName, $aPath, $sMode, $bRead, $sArguments, $aArguments);
     }
 
     return $result;

@@ -41,6 +41,11 @@ sylma.stepper.Snapshot = new Class({
 
   test : function(callback) {
 
+    this.testConfirm.delay(200, this, callback);
+  },
+
+  testConfirm: function (callback) {
+
     this.log('Test');
 
     var tree = JSON.decode(this.options.content);

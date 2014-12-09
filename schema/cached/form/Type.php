@@ -116,7 +116,18 @@ abstract class Type extends core\module\Domed {
 
     if (!$bResult = $this->validateFormat()) {
 
-      $this->addMessage($this->translate("The field '%s' : '%s' : [%s] is not valid", $this->read('title'), $this->getValue(), gettype($this->getValue())), $this->asAlias());
+      $mValue = $this->getValue();
+
+      if (is_array($mValue)) {
+
+        $sValue = var_export($mValue, true);
+      }
+      else {
+
+        $sValue = $mValue;
+      }
+
+      $this->addMessage($this->translate("The field '%s' : '%s' : [%s] is not valid", $this->read('title'), $sValue, gettype($this->getValue())), $this->asAlias());
     }
 
     return $bResult;

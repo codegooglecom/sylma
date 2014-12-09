@@ -223,6 +223,8 @@
 
   <tpl:template match="*" mode="foreign/single/boolean/update">
 
+    <tpl:apply mode="foreign/init"/>
+
     <tpl:argument name="value"/>
     <tpl:argument name="alias"/>
 
@@ -236,6 +238,8 @@
   </tpl:template>
 
   <tpl:template match="*" mode="foreign/multiple/boolean/update">
+
+    <tpl:apply mode="foreign/init"/>
 
     <tpl:argument name="values"/>
     <tpl:argument name="alias"/>

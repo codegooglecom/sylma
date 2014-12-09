@@ -179,13 +179,19 @@ class Pather extends component\Child {
   }
 
   /**
+   * Parse then apply path to tokens at level 0.
+   * Can find : all (with exclusion), expression, variable, string, numeric, function, default
+   *
+   * @param type $sPath
+   * @param type $sMode
+   * @param array $aArguments
+   * @return array|\sylma\parser\languages\common\argumentable
+   * Multiple tokens level 1 (with comma ex: id,name) return array.
+   * Single token level 1 (without comma) return object or array.
+   *
    * @usedby template\parser\component\Argument::getDefault()
    * @usedby template\parser\component\Apply::buildDefault()
    * @usedby template\parser\component\Read::build()
-   * 
-   * @return array|\sylma\parser\languages\common\argumentable
-   * Multiple path (with comma ex: id,name) return array.
-   * Simple path (without comma) return object or array.
    */
   public function applyPath($sPath, $sMode, array $aArguments = array()) {
 
@@ -237,15 +243,21 @@ class Pather extends component\Child {
     return $aResult;
   }
 
+  /**
+   * Parse and trim token expressions (using "()")
+   * @param type $sPath
+   * @return array
+   */
   protected function parsePaths($sPath) {
+
+    $aResult = array();
 
     if ($sPath{0} == "'") {
 
-      $aResult = array($sPath);
+      $aResult[] = $sPath;
     }
     else {
 
-      $aResult = array();
       $sLast = '';
       $bSub = 0;
 
@@ -278,6 +290,11 @@ class Pather extends component\Child {
     return $aResult;
   }
 
+  /**
+   * Parse token at level 1 (using "/")
+   * @param type $sPath
+   * @return type
+   */
   protected function parsePath($sPath) {
 
     if ($sPath{0} == "'") {
@@ -292,26 +309,32 @@ class Pather extends component\Child {
     return $aResult;
   }
 
+  /**
+   * Apply path to all tokens at level 1 (using ",")
+   *
+   * @param array $aPaths List of token
+   * @return array
+   */
   public function parsePathTokens(array $aPaths, $sMode, $bRead = false, array $aArguments = array()) {
-/*
-    if (count($aPaths) > 1) {
-*/
-      $mResult = array();
 
-      foreach ($aPaths as $sPath) {
+    $aResult = array();
 
-        $mResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode, $bRead, $aArguments);
-      }
-/*
+    foreach ($aPaths as $sPath) {
+
+      $aResult[] = $this->parsePathToken($this->parsePath($sPath), $sMode, $bRead, $aArguments);
     }
-    else {
 
-      $mResult = $this->parsePathToken(current($aPaths), $sMode, $bRead, $aArguments);
-    }
-*/
-    return $mResult;
+    return $aResult;
   }
 
+  /**
+   * Apply path to all tokens at level 2 (using "/")
+   * @param array $aPath
+   * @param type $sMode
+   * @param type $bRead
+   * @param array $aArguments
+   * @return type
+   */
   public function parsePathToken(array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     if ($aPath) {
@@ -327,6 +350,9 @@ class Pather extends component\Child {
     return $result;
   }
 
+  /**
+   * Apply single token, can find : variable, expression, string, numeric, function, default (key)
+   */
   protected function parsePathTokenValue($sPath, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     if ($aMatch = $this->matchVariable($sPath)) {
