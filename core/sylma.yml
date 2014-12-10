@@ -202,7 +202,7 @@ modules :
 
 template :
   # @todo : required attribute need refactoring to work
-  required : true
+  required : false
 
 path :
   extensions :

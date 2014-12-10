@@ -306,7 +306,7 @@ sylma.ui.ContainerProps = {
     }.delay(100));
   },
 
-  toggleShow : function(el, val) {
+  toggleShow : function(el, val, callback) {
 
     var result;
     el = el || this.getNode();
@@ -314,12 +314,12 @@ sylma.ui.ContainerProps = {
     if (val === false || (val === undefined && this.isShowed(el))) {
 
       result = false;
-      this.hide(el);
+      this.hide(el, callback);
     }
     else {
 
       result = true;
-      this.show(el);
+      this.show(el, callback);
     }
 
     return result;
