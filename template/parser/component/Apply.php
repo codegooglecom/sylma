@@ -89,17 +89,5 @@ class Apply extends Read {
 
     return $aResult;
   }
-
-  protected function lookupPath($sValue) {
-
-    $sResult = $this->getTemplate()->readPath($sValue, '');
-
-    if (!is_string($sResult)) {
-
-      $this->launchException("String expected as read path in '$sValue'");
-    }
-
-    return $sResult;
-  }
 }
 

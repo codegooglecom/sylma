@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/view"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tpl="http://2013.sylma.org/template"
+
+  targetNamespace="http://2013.sylma.org/view"
+  elementFormDefault="qualified"
+>
+  
+  <xs:import namespace="http://2013.sylma.org/template"/>
+
+  <xs:element name="view">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="schema" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:group ref="tpl:root"/>
+          <!-- auto-complete fixes -->
+          <xs:any namespace="http://2013.sylma.org/template"/>
+          <xs:any namespace="http://2013.sylma.org/storage/sql"/>
+          <xs:any namespace="http://2013.sylma.org/action"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="mode" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="schema" type="xs:string"/>
+
+</xs:schema>

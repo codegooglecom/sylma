@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/template/binder"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:tpl="http://2013.sylma.org/template"
+
+  targetNamespace="http://2013.sylma.org/template/binder"
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+>
+
+  <xs:import namespace="http://2013.sylma.org/schema/ssd" schemaLocation="../../schema/ssd/simple.xsd"/>
+  <xs:import namespace="http://2013.sylma.org/template"/>
+
+  <xs:group name="content">
+    <xs:choice>
+      <xs:group ref="tpl:anyContent"/>
+      <!-- auto-complete fixes -->
+      <xs:any namespace="http://2013.sylma.org/template"/>
+      <xs:any namespace="http://2013.sylma.org/action"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:attributeGroup name="object">
+    <xs:attribute ref="class"/>
+    <xs:attribute ref="name"/>
+    <xs:attribute ref="parent"/>
+    <xs:attribute ref="parent-name"/>
+  </xs:attributeGroup>
+
+  <xs:attribute name="class" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Full js class path. Must extends sylma.ui.Base
+        Ex : sylma.ui.Container
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="name" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        If no name defined, object is added to sylma.ui.Base.tmp array.
+        Name allow parent to retrieve this object in sylma.ui.Base.objects or with sylma.ui.Base.getObject().
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="parent" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Define a reference to root object as a js path. Default is : sylma.ui.tmp
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="parent-name" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Allow child objects to retrieve this object with sylma.ui.Base.getParent()
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attributeGroup name="element">
+    <xs:attribute name="node">
+      <xs:annotation>
+        <xs:documentation>
+          Allow parent object to retrieve element with sylma.ui.Base.getNode().
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="method">
+    <xs:annotation>
+      <xs:documentation>
+        Methods and event must contains valid javascript code, except for event's special tokens.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="xs:string" use="required" form="unqualified"/>
+        <xs:attribute name="arguments" type="xs:string" form="unqualified">
+          <xs:annotation>
+            <xs:documentation>
+              A list of arguments separated by a comma.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:group name="html">
+
+    <xs:choice>
+      <xs:element ref="name"/>
+      <xs:element ref="method"/>
+      <xs:element ref="event"/>
+      <xs:element ref="option"/>
+      <xs:element ref="include"/>
+    </xs:choice>
+
+  </xs:group>
+
+  <xs:element name="name">
+    <xs:complexType mixed="true">
+      <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="method" type="method">
+    <xs:annotation>
+      <xs:documentation>
+        Method is added to parent object.
+        If a parent method exists, it will be overrided and accessible with this.parent().
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="event" type="method">
+    <xs:annotation>
+      <xs:documentation>
+        Event is added as DOMEvent to parent html element.
+        Parent objects can be retrieve with %object% and parent of it parent with %parent%.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="option">
+    <xs:annotation>
+      <xs:documentation>
+        Allow parent object to access content with sylma.ui.Base.get() or sylma.ui.Base.options.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="name" use="required" form="unqualified">
+        <xs:annotation>
+          <xs:documentation>
+            Name of the options, can be multiple js properties separated by a dot.
+            If collections do not exists they will be created.
+            Ex : path, settings.myval
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="include" type="ssd:file">
+    <xs:annotation>
+      <xs:documentation>
+        Include corresponding script file.
+        Warning : inclusion will not work with ajax call, script must be included before.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:attributeGroup name="template">
+    <xs:attribute name="all"/>
+    <xs:attribute name="alias"/>
+    <xs:attribute name="autoload"/>
+  </xs:attributeGroup>
+
+</xs:schema>

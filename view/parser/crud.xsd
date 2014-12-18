@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/view/crud"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:tpl="http://2013.sylma.org/template"
+
+  targetNamespace="http://2013.sylma.org/view/crud"
+  elementFormDefault="qualified"
+>
+
+  <xs:import namespace="http://2013.sylma.org/schema/ssd" schemaLocation="../../schema/ssd/simple.xsd"/>
+  <xs:import namespace="http://2013.sylma.org/view"/>
+  <xs:import namespace="http://2013.sylma.org/template"/>
+
+  <xs:group name="content">
+    <xs:choice>
+      <xs:group ref="tpl:root"/>
+      <!-- auto-complete fixes -->
+      <xs:any namespace="http://2013.sylma.org/template"/>
+      <xs:any namespace="http://2013.sylma.org/action"/>
+      <xs:any namespace="http://2013.sylma.org/storage/sql"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="view">
+    <xs:choice>
+      <xs:element ref="view:view"/>
+      <!-- auto-complete fixes -->
+      <xs:any namespace="http://2013.sylma.org/view"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:attributeGroup name="groups">
+    <xs:attribute name="groups">
+      <xs:annotation>
+        <xs:documentation>
+          A list of groups to include, separated by a comma.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string"/>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:element name="crud">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="global" minOccurs="0">
+          <xs:complexType>
+            <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="group">
+            <xs:complexType>
+              <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:attribute name="name" type="xs:string" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="route">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="local" minOccurs="0">
+                  <xs:complexType>
+                    <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:complexType>
+                </xs:element>
+                <xs:group ref="view" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+              <xs:attribute name="name" type="xs:string">
+                <xs:annotation>
+                  <xs:documentation>
+                    Name used to access script in url.
+                    One single route without @name will be the default route used when no arguments is sent.
+                    It can be reached too with alias 'default'.
+                    Ex. /mymodule or /mymodule/index or /mymodule/index/default will call default route in file /mymodule/index.vml
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:attribute>
+              <xs:attributeGroup ref="groups"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:group ref="view"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="include">
+    <xs:annotation>
+      <xs:documentation>
+        Context and argument stay the same when including script, at the opposite of crud:script where call is isolated
+        If a @path is given, include corresponding route, else include default route
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="path" type="ssd:path"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="script">
+    <xs:annotation>
+      <xs:documentation>
+        Call another script. Children are sent as arguments.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="path" type="ssd:path" use="required"/>
+      <xs:attribute name="hollow" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            Returned value is not added to result
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="path">
+    <xs:annotation>
+      <xs:documentation>
+        If a @path is given, return corresponding route path, else return default route path
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="path" type="ssd:path"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

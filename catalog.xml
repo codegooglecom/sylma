@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+  <group prefer="public">
+
+    <uri
+      name="http://2013.sylma.org/schema/ssd"
+      uri="schema/ssd/simple.xsd"/>
+
+    <public
+      publicId="http://2013.sylma.org/schema/ssd"
+      uri="schema/ssd/simple.xsd"/>
+
+    <uri
+      name="http://2014.sylma.org/html"
+      uri="modules/html/xhtml.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/view/crud"
+      uri="view/parser/crud.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/view"
+      uri="view/parser/view.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/template"
+      uri="template/parser/template.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/action"
+      uri="action/action.xsd"/>
+
+    <uri
+      name="http://www.sylma.org/modules/tester/parser"
+      uri="modules/tester/tester.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/storage/sql"
+      uri="storage/sql/view.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/core/factory"
+      uri="core/factory/parser/factory.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/template/binder"
+      uri="template/binder/binder.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/parser/security"
+      uri="parser/security/security.xsd"/>
+
+    <uri
+      name="http://www.sylma.org/storage/fs/security"
+      uri="storage/fs/directory.xsd"/>
+
+    <uri
+      name="http://2014.sylma.org/device"
+      uri="device/device.xsd"/>
+
+<!--
+    <system
+      systemId="http://2013.sylma.org/storage/sql"
+      uri="storage/sql/schema.xsd"/>
+-->
+  </group>
+</catalog>

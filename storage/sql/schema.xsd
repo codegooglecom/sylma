@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/storage/sql"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+
+  targetNamespace="http://2013.sylma.org/storage/sql"
+  elementFormDefault="qualified"
+>
+
+  <xs:import namespace="http://2013.sylma.org/schema/ssd"/>
+
+<!--
+  @todo : currently invalid
+  <xs:include schemaLocation="schema/datatypes.xql"/>
+-->
+
+  <xs:simpleType name="name">
+    <xs:annotation>
+      <xs:documentation>
+        SQL table and column names
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NCName"/>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="default">
+    <xs:attribute name="default" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Default value if no value is sent. Behaviour can be changed with tpl:register/@mode
+          Ex : now(), 5, 'abc'
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="alter-default" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Default value defined in DB
+          Ex : null, 5, 'abc'
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="table">
+    <xs:attribute name="table" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          QName of the table.
+          Ex : user:user
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="import" type="ssd:file" use="required"/>
+  </xs:attributeGroup>
+
+  <xs:element name="schema">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="table">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required"/>
+                    <xs:attribute name="title" type="xs:string">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Display name
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="type" type="xs:string" use="required">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Ex : sql:string, ssd:file, xs:integer, or custom type
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:attribute>
+                    <xs:attributeGroup ref="default"/>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="foreign" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required"/>
+                    <xs:attribute name="occurs" use="required">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="0..1"/>
+                          <xs:enumeration value="1..1"/>
+                          <xs:enumeration value="0..n"/>
+                          <xs:enumeration value="1..n"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attributeGroup ref="table"/>
+                    <xs:attributeGroup ref="default"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+              <xs:element name="reference" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" use="required"/>
+                  <xs:attributeGroup ref="table"/>
+                  <xs:attribute name="foreign" type="name" use="required"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

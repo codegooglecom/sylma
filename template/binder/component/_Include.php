@@ -8,7 +8,6 @@ class _Include extends Basic implements common\arrayable {
   public function parseRoot(dom\element $el) {
 
     $this->setNode($el);
-    $this->setFile($this->getSourceFile($this->readx()));
 
     return $this->build();
   }
@@ -21,10 +20,12 @@ class _Include extends Basic implements common\arrayable {
 
   protected function build() {
 
+    $file = $this->getSourceFile($this->readx());
+
     $window = $this->getPHPWindow();
     $contexts = $window->getVariable('contexts');
 
-    $callFile = $window->addControler(self::FILE_MANAGER)->call('getFile', array((string) $this->getFile()));
+    $callFile = $window->addControler(self::FILE_MANAGER)->call('getFile', array((string) $file));
 
     return array($contexts->call('get', array($this->getContext()))->call('add', array($callFile))->getInsert());
   }

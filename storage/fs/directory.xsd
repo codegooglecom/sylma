@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://www.sylma.org/storage/fs/security"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ls="http://2013.sylma.org/parser/security"
+
+  targetNamespace="http://www.sylma.org/storage/fs/security"
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+>
+
+  <xs:import namespace="http://2013.sylma.org/parser/security" schemaLocation="../../parser/security/types.xsd"/>
+
+  <xs:element name="directory">
+    <xs:annotation>
+      <xs:documentation>
+        Root element of directory.sml files
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="propagate" type="security" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Define sub directories and files security values.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="self" type="security" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Define current directory security values.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="security">
+    <xs:sequence>
+      <xs:element name="security">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="owner" type="ls:owner"/>
+            <xs:element name="group" type="ls:group"/>
+            <xs:element name="mode" type="ls:mode"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

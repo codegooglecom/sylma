@@ -23,9 +23,9 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">world</div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -42,12 +42,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <div js:class="sylma.ui.Base" class="first">hello</div>
             <div js:class="sylma.ui.Base" class="second">world</div>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -67,9 +67,9 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div id="hello" js:class="sylma.ui.Base" js:parent="example" js:name="test">world</div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -86,12 +86,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <js:event name="click">sylma.tester.test(true);</js:event>
             <p>hello</p>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:callback>
@@ -183,7 +183,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <strong>
               <js:event name="click">sylma.tester.test(true);</js:event>
@@ -191,7 +191,7 @@
             </strong>
             <p>hello</p>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:callback>
@@ -209,7 +209,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <textarea js:node="strong">
               <js:event name="click">throw new Error('Must not be called');</js:event>
@@ -219,7 +219,7 @@
             </span>
             <p>hello</p>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:callback>
@@ -236,7 +236,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <strong class="myclass">
               <js:event name="click">sylma.tester.test(this.tagName == 'STRONG');</js:event>
@@ -244,7 +244,7 @@
             </strong>
             <p>hello</p>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:callback>
@@ -261,12 +261,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <js:method name="update">return 'abc';</js:method>
             <p>hello</p>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -283,12 +283,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <js:method name="myTest" arguments="myarg">return myarg + 'world';</js:method>
             <p>hello</p>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -305,13 +305,13 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <js:include>samples/sample1.js</js:include>
           <div js:class="sylma.samples.Sample1" js:parent="example" js:name="test">
             <js:method name="hello">return this.parent() + 'world';</js:method>
             <p>hello</p>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -329,12 +329,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <js:option name="mykey">mytest</js:option>
             <div>Hello world</div>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -351,7 +351,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <js:option name="mykey">
               <le:array>
@@ -361,7 +361,7 @@
               </le:array>
             </js:option>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -382,12 +382,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <js:option name="directory" cast="x"><le:directory/></js:option>
             <div>Hello world</div>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -404,12 +404,12 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <div js:node="hello">Hello</div>
             <div>World</div>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -459,13 +459,13 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <p>Bla bla bla</p>
             <div js:node="hello">Hello</div>
             <div js:node="world">World</div>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -479,7 +479,7 @@
     <tst:document>
       <view:view>
         <xl:resource/>
-        <view:template>
+        <tpl:template>
           <div js:class="sylma.ui.Base" js:parent="example" js:name="test">
             <p>Bla bla bla</p>
             <select js:node="select">
@@ -487,7 +487,7 @@
               <option selected="selected">def</option>
             </select>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:expected>
@@ -507,7 +507,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <div>
             <tpl:if test="name = 'admin'">
               <h3 js:class="sylma.ui.Base" js:parent="example" js:name="test">
@@ -518,7 +518,7 @@
               </h3>
             </tpl:if>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:callback>
@@ -536,7 +536,7 @@
           <sql:id>2</sql:id>
         </sql:resource>
         <view:schema>/#sylma/view/test/grouped/samples/user1.xql</view:schema>
-        <view:template>
+        <tpl:template>
           <js:include>samples/update01.js</js:include>
           <div js:class="sylma.samples.Sample2" js:parent="example" js:name="test">
             <js:option name="path" cast="x">
@@ -548,7 +548,7 @@
               <js:event name="click">%object%.update();</js:event>
             </button>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:prepare>
@@ -565,7 +565,7 @@
     <tst:document>
       <view:view>
         <xl:resource/>
-        <view:template>
+        <tpl:template>
           <js:include>samples/update02.js</js:include>
           <div js:class="sylma.samples.Sample2" js:parent="example" js:name="test">
             <js:option name="path" cast="x">
@@ -574,7 +574,7 @@
             </js:option>
             <js:option name="sylma-inside">1</js:option>
           </div>
-        </view:template>
+        </tpl:template>
       </view:view>
     </tst:document>
     <tst:prepare>

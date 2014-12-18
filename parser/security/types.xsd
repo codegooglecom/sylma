@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/parser/security"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+  targetNamespace="http://2013.sylma.org/parser/security"
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+>
+
+  <xs:simpleType name="owner">
+    <xs:annotation>
+      <xs:documentation>
+        Name of the owner
+        Ex : root, admin
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="group">
+    <xs:annotation>
+      <xs:documentation>
+        Name of the group
+        Ex : root, user, public
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="mode">
+    <xs:annotation>
+      <xs:documentation>
+        Linux style octal mode.
+        Ex : 700, 711, 744
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+</xs:schema>

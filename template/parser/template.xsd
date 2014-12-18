@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/template"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+  xmlns:cls="http://2013.sylma.org/core/factory"
+  xmlns:sql="http://2013.sylma.org/storage/sql"
+
+  targetNamespace="http://2013.sylma.org/template"
+  elementFormDefault="qualified"
+>
+
+  <xs:import namespace="http://2013.sylma.org/schema/ssd" schemaLocation="../../schema/ssd/simple.xsd"/>
+  <xs:import namespace="http://2013.sylma.org/action"/>
+  <xs:import namespace="http://2013.sylma.org/core/factory"/>
+  <xs:import namespace="http://2013.sylma.org/storage/sql"/>
+  <xs:import namespace="http://2014.sylma.org/html"/>
+  <xs:import namespace="http://2014.sylma.org/device"/>
+
+  <xs:simpleType name="path">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="expression">
+    <xs:annotation>
+      <xs:documentation>
+        A simple value (path, var, etc..), or values separated by operators.
+        Ex : '1', $val, $val = 'test', $val1 in $val2
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="modes">
+    <xs:attribute name="mode" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Restrict template to call using the same mode
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="xmode" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          @xmode act like @mode but automatically propagate to sub templates called with apply
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:group name="root">
+    <xs:choice>
+      <xs:element ref="template"/>
+      <xs:group ref="le:content"/>
+      <xs:any namespace="http://2013.sylma.org/storage/sql"/>
+      <!-- auto-complete fixes -->
+      <xs:any namespace="http://2013.sylma.org/action"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="node">
+    <xs:choice>
+      <xs:element ref="token"/>
+      <xs:element ref="attribute"/>
+      <xs:element ref="cdata"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="content">
+    <xs:choice>
+      <xs:element ref="apply"/>
+      <xs:element ref="read"/>
+      <xs:element ref="text"/>
+      <xs:element ref="format"/>
+      <xs:element ref="sql:result"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="anyContent">
+    <xs:choice>
+      <xs:group ref="content"/>
+      <xs:group ref="le:content"/>
+      <!-- auto-complete fixes -->
+      <xs:any namespace="http://2013.sylma.org/action"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="anyContentNode">
+    <xs:choice>
+      <xs:group ref="anyContent"/>
+      <xs:any namespace="http://2014.sylma.org/html"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="structure">
+    <xs:choice>
+      <xs:element ref="if"/>
+      <xs:element ref="switch"/>
+      <xs:element ref="constant"/>
+      <xs:element ref="variable"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="anyStructure">
+    <xs:choice>
+      <xs:group ref="structure"/>
+      <xs:any namespace="http://2013.sylma.org/storage/sql"/>
+      <xs:any namespace="http://2014.sylma.org/device"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:element name="templates">
+    <xs:annotation>
+      <xs:documentation>
+        Root element for templates files
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:group ref="root" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="template">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="argument" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:group ref="anyStructure"/>
+          <xs:group ref="anyContentNode"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attributeGroup ref="modes"/>
+      <xs:attribute name="match">
+        <xs:annotation>
+          <xs:documentation>
+            Restrict template by names or types associated to namespaces.
+            Examples : *, user:user, user:*, sql:string, user:user | group:group
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="import" type="ssd:file"/>
+
+  <xs:complexType name="apply">
+    <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded">
+      <xs:annotation>
+        <xs:documentation>
+          All children are sent as argument, accessible in called template with tpl:argument.
+          They can be index with integers, or associated to keys with @tpl:name
+        </xs:documentation>
+      </xs:annotation>
+    </xs:group>
+    <xs:attribute name="select" type="xs:string"/>
+    <xs:attribute name="use" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          A constant name.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="read" type="path">
+      <xs:annotation>
+        <xs:documentation>
+          @deprecated : Usage to define
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="modes"/>
+  </xs:complexType>
+
+  <xs:element name="apply">
+    <xs:annotation>
+      <xs:documentation>
+        Lookup for a template matching current tree, or the one choosen with @select
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="apply">
+          <xs:attribute name="reflector" type="ssd:class">
+            <xs:annotation>
+              <xs:documentation>
+                @deprecated : Usage to define
+                Start a new tree from a template\tree object
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="import" type="ssd:file">
+            <xs:annotation>
+              <xs:documentation>
+                Start a new XML tree
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="required" type="ssd:boolean">
+            <xs:annotation>
+              <xs:documentation>
+                @todo : currently disabled
+                If TRUE, an exception is thrown if no template is found
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="read" type="apply">
+    <xs:annotation>
+      <xs:documentation>
+        Return value of current tree, or the one choosen with @select
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="register">
+    <xs:annotation>
+      <xs:documentation>
+        Register current tree. Mainly used in modes insert and update.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0"/>
+      <xs:attribute name="mode" type="xs:string"/>
+      <xs:attribute name="reflector" type="ssd:class">
+        <xs:annotation>
+          <xs:documentation>
+            Override dummy class for current tree.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="argument">
+    <xs:annotation>
+      <xs:documentation>
+        Argument sent to template, can be used with $myvar
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="default" type="path"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="variable">
+    <xs:annotation>
+      <xs:documentation>
+        Variable, like argument, can be used with $myvar
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="format">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="array"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="attribute">
+    <xs:annotation>
+      <xs:documentation>
+        @deprecated : Usage to define
+        Set attribute content on parent element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="name" type="xs:NCName" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="cdata">
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="constant">
+    <xs:annotation>
+      <xs:documentation>
+        Constants can be used as a string with $$myconstant or as a path in apply/@use
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="path">
+          <xs:attribute name="name" use="required" type="xs:string"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="format">
+    <xs:annotation>
+      <xs:documentation>
+        Format content with a type dummy
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0"/>
+      <xs:attribute name="arguments" type="xs:string"/>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="numeric"/>
+            <xs:enumeration value="float"/>
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="price"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="settings">
+    <xs:annotation>
+      <xs:documentation>
+        Override settings of current tree.
+        Settings are mainly used to create object via the factory.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="cls:classes"/>
+        <xs:any/>
+        <!-- auto-complete fixes -->
+        <xs:any namespace="http://2013.sylma.org/core/factory"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="text">
+    <xs:annotation>
+      <xs:documentation>
+        Return simple string.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="token">
+    <xs:annotation>
+      <xs:documentation>
+        Add static or dynamic value to an attribute, separated by a space.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0"/>
+      <xs:attribute name="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="if">
+    <xs:annotation>
+      <xs:documentation>
+        Create a PHP if, if dynamic, or resolve it if static.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="anyContentNode" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="else" minOccurs="0">
+          <xs:complexType>
+            <xs:group ref="anyContentNode" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="test" type="expression" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="switch">
+    <xs:annotation>
+      <xs:documentation>
+        Create a PHP switch.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="case">
+          <xs:complexType>
+            <xs:group ref="anyContentNode" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:attribute name="value" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="test" type="expression" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

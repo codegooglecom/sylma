@@ -10,6 +10,18 @@ class Read extends Child implements common\arrayable, parser\component {
     $this->setNode($el);
   }
 
+  protected function lookupPath($sValue) {
+
+    $sResult = $this->getTemplate()->readPath($sValue, '');
+
+    if (!is_string($sResult)) {
+
+      $this->launchException("String expected as read path in '$sValue'");
+    }
+
+    return $sResult;
+  }
+
   protected function loadSelect($sResult) {
 
     if (!$sResult) {
@@ -19,7 +31,6 @@ class Read extends Child implements common\arrayable, parser\component {
         $sResult = $this->getParser()->getConstant($sConstant);
       }
       else if ($sValue = $this->readx('@read')) {
-
 
         $sResult = $this->lookupPath($sValue);
       }

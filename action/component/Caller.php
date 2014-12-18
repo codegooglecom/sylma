@@ -3,7 +3,7 @@
 namespace sylma\action\component;
 use sylma\core, sylma\dom;
 
-class Caller extends Basic {
+abstract class Caller extends Basic {
 
   public function parseRoot(dom\element $el) {
 

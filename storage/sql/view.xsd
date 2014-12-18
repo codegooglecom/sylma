@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/storage/sql"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+
+  targetNamespace="http://2013.sylma.org/storage/sql"
+  elementFormDefault="qualified"
+>
+<!--  schemaLocation="../../template/parser/template.xsd"-->
+  <xs:import namespace="http://2013.sylma.org/schema/ssd" schemaLocation="../../schema/ssd/simple.xsd"/>
+  <xs:import namespace="http://2013.sylma.org/template"/>
+  <xs:import namespace="http://2013.sylma.org/action"/>
+
+  <xs:include schemaLocation="schema.xsd"/>
+
+  <xs:group name="content">
+    <xs:choice>
+      <xs:group ref="tpl:content"/>
+      <xs:group ref="le:content"/>
+      <!-- auto-complete fixes -->
+      <xs:any namespace="http://2013.sylma.org/action"/>
+      <xs:any namespace="http://2013.sylma.org/template"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:element name="resource">
+    <xs:annotation>
+      <xs:documentation>
+        Required element, it indicates the use of sql tree.
+        By default, table is used as root tree. With @multiple the root tree can be a collection.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="xs:int" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Filter with WHERE on column 'id'
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="table" type="name" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Override root table name
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="connection" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="multiple" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            If TRUE, root tree will be a collection
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="optional" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            Allow use of tpl:template/@mode = sylma:empty to catch empty results
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="connection" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Override default connection alias
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="distinct">
+    <xs:annotation>
+      <xs:documentation>
+        Add DISTINCT clause to query
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="name" type="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="element">
+    <xs:annotation>
+      <xs:documentation>
+        Return sub tree defined with @name. It should not be added to content.
+        Mainly used with sql:function
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="name" type="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="filter">
+    <xs:annotation>
+      <xs:documentation>
+        Add WHERE clause
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="content" minOccurs="0"/>
+      <xs:attribute name="name" type="name">
+        <xs:annotation>
+          <xs:documentation>
+            A sub-column to use, if none defined current tree will be used
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="function" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            Avoid value escape
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="optional" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            Make field dynamic, filter is apply only when a value is sent.
+            Optional filter must be complex.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="default" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If @optional is TRUE, a default string value can be defined
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="op" default="=" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            Change comparison operator
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="group-by">
+    <xs:annotation>
+      <xs:documentation>
+        Add GROUP BY clause to query
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="element" type="name" use="required">
+        <xs:annotation>
+          <xs:documentation>The name of the column to group by</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="limit">
+    <xs:annotation>
+      <xs:documentation>
+        Add LIMIT clause to query
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="content" minOccurs="0"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="order">
+    <xs:annotation>
+      <xs:documentation>
+        Add ORDER clause to query, apply to tree defined in content
+        Content mixed : simple type 'name' or complex type
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="content" minOccurs="0"/>
+      <xs:attribute name="function" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            If TRUE, value will not be escaped
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="result"/>
+
+  <xs:element name="token">
+    <xs:annotation>
+      <xs:documentation>
+        @todo : currently disabled
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="content"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="trigger">
+    <xs:annotation>
+      <xs:documentation>
+        Run content only if query successed, can only be used in modes insert, update and delete
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="content"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="function">
+    <xs:annotation>
+      <xs:documentation>
+        Add a function call into query's columns.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Every child will be added as an argument to the function call
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element ref="element"/>
+        <xs:group ref="content"/>
+      </xs:choice>
+      <xs:attribute name="name" type="name">
+        <xs:annotation>
+          <xs:documentation>
+            Name of the SQL function to call
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="element" type="name">
+        <xs:annotation>
+          <xs:documentation>
+            Usefull to send easily one column as argument to function.
+            To send multiple arguments use content.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="alias" type="name">
+        <xs:annotation>
+          <xs:documentation>
+            If provided, result can be read with column()/{alias} in sql:collection and sql:table
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

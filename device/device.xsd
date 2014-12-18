@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2014.sylma.org/device"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+
+  targetNamespace="http://2014.sylma.org/device"
+  elementFormDefault="qualified"
+>
+
+  <xs:import namespace="http://2013.sylma.org/template"/>
+  <xs:import namespace="http://2013.sylma.org/action"/>
+
+  <xs:element name="assert">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:group ref="tpl:content"/>
+        <xs:group ref="le:content"/>
+        <xs:any namespace="http://2014.sylma.org/html"/>
+        <!-- auto-complete fixes -->
+        <xs:any namespace="http://2013.sylma.org/template"/>
+        <xs:any namespace="http://2013.sylma.org/storage/sql"/>
+        <xs:any namespace="http://2013.sylma.org/action"/>
+      </xs:choice>
+      <xs:attribute name="test" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The type of device tested.
+            Ex : mobile, desktop, tablet, !mobile
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

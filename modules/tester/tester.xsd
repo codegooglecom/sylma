@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://www.sylma.org/modules/tester/parser"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+  targetNamespace="http://www.sylma.org/modules/tester/parser"
+  elementFormDefault="qualified"
+>
+
+  <!-- definition of complex elements -->
+  <xs:element name="tests">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="test"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="test">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="prepare" type="xs:string" minOccurs="0"/>
+        <xs:element name="document" type="any" minOccurs="0"/>
+        <xs:element name="load" type="xs:string" minOccurs="0"/>
+        <xs:element name="node" type="any" minOccurs="0"/>
+        <xs:element name="expected" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="disabled" type="xs:string"/><!-- boolean -->
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="any">
+    <xs:sequence>
+      <xs:any/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

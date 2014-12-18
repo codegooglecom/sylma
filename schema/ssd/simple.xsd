@@ -1,20 +1,43 @@
 <?xml version="1.0"?>
 <xs:schema version="1.0"
-  targetNamespace="http://2013.sylma.org/schema/ssd"
+  xmlns="http://2013.sylma.org/schema/ssd"
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+  targetNamespace="http://2013.sylma.org/schema/ssd"
   elementFormDefault="qualified"
 >
 
-  <xs:simpleType name="file" ssd:class="type\File">
+  <xs:simpleType name="path">
+    <xs:annotation>
+      <xs:documentation>
+        Path can be relative or absolute (beginning with /).
+        Paths are always relative to file where it's declared.
+        To go to parent use '..'.
+      </xs:documentation>
+    </xs:annotation>
     <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
       <xs:maxLength value="255"/>
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="file" ssd:class="type\File">
+    <xs:restriction base="ssd:path"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="class">
+    <xs:annotation>
+      <xs:documentation>
+        PHP Class, relative or absolute
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  
   <xs:simpleType name="email">
     <xs:restriction base="xs:string">
-      <xs:pattern value="\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b"/>
+      <xs:pattern value="[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}"/>
       <xs:maxLength value="255"/>
     </xs:restriction>
   </xs:simpleType>
@@ -33,8 +56,7 @@
 
   <xs:simpleType name="boolean">
     <xs:restriction base="xs:string">
-      <xs:enumeration>0</xs:enumeration>
-      <xs:enumeration>1</xs:enumeration>
+      <xs:enumeration value="x"/>
     </xs:restriction>
   </xs:simpleType>
 

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/action"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:tpl="http://2013.sylma.org/template"
+
+  targetNamespace="http://2013.sylma.org/action"
+>
+
+  <xs:import namespace="http://2013.sylma.org/schema/ssd" schemaLocation="../schema/ssd/simple.xsd"/>
+  <xs:import namespace="http://2013.sylma.org/template"/>
+
+  <xs:group name="content">
+    <xs:choice>
+      <xs:element ref="script"/>
+      <xs:element ref="get-argument"/>
+      <xs:element ref="file"/>
+      <xs:element ref="directory"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="anyContent">
+    <xs:choice>
+      <xs:group ref="content"/>
+      <xs:group ref="tpl:content"/>
+      <!-- auto-complete fixes -->
+      <xs:any namespace="http://2013.sylma.org/template"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:complexType name="content">
+    <xs:group ref="anyContent"/>
+  </xs:complexType>
+
+  <xs:simpleType name="source">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="post"/>
+      <xs:enumeration value="arguments"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="path">
+    <xs:restriction base="ssd:path">
+      <xs:minLength value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="script">
+    <xs:annotation>
+      <xs:documentation>
+        Call another script. Children are sent as arguments.
+        Each child can have a @le:name to set argument name.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="path" type="ssd:path" use="required"/>
+      <xs:attribute name="hollow" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            Returned value is not added to result
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="argument">
+    <xs:annotation>
+      <xs:documentation>
+        Check if an argument exists. Can override it.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="default" type="content" minOccurs="0"/>
+        <xs:element name="replace" type="content" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="optional" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            If FALSE and argument is missing, will throw an exception.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="source" type="source"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="context">
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Ex : js, css, js/common, messages, title
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="required" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            if TRUE and context do not exists, an exception will be thrown.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="directory" type="path">
+    <xs:annotation>
+      <xs:documentation>
+        Return a directory object that can be sent as argument or add to content as text.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="file" type="ssd:file">
+    <xs:annotation>
+      <xs:documentation>
+        Return a file object that can be sent as argument or add to content as text.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="get-argument">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="optional" type="ssd:boolean"/>
+      <xs:attribute name="format">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="array"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="source" type="source"/>
+      <xs:attribute name="escape" type="ssd:boolean"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="manager">
+    <xs:annotation>
+      <xs:documentation>
+        Return a manager.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Alias of the manager.
+            Ex : user, parser, dom, formater, mysql
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="call" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            Call a method instead of returning manager object.
+            Ex : getName
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="path" type="path">
+    <xs:annotation>
+      <xs:documentation>
+        Return a valid string path.
+        If no content defined, return path of current execution file.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:attribute name="name" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Value of a key when used into an le:array
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:element name="array">
+    <xs:annotation>
+      <xs:documentation>
+        Return a PHP array.
+        Each child can has a @le:name to define a key.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="explode" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If TRUE, text content will be split with given character.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="boolean">
+    <xs:annotation>
+      <xs:documentation>
+        Return a PHP boolean value from @value or content
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:attribute name="value">
+        <xs:annotation>
+          <xs:documentation>
+            Set value to TRUE or FALSE
+            Ex : 1, true, abc = TRUE / 0, false = FALSE
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="object">
+    <xs:annotation>
+      <xs:documentation>
+        Create and return an object using content arguments.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="string">
+    <xs:annotation>
+      <xs:documentation>
+        Convert and return content as a PHP string.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

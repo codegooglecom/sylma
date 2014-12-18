@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/parser/security"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+  targetNamespace="http://2013.sylma.org/parser/security"
+  attributeFormDefault="qualified"
+>
+
+  <xs:include schemaLocation="types.xsd"/>
+
+  <xs:attributeGroup name="element">
+    <xs:attribute ref="owner"/>
+    <xs:attribute ref="group"/>
+    <xs:attribute ref="mode"/>
+  </xs:attributeGroup>
+
+  <xs:attribute name="owner" type="owner"/>
+  <xs:attribute name="group" type="group"/>
+  <xs:attribute name="mode" type="mode"/>
+
+</xs:schema>

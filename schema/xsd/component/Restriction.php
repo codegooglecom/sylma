@@ -73,7 +73,7 @@ class Restriction extends schema\parser\component\Restriction {
 
   protected function loadRule(dom\element $el, array &$aResult) {
 
-    $aResult[$el->getName()] = $el->readx('@value');
+    $aResult[$el->getName()] = $el->readx('@value', array(), false);
   }
 
   protected function merge(schema\parser\component\Restriction $define) {
