@@ -26,7 +26,7 @@ class Initializer extends Parser implements core\argumentable {
     return parent::prepareTest($test, $controler);
   }
 */
-  public function createUser($sAlias = '') {
+  public function createUser($sAlias = '', $bPrivate = false) {
 
     $manager = $this->getManager('user')->getManager();
 
@@ -44,7 +44,7 @@ class Initializer extends Parser implements core\argumentable {
 
       $aGroups = $this->aUsers[$sAlias];
 
-      $result = $manager->create('user', array($manager, $sAlias, $aGroups));
+      $result = $manager->create('user', array($manager, $sAlias, $aGroups, $bPrivate));
     }
 
     return $result;

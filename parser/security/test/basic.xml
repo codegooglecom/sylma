@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests
+  xmlns="http://2014.sylma.org/html"
   xmlns:tst="http://www.sylma.org/modules/tester/parser"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"

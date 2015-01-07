@@ -3,10 +3,16 @@
 namespace sylma\modules\html;
 use sylma\core, sylma\storage\fs, sylma\template\binder, sylma\dom, sylma\modules\less;
 
+/**
+ * Render window as HTML adding context and cleaning result
+ * Window must use shtml for html, head and body elements
+ */
 class Document extends core\window\classes\Container {
 
   private $head = null;
   protected $result = null;
+
+  protected $sHTML = '';
 
   public function __construct(core\argument $args, core\argument $post, core\argument &$contexts) {
 
@@ -40,8 +46,10 @@ class Document extends core\window\classes\Container {
     $this->setPaths($this->getArgument(self::CONTENT_ARGUMENT)->query());
     $this->setArgument(self::CONTENT_ARGUMENT, null);
 
+    $this->sHTML = \Sylma::read('render/namespaces/shtml/uri');
+
     $this->setNamespaces(array(
-      'html' => \Sylma::read('namespaces/html'),
+      'html' => $this->sHTML,
     ));
   }
 
@@ -164,13 +172,12 @@ class Document extends core\window\classes\Container {
     $system = $body->addElement('div', null, array('id' => 'sylma-system'));
     $system->addElement('div', $content);
   }
-
+/*
   protected function cleanResult(dom\handler $doc, fs\file $file = null) {
 
     if (\Sylma::read('debug/html/foreign')) {
 
-      $sHTML = \Sylma::read('namespaces/html');
-      $els = $doc->queryx("//*[namespace-uri() != '$sHTML']", array(), false);
+      $els = $doc->queryx("//*[namespace-uri() != '$this->sHTML']", array(), false);
 
       if ($els->length) {
 
@@ -181,10 +188,9 @@ class Document extends core\window\classes\Container {
 
     return parent::cleanResult($doc, $file);
   }
-
+*/
   public function prepare($sContent) {
 
-    $sContent = substr_replace($sContent, 'xmlns="' . $this->getNamespace('html') . '" ', 6, 0);
     $doc = $this->createDocument($sContent);
 
     if ($doc && !$doc->isEmpty()) {

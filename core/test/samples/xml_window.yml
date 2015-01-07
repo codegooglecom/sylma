@@ -1,0 +1,18 @@
+debug :
+  enable : true
+exception :
+  show : false
+
+render :
+  namespaces :
+    test1 :
+      prefix : test1
+      uri : http://2013.sylma.org/core/test/sample01
+    test2 :
+      prefix : test2
+      uri : http://2013.sylma.org/core/test/sample02
+
+initializer :
+  window :
+    debug :
+      update : true

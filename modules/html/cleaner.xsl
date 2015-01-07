@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:html="http://www.w3.org/1999/xhtml" version="1.0">
+<xsl:stylesheet
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:shtml="http://2014.sylma.org/html"
+
+  version="1.0"
+>
 
   <xsl:variable name="break"><![CDATA[
 ]]></xsl:variable>
 
-  <xsl:template match="html:script">
-    <xsl:element name="script" namespace="{namespace-uri()}">
+  <xsl:variable name="html">http://www.w3.org/1999/xhtml</xsl:variable>
+
+  <xsl:template match="html:script | shtml:script">
+    <xsl:element name="script" namespace="{$html}">
       <xsl:apply-templates select="@*"/>
       <xsl:choose>
         <xsl:when test="text()">
@@ -33,8 +41,8 @@
     <xsl:apply-templates select="*"/>
   </xsl:template>
 
-  <xsl:template match="html:html">
-    <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
+  <xsl:template match="html:html | shtml:html">
+    <xsl:element name="{local-name()}" namespace="{$html}">
       <xsl:apply-templates select="@* | * | text()"/>
     </xsl:element>
   </xsl:template>
@@ -45,14 +53,22 @@
 
   <!-- Empty elements that can be display as simple tag !-->
 
+  <xsl:template match="shtml:link | shtml:meta | shtml:br | shtml:img | shtml:input | shtml:hr">
+    <xsl:apply-templates select="." mode="simple"/>
+  </xsl:template>
+
   <xsl:template match="html:link | html:meta | html:br | html:img | html:input | html:hr">
-    <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
+    <xsl:apply-templates select="." mode="simple"/>
+  </xsl:template>
+
+  <xsl:template match="*" mode="simple">
+    <xsl:element name="{local-name()}" namespace="{$html}">
       <xsl:apply-templates select="@*"/>
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="html:*">
-    <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
+  <xsl:template match="html:* | shtml:*">
+    <xsl:element name="{local-name()}" namespace="{$html}">
       <xsl:apply-templates select="@* | * | text()"/>
       <xsl:if test="not(normalize-space(.))"><![CDATA[]]></xsl:if>
     </xsl:element>

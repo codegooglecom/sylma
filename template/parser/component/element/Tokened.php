@@ -143,6 +143,8 @@ class Tokened extends Attributed implements common\arrayable, common\argumentabl
 
     $aChildren = $this->build();
 
+    $bRoot = !$this->getRoot()->getCurrentElement(false);
+
     $this->start();
 
     foreach ($aChildren as $child) {
@@ -154,16 +156,24 @@ class Tokened extends Attributed implements common\arrayable, common\argumentabl
 
     foreach ($this->getAttributes() as $attr) {
 
-      if ($attr instanceof Attribute) $aResult[] = $attr->getVar()->getInsert();
-      //else $aResult[] = $attr;
+      if ($attr instanceof Attribute) {
+
+        $aResult[] = $attr->getVar()->getInsert();
+      }
     }
 
     $aResult[] = $aBefore;
 
-    $sName = $this->loadName($el);
+    $sName = $this->buildName($el->getName(), $el->getNamespace());
+
+    if ($bRoot) {
+
+      $this->buildNamespaces();
+    }
 
     $aResult[] = '<' . $sName;
     $aResult[] = $this->parseAttributes();
+
     $aResult[] = '>';
 
     $aResult[] = $aContent;
@@ -175,12 +185,26 @@ class Tokened extends Attributed implements common\arrayable, common\argumentabl
     return $aResult;
   }
 
+  protected function buildNamespaces() {
+
+    foreach ($this->getHandler()->buildNamespaces() as $sName => $sValue) {
+
+      $this->setAttribute($sName, $sValue);
+    }
+  }
+
   protected function simpleAsArray(dom\element $el) {
 
-    //$this->build();
     $aResult = array();
 
-    $aResult[] = '<' . ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
+    $sName = $this->buildName($el->getName(), $el->getNamespace());
+
+    if (!$this->getRoot()->getCurrentElement(false)) {
+
+      $this->buildNamespaces();
+    }
+
+    $aResult[] = '<' . $sName;
     $aResult[] = $this->parseAttributes();
     $aResult[] = '/>';
 

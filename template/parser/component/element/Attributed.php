@@ -8,21 +8,10 @@ abstract class Attributed extends Domed {
   protected $aDefaultAttributes = array();
   protected $aAttributes = array();
 
-/*
-  public function parseAttributeKey($sName) {
-
-    $mVal = $this->readAttribute($sName);
-
-    $content = $this->parseAttributeValue($mVal[0]);
-
-    if (is_array($content)) {
-
-      $content = current($content);
-    }
-
-    return $content;
-  }
-*/
+  protected $aAvoidNamespaces = array(
+    'http://2013.sylma.org/parser/reflector/builder',
+    'http://2013.sylma.org/parser/security',
+  );
 
   protected function buildContent() {
 
@@ -30,9 +19,10 @@ abstract class Attributed extends Domed {
 
     foreach ($el->getAttributes() as $attr) {
 
-      if (!$attr->getNamespace() || in_array($attr->getNamespace(), $this->aAllowedNamespaces)) {
+      if (!in_array($attr->getNamespace(), $this->aAvoidNamespaces)) {
 
-        $this->setDefaultAttribute($attr->getName(), $attr->getValue());
+        $sName = $this->buildName($attr->getName(), $attr->getNamespace());
+        $this->setDefaultAttribute($sName, $attr->getValue());
       }
     }
 

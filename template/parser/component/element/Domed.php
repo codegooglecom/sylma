@@ -11,15 +11,12 @@ abstract class Domed extends template\parser\component\Unknowned implements temp
   protected $bBuilded = false;
   protected $aBefore = array();
 
-  protected $aAllowedNamespaces = array();
   protected $sID = '';
 
   public function parseRoot(dom\element $el) {
 
     $this->allowUnknown(true);
     $this->allowText(true);
-
-    $this->aAllowedNamespaces[] = \Sylma::read('namespaces/html');
 
     $this->sID = uniqid();
     $this->build($el);
@@ -79,13 +76,16 @@ abstract class Domed extends template\parser\component\Unknowned implements temp
     return $this->getRoot()->stopElement();
   }
 
-  protected function loadName(dom\element $el) {
+  protected function buildName($sName, $sNamespace) {
 
-    //$sName = ($el->getPrefix() ? $el->getPrefix() . ':' : '') . $el->getName();
-    //$sName = $this->getPrefix($el->getNamespace()) . $el->getName();
-    $sName = $el->getName();
+    $sPrefix = '';
 
-    return $sName;
+    if ($sNamespace) {
+
+      $sPrefix = $this->getHandler()->lookupPrefix($sNamespace);
+    }
+
+    return ($sPrefix ? $sPrefix . ':' : '') . $sName;
   }
 
   public function asToken() {

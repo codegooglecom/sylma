@@ -19,5 +19,15 @@ interface handler {
    * @return Pather
    */
   function getPather();
+
+  /**
+   * @return string
+   */
+  function lookupPrefix($sNamespace);
+
+  /**
+   * @return array The list of xmlns attributes
+   */
+  function buildNamespaces();
 }
 

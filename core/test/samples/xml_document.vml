@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <view:view
   xmlns:view="http://2013.sylma.org/view"
-  xmlns="http://2014.sylma.org/html"
+  xmlns="http://www.w3.org/1999/xhtml"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:xl="http://2013.sylma.org/storage/xml"
   xmlns:le="http://2013.sylma.org/action"
+
+  xmlns:test1="http://2013.sylma.org/core/test/sample01"
+  xmlns:test2="http://2013.sylma.org/core/test/sample02"
 >
 
   <xl:resource/>
 
   <tpl:template>
-    <hello/>
+    <hello>
+      <test1:abc/>
+      <def test2:def="world"/>
+    </hello>
   </tpl:template>
 
 </view:view>

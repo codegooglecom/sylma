@@ -59,6 +59,23 @@
     </tst:node>
   </tst:test>
 
+  <tst:test name="XML window">
+    <tst:prepare>
+
+      $init = $manager->create('init');
+      $user = $manager->createUser('tester01', true);
+
+      $manager->clearSylma($init, $user);
+
+      $settings = $init->loadSettings(\Sylma::ROOT . '/sylma/core/test/samples/xml_window.yml', \Sylma::ROOT . \Sylma::PATH . \Sylma::PATH_OPTIONS);
+      $init->setGET('/sylma/core/test/samples/xml_document.xml');
+      $sResult = $init->run($settings->get('initializer'));
+
+      $manager->assertEquals($sResult, '&lt;hello xmlns:test2="http://2013.sylma.org/core/test/sample02" xmlns:test1="http://2013.sylma.org/core/test/sample01" xmlns="http://www.w3.org/1999/xhtml">&lt;test1:abc/>&lt;def test2:def="world"/>&lt;/hello>');
+
+    </tst:prepare>
+  </tst:test>
+
   <tst:test name="Override window">
     <tst:prepare>
 
@@ -372,7 +389,7 @@
       $sResult = $manager->readArgument('result');
 
       $manager->assertEqual(json_decode($sResult, true), array(
-        'content' => '&lt;hello>&lt;/hello>',
+        'content' => '&lt;hello xmlns="http://www.w3.org/1999/xhtml">&lt;/hello>',
       ));
 
       return true;
@@ -430,7 +447,7 @@
       $sResult = $manager->readArgument('result');
 
       $manager->assertEqual(json_decode($sResult, true), array(
-        'content' => "&lt;div>\n  &lt;a href=\"#\">&lt;/a>\n  &lt;div>abc&lt;/div>\n  &lt;div>&lt;/div>\n  &lt;textarea>abc&lt;/textarea>\n  &lt;textarea>&lt;/textarea>\n&lt;/div>",
+        'content' => "&lt;div xmlns=\"http://www.w3.org/1999/xhtml\">\n  &lt;a href=\"#\">&lt;/a>\n  &lt;div>abc&lt;/div>\n  &lt;div>&lt;/div>\n  &lt;textarea>abc&lt;/textarea>\n  &lt;textarea>&lt;/textarea>\n&lt;/div>",
       ));
 
       return true;
@@ -622,7 +639,7 @@
 
     </tst:prepare>
     <tst:node>
-      <app xmlns="">
+      <app>
         <div>
           <hello/>
         </div>
@@ -791,7 +808,7 @@
 
     </tst:prepare>
     <tst:node>
-      <app xmlns="">
+      <app>
         <hello/>
       </app>
     </tst:node>
@@ -815,7 +832,7 @@
 
     </tst:prepare>
     <tst:node>
-      <app xmlns="">
+      <app>
         <hello/>
       </app>
     </tst:node>
@@ -839,7 +856,7 @@
 
     </tst:prepare>
     <tst:node>
-      <app xmlns="">
+      <app>
         <hello/>
       </app>
     </tst:node>

@@ -14,19 +14,26 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   protected $result;
   protected $return;
 
+  /**
+   * Allowed namespaces
+   */
+  protected $aNamespaces = array();
+
+  /**
+   * Namespaces used in this document
+   */
+  protected $aUsedNamespaces = array();
+
   public function parseRoot(dom\element $el) {
 
-    $this->launchException('Not ready');
+    $aNS = array();
 
-    $this->setNode($el, false);
+    foreach (\Sylma::get('render/namespaces') as $ns) {
 
-    if ($el->getName() !== 'stylesheet') {
-
-      $this->throwException('Bad root');
+      $aNS[$ns->read('uri')] = $ns->read('prefix', false);
     }
 
-    $this->loadTemplates($el);
-    $this->loadResult();
+    $this->aNamespaces = $aNS;
   }
 
   public function parseFromChild(dom\element $el) {
@@ -200,6 +207,43 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   public function register($obj) {
 
     $this->launchException('No usage defined');
+  }
+
+  protected function registerNamespace($sNamespace, $sPrefix) {
+
+    $this->aUsedNamespaces[$sPrefix] = $sNamespace;
+  }
+
+  public function buildNamespaces() {
+
+    $aResult = array();
+
+    foreach ($this->aUsedNamespaces as $sPrefix => $sNamespace) {
+
+      $sNS = 'xmlns';
+
+      if ($sPrefix) {
+
+        $sNS = $sNS . ':' . $sPrefix;
+      }
+
+      $aResult[$sNS] = $sNamespace;
+    }
+
+    return $aResult;
+  }
+
+  public function lookupPrefix($sNamespace) {
+
+    if (!array_key_exists($sNamespace, $this->aNamespaces)) {
+
+      $this->launchException("Namespace '$sNamespace' is not allowed", get_defined_vars());
+    }
+
+    $sResult = $this->aNamespaces[$sNamespace];
+    $this->registerNamespace($sNamespace, $sResult);
+
+    return $sResult;
   }
 
   public function xmlize($mValue) {

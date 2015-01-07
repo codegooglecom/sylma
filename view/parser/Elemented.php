@@ -19,7 +19,6 @@ class Elemented extends template\parser\handler\Domed {
 
   protected $schema;
   protected $resource;
-  protected $aEntries = array();
   protected $sMode;
 
   public function __construct(reflector\documented $root, reflector\elemented $parent = null, core\argument $arg = null) {
@@ -47,6 +46,8 @@ class Elemented extends template\parser\handler\Domed {
 
       $this->launchException('Bad namespace');
     }
+
+    parent::parseRoot($el);
 
     $this->setMode($sMode);
     $this->checkInternal();

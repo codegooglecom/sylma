@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests
   xmlns:tst="http://www.sylma.org/modules/tester/parser"
+  xmlns="http://2014.sylma.org/html"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
@@ -80,7 +81,7 @@
       $doc = $manager->getScript('samples/whitespaces.vml');
 
       $sValue = &lt;&lt;&lt;EOT
-&lt;div&gt;
+&lt;div xmlns="http://2014.sylma.org/html"&gt;
   &lt;span&gt;abc&lt;/span&gt;
   &lt;span&gt;def&lt;/span&gt;
   &lt;span&gt;ghi&lt;/span&gt;

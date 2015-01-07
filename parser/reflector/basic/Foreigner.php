@@ -223,7 +223,8 @@ abstract class Foreigner extends Domed {
       }
       else {
 
-        $this->throwException(sprintf('Unknown attribute with @namespace %s in %s', $sNamespace, $el->asToken()));
+        $this->getHandler()->lookupPrefix($sNamespace); // check valid
+        $aResult[] = $content;
       }
     }
 

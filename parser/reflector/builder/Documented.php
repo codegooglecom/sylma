@@ -407,9 +407,9 @@ class Documented extends Logger implements reflector\documented {
   /**
    * @usedby sylma\template\binder\component\Event::addToClass()
    */
-  public function getCurrentElement() {
+  public function getCurrentElement($bDebug = false) {
 
-    if (!$this->aElements) {
+    if (!$this->aElements && $bDebug) {
 
       $this->launchException('No element defined');
     }

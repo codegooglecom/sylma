@@ -21,7 +21,6 @@ debug :
     html : true
     arguments : true
   html :
-    foreign : false
     show : true
   xml :
     import : false
@@ -32,6 +31,15 @@ namespaces :
 render :
   # If some text is added after compression (i.e. with echo) it will result in an encoding error page
   gzip : true
+  # Define allowed namespaces and associated prefixes into scripts
+  namespaces :
+    html :
+      prefix : null
+      uri : http://www.w3.org/1999/xhtml
+    shtml :
+      prefix : null
+      uri : http://2014.sylma.org/html
+
 
 # By default, all exceptions are shown to admin, and log into file for others.
 # You can save it into DB, or sent it by mail.
