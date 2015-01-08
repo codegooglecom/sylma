@@ -27,6 +27,11 @@ class _String extends Basic {
 
       $sValue = mb_substr($sValue, 0, $iEnd);
     }
+
+    if (isset($aSettings['url'])) {
+
+      $sValue = urlencode($sValue);
+    }
 /*
     if (isset($aSettings['html'])) {
 
