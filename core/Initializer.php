@@ -310,20 +310,7 @@ class Initializer extends module\Domed {
 
   protected function setErrorReporting() {
 
-    if (\Sylma::isAdmin() || $this->readArgument('debug/fatal', false)) {
-
-      error_reporting(E_ALL);
-/*
-	    if (!ini_get('display_errors')) {
-
-	      \Sylma::log(self::NS, sprintf('php.ini : display_errors is Off. Fatal error will not be shown.'));
-	    }
-*/
-    }
-    else {
-
-      error_reporting(0);
-    }
+    error_reporting(\Sylma::read('exception/level'));
 
     libxml_use_internal_errors(false);
   }
