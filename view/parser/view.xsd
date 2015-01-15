@@ -3,12 +3,16 @@
   xmlns="http://2013.sylma.org/view"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
 
   targetNamespace="http://2013.sylma.org/view"
   elementFormDefault="qualified"
 >
-  
+
   <xs:import namespace="http://2013.sylma.org/template"/>
+  <xs:import namespace="http://2013.sylma.org/view/crud"/>
+  <xs:import namespace="http://2013.sylma.org/parser/reflector/builder"/>
 
   <xs:element name="view">
     <xs:complexType>
@@ -24,6 +28,8 @@
       </xs:sequence>
       <xs:attribute name="name" type="xs:string"/>
       <xs:attribute name="mode" type="xs:string"/>
+      <xs:attributeGroup ref="crud:groups"/>
+      <xs:attributeGroup ref="builder:view"/>
     </xs:complexType>
   </xs:element>
 

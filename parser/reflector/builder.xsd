@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:tpl="http://2013.sylma.org/template"
+
+  targetNamespace="http://2013.sylma.org/parser/reflector/builder"
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+>
+
+  <xs:import namespace="http://2013.sylma.org/schema/ssd" schemaLocation="../../schema/ssd/simple.xsd"/>
+
+  <xs:attributeGroup name="view">
+    <xs:attribute name="class" type="ssd:class">
+      <xs:annotation>
+        <xs:documentation>
+          View return an object instanciated from this class, with the view content sended as a unique argument.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="output">
+      <xs:annotation>
+        <xs:documentation>
+          A list of possible returned type of value.
+          If not defined a DOM document will be returned.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="array"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+</xs:schema>

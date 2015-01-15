@@ -8,6 +8,7 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
   xmlns:js="http://2013.sylma.org/template/binder"
   xmlns:ls="http://2013.sylma.org/parser/security"
+  xmlns:crud="http://2013.sylma.org/view/crud"
 
   version="1.0"
   xml:lang="en"
@@ -46,6 +47,7 @@
   <xs:import namespace="http://2013.sylma.org/storage/sql"/>
   <xs:import namespace="http://2013.sylma.org/parser/security"/>
   <xs:import namespace="http://2014.sylma.org/device"/>
+  <xs:import namespace="http://2013.sylma.org/view/crud"/>
 
   <xs:attributeGroup name="sylma-binder">
     <xs:attributeGroup ref="js:object"/>
@@ -62,6 +64,7 @@
       <xs:group ref="tpl:node"/>
       <xs:group ref="le:content"/>
       <xs:group ref="js:html"/>
+      <xs:group ref="crud:content"/>
       <!-- auto-complete fixes -->
       <xs:any namespace="http://2013.sylma.org/storage/sql"/>
       <xs:any namespace="http://2013.sylma.org/action"/>
@@ -71,6 +74,7 @@
 -->
       <xs:any namespace="http://2013.sylma.org/template/binder"/>
       <xs:any namespace="http://2014.sylma.org/device"/>
+      <xs:any namespace="http://2013.sylma.org/view/crud"/>
     </xs:choice>
   </xs:group>
 
@@ -326,9 +330,11 @@
       </xs:documentation>
     </xs:annotation>
     <xs:attribute name="id" type="xs:ID"/>
-    <xs:attribute name="class" type="xs:NMTOKENS"/>
+    <!-- XHTML class type is : xs:NMTOKENS, tokens allow more chars -->
+    <xs:attribute name="class" type="xs:string"/>
     <xs:attribute name="style" type="StyleSheet"/>
     <xs:attribute name="title" type="Text"/>
+    <xs:attributeGroup ref="sylma-binder"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="i18n">
@@ -503,7 +509,6 @@
       <xs:group ref="inline"/>
       <xs:group ref="misc.inline"/>
     </xs:choice>
-    <xs:attributeGroup ref="sylma-binder"/>
   </xs:complexType>
 
   <xs:annotation>
@@ -558,7 +563,6 @@
       <xs:element ref="form"/>
       <xs:group ref="misc"/>
     </xs:choice>
-    <xs:attributeGroup ref="sylma-binder"/>
   </xs:complexType>
 
   <xs:complexType name="Flow" mixed="true">
@@ -573,7 +577,6 @@
       <xs:group ref="inline"/>
       <xs:group ref="misc"/>
     </xs:choice>
-    <xs:attributeGroup ref="sylma-binder"/>
   </xs:complexType>
 
   <xs:annotation>
@@ -595,7 +598,6 @@
       <xs:group ref="inline.forms"/>
       <xs:group ref="misc.inline"/>
     </xs:choice>
-    <xs:attributeGroup ref="sylma-binder"/>
   </xs:complexType>
 
   <xs:complexType name="pre.content" mixed="true">
@@ -612,7 +614,6 @@
       <xs:group ref="misc.inline"/>
       <xs:group ref="inline.forms"/>
     </xs:choice>
-    <xs:attributeGroup ref="sylma-binder"/>
   </xs:complexType>
 
   <xs:complexType name="form.content">
@@ -625,7 +626,6 @@
       <xs:group ref="block"/>
       <xs:group ref="misc"/>
     </xs:choice>
-    <xs:attributeGroup ref="sylma-binder"/>
   </xs:complexType>
 
   <xs:complexType name="button.content" mixed="true">
@@ -646,7 +646,6 @@
       <xs:group ref="phrase"/>
       <xs:group ref="misc"/>
     </xs:choice>
-    <xs:attributeGroup ref="sylma-binder"/>
   </xs:complexType>
 
   <xs:annotation>
@@ -971,9 +970,10 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="li"/>
-      </xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="li"/>
+        <xs:group ref="sylma"/>
+      </xs:choice>
       <xs:attributeGroup ref="attrs"/>
     </xs:complexType>
   </xs:element>
@@ -2063,19 +2063,22 @@
 
   <xs:element name="table">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" ref="caption"/>
-        <xs:choice>
-          <xs:element minOccurs="0" maxOccurs="unbounded" ref="col"/>
-          <xs:element minOccurs="0" maxOccurs="unbounded" ref="colgroup"/>
-        </xs:choice>
-        <xs:element minOccurs="0" ref="thead"/>
-        <xs:element minOccurs="0" ref="tfoot"/>
-        <xs:choice>
-          <xs:element maxOccurs="unbounded" ref="tbody"/>
-          <xs:element maxOccurs="unbounded" ref="tr"/>
-        </xs:choice>
-      </xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:sequence>
+          <xs:element minOccurs="0" ref="caption"/>
+          <xs:choice>
+            <xs:element minOccurs="0" maxOccurs="unbounded" ref="col"/>
+            <xs:element minOccurs="0" maxOccurs="unbounded" ref="colgroup"/>
+          </xs:choice>
+          <xs:element minOccurs="0" ref="thead"/>
+          <xs:element minOccurs="0" ref="tfoot"/>
+          <xs:choice>
+            <xs:element maxOccurs="unbounded" ref="tbody"/>
+            <xs:element maxOccurs="unbounded" ref="tr"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:group ref="sylma" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:choice>
       <xs:attributeGroup ref="attrs"/>
       <xs:attribute name="summary" type="Text"/>
       <xs:attribute name="width" type="Length"/>
@@ -2136,9 +2139,10 @@
 
   <xs:element name="tbody">
     <xs:complexType>
-      <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
         <xs:element maxOccurs="unbounded" ref="tr"/>
-      </xs:sequence>
+        <xs:group ref="sylma"/>
+      </xs:choice>
       <xs:attributeGroup ref="attrs"/>
       <xs:attributeGroup ref="cellhalign"/>
       <xs:attributeGroup ref="cellvalign"/>
@@ -2193,6 +2197,7 @@
       <xs:choice maxOccurs="unbounded">
         <xs:element ref="th"/>
         <xs:element ref="td"/>
+        <xs:group ref="sylma"/>
       </xs:choice>
       <xs:attributeGroup ref="attrs"/>
       <xs:attributeGroup ref="cellhalign"/>

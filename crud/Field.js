@@ -4,31 +4,6 @@ sylma.crud.Field = new Class({
   Extends : sylma.ui.Clonable,
   highlightClass : 'field-statut-invalid',
 
-  initialize : function(props) {
-
-    this.parent(props);
-
-    var inputs = this.getInputs();
-
-    if (this.change && inputs) {
-
-      this.prepareNodes(inputs);
-      inputs.addEvent('input', this.change.callback);
-    }
-  },
-
-  initEvent : function(event) {
-
-    if (event.name === 'change') {
-
-      this.change = event;
-    }
-    else {
-
-      this.parent(event);
-    }
-  },
-
   setValue : function(val) {
 
     val = val === undefined ? '' : val;

@@ -73,7 +73,7 @@ class JSON extends window\classes\Container implements window\scripted {
 
     $this->setDirectory(__FILE__);
 
-    return $result instanceof dom\document ? $this->cleanResult($result, $this->getFile('cleaner.xsl')) : $result;
+    return $result instanceof dom\document ? $this->cleanResult($result, $this->getFile('/#sylma/modules/html/cleaner.xsl')) : $result;
   }
 
   public function asString() {

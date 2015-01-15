@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tpl:collection
   xmlns:view="http://2013.sylma.org/view"
-  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns="http://2014.sylma.org/html"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:ssd="http://2013.sylma.org/schema/ssd"
   xmlns:sql="http://2013.sylma.org/storage/sql"
@@ -72,7 +72,7 @@
     <crud:include path="list"/>
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="init">
+  <tpl:template match="*" mode="init">
 
     <tpl:apply mode="filters"/>
 
@@ -127,15 +127,19 @@
   <tpl:template match="*" mode="head/row">
     <thead>
       <tr js:class="sylma.crud.collection.Sorter" js:name="head" js:parent-name="head">
-        <th>
-          <tpl:apply mode="head/corner"/>
-        </th>
+        <tpl:apply mode="head/corner"/>
         <tpl:apply use="list-cols" mode="head/cell"/>
       </tr>
     </thead>
   </tpl:template>
 
   <tpl:template match="*" mode="head/corner">
+    <th>
+      <tpl:apply mode="head/corner/content"/>
+    </th>
+  </tpl:template>
+
+  <tpl:template match="*" mode="head/corner/content">
     <a href="javascript:void(0)" class="button">
       <tpl:text>F</tpl:text>
       <js:event name="click">
@@ -145,9 +149,17 @@
   </tpl:template>
 
   <tpl:template match="*" mode="head/cell">
-    <th>
+    <tpl:variable name="alias">
+      <tpl:apply mode="head/cell/alias"/>
+    </tpl:variable>
+    <th class="order-{$alias}">
       <a href="#" class="order" js:class="sylma.crud.collection.Head">
-        <js:option name="name"><tpl:apply select="alias()"/></js:option>
+        <js:name>
+          <tpl:read select="$alias"/>
+        </js:name>
+        <js:option name="name">
+          <tpl:read select="$alias"/>
+        </js:option>
         <js:event name="click">
           %object%.update();
           e.preventDefault();
@@ -155,6 +167,10 @@
         <tpl:apply mode="head/cell/content"/>
       </a>
     </th>
+  </tpl:template>
+
+  <tpl:template match="*" mode="head/cell/alias">
+    <tpl:apply select="alias()"/>
   </tpl:template>
 
   <tpl:template match="*" mode="head/cell/content">
@@ -197,13 +213,19 @@
         </tpl:else>
       </tpl:if>
 
-      <tr>
-        <td colspan="99">
-          <tpl:apply select="pager()"/>
-        </td>
-      </tr>
+      <tpl:apply mode="pager"/>
 
     </tbody>
+
+  </tpl:template>
+
+  <tpl:template mode="pager">
+
+    <tr>
+      <td colspan="99">
+        <tpl:apply select="pager()"/>
+      </td>
+    </tr>
 
   </tpl:template>
 
@@ -211,7 +233,7 @@
     <tpl:read select="dummy()/sylma-page"/>
   </tpl:template>
 
-  <tpl:template match="sql:table" mode="init/internal">
+  <tpl:template match="*" mode="init/internal">
 
     <tpl:apply use="list-cols" mode="filter/internal"/>
 
@@ -251,7 +273,7 @@
   </tpl:template>
 
   <tpl:template match="*" mode="cell">
-    <td>
+    <td class="cell-{alias()}">
       <tpl:apply mode="cell/content"/>
     </td>
   </tpl:template>

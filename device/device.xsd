@@ -4,6 +4,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:le="http://2013.sylma.org/action"
+  xmlns:crud="http://2013.sylma.org/view/crud"
 
   targetNamespace="http://2014.sylma.org/device"
   elementFormDefault="qualified"
@@ -11,12 +12,14 @@
 
   <xs:import namespace="http://2013.sylma.org/template"/>
   <xs:import namespace="http://2013.sylma.org/action"/>
+  <xs:import namespace="http://2013.sylma.org/view/crud"/>
 
   <xs:element name="assert">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:group ref="tpl:content"/>
         <xs:group ref="le:content"/>
+        <xs:group ref="crud:content"/>
         <xs:any namespace="http://2014.sylma.org/html"/>
         <!-- auto-complete fixes -->
         <xs:any namespace="http://2013.sylma.org/template"/>

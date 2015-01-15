@@ -16,11 +16,20 @@
 
   <xs:group name="content">
     <xs:choice>
+      <xs:element ref="include"/>
+      <xs:element ref="script"/>
+      <xs:element ref="path"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="anyContent">
+    <xs:choice>
       <xs:group ref="tpl:root"/>
       <!-- auto-complete fixes -->
       <xs:any namespace="http://2013.sylma.org/template"/>
       <xs:any namespace="http://2013.sylma.org/action"/>
       <xs:any namespace="http://2013.sylma.org/storage/sql"/>
+      <xs:any namespace="http://2013.sylma.org/view"/>
     </xs:choice>
   </xs:group>
 
@@ -50,13 +59,14 @@
       <xs:sequence>
         <xs:element name="global" minOccurs="0">
           <xs:complexType>
-            <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:anyAttribute/>
           </xs:complexType>
         </xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="group">
             <xs:complexType>
-              <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
               <xs:attribute name="name" type="xs:string" use="required"/>
             </xs:complexType>
           </xs:element>
@@ -65,7 +75,7 @@
               <xs:sequence>
                 <xs:element name="local" minOccurs="0">
                   <xs:complexType>
-                    <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
                   </xs:complexType>
                 </xs:element>
                 <xs:group ref="view" minOccurs="0" maxOccurs="unbounded"/>
@@ -108,7 +118,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
       <xs:attribute name="path" type="ssd:path" use="required"/>
       <xs:attribute name="hollow" type="ssd:boolean">
         <xs:annotation>

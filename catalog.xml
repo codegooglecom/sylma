@@ -24,6 +24,10 @@
       uri="view/parser/view.xsd"/>
 
     <uri
+      name="http://2013.sylma.org/parser/reflector/builder"
+      uri="parser/reflector/builder.xsd"/>
+
+    <uri
       name="http://2013.sylma.org/template"
       uri="template/parser/template.xsd"/>
 
@@ -38,6 +42,10 @@
     <uri
       name="http://2013.sylma.org/storage/sql"
       uri="storage/sql/view.xsd"/>
+
+    <uri
+      name="http://2013.sylma.org/storage/xml"
+      uri="storage/xml/view.xsd"/>
 
     <uri
       name="http://2013.sylma.org/core/factory"

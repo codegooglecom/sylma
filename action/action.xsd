@@ -17,6 +17,11 @@
       <xs:element ref="get-argument"/>
       <xs:element ref="file"/>
       <xs:element ref="directory"/>
+      <xs:element ref="manager"/>
+      <xs:element ref="path"/>
+      <xs:element ref="array"/>
+      <xs:element ref="boolean"/>
+      <xs:element ref="string"/>
     </xs:choice>
   </xs:group>
 
@@ -179,7 +184,7 @@
   <xs:attribute name="name" type="xs:string">
     <xs:annotation>
       <xs:documentation>
-        Value of a key when used into an le:array
+        Value of a key when used into an le:script or le:array
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>

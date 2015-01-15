@@ -21,7 +21,7 @@
   <tpl:template mode="upload">
     <tpl:argument name="alias"/>
     <tpl:if test="validate($alias)">
-      <tpl:apply mode="file/update">
+      <tpl:apply mode="file/update" xmode="update">
         <tpl:read select="$alias" tpl:name="alias"/>
         <le:get-argument name="position" source="post" tpl:name="position"/>
       </tpl:apply>

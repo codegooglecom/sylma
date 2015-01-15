@@ -7,6 +7,10 @@
   xmlns:le="http://2013.sylma.org/action"
   xmlns:cls="http://2013.sylma.org/core/factory"
   xmlns:sql="http://2013.sylma.org/storage/sql"
+  xmlns:xl="http://2013.sylma.org/storage/xml"
+  xmlns:crud="http://2013.sylma.org/view/crud"
+  xmlns:view="http://2013.sylma.org/view"
+  xmlns:js="http://2013.sylma.org/template/binder"
 
   targetNamespace="http://2013.sylma.org/template"
   elementFormDefault="qualified"
@@ -14,10 +18,13 @@
 
   <xs:import namespace="http://2013.sylma.org/schema/ssd" schemaLocation="../../schema/ssd/simple.xsd"/>
   <xs:import namespace="http://2013.sylma.org/action"/>
-  <xs:import namespace="http://2013.sylma.org/core/factory"/>
   <xs:import namespace="http://2013.sylma.org/storage/sql"/>
+  <xs:import namespace="http://2013.sylma.org/core/factory" schemaLocation="../../core/factory/parser/factory.xsd"/>
   <xs:import namespace="http://2014.sylma.org/html"/>
   <xs:import namespace="http://2014.sylma.org/device"/>
+  <xs:import namespace="http://2013.sylma.org/view/crud"/>
+  <xs:import namespace="http://2013.sylma.org/view"/>
+  <xs:import namespace="http://2013.sylma.org/template/binder"/>
 
   <xs:simpleType name="path">
     <xs:restriction base="xs:string"/>
@@ -52,9 +59,12 @@
 
   <xs:group name="root">
     <xs:choice>
+      <xs:element ref="import"/>
       <xs:element ref="template"/>
+      <xs:element ref="view:schema"/>
       <xs:group ref="le:content"/>
       <xs:any namespace="http://2013.sylma.org/storage/sql"/>
+      <xs:any namespace="http://2013.sylma.org/storage/xml"/>
       <!-- auto-complete fixes -->
       <xs:any namespace="http://2013.sylma.org/action"/>
     </xs:choice>
@@ -82,15 +92,22 @@
     <xs:choice>
       <xs:group ref="content"/>
       <xs:group ref="le:content"/>
+      <xs:group ref="crud:content"/>
+      <xs:group ref="js:content"/>
       <!-- auto-complete fixes -->
       <xs:any namespace="http://2013.sylma.org/action"/>
+      <xs:any namespace="http://2013.sylma.org/view/crud"/>
     </xs:choice>
   </xs:group>
 
   <xs:group name="anyContentNode">
     <xs:choice>
       <xs:group ref="anyContent"/>
+      <xs:element ref="token"/>
       <xs:any namespace="http://2014.sylma.org/html"/>
+<!--
+      <xs:any namespace="http://www.w3.org/1999/xhtml"/>
+-->
     </xs:choice>
   </xs:group>
 
@@ -100,6 +117,7 @@
       <xs:element ref="switch"/>
       <xs:element ref="constant"/>
       <xs:element ref="variable"/>
+      <xs:element ref="token"/>
     </xs:choice>
   </xs:group>
 
@@ -122,15 +140,15 @@
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="collection" substitutionGroup="templates"/>
+
   <xs:element name="template">
     <xs:complexType mixed="true">
-      <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="argument" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:group ref="anyStructure"/>
-          <xs:group ref="anyContentNode"/>
-        </xs:choice>
-      </xs:sequence>
+        <xs:group ref="anyStructure"/>
+        <xs:group ref="anyContentNode"/>
+      </xs:choice>
       <xs:attributeGroup ref="modes"/>
       <xs:attribute name="match">
         <xs:annotation>
@@ -173,6 +191,10 @@
       </xs:annotation>
     </xs:attribute>
     <xs:attributeGroup ref="modes"/>
+    <xs:attribute ref="name"/>
+    <xs:attribute ref="le:name"/>
+    <!-- auto-complete fix -->
+    <xs:anyAttribute namespace="http://2013.sylma.org/action"/>
   </xs:complexType>
 
   <xs:element name="apply">
@@ -238,6 +260,14 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+
+  <xs:attribute name="name" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Set the name of the argument when sent with tpl:apply
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 
   <xs:element name="argument">
     <xs:annotation>
@@ -372,11 +402,11 @@
         Create a PHP if, if dynamic, or resolve it if static.
       </xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:sequence>
         <xs:group ref="anyContentNode" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="else" minOccurs="0">
-          <xs:complexType>
+          <xs:complexType mixed="true">
             <xs:group ref="anyContentNode" minOccurs="0" maxOccurs="unbounded"/>
           </xs:complexType>
         </xs:element>

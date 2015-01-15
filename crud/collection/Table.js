@@ -27,7 +27,12 @@ sylma.crud.collection.Table = new Class({
 
         if (reset) {
 
-          this.getObject('container').getObject('pager').setPage(1);
+          var pager = this.getObject('container').getObject('pager');
+          
+          if (pager) {
+
+            pager.setPage(1);
+          }
         }
 
         this.submit();

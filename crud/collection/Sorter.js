@@ -7,16 +7,19 @@ sylma.crud.collection.Sorter = new Class({
   Extends : sylma.ui.Base,
 
   current : [],
+  first : null,
   //orders : {},
 
   onLoad : function() {
 
     var order = this.extractOrders().pick();
 
+    this.first = this.getObject(order.name);
+
     var name = order.name;
     var dir = order.dir;
 
-    this.tmp.each(function(head) {
+    Object.each(this.objects, function(head) {
 
       //this.orders[head.options.name] = head;
 
@@ -35,7 +38,7 @@ sylma.crud.collection.Sorter = new Class({
 
   downlight : function() {
 
-    this.tmp.each(function(head) {
+    Object.each(this.objects, function(head) {
       head.downlight();
     });
   },
@@ -112,7 +115,9 @@ sylma.crud.collection.Sorter = new Class({
     return this.current;
   },
 
-  updateContainer: function (name, dir) {
+  updateContainer: function (obj, name, dir) {
+
+    this.first = obj;
 
     var table = this.getParent('table');
 

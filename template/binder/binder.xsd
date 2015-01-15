@@ -15,6 +15,14 @@
 
   <xs:group name="content">
     <xs:choice>
+      <xs:element ref="event"/>
+      <xs:element ref="option"/>
+      <xs:element ref="include"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:group name="anyContent">
+    <xs:choice>
       <xs:group ref="tpl:anyContent"/>
       <!-- auto-complete fixes -->
       <xs:any namespace="http://2013.sylma.org/template"/>
@@ -107,7 +115,7 @@
 
   <xs:element name="name">
     <xs:complexType mixed="true">
-      <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
 
@@ -136,13 +144,20 @@
       </xs:documentation>
     </xs:annotation>
     <xs:complexType mixed="true">
-      <xs:group ref="content" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:group ref="anyContent" minOccurs="0" maxOccurs="unbounded"/>
       <xs:attribute name="name" use="required" form="unqualified">
         <xs:annotation>
           <xs:documentation>
             Name of the options, can be multiple js properties separated by a dot.
             If collections do not exists they will be created.
             Ex : path, settings.myval
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="cast" type="ssd:boolean" form="unqualified">
+        <xs:annotation>
+          <xs:documentation>
+            Concat values into a string.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

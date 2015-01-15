@@ -212,7 +212,7 @@ abstract class Basic extends template\parser\component\Child implements core\tok
 
   protected function startLog($sMessage = '', array $aVars = array()) {
 
-    parent::startLog($this->asToken(), array_merge(array('file' => (string) $this->getSourceFile()), $aVars));
+    parent::startLog($this->asToken(), array_merge(array('file' => (string) $this->getNode()->asToken()), $aVars));
   }
 
   public function asToken() {

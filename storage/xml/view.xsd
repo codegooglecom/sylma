@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+  xmlns="http://2013.sylma.org/storage/xml"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:ssd="http://2013.sylma.org/schema/ssd"
+  xmlns:tpl="http://2013.sylma.org/template"
+  xmlns:le="http://2013.sylma.org/action"
+
+  targetNamespace="http://2013.sylma.org/storage/xml"
+  elementFormDefault="qualified"
+>
+
+  <xs:element name="resource">
+    <xs:annotation>
+      <xs:documentation>
+        Required element, it indicates the use of xml tree.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+</xs:schema>

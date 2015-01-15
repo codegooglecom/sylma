@@ -45,6 +45,6 @@ sylma.crud.collection.Head = new Class({
 
   updateContainer: function () {
 
-    this.getParent('head').updateContainer(this.options.name, this.options.dir);
+    this.getParent('head').updateContainer(this, this.options.name, this.options.dir);
   }
 });
