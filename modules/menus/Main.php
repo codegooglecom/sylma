@@ -19,7 +19,14 @@ class Main extends xml\tree\Argument {
 
       case 'check-active' :
 
-        $result = $this->getDummy()->call('checkActive', array($this->reflectApplyDefault('@href', array(), '', true)));
+        $node = $this->getOptions();
+
+        if (!$sPath = $node->read('@match', false)) {
+
+          $sPath = $node->read('@href');
+        }
+
+        $result = $this->getDummy()->call('checkActive', array($sPath));
 
         break;
 
