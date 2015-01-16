@@ -67,24 +67,35 @@
   <tpl:template match="*" mode="slideshow/pager">
 
     <div class="pager" js:node="pager">
-      <a href="javascript:void(0)" class="previous">
-        <js:event name="click">
-          %object%.goPrevious('normal');
-          %object%.resetLoop();
-        </js:event>
-        &lt;&lt;
-      </a>
+      <tpl:apply mode="pager/previous"/>
       <div class="pages" js:node="pages"/>
+      <tpl:apply mode="pager/next"/>
+    </div>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/previous">
+    <a href="javascript:void(0)" class="previous">
+      <js:event name="click">
+        %object%.goPrevious('normal');
+        %object%.resetLoop();
+      </js:event>
+      <tpl:apply mode="pager/previous/content"/>
+    </a>
+  </tpl:template>
+
+  <tpl:template match="*" mode="pager/next">
       <a href="javascript:void(0)" class="next">
         <js:event name="click">
           %object%.goNext('normal');
           %object%.resetLoop();
         </js:event>
-        &gt;&gt;
+        <tpl:apply mode="pager/previous/content"/>
       </a>
-    </div>
-
   </tpl:template>
+
+  <tpl:template match="*" mode="pager/previous/content">&lt;&lt;</tpl:template>
+  <tpl:template match="*" mode="pager/next/content">&gt;&gt;</tpl:template>
 
   <tpl:template match="*" mode="slideshow/item">
     <div js:class="sylma.slideshow.Slide" class="slide">

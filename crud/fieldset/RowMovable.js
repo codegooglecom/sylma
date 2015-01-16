@@ -52,7 +52,7 @@ sylma.crud.fieldset.RowMovable = new Class({
 
     this.buildScrollers();
 
-    window.body.grab(node, 'top');
+    window.document.body.grab(node, 'top');
 
     this.updatePosition(top);
   },
