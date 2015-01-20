@@ -50,6 +50,10 @@ class Filter extends reflector\component\Foreigner implements reflector\componen
 
         $content = $this->reflectEscape($this->getWindow()->toString($content));
       }
+      else {
+
+        $content = $this->getWindow()->parse($content);
+      }
     }
     else if (!$bIN) {
 
