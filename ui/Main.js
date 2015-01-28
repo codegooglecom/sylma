@@ -23,6 +23,8 @@ sylma.uiClass = {
   roots : [],
   windowLoaded : false,
   uID : 1,
+  // log value
+  objectCount : 0,
 
   cookie : {
 
@@ -35,6 +37,11 @@ sylma.uiClass = {
 
     this.loadMessages();
     this.loadObjects(parent, objects);
+
+    if (sylma.debug.log) {
+
+      console.log(this.objectCount + ' objects created');
+    }
   },
 
   loadObjects : function(parent, objects) {
@@ -114,6 +121,8 @@ sylma.uiClass = {
   },
 
   createObject : function(props) {
+
+    this.objectCount++;
 
     if (!props.extend) {
 

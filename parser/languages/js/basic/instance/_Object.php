@@ -106,7 +106,10 @@ class _Object extends js\basic\Base implements common\_instance, common\_object,
 
     if ($aResult) {
 
-      $result = $this->getContext()->call('add', array($window->createString($aResult)), '\sylma\core\window\context', false);
+      $sContent = $window->createString($aResult);
+      $sKey = $window->createString(uniqid());
+
+      $result = $this->getContext()->call('add', array(array($sKey, $sContent)), '\sylma\core\window\context', false);
     }
     else {
 

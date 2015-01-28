@@ -121,6 +121,13 @@ class Template extends Builder {
 
   public function addTo(common\_object $container) {
 
+    $js = $this->getObject();
+
+    if ($this->useTemplate()) {
+
+      $js->setProperty('buildTemplate', $this->template);
+    }
+
     if ($this->aAutoloads) {
 
       $this->getObject()->setProperty('sylma.template.autoloaded', $this->getWindow()->createObject($this->aAutoloads));

@@ -10,6 +10,13 @@ class Objects extends core\argument\Readable implements core\stringable {
   protected $sPath = '';
   protected $aObjects = array();
 
+  public function add($mValue, $bRef = false) {
+
+    list($sKey, $sValue) = $mValue;
+
+    return parent::add($sValue, $bRef);
+  }
+
   protected function parsePath($sPath) {
 
     if (strpos($sPath, '.') !== false) $aResult = explode('.', $sPath);

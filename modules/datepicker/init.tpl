@@ -13,14 +13,20 @@
 
   <tpl:template match="*" mode="date/prepare" once="x">
     <le:context name="js">
+
       <le:file>/#sylma/ui/Extras.js</le:file>
       <le:file>/#sylma/ui/Locale.js</le:file>
       <le:file>/#sylma/ui/Date.js</le:file>
+      <le:file>/#sylma/ui/Clonable.js</le:file>
+      <le:file>/#sylma/crud/Field.js</le:file>
+
       <le:file>arian/Locale.fr-FR.DatePicker.js</le:file>
       <le:file>arian/Picker.js</le:file>
       <le:file>arian/Picker.Attach.js</le:file>
       <le:file>arian/Picker.Date.js</le:file>
+
       <le:file>date.js</le:file>
+
     </le:context>
     <le:context name="css">
       <le:file>arian/datepicker_jqui/datepicker_jqui.css</le:file>

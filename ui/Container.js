@@ -25,7 +25,32 @@ sylma.ui.ContainerProps = {
     Object.append(this.sylma.template, template);
   },
 
-  update : function(args, path, inside, callback, get, show) {
+  update : function(callback, options) {//path, inside, callback, get, show) {
+
+    if (arguments.length >= 2 && typeOf(options) !== 'object') {
+
+      this.updateDeprecated.apply(this, arguments);
+    }
+    else {
+
+      var success = function(response) {
+
+        this.updateSuccess(response, callback, options.show);
+
+      }.bind(this);
+
+      var path = this.get('path') || options.url;
+
+      options = Object.append({
+        onSuccess : success,
+        url : path + '.json',
+      }, options);
+
+      new Request.JSON(options).send();
+    }
+  },
+
+  updateDeprecated : function(args, path, inside, callback, get, show) {
 
     if (inside !== undefined) this.set('sylma-inside', inside);
     get = get || get === undefined;

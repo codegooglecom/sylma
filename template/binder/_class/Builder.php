@@ -92,14 +92,9 @@ class Builder extends Proped implements common\arrayable, template\binder\_class
 
   public function addTo(common\_object $container) {
 
-    $js = $this->getObject();
-
-    if ($this->useTemplate()) {
-
-      $js->setProperty('buildTemplate', $this->template);
-    }
-
     if ($this->isUsed()) {
+
+      $js = $this->getObject();
 
       $this->loadExtend();
 

@@ -38,14 +38,22 @@ sylma.crud.fieldset.Row = new Class({
       if (fieldset.get('useID')) {
 
         var id = this.getObject('id');
+        var val = id.getValue();
 
-        id.setValue(- parseInt(id.getValue()));
+        if (val) {
 
-        this.hide(null, function() {
+          id.setValue(- parseInt(val));
 
-          this.getNode().inject(fieldset.getNode());
+          this.hide(null, function() {
 
-        }.bind(this));
+            this.getNode().inject(fieldset.getNode());
+
+          }.bind(this));
+        }
+        else {
+
+          this.parent();
+        }
       }
       else {
 

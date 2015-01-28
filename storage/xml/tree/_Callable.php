@@ -89,7 +89,7 @@ class _Callable extends reflector\component\Foreigner implements tpl\parser\tree
       $this->launchException("Function '$sName()' unknown or object undefined");
     }
 
-    return $this->getDummy()->call($sName, $aArguments);
+    return $this->getDummy()->call($sName, $this->getWindow()->parse($aArguments, true));
   }
 
   public function reflectApply($sMode) {

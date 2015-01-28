@@ -127,7 +127,7 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
 
     $aResult[] = $context_common->getInsert();
     $aResult[] = $context->getInsert();
-    
+
     $aResult[] = $this->addScript($context_common, $this->read('mootools'));
 
     foreach ($this->aFiles as $sFile) {
@@ -339,6 +339,9 @@ class Handler extends reflector\handler\Elemented implements reflector\elemented
     return $result;
   }
 
+  /**
+   * @callby \sylma\parser\reflector\handler\Parsed::onFinish()
+   */
   public function onFinish() {
 
     $this->buildClasses();

@@ -123,6 +123,11 @@ class Table extends sql\template\component\Table implements common\argumentable 
 
   public function loadMultipleReference($sName, self $table, array $aPath, $sMode, array $aArguments = array(), sql\schema\element $foreign = null, $val = null) {
 
+    if (!$this->getDummy(false)) {
+
+      $this->loadDummy();
+    }
+
     $window = $this->getWindow();
 
     $item = $window->createVariable('', '\sylma\core\argument');

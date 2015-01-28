@@ -23,7 +23,7 @@
     <xs:restriction base="sql:int"/>
   </xs:simpleType>
 
-  <xs:simpleType name="float" reflector="\sylma\schema\cached\form\_Float">
+  <xs:simpleType name="float" reflector="\sylma\schema\cached\form\_Float" reflector-static="\sylma\schema\cached\view\Float">
     <xs:restriction base="xs:float">
       <xs:fractionDigits value="6"/>
       <xs:totalDigits value="6"/>

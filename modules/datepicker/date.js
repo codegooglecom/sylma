@@ -1,16 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
+sylma.crud = sylma.crud || {};
 
 Locale.use('fr-FR');
 
 sylma.crud.Date = new Class({
-  Extends : sylma.ui.Base,
 
-  initialize : function(props) {
+  Extends : sylma.crud.Field,
 
-    this.parent(props);
+  onLoad : function() {
+
     this.loadWidget();
   },
 

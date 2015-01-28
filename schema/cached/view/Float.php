@@ -20,7 +20,7 @@ class Float extends Numeric {
         $iCount = 0;
       }
 
-      $sValue = round($sValue, $iCount);
+      $sValue = sprintf("%.{$iCount}f", $sValue);
     }
 
     return $sValue;

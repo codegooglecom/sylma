@@ -313,7 +313,7 @@ sylma.crud.Form = new Class({
     }
     else {
 
-      this.submitSuccess();
+      this.submitSuccess(result);
     }
   },
 
@@ -322,9 +322,9 @@ sylma.crud.Form = new Class({
     window.location.href = document.referrer;
   },
 
-  submitSuccess : function() {
+  submitSuccess : function(result) {
 
-    this.fireEvent('success');
+    this.fireEvent('success', result);
     //throw new Error('Must do something');
   },
 

@@ -6,6 +6,21 @@ use sylma\core;
 class Classes extends core\argument\Readable implements core\stringable {
 
   const PARENT_PATH = 'sylma.binder.classes';
+  protected $aKeys = array();
+
+  public function add($mValue, $bRef = false) {
+
+    $sResult = null;
+    list($sKey, $sValue) = $mValue;
+
+    if (!in_array($sKey, $this->aKeys)) {
+
+      $this->aKeys[] = $sKey;
+      $sResult = parent::add($sValue, $bRef);
+    }
+
+    return $sResult;
+  }
 
   public function asString($sTarget = '') {
 
