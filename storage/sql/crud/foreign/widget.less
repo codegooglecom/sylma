@@ -1,0 +1,138 @@
+
+@import "/sylma/modules/html/medias/vars.less";
+
+@input-height: 40;
+@input-em: 1 / 16 + 0em;
+@em2: 1 / 16 + 0em;
+
+@margin: 10;
+@widget-width: 200;
+@widget-pcw: 100 / @widget-width + 0%;
+
+.less-fix-parse {}
+
+.widget-numeric
+{
+
+  _width: @widget-width + 0px;
+  _float: left;
+  _overflow: hidden;
+
+  label
+  {
+    float: left;
+    _margin-right: 23 * @widget-pcw;
+    _text-align: right;
+    width: @margin * @widget-pcw;
+
+    span
+    {
+      display: block;
+    }
+  }
+
+  &.horaire_a
+  {
+    label
+    {
+      margin-left: 10 * @widget-pcw;
+    }
+  }
+}
+
+.select
+{
+  @select-width: 132;
+  @select-pcw: 100 / @select-width + 0%;
+
+  position: relative;
+  float: left;
+  cursor: pointer;
+  background-color: @color-background3;
+  color: @color-text3;
+  width: 132 * @widget-pcw;
+  text-align: center;
+
+  &.max
+  {
+    float: right;
+  }
+
+  .input
+  {
+    overflow: hidden;
+
+    .value
+    {
+      display: inline-block;
+      float: left;
+      text-align: center;
+      line-height: @input-height * @em2;
+      height: @input-height * @em2;
+      width: 105 * @select-pcw;
+      color: @color-text2;
+    }
+
+    .scroller
+    {
+      float: right;
+      border-left: 1px solid @color-text1;
+      user-select: none;
+      width: 24 * @select-pcw;
+
+      span
+      {
+        @arrow-font: 0.8em;
+        @arrow-em: @input-em / @arrow-font;
+
+        font-size: @arrow-font;
+        line-height: (@input-height / 2) * @arrow-em;
+        height: (@input-height / 2) * @arrow-em;
+
+        display: block;
+
+        &:active
+        {
+          background-color: @color-background4;
+          color: white;
+        }
+
+        &.up
+        {
+        }
+
+        &.down
+        {
+          border-top: 1px solid @color-text1;
+        }
+      }
+    }
+  }
+
+  .list
+  {
+    position: absolute;
+    transition: opacity 0.5s, visibility 0.5s;
+    z-index: 1;
+    pointer-events: none;
+    background-color: @color-background2;
+    color: @color-text2;
+
+    width: 100%;
+
+    .value
+    {
+      line-height: 25 * @em2;
+
+      display: block;
+      text-align: center;
+      width: 100%;
+      pointer-events: auto;
+
+      &:nth-child(odd)
+      {
+        background-color: @color-background3;
+      }
+    }
+  }
+}
