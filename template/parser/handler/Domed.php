@@ -11,6 +11,7 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   protected $aConstants = array();
   protected $bInternal = false;
 
+  protected $rootDocument;
   protected $result;
   protected $return;
 
@@ -25,6 +26,8 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   protected $aUsedNamespaces = array();
 
   public function parseRoot(dom\element $el) {
+
+    $this->loadRootDocument();
 
     $aNS = array();
 
@@ -282,5 +285,18 @@ class Domed extends Templated implements reflector\elemented, template\parser\ha
   public function getConstant($sName) {
 
     return $this->aConstants[$sName];
+  }
+
+  protected function loadRootDocument() {
+
+    $this->rootDocument = $this->loadSimpleComponent('document', $this);//$this->create('document');
+  }
+
+  /**
+   * Should be named getDocument()
+   */
+  public function getRootDocument() {
+
+    return $this->rootDocument;
   }
 }

@@ -46,6 +46,7 @@ abstract class Pathed extends Domed {
 
   /**
    * @usedby template\parser\Pather::parseExpression()
+   * @usedby template\parser\component\element\Attributed::parseAttributeValue()
    */
   public function parseValue($sValue) {
 
@@ -61,7 +62,8 @@ abstract class Pathed extends Domed {
         $iStart = mb_strlen(substr($sValue, 0, $aResult[0][1]), 'utf-8');
 
         $iVarLength = mb_strlen($aResult[0][0]);
-        $val = $this->applyPath($aResult[1][0], '');
+
+        $val = $this->readPath($aResult[1][0], '');
 
         $iDiff = $iStart - $iOffset;
 

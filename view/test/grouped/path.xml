@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests
   xmlns:tst="http://www.sylma.org/modules/tester/parser"
-  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:html="http://2014.sylma.org/html"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
-  xmlns:build="http://2013.sylma.org/parser/reflector/builder"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
   xmlns:cls="http://2013.sylma.org/core/factory"
 
   xmlns:sql="http://2013.sylma.org/storage/sql"
@@ -72,9 +72,9 @@
       </div>
     </tst:node>
   </tst:test>
-  <tst:test name="Root tree">
+  <tst:test name="Root tree in SQL">
     <tst:document>
-      <view:view debug="x">
+      <view:view>
         <sql:resource multiple="x"/>
         <view:schema>samples/user2.xql</view:schema>
         <tpl:template>
@@ -90,6 +90,9 @@
             <tpl:apply select="root()" mode="table"/>
           </h2>
           <tpl:apply select="name, group_id" mode="field"/>
+          <span>
+            <tpl:apply select="/root()" mode="path"/>
+          </span>
         </tpl:template>
         <tpl:template match="*" mode="field">
           <h3>
@@ -99,6 +102,7 @@
         <tpl:template mode="collection">collection</tpl:template>
         <tpl:template mode="table">table</tpl:template>
         <tpl:template mode="field">field</tpl:template>
+        <tpl:template mode="path">path</tpl:template>
       </view:view>
     </tst:document>
     <tst:node>
@@ -107,7 +111,62 @@
         <h2>table</h2>
         <h3>field</h3>
         <h3>field</h3>
+        <span>path</span>
       </div>
     </tst:node>
+  </tst:test>
+  <tst:test name="Root tree in XML">
+    <tst:document>
+      <view:view>
+
+        <xl:resource file="samples/tree2.xml"/>
+
+        <tpl:template>
+          <div>
+            <h1>
+              <tpl:read select="abc"/>
+            </h1>
+            <tpl:apply select="def" mode="def"/>
+          </div>
+        </tpl:template>
+
+        <tpl:template match="*" mode="def">
+          <block>
+            <span><tpl:read select="/root()/john"/></span>
+            <tpl:read select="lmn"/>
+            <a href="{/sylma()/namespaces/html}"/>
+          </block>
+        </tpl:template>
+
+      </view:view>
+    </tst:document>
+    <tst:node>
+      <div>
+        <h1>123</h1>
+        <block>
+          <span>smith</span>john<a href="http://www.w3.org/1999/xhtml"/>
+        </block>
+      </div>
+    </tst:node>
+  </tst:test>
+  <tst:test name="Read url">
+    <tst:document>
+      <view:view builder:return="result">
+
+        <xl:resource/>
+
+        <tpl:template>
+          <tpl:read select="/url()"/>
+        </tpl:template>
+      </view:view>
+    </tst:document>
+    <tst:expected>
+
+      $result = $manager->loadScript();
+
+      $manager->assertTrue(preg_match('`https?://.*`', $result));
+      return true;
+
+    </tst:expected>
   </tst:test>
 </tst:tests>

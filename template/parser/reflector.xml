@@ -9,6 +9,7 @@
     <cls:base>\sylma\template\parser</cls:base>
     <cls:class alias="elemented" name="handler\Elemented">
       <cls:classes>
+        <cls:class alias="document" name="Document"/>
         <cls:class alias="settings" name="component\Settings"/>
         <component>
           <cls:classes>

@@ -419,4 +419,10 @@ class Initializer extends module\Domed {
 
     return $aResult[1];
   }
+
+  public function getURL() {
+
+    return
+      (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'];
+  }
 }

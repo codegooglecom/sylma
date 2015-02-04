@@ -382,7 +382,8 @@ class Pather extends component\Child {
     }
     else {
 
-      $this->launchException('Invalid path token', get_defined_vars());
+      $mResult = $this->parsePathRoot($aPath, $sMode, $bRead, $aArguments);
+      //$this->launchException('Invalid path token', get_defined_vars());
     }
 
     return $mResult;
@@ -483,6 +484,16 @@ class Pather extends component\Child {
   protected function parsePathFunction(array $aMatch, array $aPath, $sMode, $bRead, array $aArguments = array()) {
 
     $this->launchException('Not yet implemented');
+  }
+
+  protected function parsePathRoot(array $aPath, $sMode, $bRead, array $aArguments = array()) {
+
+    $tree = $this->getHandler()->getRootDocument();
+    $pather = clone $this;
+
+    $pather->setSource($tree);
+    
+    return $pather->parsePathToken($aPath, $sMode, $bRead, $aArguments);
   }
 }
 

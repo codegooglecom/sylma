@@ -93,7 +93,7 @@ abstract class Componented extends Namespaced {
     if (!$class = $this->getFactory()->findClass($sAlias, '', false)) {
 
 //dsp($this->getArguments());
-      $this->launchException("Class not found for component '$sAlias'", get_defined_vars());
+      $this->launchException("No class found in factory for component '$sAlias'", get_defined_vars());
     }
 
     $result = $this->create($sAlias, array($manager, $class, $this->getUsedNamespaces()));

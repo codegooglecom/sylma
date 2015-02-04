@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tst:tests
   xmlns:tst="http://www.sylma.org/modules/tester/parser"
-  _xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:view="http://2013.sylma.org/view"
   xmlns:tpl="http://2013.sylma.org/template"
-  xmlns:xl="http://2013.sylma.org/storage/xml"
   xmlns:ls="http://2013.sylma.org/parser/security"
   xmlns:le="http://2013.sylma.org/action"
-
   xmlns:cls="http://2013.sylma.org/core/factory"
+
+  xmlns:xl="http://2013.sylma.org/storage/xml"
 
   xmlns:user="http://2013.sylma.org/action/test/sample1"
   xmlns:group="http://2013.sylma.org/action/test/sample2"
