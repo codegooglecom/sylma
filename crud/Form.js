@@ -50,19 +50,20 @@ sylma.crud.Form = new Class({
 
     if (this.get('mask') === true) {
 
-      if (val) val = 'disabled';
-      else val = undefined;
+      var content = val ? 'disabled' : undefined;
+
+      this.getNode().toggleClass('disabled', val || false);
 
       this.getInputs().each(function(el) {
 
-        el.set('disabled', val);
+        el.set('disabled', content);
       });
     }
   },
 
   getInputs : function() {
 
-    return this.getNode().getElements('input, select, textarea');
+    return this.getNode().getElements('button, input, select, textarea');
   },
 
   clearInputs : function(inputs) {

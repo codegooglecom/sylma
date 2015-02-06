@@ -12,6 +12,7 @@ class Prefixer extends \lessc {
 
   protected $aProperties = array(
 
+    'backface-visibility' => array(),
     'background-clip' => array(),
     'background-origin' => array(),
     'background-size' => array(),
