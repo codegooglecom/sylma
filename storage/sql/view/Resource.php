@@ -200,5 +200,13 @@ class Resource extends reflector\handler\Elemented implements reflector\elemente
 
     return $this->ID;
   }
+
+  /**
+   * @usedby component\Trigger
+   */
+  public function getView() {
+
+    return $this->getParent();
+  }
 }
 

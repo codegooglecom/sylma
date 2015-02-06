@@ -214,6 +214,13 @@
     </xs:annotation>
     <xs:complexType mixed="true">
       <xs:group ref="content"/>
+      <xs:attribute name="return" type="ssd:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            If TRUE, replace result with content.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 

@@ -130,12 +130,12 @@ sylma.uiClass = {
       throw new Error('No path defined');
     }
 
-    var parent = this.loadPath(props.extend);
-
     if (sylma.factory.debug) {
 
       sylma.log('Create object : key=' + (props.sylma ? props.sylma.key : '[unknown]') + ' id=' + props.id);
     }
+
+    var parent = this.loadPath(props.extend);
 
     var result = new parent(props);
 

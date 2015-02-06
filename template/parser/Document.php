@@ -14,6 +14,7 @@ class Document  extends xml\tree\Argument implements template\parser\tree
       case 'url' : $result = $this->reflectFunctionURL(); break;
       case 'root' : $result = $this->reflectFunctionRoot($aPath, $sMode, $bRead, $aArguments); break;
       case 'sylma' : $result = $this->reflectFunctionSylma($aPath); break;
+      case 'argument' : $result = $this->reflectFunctionArgument($aPath); break;
 
       default :
 
@@ -49,4 +50,10 @@ class Document  extends xml\tree\Argument implements template\parser\tree
     return $init->call('getURL');
   }
 
+  protected function reflectFunctionArgument(array $aPath) {
+
+    $arg = $this->getWindow()->getVariable('arguments');
+
+    return $arg->call('read', $aPath);
+  }
 }

@@ -1,9 +1,9 @@
 <?php
 
 namespace sylma\storage\sql\view\component;
-use sylma\core, sylma\dom, sylma\parser\reflector, sylma\parser\languages\common, sylma\storage\sql;
+use sylma\core, sylma\dom, sylma\parser\languages\common, sylma\storage\sql;
 
-class Trigger extends reflector\component\Foreigner implements reflector\component, common\arrayable {
+class Trigger extends Basic implements common\arrayable {
 
   public function parseRoot(dom\element $el) {
 
@@ -18,7 +18,20 @@ class Trigger extends reflector\component\Foreigner implements reflector\compone
 
   protected function addToTree(sql\template\component\Rooted $tree) {
 
-    return $tree->addTrigger(array($this->build()));
+    $aResult = array();
+    $content = $this->build();
+
+    if ($this->readx('@return')) {
+
+      $test = $this->getHandler()->getView()->addToResult($content, false, true);
+      $aResult[] = $tree->addTrigger(array($test));
+    }
+    else {
+
+      $aResult[] = $tree->addTrigger(array($content));
+    }
+
+    return $aResult;
   }
 
   protected function build() {

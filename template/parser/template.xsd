@@ -118,6 +118,7 @@
       <xs:element ref="constant"/>
       <xs:element ref="variable"/>
       <xs:element ref="token"/>
+      <xs:element ref="settings"/>
     </xs:choice>
   </xs:group>
 

@@ -115,6 +115,7 @@ initializer :
     fusion :
       enable : true
       update : false
+      # enable must be TRUE to debug
       debug : false
     error :
       # All exceptions, 404 and restricted will lead to these pages when public

@@ -169,4 +169,29 @@
 
     </tst:expected>
   </tst:test>
+  <tst:test name="Read argument">
+    <tst:document>
+      <view:view>
+
+        <xl:resource/>
+
+        <tpl:template>
+          <div>
+            <tpl:read select="/argument()/abc"/>
+          </div>
+        </tpl:template>
+
+      </view:view>
+    </tst:document>
+    <tst:load>
+
+      return
+        array('arguments' => $manager->createArgument(array(
+          'abc' => 'def',
+        )))
+    </tst:load>
+    <tst:node>
+      <div>def</div>
+    </tst:node>
+  </tst:test>
 </tst:tests>

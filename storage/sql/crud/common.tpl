@@ -9,7 +9,12 @@
   xmlns:sql="http://2013.sylma.org/storage/sql"
 >
 
+  <!-- @deprecated, use filter/get instead -->
   <tpl:template match="*" mode="filter/argument">
+    <tpl:apply mode="filter/get"/>
+  </tpl:template>
+
+  <tpl:template match="*" mode="filter/get">
     <sql:filter>
       <le:get-argument>
         <le:name>
