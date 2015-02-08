@@ -26,55 +26,58 @@
 
     <div class="field-container widget-numeric clearfix" js:class="sylma.crud.Foreign" js:parent-name="select">
 
-      <tpl:apply mode="label"/>
+      <tpl:apply mode="foreign/widget/content"/>
 
-      <div class="select">
+    </div>
 
-        <div class="list hidder" js:class="sylma.ui.Container" js:name="container">
+  </tpl:template>
 
-          <tpl:apply mode="foreign/widget/value">
-            <tpl:read select="'0'" tpl:name="key"/>
-            <tpl:read select="'0'" tpl:name="id"/>
-            <tpl:apply mode="input/foreign/default" tpl:name="content"/>
-          </tpl:apply>
-          <tpl:apply select="all()" mode="foreign/widget/value"/>
-        </div>
+  <tpl:template match="*" mode="foreign/widget/content">
 
-        <div class="input field">
-          <div style="position: absolute; width: 0; overflow: hidden">
-            <span js:node="focus" tabindex="-1">
-              <js:event name="blur">
-                %object%.hideContainer();
-              </js:event>
-            </span>
-            <input name="{alias('form')}" type="hidden" js:node="input"/>
-          </div>
+    <tpl:apply mode="label"/>
 
-          <span class="value" js:node="value">
-            <js:event name="click">
-              %object%.showContainer();
-              %object%.getNode('focus').focus();
-            </js:event>
-            <tpl:apply mode="input/foreign/default"/>
-          </span>
+    <div class="select">
 
-          <div class="scroller">
-            <span class="up">
-              <js:event name="click">
-                %object%.stepValue(1);
-              </js:event>
-              <tpl:text>▲</tpl:text>
-            </span>
-            <span class="down">
-              <js:event name="click">
-                %object%.stepValue(-1);
-              </js:event>
-              <tpl:text>▼</tpl:text>
-            </span>
-          </div>
-        </div>
+      <div class="list hidder" js:class="sylma.ui.Container" js:name="container">
 
+        <tpl:apply mode="foreign/widget/empty"/>
+        <tpl:apply select="all()" mode="foreign/widget/value"/>
       </div>
+
+      <div class="input field">
+        <div style="position: absolute; width: 0; overflow: hidden">
+          <span js:node="focus" tabindex="-1">
+            <js:event name="blur">
+              %object%.hideContainer();
+            </js:event>
+          </span>
+          <input name="{alias('form')}" type="hidden" js:node="input"/>
+        </div>
+
+        <span class="value" js:node="value">
+          <js:event name="click">
+            %object%.showContainer();
+            %object%.getNode('focus').focus();
+          </js:event>
+          <tpl:apply mode="input/foreign/default"/>
+        </span>
+
+        <div class="scroller">
+          <span class="up">
+            <js:event name="click">
+              %object%.stepValue(1);
+            </js:event>
+            <tpl:text>▲</tpl:text>
+          </span>
+          <span class="down">
+            <js:event name="click">
+              %object%.stepValue(-1);
+            </js:event>
+            <tpl:text>▼</tpl:text>
+          </span>
+        </div>
+      </div>
+
     </div>
 
   </tpl:template>
@@ -91,6 +94,16 @@
       </js:event>
       <tpl:read select="$content"/>
     </span>
+
+  </tpl:template>
+
+  <tpl:template match="*" mode="foreign/widget/empty">
+
+    <tpl:apply mode="foreign/widget/value">
+      <tpl:read select="'0'" tpl:name="key"/>
+      <tpl:read select="'0'" tpl:name="id"/>
+      <tpl:apply mode="input/foreign/default" tpl:name="content"/>
+    </tpl:apply>
 
   </tpl:template>
 

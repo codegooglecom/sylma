@@ -50,16 +50,23 @@ sylma.crud.Foreign = new Class({
 
     var el = items[val];
 
-    this.updateValue(el.get('data-key'), el.get('data-id'), el.get('html'));
+    return this.stepValueNode(el);
+  },
+
+  stepValueNode: function (el) {
+
+    return this.updateValue(el.get('data-key'), el.get('data-id'), el.get('html'));
   },
 
   showContainer : function() {
 
+    this.getNode().addClass('open');
     this.getObject('container').show();
   },
 
   hideContainer : function() {
 
+    this.getNode().removeClass('open');
     this.getObject('container').hide();
   }
 });
