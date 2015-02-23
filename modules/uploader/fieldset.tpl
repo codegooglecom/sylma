@@ -77,7 +77,7 @@
       <tpl:apply mode="file/extension"/>
     </tpl:variable>
 
-    <div js:class="sylma.crud.fieldset.RowMovable" class="file row hidder visible form-reference file-{$extension}">
+    <div js:class="sylma.crud.fieldset.RowForm" class="file row hidder visible form-reference file-{$extension}">
       <tpl:apply mode="file/inputs">
         <tpl:read select="$prefix" tpl:name="prefix"/>
         <tpl:read select="$position" tpl:name="position"/>

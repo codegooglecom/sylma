@@ -366,7 +366,7 @@ sylma.stepper.Page = new Class({
   select : function(callback, reset) {
 
     this.getParent('test').updateFrameSize();
-    
+
     if (reset) {
 
       this.setCurrent(-1);
