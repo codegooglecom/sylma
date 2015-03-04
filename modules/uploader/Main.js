@@ -28,8 +28,6 @@ sylma.uploader.Main = new Class({
       this.sendComplete(response);
 
     }
-
-
   },
 
   getForm : function() {
@@ -37,12 +35,11 @@ sylma.uploader.Main = new Class({
     return this.getObject('uploader');
   },
 
-  setDropper : function(dropper) {
+  sendFile: function(fieldset, input) {
 
-  },
-
-  sendFile: function(input) {
-
+    this.fieldset = fieldset;
+    this.input = input;
+    
     var node = this.getForm().getNode();
 
     node.grab(input);
@@ -51,7 +48,8 @@ sylma.uploader.Main = new Class({
 
   sendComplete : function(response) {
 
-    this.fireEvent('complete');
+    this.input.remove();
+    this.fieldset.getObject('template').sendComplete(response);
   }
 
 });

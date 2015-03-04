@@ -4,16 +4,11 @@ sylma.uploader.MainPosition = new Class({
   Extends : sylma.uploader.Main,
   position : 1,
 
-  setDropper : function(dropper) {
+  sendFile: function(fieldset, input) {
 
-    this.fieldset = dropper.getParent('fieldset');
-  },
-
-  sendFile: function(input) {
-
-    this.position = this.fieldset.getCount() + 1;
+    this.position = fieldset.getCount() + 1;
     this.getForm().getNode('position').set('value', this.position);
 
-    this.parent(input);
+    this.parent(fieldset, input);
   }
 });

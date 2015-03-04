@@ -18,21 +18,6 @@ class Tree extends xml\tree\Argument {
 
     $this->setNamespace(self::NS);
     $this->setName(self::NAME);
-
-    $this->setArguments('tree.xml');
-
-    if ($el) {
-
-      $this->loadReflector();
-    }
-  }
-
-  protected function loadReflector() {
-
-    $reflector = $this->createObject();
-    $this->setReflector($reflector);
-
-    $this->getWindow()->add($reflector->getInsert());
   }
 
   protected function setExtensions(array $aValues) {
@@ -45,31 +30,15 @@ class Tree extends xml\tree\Argument {
     return $this->aExtensions;//$this->getArgument('extensions')->query();
   }
 
-  protected function setReflector(common\_var $var) {
-
-    $this->reflector = $var;
-  }
-
-  protected function getReflector($bDebug = true) {
-
-    if (!$this->reflector && $bDebug) {
-
-      $this->launchException('No reflector defined');
-    }
-
-    return $this->reflector;
-  }
-
   public function reflectApplyFunction($sName, array $aPath, $sMode, $bRead = false, $sArguments = '', array $aArguments = array()) {
 
     switch ($sName) {
 
       case 'init' : $result = $this->reflectFunctionInit($this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false)); break;
-      case 'validate' : $result = $this->reflectFunctionValidate($this->getParser()->getPather()->parseArguments($sArguments, $sMode, $bRead, false)); break;
       case 'max-size' : $result = ini_get('upload_max_filesize') . 'B'; break;
       //case 'extensions' : $result = implode(', ', $this->getExtensions()); break;
       case 'extensions' : $result = $this->reflectFunctionExtensions($aPath, $sMode, $aArguments); break;
-      case 'directory' : $result = $this->reflectDirectory($aArguments); break;
+      case 'directory' : $result = parent::reflectApplyFunction('setDirectory', $aPath, $sMode, $bRead, $sArguments, $aArguments); break;
       case 'position' : $result = ''; break;
 
       default :
@@ -82,19 +51,19 @@ class Tree extends xml\tree\Argument {
 
   protected function reflectSetExtensions() {
 
-    return $this->getReflector()->call('setExtensions', array($this->getExtensions()));
+    return $this->getDummy()->call('setExtensions', array($this->getExtensions()));
   }
 
   protected function reflectFunctionInit(array $aArguments) {
 
     $this->setExtensions($aArguments);
 
-    return $this->getReflector(false) ? $this->reflectSetExtensions() : null;
+    return $this->getDummy(false) ? $this->reflectSetExtensions() : null;
   }
 
   protected function reflectFunctionValidate(array $aArguments) {
 
-    return $this->getReflector()->call('validate', $aArguments);
+    return $this->getDummy()->call('validate', $aArguments);
   }
 
   protected function reflectFunctionExtensions(array $aPath, $sMode, array $aArguments) {
@@ -121,12 +90,12 @@ class Tree extends xml\tree\Argument {
 
   protected function reflectDirectory(array $aArguments) {
 
-    return $this->getReflector()->call('setDirectory', array($aArguments['directory']))->getInsert();
+    return $this->getDummy()->call('setDirectory', array($aArguments['directory']))->getInsert();
   }
 
   public function reflectApplyDefault($sPath, array $aPath = array(), $sMode = '', $bRead = false, array $aArguments = array()) {
 
-    return $this->getReflector()->call('read', array($sPath));
+    return $this->getDummy()->call('read', array($sPath));
   }
 }
 

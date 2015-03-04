@@ -7,6 +7,11 @@ class Validate extends core\module\Domed implements core\stringable {
 
   protected $aExtensions = array();
 
+  public function __construct() {
+
+    
+  }
+
   public function setExtensions(array $aExtensions) {
 
     $this->aExtensions = $aExtensions;

@@ -7,8 +7,8 @@ sylma.uploader.Dropper = new Class({
 
     var main = this.getMain();
 
-    main.setDropper(this);
-    main.addEvent('complete', this.sendComplete.bind(this));
+    //main.setDropper(this);
+    //main.addEvent('complete', this.sendComplete.bind(this));
   },
 
   getMain : function() {
@@ -30,7 +30,7 @@ sylma.uploader.Dropper = new Class({
 
     this.highlight();
 
-    this.getMain().sendFile(input);
+    this.getMain().sendFile(this.getParent('fieldset'), input);
   },
 
   getInput : function() {

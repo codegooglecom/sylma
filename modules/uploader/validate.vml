@@ -11,7 +11,11 @@
 
   <tpl:settings>
     <cls:classes>
-      <cls:class alias="tree" name="\sylma\modules\uploader\Tree"/>
+      <cls:class alias="tree" name="\sylma\modules\uploader\Tree">
+        <cls:classes>
+          <cls:class alias="cached" name="\sylma\modules\uploader\Validate"/>
+        </cls:classes>
+      </cls:class>
     </cls:classes>
   </tpl:settings>
   <xl:resource/>

@@ -31,6 +31,7 @@ sylma.uploader.MainFieldset = new Class({
       //throw new Error('No valid response');
     }
 
-    this.fireEvent('complete');
+    //this.fireEvent('complete');
+    this.parent(response);
   },
 });
