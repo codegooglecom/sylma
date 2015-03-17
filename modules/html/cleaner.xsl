@@ -3,6 +3,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:shtml="http://2014.sylma.org/html"
+  xmlns:builder="http://2013.sylma.org/parser/reflector/builder"
 
   version="1.0"
 >
@@ -80,6 +81,14 @@
 
   <xsl:template match="@*">
     <xsl:attribute name="{local-name()}">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template match="@builder:source"/>
+  
+  <xsl:template match="@builder:element">
+    <xsl:attribute name="data-source">
       <xsl:value-of select="."/>
     </xsl:attribute>
   </xsl:template>

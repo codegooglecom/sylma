@@ -188,3 +188,12 @@
   max-height: 1850px;
   opacity: 1;
 }
+
+.sylma-source
+{
+  position: absolute;
+  font-weight: normal;
+  font-size: 10pt;
+  overflow: hidden;
+  text-align: right;
+}

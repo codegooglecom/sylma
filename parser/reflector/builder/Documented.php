@@ -71,11 +71,18 @@ class Documented extends Logger implements reflector\documented {
 
   public function importDocument(dom\handler $doc, fs\file $file) {
 
+    $bElement = \Sylma::read('template/debug/source');
+
     if (!$file->getControler()->getName()) {
 
       foreach ($doc->queryx('//*') as $el) {
 
         $el->createAttribute('build:source', (string) $file, $this->getNamespace());
+
+        if ($bElement) {
+
+          $el->createAttribute('build:element', $this->getManager('formater')->buildLink($el->asLink()), $this->getNamespace());
+        }
       }
     }
 

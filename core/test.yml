@@ -6,6 +6,14 @@ debug :
 exception :
   show : false
 
+render :
+  namespaces :
+    # allow use of template/debug/source
+    builder :
+      prefix : builder
+      uri : http://2013.sylma.org/parser/reflector/builder
+
+
 initializer :
   debug :
     update : null

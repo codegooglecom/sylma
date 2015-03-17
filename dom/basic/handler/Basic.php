@@ -261,12 +261,14 @@ abstract class Basic extends core\module\Managed {
     return $aNS;
   }
 
+  public function asLink() {
+
+    return $this->getFile() ? (string) $this->getFile() : '[unknown]';
+  }
+
   public function asToken() {
 
-    if ($this->getFile()) $sResult = '@file ' . $this->getFile();
-    else $sResult = '@file [unknown]';
-
-    return $sResult;
+    return '@file ' . $this->asLink();
   }
 
   public function asArgument() {

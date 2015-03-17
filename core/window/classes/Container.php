@@ -114,17 +114,24 @@ class Container extends core\module\Domed {
     $content = $this->createArgument(array(
       'ul' => array(
         '#li' => array(
+          array(
+            '#button' => array(
+              array(
+                '@type' => 'button',
+                '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, null, true);",
+                (string) $file,
+              ),
+              array(
+                '@type' => 'button',
+                '@onclick' => "sylma.ui.debugSource();",
+                'source'
+              )
+            )
+          ),
           'user : ' . $user->getName(),
           'groups : ' . implode(',', $user->getGroups()),
           'time : ' . functions\numeric\formatFloat($init->getElapsedTime()),
           'device : ' . $sDevice,
-          array(
-            'a' => array(
-              '@href' => '#',
-              '@onclick' => "sylma.ui.send('/sylma/modules/rebuild/standalone', {path : '$file'}, null, true); return false;",
-              (string) $file,
-            ),
-          ),
           'builded : ' . count($aBuilded),
           array(
             'ul' => array(

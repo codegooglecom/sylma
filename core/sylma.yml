@@ -211,6 +211,9 @@ modules :
         - /sylma/modules/users/logout.vml
 
 template :
+  debug :
+    # add source to rendered elements, break tests.
+    source : false
   # @todo : required attribute need refactoring to work
   required : false
 

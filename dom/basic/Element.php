@@ -856,24 +856,38 @@ class Element extends \DOMElement implements dom\element {
     return $sResult;
   }
 
-  public function asToken() {
+  public function asLink() {
 
     if ($this->getDocument()) {
 
       if ($sFile = $this->readAttribute('source', self::SOURCE_NS, false)) {
 
-        $sFile = '@file ' . $sFile;
+        $sFile = $sFile;
       }
       else if ($this->getHandler(false) and $this->getHandler()->getFile()) {
 
-        $sFile = $this->getHandler()->asToken();
+        $sFile = $this->getHandler()->asLink();
       }
       else {
 
         $sFile = '[no-file]' . ($this->getHandler(false) ? '[no-handler]' : '');
       }
 
-      $sResult = ' @element ' . $this->getPath() . ' in ' . $sFile . ':' . $this->getLineNo();
+      $sResult = $sFile . ':' . $this->getLineNo();
+    }
+    else {
+
+      $sResult = " [Lost element]";
+    }
+
+    return $sResult;
+  }
+
+  public function asToken() {
+
+    if ($this->getDocument()) {
+
+      $sResult = ' @element ' . $this->getPath() . ' in @file ' . $this->asLink();
     }
     else {
 

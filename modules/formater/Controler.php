@@ -302,9 +302,7 @@ class Controler extends core\module\Domed {
         $aResult[] = substr($sValue, 0, $iFile) . ' ';
         $aResult[] = '@file';
 
-        $sDirectory = $fs->getDirectory()->getSystemPath();
-
-        $aResult[] = '<a href="netbeans://' . $sDirectory . $sFile.'">' . $sFile . '</a>';
+        $aResult[] = '<a href="' . $this->buildLink($sFile).'">' . $sFile . '</a>';
         $aResult[] = substr($sValue, $iFile + $iLength);
       }
       else {
@@ -318,6 +316,13 @@ class Controler extends core\module\Domed {
     }
 
     return implode(' ', $aResult);
+  }
+
+  public function buildLink($sFile) {
+
+    $sDirectory = \Sylma::getManager('fs')->getDirectory()->getSystemPath();
+
+    return 'netbeans://' . $sDirectory . $sFile;
   }
 
   public function stringToDOM($sValue, $bCollection = false) {

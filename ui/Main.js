@@ -373,6 +373,35 @@ sylma.uiClass = {
     };
 
     el.addEventListener(name, handler);
+  },
+
+  debugSource : function() {
+
+    $$('*').each(function(el) {
+
+      var source = el.get('data-source');
+
+      if (source) {
+
+        var link = new Element('a', {
+          href : source,
+          html : 'E',
+          'class' : 'hidder sylma-source',
+        });
+
+        el.grab(link);
+
+        el.addEvents({
+          mouseenter : function() {
+            link.addClass('visible');
+          },
+          mouseleave : function() {
+            link.removeClass('visible');
+          }
+        });
+      }
+
+    });
   }
 };
 

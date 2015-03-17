@@ -9,13 +9,18 @@ abstract class Attributed extends Domed {
   protected $aAttributes = array();
 
   protected $aAvoidNamespaces = array(
-    'http://2013.sylma.org/parser/reflector/builder',
-    'http://2013.sylma.org/parser/security',
+    'builder' => 'http://2013.sylma.org/parser/reflector/builder',
+    'ls' => 'http://2013.sylma.org/parser/security',
   );
 
   protected function buildContent() {
 
     $el = $this->getNode();
+
+    if (\Sylma::read('template/debug/source')) {
+
+      unset($this->aAvoidNamespaces['builder']);
+    }
 
     foreach ($el->getAttributes() as $attr) {
 
