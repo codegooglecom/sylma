@@ -389,7 +389,7 @@ sylma.uiClass = {
           'class' : 'hidder sylma-source',
         });
 
-        el.grab(link);
+        link.inject(el, 'top');
 
         el.addEvents({
           mouseenter : function() {

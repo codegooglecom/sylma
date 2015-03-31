@@ -196,4 +196,14 @@
   font-size: 10pt;
   overflow: hidden;
   text-align: right;
+  border: 1px solid #aaa;
+  background-color: #ccc;
+  width: 1em;
+  height: 1em;
+  line-height: 1em;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  text-transform: none;
+  font-family: sans-serif;
 }
